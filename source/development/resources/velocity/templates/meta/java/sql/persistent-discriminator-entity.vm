@@ -1,0 +1,52 @@
+#parseJavaMacros()
+#setJavaVariables()
+#writeJavaLicense()
+#writeJavaPackage()
+#setLocalVariables()
+#writeJavaImports($imports)
+#writeJavaAuthor('Jorge Campins')
+@EntityClass(startWith = 0)
+public class ${javaClassSimpleName} extends AbstractPersistentEnumerationEntity {
+
+    // <editor-fold defaultstate="collapsed" desc="class constructors">
+    @Deprecated()
+    private ${javaClassSimpleName}() {
+        this(null, null);
+    }
+
+    public ${javaClassSimpleName}(Artifact declaringArtifact, Field declaringField) {
+        super(declaringArtifact, declaringField);
+    }
+    // </editor-fold>
+
+    @PrimaryKey
+    public IntegerProperty numero;
+
+    @BusinessKey
+    @StringField(maxLength = 50)
+    public StringProperty codigo;
+
+....    public Instance $table.name.toUpperCase();
+
+    #foreach($extension in $table.extensions.values())
+....    public Instance $extension.name.toUpperCase();
+
+    #end
+    @Override
+    protected void settleInstances() {
+        super.settleInstances();
+        ${table.name.toUpperCase()}.newInstanceField(numero, 0);
+        #foreach($extension in $table.extensions.values())
+....        ${extension.name.toUpperCase()}.newInstanceField(numero, $extension.discriminatorValue);
+        #end
+    }
+}
+#break
+
+#macro(setLocalVariables)
+    #set($added = $imports.add("adalid.core.interfaces.*"))
+    #set($added = $imports.add("java.lang.reflect.Field"))
+    #set($added = $imports.add("adalid.core.*"))
+    #set($added = $imports.add("adalid.core.annotations.*"))
+    #set($added = $imports.add("adalid.core.properties.*"))
+#end

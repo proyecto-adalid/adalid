@@ -1,0 +1,100 @@
+#set($dot = '.')
+#set($dollar = '$')
+#set($insertFilterByReferenceMap = $entity.insertFilterByReferenceMap)
+#if(!$insertFilterByReferenceMap.isEmpty())
+    @Override
+    protected String getBeforeAppendingProcedure() {
+        String tablaMaestro = getTablaMaestro();
+        String columnaMaestro = getColumnaMaestro();
+        if (StringUtils.isBlank(tablaMaestro) || StringUtils.isBlank(columnaMaestro)) {
+            return null;
+        }
+        #foreach($key in $insertFilterByReferenceMap.keySet())
+            #set($filter = $insertFilterByReferenceMap.get($key))
+....        if (tablaMaestro.equals("$key.root.wrapper.sqlName") && columnaMaestro.equals(COLUMNA_${key.wrapper.javaConstantName})) {
+....            return "$key.root.wrapper.sqlName$dollar$filter.wrapper.sqlName";
+....        }
+        #end
+        return super.getBeforeAppendingProcedure();
+    }
+
+    @Override
+    protected String getBeforeAppendingProcedureDefaultErrorMessage() {
+        String tablaMaestro = getTablaMaestro();
+        String columnaMaestro = getColumnaMaestro();
+        if (StringUtils.isBlank(tablaMaestro) || StringUtils.isBlank(columnaMaestro)) {
+            return null;
+        }
+        #foreach($key in $insertFilterByReferenceMap.keySet())
+            #set($filter = $insertFilterByReferenceMap.get($key))
+....        if (tablaMaestro.equals("$key.root.wrapper.sqlName") && columnaMaestro.equals(COLUMNA_${key.wrapper.javaConstantName})) {
+....            return "<$key.root.wrapper.sqlName$dot$filter.wrapper.sqlName>";
+....        }
+        #end
+        return super.getBeforeAppendingProcedureDefaultErrorMessage();
+    }
+
+#end
+    @Override
+    protected void posAppendRow(RowKey rowKey, long funcion) {
+        super.posAppendRow(rowKey, funcion);
+        #foreach($property in $dataProviderColumns)
+            #writeSetInitialValue("$!property.wrapper.javaInitialValue")
+        #end##foreach-property
+        #set($discriminatorVariableName = '')
+        #if($esRecursoDiscriminado)
+            #set($property = $entity.discriminatorProperty)
+            #set($discriminatorVariableName = $property.wrapper.javaVariableName)
+            #writeSetInitialValue("$!property.wrapper.getJavaPrimitiveValue($entity.discriminatorValue)")
+        #end
+    }
+
+#break
+
+#macro(writeSetInitialValue $value)
+    #if($value != '' && $value != 'null')
+        set${property.wrapper.javaClassName}(rowKey, $value);
+    #elseif($property.isBooleanPrimitive() && $property.booleanDisplayType == 'CHECKBOX')
+        set${property.wrapper.javaClassName}(rowKey, Boolean.FALSE);
+    #end
+#end##writeSetInitialValue
+
+#*
+    public RowKey crear${entity.wrapper.javaClassName}() throws ExcepcionAplicacion {
+        return appendRow(${FUNCION_INSERT});
+    }
+
+    @Override
+    protected void posAppendRow(RowKey rowKey, long funcion) {
+        initRow(rowKey);
+        if (funcion == ${FUNCION_INSERT}) {
+            posCrear${entity.wrapper.javaClassName}(rowKey);
+        }
+    }
+
+    protected void initRow(RowKey rowKey) {
+*#
+
+#*
+    protected void posCrear${entity.wrapper.javaClassName}(RowKey rowKey) {
+    }
+
+    protected boolean esFilaValidaParaCrear${entity.wrapper.javaClassName}(RowKey rowKey) {
+        boolean es = isRowAvailable(rowKey);
+##  #checkRecursoSegmentableValidoParaCrear()
+    #if($esRecursoConReferencias)
+        es &= esFilaConReferenciasValidas(rowKey);
+    #end
+##      es &= esFilaInsertable(rowKey, ${FUNCION_INSERT});
+        return es;
+    }
+*#
+
+#macro(checkRecursoSegmentableValidoParaCrear)
+    #if($esRecursoSegmentable)
+        if (es && isColumnaInsertable(COLUMNA_SEGMENTO_RECURSO)) {
+            setSegmento(rowKey);
+            es = esFilaSegmentoAutorizado(rowKey, ${FUNCION_INSERT});
+          }
+    #end
+#end##checkRecursoSegmentableValidoParaCrear

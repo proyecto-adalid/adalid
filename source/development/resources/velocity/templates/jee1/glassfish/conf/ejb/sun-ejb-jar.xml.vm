@@ -1,0 +1,69 @@
+#parseXMLMacros()
+#setXMLVariables()
+#writeXMLDeclaration()
+#writeXMLLicense()
+#writeXMLAuthor('Jorge Campins')
+#set($projectAlias = "${javaProgrammer.getJavaVariableName($project.alias)}")
+<!DOCTYPE sun-ejb-jar PUBLIC "-//Sun Microsystems, Inc.//DTD Application Server 9.0 EJB 3.0//EN" "http://www.sun.com/software/appserver/dtds/sun-ejb-jar_3_0-0.dtd">
+<sun-ejb-jar>
+    <enterprise-beans>
+        <ejb>
+            <ejb-name>BusinessProcessMessengerBean</ejb-name>
+            <resource-ref>
+                <res-ref-name>jms/${projectAlias}BusinessProcessMessageFactory</res-ref-name>
+                <jndi-name>jms/${projectAlias}BusinessProcessMessageFactory</jndi-name>
+            </resource-ref>
+            <message-destination-ref>
+                <message-destination-ref-name>jms/${projectAlias}BusinessProcessRequestMessageQueue</message-destination-ref-name>
+                <jndi-name>jms/${projectAlias}BusinessProcessRequestMessageQueue</jndi-name>
+            </message-destination-ref>
+            <message-destination-ref>
+                <message-destination-ref-name>jms/${projectAlias}BusinessProcessReplyMessageQueue</message-destination-ref-name>
+                <jndi-name>jms/${projectAlias}BusinessProcessReplyMessageQueue</jndi-name>
+            </message-destination-ref>
+            <message-destination-ref>
+                <message-destination-ref-name>jms/${projectAlias}BusinessProcessReturnMessageQueue</message-destination-ref-name>
+                <jndi-name>jms/${projectAlias}BusinessProcessReturnMessageQueue</jndi-name>
+            </message-destination-ref>
+        </ejb>
+        <ejb>
+            <ejb-name>BusinessProcessRequestMessageBean</ejb-name>
+            <bean-pool>
+                <steady-pool-size>2</steady-pool-size>
+                <resize-quantity>2</resize-quantity>
+                <max-pool-size>2</max-pool-size>
+                <pool-idle-timeout-in-seconds>300</pool-idle-timeout-in-seconds>
+##              <max-wait-time-in-millis>30000</max-wait-time-in-millis>
+            </bean-pool>
+        </ejb>
+        <ejb>
+            <ejb-name>UtilityProcessMessengerBean</ejb-name>
+            <resource-ref>
+                <res-ref-name>jms/${projectAlias}UtilityProcessMessageFactory</res-ref-name>
+                <jndi-name>jms/${projectAlias}UtilityProcessMessageFactory</jndi-name>
+            </resource-ref>
+            <message-destination-ref>
+                <message-destination-ref-name>jms/${projectAlias}UtilityProcessRequestMessageQueue</message-destination-ref-name>
+                <jndi-name>jms/${projectAlias}UtilityProcessRequestMessageQueue</jndi-name>
+            </message-destination-ref>
+            <message-destination-ref>
+                <message-destination-ref-name>jms/${projectAlias}UtilityProcessReplyMessageQueue</message-destination-ref-name>
+                <jndi-name>jms/${projectAlias}UtilityProcessReplyMessageQueue</jndi-name>
+            </message-destination-ref>
+            <message-destination-ref>
+                <message-destination-ref-name>jms/${projectAlias}UtilityProcessReturnMessageQueue</message-destination-ref-name>
+                <jndi-name>jms/${projectAlias}UtilityProcessReturnMessageQueue</jndi-name>
+            </message-destination-ref>
+        </ejb>
+        <ejb>
+            <ejb-name>UtilityProcessRequestMessageBean</ejb-name>
+            <bean-pool>
+                <steady-pool-size>2</steady-pool-size>
+                <resize-quantity>2</resize-quantity>
+                <max-pool-size>2</max-pool-size>
+                <pool-idle-timeout-in-seconds>300</pool-idle-timeout-in-seconds>
+##              <max-wait-time-in-millis>30000</max-wait-time-in-millis>
+            </bean-pool>
+        </ejb>
+    </enterprise-beans>
+</sun-ejb-jar>

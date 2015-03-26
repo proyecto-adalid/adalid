@@ -1,0 +1,33 @@
+    /**
+     * ${campo1}.validatorExpression
+     */
+    public void ${campo1}_validate(FacesContext context, UIComponent component, Object value) {
+//      Object object = $!{fieldObjUtilsMethod}(bean.get${Campo1}());
+        RowKey rowKey = bean.getGestor().getCurrentRowKey();
+        if (rowKey != null) {
+            bean.get${EntityDataProvider}().set${fieldClassName}(rowKey, null);
+            #set($fieldDivisorRule = "$!property.divisorRule")
+            #if($fieldDivisorRule != 'CHECK' || $property.divisor < 1)
+            if (value != null) {
+##              #set($fieldValueMethod = "$!{fieldObjUtilsMethod}(value)")
+##              #if($fieldDivisorRule == 'CEILING' || $fieldDivisorRule == 'FLOOR' || $fieldDivisorRule == 'ROUND')
+##                  #set($fieldValueMethod = "NumUtils.$fieldDivisorRule.toLowerCase()($fieldValueMethod, $property.divisor)")
+##              #else
+##              #end
+##              bean.get${EntityDataProvider}().set${fieldClassName}(rowKey, $fieldValueMethod);
+                bean.get${EntityDataProvider}().set${fieldClassName}(rowKey, $!{fieldObjUtilsMethod}(value));
+            }
+            #else
+            if (value != null) {
+                if (NumUtils.multiple($!{fieldObjUtilsMethod}(value), $property.divisor)) {
+                    bean.get${EntityDataProvider}().set${fieldClassName}(rowKey, $!{fieldObjUtilsMethod}(value));
+                } else {
+                    String summary = Bitacora.getTextoMensaje(CBM.CHECK_CHANGES_EXCEPTION_7, "$property.divisor");
+                    FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_ERROR, summary, null);
+                    throw new ValidatorException(message);
+                }
+            }
+            #end
+        }
+    }
+#break

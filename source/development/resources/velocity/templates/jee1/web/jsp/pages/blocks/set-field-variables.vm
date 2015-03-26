@@ -1,0 +1,27 @@
+#break
+
+#macro(setFieldVariables)
+    #set($fieldClassName = "${field.property.wrapper.javaClassName}")
+    #set($fieldVariableName = "${field.property.wrapper.javaVariableName}")
+    #set($fieldFirstName = "${fieldClassName}1")
+    #set($fieldMiddleName = "${fieldClassName}2")
+    #set($fieldLastName = "${fieldClassName}3")
+    #set($fieldSearchType = "$!field.property.searchType")
+    #set($fieldSqlName = "${field.property.wrapper.sqlName}")
+    #set($fieldForeignCodeVariableName = "$!field.foreignCodeField.wrapper.javaVariableName")
+    #set($fieldForeignNameVariableName = "$!field.foreignNameField.wrapper.javaVariableName")
+    #set($fieldForeignCodeSqlName = "$!field.foreignCodeField.wrapper.sqlName")
+    #set($fieldForeignNameSqlName = "$!field.foreignNameField.wrapper.sqlName")
+##  #set($fieldReadOnly = "$field.property.isReadOnly()")
+##  #set($fieldRequired = "$field.property.isRequiredProperty()")
+    #if($field.property.isReadOnly())
+        #set($fieldReadOnly = 'true')
+        #set($fieldRequired = 'false')
+    #else
+        #set($fieldReadOnly = "#{${pageBeanName}.asistente.field${fieldClassName}ReadOnly}")
+        #set($fieldRequired = "#{${pageBeanName}.asistente.field${fieldClassName}Required}")
+    #end
+    #set($fieldRendered = "#{${pageBeanName}.asistente.field${fieldClassName}Rendered}")
+    #set($Campo1 = "Campo$fieldFirstName")
+    #set($campo1 = "campo$fieldFirstName")
+#end##setFieldVariables

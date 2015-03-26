@@ -1,0 +1,4 @@
+    private void ${campo1}_validate(Object value) {
+    }
+
+#break

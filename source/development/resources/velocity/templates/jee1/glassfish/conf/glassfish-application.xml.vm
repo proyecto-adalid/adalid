@@ -1,0 +1,57 @@
+#parseXMLMacros()
+#setXMLVariables()
+#writeXMLDeclaration()
+#writeXMLLicense()
+#writeXMLAuthor('Jorge Campins')
+#set($projectAlias = "${javaProgrammer.getJavaVariableName($project.alias)}")
+#set($securityRealmType = "$!project.securityRealmType")
+#set($ldap = $securityRealmType.equals('LDAP'))
+<!DOCTYPE glassfish-application PUBLIC "-//GlassFish.org//DTD GlassFish Application Server 3.1 Java EE Application 6.0//EN" "http://glassfish.org/dtds/glassfish-application_6_0-1.dtd">
+<glassfish-application>
+    #writeSecurityRoles()
+    <realm>${project.securityRealmName}</realm>
+</glassfish-application>
+#break
+
+#macro(writeSecurityRoles)
+    <security-role-mapping>
+        <role-name>SuperGestor</role-name>
+        <group-name>SuperGestor</group-name>
+    #if($ldap)
+        <group-name>SuperGestor-${projectAlias}</group-name>
+    #end
+    </security-role-mapping>
+    <security-role-mapping>
+        <role-name>SuperLector</role-name>
+        <group-name>SuperLector</group-name>
+    #if($ldap)
+        <group-name>SuperLector-${projectAlias}</group-name>
+    #end
+    </security-role-mapping>
+    <security-role-mapping>
+        <role-name>Operador</role-name>
+        <group-name>Operador</group-name>
+    #if($ldap)
+        <group-name>Operador-${projectAlias}</group-name>
+    #end
+    </security-role-mapping>
+    #set($tipoRol = $project.getEntity($TipoRol))
+    #set($modules = $ColUtils.filter($project.modulesList, $isRoleModule))
+    #set($modules = $ColUtils.sort($modules, $byProjectName))
+    #foreach($module in $modules)
+        #writeSecurityRole()
+    #end##foreach-module
+#end##writeSecurityRoles
+
+#macro(writeSecurityRole)
+#foreach($row in $tipoRol.insertableRowsList)
+    #set($role = $StrUtils.getStringXml($row.instanceKeyLabel.toString()))
+    <security-role-mapping>
+        <role-name>${role}${module.name}</role-name>
+        <group-name>${role}${module.name}</group-name>
+    #if($ldap)
+        <group-name>${role}${module.name}-${projectAlias}</group-name>
+    #end
+    </security-role-mapping>
+#end##foreach-row
+#end##writeSecurityRole

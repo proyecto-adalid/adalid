@@ -1,0 +1,82 @@
+#parsePostgreSQLMacros()
+#setPostgreSQLVariables()
+#writePostgreSQLLicense()
+#writePostgreSQLAuthor('Jorge Campins')
+#set($entities = $ColUtils.filter($project.entitiesList, $isPersistentEntity))
+#set($entities = $ColUtils.sort($entities, $byEntityName))
+#foreach($entity in $entities)
+    #set($entityNumber = $project.getEntityNumber($entity))
+    #writeInsertRow()
+#end##foreach-entity
+#break
+
+#macro(writeInsertRow)
+#set($codex = "$entity.wrapper.sqlName")
+#set($codex = "$entity.wrapper.sqlSchemaQualifiedShortName")
+#set($tabla = "$entity.wrapper.sqlTableName")
+#set($tabla = "$entity.wrapper.sqlSchemaQualifiedShortTableName")
+insert
+into public.dominio
+    (
+    id_dominio,
+    codigo_dominio,
+    nombre_dominio,
+    descripcion_dominio,
+    nombre_tabla,
+    numero_tipo_dominio,
+    id_clase_recurso,
+    id_funcion_seleccion
+    )
+values
+    (
+##
+##  id_dominio
+##
+    $entityNumber,
+##
+##  codigo_dominio
+##
+    '$codex',
+##
+##  nombre_dominio
+##
+#if( $entity.wrapper.validDefaultShortDescription )
+    '$entity.wrapper.validDefaultShortDescription',
+#else
+    null,
+#end
+##
+##  descripcion_dominio
+##
+#if( $entity.wrapper.defaultDescription )
+    '$entity.wrapper.defaultDescription',
+#else
+    null,
+#end
+##
+##  nombre_tabla
+##
+    '$tabla',
+##
+##  numero_tipo_dominio
+##
+#if($entity.table)
+    1,
+#else
+    2,
+#end
+##
+##  id_clase_recurso
+##
+    $entityNumber,
+##
+##  id_funcion_seleccion
+##
+##  #if($entity.selectEnabled)
+    ${project.getOperationNumber($selectOperationKey, $entity)}
+##  #else
+##      null
+##  #end
+    );
+
+#end##writeInsertRow

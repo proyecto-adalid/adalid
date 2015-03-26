@@ -1,0 +1,25 @@
+#break
+
+#macro(setJSPVariables)
+    #setGlobalVariables()
+    #set($javaClassSimpleName = $StringUtils.removeEndIgnoreCase($fileName, '.jsp'))
+#end##setJSPVariables
+
+#macro(writeJSPLicense)
+    #if("$!writeLicense" == '')
+        #set($writeLicense = 'on')
+    #end
+    #if($writeLicense == 'on')
+        #include('licenses/license-xml.txt')
+    #end
+#end##writeJSPLicense
+
+#macro(writeJSPAuthor $author)
+    #if("$!writeLicense" == 'on')
+<!--
+    author: adalid $adalidMajorVersionNumber
+    template: $template.replace('\\', '/')
+    template-author: $author
+-->
+    #end
+#end##writeJSPAuthor

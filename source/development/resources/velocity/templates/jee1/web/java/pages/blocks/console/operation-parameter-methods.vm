@@ -1,0 +1,12 @@
+#if($parameter.isBooleanPrimitive())
+    #parse("$templatePath/blocks/console/parameter/boolean.vm")
+#elseif($parameter.isEntity())
+    #if($fieldSearchType == 'DISPLAY')
+        #parse("$templatePath/blocks/console/parameter/entity.vm")
+    #elseif($fieldSearchType == 'LIST')
+        #parse("$templatePath/blocks/console/parameter/entity-list.vm")
+    #else
+        #parse("$templatePath/blocks/console/parameter/entity-key.vm")
+    #end
+#end
+#break

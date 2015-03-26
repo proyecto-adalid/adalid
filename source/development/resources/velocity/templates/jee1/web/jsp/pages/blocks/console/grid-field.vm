@@ -1,0 +1,33 @@
+#foreach($operation in $operations)
+    #setOperationVariables()
+    #if($operation.view)
+        #parse("$templatePath/blocks/console/lista-tipo-informe.vm")
+    #end
+    #foreach($parameter in $parameters)
+        #setParameterVariables()
+        #if($parameter.isHiddenField())
+        #elseif($parameter.isEntity())
+            #if($fieldSearchType == 'LIST')
+                #parse("$templatePath/blocks/console/column/entity-list.vm")
+            #elseif($fieldSearchType == 'DISPLAY')
+                #parse("$templatePath/blocks/console/column/entity.vm")
+            #else
+                #parse("$templatePath/blocks/console/column/numeric.vm")
+            #end
+        #elseif($parameter.isBinaryPrimitive())
+            #parse("$templatePath/blocks/console/column/binary.vm")
+        #elseif($parameter.isBooleanPrimitive())
+            #parse("$templatePath/blocks/console/column/boolean.vm")
+        #elseif($parameter.isCharacterPrimitive())
+            #if($parameter.isFileReferenceField())
+                #parse("$templatePath/blocks/console/column/file-name.vm")
+            #else
+                #parse("$templatePath/blocks/console/column/character.vm")
+            #end
+        #elseif($parameter.isNumericPrimitive())
+            #parse("$templatePath/blocks/console/column/numeric.vm")
+        #elseif($parameter.isTemporalPrimitive())
+            #parse("$templatePath/blocks/console/column/temporal.vm")
+        #end
+    #end##foreach-parameter
+#end##foreach-operation

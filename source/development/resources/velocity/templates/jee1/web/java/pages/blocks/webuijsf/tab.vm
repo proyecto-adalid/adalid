@@ -1,0 +1,12 @@
+#set($capitalizedComponentName = $StringUtils.capitalize($componentName))
+$tab    private Tab ${componentName} = new Pestanya();
+
+$tab    public Tab get${capitalizedComponentName}() {
+$tab        return ${componentName};
+$tab    }
+
+$tab    public void set${capitalizedComponentName}(Tab tab) {
+$tab        ${componentName} = tab;
+$tab    }
+
+#break

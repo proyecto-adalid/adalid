@@ -1,0 +1,46 @@
+#set($folder = $VelocityAid.fixPath("$!{targetFolder}"))
+@echo off
+cd /d "%~dp0"
+set folder="${folder}"
+set target="${folder}\%~n0.sql"
+if not exist %folder% md %folder%
+if exist %target% del %target%
+if exist %target% (
+    echo -- %DATE% %TIME% concat %target% failed, delete return code = %errorlevel% > %target%
+    goto:eof
+)
+echo -- >> %target%
+echo -- %DATE% %TIME% concat %target% >> %target%
+echo -- >> %target%
+#set($list1 = $filePathFile.listFiles($FilUtils.visibleDirectoryFilter()))
+#foreach($f1 in $list1)
+    #if($f1.name == "$!sqlFolder") 
+        #writeFile1()
+        #set($list2 = $FilUtils.directoriesPathList($f1))
+        #foreach($string in $list2)
+            #if($FilUtils.isDirectory($string))
+                #set($f2 = $FilUtils.getDirectory($string))
+                #writeFile2()
+                #set($list3 = $f2.listFiles($FilUtils.nameEndsWithFilter('.sql')))
+                #foreach($f3 in $list3)
+                    #writeFile3()
+                #end
+            #end
+        #end
+    #end
+#end
+#break
+
+#macro(writeFile1)
+#end##writeFile1
+
+#macro(writeFile2)
+
+echo -- >> %target%
+echo -- "$f2" >> %target%
+echo -- >> %target%
+#end##writeFile2
+
+#macro(writeFile3)
+type "$f3" >> %target%
+#end##writeFile3

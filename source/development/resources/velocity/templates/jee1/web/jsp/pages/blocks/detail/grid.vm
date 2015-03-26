@@ -1,0 +1,12 @@
+$tab<h:panelGrid id="panelGrid${panelGridSequence.next()}" columns="2">
+        #writeIdentificacionFila1()
+##      #if($page.reference)
+##          #writeDenominacionFilaMaestro1()
+##      #end
+$tab    <!-- data provider columns opening -->
+        #set($tabString = '')
+        #increaseIndentationBy(1)
+        #parse("$templatePath/blocks/detail/grid-field.vm")
+        #decreaseIndentationBy(1)
+$tab    <!-- data provider columns closing -->
+$tab</h:panelGrid>

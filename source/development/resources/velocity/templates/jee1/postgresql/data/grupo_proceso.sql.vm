@@ -1,0 +1,16 @@
+#parsePostgreSQLMacros()
+#setPostgreSQLVariables()
+#writePostgreSQLLicense()
+#writePostgreSQLAuthor('Jorge Campins')
+#set($groups = $project.processingGroups)
+#foreach($group in $groups)
+    #writeInsertGrupoProceso()
+#end##foreach-module
+#break
+
+#macro(writeInsertGrupoProceso)
+#set($id = $SetUtils.getIndex($groups, $group) + 1)
+insert into grupo_proceso (id_grupo_proceso, codigo_grupo_proceso, nombre_grupo_proceso)
+values ($id, '$group', '$StrUtils.getWordyString($group)');
+
+#end##writeInsertGrupoProceso

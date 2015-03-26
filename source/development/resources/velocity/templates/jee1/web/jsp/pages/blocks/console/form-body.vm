@@ -1,0 +1,35 @@
+$tab<!-- console form body opening -->
+$tab<div class="pos-div-detalle">
+$tab    <h:panelGrid id="panelGrid${panelGridSequence.next()}">
+$tab        <h:panelGrid id="panelGrid${panelGridSequence.next()}">
+$tab            <h:panelGrid id="panelGrid${panelGridSequence.next()}" columns="2">
+$tab                <webuijsf:image id="imagenMensaje1"
+$tab                    rendered="#{${pageBeanName}.gestor.urlImagenSeveridadMensajeDisponible}"
+$tab                    url="#{${pageBeanName}.gestor.urlImagenSeveridadMensaje}"/>
+$tab                <webuijsf:imageHyperlink id="hipervinculoMensaje1"
+$tab                    align="middle"
+$tab                    rendered="#{${pageBeanName}.gestor.mensajeDisponible}"
+$tab                    text="#{${pageBeanName}.gestor.mensaje}"
+$tab                    url="#{${pageBeanName}.gestor.urlAnclaPie1}"/>
+$tab            </h:panelGrid>
+$tab        </h:panelGrid>
+$tab        <h:panelGrid id="panelGrid${panelGridSequence.next()}"
+$tab            style="width: ${page.entity.consoleViewWidth}px"
+$tab            styleClass="pdq-grid-detalle-1">
+                #increaseIndentationBy(3)
+                #parse("$templatePath/blocks/console/console-heading.vm")
+                #parse("$templatePath/blocks/console/console-body.vm")
+                #parse("$templatePath/blocks/console/console-footing.vm")
+                #decreaseIndentationBy(3)
+$tab        </h:panelGrid>
+$tab        <h:panelGrid id="panelGrid${panelGridSequence.next()}">
+$tab            <h:panelGrid id="panelGrid${panelGridSequence.next()}">
+$tab                <webuijsf:anchor id="anchor${anchorSequence.next()}"/>
+$tab            </h:panelGrid>
+                #increaseIndentationBy(3)
+                #parse("$templatePath/blocks/console/processing-buttons-grid.vm")
+                #decreaseIndentationBy(3)
+$tab        </h:panelGrid>
+$tab    </h:panelGrid>
+$tab</div>
+$tab<!-- console form body closing -->

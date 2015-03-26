@@ -1,0 +1,12 @@
+#set($capitalizedComponentName = $StringUtils.capitalize($componentName))
+$tab    private TableColumn ${componentName} = new ColumnaTabla();
+
+$tab    public TableColumn get${capitalizedComponentName}() {
+$tab        return ${componentName};
+$tab    }
+
+$tab    public void set${capitalizedComponentName}(TableColumn tableColumn) {
+$tab        ${componentName} = tableColumn;
+$tab    }
+
+#break

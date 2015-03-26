@@ -1,0 +1,118 @@
+#break
+
+#macro(writeInsertDefaultCrudOperationRow)
+#set($codex = "$entity.wrapper.sqlName")
+#set($codex = "$entity.wrapper.sqlSchemaQualifiedShortName")
+insert
+into public.funcion
+    (
+    id_funcion,
+    codigo_funcion,
+    nombre_funcion,
+    descripcion_funcion,
+    numero_tipo_funcion,
+    numero_tipo_rastro_fun,
+    id_dominio,
+    clausula_where,
+    clausula_order,
+    es_publica,
+    es_programatica,
+    es_protegida,
+    es_personalizable,
+    es_segmentable,
+    es_heredada,
+    id_grupo_proceso
+    )
+values
+    (
+##
+##  id_funcion
+##
+    $project.getOperationNumber($operation),
+##
+##  codigo_funcion
+##
+    '${codex}.${operation.wrapper.sqlName}',
+##
+##  nombre_funcion
+##
+    cast('${operationName}' as varchar(200)),
+##
+##  descripcion_funcion
+##
+#if( $operation.wrapper.defaultDescription )
+    '$operation.wrapper.defaultDescription',
+#else
+    null,
+#end
+##
+##  numero_tipo_funcion
+##
+    $operationTypeNumber, -- $operationTypeString
+##
+##  numero_tipo_rastro_fun
+##
+    $operationLoggingNumber, -- $!operation.operationLogging
+##
+##  id_dominio
+##
+    $entityNumber, -- $entity.wrapper.sqlName
+##
+##  clausula_where
+##
+    null,
+##
+##  clausula_order
+##
+    null,
+##
+##  es_publica
+##
+#if("$!operation.operationAccess" == 'PUBLIC')
+    true, -- $!operation.operationAccess
+#else
+    false,
+#end
+##
+##  es_programatica
+##
+#if("$!operation.operationAccess" == 'PRIVATE')
+    true, -- $!operation.operationAccess
+#else
+    false,
+#end
+##
+##  es_protegida
+##
+#if("$!operation.operationAccess" == 'PROTECTED')
+    true, -- $!operation.operationAccess
+#else
+    false,
+#end
+##
+##  es_personalizable
+##
+#if($entity.ownerProperty)
+    true,
+#else
+    false,
+#end
+##
+##  es_segmentable
+##
+#if($entity.segmentProperty)
+    true,
+#else
+    false,
+#end
+##
+##  es_heredada
+##
+    $operation.isInherited(),
+##
+##  id_grupo_proceso
+##
+    null
+    );
+
+#end##writeInsertDefaultCrudOperationRow

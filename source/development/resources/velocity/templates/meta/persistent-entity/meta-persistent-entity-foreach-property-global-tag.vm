@@ -1,0 +1,132 @@
+##
+##  Discriminator Column
+##
+#if(!$entity.getValidDiscriminatorProperty().isEmpty() and $entity.getValidDiscriminatorProperty().equals($property.name))
+${tab}@DiscriminatorColumn
+#end
+##
+##  foreignKey annotation
+##
+#if(!$property.foreignKeyString.isEmpty())
+${tab}@ForeignKey($property.foreignKeyString)
+#end
+##
+##  primaryKey annotation
+##
+#if($entity.validPrimaryKeyProperty.equals($property.name))
+${tab}@PrimaryKey
+#end
+##
+##  numericKey annotation
+##
+#if($entity.validNumericKeyProperty.equals($property.name))
+${tab}@NumericKey
+#end
+##
+##  characterKey annotation
+##
+#if($entity.validCharacterKeyProperty.equals($property.name))
+${tab}@CharacterKey
+#end
+##
+##  businessKeyProperty annotation
+##
+#if($entity.validBusinessKeyProperty.equals($property.name))
+${tab}@BusinessKey
+#end
+##
+##  manyToOne annotation
+##
+#if(!$property.manyToOneString.isEmpty())
+${tab}@ManyToOne($property.manyToOneString)
+#end
+##
+##  oneToOne annotation
+##
+#if(!$property.oneToOneString.isEmpty())
+${tab}@OneToOne($property.oneToOneString)
+#end
+##
+##  nameProperty annotation
+##
+#if($entity.validNameProperty.equals($property.name))
+${tab}@NameProperty
+#end
+##
+##  descriptionProperty annotation
+##
+#if($entity.validDescriptionProperty.equals($property.name))
+${tab}@DescriptionProperty
+#end
+##
+##  ownerProperty annotation
+##
+#if($entity.validOwnerProperty.equals($property.name))
+${tab}@OwnerProperty
+#end
+##
+##  parentProperty annotation
+##
+#if($entity.validParentProperty.equals($property.name))
+${tab}@ParentProperty
+#end
+##
+##  versionProperty annotation
+##
+#if($entity.validVersionProperty.equals($property.name))
+${tab}@VersionProperty
+#end
+##
+##  fileReference annotarion
+##
+#if($property.fileReference)
+${tab}@FileReference
+#end
+##
+##  inactiveIndicator annotarion
+##
+#if($property.inactiveIndicator)
+${tab}@InactiveIndicator
+#end
+##
+##  allocation annotation
+##
+#if(!$property.allocationString.isEmpty())
+${tab}@Allocation($property.allocationString)
+#end
+##
+## BigDecimalField annotation
+##
+#if($property.bigDecimalField&& !$property.bigDecimalFieldString.isEmpty())
+${tab}@BigDecimalField($property.bigDecimalFieldString)
+#end
+##
+## StringField annotation
+##
+#if($property.stringField&& !$property.stringFieldString.isEmpty())
+${tab}@StringField($property.stringFieldString)
+#end
+##
+## TimeField annotation
+##
+#if($property.timeField&& !$property.timeFieldString.isEmpty())
+${tab}@TimeField($property.timeFieldString)
+#end
+##
+## TimestampField annotation
+##
+#if($property.timestampField&& !$property.timestampFieldString.isEmpty())
+${tab}@TimestampField($property.timestampFieldString)
+#end
+##
+## propertyField
+##
+#if(!$property.propertyFieldString.isEmpty())
+${tab}@PropertyField($property.propertyFieldString)
+#end
+##
+##  columnField annotation
+##
+#if(!$property.columnFieldString.isEmpty())
+${tab}@ColumnField($property.columnFieldString)
+#end

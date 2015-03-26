@@ -1,0 +1,16 @@
+#if($keysList && $keysList.size()>0)
+$tab//  for each one of the $keysList.size() keys in $keysList
+#else
+    #break
+#end
+#increaseIndentation()
+#foreach($key in $keysList)
+$tab//  Key $key
+    #if($key)
+        #increaseIndentation()
+        #set($keyFieldsList = $VelocityAid.coalesce($key.keyFieldsList, $FALSE))
+        #writeTemplate($foreachKeyField)
+        #decreaseIndentation()
+    #end
+#end
+#decreaseIndentation()

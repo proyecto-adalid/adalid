@@ -1,0 +1,49 @@
+#break
+
+#macro(writeRecursoCodificableImport)
+#if($esRecursoCodificable)
+    #set($added = $imports.add("${project.rootPackageName}.lib.core.db.xdp.RecursoCodificableDataProvider"))
+    #set($added = $interfaces.add('RecursoCodificableDataProvider'))
+#end
+#end##writeRecursoCodificableImport
+
+#macro(writeRecursoCodificableImplementation)
+#if($esRecursoCodificable)
+    #set($property = $entity.characterKeyProperty)
+##  public static final String COLUMNA_CODIGO_RECURSO = "${property.wrapper.sqlName}";
+    public static final String COLUMNA_CODIGO_RECURSO = "${query.getSqlAlias($property)}";
+
+    public static final String ETIQUETA_CODIGO_RECURSO = BundleWebui.getString("xdp.etiqueta_codigo_recurso");
+
+    @Override
+    public String getColumnaCodigoRecurso() {
+        return COLUMNA_CODIGO_RECURSO;
+    }
+
+    @Override
+    public String getEtiquetaCodigoRecurso() {
+        return ETIQUETA_CODIGO_RECURSO;
+    }
+
+    @Override
+    public ${property.wrapper.javaPrimitiveType} getCodigoRecurso() {
+        return get${property.wrapper.javaClassName}();
+    }
+
+    @Override
+    public ${property.wrapper.javaPrimitiveType} getCodigoRecurso(RowKey rowKey) {
+        return get${property.wrapper.javaClassName}(rowKey);
+    }
+
+    @Override
+    public void setCodigoRecurso(${property.wrapper.javaPrimitiveType} codigoRecurso) {
+        set${property.wrapper.javaClassName}(codigoRecurso);
+    }
+
+    @Override
+    public void setCodigoRecurso(RowKey rowKey, ${property.wrapper.javaPrimitiveType} codigoRecurso) {
+        set${property.wrapper.javaClassName}(rowKey, codigoRecurso);
+    }
+
+#end
+#end##writeRecursoCodificableImplementation

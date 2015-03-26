@@ -1,0 +1,180 @@
+#parseJavaMacros()
+#setJavaVariables()
+#writeJavaLicense()
+#writeJavaPackage()
+#setLocalVariables()
+#addImports()
+#writeJavaImports($imports)
+#writeJavaAuthor('Jorge Campins')
+@Stateless
+public class ${javaClassSimpleName}#writeJavaImplements()
+
+    @PersistenceContext
+    private EntityManager em;
+
+#set($foo = $entity.primaryKeyProperty.wrapper.javaVariableName)
+    @Override
+    public ${entityClass} find(Object id) {
+        return find(id, false);
+    }
+
+    @Override
+    public ${entityClass} find(Object id, boolean refresh) {
+        String query = "select o from ${entityClass} as o where o.$foo = :id";
+        ${entityClass} o = null;
+        Query q;
+        if (id != null) {
+            try {
+                q = em.createQuery(query);
+                q = q.setParameter("id", id);
+                if (refresh) {
+                    q = q.setHint(QueryHints.REFRESH, HintValues.TRUE);
+                    q = q.setHint(QueryHints.REFRESH_CASCADE, CascadePolicy.CascadeAllParts);
+                }
+                o = (${entityClass}) q.getSingleResult();
+            } catch (NoResultException nrex) {
+                o = null;
+            }
+        }
+        return o;
+    }
+
+#if($entity.characterKeyProperty)
+    #set($foo = "$!entity.characterKeyProperty.wrapper.javaVariableName")
+    @Override
+    public ${entityClass} findByCodigo(String codigo) {
+        return findByCodigo(codigo, false);
+    }
+
+    @Override
+    public ${entityClass} findByCodigo(String codigo, boolean refresh) {
+        String query = "select o from ${entityClass} as o where o.$foo = :codigo";
+        ${entityClass} o = null;
+        Query q;
+        if (codigo != null) {
+            try {
+                q = em.createQuery(query);
+                q = q.setParameter("codigo", codigo);
+                if (refresh) {
+                    q = q.setHint(QueryHints.REFRESH, HintValues.TRUE);
+                    q = q.setHint(QueryHints.REFRESH_CASCADE, CascadePolicy.CascadeAllParts);
+                }
+                o = (${entityClass}) q.getSingleResult();
+            } catch (NoResultException nrex) {
+                o = null;
+            }
+        }
+        return o;
+    }
+
+#end
+    @Override
+    public List<${entityClass}> findAll() {
+        return findAll(false);
+    }
+
+    @Override
+    public List<${entityClass}> findAll(boolean refresh) {
+        String query = "select object(o) from ${entityClass} as o";
+        return findByQuery(query, refresh);
+    }
+
+    @Override
+    public List<${entityClass}> findByQuery(String query) {
+        return findByQuery(query, false);
+    }
+
+    @Override
+    public List<${entityClass}> findByQuery(String query, boolean refresh) {
+        return findByQuery(query, EnumTipoQuery.JPQL, refresh);
+    }
+
+    @Override
+    public List<${entityClass}> findByQuery(String query, EnumTipoQuery tipo) {
+        return findByQuery(query, tipo, false);
+    }
+
+    @Override
+    public List<${entityClass}> findByQuery(String query, EnumTipoQuery tipo, boolean refresh) {
+        return findByQuery(query, tipo, 0, refresh);
+    }
+
+    @Override
+    public List<${entityClass}> findByQuery(String query, EnumTipoQuery tipo, int max) {
+        return findByQuery(query, tipo, max, false);
+    }
+
+    @Override
+    public List<${entityClass}> findByQuery(String query, EnumTipoQuery tipo, int max, boolean refresh) {
+        Query q;
+        switch (tipo) {
+            case NAMED:
+                q = em.createNamedQuery(query);
+                break;
+            case NATIVE:
+                q = em.createNativeQuery(query, ${entityClass}.class);
+                break;
+            default:
+                q = em.createQuery(query);
+                break;
+        }
+        if (refresh) {
+            q = q.setHint(QueryHints.REFRESH, HintValues.TRUE);
+            q = q.setHint(QueryHints.REFRESH_CASCADE, CascadePolicy.CascadeAllParts);
+        }
+        q = q.setMaxResults(max);
+        return (List<${entityClass}>) q.getResultList();
+    }
+
+    @Override
+    public void flush() {
+        em.flush();
+    }
+
+    @Override
+    public void merge(${entityClass} ${entity.wrapper.javaVariableName}) {
+        em.merge(${entity.wrapper.javaVariableName});
+    }
+
+    @Override
+    public void persist(${entityClass} ${entity.wrapper.javaVariableName}) {
+        em.persist(${entity.wrapper.javaVariableName});
+    }
+
+    @Override
+    public void refresh(${entityClass} ${entity.wrapper.javaVariableName}) {
+        em.refresh(${entity.wrapper.javaVariableName});
+    }
+
+    @Override
+    public void remove(${entityClass} ${entity.wrapper.javaVariableName}) {
+        em.remove(em.merge(${entity.wrapper.javaVariableName}));
+    }
+
+}
+#break
+
+#macro(setLocalVariables)
+#set($entityClass = "$!{entity.wrapper.javaClassName}")
+#set($pack1 = "$!package")
+#set($pack2 = "$!entityPackage")
+#if($pack2 != '' && $pack2 != $pack1)
+    #set($added = $imports.add("${pack2}.${entityClass}"))
+#end
+#end##setLocalVariables
+
+#macro(addImports)
+#set($added = $imports.add("${baseFacadePackage}.${entityClass}FacadeBase"))
+#set($added = $interfaces.add("${entityClass}FacadeLocal"))
+#set($added = $interfaces.add("${entityClass}FacadeBase"))
+#set($added = $imports.add("${project.rootPackageName}.lib.base.enumeration.EnumTipoQuery"))
+#set($added = $imports.add('java.util.List'))
+#set($added = $imports.add('javax.ejb.Stateless'))
+#set($added = $imports.add('javax.persistence.EntityManager'))
+#set($added = $imports.add('javax.persistence.NoResultException'))
+#set($added = $imports.add('javax.persistence.PersistenceContext'))
+#set($added = $imports.add('javax.persistence.Query'))
+#set($added = $imports.add('org.eclipse.persistence.config.CascadePolicy'))
+#set($added = $imports.add('org.eclipse.persistence.config.HintValues'))
+#set($added = $imports.add('org.eclipse.persistence.config.QueryHints'))
+#end##addImports

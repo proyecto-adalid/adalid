@@ -1,0 +1,25 @@
+#parsePostgreSQLMacros()
+#setPostgreSQLVariables()
+#writePostgreSQLLicense()
+#writePostgreSQLAuthor('Jorge Campins')
+#set($entities = $ColUtils.filter($project.entitiesList, $isEntitySqlCodeGenEnabled, $isPersistentEntityTable))
+#set($entities = $ColUtils.sort($entities, $byEntityName))
+#foreach($entity in $entities)
+    #writeTemplate('remark-entity')
+    #writeCreatePrimaryKey()
+#end##foreach-entity
+#break
+
+#macro(writeCreatePrimaryKey)
+    #resetSQLVariables()
+    #set($table = $entity.wrapper.sqlTableName)
+    #set($table = $entity.wrapper.sqlSchemaQualifiedShortTableName)
+    #set($pk = $entity.primaryKeyProperty.wrapper.sqlName)
+    #setGlobalPrimaryKeyName($entity)
+    #set($constraint = $globalConstraintName)
+    #writeCreatePrimaryKeyStatement()
+#end##writeCreatePrimaryKey
+
+#macro(writeCreatePrimaryKeyStatement)
+alter table $table add constraint $constraint primary key ($pk);
+#end##writeCreatePrimaryKeyStatement

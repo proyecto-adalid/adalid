@@ -1,0 +1,8 @@
+    // <editor-fold defaultstate="collapsed" desc="implementacion estandar de la interfaz PaginaBasicaConGestor">
+    private GestorPaginaBasica gestor = GestorPaginaBasica.newInstance(this);
+
+    public GestorPaginaBasica getGestor() {
+        return gestor;
+    }
+    // </editor-fold>
+

@@ -1,0 +1,26 @@
+#parsePostgreSQLMacros()
+#setPostgreSQLVariables()
+#writePostgreSQLLicense()
+#writePostgreSQLAuthor('Jorge Campins')
+#set($entities = $ColUtils.filter($project.entitiesList, $isEntitySqlCodeGenEnabled, $isPersistentEnumerationEntity))
+#set($entities = $ColUtils.sort($entities, $byEntityName))
+#foreach($entity in $entities)
+    #writeTemplate('remark-entity')
+    #writeDropEnumFunctions()
+#end##foreach-entity
+#break
+
+#macro(writeDropEnumFunctions)
+    #resetSQLVariables()
+    #set($entname = $entity.wrapper.sqlName)
+    #set($entname = $entity.wrapper.sqlSchemaQualifiedShortName)
+    #set($table = $entity.wrapper.sqlTableName)
+    #set($table = $entity.wrapper.sqlSchemaQualifiedShortTableName)
+    #set($keytype = $entity.primaryKeyProperty.wrapper.sqlType)
+    #set($foo = "${sql_name_separator}enum")
+    #writeDropEnumFunction("${entname}${foo}()")
+#end##writeDropEnumFunctions
+
+#macro(writeDropEnumFunction $function)
+drop function if exists $function cascade;
+#end##writeDropEnumFunction

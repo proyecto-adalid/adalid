@@ -1,0 +1,42 @@
+$tab<webuijsf:form id="form1"
+$tab    binding="#{${pageBeanName}.form1}"
+#if("$!multipartUpload" == 'true' && "$page.displayMode" == 'PROCESSING' && "$page.displayFormat" == 'CONSOLE')
+$tab    enctype="multipart/form-data"
+#end
+$tab    virtualFormsConfig="$virtualFormsConfig">
+$tab    <div class="pos-div-cab-1">
+$tab        <jsp:directive.include file="/fragments/FragmentoCabeza1.jspf"/>
+$tab    </div>
+$tab    <div class="pos-div-cab-2">
+$tab        <jsp:directive.include file="/fragments/FragmentoCabeza2.jspf"/>
+$tab    </div>
+$tab    <div class="pos-div-fork">
+$tab        <div class="pos-div-col-izq">
+$tab            <jsp:directive.include file="/fragments/FragmentoColumnaIzquierda.jspf"/>
+$tab        </div>
+$tab        <div class="pos-div-col-der">
+$tab            <div class="pos-div-cab-3">
+$tab                <jsp:directive.include file="/fragments/FragmentoCabeza3.jspf"/>
+$tab                <webuijsf:breadcrumbs id="breadcrumbs1"
+$tab                    binding="#{${pageBeanName}.breadcrumbs1}"
+$tab                    styleClass="pdq-breadcrumbs-1"/>
+$tab            </div>
+                #increaseIndentationBy(3)
+                #parse("$templatePath/blocks/$page.displayFormat.name().toLowerCase()/form-body.vm")
+                #decreaseIndentationBy(3)
+$tab            <div class="pos-div-pie-3">
+$tab                <jsp:directive.include file="/fragments/FragmentoPie3.jspf"/>
+$tab            </div>
+$tab        </div>
+$tab        <div class="pos-div-join">
+$tab            <jsp:directive.include file="/fragments/FragmentoJoin.jspf"/>
+$tab        </div>
+$tab    </div>
+$tab    <div class="pos-div-pie-2">
+$tab        <jsp:directive.include file="/fragments/FragmentoPie2.jspf"/>
+$tab    </div>
+$tab    <div class="pos-div-pie-1">
+$tab        <jsp:directive.include file="/fragments/FragmentoPie1.jspf"/>
+$tab    </div>
+$tab    <webuijsf:anchor id="anchor${anchorSequence.next()}"/>
+$tab</webuijsf:form>

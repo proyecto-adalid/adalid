@@ -1,0 +1,28 @@
+#break
+
+#macro(setXMLVariables)
+    #setGlobalVariables()
+#end##setXMLVariables
+
+#macro(writeXMLDeclaration)
+<?xml version="1.0" encoding="UTF-8"?>
+#end##writeXMLDeclaration
+
+#macro(writeXMLLicense)
+    #if("$!writeLicense" == '')
+        #set($writeLicense = 'on')
+    #end
+    #if($writeLicense == 'on')
+        #include('licenses/license-xml.txt')
+    #end
+#end##writeXMLLicense
+
+#macro(writeXMLAuthor $author)
+    #if("$!writeLicense" == 'on')
+<!--
+    author: adalid $adalidMajorVersionNumber
+    template: $template.replace('\\', '/')
+    template-author: $author
+-->
+    #end
+#end##writeXMLAuthor

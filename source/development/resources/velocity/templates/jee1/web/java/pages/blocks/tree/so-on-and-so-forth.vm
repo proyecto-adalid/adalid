@@ -1,0 +1,224 @@
+    // <editor-fold defaultstate="collapsed" desc="metodos estandar para refrescar, agregar, editar, deshacer y eliminar de la plantilla #3">
+    public String botonAplicarZum1_action() {
+        gestor.escoger();
+        gestor.zumNodo();
+        return null;
+    }
+
+    public String botonQuitarZum1_action() {
+        gestor.escoger();
+        gestor.zumTodo();
+        return null;
+    }
+
+    public String botonAgregar1_action() {
+    #set($sibling = $FALSE)
+    #set($sibling = $module.getDetailSiblingOf($page))
+    #if($sibling)
+//      relate $sibling.name @ $module.name ($module.wrapper.hyphenatedAlias) @ $module.master.name ($module.master.wrapper.hyphenatedAlias)
+        if (gestor.agregar()) {
+            return gestor.accionVincularDetalle();
+        }
+    #else
+        #set($cousin = $FALSE)
+        #set($cousin = $module.getDetailCousinOf($page))
+        #if($cousin)
+//      cousin $cousin.name @ $module.name ($module.wrapper.hyphenatedAlias) @ $module.master.name ($module.master.wrapper.hyphenatedAlias)
+        if (gestor.agregar()) {
+            return gestor.accionVincularDetalle();
+        }
+        #end
+    #end
+        return null;
+    }
+
+    public String botonEditar1_action() {
+    #set($sibling = $FALSE)
+    #set($sibling = $module.getDetailSiblingOf($page))
+    #if($sibling)
+//      relate $sibling.name @ $module.name ($module.wrapper.hyphenatedAlias) @ $module.master.name ($module.master.wrapper.hyphenatedAlias)
+        if (gestor.editar()) {
+            return gestor.accionVincularDetalle();
+        }
+    #else
+        #set($cousin = $FALSE)
+        #set($cousin = $module.getDetailCousinOf($page))
+        #if($cousin)
+//      cousin $cousin.name @ $module.name ($module.wrapper.hyphenatedAlias) @ $module.master.name ($module.master.wrapper.hyphenatedAlias)
+        if (gestor.editar()) {
+            return gestor.accionVincularDetalle();
+        }
+        #end
+    #end
+        return null;
+    }
+
+    public String botonEliminar1_action() {
+        gestor.eliminar();
+        return null;
+    }
+
+    public String botonAplicar1_action() {
+        gestor.aplicar();
+        return null;
+    }
+
+    public String botonDeshacer1_action() {
+        gestor.deshacer();
+        return null;
+    }
+
+    public String botonConfirmar1_action() {
+        gestor.confirmar();
+        return null;
+    }
+
+    public String botonDescartar1_action() {
+        gestor.descartar();
+        return null;
+    }
+
+    public String botonProcesar1_action() {
+//      asistente.procesar();
+        return null;
+    }
+
+    public String botonRefrescar1_action() {
+        gestor.refrescar();
+        return null;
+    }
+
+    public String botonReconsultar1_action() {
+        gestor.reconsultar();
+        return null;
+    }
+
+    public String botonRetornar1_action() {
+        gestor.retornar();
+        return null;
+    }
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="metodos para establecer las acciones especificas de la pagina">
+    public String botonProcesarFila1_action() {
+        return null;
+    }
+
+    public String getScriptAbrirVentanaProcesarFila1() {
+#set($cousin = $FALSE)
+#set($cousin = $module.getConsoleCousinOf($page))
+#if($cousin)
+//      relate $cousin.name @ $module.name ($module.wrapper.hyphenatedAlias) @ $module.master.name ($module.master.wrapper.hyphenatedAlias)
+        String urx = URX.${cousin.entity.wrapper.javaConstantName}_${cousin.displayMode}_${cousin.displayFormat};
+        return gestor.getScriptAbrirVentana(urx);
+#else
+    #set($cousin = $project.getConsoleCousinOf($page))
+    #if($cousin)
+//      relate $cousin.name @ $project.name ($project.wrapper.hyphenatedAlias)
+        String urx = URX.${cousin.entity.wrapper.javaConstantName}_${cousin.displayMode}_${cousin.displayFormat};
+        return gestor.getScriptAbrirVentana(urx);
+    #else
+        return null;
+    #end
+#end
+    }
+
+    public String hipervinculoAccionFila1_action() {
+        gestor.escoger();
+        gestor.procesar(new RowProcessor() {
+
+            @Override
+            public void processRow(RowKey rowKey) throws Exception {
+                accionFila1(rowKey);
+            }
+
+        });
+        return null;
+    }
+
+    public String getScriptAbrirVentanaAccionFila1() {
+        return null;
+    }
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="metodos para ejecutar funciones">
+##  public void accionFila1() {
+##      accionFila1(gestor.getCurrentRowKey());
+##  }
+##
+##  public void accionFila1(RowKey rowKey) {
+##      accionFila1(rowKey, 0);
+##  }
+##
+##  public void accionFila1(long funcion) {
+##      accionFila1(gestor.getCurrentRowKey(), funcion);
+##  }
+##
+##  public void accionFila1(RowKey rowKey, long funcion) {
+##      // TODO: ejecutar funcion
+##  }
+    public void accionFila1(RowKey rowKey) {
+##      long funcion = -1; // TODO: cambiar -1 por el id de la funcion a ejecutar
+##      boolean ok = getRecursoDataProvider().esFilaAutorizada(rowKey, funcion);
+##      if (ok) {
+##          // TODO: ejecutar funcion
+##      }
+    }
+    // </editor-fold>
+
+    public String getScriptAbrirVentanaVerDetalle() {
+#set($sibling = $FALSE)
+#set($sibling = $module.getDetailSiblingOf($page))
+#if($sibling)
+//      relate $sibling.name @ $module.name ($module.wrapper.hyphenatedAlias) @ $module.master.name ($module.master.wrapper.hyphenatedAlias)
+//      String urx = URX.${sibling.entity.wrapper.javaConstantName}_${sibling.displayMode}_${sibling.displayFormat};
+//      return gestor.getScriptAbrirVentanaVerDetalle(urx);
+        return null;
+#else
+    #set($sibling = $project.getDetailSiblingOf($page))
+    #if($sibling)
+//      relate $sibling.name @ $project.name ($project.wrapper.hyphenatedAlias)
+        String urx = URX.${sibling.entity.wrapper.javaConstantName}_${sibling.displayMode}_${sibling.displayFormat};
+        return gestor.getScriptAbrirVentanaVerDetalle(urx);
+    #else
+        #set($cousin = $FALSE)
+        #set($cousin = $module.getDetailCousinOf($page))
+        #if($cousin)
+....//      cousin $cousin.name @ $module.name ($module.wrapper.hyphenatedAlias) @ $module.master.name ($module.master.wrapper.hyphenatedAlias)
+....//      String urx = URX.${cousin.entity.wrapper.javaConstantName}_${cousin.displayMode}_${cousin.displayFormat};
+....//      return gestor.getScriptAbrirVentanaVerDetalle(urx);
+....        return null;
+        #else
+            #set($cousin = $project.getDetailCousinOf($page))
+            #if($cousin)
+........//      cousin $cousin.name @ $project.name ($project.wrapper.hyphenatedAlias)
+........        String urx = URX.${cousin.entity.wrapper.javaConstantName}_${cousin.displayMode}_${cousin.displayFormat};
+........        return gestor.getScriptAbrirVentanaVerDetalle(urx);
+            #else
+                return null;
+            #end
+        #end
+    #end
+#end
+    }
+
+    public boolean isComandoDisponible() {
+#set($cousin = $FALSE)
+#set($cousin = $module.getConsoleCousinOf($page))
+#if($cousin)
+//      relate $cousin.name @ $module.name ($module.wrapper.hyphenatedAlias) @ $module.master.name ($module.master.wrapper.hyphenatedAlias)
+//      String urx = URX.${cousin.entity.wrapper.javaConstantName}_${cousin.displayMode}_${cousin.displayFormat};
+        return gestor.isLoteSinCambios();
+#else
+    #set($cousin = $project.getConsoleCousinOf($page))
+    #if($cousin)
+//      relate $cousin.name @ $project.name ($project.wrapper.hyphenatedAlias)
+//      String urx = URX.${cousin.entity.wrapper.javaConstantName}_${cousin.displayMode}_${cousin.displayFormat};
+        return gestor.isLoteSinCambios();
+    #else
+        return false;
+    #end
+#end
+    }
+
+#break

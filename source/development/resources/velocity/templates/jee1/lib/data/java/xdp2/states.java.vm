@@ -1,0 +1,19 @@
+#foreach($stateKey in $entity.statesMap.keySet())
+    #set($state = $entity.statesMap.get($stateKey))
+    #set($added = $writtenExpressionNames.add($state.name))
+    /**
+     * $stateKey $!state.wrapper.javaDefaultDescription.
+     */
+    public boolean ${state.wrapper.javaVariableName}(RowKey rowKey) {
+        boolean es = isRowAvailable(rowKey);
+        #set($filterEntity = $entity)
+        #set($filterExpression = $state)
+        #set($filterErrorMessageBundle = '')
+        #set($filterErrorMessageBundleMethod = '')
+        #set($filterErrorMessageBundleKey = '')
+        #writeFilterExpression()
+        return es;
+    }
+
+#end
+#break

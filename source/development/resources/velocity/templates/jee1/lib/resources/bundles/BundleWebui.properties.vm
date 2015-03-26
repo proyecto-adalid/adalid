@@ -1,0 +1,299 @@
+#parsePropertiesMacros()
+#setPropertiesVariables()
+#writePropertiesLicense()
+#writePropertiesAuthor('Jorge Campins')
+locale.language.tag=$project.locale.toLanguageTag()
+
+#parse("$templatePath/base/BundleWebui.properties.vm")
+
+${project.wrapper.hyphenatedAlias}=${project.wrapper.javaValidDefaultLabel}
+##
+## á=\u00E1 é=\u00E9 í=\u00ED ó=\u00F3 ú=\u00FA ü=\u00FC Ñ=\u00D1 ñ=\u00F1
+##
+#writeSSCC1I18N()
+#set($modules = $ColUtils.filter($project.modulesList, $isWebModule))
+#set($modules = $ColUtils.sort($modules, $byProjectName))
+#foreach($module in $modules)
+    #writeWebModule1()
+#end##foreach-module
+
+#writeFavoritosI18N()
+#foreach($module in $modules)
+    #writeWebModule2()
+#end##foreach-module
+#break
+
+#macro(writeFavoritos)
+#${project.rootFolderName}-war
+Favoritos=Favoritos
+Favoritos_ETIQUETA_MIGAS_PAN=Favoritos
+Favoritos_ETIQUETA_CLASE_DETALLE=Favoritos
+Favoritos_ETIQUETA_CLASE_MAESTRO=
+
+Menu=Men\u00FA
+Menu_ETIQUETA_MIGAS_PAN=Men\u00FA
+Menu_ETIQUETA_CLASE_DETALLE=Men\u00FA
+Menu_ETIQUETA_CLASE_MAESTRO=
+Menu_ETIQUETA_ARBOL_RECURSO=Haga clic sobre la opci\u00F3n que desea ejecutar
+
+Password=Cambiar contrase\u00F1a
+Password_ETIQUETA_MIGAS_PAN=Cambiar contrase\u00F1a
+Password_ETIQUETA_CLASE_DETALLE=Cambiar contrase\u00F1a
+Password_ETIQUETA_CLASE_MAESTRO=
+
+Recurso1=B\u00FAsqueda de recursos
+Recurso1_ETIQUETA_MIGAS_PAN=B\u00FAsqueda de recursos
+Recurso1_ETIQUETA_CLASE_DETALLE=B\u00FAsqueda de recursos
+Recurso1_ETIQUETA_CLASE_MAESTRO=
+
+Recurso3=B\u00FAsqueda de recursos
+Recurso3_ETIQUETA_MIGAS_PAN=B\u00FAsqueda de recursos
+Recurso3_ETIQUETA_CLASE_DETALLE=B\u00FAsqueda de recursos
+Recurso3_ETIQUETA_CLASE_MAESTRO=
+
+RecursoFiltro1=B\u00FAsqueda de recursos
+RecursoFiltro1_ETIQUETA_MIGAS_PAN=B\u00FAsqueda de recursos
+RecursoFiltro1_ETIQUETA_CLASE_DETALLE=B\u00FAsqueda de recursos
+RecursoFiltro1_ETIQUETA_CLASE_MAESTRO=
+
+RecursoFiltro3=B\u00FAsqueda de recursos
+RecursoFiltro3_ETIQUETA_MIGAS_PAN=B\u00FAsqueda de recursos
+RecursoFiltro3_ETIQUETA_CLASE_DETALLE=B\u00FAsqueda de recursos
+RecursoFiltro3_ETIQUETA_CLASE_MAESTRO=
+
+#end##writeFavoritos
+
+#macro(writeFavoritosI18N)
+#${project.rootFolderName}-war
+Favoritos=${Bundle.getString('BundleWebui.favoritos')}
+Favoritos_ETIQUETA_MIGAS_PAN=${Bundle.getString('BundleWebui.favoritos')}
+Favoritos_ETIQUETA_CLASE_DETALLE=${Bundle.getString('BundleWebui.favoritos')}
+Favoritos_ETIQUETA_CLASE_MAESTRO=
+
+Menu=${Bundle.getString('BundleWebui.menu')}
+Menu_ETIQUETA_MIGAS_PAN=${Bundle.getString('BundleWebui.menu')}
+Menu_ETIQUETA_CLASE_DETALLE=${Bundle.getString('BundleWebui.menu')}
+Menu_ETIQUETA_CLASE_MAESTRO=
+Menu_ETIQUETA_ARBOL_RECURSO=${Bundle.getString('BundleWebui.menu.ETIQUETA_ARBOL_RECURSO')}
+
+Password=${Bundle.getString('BundleWebui.cambiar.password')}
+Password_ETIQUETA_MIGAS_PAN=${Bundle.getString('BundleWebui.cambiar.password')}
+Password_ETIQUETA_CLASE_DETALLE=${Bundle.getString('BundleWebui.cambiar.password')}
+Password_ETIQUETA_CLASE_MAESTRO=
+
+Recurso1=${Bundle.getString('BundleWebui.busqueda.recursos')}
+Recurso1_ETIQUETA_MIGAS_PAN=${Bundle.getString('BundleWebui.busqueda.recursos')}
+Recurso1_ETIQUETA_CLASE_DETALLE=${Bundle.getString('BundleWebui.busqueda.recursos')}
+Recurso1_ETIQUETA_CLASE_MAESTRO=
+
+Recurso3=${Bundle.getString('BundleWebui.busqueda.recursos')}
+Recurso3_ETIQUETA_MIGAS_PAN=${Bundle.getString('BundleWebui.busqueda.recursos')}
+Recurso3_ETIQUETA_CLASE_DETALLE=${Bundle.getString('BundleWebui.busqueda.recursos')}
+Recurso3_ETIQUETA_CLASE_MAESTRO=
+
+RecursoFiltro1=${Bundle.getString('BundleWebui.busqueda.recursos')}
+RecursoFiltro1_ETIQUETA_MIGAS_PAN=${Bundle.getString('BundleWebui.busqueda.recursos')}
+RecursoFiltro1_ETIQUETA_CLASE_DETALLE=${Bundle.getString('BundleWebui.busqueda.recursos')}
+RecursoFiltro1_ETIQUETA_CLASE_MAESTRO=
+
+RecursoFiltro3=${Bundle.getString('BundleWebui.busqueda.recursos')}
+RecursoFiltro3_ETIQUETA_MIGAS_PAN=${Bundle.getString('BundleWebui.busqueda.recursos')}
+RecursoFiltro3_ETIQUETA_CLASE_DETALLE=${Bundle.getString('BundleWebui.busqueda.recursos')}
+RecursoFiltro3_ETIQUETA_CLASE_MAESTRO=
+
+#end##writeFavoritosI18N
+
+#macro(writeSSCC1)
+${project.rootPackageName}.web.pages.nombre_aplicacion=${project.wrapper.javaValidDefaultLabel}
+${project.rootPackageName}.web.recurso.pages.nombre_aplicacion=B\u00FAsqueda de Recursos
+${project.rootPackageName}.web.recurso_filtro.pages.nombre_aplicacion=B\u00FAsqueda de Recursos
+#end##writeSSCC1
+
+#macro(writeSSCC1I18N)
+${project.rootPackageName}.web.pages.nombre_aplicacion=${project.wrapper.javaValidDefaultLabel}
+${project.rootPackageName}.web.recurso.pages.nombre_aplicacion=${Bundle.getString('BundleWebui.busqueda.recursos')}
+${project.rootPackageName}.web.recurso_filtro.pages.nombre_aplicacion=${Bundle.getString('BundleWebui.busqueda.recursos')}
+#end##writeSSCC1I18N
+
+#macro(writeWebModule1)
+#set($webProjectName = "${project.rootFolderName}-war-${module.wrapper.hyphenatedAlias}")
+#set($webProjectPackageName = "${project.rootPackageName}.web.${module.wrapper.dottedAlias}")
+${webProjectPackageName}.pages.nombre_aplicacion=$module.wrapper.bundleValidDefaultShortDescription
+#end##writeWebModule1
+
+#macro(writeWebModule2)
+#set($webProjectName = "${project.rootFolderName}-war-${module.wrapper.hyphenatedAlias}")
+#set($webProjectPackageName = "${project.rootPackageName}.web.${module.wrapper.dottedAlias}")
+#${webProjectName} ($module.wrapper.bundleValidDefaultShortDescription)
+#set($pages = $module.displaysList)
+#set($pages = $ColUtils.sort($pages, $byDisplayName))
+#foreach($page in $pages)
+    #if("$!page.displayMode" == 'UNSPECIFIED' || "$!page.displayFormat" == 'UNSPECIFIED')
+    #elseif("$!page.displayMode" == 'READING')
+        #if("$!page.displayFormat" == 'TABLE')
+            #writeP5()
+        #elseif("$!page.displayFormat" == 'DETAIL')
+            #writeP6()
+        #elseif("$!page.displayFormat" == 'TREE')
+            #writeP7()
+        #end
+    #elseif("$!page.displayMode" == 'WRITING')
+        #if("$!page.displayFormat" == 'TABLE')
+            #writeP1()
+        #elseif("$!page.displayFormat" == 'DETAIL')
+            #writeP2()
+        #elseif("$!page.displayFormat" == 'TREE')
+            #writeP3()
+        #end
+    #elseif("$!page.displayMode" == 'PROCESSING')
+        #if("$!page.displayFormat" == 'CONSOLE')
+            #writeP4()
+        #end
+    #end
+
+#end##foreach-page
+#end##writeWebModule2
+
+#macro(writeP1)
+    #set($webPageType = '1')
+    #set($webPageSort = 'registro de ')
+    #set($webPageSort = ${Bundle.getString('BundleWebui.registro')})
+    #writePX()
+#end##
+
+#macro(writeP2)
+    #set($webPageType = '2')
+    #set($webPageSort = 'registro detallado de ')
+    #set($webPageSort = ${Bundle.getString('BundleWebui.registro.detallado')})
+    #writePX()
+#end##
+
+#macro(writeP3)
+    #set($webPageType = '3')
+    #set($webPageSort = 'registro jer\u00E1rquico de ')
+    #set($webPageSort = ${Bundle.getString('BundleWebui.registro.jerarquico')})
+    #writePX()
+#end##
+
+#macro(writeP4)
+    #set($webPageType = '4')
+    #set($webPageSort = 'procesamiento de ')
+    #set($webPageSort = ${Bundle.getString('BundleWebui.procesamiento')})
+    #writePX()
+#end##
+
+#macro(writeP5)
+    #set($webPageType = '5')
+    #set($webPageSort = 'consulta de ')
+    #set($webPageSort = ${Bundle.getString('BundleWebui.consulta')})
+    #writePX()
+#end##
+
+#macro(writeP6)
+    #set($webPageType = '6')
+    #set($webPageSort = 'consulta detallada de ')
+    #set($webPageSort = ${Bundle.getString('BundleWebui.consulta.detallada')})
+    #writePX()
+#end##
+
+#macro(writeP7)
+    #set($webPageType = '7')
+    #set($webPageSort = 'consulta jer\u00E1rquica de ')
+    #set($webPageSort = ${Bundle.getString('BundleWebui.consulta.jerarquica')})
+    #writePX()
+#end##
+
+#macro(writePX)
+    #set($webPageName = "$!{webPageNamePrefix}${page.name}")
+##  #set($label1 = $page.entity.wrapper.getBundleValidDefaultLabel($page.reference))
+##  #set($label2 = $page.entity.wrapper.getBundleValidDefaultShortLabel($page.reference))
+    #set($label3 = $page.entity.wrapper.getBundleValidDefaultCollectionLabel($page.reference))
+    #set($label4 = $page.entity.wrapper.getBundleValidDefaultCollectionShortLabel($page.reference))
+    #set($nombre = $label3)
+    #set($nombre = $StringUtils.capitalize($nombre))
+    #set($nombre = $StrUtils.getStringParametrizado("$webPageSort", "$nombre"))
+    #set($nombre = $StringUtils.capitalize($nombre))
+    #if("$!page.displayFormat" == 'DETAIL')
+        #set($etiqueta1 = $page.displayFormat.outcomeLabel)
+        #set($etiqueta1 = $StringUtils.capitalize($etiqueta1))
+    #else
+        #set($etiqueta1 = $StringUtils.capitalize($label4))
+    #end
+    #if($page.reference)
+        #set($etiqueta2 = $StringUtils.capitalize($label4))
+        #set($etiqueta3 = "#connector($page.reference)$StringUtils.capitalize(${page.reference.wrapper.bundleValidDefaultShortLabel})")
+    #else
+        #set($etiqueta2 = $StringUtils.capitalize($label3))
+        #set($etiqueta3 = '')
+    #end
+    #writePage()
+    #writePageSiblings()
+    #writePageChildren()
+#end##
+
+#*
+${webPageName}_name=$StringUtils.capitalize("$webPageSort$label3")
+${webPageName}_name=$StringUtils.capitalize($bundleProgrammer.getValueString($StrUtils.getStringParametrizado("$webPageSort", "$label3")))
+${webPageName}_label=$StringUtils.capitalize($label1)
+${webPageName}_shortLabel=$StringUtils.capitalize($label2)
+${webPageName}_collectionLabel=$StringUtils.capitalize($label3)
+${webPageName}_collectionShortLabel=$StringUtils.capitalize($label4)
+*#
+
+#macro(writePage)
+${webPageName}=$nombre
+${webPageName}_ETIQUETA_MIGAS_PAN=$etiqueta1
+${webPageName}_ETIQUETA_CLASE_DETALLE=$etiqueta2
+${webPageName}_ETIQUETA_CLASE_MAESTRO=$etiqueta3
+#end##writePage
+
+#macro(writePageSiblings)
+    #set($siblings = $page.siblings)
+    #set($siblings = $ColUtils.sort($siblings, $byDisplayName))
+    #foreach($sibling in $siblings)
+        #writePageSibling()
+    #end##foreach-sibling
+#end##writePageSiblings
+
+#macro(writePageSibling)
+#end##writePageSibling
+
+#macro(writePageChildren)
+    #set($children = $ColUtils.filter($page.children, $isTableViewDisplay))
+    #set($children = $ColUtils.sort($children, $byDisplayName))
+    #foreach($child in $children)
+        #set($seq = $foreach.count)
+        #setChildLabels()
+        #set($text = "$!StringUtils.capitalize($child.entity.wrapper.getBundleValidDefaultCollectionShortLabel($child.reference))")
+        #set($toolTip = "$!StringUtils.capitalize($child.entity.wrapper.getBundleValidDefaultCollectionLabel($child.reference))")
+        #set($token = $StrUtils.getToken($text, 0, ' '))
+        #if($text != $token)
+            #set($text = "${token}...")
+        #end
+        #if(!$StringUtils.endsWithIgnoreCase($toolTip, $childLabel5))
+            #set($toolTip = "${toolTip} ${childLabel5}")
+        #end
+        #writePageChild()
+    #end##foreach-child
+#end##writePageChildren
+
+#macro(writePageChild)
+${webPageName}_imageHyperlink${seq}_text=${text}
+${webPageName}_imageHyperlink${seq}_toolTip=${toolTip}
+#end##writePageChild
+
+#macro(setChildLabels)
+    #set($childLabel1 = "$!child.entity.wrapper.getBundleValidDefaultCollectionLabel($child.reference)")
+    #set($childLabel2 = "$!StringUtils.capitalize($childLabel1)")
+    #set($childLabel3 = "#connector($child.reference)$!StringUtils.capitalize(${child.reference.root.wrapper.bundleValidDefaultShortLabel})")
+    #set($childLabel4 = "$childLabel2 $childLabel3")
+    #set($childLabel5 = "#connector($child.reference)$!StringUtils.capitalize(${child.reference.wrapper.bundleValidDefaultShortLabel})")
+    #set($childLabel6 = "$childLabel2 $childLabel5")
+#end##
+
+#macro(connector $reference)
+##  #set($foo = "$!{reference.resourceGender.connector}")
+    #set($foo = "$!{Bundle.getString('by_connective.string')}")
+    #set($foo = "$!{StringUtils.uncapitalize($foo)} ")
+$foo##
+#end

@@ -1,0 +1,426 @@
+#parsePropertiesMacros()
+#setPropertiesVariables()
+#writePropertiesLicense()
+#writePropertiesAuthor('Jorge Campins')
+#writeEntities()
+#writeWebModules()
+#writePages()
+#break
+
+#macro(writeEntities)
+    #writeBundleDominiosDefaults()
+    #writeBundleDominiosFavoritos()
+    #set($selectOperationKey = "$!Operation.getSelectOperationKey()")
+    #set($entities = $ColUtils.filter($project.entitiesList, $isPersistentEntity))
+    #set($entities = $ColUtils.sort($entities, $byEntityName))
+    #foreach($entity in $entities)
+        #set($entity_name = $entity.wrapper.sqlSchemaQualifiedShortName)
+        #set($entity_view = "${entity.wrapper.sqlSchemaQualifier}consulta_${entity.wrapper.sqlSchemaUnqualifiedShortName}")
+        #writeBundleDominiosEntity()
+        #set($atleast1 = $FALSE)
+        #foreach($operation in $entity.operationsList)
+            #set($operation_jlcn = $javaProgrammer.getJavaLowerConstantName($operation.name))
+            #if("$!operation.operationType" == 'EXPORT')
+                #set($atleast1 = $TRUE)
+                #set($operation_name = $VelocityAid.coalesce($operation.exportName, $operation.name))
+                #set($operation_name = $javaProgrammer.getJavaLowerConstantName($operation_name))
+                #writeBundleArchivosOperation()
+            #end
+            #if("$!operation.operationType" == 'REPORT')
+                #set($atleast1 = $TRUE)
+                #set($operation_name = $VelocityAid.coalesce($operation.reportName, $operation.name))
+                #set($operation_name = $javaProgrammer.getJavaLowerConstantName($operation_name))
+                #writeBundleInformesOperation()
+            #end
+            #if("$!operation.operationType" == 'PROCEDURE')
+                #set($atleast1 = $TRUE)
+                #set($operation_name = $VelocityAid.coalesce($operation.procedureName, $operation.name))
+                #set($operation_name = $javaProgrammer.getJavaLowerConstantName($operation_name))
+                #writeBundleProcedimientosOperation()
+            #end
+            #if("$!operation.operationType" == 'PROCESS')
+                #set($atleast1 = $TRUE)
+                #set($operation_name = $VelocityAid.coalesce($operation.processName, $operation.name))
+                #set($operation_name = $javaProgrammer.getJavaLowerConstantName($operation_name))
+                #writeBundleProcesosOperation()
+            #end
+        #end##foreach-operation
+    #if($atleast1)
+
+    #end
+    #end##foreach-entity
+#end##writeEntities
+
+#macro(writeBundleDominiosDefaults)
+default.limite_filas_funcion_export=$Constants.getDefaultExportRowsLimit()
+default.opcion_orden_funcion_export=$Constants.getDefaultExportSortOption()
+default.limite_filas_funcion_report=$Constants.getDefaultReportRowsLimit()
+default.opcion_orden_funcion_report=$Constants.getDefaultReportSortOption()
+default.limite_filas_funcion_select=$Constants.getDefaultSelectRowsLimit()
+default.opcion_orden_funcion_select=$Constants.getDefaultSelectSortOption()
+
+#end##writeBundleDominiosDefaults
+
+#macro(writeBundleDominiosFavoritos)
+#set($esquema = "$!{project.esquemaEntidadesComunes}")
+#if($esquema == '')
+    #set($entity_name = 'favoritos')
+#else
+    #set($entity_name = "${esquema}.favoritos")
+#end
+${entity_name}.limite_filas_funcion_export=0
+${entity_name}.opcion_orden_funcion_export=ASC
+${entity_name}.limite_filas_funcion_report=0
+${entity_name}.opcion_orden_funcion_report=ASC
+${entity_name}.limite_filas_funcion_select=0
+${entity_name}.opcion_orden_funcion_select=ASC
+
+#end##writeBundleDominiosFavoritos
+
+#macro(writeBundleDominiosEntity)
+${entity_name}.limite_filas_funcion_export=${entity.exportRowsLimit}
+${entity_name}.opcion_orden_funcion_export=${entity.exportSortOption}
+${entity_name}.limite_filas_funcion_report=${entity.reportRowsLimit}
+${entity_name}.opcion_orden_funcion_report=${entity.reportSortOption}
+${entity_name}.limite_filas_funcion_select=${entity.selectRowsLimit}
+${entity_name}.opcion_orden_funcion_select=${entity.selectSortOption}
+#*
+#if($entity.inactiveIndicatorReferenceProperty)
+${entity_name}.columna_indicador_inactivo=$!{entity.inactiveIndicatorReferenceProperty.wrapper.sqlName}
+${entity_name}.funcion_indicador_inactivo=$!{entity.inactiveIndicatorReferenceProperty.root.wrapper.sqlSchemaQualifiedShortName}${sql_name_separator}select_indicador_inactivo
+#end
+#if($entity.ownerReferenceProperty)
+${entity_name}.columna_propietario=$!{entity.ownerReferenceProperty.wrapper.sqlName}
+${entity_name}.funcion_propietario=$!{entity.ownerReferenceProperty.root.wrapper.sqlSchemaQualifiedShortName}${sql_name_separator}select_propietario
+#end
+#if($entity.segmentReferenceProperty)
+${entity_name}.columna_segmento=$!{entity.segmentReferenceProperty.wrapper.sqlName}
+${entity_name}.funcion_segmento=$!{entity.segmentReferenceProperty.root.wrapper.sqlSchemaQualifiedShortName}${sql_name_separator}select_segmento
+#end
+*#
+#writeRestrictedSelectColumnsMap()
+#end##writeBundleDominiosEntity
+
+#macro(writeRestrictedSelectColumnsMap)
+    #set($atleast1 = $FALSE)
+    #set($map = $entity.queryTable.selectColumnsMap)
+    #foreach($column_name in $map.keySet())
+        #set($property = $map.get($column_name))
+        #if("$!property.propertyAccess" == 'RESTRICTED_READING')
+            #set($atleast1 = $TRUE)
+            #writeRestrictedSelectColumnsMapElement()
+        #end
+    #end
+    #if($atleast1)
+
+    #end
+#end##writeRestrictedSelectColumnsMap
+
+#macro(writeRestrictedSelectColumnsMapElement)
+${entity_name}.${column_name}.property_entity=$property.declaringEntity.root.wrapper.sqlName
+${entity_name}.${column_name}.property_column=$property.wrapper.sqlName
+${entity_name}.${column_name}.property_select=$project.getOperationNumber($selectOperationKey, $property.declaringEntity.root)
+#end##writeRestrictedSelectColumnsMapElement
+
+#macro(writeBundleArchivosOperation)
+${entity_name}.${operation_jlcn}.name=${entity_name}${sql_name_separator}${operation_name}
+#if("$!{operation.viewName}" == '')
+....${entity_name}.${operation_jlcn}.nombre_vista_funcion_export=${entity_view}
+#else
+....${entity_name}.${operation_jlcn}.nombre_vista_funcion_export=${operation.viewName}
+#end
+${entity_name}.${operation_jlcn}.limite_filas_funcion_export=${operation.rowsLimit}
+#if($operation.view)
+....${entity_name}.${operation_jlcn}.detalle.limite_filas_funcion_export=${operation.detailRowsLimit}
+....${entity_name}.${operation_jlcn}.resumen.limite_filas_funcion_export=${operation.summaryRowsLimit}
+....${entity_name}.${operation_jlcn}.grafico.limite_filas_funcion_export=${operation.chartRowsLimit}
+#end
+${entity_name}.${operation_jlcn}.opcion_orden_funcion_export=${operation.sortOption}
+#end##writeBundleArchivosOperation
+
+#macro(writeBundleInformesOperation)
+${entity_name}.${operation_jlcn}.name=${entity_name}${sql_name_separator}${operation_name}
+#if("$!{operation.viewName}" == '')
+....${entity_name}.${operation_jlcn}.nombre_vista_funcion_report=${entity_view}
+#else
+....${entity_name}.${operation_jlcn}.nombre_vista_funcion_report=${operation.viewName}
+#end
+${entity_name}.${operation_jlcn}.limite_filas_funcion_report=${operation.rowsLimit}
+#if($operation.view)
+....${entity_name}.${operation_jlcn}.detalle.limite_filas_funcion_report=${operation.detailRowsLimit}
+....${entity_name}.${operation_jlcn}.resumen.limite_filas_funcion_report=${operation.summaryRowsLimit}
+....${entity_name}.${operation_jlcn}.grafico.limite_filas_funcion_report=${operation.chartRowsLimit}
+#end
+${entity_name}.${operation_jlcn}.opcion_orden_funcion_report=${operation.sortOption}
+#end##writeBundleInformesOperation
+
+#macro(writeBundleProcedimientosOperation)
+${entity_name}.${operation_jlcn}.name=${entity_name}${sql_name_separator}${operation_name}
+${entity_name}.${operation_jlcn}.type=$!operation.procedureType
+${entity_name}.${operation_jlcn}.data_type=$!operation.procedureDataType
+
+#end##writeBundleProcedimientosOperation
+
+#macro(writeBundleProcesosOperation)
+${entity_name}.${operation_jlcn}.name=${entity_name}${sql_name_separator}${operation_name}
+${entity_name}.${operation_jlcn}.type=SIMPLE
+${entity_name}.${operation_jlcn}.data_type=INTEGER
+
+#end##writeBundleProcesosOperation
+
+#macro(writeWebModules)
+    #writeSSCC1()
+    #set($modules = $ColUtils.filter($project.modulesList, $isWebModule))
+    #set($modules = $ColUtils.sort($modules, $byProjectName))
+    #foreach($module in $modules)
+        #writeWebModule1()
+    #end##foreach-module
+#end##writeWebModules
+
+#macro(writeSSCC1)
+#C\u00F3digo de la aplicaci\u00F3n
+${project.rootPackageName}.web.pages.codigo_aplicacion=${project.wrapper.hyphenatedAlias}
+#Nombre de la aplicaci\u00F3n
+${project.rootPackageName}.web.pages.nombre_aplicacion=${project.wrapper.javaValidDefaultShortDescription}
+#Propiedad enabled del fragmento FragmentoVisor
+${project.rootPackageName}.web.pages.fragmento_visor_enabled=false
+#Propiedad enabled de la lista desplegable listaFiltro1 del fragmento FragmentoFiltro
+${project.rootPackageName}.web.pages.fragmento_filtro_lista_filtro_enabled=true
+#Propiedad enabled de los botones botonBuscarFiltro1, botonBuscarFiltro2 y botonBorrarFiltro1 del fragmento FragmentoFiltro
+${project.rootPackageName}.web.pages.fragmento_filtro_boton_filtro_enabled=true
+#Propiedad enabled del boton botonFavoritos1 del fragmento FragmentoCabeza2
+${project.rootPackageName}.web.pages.fragmento_cabeza_boton_abrir_favoritos_enabled=true
+#Propiedad enabled del boton botonFavoritos2 del fragmento FragmentoCabeza2
+${project.rootPackageName}.web.pages.fragmento_cabeza_boton_agregar_favoritos_enabled=false
+#Propiedad enabled del boton botonTareas1 del fragmento FragmentoCabeza2
+${project.rootPackageName}.web.pages.fragmento_cabeza_boton_abrir_tareas_enabled=false
+#Propiedad enabled del boton botonCambiarPassword1 del fragmento FragmentoCabeza2
+${project.rootPackageName}.web.pages.fragmento_cabeza_boton_cambiar_password_enabled=true
+
+#C\u00F3digo de la aplicaci\u00F3n
+${project.rootPackageName}.web.recurso.pages.codigo_aplicacion=${project.rootFolderName}-war-recurso
+#Nombre de la aplicaci\u00F3n
+${project.rootPackageName}.web.recurso.pages.nombre_aplicacion=B\u00FAsqueda de Recursos
+#Propiedad enabled del fragmento FragmentoVisor
+${project.rootPackageName}.web.recurso.pages.fragmento_visor_enabled=false
+#Propiedad enabled de la lista desplegable listaFiltro1 del fragmento FragmentoFiltro
+${project.rootPackageName}.web.recurso.pages.fragmento_filtro_lista_filtro_enabled=true
+#Propiedad enabled de los botones botonBuscarFiltro1, botonBuscarFiltro2 y botonBorrarFiltro1 del fragmento FragmentoFiltro
+${project.rootPackageName}.web.recurso.pages.fragmento_filtro_boton_filtro_enabled=true
+#Propiedad enabled del boton botonFavoritos1 del fragmento FragmentoCabeza2
+${project.rootPackageName}.web.recurso.pages.fragmento_cabeza_boton_abrir_favoritos_enabled=false
+#Propiedad enabled del boton botonFavoritos2 del fragmento FragmentoCabeza2
+${project.rootPackageName}.web.recurso.pages.fragmento_cabeza_boton_agregar_favoritos_enabled=false
+#Propiedad enabled del boton botonTareas1 del fragmento FragmentoCabeza2
+${project.rootPackageName}.web.recurso.pages.fragmento_cabeza_boton_abrir_tareas_enabled=false
+#Propiedad enabled del boton botonCambiarPassword1 del fragmento FragmentoCabeza2
+${project.rootPackageName}.web.recurso.pages.fragmento_cabeza_boton_cambiar_password_enabled=false
+
+#C\u00F3digo de la aplicaci\u00F3n
+${project.rootPackageName}.web.recurso_filtro.pages.codigo_aplicacion=${project.rootFolderName}-war-recurso-filtro
+#Nombre de la aplicaci\u00F3n
+${project.rootPackageName}.web.recurso_filtro.pages.nombre_aplicacion=B\u00FAsqueda de Recursos
+#Propiedad enabled del fragmento FragmentoVisor
+${project.rootPackageName}.web.recurso_filtro.pages.fragmento_visor_enabled=false
+#Propiedad enabled de la lista desplegable listaFiltro1 del fragmento FragmentoFiltro
+${project.rootPackageName}.web.recurso_filtro.pages.fragmento_filtro_lista_filtro_enabled=true
+#Propiedad enabled de los botones botonBuscarFiltro1, botonBuscarFiltro2 y botonBorrarFiltro1 del fragmento FragmentoFiltro
+${project.rootPackageName}.web.recurso_filtro.pages.fragmento_filtro_boton_filtro_enabled=false
+#Propiedad enabled del boton botonFavoritos1 del fragmento FragmentoCabeza2
+${project.rootPackageName}.web.recurso_filtro.pages.fragmento_cabeza_boton_abrir_favoritos_enabled=false
+#Propiedad enabled del boton botonFavoritos2 del fragmento FragmentoCabeza2
+${project.rootPackageName}.web.recurso_filtro.pages.fragmento_cabeza_boton_agregar_favoritos_enabled=false
+#Propiedad enabled del boton botonTareas1 del fragmento FragmentoCabeza2
+${project.rootPackageName}.web.recurso_filtro.pages.fragmento_cabeza_boton_abrir_tareas_enabled=false
+#Propiedad enabled del boton botonCambiarPassword1 del fragmento FragmentoCabeza2
+${project.rootPackageName}.web.recurso_filtro.pages.fragmento_cabeza_boton_cambiar_password_enabled=false
+
+#end##writeSSCC1
+
+#macro(writeWebModule1)
+#set($webProjectName = "${project.rootFolderName}-war-${module.wrapper.hyphenatedAlias}")
+#set($webProjectPackageName = "${project.rootPackageName}.web.${module.wrapper.dottedAlias}")
+#C\u00F3digo de la aplicaci\u00F3n
+${webProjectPackageName}.pages.codigo_aplicacion=${webProjectName}
+#Nombre de la aplicaci\u00F3n
+${webProjectPackageName}.pages.nombre_aplicacion=$module.wrapper.bundleValidDefaultShortDescription
+#Propiedad enabled del fragmento FragmentoVisor
+${webProjectPackageName}.pages.fragmento_visor_enabled=$module.isFragmentoVisorEnabled()
+#Propiedad disabled de la lista desplegable listaFiltro1 del fragmento FragmentoFiltro
+${webProjectPackageName}.pages.fragmento_filtro_lista_filtro_enabled=$module.isFragmentoFiltroListaFiltroEnabled()
+#Propiedad disabled de los botones botonBuscarFiltro1, botonBuscarFiltro2 y botonBorrarFiltro1 del fragmento FragmentoFiltro
+${webProjectPackageName}.pages.fragmento_filtro_boton_filtro_enabled=$module.isFragmentoFiltroBotonFiltroEnabled()
+#Propiedad enabled del boton botonFavoritos1 del fragmento FragmentoCabeza2
+${webProjectPackageName}.pages.fragmento_cabeza_boton_abrir_favoritos_enabled=$module.isFragmentoCabezaBotonAbrirFavoritosEnabled()
+#Propiedad enabled del boton botonFavoritos2 del fragmento FragmentoCabeza2
+${webProjectPackageName}.pages.fragmento_cabeza_boton_agregar_favoritos_enabled=$module.isFragmentoCabezaBotonAgregarFavoritosEnabled()
+#Propiedad enabled del boton botonTareas1 del fragmento FragmentoCabeza2
+${webProjectPackageName}.pages.fragmento_cabeza_boton_abrir_tareas_enabled=$module.isFragmentoCabezaBotonAbrirTareasEnabled()
+#Propiedad enabled del boton botonCambiarPassword1 del fragmento FragmentoCabeza2
+${webProjectPackageName}.pages.fragmento_cabeza_boton_cambiar_password_enabled=$module.isFragmentoCabezaBotonCambiarPasswordEnabled()
+
+#end##writeWebModule1
+
+#macro(writePages)
+    #set($modules = $ColUtils.filter($project.modulesList, $isWebModule))
+    #set($modules = $ColUtils.sort($modules, $byProjectDeclaringFieldName))
+    #foreach($module in $modules)
+--
+--  $module.name $!module.declaringField.name ($module.wrapper.bundleValidDefaultShortDescription)
+--
+        #set($pages = $module.displaysList)
+        #set($pages = $ColUtils.sort($pages, $byDisplayName))
+        #foreach($page in $pages)
+            #write1()
+            #foreach($field in $page.rootFields)
+                #if($field.property.isEntity())
+                    #set($fieldSearchType = "$!field.property.searchType")
+                    #set($fieldSearchDisplayMode = "$!field.property.searchDisplayMode")
+                    #set($fieldSearchListStyle = "$!field.property.listStyle")
+                    #set($referenceReadingSearchPage = $FALSE)
+                    #set($referenceWritingSearchPage = $FALSE)
+                    #set($referenceReadingDetailPage = $FALSE)
+                    #set($referenceWritingDetailPage = $FALSE)
+                    #set($referenceReadingSearchPage = $project.getReadingTableAlternativeTo( $page, $field.property.root))
+                    #set($referenceWritingSearchPage = $project.getWritingTableAlternativeTo( $page, $field.property.root))
+                    #set($referenceReadingDetailPage = $project.getReadingDetailAlternativeTo($page, $field.property.root))
+                    #set($referenceWritingDetailPage = $project.getWritingDetailAlternativeTo($page, $field.property.root))
+                    #writeScriptBoton1SwitchX()
+                    #writeScriptBoton2SwitchX()
+                #end
+                #if($field.property.isDiscriminatorProperty())
+                    #writeDiscriminatorPropertyReferences()
+                #end
+            #end
+        #end
+    #end
+#end##writePages
+
+#macro(writeScriptBoton1SwitchX)
+    #if($fieldSearchDisplayMode == 'WRITING')
+        #if($referenceWritingSearchPage)
+            #writeScriptBoton1Switch1()
+        #elseif($referenceReadingSearchPage)
+            #writeScriptBoton1Switch2()
+        #else
+            #writeScriptBoton1($FALSE)
+        #end
+    #elseif($fieldSearchDisplayMode == 'READING')
+        #if($referenceReadingSearchPage)
+            #writeScriptBoton1Switch2()
+        #else
+            #writeScriptBoton1($FALSE)
+        #end
+    #elseif($referenceReadingSearchPage)
+        #writeScriptBoton1Switch2()
+    #else
+        #writeScriptBoton1($FALSE)
+    #end
+#end##writeScriptBoton1SwitchX
+
+#macro(writeScriptBoton1Switch1)
+    #if($page.module.equals($referenceWritingSearchPage.module))
+        #writeScriptBoton1Switch2()
+    #else
+        #writeScriptBoton1($referenceWritingSearchPage)
+    #end
+#end##writeScriptBoton1Switch1
+
+#macro(writeScriptBoton1Switch2)
+    #writeScriptBoton1($referenceReadingSearchPage)
+#end##writeScriptBoton1Switch2
+
+#macro(writeScriptBoton1Switch2V1)
+    #if($page.module.equals($referenceReadingSearchPage.module))
+        #writeScriptBoton1($FALSE)
+    #else
+        #writeScriptBoton1($referenceReadingSearchPage)
+    #end
+#end##writeScriptBoton1Switch2
+
+#macro(writeScriptBoton1 $cousin)
+    #if($cousin)
+        #write2('search' $cousin)
+    #end
+#end##writeScriptBoton1
+
+#macro(writeScriptBoton2SwitchX)
+    #if($fieldSearchDisplayMode == 'WRITING')
+        #if($referenceWritingDetailPage)
+            #writeScriptBoton2Switch1()
+        #elseif($referenceReadingDetailPage)
+            #writeScriptBoton2Switch2()
+        #else
+            #writeScriptBoton2($FALSE)
+        #end
+    #elseif($fieldSearchDisplayMode == 'READING')
+        #if($referenceReadingDetailPage)
+            #writeScriptBoton2Switch2()
+        #else
+            #writeScriptBoton2($FALSE)
+        #end
+    #elseif($referenceReadingDetailPage)
+        #writeScriptBoton2Switch2()
+    #else
+        #writeScriptBoton2($FALSE)
+    #end
+#end##writeScriptBoton2SwitchX
+
+#macro(writeScriptBoton2Switch1)
+    #if($page.module.equals($referenceWritingDetailPage.module))
+        #writeScriptBoton2Switch2()
+    #else
+        #writeScriptBoton2($referenceWritingDetailPage)
+    #end
+#end##writeScriptBoton2Switch1
+
+#macro(writeScriptBoton2Switch2)
+    #writeScriptBoton2($referenceReadingDetailPage)
+#end##writeScriptBoton2Switch2
+
+#macro(writeScriptBoton2Switch2V1)
+    #if($page.module.equals($referenceReadingDetailPage.module))
+        #writeScriptBoton2($FALSE)
+    #else
+        #writeScriptBoton2($referenceReadingDetailPage)
+    #end
+#end##writeScriptBoton2Switch2
+
+#macro(writeScriptBoton2 $cousin)
+    #if($cousin)
+        #write2('detail' $cousin)
+    #end
+#end##writeScriptBoton2
+
+#macro(write1)
+#set($key = "${page.name}")
+#writeURX($page)
+#end##write1
+
+#macro(write2 $fee $foo)
+#set($key = "${page.name}.${field.property.name}.${fee}")
+#writeURX($foo)
+#end##write2
+
+#macro(writeURX $foo)
+#set($urx = "/${project.rootFolderName}-war/faces/crop/${foo.module.wrapper.dottedAlias.replace('.', '/')}/$!{webPageNamePrefix}${foo.name}.jsp")
+$key=$urx
+#end##writeURX
+
+#macro(writeDiscriminatorPropertyReferences)
+#foreach($extension in $page.entity.extensionsList)
+    #set($fee = "$!extension.discriminatorValue")
+    #if($fee != '')
+        #set($key = "${page.name}.${field.property.name}_${fee}.detail")
+        #set($referenceDetailPage = $FALSE)
+        #if("$!page.displayMode" == "WRITING")
+            #set($referenceDetailPage = $project.getWritingDetailAlternativeTo($page, $extension))
+        #else
+            #set($referenceDetailPage = $project.getReadingDetailAlternativeTo($page, $extension))
+        #end
+        #if($referenceDetailPage)
+            #writeURX($referenceDetailPage)
+        #end
+    #end
+#end##foreach-extension
+#end##writeDiscriminatorPropertyReferences

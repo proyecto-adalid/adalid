@@ -1,0 +1,11 @@
+#set($textGetterProperty = $field.property)
+#set($componentName = "${campo1}${divString}Texto1")
+#parse("$templatePath/blocks/detail-table/master-heading-field/text-getter.vm")
+#set($componentName = "label${fieldFirstName}${divString}")
+#parse("$templatePath/blocks/webuijsf/label.vm")
+#set($componentName = "helpInline${fieldFirstName}${divString}")
+#parse("$templatePath/blocks/webuijsf/help-inline.vm")
+#set($componentName = "converter${fieldFirstName}${divString}")
+#set($componentClassName = "Converter${EOL}ConvertidorLogico")
+#parse("$templatePath/blocks/webuijsf/component.vm")
+#break

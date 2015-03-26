@@ -1,0 +1,105 @@
+#macro(parseJavaMacros)
+    #parse('macros/java/macros-1.vm')
+    #parse('macros/java/macros-2.vm')
+#end##parseJavaMacros
+
+#macro(parseJSPMacros)
+    #parse('macros/xml/macros-1.vm')
+    #parse('macros/jsp/macros-1.vm')
+#end##parseJSPMacros
+
+#macro(parsePropertiesMacros)
+    #parse('macros/properties/macros-1.vm')
+#end##parsePropertiesMacros
+
+#macro(parseSQLMacros)
+    #parse('macros/sql/macros-1.vm')
+#end##parseSQLMacros
+
+#macro(parsePostgreSQLMacros)
+    #parse('macros/sql/macros-1.vm')
+    #parse('macros/sql/postgresql/macros-1.vm')
+#end##parsePostgreSQLMacros
+
+#macro(parseXMLMacros)
+    #parse('macros/xml/macros-1.vm')
+#end##parseXMLMacros
+
+#macro(setGlobalVariables)
+    #set($TRUE  = $VelocityAid.TRUE())
+    #set($FALSE = $VelocityAid.FALSE())
+    #set($EMPTY = $VelocityAid.EMPTY())
+    #set($EOL   = $VelocityAid.EOL())
+    #set($TAB   = $VelocityAid.TAB())
+    #set($tab   = $EMPTY)
+    #set($globalTabCount = 0)
+    #set($adalidMajorVersionNumber = '1.0')
+    #set($targetApplicationServerCode = $StringUtils.lowerCase("$!targetApplicationServer"))
+    #set($targetApplicationServerName = "$!targetApplicationServer")
+    #set($targetDatabaseServerCode = $StringUtils.lowerCase("$!targetDatabaseServer"))
+    #set($targetDatabaseServerName = "$!targetDatabaseServer")
+    #set($sql_name_separator = '$')
+    #setManifestInfo()
+#end##setGlobalVariables
+
+#macro(increaseIndentation)
+    #set($globalTabCount = $globalTabCount + 1)
+    #set($tab = $StringUtils.repeat($TAB, $globalTabCount))
+#end##increaseIndentation
+
+#macro(increaseIndentationBy $tabCount)
+    #if($tabCount > 0)
+        #set($globalTabCount = $globalTabCount + $tabCount)
+    #end
+    #set($tab = $StringUtils.repeat($TAB, $globalTabCount))
+#end##increaseIndentationBy
+
+#macro(decreaseIndentation)
+    #if($globalTabCount > 0)
+        #set($globalTabCount = $globalTabCount - 1)
+    #else
+        #set($globalTabCount = 0)
+    #end
+    #set($tab = $StringUtils.repeat($TAB, $globalTabCount))
+#end##decreaseIndentation
+
+#macro(decreaseIndentationBy $tabCount)
+    #if($tabCount > 0 && $globalTabCount > $tabCount)
+        #set($globalTabCount = $globalTabCount - $tabCount)
+    #else
+        #set($globalTabCount = 0)
+    #end
+    #set($tab = $StringUtils.repeat($TAB, $globalTabCount))
+#end##decreaseIndentationBy
+
+#macro(setIndentation $tabCount)
+    #if($tabCount < 0)
+        #set($globalTabCount = 0)
+    #else
+        #set($globalTabCount = $tabCount)
+    #end
+    #set($tab = $StringUtils.repeat($TAB, $globalTabCount))
+#end##setIndentation
+
+#macro(resetIndentation)
+    #set($globalTabCount = 0)
+    #set($tab = $EMPTY)
+#end##resetIndentation
+
+#macro(setManifestInfo)
+    #set($manifest = $VelocityAid.coalesce($ManUtils.getManifest(), $FALSE))
+    #if($manifest)
+        #set($builtBy = $ManUtils.getBuiltBy($manifest))
+        #set($extensionName = $ManUtils.getExtensionName($manifest))
+        #set($implementationVersion = $ManUtils.getImplementationVersion($manifest))
+        #set($implementationDate = $ManUtils.getImplementationDate($manifest))
+        #set($implementationTimestamp = $ManUtils.getImplementationTimestamp($manifest))
+        #if($implementationVersion)
+            #set($implementationVersionStamp = "${buildTimestamp}-${implementationVersion}")
+        #else
+            #set($implementationVersionStamp = $buildTimestamp)
+        #end
+    #else
+        #set($implementationVersionStamp = $buildTimestamp)
+    #end
+#end##setManifestInfo

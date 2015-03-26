@@ -1,0 +1,15 @@
+#set($capitalizedComponentName = $StringUtils.capitalize($componentName))
+$tab    private TextField ${componentName} = new CampoTexto();
+
+#if("$!PaginaActualizacion" != '' && "$!divString" == '' && "$!tabString" == '')
+$tab    @Override
+#end
+$tab    public TextField get${capitalizedComponentName}() {
+$tab        return ${componentName};
+$tab    }
+
+$tab    public void set${capitalizedComponentName}(TextField textField) {
+$tab        ${componentName} = textField;
+$tab    }
+
+#break

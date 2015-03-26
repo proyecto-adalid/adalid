@@ -1,0 +1,100 @@
+#set($referenceClassName = "${property.root.wrapper.javaClassName}")
+#set($referencePrimaryKeyClassName = "$!{property.root.primaryKeyProperty.wrapper.javaCapitalizedName}")
+#set($referenceCharacterKeyClassName = "$!{property.root.characterKeyProperty.wrapper.javaCapitalizedName}")
+#set($referenceNamePropertyClassName = "$!{property.root.nameProperty.wrapper.javaCapitalizedName}")
+#set($referenceSelectFunctionConstantName = "FUNCION_SELECT_${property.root.wrapper.javaConstantName}")
+#set($referenceReadingTablePage  = $FALSE)
+#set($referenceWritingTablePage  = $FALSE)
+#set($referenceReadingDetailPage = $FALSE)
+#set($referenceWritingDetailPage = $FALSE)
+#set($referenceClassSelectFunction = "${referenceClassName}Constants.FUNCION_SELECT_RECURSO")
+#set($validateSearchQueryFilter = $FALSE)
+#set($resetFiltroConsultaBusqueda = $FALSE)
+#if($property.searchQueryFilter)
+##  #set($validateSearchQueryFilter = $TRUE)
+    #if($property.filterInactiveIndicatorProperty && $property.root.inactiveIndicatorProperty)
+        #set($resetFiltroConsultaBusqueda = $TRUE)
+    #elseif($property.filterOwnerProperty && $property.root.ownerProperty)
+        #set($resetFiltroConsultaBusqueda = $TRUE)
+    #elseif($property.filterSegmentProperty && $property.root.segmentProperty)
+        #set($resetFiltroConsultaBusqueda = $TRUE)
+    #end
+#end
+    // <editor-fold defaultstate="collapsed" desc="${fieldClassName}">
+    protected Map<RowKey, ${referenceClassName}Base> ${fieldVariableName}Map = new LinkedHashMap<>();
+
+#set($parameterSearchQueryKey = "${entity.wrapper.sqlName}.${property.wrapper.sqlName}")
+#set($parameterSearchQueryKey = "${entity.wrapper.sqlSchemaQualifiedShortName}.${property.wrapper.sqlName}")
+#set($parametersMapSize = 0)
+#if($property.searchQueryFilter)
+    #set($parameterQueryTable = $property.queryTable)
+    #set($parameterRootQueryTable = $property.root.queryTable)
+    protected ConsultaBusqueda consultaBusqueda${fieldClassName} = ConsultaBusquedaBuilder.getConsultaBusqueda("$parameterSearchQueryKey");
+
+    protected void resetConsultaBusqueda${fieldClassName}() {
+    #set($sqlQualifier = $VelocityAid.valueOf($SqlQualifierType, 'SUFFIX'))
+    #set($parameterizedExpression = $property.searchQueryFilter.wrapper.getSqlParameterizedExpression($parameterQueryTable, $sqlQualifier))
+    #set($parametersMap = $parameterizedExpression.parametersMap)
+    #set($parametersMapSize = $parametersMap.size())
+    #if($parametersMapSize == 0)
+        consultaBusqueda${fieldClassName}.setParametros(null);
+    #else
+        String key;
+        Object obj;
+        Map<String, Object> map = new LinkedHashMap<>();
+        RowKey rowKey = bean.getGestor().getCurrentRowKey();
+        boolean notAvailable = bean.get${EntityDataProvider}().isNotRowAvailable(rowKey);
+        if (notAvailable) {
+        #foreach($parameterKey in $parametersMap.keySet())
+            key = "$parameterKey";
+            map.put(key, null);
+        #end
+        } else {
+        #setIndentation(2)
+        #clearEntityBeanParametersList()
+        #foreach($parameterKey in $parametersMap.keySet())
+            #writeGetEntityBean()
+        #end
+        #foreach($parameterKey in $parametersMap.keySet())
+            key = "$parameterKey";
+            #writeAssignObjValue()
+            map.put(key, obj);
+            /**/
+        #end
+        }
+        consultaBusqueda${fieldClassName}.setParametros(map);
+    #end
+        consultaBusqueda${fieldClassName}.setFiltro(null);
+    }
+
+#end
+#if($resetFiltroConsultaBusqueda)
+    private void resetFiltroConsultaBusqueda${fieldClassName}() {
+            String columna;
+            FiltroBusqueda filtro = new FiltroBusqueda();
+            consultaBusqueda${fieldClassName}.setFiltro(filtro);
+    #if($property.filterInactiveIndicatorProperty && $property.root.inactiveIndicatorProperty)
+            columna = "${parameterRootQueryTable.getSqlQualifiedName($property.root.inactiveIndicatorProperty)}";
+            filtro.addCriterio(columna, OperadorComEnumeration.NO_ES_VERDADERO);
+    #end
+    #if($property.filterOwnerProperty && $property.root.ownerProperty)
+            columna = "${parameterRootQueryTable.getSqlQualifiedName($property.root.ownerProperty)}";
+            Long propietario = TLC.getControlador().getPropietarioAutorizado($referenceClassSelectFunction);
+            if (propietario != null) {
+                filtro.addCriterio(columna, OperadorComEnumeration.ES_NULO_O_ES_IGUAL, propietario);
+            }
+    #end
+    #if($property.filterSegmentProperty && $property.root.segmentProperty)
+            columna = "${parameterRootQueryTable.getSqlQualifiedName($property.root.segmentProperty)}";
+            String segmentos = TLC.getControlador().getSegmentosAutorizados($referenceClassSelectFunction);
+            if (segmentos != null) {
+                filtro.addCriterio(columna, OperadorComEnumeration.ES_NULO_O_ESTA_ENTRE, segmentos);
+            }
+    #end
+    }
+
+#end
+    char bookmark$bookmarkSequence.next();
+    // </editor-fold>
+
+#break

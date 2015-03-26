@@ -1,0 +1,32 @@
+#set($children = $ColUtils.filter($page.children, $isTableViewDisplay))
+#if(!$children.isEmpty())
+    #set($children = $ColUtils.sort($children, $byDisplayName))
+    #writeNavigationHyperlinksGrid()
+#end
+#break
+
+#macro(writeNavigationHyperlinksGrid)
+$tab<!-- navigation hyperlinks opening -->
+$tab<h:panelGrid id="panelGrid${panelGridSequence.next()}" columns="12" rendered="#{${pageBeanName}.gestor.funcionOpenLinkHabilitada}">
+    #foreach($child in $children)
+        #set($foo = $foreach.count)
+        #set($imageHyperlinkDisabled = "#{${pageBeanName}.imageHyperlink${foo}Disabled}")
+        #set($imageHyperlinkRendered = "#{${pageBeanName}.imageHyperlink${foo}Rendered}")
+$tab    <!-- ${child.name} hyperlink -->
+$tab    <webuijsf:imageHyperlink id="imageHyperlink$foo"
+$tab        actionExpression="#{${pageBeanName}.imageHyperlink${foo}_action}"
+$tab        binding="#{${pageBeanName}.imageHyperlink$foo}"
+$tab        disabled="$imageHyperlinkDisabled"
+$tab        imageURL="#{${pageBeanName}.gestor.urlImagenAbrirVinculo}"
+$tab        onClick="#{${pageBeanName}.gestor.scriptAbrirVinculo}"
+$tab        rendered="$imageHyperlinkRendered"
+$tab        styleClass="pdq-hyperlink-1"
+$tab        text="${pageName}_imageHyperlink${foo}_text"
+$tab        toolTip="${pageName}_imageHyperlink${foo}_toolTip"/>
+    #end##foreach-foo
+$tab</h:panelGrid>
+$tab<!-- navigation hyperlinks closing -->
+#end##writeNavigationHyperlinksGrid
+
+$tab        text="#{bundle.${pageName}_imageHyperlink${foo}_text}"
+$tab        toolTip="#{bundle.${pageName}_imageHyperlink${foo}_toolTip}"/>

@@ -1,0 +1,18 @@
+#if($operationType == '')
+    #break
+#elseif($operationType == 'EXPORT')
+    #parse("$templatePath/blocks/console/operation/export.vm")
+#elseif($operationType == 'REPORT')
+    #parse("$templatePath/blocks/console/operation/report.vm")
+#elseif($operationType == 'PROCEDURE')
+##  #parse("$templatePath/blocks/console/operation/procedure.vm")
+    #parse("$templatePath/blocks/console/operation/process.vm")
+#elseif($operationType == 'PROCESS')
+    #parse("$templatePath/blocks/console/operation/process.vm")
+#end
+#parse("$templatePath/blocks/console/operation/macros.vm")
+#parse("$templatePath/blocks/console/operation/checks.vm")
+#parse("$templatePath/blocks/console/operation/set-initial-values.vm")
+#parse("$templatePath/blocks/console/operation/set-default-values.vm")
+#parse("$templatePath/blocks/console/operation/shared.vm")
+#break

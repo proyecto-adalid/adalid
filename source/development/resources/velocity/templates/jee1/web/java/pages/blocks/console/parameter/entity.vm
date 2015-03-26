@@ -1,0 +1,448 @@
+#set($referenceClassName = "${parameter.root.wrapper.javaClassName}")
+#set($referencePrimaryKeyClassName = "$!{parameter.root.primaryKeyProperty.wrapper.javaCapitalizedName}")
+#set($referenceCharacterKeyClassName = "$!{parameter.root.characterKeyProperty.wrapper.javaCapitalizedName}")
+#set($referenceNamePropertyClassName = "$!{parameter.root.nameProperty.wrapper.javaCapitalizedName}")
+#set($referenceClassSelectFunction = "${referenceClassName}Constants.FUNCION_SELECT_RECURSO")
+#set($validateSearchQueryFilter = $FALSE)
+#set($resetFiltroConsultaBusqueda = $FALSE)
+#if($parameter.searchQueryFilter)
+##  #set($validateSearchQueryFilter = $TRUE)
+    #if($parameter.filterInactiveIndicatorProperty && $parameter.root.inactiveIndicatorProperty)
+        #set($resetFiltroConsultaBusqueda = $TRUE)
+    #elseif($parameter.filterOwnerProperty && $parameter.root.ownerProperty)
+        #set($resetFiltroConsultaBusqueda = $TRUE)
+    #elseif($parameter.filterSegmentProperty && $parameter.root.segmentProperty)
+        #set($resetFiltroConsultaBusqueda = $TRUE)
+    #end
+#end
+#set($parameterSearchQueryKey = "${page.entity.wrapper.sqlName}.${operation.wrapper.sqlName}.${parameter.wrapper.sqlName}")
+#set($parameterSearchQueryKey = "${page.entity.wrapper.sqlSchemaQualifiedShortName}.${operation.wrapper.sqlName}.${parameter.wrapper.sqlName}")
+#set($sqlParametersMapSize = 0)
+#if($parameter.searchQueryFilter)
+    #set($parameterQueryTable = $parameter.queryTable)
+    #set($parameterRootQueryTable = $parameter.root.queryTable)
+    private ConsultaBusqueda consultaBusqueda${Campo1} = ConsultaBusquedaBuilder.getConsultaBusqueda("$parameterSearchQueryKey");
+
+    private void resetConsultaBusqueda${Campo1}() {
+    #set($sqlQualifier = $VelocityAid.valueOf($SqlQualifierType, 'SUFFIX'))
+    #set($sqlExpression = $parameter.searchQueryFilter.wrapper.getSqlParameterizedExpression($parameterQueryTable, $sqlQualifier))
+    #set($sqlParametersMap = $sqlExpression.parametersMap)
+    #set($sqlParametersMapSize = $sqlParametersMap.size())
+    #if($sqlParametersMapSize == 0)
+        consultaBusqueda${Campo1}.setParametros(null);
+    #else
+        String key;
+        Object obj;
+        Map<String, Object> map = new LinkedHashMap<>();
+        /**/
+        #foreach($sqlParameterKey in $sqlParametersMap.keySet())
+....        key = "$sqlParameterKey";
+            #writeAssignObjValue()
+....        map.put(key, obj);
+....        /**/
+        #end
+        consultaBusqueda${Campo1}.setParametros(map);
+    #end
+        consultaBusqueda${Campo1}.setFiltro(null);
+    }
+
+#end
+#if($resetFiltroConsultaBusqueda)
+    private void resetFiltroConsultaBusqueda${Campo1}() {
+            String columna;
+            FiltroBusqueda filtro = new FiltroBusqueda();
+            consultaBusqueda${Campo1}.setFiltro(filtro);
+    #if($parameter.filterInactiveIndicatorProperty && $parameter.root.inactiveIndicatorProperty)
+            columna = "${parameterRootQueryTable.getSqlQualifiedName($parameter.root.inactiveIndicatorProperty)}";
+            filtro.addCriterio(columna, OperadorComEnumeration.NO_ES_VERDADERO);
+    #end
+    #if($parameter.filterOwnerProperty && $parameter.root.ownerProperty)
+            columna = "${parameterRootQueryTable.getSqlQualifiedName($parameter.root.ownerProperty)}";
+            Long propietario = TLC.getControlador().getPropietarioAutorizado($referenceClassSelectFunction);
+            if (propietario != null) {
+                filtro.addCriterio(columna, OperadorComEnumeration.ES_NULO_O_ES_IGUAL, propietario);
+            }
+    #end
+    #if($parameter.filterSegmentProperty && $parameter.root.segmentProperty)
+            columna = "${parameterRootQueryTable.getSqlQualifiedName($parameter.root.segmentProperty)}";
+            String segmentos = TLC.getControlador().getSegmentosAutorizados($referenceClassSelectFunction);
+            if (segmentos != null) {
+                filtro.addCriterio(columna, OperadorComEnumeration.ES_NULO_O_ESTA_ENTRE, segmentos);
+            }
+    #end
+    }
+
+#end
+    public void ${campo1}_validate(FacesContext context, UIComponent component, Object value) {
+        ${campo1}_validate(value);
+    }
+
+    private void ${campo1}_validate(Object value) {
+#if($parameter.isInstanceReferenceField())
+    #set($facadeVariableNamePrefix = $entityVariableName)
+        ${entityVariableName} = null;
+#else
+    #set($facadeVariableNamePrefix = $parameterVariableName)
+#end
+        ${parameterVariableName}${Campo1} = null;
+        String string = STP.getString(value);
+        if (StringUtils.isBlank(string)) {
+            return;
+        }
+        try {
+#if($referenceCharacterKeyClassName != '')
+            Object o = STP.getObjetoCodigoRecurso(string);
+#else
+            Object o = STP.getObjetoCodigoRecurso(string, true); /* cast String as Long */
+#end
+#if($validateSearchQueryFilter)
+            String columna;
+            String query = null;
+            resetConsultaBusqueda${Campo1}();
+    #if($resetFiltroConsultaBusqueda)
+            resetFiltroConsultaBusqueda${Campo1}();
+            FiltroBusqueda filtro = consultaBusqueda${Campo1}.getFiltro();
+    #else
+            FiltroBusqueda filtro = new FiltroBusqueda();
+            consultaBusqueda${Campo1}.setFiltro(filtro);
+    #end
+#end
+            if (o instanceof Long) {
+#if($validateSearchQueryFilter)
+                columna = "$sqlProgrammer.getSqlQualifiedName($parameter.root.primaryKeyProperty, $parameterRootQueryTable)";
+                filtro.addCriterio(columna, OperadorComEnumeration.ES_IGUAL, o);
+                query = consultaBusqueda${Campo1}.getQuerySql();
+#end
+                ${parameterVariableName}${Campo1} = ${facadeVariableNamePrefix}Facade.find(o, true);
+#if($referenceCharacterKeyClassName != '')
+            } else if (o instanceof String) {
+    #if($validateSearchQueryFilter)
+                columna = "$sqlProgrammer.getSqlQualifiedName($parameter.root.characterKeyProperty, $parameterRootQueryTable)";
+                filtro.addCriterio(columna, OperadorComEnumeration.ES_IGUAL, o);
+                query = consultaBusqueda${Campo1}.getQuerySql();
+    #end
+                ${parameterVariableName}${Campo1} = ${facadeVariableNamePrefix}Facade.findByCodigo(string, true);
+#else
+//          } else if (o instanceof String) {
+//              ${parameterVariableName}${Campo1} = ${facadeVariableNamePrefix}Facade.findByCodigo(string, true);
+#end
+            }
+            if (${parameterVariableName}${Campo1} == null) {
+                String arg0 = BundleParametros.getLabel("${parameterSearchQueryKey}");
+                throw new ExcepcionAplicacion(Bitacora.getTextoMensaje(CBM.RECURSO_NO_EXISTE, arg0 + " " + value));
+            }
+#if($validateSearchQueryFilter)
+            String select1 = query == null ? null : TLC.getInterpreteSql().getComandoSelect1(query);
+            if (select1 != null) {
+                ResultSet resultSet = TLC.getAgenteSql().executeQuery(select1, 1);
+                if (resultSet == null || !resultSet.next()) {
+                    String arg0 = BundleParametros.getLabel("${parameterSearchQueryKey}");
+                    #set($filterExpressionDefaultErrorMessage = "$!parameter.searchQueryFilter.wrapper.bundleDefaultErrorMessageChoice")
+                    #if($filterExpressionDefaultErrorMessage == '')
+....                    throw new ExcepcionAplicacion(Bitacora.getTextoMensaje(CBM.RECURSO_NO_REFERENCIABLE, arg0, value, ""));
+                    #else
+....                    String arg2 = StrUtils.enclose(BundleParametros.getFilterError("${parameterSearchQueryKey}"));
+....                    throw new ExcepcionAplicacion(Bitacora.getTextoMensaje(CBM.RECURSO_NO_REFERENCIABLE, arg0, value, arg2));
+                    #end
+                }
+            }
+#else
+    #if($parameter.filterInactiveIndicatorProperty && $parameter.root.inactiveIndicatorProperty)
+            if (BitUtils.valueOf(${parameterVariableName}${Campo1}.getEsRecursoInactivo())) {
+                String arg0 = BundleParametros.getLabel("${parameterSearchQueryKey}");
+                throw new ExcepcionAplicacion(Bitacora.getTextoMensaje(CBM.RECURSO_INACTIVO, arg0 + " " + value));
+            }
+    #end
+    #if($parameter.filterOwnerProperty && $parameter.root.ownerProperty)
+            if (TLC.getControlador().esPropietarioRecurso(${parameterVariableName}${Campo1}, $referenceClassSelectFunction)) {
+            } else {
+                String arg0 = BundleParametros.getLabel("${parameterSearchQueryKey}");
+                throw new ExcepcionAplicacion(Bitacora.getTextoMensaje(CBM.RECURSO_NO_AUTORIZADO, arg0 + " " + value));
+            }
+    #end
+    #if($parameter.filterSegmentProperty && $parameter.root.segmentProperty)
+        #if($parameter.filterOwnerProperty && $parameter.root.ownerProperty && $parameter.root.ownerProperty == $parameter.root.segmentProperty)
+        #else
+            if (TLC.getControlador().esSegmentoAutorizado(${parameterVariableName}${Campo1}, $referenceClassSelectFunction)) {
+            } else {
+                String arg0 = BundleParametros.getLabel("${parameterSearchQueryKey}");
+                throw new ExcepcionAplicacion(Bitacora.getTextoMensaje(CBM.RECURSO_NO_AUTORIZADO, arg0 + " " + value));
+            }
+        #end
+    #end
+#end
+        } catch (Exception ex) {
+            if (ex instanceof ValidatorException) {
+                throw (ValidatorException) ex;
+            } else {
+                FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_ERROR, ThrowableUtils.getString(ex), null);
+                throw new ValidatorException(message);
+            }
+        }
+#if($parameter.isInstanceReferenceField())
+        ${entityVariableName} = ${parameterVariableName}${Campo1};
+#end
+    }
+
+    public String getToolTip${Campo1}() {
+        if (${parameterVariableName}${Campo1} == null) {
+            return null;
+        }
+#if($referenceNamePropertyClassName != '')
+        return STP.trimToStringRecursoSinNombre(${parameterVariableName}${Campo1}.getNombreRecurso());
+#else
+//      return STP.trimToStringRecursoSinNombre(${parameterVariableName}${Campo1}.getNombreRecurso());
+        return STP.trimToStringRecursoSinNombre(null);
+#end
+    }
+
+    public String getScript${Campo1}Boton1() {
+#setUrxBoton1SwitchX()
+#if($referenceCharacterKeyClassName != '')
+    #set($metodo = 'getScriptAbrirVentanaBuscarCodigo')
+#elseif($referencePrimaryKeyClassName != '')
+    #set($metodo = 'getScriptAbrirVentanaBuscarIdentificacion')
+#else
+    #set($metodo = '')
+#end
+        long dominio = ${parameterClassName}Constants.ID_DOMINIO_RECURSO;
+        long funcion = ${parameterClassName}Constants.${referenceSelectFunctionConstantName};
+        String campo = get$Campo1().getClientId(getFacesContext());
+        String boton = getBotonAplicar1().getClientId(getFacesContext());
+#if($metodo == '' && $urx == '')
+        String columna = "$parameter.root.primaryKeyProperty.wrapper.sqlName";
+##      FiltroBusqueda filtro = getFiltroBusqueda${Campo1}();
+##      return gestor.getScriptAbrirVentanaBuscar(dominio, funcion, columna, campo, boton, filtro);
+    #if($parameter.searchQueryFilter)
+        resetConsultaBusqueda${Campo1}();
+        #if($resetFiltroConsultaBusqueda)
+....        resetFiltroConsultaBusqueda${Campo1}();
+        #end
+        return gestor.getScriptAbrirVentanaBuscar(dominio, funcion, columna, campo, boton, consultaBusqueda${Campo1});
+    #else
+        return gestor.getScriptAbrirVentanaBuscar(dominio, funcion, columna, campo, boton);
+    #end
+#elseif($metodo == '' && $urx != '')
+        String urx = $urx;
+        String columna = "$parameter.root.primaryKeyProperty.wrapper.sqlName";
+##      FiltroBusqueda filtro = getFiltroBusqueda${Campo1}();
+##      return gestor.getScriptAbrirVentanaBuscar(urx, dominio, funcion, columna, campo, boton, filtro);
+    #if($parameter.searchQueryFilter)
+        resetConsultaBusqueda${Campo1}();
+        #if($resetFiltroConsultaBusqueda)
+....        resetFiltroConsultaBusqueda${Campo1}();
+        #end
+        return gestor.getScriptAbrirVentanaBuscar(urx, dominio, funcion, columna, campo, boton, consultaBusqueda${Campo1});
+    #else
+        return gestor.getScriptAbrirVentanaBuscar(urx, dominio, funcion, columna, campo, boton);
+    #end
+#elseif($urx == '')
+##      FiltroBusqueda filtro = getFiltroBusqueda${Campo1}();
+##      return gestor.$metodo(dominio, funcion, campo, boton, filtro);
+    #if($parameter.searchQueryFilter)
+        resetConsultaBusqueda${Campo1}();
+        #if($resetFiltroConsultaBusqueda)
+....        resetFiltroConsultaBusqueda${Campo1}();
+        #end
+        return gestor.$metodo(dominio, funcion, campo, boton, consultaBusqueda${Campo1});
+    #else
+        return gestor.$metodo(dominio, funcion, campo, boton);
+    #end
+#else
+        String urx = $urx;
+##      FiltroBusqueda filtro = getFiltroBusqueda${Campo1}();
+##      return gestor.$metodo(urx, dominio, funcion, campo, boton, filtro);
+    #if($parameter.searchQueryFilter)
+        resetConsultaBusqueda${Campo1}();
+        #if($resetFiltroConsultaBusqueda)
+....        resetFiltroConsultaBusqueda${Campo1}();
+        #end
+        return gestor.$metodo(urx, dominio, funcion, campo, boton, consultaBusqueda${Campo1});
+    #else
+        return gestor.$metodo(urx, dominio, funcion, campo, boton);
+    #end
+#end
+    }
+
+    public boolean is${Campo1}Boton1Rendered() {
+        return getScript${Campo1}Boton1() != null;
+    }
+
+    public String getScript${Campo1}Boton2() {
+#setUrxBoton2SwitchX()
+#if($referencePrimaryKeyClassName != '')
+    #set($getter = 'getIdentificacionRecurso')
+#else
+    #set($getter = '')
+#end
+#set($metodo = 'getScriptAbrirVentanaVerDetalle')
+#if($urx == '')
+        return null;
+#elseif($getter == '')
+//      if (${parameterVariableName}${Campo1} == null) {
+//          return null;
+//      }
+//      String urx = $urx;
+//      Long id = ${parameterVariableName}${Campo1}.getIdentificacionRecurso();
+//      return gestor.$metodo(urx, id);
+        return null;
+#else
+        if (${parameterVariableName}${Campo1} == null) {
+            return null;
+        }
+        String urx = $urx;
+        Long id = ${parameterVariableName}${Campo1}.getIdentificacionRecurso();
+        return gestor.$metodo(urx, id);
+#end
+    }
+
+    public boolean is${Campo1}Boton2Rendered() {
+#setUrxBoton2SwitchX()
+#if($referencePrimaryKeyClassName != '')
+    #set($getter = 'getIdentificacionRecurso')
+#else
+    #set($getter = '')
+#end
+#if($urx == '' || $getter == '')
+        return false;
+#else
+        return getScript${Campo1}Boton2() != null;
+#end
+    }
+
+    public String getScript${Campo1}Boton3() {
+        return getScript${Campo1}Boton2();
+    }
+
+    public boolean is${Campo1}Boton3Rendered() {
+        return is${Campo1}Boton2Rendered();
+    }
+
+#break
+
+#macro(setUrxBoton1SwitchX)
+    #if($fieldSearchDisplayMode == 'WRITING')
+        #if($referenceWritingTablePage)
+            #setUrxBoton1Switch1()
+        #elseif($referenceReadingTablePage)
+            #setUrxBoton1Switch2()
+        #else
+            #setUrxBoton1($FALSE)
+        #end
+    #elseif($fieldSearchDisplayMode == 'READING')
+        #if($referenceReadingTablePage)
+            #setUrxBoton1Switch2()
+        #else
+            #setUrxBoton1($FALSE)
+        #end
+    #elseif($referenceReadingTablePage)
+        #setUrxBoton1Switch2()
+    #else
+        #setUrxBoton1($FALSE)
+    #end
+#end##setUrxBoton1SwitchX
+
+#macro(setUrxBoton1Switch1)
+    #if($page.module.equals($referenceWritingTablePage.module))
+        #setUrxBoton1Switch2()
+    #else
+        #setUrxBoton1($referenceWritingTablePage)
+    #end
+#end##setUrxBoton1Switch1
+
+#macro(setUrxBoton1Switch2)
+    #if($page.module.equals($referenceReadingTablePage.module))
+        #setUrxBoton1($FALSE)
+    #else
+        #setUrxBoton1($referenceReadingTablePage)
+    #end
+#end##setUrxBoton1Switch2
+
+#macro(setUrxBoton1 $cousin)
+    #if($cousin)
+        #set($urx = "URX.${cousin.entity.wrapper.javaConstantName}_${cousin.displayMode}_${cousin.displayFormat}")
+    #else
+        #set($urx = '')
+    #end
+#end##setUrxBoton1
+
+#macro(setUrxBoton2SwitchX)
+    #if($fieldSearchDisplayMode == 'WRITING')
+        #if($referenceWritingDetailPage)
+            #setUrxBoton2Switch1()
+        #elseif($referenceReadingDetailPage)
+            #setUrxBoton2Switch2()
+        #else
+            #setUrxBoton2($FALSE)
+        #end
+    #elseif($fieldSearchDisplayMode == 'READING')
+        #if($referenceReadingDetailPage)
+            #setUrxBoton2Switch2()
+        #else
+            #setUrxBoton2($FALSE)
+        #end
+    #elseif($referenceReadingDetailPage)
+        #setUrxBoton2Switch2()
+    #else
+        #setUrxBoton2($FALSE)
+    #end
+#end##setUrxBoton2SwitchX
+
+#macro(setUrxBoton2Switch1)
+    #if($page.module.equals($referenceWritingDetailPage.module))
+        #setUrxBoton2Switch2()
+    #else
+        #setUrxBoton2($referenceWritingDetailPage)
+    #end
+#end##setUrxBoton2Switch1
+
+#macro(setUrxBoton2Switch2)
+    #if($page.module.equals($referenceReadingDetailPage.module))
+        #setUrxBoton2($FALSE)
+    #else
+        #setUrxBoton2($referenceReadingDetailPage)
+    #end
+#end##setUrxBoton2Switch2
+
+#macro(setUrxBoton2 $cousin)
+    #if($cousin)
+        #set($urx = "URX.${cousin.entity.wrapper.javaConstantName}_${cousin.displayMode}_${cousin.displayFormat}")
+    #else
+        #set($urx = '')
+    #end
+#end##setUrxBoton2
+
+#macro(writeAssignObjValue)
+#set($sqlParameterPath = '')
+#set($lastArtifact = $FALSE)
+#set($sqlParameter = $sqlParametersMap.get($sqlParameterKey))
+#set($sqlParameterPathList = $sqlParameter.parameterPathList)
+#foreach($artifact in $sqlParameterPathList)
+    #setArtifactVariables($artifact)
+    #if($sqlParameterPath == '')
+        #if($artifact.isEntity())
+            #if("$!artifact.searchType" == 'LIST' && $artifact == $sqlParameter)
+........        obj = ${artifactValueExpression};
+            #else
+                #set($sqlParameterPath = "$!{artifact.root.wrapper.javaVariableName}$!{artifact_Campo1}")
+........        obj = ${sqlParameterPath} == null ? null
+            #end
+        #else
+....        obj = ${artifactValueExpression};
+        #end
+    #else
+        #set($sqlParameterPath = "${sqlParameterPath}.get${artifact.wrapper.javaCapitalizedName}()")
+        #if($artifact.isEntity())
+            : ${sqlParameterPath} == null ? null
+        #end
+    #end
+    #set($lastArtifact = $artifact)
+#end
+#if($sqlParameterPath != '')
+    #if($lastArtifact.isEntity())
+            : ${sqlParameterPath}.get${lastArtifact.primaryKeyProperty.wrapper.javaCapitalizedName}();
+    #else
+            : ${sqlParameterPath};
+    #end
+#end
+#end##writeAssignObjValue

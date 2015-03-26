@@ -1,0 +1,185 @@
+#parseJavaMacros()
+#setJavaVariables()
+#writeJavaLicense()
+#writeJavaPackage()
+#parse('templates/jee1/lib/data/java/XDP0.java.vm')
+#parse('templates/jee1/lib/data/java/xdp1/RecursoIdentificable.java.vm')
+#parse('templates/jee1/lib/data/java/xdp1/RecursoVersionable.java.vm')
+#parse('templates/jee1/lib/data/java/xdp1/RecursoEnumerable.java.vm')
+#parse('templates/jee1/lib/data/java/xdp1/RecursoCodificable.java.vm')
+#parse('templates/jee1/lib/data/java/xdp1/RecursoNombrable.java.vm')
+#parse('templates/jee1/lib/data/java/xdp1/RecursoDescriptible.java.vm')
+#parse('templates/jee1/lib/data/java/xdp1/RecursoDesactivable.java.vm')
+#parse('templates/jee1/lib/data/java/xdp1/RecursoLocalizable.java.vm')
+#parse('templates/jee1/lib/data/java/xdp1/RecursoJerarquizable.java.vm')
+#parse('templates/jee1/lib/data/java/xdp1/RecursoPersonalizable.java.vm')
+#parse('templates/jee1/lib/data/java/xdp1/RecursoSegmentable.java.vm')
+#setVariablesRecurso($entity)
+#writeRecursoIdentificableImport()
+#writeRecursoVersionableImport()
+#writeRecursoEnumerableImport()
+#writeRecursoCodificableImport()
+#writeRecursoNombrableImport()
+#writeRecursoDescriptibleImport()
+#writeRecursoDesactivableImport()
+#writeRecursoLocalizableImport()
+#writeRecursoJerarquizableImport()
+#writeRecursoPersonalizableImport()
+#writeRecursoSegmentableImport()
+#set($added = $imports.add("java.util.LinkedHashMap"))
+#set($added = $imports.add("java.util.Map"))
+#set($added = $imports.add("com.sun.data.provider.RowKey"))
+#set($added = $imports.add("javax.sql.rowset.CachedRowSet"))
+#set($added = $imports.add("${project.rootPackageName}.lib.base.bundle.BundleDominios"))
+#set($added = $imports.add("${project.rootPackageName}.lib.base.bundle.BundleWebui"))
+#set($added = $imports.add("${project.rootPackageName}.lib.base.util.NumUtils"))
+#set($added = $imports.add("${project.rootPackageName}.lib.base.util.TimeUtils"))
+#set($added = $imports.add("${project.rootPackageName}.lib.core.db.xdp.RecursoCachedRowSetDataProvider"))
+#writeJavaImports($imports)
+#writeJavaAuthor('Jorge Campins')
+public class ${javaClassSimpleName} extends RecursoCachedRowSetDataProvider#writeJavaImplements()
+
+    public ${javaClassSimpleName}() {
+        super();
+    }
+
+    public ${javaClassSimpleName}(CachedRowSet cachedRowSet) {
+        super(cachedRowSet);
+    }
+
+    public static final long ID_DOMINIO_RECURSO = ${entityNumber}L;
+
+    public static final String CODIGO_DOMINIO_RECURSO = "${codex}";
+
+    public static final String CODIGO_ENTIDAD_RECURSO = "${entity.wrapper.sqlSchemaQualifiedShortBundleKey}";
+
+//  public String NOMBRE_DOMINIO_RECURSO = "${entity.wrapper.javaValidDefaultCollectionLabel}";
+    public String NOMBRE_DOMINIO_RECURSO = BundleDominios.getCollectionLabel(CODIGO_DOMINIO_RECURSO);
+
+    @Override
+    public String getCodigoDominioRecurso() {
+        return CODIGO_DOMINIO_RECURSO;
+    }
+
+    @Override
+    public String getCodigoEntidadRecurso() {
+        return CODIGO_ENTIDAD_RECURSO;
+    }
+
+    @Override
+    public String getNombreDominioRecurso() {
+        return NOMBRE_DOMINIO_RECURSO;
+    }
+
+    private static final String COMANDO_SELECT = "SELECT * FROM $vista ";
+
+    private static final String COMANDO_SELECT_NOTHING = COMANDO_SELECT + "WHERE (0=1)";
+
+#if($entity.isNotTable() && $entity.baseTableRoot)
+    private static final String TABLA_DESTINO = "$seudo";
+#elseif($entity.isJoinedTable())
+    private static final String TABLA_DESTINO = "$seudo";
+#elseif($entity.isPseudoTargetTable())
+    private static final String TABLA_DESTINO = "$seudo";
+#else
+    private static final String TABLA_DESTINO = "$tabla";
+#end
+
+    @Override
+    public String getComandoSelect() {
+        return COMANDO_SELECT;
+    }
+
+    @Override
+    public String getComandoSelectNothing() {
+        return COMANDO_SELECT_NOTHING;
+    }
+
+    @Override
+    public String getTablaDestino() {
+        return TABLA_DESTINO;
+    }
+
+#foreach($property in $dataProviderColumns)
+    #if($property.isTemporalPrimitive())
+        #set($valor = "TimeUtils.to${property.dataType.simpleName}(valor)")
+        #set($javaType = 'java.util.Date')
+    #else
+        #set($valor = 'valor')
+        #set($javaType = "$!{property.wrapper.javaPrimitiveType}")
+        #if($javaType == '')
+            #set($javaType = 'Object')
+        #end
+    #end
+    public static final String COLUMNA_${property.wrapper.javaConstantName} = "${query.getSqlAlias($property)}";
+
+    public ${javaType} get${property.wrapper.javaClassName}() {
+        return (${javaType}) super.getValue(COLUMNA_${property.wrapper.javaConstantName});
+    }
+
+    public ${javaType} get${property.wrapper.javaClassName}(RowKey rowKey) {
+        return (${javaType}) super.getValue(COLUMNA_${property.wrapper.javaConstantName}, rowKey);
+    }
+
+    public void set${property.wrapper.javaClassName}(${javaType} valor) {
+        super.setValue(COLUMNA_${property.wrapper.javaConstantName}, $valor);
+    }
+
+    public void set${property.wrapper.javaClassName}(RowKey rowKey, ${javaType} valor) {
+        super.setValue(COLUMNA_${property.wrapper.javaConstantName}, rowKey, $valor);
+    }
+
+#end##foreach-property
+    private Map<String, String> columnAliasNameMap;
+
+    protected Map<String, String> getColumnAliasNameMap() {
+        if (columnAliasNameMap == null) {
+            columnAliasNameMap = new LinkedHashMap<>();
+            #foreach($property in $query.selectColumnsList)
+....            columnAliasNameMap.put("${query.getSqlAlias($property)}", "${query.getSqlQualifiedName($property)}");
+            #end
+        }
+        return columnAliasNameMap;
+    }
+
+#writeRecursoIdentificableImplementation()
+#writeRecursoVersionableImplementation()
+#writeRecursoEnumerableImplementation()
+#writeRecursoCodificableImplementation()
+#writeRecursoNombrableImplementation()
+#writeRecursoDescriptibleImplementation()
+#writeRecursoDesactivableImplementation()
+#writeRecursoLocalizableImplementation()
+#writeRecursoJerarquizableImplementation()
+#writeRecursoPersonalizableImplementation()
+#writeRecursoSegmentableImplementation()
+    protected void setMapaTiposJava() {
+    #foreach($property in $dataProviderColumns)
+        #set($javaType = "$!{property.wrapper.javaPrimitiveType}")
+        #if($javaType == '')
+            #set($javaType = 'Object')
+        #end
+        getRecursoCachedRowSet().getColumnTypes().put(COLUMNA_${property.wrapper.javaConstantName}, ${javaType}.class);
+    #end##foreach-property
+    }
+
+    protected void setColumnasInsertables() {
+        setColumnasInsertables(false);
+#foreach($property in $dataProviderColumns)
+    #if($property.isInsertable())
+        setColumnasInsertables(COLUMNA_${property.wrapper.javaConstantName}, true);
+    #end
+#end##foreach-property
+    }
+
+    protected void setColumnasModificables() {
+        setColumnasModificables(false);
+#foreach($property in $dataProviderColumns)
+    #if($property.isUpdateable())
+        setColumnasModificables(COLUMNA_${property.wrapper.javaConstantName}, true);
+    #end
+#end##foreach-property
+    }
+
+}
+#break

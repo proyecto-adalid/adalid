@@ -1,0 +1,35 @@
+$tab<!-- table footing opening -->
+$tab<h:panelGrid id="panelGrid${panelGridSequence.next()}">
+$tab    <h:panelGrid id="panelGrid${panelGridSequence.next()}" columns="2"
+$tab        rendered="#{${pageBeanName}.gestor.filaDisponible}">
+$tab        <h:panelGrid id="panelGrid${panelGridSequence.next()}">
+$tab            <webuijsf:label id="etiquetaTextoFilasPorPagina1" 
+$tab                binding="#{${pageBeanName}.etiquetaTextoFilasPorPagina1}" 
+$tab                for="textoFilasPorPagina1"
+$tab                text="#{${pageBeanName}.gestor.i18n.textoEtiquetaTextoFilasPorPagina}"/>
+$tab        </h:panelGrid>
+$tab        <h:panelGrid id="panelGrid${panelGridSequence.next()}" columns="3">
+$tab            <webuijsf:textField id="textoFilasPorPagina1" maxLength="2"
+$tab                binding="#{${pageBeanName}.textoFilasPorPagina1}" 
+$tab                columns="2"
+$tab                converter="#{${pageBeanName}.textoFilasPorPagina1Converter1}"
+$tab                disabled="#{${pageBeanName}.gestor.paginacionInhabilitada}" 
+$tab                text="#{${pageBeanName}.gestor.filasPorPagina}" 
+$tab                validatorExpression="#{${pageBeanName}.textoFilasPorPagina1Validator1.validate}"/>
+$tab            <webuijsf:button id="botonRepaginar1"
+$tab                actionExpression="#{${pageBeanName}.botonRepaginar1_action}"
+$tab                binding="#{${pageBeanName}.botonRepaginar1}" 
+$tab                imageURL="#{${pageBeanName}.gestor.urlImagenRepaginar}" 
+$tab                onClick="#{${pageBeanName}.gestor.scriptRepaginar}"
+$tab                text="#{${pageBeanName}.gestor.i18n.textoBotonRepaginar}"
+$tab                toolTip="#{${pageBeanName}.gestor.i18n.toolTipBotonRepaginar}"/>
+$tab            <webuijsf:message id="messageFilasPorPagina1"
+$tab                for="textoFilasPorPagina1"/>
+$tab        </h:panelGrid>
+$tab    </h:panelGrid>
+        #increaseIndentationBy(1)
+        #parse("$templatePath/blocks/crud-buttons-grid.vm")
+        #parse("$templatePath/blocks/navigation-hyperlinks-grid.vm")
+        #decreaseIndentationBy(1)
+$tab</h:panelGrid>
+$tab<!-- table footing closing -->

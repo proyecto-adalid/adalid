@@ -1,0 +1,20 @@
+#set($class="adalid.xmi.types")
+#foreach($property in $propertiesList)
+#writeTemplate($foreachPropertyGlobalTag)
+##
+##  property declaration
+##
+#if($property.entityProperty)
+#if($property.packageName.equals($entity.packageName))
+${tab}public $property.propertyType $property.name;
+
+#else
+${tab}public $property.fullPropertyType $property.name;
+
+#end
+#else
+${tab}public $property.propertyType $property.name;
+
+#end
+#end
+##

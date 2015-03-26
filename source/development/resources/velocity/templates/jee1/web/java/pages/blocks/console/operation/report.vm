@@ -1,0 +1,223 @@
+#set($BOP = '$P{')
+#set($EOP = '}')
+#if($instanceOperation || $operation.parametersList.size() > 0)
+    #set($reportQueryType = "$!operation.queryType")
+#else
+    #set($reportQueryType = 'UNSPECIFIED')
+#end
+#writeOperationJavadocType1()
+    private String ${operationName}() throws Exception {
+    #if($operation.view)
+        String report = getReportIdentifier${operationClassName}();
+    #else
+        String report = $operationReportConstantName;
+    #end
+        long function = $operationNumberConstantName;
+#if($reportQueryType == 'DYNAMIC' || $reportQueryType == 'PARAMETERIZED')
+        Map parameters = new LinkedHashMap();
+    #foreach($parameter in $operation.parametersList)
+        #setParameterVariables()
+##      parameters.put("${parameter.wrapper.sqlName}", $parameterCoalesceToDefaultValue);
+        parameters.put("${parameter.wrapper.sqlName}", $parameterValueExpression);
+    #end##foreach-parameter
+#end
+#set($vista = "$!{operation.viewName}")
+#if($vista == '')
+    #set($vista = "consulta_${page.entity.wrapper.sqlName}")
+    #set($vista = "${page.entity.wrapper.sqlSchemaQualifier}consulta_${page.entity.wrapper.sqlSchemaUnqualifiedShortName}")
+#end
+#if($reportQueryType == 'DYNAMIC')
+    #if($operation.view)
+        String select = getSelectStatement${operationClassName}();
+    #else
+        String select = "select * from ${vista}";
+    #end
+        String criteria = "";
+        ArrayList arguments = new ArrayList();
+        Object argument;
+    #foreach($parameter in $operation.parametersList)
+        #setParameterVariables()
+        #if("$!parameter.linkedColumnName" != '')
+            #set($name = $parameter.linkedColumnName)
+        #elseif($parameter.linkedProperty)
+            #set($name = ${parameter.linkedProperty.wrapper.sqlName})
+        #else
+            #set($name = ${parameter.wrapper.sqlName})
+        #end
+        argument = parameters.get("${parameter.wrapper.sqlName}");
+        #set($parameterPlaceHolder = '?')
+        #set($parameterPlaceHolder = "$BOP${parameter.wrapper.sqlName}$EOP")
+        if (argument != null) {
+            criteria += " and ($sqlProgrammer.getSqlStandardRelationalExpression($name, ${parameter.linkedColumnOperator}, ${parameterPlaceHolder}))";
+            arguments.add(argument);
+        }
+    #end##foreach-parameter
+        ObjectMessage solicitud;
+        if (criteria.length() > 0) {
+        #if($operation.view)
+            select = Utils.addWhereClause(select, criteria.substring(5));
+        #else
+            select += " where (" + criteria.substring(5) + ")";
+        #end
+            solicitud = reporter.executeReport(report, function, select, arguments.toArray(), parameters);
+        } else {
+            solicitud = reporter.executeReport(report, function, select);
+        }
+#elseif($reportQueryType == 'PARAMETERIZED')
+        solicitud = reporter.executeReport(report, function, parameters);
+#else
+        solicitud = reporter.executeReport(report, function);
+#end
+        receiveReply(solicitud);
+        return null;
+    }
+
+#if($operation.view)
+    #set($entityView = $operation.view)
+    #writeReportSelectOptionsGetter()
+    #writeReportSelectStatementGetter1()
+    #if($entityView.isSelectable())
+        #writeReportSelectStatementGetter2('DETAIL')
+    #end
+#***
+    #if($entityView.isSummarizable())
+        #writeReportSelectStatementGetter2('SUMMARY')
+    #end
+*###
+    #if($entityView.isChartable())
+        #writeReportSelectStatementGetter2('CHART')
+    #end
+#end
+#break
+
+#macro(writeReportSelectOptionsGetter)
+    private DropDown listaTipoInforme${operationClassName}1 = new ${project.rootPackageName}.lib.core.jsf.component.ListaDesplegable();
+
+    public DropDown getListaTipoInforme${operationClassName}1() {
+        return listaTipoInforme${operationClassName}1;
+    }
+
+    public void setListaTipoInforme${operationClassName}1(DropDown dd) {
+        this.listaTipoInforme${operationClassName}1 = dd;
+    }
+
+    private IntegerConverter listaTipoInforme${operationClassName}1Converter = new IntegerConverter();
+
+    public IntegerConverter getListaTipoInforme${operationClassName}1Converter() {
+        return listaTipoInforme${operationClassName}1Converter;
+    }
+
+    public void setListaTipoInforme${operationClassName}1Converter(IntegerConverter ic) {
+        this.listaTipoInforme${operationClassName}1Converter = ic;
+    }
+
+    private Integer tipoInforme${operationClassName};
+
+    public Integer getTipoInforme${operationClassName}() {
+        return tipoInforme${operationClassName};
+    }
+
+    public void setTipoInforme${operationClassName}(Integer tipoInforme${operationClassName}) {
+        this.tipoInforme${operationClassName} = tipoInforme${operationClassName};
+    }
+
+    public Object getSelectOptions${operationClassName}() {
+        EnumTipoInforme[] values = new EnumTipoInforme[]{
+        #if($entityView.isChartable())
+            EnumTipoInforme.DETALLE, EnumTipoInforme.RESUMEN, EnumTipoInforme.GRAFICO
+        #elseif($entityView.isSummarizable())
+            EnumTipoInforme.DETALLE, EnumTipoInforme.RESUMEN
+        #elseif($entityView.isSelectable())
+            EnumTipoInforme.DETALLE
+        #end
+        };
+        return JSF.getListaOpciones(values, false, false);
+    }
+
+#end##writeReportSelectOptionsGetter
+
+#macro(writeReportSelectStatementGetter1)
+    private String getReportIdentifier${operationClassName}() {
+        String report = $operationReportConstantName;
+        #if($entityView.isChartable() || $entityView.isSummarizable())
+....        EnumTipoInforme tipo = tipoInforme${operationClassName} == null ? null : EnumTipoInforme.valueOf(tipoInforme${operationClassName});
+#***
+....        if (tipo == null) {
+....            return report;
+....        }
+....        switch (tipo) {
+....            case DETALLE:
+....                return report + ".1";
+....            case RESUMEN:
+....                return report + ".2";
+....            case GRAFICO:
+....                return report + ".3";
+....            default:
+....                return report;
+....        }
+*###
+....        String suffix = tipo == null ? "" : "." + StrUtils.getIdentificadorSqlLowerCase(tipo.name());
+....        return report + suffix;
+        #elseif($entityView.isSelectable())
+#***
+....        return report + ".1";
+*###
+....        String suffix = "." + StrUtils.getIdentificadorSqlLowerCase(EnumTipoInforme.DETALLE.name());
+....        return report + suffix;
+        #else
+....        return report;
+        #end
+    }
+
+    private String getSelectStatement${operationClassName}() {
+        String select = "select * from ${vista}";
+        #if($entityView.isChartable() || $entityView.isSummarizable())
+....        EnumTipoInforme tipo = tipoInforme${operationClassName} == null ? null : EnumTipoInforme.valueOf(tipoInforme${operationClassName});
+....        if (tipo == null) {
+....            return select;
+....        }
+....        switch (tipo) {
+#***
+....            case DETALLE:
+                    #set($opcion = $VelocityAid.valueOf($SelectOption, 'DETAIL'))
+....                return getSelectStatement$StringUtils.capitalize($opcion.nameTag)${operationClassName}();
+....            case RESUMEN:
+                    #set($opcion = $VelocityAid.valueOf($SelectOption, 'SUMMARY'))
+....                return getSelectStatement$StringUtils.capitalize($opcion.nameTag)${operationClassName}();
+*###
+....            case DETALLE:
+....            case RESUMEN:
+                    #set($opcion = $VelocityAid.valueOf($SelectOption, 'DETAIL'))
+....                return getSelectStatement$StringUtils.capitalize($opcion.nameTag)${operationClassName}();
+....            case GRAFICO:
+                    #set($opcion = $VelocityAid.valueOf($SelectOption, 'CHART'))
+....                return getSelectStatement$StringUtils.capitalize($opcion.nameTag)${operationClassName}();
+....            default:
+....                return select;
+....        }
+        #elseif($entityView.isSelectable())
+            #set($opcion = $VelocityAid.valueOf($SelectOption, 'DETAIL'))
+....        return getSelectStatement$StringUtils.capitalize($opcion.nameTag)${operationClassName}();
+        #else
+....        return select;
+        #end
+    }
+
+#end##writeReportSelectStatementGetter1
+
+#macro(writeReportSelectStatementGetter2 $option)
+    #set($opcion = $VelocityAid.valueOf($SelectOption, $option))
+    #if($opcion)
+        #set($selectStatement = "$!entityView.getSelectStatement($vista, $opcion)")
+        #if($selectStatement != '')
+            #set($selectStatement = $selectStatement.replace(' FROM ',     " ""${EOL}${TAB}${TAB}${TAB}+ ""FROM "))
+            #set($selectStatement = $selectStatement.replace(' GROUP BY ', " ""${EOL}${TAB}${TAB}${TAB}+ ""GROUP BY "))
+            #set($selectStatement = $selectStatement.replace(' ORDER BY ', " ""${EOL}${TAB}${TAB}${TAB}+ ""ORDER BY "))
+            #set($selectStatement = $selectStatement.toLowerCase())
+........    private String getSelectStatement$StringUtils.capitalize($opcion.nameTag)${operationClassName}() {
+........        return "$selectStatement";
+........    }
+........
+        #end
+    #end
+#end##writeReportSelectStatementGetter2

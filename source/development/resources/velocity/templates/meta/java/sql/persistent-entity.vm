@@ -1,0 +1,413 @@
+#parseJavaMacros()
+#setJavaVariables()
+#writeJavaLicense()
+#writeJavaPackage()
+#setLocalVariables()
+#writeJavaImports($imports)
+#writeJavaAuthor('Jorge Campins')
+#if(!$inheriting)
+....@EntityClass(independent = $independent, resourceType = $resourceType)
+    #if($table.resourceType == 'operation')
+........@EntityTableView(inserts = Kleenean.FALSE, updates = Kleenean.FALSE)
+    #end
+#end
+#if($superClass == 'AbstractPersistentEntity')
+#elseif($superClass == 'AbstractPersistentEnumerationEntity')
+#elseif(!$inheriting && $table.discriminatorValue > 0)
+....@DiscriminatorValue("$table.discriminatorValue")
+#end
+#if(!$inheriting && !$table.enumeration && !$table.loadable)
+....@EntityDataGen(start = 1, stop = 100)
+#end
+#if(!$inheriting && $table.root)
+....@DiscriminatorValue("0")
+....@InheritanceMapping(strategy = InheritanceMappingStrategy.JOINED)
+#end
+public class ${javaClassSimpleName} extends $superClass {
+
+    // <editor-fold defaultstate="collapsed" desc="class constructors">
+    @Deprecated()
+    private ${javaClassSimpleName}() {
+        this(null, null);
+    }
+
+    public ${javaClassSimpleName}(Artifact declaringArtifact, Field declaringField) {
+        super(declaringArtifact, declaringField);
+    }
+    // </editor-fold>
+
+#if(!$inheriting)
+    #writeTheRestOfTheClass()
+#end
+}
+#break
+
+#macro(writeTheRestOfTheClass)
+#set($tableFieldCount = 0)
+#set($nonNullableFieldFound = $FALSE)
+#foreach($column in $table.columns)
+    #setKeyField($column)
+    #if($extending && $keyField)
+    #elseif($column.nullable)
+    #elseif($column.primary && $column.name == "$!table.primaryKey.name")
+    #elseif($column.primary && $column.name == "$!table.businessKey.name")
+    #elseif($column.unique)
+    #elseif($column.matches('long', 'version'))
+    #elseif($column.matches('string', 'nombre'))
+    #elseif($column.matches('string', 'descripcion'))
+    #else
+        #set($nonNullableFieldFound = $TRUE)
+        #break
+    #end
+#end
+#if($table.root)
+    @DiscriminatorColumn
+    @ForeignKey(onDelete = OnDeleteAction.NONE, onUpdate = OnUpdateAction.NONE)
+    @ManyToOne(navigability = Navigability.UNIDIRECTIONAL, view = MasterDetailView.NONE)
+    public Discriminador${javaClassSimpleName} discriminador;
+
+#end
+#foreach($column in $table.columns)
+    #setKeyField($column)
+    #if($extending && $keyField)
+    #else
+        #if(!$column.nullable && $column.primary && $column.name == "$!table.primaryKey.name")
+........    @PrimaryKey
+        #elseif(!$column.nullable && $column.unique && $column.name == "$!table.businessKey.name")
+........    @BusinessKey
+........    @CharacterDataGen(function = "util.string_codigo_entidad", nullable = 0)
+        #elseif(!$column.nullable && $column.unique)
+            #if($column.type == 'string')
+............    @CharacterKey
+            #elseif($column.type == 'integer')
+............    @NumericKey
+            #else
+............    @ColumnField(nullable = Kleenean.FALSE, unique = Kleenean.TRUE)
+            #end
+        #elseif(!$column.nullable && $column.matches('long', 'version'))
+........    @VersionProperty
+        #elseif(!$column.nullable && $column.matches('string', 'nombre'))
+........    @NameProperty
+            #if($table.name == 'persona')
+............    @CharacterDataGen(function = "util.string_nombre_persona", nullable = 0)
+            #else
+............    @CharacterDataGen(function = "util.string_nombre_entidad", nullable = 0)
+            #end
+        #elseif($column.matches('string', 'descripcion'))
+........    @DescriptionProperty
+        #elseif($column.nullable)
+........    @ColumnField(nullable = Kleenean.TRUE)
+        #else
+........    @ColumnField(nullable = Kleenean.FALSE)
+        #end
+        #if($column.foreignTable)
+........    @ForeignKey(onDelete = OnDeleteAction.NONE, onUpdate = OnUpdateAction.NONE)
+            #if($column.unique)
+............    @OneToOne(navigability = Navigability.UNIDIRECTIONAL)
+            #else
+............    @ManyToOne(navigability = Navigability.BIDIRECTIONAL, view = MasterDetailView.UNSPECIFIED)
+            #end
+        #elseif($column.type == 'decimal' && ($column.precision > 0 || $column.precision > $column.scale))
+........    @BigDecimalField(precision = $column.precision, scale = $column.scale)
+        #elseif($column.type == 'string' && $column.name.startsWith('nombre_archivo'))
+........    @FileReference
+        #elseif($column.type == 'string' && $column.length > 0)
+........    @StringField(maxLength = $column.length)
+        #elseif($column.type == 'time' && $column.precision > 0)
+........    @TimeField(precision = $column.precision)
+        #elseif($column.type == 'timestamp' && $column.precision > 0)
+            #if($column.name.startsWith('fecha') && !$column.name.startsWith('fecha_hora'))
+            #elseif($column.name.startsWith('hora'))
+............    @TimeField(precision = $column.precision)
+            #else
+............    @TimestampField(precision = $column.precision)
+            #end
+        #end
+        #if($superClass == 'AbstractPersistentEnumerationEntity')
+            #if($keyField)
+            #else
+............    @PropertyField(table = Kleenean.TRUE, report = Kleenean.TRUE, update = Kleenean.TRUE)
+            #end
+        #else
+            #if($keyField)
+            #elseif($column.nullable && $nonNullableFieldFound)
+            #elseif($tableFieldCount > 0)
+............    @PropertyField(table = Kleenean.FALSE, report = Kleenean.FALSE)
+            #else
+                #set($tableFieldCount = $tableFieldCount + 1)
+............    @PropertyField(table = Kleenean.TRUE, report = Kleenean.TRUE)
+            #end
+        #end
+        #if($column.booleanish && $column.type == 'integer')
+            #set($metajavaType = 'BooleanProperty')
+        #elseif($column.type == 'timestamp' && $column.name.startsWith('fecha') && !$column.name.startsWith('fecha_hora'))
+            #set($metajavaType = 'DateProperty')
+        #elseif($column.type == 'timestamp' && $column.name.startsWith('hora'))
+            #set($metajavaType = 'TimeProperty')
+        #else
+            #set($metajavaType = $column.metajavaType)
+        #end
+....    $metajavaType $column.decapitalizedJavaName;
+
+    #end
+#end##foreach-column
+#foreach($index in $table.indexes)
+    Key $index.name;
+
+#end
+#foreach($tab in $table.tabs)
+    Tab $tab.name;
+
+#end
+#if($table.enumeration)
+    #foreach($row in $table.rows)
+....    public Instance $row.javaConstantName;
+
+    #end
+#end
+#foreach($routine in $table.routines)
+    $routine.capitalizedJavaName $routine.decapitalizedJavaName;
+
+#end
+    @Override
+    protected void settleAttributes() {
+        super.settleAttributes();
+#if($table.defaultLabel)
+        setDefaultLabel("$table.defaultLabel.toLowerCase()");
+#end
+#if($table.defaultCollectionLabel)
+        setDefaultCollectionLabel("$table.defaultCollectionLabel.toLowerCase()");
+#end
+    }
+
+#foreach($column in $table.columns)
+    #if($foreach.first)
+....    @Override
+....    protected void settleProperties() {
+....        super.settleProperties();
+    #end
+    #setKeyField($column)
+    #if($extending && $keyField)
+    #elseif($column.default)
+        #setJavaValueStringOfColumn($column $column.default)
+        #if($javaValueString != '' && !$javaValueString.startsWith('nextval'))
+....        ${column.decapitalizedJavaName}.setInitialValue($javaValueString);
+....        ${column.decapitalizedJavaName}.setDefaultValue($javaValueString);
+        #end
+    #end
+    #if($foreach.last)
+....    }
+....
+    #end
+#end##foreach-column
+#foreach($index in $table.indexes)
+    #if($foreach.first)
+....    @Override
+....    protected void settleKeys() {
+....        super.settleKeys();
+    #end
+    #if($index.unique)
+//      ${index.name}.setUnique(${index.unique});
+    #end
+    #foreach($col in $index.columns)
+        #setKeyField($col.column)
+        #if($extending && $keyField)
+            #set($x = '//  ')
+        #else
+            #set($x = '    ')
+        #end
+${x}    ${index.name}.newKeyField($col.column.decapitalizedJavaName#if("$!col.option" == 'desc'), SortOption.DESC#end);
+    #end
+    #if($foreach.last)
+....    }
+....
+    #end
+#end##foreach-index
+#foreach($tab in $table.tabs)
+    #if($foreach.first)
+....    @Override
+....    protected void settleTabs() {
+....        super.settleTabs();
+    #end
+    #if($tab.defaultLabel)
+        ${tab.name}.setDefaultLabel("$tab.defaultLabel.toLowerCase()");
+    #end
+    #foreach($col in $tab.columns)
+        ${tab.name}.newTabField($col.column.decapitalizedJavaName);
+    #end
+    #if($foreach.last)
+....    }
+....
+    #end
+#end##foreach-tab
+#if($table.enumeration)
+    #foreach($row in $table.rows)
+        #if($foreach.first)
+........    @Override
+........    protected void settleInstances() {
+........        super.settleInstances();
+        #end
+        #foreach($value in $row.values)
+            #if($value.value)
+                #setJavaValueStringOfColumn($value.column $value.value)
+                #if($javaValueString != '')
+............        ${row.javaConstantName}.newInstanceField($value.column.decapitalizedJavaName, $javaValueString);
+                #end
+            #end
+        #end
+        #if($foreach.last)
+........    }
+........
+        #end
+    #end##foreach-row
+#end
+#foreach($routine in $table.routines)
+    @OperationClass
+    public class $routine.capitalizedJavaName extends ProcessOperation {
+
+    #foreach($parameter in $routine.parameters)
+        #set($instanceReference = $FALSE)
+        #set($namesake = $VelocityAid.coalesce($parameter.namesakeColumn, $FALSE))
+        #set($referencedTable = $VelocityAid.coalesce($parameter.referencedTable, $FALSE))
+        #set($linkedField = $FALSE)
+        #set($referencedClassName = "$!parameter.referencedTable.capitalizedJavaName")
+        #if($foreach.first && $javaClassSimpleName == $referencedClassName)
+            #set($instanceReference = $TRUE)
+            #set($metajavaType = $referencedClassName)
+        #elseif($referencedClassName != '')
+            #set($metajavaType = $referencedClassName)
+        #elseif($parameter.type == 'integer'   && $parameter.name.startsWith('es_'))
+            #set($metajavaType = 'BooleanParameter')
+        #elseif($parameter.type == 'timestamp' && $parameter.name.startsWith('fecha') && !$parameter.name.startsWith('fecha_hora'))
+            #set($metajavaType = 'DateParameter')
+        #elseif($parameter.type == 'timestamp' && $parameter.name.startsWith('hora'))
+            #set($metajavaType = 'TimeParameter')
+        #else
+            #set($metajavaType = $parameter.metajavaType)
+        #end
+        #if($instanceReference)
+....        @InstanceReference
+        #elseif($parameter.type == 'string' && $parameter.name.startsWith('nombre_archivo'))
+....        @FileReference
+        #end
+        #if($instanceReference)
+        #else
+            #set($elementos = '')
+            #set($separador = '')
+            #if($parameter.hidden)
+                #set($elementos = 'hidden = Kleenean.TRUE')
+            #elseif($parameter.required)
+                #set($elementos = 'required = Kleenean.TRUE')
+            #end
+            #if($elementos != '')
+                #set($separador = ', ')
+            #end
+            #if($namesake)
+                #set($elementos = "${elementos}${separador}linkedField = ""$parameter.decapitalizedJavaName""")
+            #end
+            #if($elementos != '')
+........        @ParameterField($elementos)
+            #end
+        #end
+        $metajavaType $parameter.decapitalizedJavaName;
+
+    #end##foreach-parameter
+    #foreach($parameter in $routine.parameters)
+        #if($foreach.first)
+....        @Override
+....        protected void settleParameters() {
+....            super.settleParameters();
+        #end
+        #if($parameter.default)
+            #setJavaValueStringOfParameter($parameter $parameter.default)
+            #if($javaValueString != '')
+....            ${parameter.decapitalizedJavaName}.setInitialValue($javaValueString);
+....            ${parameter.decapitalizedJavaName}.setDefaultValue($javaValueString);
+            #end
+        #end
+        #if($foreach.last)
+....        }
+....
+        #end
+    #end##foreach-parameter
+    }
+
+#end##foreach-routine
+#end##writeTheRestOfTheClass
+
+#macro(setLocalVariables)
+    #set($independent = "Kleenean.$table.independent.toString().toUpperCase()")
+    #set($resourceType = "ResourceType.$table.resourceType.toUpperCase()")
+    #set($inheriting = $FALSE)
+    #set($superClass = "$!table.superTable.capitalizedJavaName")
+    #if($superClass == '')
+        #set($extending = $FALSE)
+        #if($reader.tablesInheritMap.containsKey($table.name))
+            #set($inheriting = $TRUE)
+            #set($superClass = $reader.tablesInheritMap.get($table.name))
+        #elseif($table.enumeration)
+            #set($superClass = 'AbstractPersistentEnumerationEntity')
+        #else
+            #set($superClass = 'AbstractPersistentEntity')
+        #end
+    #else
+        #set($extending = $TRUE)
+    #end
+    #set($added = $imports.add("adalid.core.interfaces.*"))
+    #set($added = $imports.add("java.lang.reflect.Field"))
+    #if(!$inheriting)
+        #set($added = $imports.add("adalid.core.*"))
+        #set($added = $imports.add("adalid.core.annotations.*"))
+        #set($added = $imports.add("adalid.core.enums.*"))
+        #set($added = $imports.add("adalid.core.parameters.*"))
+        #set($added = $imports.add("adalid.core.properties.*"))
+    #end
+#end
+
+#macro(setJavaValueStringOfColumn $faa $foo)
+    #if($faa.matches('long', 'version'))
+        #set($javaValueString = '')
+    #elseif($faa.booleanish && $faa.type == 'integer' && $foo == '0')
+        #set($javaValueString = 'false')
+    #elseif($faa.booleanish && $faa.type == 'integer' && $foo == '1')
+        #set($javaValueString = 'true')
+    #elseif($faa.type == 'string')
+        #set($javaValueString = $StrUtils.enclose($foo, '"'))
+    #elseif($faa.type == 'long')
+        #set($javaValueString = "${foo}L")
+    #else
+        #set($javaValueString = $foo)
+    #end
+#end
+
+#macro(setJavaValueStringOfParameter $faa $foo)
+    #set($fee = $VelocityAid.coalesce($faa.namesakeColumn, $FALSE))
+    #if($fee)
+        #setJavaValueStringOfColumn($fee $foo)
+    #elseif($faa.type == 'string')
+        #set($javaValueString = $StrUtils.enclose($foo, '"'))
+    #else
+        #set($javaValueString = $foo)
+    #end
+#end
+
+#macro(setKeyField $nmuloc)
+    #set($keyField = $FALSE)
+    #if(!$nmuloc.nullable && $nmuloc.primary && $nmuloc.name == "$!table.primaryKey.name")
+        #set($keyField = $TRUE)
+    #elseif(!$nmuloc.nullable && $nmuloc.unique && $nmuloc.name == "$!table.businessKey.name")
+        #set($keyField = $TRUE)
+    #elseif(!$nmuloc.nullable && $nmuloc.unique)
+        #if($nmuloc.type == 'string')
+            #set($keyField = $TRUE)
+        #elseif($nmuloc.type == 'integer')
+            #set($keyField = $TRUE)
+        #end
+    #elseif(!$nmuloc.nullable && $nmuloc.matches('long', 'version'))
+        #set($keyField = $TRUE)
+    #elseif(!$nmuloc.nullable && $nmuloc.matches('string', 'nombre'))
+        #set($keyField = $TRUE)
+    #elseif($nmuloc.matches('string', 'descripcion'))
+        #set($keyField = $TRUE)
+    #end
+#end##setKeyField

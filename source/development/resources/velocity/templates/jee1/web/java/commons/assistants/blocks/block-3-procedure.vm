@@ -1,0 +1,31 @@
+#writeOperationJavadocType1()
+    protected boolean _${operationName}(RowKey rowKey) throws Exception {
+        bean.getGestor().setReadOnlyProcessing(false);
+        String procedure = $operationProcedureConstantName;
+        long function = $operationNumberConstantName;
+    #if($instanceOperation || $operation.parametersList.size() > 0)
+        ArrayList arguments = new ArrayList();
+    #end
+    #foreach($parameter in $operation.parametersList)
+        #if($parameter.isInstanceReferenceField())
+            #set($value = "bean.get$EntityDataProvider().get${entityPrimaryKeyClassName}(rowKey)")
+        #else
+            #set($value = $VelocityAid.coalesce($parameter.wrapper.javaInitialValue, $parameter.wrapper.javaDefaultValue, 'null'))
+            #set($value = $VelocityAid.coalesce($parameter.wrapper.javaInitialValue, 'null'))
+        #end
+        #if($parameter.isInstanceReferenceField())
+            #set($x = '  ')
+        #else
+            #set($x = '//')
+        #end
+$x      arguments.add($value); // ${parameter.wrapper.sqlName}
+    #end##foreach-parameter
+    #if($instanceOperation || $operation.parametersList.size() > 0)
+        getSqlAgent().executeProcedure(procedure, function, arguments.toArray());
+    #else
+        getSqlAgent().executeProcedure(procedure, function);
+    #end
+        return true;
+    }
+
+#break

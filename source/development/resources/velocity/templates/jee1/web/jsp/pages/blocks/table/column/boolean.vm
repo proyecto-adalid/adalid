@@ -1,0 +1,45 @@
+$tab<webuijsf:tableColumn id="tableColumn${fieldFirstName}"
+$tab    binding="#{${pageBeanName}.tableColumn${fieldFirstName}}"
+    #if(!$field.property.headertextlessField)
+##      headerText="$field.property.wrapper.xmlValidDefaultShortLabel"
+$tab    headerText="BundleParametros.${page.entity.wrapper.sqlSchemaQualifiedShortName}.${field.property.wrapper.sqlName}"
+    #end
+##      rendered="true"
+$tab    rendered="#{${pageBeanName}.asistente.column${fieldClassName}Rendered}"
+$tab    sort="$fieldSqlName">
+$tab    <webuijsf:label id="label${fieldFirstName}"
+$tab        binding="#{${pageBeanName}.label${fieldFirstName}}"
+$tab        for="${campo1}"/>
+    #if($field.property.booleanDisplayType != 'CHECKBOX' || $field.property.isNullable())
+$tab    <webuijsf:dropDown id="${campo1}"
+$tab        binding="#{${pageBeanName}.$campo1}"
+$tab        converter="#{${pageBeanName}.converter${fieldFirstName}}"
+$tab        disabled="$fieldReadOnly"
+$tab        items="#{${pageBeanName}.asistente.options${Campo1}}"
+        #if($field.property.isSubmitField())
+$tab        onChange="webui.suntheme4_2.common.timeoutSubmitForm(this.form, '${campo1}');"
+        #end
+$tab        rendered="$fieldRendered"
+$tab        required="$fieldRequired"
+$tab        selected="#{${sourceVar}.value['$fieldSqlName']}"
+##          toolTip="$field.property.wrapper.xmlValidDefaultTooltip"/>
+$tab        toolTip="BundleParametros.${page.entity.wrapper.sqlSchemaQualifiedShortName}.${field.property.wrapper.sqlName}"
+$tab        validatorExpression="#{${pageBeanName}.${campo1}_validate}"/>
+$tab    <webuijsf:staticText id="${campo1}Texto1"
+$tab        binding="#{${pageBeanName}.${campo1}Texto1}"/>
+    #else
+$tab    <webuijsf:checkbox id="${campo1}"
+$tab        binding="#{${pageBeanName}.$campo1}"
+        #if($field.property.isSubmitField())
+$tab        onChange="webui.suntheme4_2.common.timeoutSubmitForm(this.form, '${campo1}');"
+        #end
+$tab        readOnly="$fieldReadOnly"
+$tab        rendered="$fieldRendered"
+$tab        selected="#{${sourceVar}.value['$fieldSqlName']}"
+##          toolTip="$field.property.wrapper.xmlValidDefaultTooltip"/>
+$tab        toolTip="BundleParametros.${page.entity.wrapper.sqlSchemaQualifiedShortName}.${field.property.wrapper.sqlName}"
+$tab        validatorExpression="#{${pageBeanName}.${campo1}_validate}"/>
+    #end
+$tab    <webuijsf:message id="message${fieldFirstName}"
+$tab        for="${campo1}"/>
+$tab</webuijsf:tableColumn>

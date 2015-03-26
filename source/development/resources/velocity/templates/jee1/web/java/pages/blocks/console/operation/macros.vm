@@ -1,0 +1,67 @@
+#break
+
+#macro(writeValueExpression $valueExpression)
+        Object obj;
+    #set($parameterizedExpression = $valueExpression.wrapper.javaParameterizedExpression)
+    #set($expressionParametersMap = $parameterizedExpression.parametersMap)
+    #set($namedValuesMap = $parameterizedExpression.namedValuesMap)
+        #writeNamedValues()
+        #foreach($expressionParameterKey in $expressionParametersMap.keySet())
+            #writeAssignObjValue()
+....        $artifactJavaType $expressionParameterKey = $artifactObjUtilsMethod(obj);
+        #end
+        #set($maxLineLength = 0)
+        #set($newLineString = '<EOL>')
+        #set($string2split = "$!parameterizedExpression.expression")
+        #set($string2split = "obj = $string2split;")
+        #set($string2split = $string2split.replace(":", "${newLineString}${TAB}:"))
+        #set($string2split = $string2split.replace("&&", "${newLineString}${TAB}&&"))
+        #set($string2split = $string2split.replace("||", "${newLineString}${TAB}||"))
+        #set($string2split = $string2split.replace("), ", "),${newLineString}${TAB}"))
+        #set($string2lines = $VelocityAid.split($string2split, $maxLineLength, $newLineString, $FALSE, $TAB))
+        #foreach($line in $string2lines)
+....        ${line}
+        #end
+        return $parameterObjUtilsMethod(obj);
+#end##writeValueExpression
+
+#macro(writeNamedValues)
+    #foreach($name in $namedValuesMap.keySet())
+//          Object $name = null;
+    #end
+#end##writeNamedValues
+
+#macro(writeAssignObjValue)
+#set($expressionParameterPath = '')
+#set($lastArtifact = $FALSE)
+#set($expressionParameter = $expressionParametersMap.get($expressionParameterKey))
+#set($expressionParameterPathList = $expressionParameter.parameterPathList)
+#foreach($artifact in $expressionParameterPathList)
+    #setArtifactVariables($artifact)
+    #if($expressionParameterPath == '')
+        #if($artifact.isEntity())
+            #if("$!artifact.searchType" == 'LIST' && $artifact == $expressionParameter)
+........        obj = ${artifactValueExpression};
+            #else
+                #set($expressionParameterPath = "$!{artifact.root.wrapper.javaVariableName}$!{artifact_Campo1}")
+........        obj = ${expressionParameterPath} == null ? null
+            #end
+        #else
+....        obj = ${artifactValueExpression};
+        #end
+    #else
+        #set($expressionParameterPath = "${expressionParameterPath}.get${artifact.wrapper.javaCapitalizedName}()")
+        #if($artifact.isEntity())
+            : ${expressionParameterPath} == null ? null
+        #end
+    #end
+    #set($lastArtifact = $artifact)
+#end
+#if($expressionParameterPath != '')
+    #if($lastArtifact.isEntity())
+            : ${expressionParameterPath}.get${lastArtifact.primaryKeyProperty.wrapper.javaCapitalizedName}();
+    #else
+            : ${expressionParameterPath};
+    #end
+#end
+#end##writeAssignObjValue

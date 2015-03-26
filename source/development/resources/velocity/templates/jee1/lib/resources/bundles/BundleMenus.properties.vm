@@ -1,0 +1,153 @@
+#parsePropertiesMacros()
+#setPropertiesVariables()
+#writePropertiesLicense()
+#writePropertiesAuthor('Jorge Campins')
+locale.language.tag=$project.locale.toLanguageTag()
+
+#set($redirect = 'redirect.html?url=http://localhost:8080/')
+#set($xe10 = 10000000000)
+#set($xe15 = 1000000000000000)
+#set($xe18 = 1000000000000000000)
+#set($projectCode = $project.alias)
+#writeRoot($xe18 $project.wrapper.validDefaultLabel)
+#set($modules = $ColUtils.filter($project.modulesList, $isMenuModule))
+#set($modules = $ColUtils.sort($modules, $byProjectDeclaringFieldName))
+#foreach($module in $modules)
+    #set($moduleCode = $module.wrapper.sqlName)
+    #set($moduleRoot = $foreach.index + 1)
+    #set($moduleRoot = $xe18 + $moduleRoot * $xe15)
+    #set($branch1000 = $moduleRoot +  1000 * $xe10)
+    #set($branch1100 = $moduleRoot +  1100 * $xe10)
+    #set($branch1110 = $moduleRoot +  1110 * $xe10)
+    #set($branch2000 = $moduleRoot +  2000 * $xe10)
+    #set($branch2100 = $moduleRoot +  2100 * $xe10)
+    #set($branch2110 = $moduleRoot +  2110 * $xe10)
+    #set($branch3000 = $moduleRoot +  3000 * $xe10)
+    #set($branch3100 = $moduleRoot +  3100 * $xe10)
+    #set($branch3110 = $moduleRoot +  3110 * $xe10)
+    #set($next = 0)
+##
+##  $module.wrapper.bundleValidDefaultLabel
+##
+    #writeModuleTree()
+    #set($web = $isWebModule.evaluate($module))
+    #if($web)
+        #set($pages = $module.displaysList)
+    #else
+        #set($pages = $module.master.displaysList)
+    #end
+    #set($pages = $ColUtils.sort($pages, $byDisplayName))
+    #foreach($page in $pages)
+        #if($web || $module.entitiesList.contains($page.entity))
+            #if($page.master)
+            #elseif("$!page.displayMode" == 'UNSPECIFIED' || "$!page.displayFormat" == 'UNSPECIFIED')
+            #elseif("$!page.displayMode" == 'READING')
+                #if("$!page.displayFormat" == 'TABLE')
+                    #if($page.entity.isEnumerationEntity())
+                        #writePage($branch1110)
+                    #elseif("$!page.entity.resourceType" == 'CONFIGURATION')
+                        #writePage($branch1100)
+                    #else
+                        #writePage($branch1000)
+                    #end
+                #elseif("$!page.displayFormat" == 'DETAIL')
+##                  #writePage($branch1000)
+                #elseif("$!page.displayFormat" == 'TREE')
+##                  #writePage($branch1000)
+                #end
+            #elseif("$!page.displayMode" == 'PROCESSING')
+                #if("$!page.displayFormat" == 'CONSOLE')
+                    #if($page.entity.isEnumerationEntity())
+                        #writePage($branch2110)
+                    #elseif("$!page.entity.resourceType" == 'CONFIGURATION')
+                        #writePage($branch2100)
+                    #else
+                        #writePage($branch2000)
+                    #end
+                #end
+            #elseif("$!page.displayMode" == 'WRITING')
+                #if("$!page.displayFormat" == 'TABLE')
+                    #if($page.entity.isEnumerationEntity())
+                        #writePage($branch3110)
+                    #elseif("$!page.entity.resourceType" == 'CONFIGURATION')
+                        #writePage($branch3100)
+                    #else
+                        #writePage($branch3000)
+                    #end
+                #elseif("$!page.displayFormat" == 'DETAIL')
+##                  #writePage($branch3000)
+                #elseif("$!page.displayFormat" == 'TREE')
+##                  #writePage($branch3000)
+                #end
+            #end
+        #end
+    #end##foreach-page
+#end##foreach-module
+#break
+
+#macro(writeRoot $id $name)
+#set($code = "${projectCode}")
+${code}.name=$bundleProgrammer.getValueString(${name})
+${code}.description=
+#end##writeRoot
+
+${code}.id=${id}
+${code}.name=$bundleProgrammer.getValueString(${name})
+${code}.description=$bundleProgrammer.getValueString(${description})
+${code}.especial=true
+
+#macro(writeModuleTree)
+#writeBranch($moduleRoot "$module.wrapper.validDefaultLabel" "$!module.defaultShortDescription" $xe18)
+#writeBranch($branch1000 "${Bundle.getString('BundleMenus.consulta')}"              "" $moduleRoot)
+#writeBranch($branch1100 "${Bundle.getString('BundleMenus.configuracion')}"         "" $branch1000)
+#writeBranch($branch1110 "${Bundle.getString('BundleMenus.configuracion_fija')}"    "" $branch1100)
+#writeBranch($branch2000 "${Bundle.getString('BundleMenus.procesamiento')}"         "" $moduleRoot)
+#writeBranch($branch2100 "${Bundle.getString('BundleMenus.configuracion')}"         "" $branch2000)
+#writeBranch($branch2110 "${Bundle.getString('BundleMenus.configuracion_fija')}"    "" $branch2100)
+#writeBranch($branch3000 "${Bundle.getString('BundleMenus.registro')}"              "" $moduleRoot)
+#writeBranch($branch3100 "${Bundle.getString('BundleMenus.configuracion')}"         "" $branch3000)
+#writeBranch($branch3110 "${Bundle.getString('BundleMenus.configuracion_fija')}"    "" $branch3100)
+#end##writeModuleTree
+
+#macro(writeBranch $id $name $description $branch)
+#set($plus = $id - $moduleRoot)
+#if($plus == 0)
+    #set($code = "${projectCode}.${moduleCode}")
+#else
+    #set($code = "${projectCode}.${moduleCode}.${plus}")
+#end
+${code}.name=$bundleProgrammer.getValueString(${name})
+${code}.description=$bundleProgrammer.getValueString(${description})
+#end##writeBranch
+
+${code}.id=${id}
+${code}.name=$bundleProgrammer.getValueString(${name})
+${code}.description=$bundleProgrammer.getValueString(${description})
+${code}.especial=false
+${code}.branch=${branch}
+
+#macro(writePage $branch)
+#set($webPageName = "crop/${page.module.wrapper.dottedAlias.replace('.', '/')}/$!{webPageNamePrefix}${page.name}.jsp")
+#set($webProjectSuffix = $page.module.wrapper.hyphenatedAlias)
+#set($next = $next + 1)
+#set($leaf = $next + $branch)
+#set($name = $StringUtils.capitalize($page.entity.wrapper.validDefaultCollectionLabel))
+#set($description = "$!page.entity.defaultShortDescription")
+#set($url = "${redirect}${project.rootFolderName}-war/faces/${webPageName}&twn=${project.rootFolderName}-war-${webProjectSuffix}")
+#writeLeaf($leaf $name $description $branch $url)
+#end##writePage
+
+#macro(writeLeaf $id $name $description $branch $url)
+#set($plus = $id - $moduleRoot)
+#set($code = "${projectCode}.${moduleCode}.${plus}")
+#set($code = "${projectCode}.${moduleCode}.${webPageName.replaceAll('\.jsp$', '').replace('/', '.').replace('-', '_')}")
+${code}.name=$bundleProgrammer.getValueString(${name})
+${code}.description=$bundleProgrammer.getValueString(${description})
+#end##writeLeaf
+
+${code}.id=${id}
+${code}.name=$bundleProgrammer.getValueString(${name})
+${code}.description=$bundleProgrammer.getValueString(${description})
+${code}.especial=false
+${code}.branch=${branch}
+${code}.url=${url}

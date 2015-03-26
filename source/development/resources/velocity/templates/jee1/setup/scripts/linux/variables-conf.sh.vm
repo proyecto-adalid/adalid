@@ -1,0 +1,4 @@
+#setGlobalVariables()
+${pound}!/bin/bash
+EEAS=$targetApplicationServer
+DBMS=$targetDatabaseServer

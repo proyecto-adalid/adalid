@@ -1,0 +1,166 @@
+#parseJavaMacros()
+#setJavaVariables()
+#writeJavaLicense()
+#writeJavaPackage()
+#set($added = $imports.add('java.util.LinkedHashMap'))
+#set($added = $imports.add('java.util.Map'))
+#writeJavaImports($imports)
+#writeJavaAuthor('Jorge Campins')
+public class ${javaClassSimpleName} { // URI/URL de las páginas de la aplicación
+
+    public static final String WAR = "${project.rootFolderName}-war";
+
+#set($pages = $project.displaysList)
+#set($pdq = '')
+#foreach($page in $pages)
+    #if($page.master)
+    #elseif("$!page.displayMode" == 'UNSPECIFIED' || "$!page.displayFormat" == 'UNSPECIFIED')
+    #else
+        #writeURX()
+    #end
+#end##foreach-page
+#if($pdq != '')
+// </editor-fold>
+
+#end
+#writeURXOOBB()
+#writeURXTWN()
+#writeURXSFN()
+}
+#break
+
+#macro(writeURX)
+    #if($pdq != '')
+
+    #else
+    // <editor-fold defaultstate="collapsed" desc="Páginas propias de la Aplicación">
+    #end
+    #set($pdq = 'true')
+    #set($fee = "${page.entity.wrapper.javaConstantName}")
+    #set($faa = "${page.module.wrapper.hyphenatedAlias}")
+    #set($foo = "crop/${page.module.wrapper.dottedAlias.replace('.', '/')}/$!{webPageNamePrefix}${page.name}.jsp")
+    public static final String ${fee}_${page.displayMode}_${page.displayFormat} = "/${project.rootFolderName}-war/faces/${foo}";
+#end##
+
+#macro(writeURXOOBB)
+    #set($por = "$!{Bundle.getString('java.web.page_name_connective')}")
+    // <editor-fold defaultstate="collapsed" desc="Operaciones Basicas">
+    public static final String REDIRECT = "/${project.rootFolderName}-war/redirect.html";
+
+    public static final String AYUDA = "/${project.rootFolderName}-war/ayuda.html";
+
+    public static final String REJECT = "/${project.rootFolderName}-war/faces/copy/reject.jsp";
+
+    public static final String INICIO = "/${project.rootFolderName}-war/faces/copy/Menu.jsp";
+
+    public static final String FAVORITOS = "/${project.rootFolderName}-war/faces/copy/Favoritos.jsp";
+
+    public static final String CAMBIO_PASSWORD = "/${project.rootFolderName}-war/faces/copy/Password.jsp";
+
+    public static final String FILTRO_FUNCION = "/${project.rootFolderName}-war/faces/crop/filtro/FiltroFuncion21${por}IdFuncion.jsp";
+
+    public static final String FILTRO_FUNCION_DETALLE = "/${project.rootFolderName}-war/faces/crop/filtro/FiltroFuncion22${por}IdFuncion.jsp";
+
+    public static final String FILTRO_FUNCION_PAR = "/${project.rootFolderName}-war/faces/crop/filtro/FiltroFuncionPar21${por}IdFiltroFuncion.jsp";
+
+    public static final String FILTRO_FUNCION_PAR_DETALLE = "/${project.rootFolderName}-war/faces/crop/filtro/FiltroFuncionPar22${por}IdFiltroFuncion.jsp";
+
+    public static final String FILTRO_FUNCION_PAR_RECURSO = "/${project.rootFolderName}-war/faces/copy/recurso_filtro/RecursoFiltro1.jsp";
+
+    public static final String FILTRO_FUNCION_PAR_RECURSO_ARBOL = "/${project.rootFolderName}-war/faces/copy/recurso_filtro/RecursoFiltro3.jsp";
+
+    public static final String VISTA_FUNCION = "/${project.rootFolderName}-war/faces/crop/vista/VistaFuncion21${por}Funcion.jsp";
+
+    public static final String VISTA_FUNCION_DETALLE = "/${project.rootFolderName}-war/faces/crop/vista/VistaFuncion22${por}Funcion.jsp";
+
+    public static final String VISTA_FUNCION_COL = "/${project.rootFolderName}-war/faces/crop/vista/VistaFuncionCol21${por}Vista.jsp";
+
+    public static final String VISTA_FUNCION_COL_DETALLE = "/${project.rootFolderName}-war/faces/crop/vista/VistaFuncionCol22${por}Vista.jsp";
+
+    public static final String LISTA_RECURSOS = "/${project.rootFolderName}-war/faces/copy/recurso/Recurso1.jsp";
+
+    public static final String ARBOL_RECURSOS = "/${project.rootFolderName}-war/faces/copy/recurso/Recurso3.jsp";
+
+    public static final String RASTRO_FUNCION = RASTRO_FUNCION_READING_TABLE;
+
+    public static final String RASTRO_INFORME = RASTRO_INFORME_READING_TABLE;
+
+    public static final String RASTRO_PROCESO = RASTRO_PROCESO_READING_TABLE;
+    // </editor-fold>
+
+#end##writeURXOOBB
+
+#macro(writeURXTWN)
+    /**
+     * URX (URI/URL) to TWN (Target Window Name) map
+     */
+    private static final Map<String, String> twn = new LinkedHashMap<>();
+
+    static {
+        twn.put(INICIO, "${project.rootFolderName}-war");
+        twn.put(FAVORITOS, "${project.rootFolderName}-war");
+        twn.put(CAMBIO_PASSWORD, "${project.rootFolderName}-war");
+        twn.put(FILTRO_FUNCION, "${project.rootFolderName}-war-filtro");
+        twn.put(FILTRO_FUNCION_DETALLE, "${project.rootFolderName}-war-filtro");
+        twn.put(FILTRO_FUNCION_PAR, "${project.rootFolderName}-war-filtro");
+        twn.put(FILTRO_FUNCION_PAR_DETALLE, "${project.rootFolderName}-war-filtro");
+        twn.put(FILTRO_FUNCION_PAR_RECURSO, "${project.rootFolderName}-war-recurso-filtro");
+        twn.put(FILTRO_FUNCION_PAR_RECURSO_ARBOL, "${project.rootFolderName}-war-recurso-filtro");
+        twn.put(LISTA_RECURSOS, "${project.rootFolderName}-war-recurso");
+        twn.put(ARBOL_RECURSOS, "${project.rootFolderName}-war-recurso");
+        twn.put(RASTRO_FUNCION, "${project.rootFolderName}-war-consulta");
+        twn.put(RASTRO_INFORME, "${project.rootFolderName}-war-consulta");
+        twn.put(RASTRO_PROCESO, "${project.rootFolderName}-war-consulta");
+        #set($pages = $project.displaysList)
+#foreach($page in $pages)
+    #if($page.master)
+    #elseif("$!page.displayMode" == 'UNSPECIFIED' || "$!page.displayFormat" == 'UNSPECIFIED')
+    #else
+        #set($fee = $page.entity.wrapper.javaConstantName)
+        #set($faa = $page.module.wrapper.hyphenatedAlias)
+        twn.put(${fee}_${page.displayMode}_${page.displayFormat}, "${project.rootFolderName}-war-${faa}");
+    #end
+#end##foreach-page
+    }
+
+    public static String getTargetWindowName(String urx) {
+        return twn.containsKey(urx) ? twn.get(urx) : null;
+    }
+
+#end##writeURXTWN
+
+#macro(writeURXSFN)
+    /**
+     * URX (URI/URL) to SFN (Select Function Number) map
+     */
+    private static final Map<String, Long[]> sfn = new LinkedHashMap<>();
+
+    static {
+        #set($pages = $project.displaysList)
+#foreach($page in $pages)
+    #if($page.master)
+    #elseif("$!page.displayMode" == 'UNSPECIFIED' || "$!page.displayFormat" == 'UNSPECIFIED')
+    #elseif("$!page.displayMode" == 'PROCESSING' && "$!page.displayFormat" == 'CONSOLE')
+        #set($fee = $page.entity.wrapper.javaConstantName)
+        #set($faa = $page.module.wrapper.hyphenatedAlias)
+        #set($sfn = '')
+        #set($operations = $ColUtils.filter($page.entity.businessOperationsList, $isAccesibleOperation))
+        #foreach($operation in $operations)
+            #set($sfn = "${sfn}, ${project.getOperationNumber($operation)}L")
+        #end
+        #if($sfn != '')
+....        sfn.put(${fee}_${page.displayMode}_${page.displayFormat}, new Long[]{$sfn.substring(2)});
+        #end
+    #else
+        #set($fee = $page.entity.wrapper.javaConstantName)
+        #set($faa = $page.module.wrapper.hyphenatedAlias)
+        sfn.put(${fee}_${page.displayMode}_${page.displayFormat}, new Long[]{${project.getOperationNumber($selectOperationKey, $page.entity)}L});
+    #end
+#end##foreach-page
+    }
+
+    public static Long[] getSelectFunctionNumber(String urx) {
+        return sfn.containsKey(urx) ? sfn.get(urx) : null;
+    }
+
+#end##writeURXSFN

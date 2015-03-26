@@ -1,0 +1,51 @@
+#parseXMLMacros()
+#setXMLVariables()
+#writeXMLDeclaration()
+#writeXMLLicense()
+#writeXMLAuthor('Jorge Campins')
+#set($projectAlias = "${javaProgrammer.getJavaVariableName($project.alias)}")
+<application version="6" xmlns="http://java.sun.com/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/application_6.xsd">
+    <display-name>${projectAlias}</display-name>
+    <module>
+        <ejb>${project.rootFolderName}-ejb.jar</ejb>
+    </module>
+    <module>
+        <web>
+            <web-uri>${project.rootFolderName}-war.war</web-uri>
+            <context-root>/${project.rootFolderName}-war</context-root>
+        </web>
+    </module>
+    #writeSecurityRoles()
+</application>
+#break
+
+#macro(writeSecurityRoles)
+    <security-role>
+        <description>S&#250;per Gestor</description>
+        <role-name>SuperGestor</role-name>
+    </security-role>
+    <security-role>
+        <description>S&#250;per Lector</description>
+        <role-name>SuperLector</role-name>
+    </security-role>
+    <security-role>
+        <description>Operador</description>
+        <role-name>Operador</role-name>
+    </security-role>
+    #set($tipoRol = $project.getEntity($TipoRol))
+    #set($modules = $ColUtils.filter($project.modulesList, $isRoleModule))
+    #set($modules = $ColUtils.sort($modules, $byProjectName))
+    #foreach($module in $modules)
+        #writeSecurityRole()
+    #end##foreach-module
+#end##writeSecurityRoles
+
+#macro(writeSecurityRole)
+#foreach($row in $tipoRol.insertableRowsList)
+    #set($role = $StrUtils.getStringXml($row.instanceKeyLabel.toString()))
+    <security-role>
+        <description>$role de $module.wrapper.xmlValidDefaultLabel</description>
+        <role-name>$role$module.name</role-name>
+    </security-role>
+#end##foreach-row
+#end##writeSecurityRole

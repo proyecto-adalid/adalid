@@ -1,0 +1,356 @@
+    public boolean isFuncionViewFilterHabilitada() {
+        return ${entityDataProvider}.isFuncionViewFilterHabilitada();
+    }
+
+    public boolean isFuncionShowFilterHabilitada() {
+        return ${entityDataProvider}.isFuncionShowFilterHabilitada();
+    }
+
+    private FragmentoFiltro ${fragmentoFiltro};
+
+    public FragmentoFiltro getFiltro() {
+        if (${fragmentoFiltro} == null) {
+            ${fragmentoFiltro} = new FragmentoFiltro();
+            ${fragmentoFiltro}.init();
+        }
+        return ${fragmentoFiltro};
+    }
+
+    public class FragmentoFiltro implements FragmentoFiltroEstandar {
+
+        #writeSearchFieldFacades()
+        // <editor-fold defaultstate="collapsed" desc="Managed Component Definition">
+        #writeSearchFields()
+        private FiltroFuncionCachedRowSetDataProvider2 filtroDataProvider;
+
+        private void initFiltroDataProvider() {
+            if (filtroDataProvider == null) {
+                filtroDataProvider = new FiltroFuncionCachedRowSetDataProvider2();
+##              filtroDataProvider.setCachedRowSet((javax.sql.rowset.CachedRowSet) getValue("#{SessionBean1.filtroRowSet}"));
+                filtroDataProvider.setCachedRowSet(getCachedRowSetValue("#{SessionBean1.filtroRowSet}"));
+            }
+        }
+
+        private HiddenField campoAplicarFiltro1 = new HiddenField();
+
+        public HiddenField getCampoAplicarFiltro1() {
+            return campoAplicarFiltro1;
+        }
+
+        public void setCampoAplicarFiltro1(HiddenField hf) {
+            campoAplicarFiltro1 = hf;
+        }
+
+        private DropDown listaFiltro1 = new ${project.rootPackageName}.lib.core.jsf.component.ListaDesplegable();
+
+        public DropDown getListaFiltro1() {
+            return listaFiltro1;
+        }
+
+        public void setListaFiltro1(DropDown dd) {
+            this.listaFiltro1 = dd;
+        }
+
+        private Button botonAplicarFiltro1 = new Button();
+
+        public Button getBotonAplicarFiltro1() {
+            return botonAplicarFiltro1;
+        }
+
+        public void setBotonAplicarFiltro1(Button b) {
+            botonAplicarFiltro1 = b;
+        }
+
+        private LongConverter longConverter1 = new LongConverter();
+
+        public LongConverter getLongConverter1() {
+            return longConverter1;
+        }
+
+        public void setLongConverter1(LongConverter lc) {
+            longConverter1 = lc;
+        }
+        // </editor-fold>
+
+        // <editor-fold defaultstate="collapsed" desc="Managed Component Properties">
+        private Bit bitFuncionHideFilterHabilitada = new Bit() {
+
+            @Override
+            public boolean isOn() {
+                return ${entityDataProvider}.isFuncionHideFilterHabilitada();
+            }
+
+        };
+
+        public Bit getBitFuncionHideFilterHabilitada() {
+            return bitFuncionHideFilterHabilitada;
+        }
+
+        private Bit bitFuncionShowFilterHabilitada = new Bit() {
+
+            @Override
+            public boolean isOn() {
+                return ${entityDataProvider}.isFuncionShowFilterHabilitada();
+            }
+
+        };
+
+        public Bit getBitFuncionShowFilterHabilitada() {
+            return bitFuncionShowFilterHabilitada;
+        }
+
+        private Bit bitFuncionViewFilterHabilitada = new Bit() {
+
+            @Override
+            public boolean isOn() {
+                return ${entityDataProvider}.isFuncionViewFilterHabilitada();
+            }
+
+        };
+
+        public Bit getBitFuncionViewFilterHabilitada() {
+            return bitFuncionViewFilterHabilitada;
+        }
+
+        public boolean isFuncionSelectHabilitada() {
+            return ${entityDataProvider}.isFuncionSelectHabilitada();
+        }
+
+        public boolean isFuncionSelectInhabilitada() {
+            return !isFuncionSelectHabilitada();
+        }
+
+        public boolean isFuncionApplyFilterHabilitada() {
+            return ${entityDataProvider}.isFuncionApplyFilterHabilitada();
+        }
+
+        public boolean isFuncionApplyFilterInhabilitada() {
+            return !isFuncionApplyFilterHabilitada();
+        }
+
+        public boolean isFuncionRemoveFilterHabilitada() {
+            return ${entityDataProvider}.isFuncionRemoveFilterHabilitada();
+        }
+
+        public boolean isFuncionRemoveFilterInhabilitada() {
+            return !isFuncionRemoveFilterHabilitada();
+        }
+
+        public boolean isFuncionRestoreFilterHabilitada() {
+            return ${entityDataProvider}.isFuncionRestoreFilterHabilitada();
+        }
+
+        public boolean isFuncionRestoreFilterInhabilitada() {
+            return !isFuncionRestoreFilterHabilitada();
+        }
+
+        public boolean isListaFiltroHabilitada() {
+            String enabled = BaseBundle.getCurrentPageString("fragmento_filtro_lista_filtro_enabled");
+            return BitUtils.valueOf(enabled) && isFuncionSelectHabilitada();
+        }
+
+        public boolean isListaFiltroInhabilitada() {
+            return !isListaFiltroHabilitada();
+        }
+
+        public boolean isBotonFiltroHabilitado() {
+            String enabled = BaseBundle.getCurrentPageString("fragmento_filtro_boton_filtro_enabled");
+            return BitUtils.valueOf(enabled) && isFuncionSelectHabilitada();
+        }
+
+        public boolean isBotonFiltroInhabilitado() {
+            return !isBotonFiltroHabilitado();
+        }
+
+        public String getUrlImagenListaFiltro1() {
+            return ${entityDataProvider}.isFiltroFuncionSelectModificado() ? URL_WARNING
+                : ${entityDataProvider}.getFiltroFuncionSelect() == null ? URL_OK_DIMMED
+                : URL_OK;
+        }
+
+        public Object getItemsListaFiltro1() {
+            Object items = null;
+            long valor = ${entityDataProvider}.getFuncionSelect();
+            if (valor > 0) {
+                initFiltroDataProvider();
+                FiltroBusqueda filtro = new FiltroBusqueda();
+                String clave = FiltroFuncionCachedRowSetDataProvider2.COLUMNA_ID_FUNCION;
+                try {
+                    filtro.addCriterio(clave, valor);
+                    filtroDataProvider.consultarFiltroFuncion(filtro);
+                    items = filtroDataProvider.getListaOpciones(true, EnumColumnaEtiqueta.COLUMNA_NOMBRE);
+                } catch (ExcepcionAplicacion ex) {
+                    items = null;
+                }
+            }
+            return items;
+        }
+
+        public String botonBorrarFiltro1_action() {
+            ${entityDataProvider}.setFiltroFuncionSelect(null);
+            return null;
+        }
+
+        public String getScriptBotonBuscarFiltro1() {
+            String ocr = FiltroFuncionCachedRowSetDataProvider2.COLUMNA_ID_FILTRO_FUNCION;
+            String car = campoAplicarFiltro1.getClientId(getFacesContext());
+            String bar = botonAplicarFiltro1.getClientId(getFacesContext());
+            long funcion = ${entityDataProvider}.getFuncionSelect();
+            return getScriptAbrirVentanaFiltros(URX.FILTRO_FUNCION, ocr, car, bar, funcion);
+        }
+
+        public String getScriptBotonBuscarFiltro2() {
+            String car = campoAplicarFiltro1.getClientId(getFacesContext());
+            String bar = botonAplicarFiltro1.getClientId(getFacesContext());
+            long funcion = ${entityDataProvider}.getFuncionSelect();
+            Long filtro = ${entityDataProvider}.getFiltroFuncionSelect();
+            if (filtro == null) {
+                String ocr = FiltroFuncionCachedRowSetDataProvider2.COLUMNA_ID_FILTRO_FUNCION;
+                return getScriptAbrirVentanaFiltros(URX.FILTRO_FUNCION, ocr, car, bar, funcion);
+            } else {
+                String ocr = FiltroFuncionParCachedRowSetDataProvider2.COLUMNA_ID_FILTRO_FUNCION;
+                return getScriptAbrirVentanaFiltros(URX.FILTRO_FUNCION_PAR, ocr, car, bar, filtro);
+            }
+        }
+
+        private String getScriptAbrirVentanaFiltros(String url, String ocr, String car, String bar, long rm) {
+            ListaParametros rpl = new ListaParametros();
+            rpl.addParametro(CPP.ID_OPCION_CAMPO_RETORNO, ocr);
+            rpl.addParametro(CPP.ID_CAMPO_ACCION_RETORNO, car);
+            rpl.addParametro(CPP.ID_BOTON_ACCION_RETORNO, bar);
+            rpl.addParametro(CPP.ID_DOMINIO_RETORNO, FiltroFuncionCachedRowSetDataProvider2.ID_DOMINIO_RECURSO);
+            rpl.addParametro(CPP.ID_RECURSO_MAESTRO, String.valueOf(rm));
+            return JSF.getOpenWindowJavaScript(url, rpl.toString());
+        }
+
+        public String botonAplicarFiltro1_action() {
+            try {
+                if (campoAplicarFiltro1.getText() != null) {
+                    String filtro = (String) campoAplicarFiltro1.getText();
+                    campoAplicarFiltro1.setText(null);
+                    if (StringUtils.isNotBlank(filtro) && filtro.startsWith(Global.PREFIJO_STRING_ID_RECURSO)) {
+                        Long valor = Long.valueOf(filtro.substring(1));
+                        ${entityDataProvider}.setFiltroFuncionSelect(valor);
+                    }
+                }
+                consultar();
+            } catch (Exception ex) {
+                gestor.handle(ex);
+            } finally {
+                return null;
+            }
+        }
+
+        public String botonQuitarFiltro1_action() {
+            ${entityDataProvider}.resetFilter();
+            consultar();
+            return null;
+        }
+
+        public String botonRestaurarFiltro1_action() {
+            ${entityDataProvider}.restoreFilter();
+            consultar();
+            return null;
+        }
+
+        public String botonOcultarFiltro1_action() {
+            ${entityDataProvider}.setFiltroEscondido(true);
+            return null;
+        }
+
+        public String botonMostrarFiltro1_action() {
+            ${entityDataProvider}.setFiltroEscondido(false);
+            return null;
+        }
+        // </editor-fold>
+
+        private void init() {
+            getContextoPeticion().setFragmentoFiltroActual(this);
+        }
+
+        private void destroy() {
+            if (filtroDataProvider != null) {
+                filtroDataProvider.close();
+            }
+        }
+
+        private void consultar() {
+            getContextoPeticion().setFiltroFuncionSelect(null);
+            getContextoPeticion().setCodigoFuncionSelect(null);
+            getContextoPeticion().setNombreFuncionSelect(null);
+            gestor.setConsultaPendiente(true);
+        }
+
+        @Override
+        public void reiniciar() {
+            try {
+                ${entityDataProvider}.release();
+                consultar();
+            } catch (Exception ex) {
+                gestor.handle(ex);
+            }
+        }
+
+    }
+
+#break
+
+#macro(writeSearchFieldFacades)
+    #foreach($facade in $searchFieldFacades)
+        #set($facadeClassName = "${facade.wrapper.javaClassName}FacadeBase")
+        #set($facadeVariableName = "${facade.wrapper.javaVariableName}Facade")
+        private ${facadeClassName} ${facadeVariableName};
+
+        protected ${facadeClassName} get${facade.wrapper.javaClassName}Facade() {
+            if (${facadeVariableName} == null) {
+                ${facadeVariableName} = (${facadeClassName}) EJBL.lookup(${facadeClassName}.class);
+            }
+            return ${facadeVariableName};
+        }
+
+    #end##foreach-field
+#end##writeSearchFieldFacades
+
+#macro(writeSearchFields)
+    #increaseIndentation()
+    #set($divString = 'DivFiltro1')
+    #foreach($field in $page.rootFields)
+        #if($field.property.equals($page.reference))
+        #elseif($field.property.isSearchField())
+            #setSearchFieldVariables()
+            #if($field.property.isEntity())
+                #if($fieldSearchType == 'LIST')
+                    #parse("$templatePath/blocks/table/search-field/entity-list.vm")
+                #elseif($fieldSearchType == 'DISPLAY')
+                    #parse("$templatePath/blocks/table/search-field/entity.vm")
+                #else
+                    #parse("$templatePath/blocks/table/search-field/numeric.vm")
+                #end
+            #elseif($field.property.isBooleanPrimitive())
+                #parse("$templatePath/blocks/table/search-field/boolean.vm")
+            #elseif($field.property.isCharacterPrimitive())
+                #parse("$templatePath/blocks/table/search-field/character.vm")
+            #elseif($field.property.isNumericPrimitive())
+                #parse("$templatePath/blocks/table/search-field/numeric.vm")
+            #elseif($field.property.isTemporalPrimitive())
+                #parse("$templatePath/blocks/table/search-field/temporal.vm")
+            #end
+        #end
+    #end
+    #set($divString = '')
+    #decreaseIndentation()
+#end##writeSearchFields
+
+#macro(setSearchFieldVariables)
+    #set($fieldClassName = "${field.property.wrapper.javaClassName}")
+    #set($fieldVariableName = "${field.property.wrapper.javaVariableName}")
+    #set($fieldFirstName = "${fieldClassName}1")
+    #set($fieldMiddleName = "${fieldClassName}2")
+    #set($fieldLastName = "${fieldClassName}3")
+    #set($fieldSearchType = "$!field.property.searchType")
+    #set($fieldSqlName = "${field.property.wrapper.sqlName}")
+    #set($fieldForeignCodeSqlName = "$!field.foreignCodeField.wrapper.sqlName")
+    #set($fieldForeignNameSqlName = "$!field.foreignNameField.wrapper.sqlName")
+    #set($Campo1 = "Campo$fieldFirstName")
+    #set($campo1 = "campo$fieldFirstName")
+#end##setSearchFieldVariables

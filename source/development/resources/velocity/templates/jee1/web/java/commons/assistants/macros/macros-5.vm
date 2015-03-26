@@ -1,0 +1,78 @@
+#break
+
+#macro(clearEntityBeanParametersList)
+#if($entityBeanParametersList)
+....$entityBeanParametersList.clear()##
+#else
+    #set($entityBeanParametersList = $VelocityAid.getNewArrayList())
+#end
+#end##clearEntityBeanParametersList
+
+#macro(writeGetEntityBean)
+    #set($dataArtifact = $parametersMap.get($parameterKey))
+    #if($dataArtifact == $entity)
+    #else
+        #set($dataArtifactPathList = $dataArtifact.propertyPathList)
+        #foreach($artifact in $dataArtifactPathList)
+            #setArtifactVariables($artifact)
+            #if($artifact.isEntity())
+                #if("$!artifact.searchType" == 'LIST' && $artifact == $dataArtifact)
+                #elseif($entityBeanParametersList.contains($artifactUncapitalizedName))
+                #else
+                    #set($added = $entityBeanParametersList.add($artifactUncapitalizedName))
+                    #set($x = "$!tab")
+............${x}    ${artifactClassName}Base ${artifactUncapitalizedName} = ${artifactUncapitalizedName}Map.get(rowKey);
+............${x}    if (${artifactUncapitalizedName} == null) {
+............${x}        obj = bean.get${EntityDataProvider}().get${artifactCapitalizedName}(rowKey);
+............${x}        ${artifactUncapitalizedName} = obj == null ? null : get${artifactClassName}Facade().find(obj, true);
+............${x}        if (${artifactUncapitalizedName} != null) {
+............${x}            ${artifactUncapitalizedName}Map.put(rowKey, ${artifactUncapitalizedName});
+............${x}        }
+............${x}    }
+                #end
+            #end
+            #break
+        #end
+    #end
+#end##writeGetEntityBean
+
+#macro(writeAssignObjValue)
+    #set($x = "$!tab")
+    #set($javaObjValuePath = '')
+    #set($dataArtifact = $parametersMap.get($parameterKey))
+    #if($dataArtifact == $entity)
+${x}    obj = bean.get${EntityDataProvider}().get${dataArtifact.primaryKeyProperty.wrapper.javaCapitalizedName}(rowKey);
+    #else
+        #set($dataArtifactPathList = $dataArtifact.propertyPathList)
+        #foreach($artifact in $dataArtifactPathList)
+            #setArtifactVariables($artifact)
+            #if($javaObjValuePath == '')
+                #if($artifact.isEntity())
+                    #if("$!artifact.searchType" == 'LIST' && $artifact == $dataArtifact)
+................//${x}  obj = ${artifactValueExpression}; // entity && list
+................${x}    obj = bean.get${EntityDataProvider}().get${artifact.wrapper.javaCapitalizedName}(rowKey);
+                    #else
+                        #set($javaObjValuePath = "$!{artifactUncapitalizedName}")
+................${x}    obj = ${javaObjValuePath} == null ? null
+                    #end
+                #else
+............//${x}  obj = ${artifactValueExpression}; // primitive
+............${x}    obj = bean.get${EntityDataProvider}().get${artifact.wrapper.javaCapitalizedName}(rowKey);
+                #end
+            #else
+                #set($javaObjValuePath = "${javaObjValuePath}.get${artifactCapitalizedName}()")
+                #if($artifact.isEntity())
+........${x}        : ${javaObjValuePath} == null ? null
+                #end
+            #end
+            #set($lastArtifact = $artifact)
+        #end
+        #if($javaObjValuePath != '')
+            #if($lastArtifact.isEntity())
+....${x}        : ${javaObjValuePath}.get${lastArtifact.primaryKeyProperty.wrapper.javaCapitalizedName}();
+            #else
+....${x}        : ${javaObjValuePath};
+            #end
+        #end
+    #end
+#end##writeAssignObjValue

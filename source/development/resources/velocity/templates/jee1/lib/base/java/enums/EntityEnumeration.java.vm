@@ -1,0 +1,101 @@
+#parseJavaMacros()
+#setJavaVariables()
+#writeJavaLicense()
+#writeJavaPackage()
+#setLocalVariables()
+#set($added = $imports.add("${project.rootPackageName}.lib.base.bundle.BundleEnums"))
+#set($added = $imports.add("${project.rootPackageName}.lib.base.list.ListOption"))
+#set($added = $imports.add("${project.rootPackageName}.lib.base.util.IntUtils"))
+#writeJavaImports($imports)
+#writeJavaAuthor('Jorge Campins')
+public enum ${javaClassSimpleName} implements ListOption {
+
+#set($comma = ',')
+#set($rows = $entity.insertableRowsList)
+#set($rowsSize = $rows.size())
+#foreach($row in $rows)
+    #if($foreach.last)
+        #set($comma = ';')
+    #end
+##  #set($kname = $row.wrapper.sqlName.toUpperCase())
+    #set($kname = $row.wrapper.javaConstantName)
+    #set($value = $row.instanceKeyValue)
+##  #set($label = "${entity.wrapper.sqlName}.${row.wrapper.sqlName}")
+##  #set($label = "${entity.wrapper.sqlSchemaQualifiedShortName}.${row.wrapper.sqlName}")
+##  #set($label = "${entity.wrapper.bundleKey}.${row.wrapper.bundleKey}")
+    #set($label = "${entity.wrapper.sqlSchemaQualifiedShortBundleKey}.${row.wrapper.bundleKey}")
+    #writeEnumConstant()
+#end##foreach-row
+
+    public static ${javaClassSimpleName} valueOf(int i) {
+        switch (i) {
+            #foreach($row in $rows)
+##              #set($kname = $row.wrapper.sqlName.toUpperCase())
+                #set($kname = $row.wrapper.javaConstantName)
+                #set($value = $row.instanceKeyValue)
+                #writeEnumConstantCase()
+            #end##foreach-row
+            default:
+                return null;
+        }
+    }
+
+    public static ${javaClassSimpleName} valueOf(Integer i) {
+        return valueOf(IntUtils.valueOf(i));
+    }
+
+    public static ${javaClassSimpleName} valueOf(Long l) {
+        return valueOf(IntUtils.valueOf(l));
+    }
+
+    private final int value;
+
+    private final String label;
+
+    ${javaClassSimpleName}(int value, String label) {
+        this.value = value;
+        this.label = label;
+    }
+
+    public int intValue() {
+        return value;
+    }
+
+    public String getLabel() {
+        return BundleEnums.getString(label);
+    }
+
+    @Override
+    public Object getOptionValue() {
+        return value;
+    }
+
+    @Override
+    public String getOptionLabel() {
+        return getLabel();
+    }
+
+    @Override
+    public String getOptionDescription() {
+        return null;
+    }
+
+    @Override
+    public boolean isOptionDisabled() {
+        return false;
+    }
+
+}
+#break
+
+#macro(setLocalVariables)
+#end##setLocalVariables
+
+#macro(writeEnumConstant)
+    $kname($value, "$label")$comma
+#end##writeEnumConstant
+
+#macro(writeEnumConstantCase)
+            case $value:
+                return $kname;
+#end##writeEnumConstantCase

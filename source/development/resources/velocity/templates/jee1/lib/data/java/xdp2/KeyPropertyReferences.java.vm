@@ -1,0 +1,57 @@
+#break
+
+#writeInactiveIndicatorReferencePropertyStrings()
+#writeOwnerReferencePropertyStrings()
+#writeSegmentReferencePropertyStrings()
+#break
+
+#macro(writeInactiveIndicatorReferencePropertyStrings)
+    #if($entity.inactiveIndicatorReferenceProperty)
+        #set($fee = 'INDICADOR_INACTIVO')
+        #set($faa = $entity.inactiveIndicatorReferenceProperty)
+        #set($foo = "select_indicador_inactivo")
+        #writeKeyPropertyReferencePropertyConstants($fee $faa $foo)
+        #writeKeyPropertyReferencePropertyGetters($fee)
+    #end
+#end##writeInactiveIndicatorReferencePropertyStrings
+
+#macro(writeOwnerReferencePropertyStrings)
+    #if($entity.ownerReferenceProperty)
+        #set($fee = 'PROPIETARIO')
+        #set($faa = $entity.ownerReferenceProperty)
+        #set($foo = 'select_propietario')
+        #writeKeyPropertyReferencePropertyConstants($fee $faa $foo)
+        #writeKeyPropertyReferencePropertyGetters($fee)
+    #end
+#end##writeOwnerReferencePropertyStrings
+
+#macro(writeSegmentReferencePropertyStrings)
+    #if($entity.segmentReferenceProperty)
+        #set($fee = 'SEGMENTO')
+        #set($faa = $entity.segmentReferenceProperty)
+        #set($foo = 'select_segmento')
+        #writeKeyPropertyReferencePropertyConstants($fee $faa $foo)
+        #writeKeyPropertyReferencePropertyGetters($fee)
+    #end
+#end##writeSegmentReferencePropertyStrings
+
+#macro(writeKeyPropertyReferencePropertyConstants $fee $faa $foo)
+    private static final String FUNCION_GET_${fee} = "${faa.root.wrapper.sqlSchemaQualifiedShortName}_${foo}";
+
+    private static final String PARAMETRO_FUNCION_GET_${fee} = "${faa.wrapper.sqlName}";
+
+#end##writeKeyPropertyReferencePropertyConstants
+
+#macro(writeKeyPropertyReferencePropertyGetters $fee)
+    #set($foo = $StrUtils.getUpperCamelCase("${fee}"))
+    @Override
+    public String getFuncionGet${foo}() {
+        return FUNCION_GET_${fee};
+    }
+
+    @Override
+    public String getParametroFuncionGet${foo}() {
+        return PARAMETRO_FUNCION_GET_${fee};
+    }
+
+#end##writeKeyPropertyReferencePropertyGetters

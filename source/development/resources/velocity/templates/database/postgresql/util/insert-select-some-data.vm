@@ -1,0 +1,296 @@
+#parsePostgreSQLMacros()
+#setPostgreSQLVariables()
+#writePostgreSQLLicense()
+#writePostgreSQLAuthor('Jorge Campins')
+#set($entities = $ColUtils.filter($project.entitiesList, $isEntitySqlCodeGenEnabled, $isPersistentEntity))
+#set($entities = $ColUtils.sort($entities, $byEntityName))
+#foreach($entity in $entities)
+    #if($entity.isDataGenEnabled() && !$entity.isAbstractClass())
+        #resetSQLVariables()
+        #set($nttname = $entity.wrapper.sqlName)
+        #set($nttname = $entity.wrapper.sqlSchemaUnqualifiedShortName)
+        #set($tabname = $entity.wrapper.sqlTableName)
+        #set($tabname = $entity.wrapper.sqlSchemaQualifiedShortTableName)
+        #set($keyname = $entity.primaryKeyProperty.wrapper.sqlName)
+        #set($keytype = $entity.wrapper.sqlType)
+        #set($hierarchyRoot = $entity.hierarchyRoot)
+        #if($entity.isNotTable())
+            #set($lowerEntity = $entity.root)
+            #set($upperEntity = $VelocityAid.coalesce($entity.baseTableRoot, $FALSE))
+        #elseif($entity.isJoinedTable())
+            #set($lowerEntity = $entity.root)
+            #set($upperEntity = $entity.root)
+        #else
+            #set($lowerEntity = $FALSE)
+            #set($upperEntity = $FALSE)
+        #end
+        #if($lowerEntity && $upperEntity)
+            #set($tabname = "seudo_${entity.wrapper.sqlName}")
+            #set($tabname = "${entity.wrapper.sqlSchemaQualifier}seudo_${nttname}")
+            #writeInsertSelect2()
+        #else
+            #writeInsertSelect1()
+        #end
+    #end
+#end##foreach-entity
+#break
+
+#macro(writeInsertSelect1)
+#set($start = $entity.seriesStart + 1000000)
+#set($stop  = $entity.seriesStop  + 1000000)
+#writeInsertSelect()
+#end##writeInsertSelect1
+
+#macro(writeInsertSelect2)
+#set($mega = 1)
+#if($entity.root != $hierarchyRoot)
+    #set($extensions = $hierarchyRoot.extensionsList)
+    #foreach($extension in $extensions)
+        #if($entity == $extension)
+            #set($mega = $mega + $foreach.count)
+            #break
+        #end
+    #end
+#end
+#set($start = $entity.seriesStart + $mega * 1000000)
+#set($stop  = $entity.seriesStop  + $mega * 1000000)
+#writeInsertSelect()
+#end##writeInsertSelect2
+
+#macro(writeInsertSelect)
+#set($table = $nttname)
+#writeTemplate('remark-table')
+#set($properties = $entity.propertiesList)
+#set($propertiesSize = $properties.size())
+#foreach($property in $properties)
+    #setPropertyVariables()
+    #writeDropColumnSequence($seqname)
+    #writeCreateColumnSequence($seqname)
+#end##foreach-property
+
+#foreach($property in $properties)
+    #setPropertyVariables()
+    #if($foreach.first)insert into ${tabname} (#end$colname#if($foreach.last))$EOL#else, #end
+#end##foreach-property
+select
+#foreach($property in $properties)
+    #setPropertyVariables()
+    #set($funname = "'$!property.dataGenFunction'")
+    #set($pattern = "'$!property.dataGenPattern'")
+    #set($prefix  = "'$!property.dataGenPrefix'")
+    #set($suffix  = "'$!property.dataGenSuffix'")
+    #if($property.isNullable())
+        #set($nullable = $property.dataGenNullable)
+    #else
+        #set($nullable = 0)
+    #end
+    #if($colname == $keyname)
+        #set($expression = $colname)
+    #elseif($property.isPrimaryKeyProperty())
+        #set($expression = $colname)
+    #elseif($property.isVersionProperty())
+        #set($expression = 0)
+    #elseif($property.isDiscriminatorProperty())
+        #set($expression = $entity.wrapper.sqlDiscriminatorValue)
+    #elseif("$!property.dataGenType" == 'DEFAULT')
+        #set($expression = $default)
+    #elseif($nullable == 100)
+        #set($expression = 'null')
+    #elseif($property.isStringData())
+        #if($property.isUnique())
+##          #some_serial_string()
+            #next_string()
+        #elseif("$!property.dataGenType" == 'SERIES')
+            #next_string()
+        #else
+            #some_string()
+        #end
+    #elseif($property.isCharacterData())
+        #some_character()
+    #elseif($property.isBooleanPrimitive())
+        #some_boolean()
+    #elseif($property.isNumericPrimitive())
+        #if($property.isUnique())
+            #some_serial_number()
+        #elseif("$!property.dataGenType" == 'SERIES')
+            #next_number()
+        #else
+            #some_number()
+        #end
+    #elseif($property.isDateData())
+        #set($zero = 'current_date')
+        #if("$!property.dataGenType" == 'SERIES')
+            #next_temporal('date')
+        #else
+            #some_temporal('date')
+        #end
+    #elseif($property.isTimeData())
+        #set($zero = 'localtime')
+        #if("$!property.dataGenType" == 'SERIES')
+            #next_temporal('time')
+        #else
+            #some_temporal('time')
+        #end
+    #elseif($property.isTimestampData())
+        #set($zero = 'localtimestamp')
+        #if("$!property.dataGenType" == 'SERIES')
+            #next_temporal('timestamp')
+        #else
+            #some_temporal('timestamp')
+        #end
+    #elseif($property.isPersistentEntity())
+        #set($rows = $property.insertableRowsList)
+        #set($rowcount = $rows.size())
+        #if($property.isDataGenEnabled())
+            #if($property.isUnique())
+                #some_serial_number()
+            #else
+                #some_entity_number()
+            #end
+        #elseif($rowcount > 0)
+            #some_entity_number()
+        #else
+            #set($expression = 'null')
+        #end
+    #else
+        #set($expression = 'null')
+    #end
+    $expression as $colname#if($foreach.hasNext),#end$!crlf
+#end##foreach-property
+from generate_series(${start}::$keytype, ${stop}::$keytype) as $keyname
+order by 1;
+
+#foreach($property in $properties)
+    #setPropertyVariables()
+    #writeDropColumnSequence($seqname)
+#end##foreach-property
+
+#end##writeInsertSelect
+
+#macro(setPropertyVariables)
+#set($colname = $property.wrapper.sqlName)
+#set($ishname = $property.wrapper.sqlishName)
+#set($seqname = $property.wrapper.getAffixedSqlName('_', $globalSequenceAffix))
+#set($next = "nextval('$seqname')")
+#set($default = $VelocityAid.coalesce($property.wrapper.sqlDefaultValue, 'null'))
+#if("$!property.dataGenType" == 'UNSPECIFIED')
+    #set($funtype = 'some')
+#elseif("$!property.dataGenType" == 'RANDOM')
+    #set($funtype = 'some')
+#elseif("$!property.dataGenType" == 'SERIES')
+    #set($funtype = 'next')
+#elseif("$!property.dataGenType" == 'DEFAULT')
+    #set($funtype = '')
+#else
+    #set($funtype = '')
+#end
+#end##setPropertyVariables
+
+#macro(writeDropColumnSequence $seqname)
+drop sequence if exists ${seqname};
+#end##writeDropColumnSequence
+
+#macro(writeCreateColumnSequence $seqname)
+#if($property.isPersistentEntity() && $property.root.isDataGenEnabled())
+    #computeBase($property.root)
+    #set($minvalue  = $base + $property.root.seriesStart)
+    #set($maxvalue  = $base + $property.root.seriesStop)
+    #set($increment = $property.root.seriesStep)
+#else
+    #set($minvalue  = $property.dataGenSeriesStart)
+    #set($maxvalue  = $property.dataGenSeriesStop)
+    #set($increment = $property.dataGenSeriesStep)
+#end
+create sequence ${seqname} minvalue $minvalue maxvalue $maxvalue increment $increment start $minvalue cache 1 cycle;
+#end##writeCreateColumnSequence
+
+#macro(next_string)
+    #set($expression = "util.next_string(#p5p(), $nullable, $pattern::varchar, $prefix::varchar, $suffix::varchar)")
+#end##next_string
+
+#macro(some_string)
+    #set($zero = 'null')
+    #set($min = $VelocityAid.coalesce($property.minLength, $zero))
+    #set($max = $VelocityAid.coalesce($property.maxLength, $zero))
+    #set($expression = "util.some_string(#p5p(), $nullable, $pattern::varchar, $prefix::varchar, $suffix::varchar, $min, $max)")
+#end##some_string
+
+#macro(some_serial_string)
+    #set($expression = "util.some_serial_string(#p5p())")
+#end##some_serial_string
+
+#macro(some_character)
+    #set($expression = "util.some_string(#p5p(), $nullable, ''::varchar, ''::varchar, ''::varchar, 1, 1)")
+    #set($expression = "substr($expression, 1, 1)")
+#end##some_character
+
+#macro(some_boolean)
+    #set($trueable = $property.dataGenTrueable)
+    #set($expression = "util.some_boolean(#p5p(), $nullable, $trueable)")
+#end##some_boolean
+
+#macro(some_serial_number)
+    #set($expression = "util.some_serial_number(#p5p())")
+#end##some_serial_number
+
+#macro(next_number)
+    #set($zero = 'null::integer')
+    #set($min = $VelocityAid.coalesce($property.dataGenMin, $property.minValue, $zero))
+    #set($max = $VelocityAid.coalesce($property.dataGenMax, $property.maxValue, $zero))
+    #set($action = $property.dataGenNumericAction.ordinal())
+    #set($zero = 'null::numeric')
+    #set($factor = $VelocityAid.coalesce($property.dataGenFactor, $zero))
+    #set($expression = "util.next_number(#p5p(), $nullable, $min, $max, $action, $factor)")
+#end##some_number
+
+#macro(some_number)
+    #set($zero = 'null::integer')
+    #set($min1 = $VelocityAid.coalesce($property.dataGenMin, $property.minValue, $zero))
+    #set($max1 = $VelocityAid.coalesce($property.dataGenMax, $property.maxValue, $zero))
+    #set($action = $property.dataGenNumericAction.ordinal())
+    #set($zero = 'null::numeric')
+    #set($factor = $VelocityAid.coalesce($property.dataGenFactor, $zero))
+    #set($min2 = $VelocityAid.coalesce($property.minValue, $zero))
+    #set($max2 = $VelocityAid.coalesce($property.maxValue, $zero))
+    #set($expression = "util.some_number(#p5p(), $nullable, $min1, $max1, $action, $factor, $min2, $max2)")
+#end##some_number
+
+#macro(next_temporal $foo)
+    #set($zero = "null::$foo")
+    #set($min = $VelocityAid.coalesce($sqlProgrammer.getDelimitedString($property.dataGenMin), $zero))
+    #set($max = $VelocityAid.coalesce($sqlProgrammer.getDelimitedString($property.dataGenMax), $zero))
+    #set($interval = $property.dataGenTemporalInterval.ordinal())
+    #set($expression = "util.next_${foo}(#p5p(), $nullable, $min, $max, $interval)")
+#end##some_temporal
+
+#macro(some_temporal $foo)
+    #set($zero = "null::$foo")
+    #set($min = $VelocityAid.coalesce($sqlProgrammer.getDelimitedString($property.dataGenMin), $zero))
+    #set($max = $VelocityAid.coalesce($sqlProgrammer.getDelimitedString($property.dataGenMax), $zero))
+    #set($expression = "util.some_${foo}(#p5p(), $nullable, $min, $max)")
+#end##some_temporal
+
+#macro(some_entity_number)
+    #set($expression = "util.some_${property.root.wrapper.sqlName}($nullable)")
+    #set($expression = "util.some_${property.root.wrapper.sqlSchemaUnqualifiedShortName}($nullable)")
+#end##some_entity_number
+
+#macro(p5p)
+'$nttname'::varchar, '$ishname'::varchar, ${keyname}::integer, ${next}::integer, $funname::varchar##
+#end##p5p
+
+#macro(computeBase $ntt)
+    #if($ntt.isAbstractClass())
+        #set($mega = 0)
+        #set($base = 0)
+    #else
+        #set($mega = 1)
+        #foreach($foo in $hierarchyRoot.extensionsList)
+            #if($ntt == $foo)
+                #set($mega = $mega + $foreach.count)
+                #break
+            #end
+        #end
+        #set($base = $mega * 1000000)
+    #end
+#end##computeBase

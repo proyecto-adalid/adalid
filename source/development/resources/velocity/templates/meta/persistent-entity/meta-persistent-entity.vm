@@ -1,0 +1,111 @@
+#parseJavaMacros()
+#setJavaVariables()
+#writeJavaLicense()
+#writeJavaPackage()
+#parse('templates/meta/persistent-entity/meta-persistent-entity-macros.vm')
+#set($foreachProperty       = "foreach-property")
+#set($foreachRow            = "foreach-row")
+#set($foreachRowField       = "foreach-row-field")
+#set($foreachOperation      = "foreach-operation")
+#set($foreachOperationBody  = "foreach-operation-body")
+#set($foreachParameter      = "foreach-parameter")
+#set($foreachPropertyTag    = "foreach-property-tag")
+#set($foreachPropertyGlobalTag    = "foreach-property-global-tag")
+#set($foreachEntityTag      = "foreach-entity-tag")
+#set($foreachEntityGlobalTag = "foreach-entity-global-tag")
+#set($foreachParameterTag   = "foreach-parameter-tag")
+#set($foreachPackage = "foreach-package")
+#set($expressionsListStack  = $VelocityAid.getNewStack())
+#set($foldersListStack      = $VelocityAid.getNewStack())
+#set($added = $imports.add("adalid.core.*"))
+#set($added = $imports.add("adalid.core.annotations.*"))
+#set($added = $imports.add("adalid.core.enums.*"))
+#set($added = $imports.add("adalid.core.expressions.*"))
+#set($added = $imports.add("adalid.core.interfaces.*"))
+#set($added = $imports.add("adalid.core.operations.*"))
+#set($added = $imports.add("adalid.core.parameters.*"))
+#set($added = $imports.add("adalid.core.properties.*"))
+#set($added = $imports.add("meta.entidad.base.*"))
+#set($added = $imports.add("java.lang.reflect.Field"))
+#writeJavaImports($imports)
+#writeTemplate($foreachEntityGlobalTag)
+public class ${javaClassSimpleName} extends ${entity.type} {
+
+    // <editor-fold defaultstate="collapsed" desc="class constructors">
+    @Deprecated()
+    private ${javaClassSimpleName}() {
+        this(null, null);
+    }
+
+    public ${javaClassSimpleName}(Artifact declaringArtifact, Field declaringField) {
+        super(declaringArtifact, declaringField);
+    }
+    // </editor-fold>
+
+##
+#increaseIndentation()
+##
+##  properties
+##
+#set($propertiesList = $VelocityAid.coalesce($entity.propertiesList, $FALSE))
+#writeTemplate($foreachProperty)
+##
+##  rows
+##
+#set($rowsList = $VelocityAid.coalesce($entity.rowsList, $FALSE))
+#writeTemplate($foreachRow)
+##
+##  operations
+##
+#set($operationsList = $VelocityAid.coalesce($entity.operationsList, $FALSE))
+#writeTemplate($foreachOperation)
+##
+#if($entity.customizedAttributes)
+${tab}@Override
+${tab}protected void settleAttributes() {
+#increaseIndentation()
+${tab}super.settleAttributes();
+##
+##  tags for this entity
+##
+#writeTemplate($foreachEntityTag)
+#decreaseIndentation()
+##
+${tab}}
+
+#end
+#if($entity.customizedProperties)
+${tab}@Override
+${tab}protected void settleProperties() {
+#increaseIndentation()
+${tab}super.settleProperties();
+##
+##  tags for each property
+##
+#writeTemplate($foreachPropertyTag)
+#decreaseIndentation()
+##
+${tab}}
+
+#end
+#if($rowsList && $rowsList.size()>0)
+${tab}@Override
+${tab}protected void settleInstances() {
+#increaseIndentation()
+${tab}super.settleInstances();
+##
+##  tags for each row
+##
+#writeTemplate($foreachRowField)
+#decreaseIndentation()
+##
+${tab}}
+
+#end
+#if($operationsList && $operationsList.size()>0)
+    //${tab} <editor-fold defaultstate="collapsed" desc="Operations">
+#writeTemplate($foreachOperationBody)
+    //${tab} </editor-fold>
+#end
+#decreaseIndentation()
+}

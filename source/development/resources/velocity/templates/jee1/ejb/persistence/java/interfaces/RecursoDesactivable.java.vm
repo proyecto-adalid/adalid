@@ -1,0 +1,54 @@
+#break
+
+#macro(writeRecursoDesactivableImport)
+#if($esRecursoDesactivable)
+    #set($added = $imports.add("${project.rootPackageName}.lib.base.interfaces.RecursoDesactivable"))
+    #set($added = $interfaces.add('RecursoDesactivable'))
+#end
+#end##writeRecursoDesactivableImport
+
+#macro(writeRecursoDesactivableImplementation)
+#if($esRecursoDesactivable)
+    #set($property = $entity.inactiveIndicatorProperty)
+    @Override
+    public String getColumnaEsRecursoInactivo() {
+        return ${javaClassSimpleName}Constants.COLUMNA_ES_RECURSO_INACTIVO;
+    }
+
+    @Override
+    public String getEtiquetaEsRecursoInactivo() {
+        return ${javaClassSimpleName}Constants.ETIQUETA_ES_RECURSO_INACTIVO;
+    }
+
+    @Override
+    public ${property.wrapper.javaPrimitiveType} getEsRecursoInactivo() {
+    #if($dataProviderColumns.contains($property))
+        return get${property.wrapper.javaClassName}();
+    #else
+##      return ${property.pathString};
+        #set($propertyPathList = $property.propertyPathList)
+        #set($propertyPathString = '')
+        #set($propertyPathSeparator = '')
+        #foreach($artifact in $propertyPathList)
+            #if($foreach.last)
+........        return $propertyPathString$propertyPathSeparator$artifact.wrapper.javaVariableName;
+            #else
+                #set($propertyPathString = "$propertyPathString$propertyPathSeparator$artifact.wrapper.javaVariableName")
+........        if ($propertyPathString == null) {
+........            return null;
+........        }
+            #end
+            #set($propertyPathSeparator = '.')
+        #end
+    #end
+    }
+
+    @Override
+    public void setEsRecursoInactivo(${property.wrapper.javaPrimitiveType} esRecursoInactivo) {
+    #if($dataProviderColumns.contains($property))
+        set${property.wrapper.javaClassName}(esRecursoInactivo);
+    #end
+    }
+
+#end
+#end##writeRecursoDesactivableImplementation

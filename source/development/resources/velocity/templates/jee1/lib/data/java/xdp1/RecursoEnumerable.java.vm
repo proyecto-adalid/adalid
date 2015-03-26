@@ -1,0 +1,49 @@
+#break
+
+#macro(writeRecursoEnumerableImport)
+#if($esRecursoEnumerable)
+    #set($added = $imports.add("${project.rootPackageName}.lib.core.db.xdp.RecursoEnumerableDataProvider"))
+    #set($added = $interfaces.add('RecursoEnumerableDataProvider'))
+#end
+#end##writeRecursoEnumerableImport
+
+#macro(writeRecursoEnumerableImplementation)
+#if($esRecursoEnumerable)
+    #set($property = $entity.numericKeyProperty)
+##  public static final String COLUMNA_NUMERO_RECURSO = "${property.wrapper.sqlName}";
+    public static final String COLUMNA_NUMERO_RECURSO = "${query.getSqlAlias($property)}";
+
+    public static final String ETIQUETA_NUMERO_RECURSO = BundleWebui.getString("xdp.etiqueta_numero_recurso");
+
+    @Override
+    public String getColumnaNumeroRecurso() {
+        return COLUMNA_NUMERO_RECURSO;
+    }
+
+    @Override
+    public String getEtiquetaNumeroRecurso() {
+        return ETIQUETA_NUMERO_RECURSO;
+    }
+
+    @Override
+    public ${property.wrapper.javaPrimitiveType} getNumeroRecurso() {
+        return get${property.wrapper.javaClassName}();
+    }
+
+    @Override
+    public ${property.wrapper.javaPrimitiveType} getNumeroRecurso(RowKey rowKey) {
+        return get${property.wrapper.javaClassName}(rowKey);
+    }
+
+    @Override
+    public void setNumeroRecurso(${property.wrapper.javaPrimitiveType} numeroRecurso) {
+        set${property.wrapper.javaClassName}(numeroRecurso);
+    }
+
+    @Override
+    public void setNumeroRecurso(RowKey rowKey, ${property.wrapper.javaPrimitiveType} numeroRecurso) {
+        set${property.wrapper.javaClassName}(rowKey, numeroRecurso);
+    }
+
+#end
+#end##writeRecursoEnumerableImplementation

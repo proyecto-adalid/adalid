@@ -1,0 +1,51 @@
+    // <editor-fold defaultstate="collapsed" desc="definición de componentes JSF de I/O">
+    char bookmark$bookmarkSequence.next();
+
+#set($tabString = '')
+#foreach($field in $page.rootFields)
+    #setFieldVariables()
+    #if($field.property.isEntity())
+        #if($fieldSearchType == 'LIST')
+            #parse("$templatePath/blocks/table/column/entity-list.vm")
+        #elseif($fieldSearchType == 'DISPLAY')
+            #parse("$templatePath/blocks/table/column/entity.vm")
+        #else
+            #parse("$templatePath/blocks/table/column/numeric.vm")
+        #end
+    #elseif($field.property.isBinaryPrimitive())
+        #parse("$templatePath/blocks/table/column/binary.vm")
+    #elseif($field.property.isBooleanPrimitive())
+        #parse("$templatePath/blocks/table/column/boolean.vm")
+    #elseif($field.property.isCharacterPrimitive())
+        #if($field.property.isFileReferenceField())
+            #parse("$templatePath/blocks/table/column/file-name.vm")
+        #else
+            #parse("$templatePath/blocks/table/column/character.vm")
+        #end
+    #elseif($field.property.isNumericPrimitive())
+        #parse("$templatePath/blocks/table/column/numeric.vm")
+    #elseif($field.property.isTemporalPrimitive())
+        #parse("$templatePath/blocks/table/column/temporal.vm")
+    #end
+    #if($field.property.isDiscriminatorProperty())
+        #parse("$templatePath/blocks/table/column/discriminator.vm")
+    #end
+#end
+    char bookmark$bookmarkSequence.next();
+    // </editor-fold>
+
+#break
+
+#macro(setFieldVariables)
+    #set($fieldClassName = "${field.property.wrapper.javaClassName}")
+    #set($fieldVariableName = "${field.property.wrapper.javaVariableName}")
+    #set($fieldFirstName = "${fieldClassName}1")
+    #set($fieldMiddleName = "${fieldClassName}2")
+    #set($fieldLastName = "${fieldClassName}3")
+    #set($fieldSearchType = "$!field.property.searchType")
+    #set($fieldSqlName = "${field.property.wrapper.sqlName}")
+    #set($fieldForeignCodeSqlName = "$!field.foreignCodeField.wrapper.sqlName")
+    #set($fieldForeignNameSqlName = "$!field.foreignNameField.wrapper.sqlName")
+    #set($Campo1 = "Campo$fieldFirstName")
+    #set($campo1 = "campo$fieldFirstName")
+#end##setFieldVariables

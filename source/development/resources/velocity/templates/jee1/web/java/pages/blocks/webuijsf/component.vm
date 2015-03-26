@@ -1,0 +1,25 @@
+#if($StringUtils.contains($componentClassName, $EOL))
+    #set($componentClassName1 = $StringUtils.substringBefore($componentClassName, $EOL))
+    #set($componentClassName2 = "$!StringUtils.substringAfter($componentClassName, $EOL)")
+#else
+    #set($componentClassName1 = $componentClassName)
+    #set($componentClassName2 = $componentClassName)
+#end
+#set($variableName = $StringUtils.uncapitalize($componentClassName1))
+#set($variableName = 'value')
+#set($capitalizedComponentName = $StringUtils.capitalize($componentName))
+#if("$!componentClassName2" == '')
+$tab    private ${componentClassName1} ${componentName};
+#else
+$tab    private ${componentClassName1} ${componentName} = new ${componentClassName2}();
+#end
+
+$tab    public ${componentClassName1} get${capitalizedComponentName}() {
+$tab        return ${componentName};
+$tab    }
+
+$tab    public void set${capitalizedComponentName}(${componentClassName1} $variableName) {
+$tab        ${componentName} = $variableName;
+$tab    }
+
+#break

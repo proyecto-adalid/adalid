@@ -1,0 +1,79 @@
+#if($esRecursoConReferencias)
+    #writeRecursoConReferenciasImplementation()
+#end
+    @Override
+    protected void preCommitRow(RowKey rowKey, long funcion) {
+        super.preCommitRow(rowKey, funcion);
+        if (funcion == ${FUNCION_INSERT}) {
+            preCommitCrear${entity.wrapper.javaClassName}(rowKey);
+        } else if (funcion == ${FUNCION_UPDATE}) {
+            preCommitModificar${entity.wrapper.javaClassName}(rowKey);
+        } else if (funcion == ${FUNCION_DELETE}) {
+            preCommitEliminar${entity.wrapper.javaClassName}(rowKey);
+        }
+    }
+#*
+    @Override
+    protected void posCommitRow(RowKey rowKey, long funcion) {
+        super.posCommitRow(rowKey, funcion);
+        if (funcion == ${FUNCION_INSERT}) {
+            posCommitCrear${entity.wrapper.javaClassName}(rowKey);
+        } else if (funcion == ${FUNCION_UPDATE}) {
+            posCommitModificar${entity.wrapper.javaClassName}(rowKey);
+        }
+    }
+*#
+#parse('templates/jee1/lib/data/java/xdp2/commit.java.vm')
+    protected RastroFuncion getRastroFuncion(RowKey rowKey, long funcion) {
+        RastroFuncion rastro = new RastroFuncion();
+        rastro.setIdFuncion(funcion);
+#if($esRecursoIdentificable)
+        rastro.setIdRecurso(getIdentificacionRecurso(rowKey));
+#end
+#if($esRecursoVersionable)
+        rastro.setVersionRecurso(getVersionRecurso(rowKey));
+#end
+#if($esRecursoCodificable)
+        rastro.setCodigoRecurso(getCodigoRecurso(rowKey));
+#end
+#if($esRecursoNombrable)
+        rastro.setNombreRecurso(getNombreRecurso(rowKey));
+#end
+#if($esRecursoPersonalizable)
+        rastro.setIdPropietarioRecurso(getPropietarioRecurso(rowKey));
+#end
+#if($esRecursoSegmentable)
+        rastro.setIdSegmentoRecurso(getSegmentoRecurso(rowKey));
+#end
+        return rastro;
+    }
+
+    protected SeudoTareaUsuario getSeudoTareaUsuario(RowKey rowKey, String comando) {
+        SeudoTareaUsuario seudo = new SeudoTareaUsuario();
+        seudo.setDominio(CODIGO_DOMINIO_RECURSO);
+        seudo.setComando(comando);
+#if($esRecursoIdentificable)
+        seudo.setIdRecurso(getIdentificacionRecurso(rowKey));
+#elseif($esRecursoEnumerable)
+        seudo.setIdRecurso(getNumeroRecurso(rowKey));
+#end
+        return seudo;
+    }
+
+#break
+
+#*
+    @Override
+    protected boolean esFilaValida(RowKey rowKey, long funcion) {
+        boolean es = false;
+        if (funcion == ${FUNCION_INSERT}) {
+            es = esFilaValidaParaCrear${entity.wrapper.javaClassName}(rowKey);
+            return es;
+        }
+        if (funcion == ${FUNCION_UPDATE}) {
+            es = esFilaValidaParaModificar${entity.wrapper.javaClassName}(rowKey);
+            return es;
+        }
+        return es;
+    }
+*#

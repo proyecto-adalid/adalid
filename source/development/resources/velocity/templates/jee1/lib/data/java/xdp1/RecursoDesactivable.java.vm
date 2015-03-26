@@ -1,0 +1,63 @@
+#break
+
+#macro(writeRecursoDesactivableImport)
+#if($esRecursoDesactivable)
+    #set($added = $imports.add("${project.rootPackageName}.lib.core.db.xdp.RecursoDesactivableDataProvider"))
+    #set($added = $interfaces.add('RecursoDesactivableDataProvider'))
+#end
+#end##writeRecursoDesactivableImport
+
+#macro(writeRecursoDesactivableImplementation)
+#if($esRecursoDesactivable)
+    #set($property = $entity.inactiveIndicatorProperty)
+##  public static final String COLUMNA_ES_RECURSO_INACTIVO = "${property.wrapper.sqlName}";
+    public static final String COLUMNA_ES_RECURSO_INACTIVO = "${query.getSqlAlias($property)}";
+
+    public static final String COLUMNA_CALIFICADA_ES_RECURSO_INACTIVO = "${query.getSqlQualifiedName($property)}";
+
+    public static final String ETIQUETA_ES_RECURSO_INACTIVO = BundleWebui.getString("xdp.etiqueta_es_recurso_inactivo");
+
+    @Override
+    public String getColumnaEsRecursoInactivo() {
+        return COLUMNA_ES_RECURSO_INACTIVO;
+    }
+
+    @Override
+    public String getEtiquetaEsRecursoInactivo() {
+        return ETIQUETA_ES_RECURSO_INACTIVO;
+    }
+
+    @Override
+    public ${property.wrapper.javaPrimitiveType} getEsRecursoInactivo() {
+    #if($dataProviderColumns.contains($property))
+        return get${property.wrapper.javaClassName}();
+    #else
+        return (${property.wrapper.javaPrimitiveType}) super.getValue(COLUMNA_ES_RECURSO_INACTIVO);
+    #end
+    }
+
+    @Override
+    public ${property.wrapper.javaPrimitiveType} getEsRecursoInactivo(RowKey rowKey) {
+    #if($dataProviderColumns.contains($property))
+        return get${property.wrapper.javaClassName}(rowKey);
+    #else
+        return (${property.wrapper.javaPrimitiveType}) super.getValue(COLUMNA_ES_RECURSO_INACTIVO, rowKey);
+    #end
+    }
+
+    @Override
+    public void setEsRecursoInactivo(${property.wrapper.javaPrimitiveType} esRecursoInactivo) {
+    #if($dataProviderColumns.contains($property))
+        set${property.wrapper.javaClassName}(esRecursoInactivo);
+    #end
+    }
+
+    @Override
+    public void setEsRecursoInactivo(RowKey rowKey, ${property.wrapper.javaPrimitiveType} esRecursoInactivo) {
+    #if($dataProviderColumns.contains($property))
+        set${property.wrapper.javaClassName}(rowKey, esRecursoInactivo);
+    #end
+    }
+
+#end
+#end##writeRecursoDesactivableImplementation

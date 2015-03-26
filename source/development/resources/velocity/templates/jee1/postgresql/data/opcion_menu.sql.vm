@@ -1,0 +1,171 @@
+#parsePostgreSQLMacros()
+#setPostgreSQLVariables()
+#writePostgreSQLLicense()
+#writePostgreSQLAuthor('Jorge Campins')
+#setLocalVariables()
+#writeRoot($xe18 $project.wrapper.validDefaultShortDescription)
+#set($modules = $ColUtils.filter($project.modulesList, $isMenuModule))
+#set($modules = $ColUtils.sort($modules, $byProjectDeclaringFieldName))
+#foreach($module in $modules)
+    #set($moduleCode = $module.wrapper.sqlName)
+    #set($moduleRoot = $foreach.index + 1)
+    #set($moduleRoot = $xe18 + $moduleRoot * $xe15)
+    #set($branch1000 = $moduleRoot +  1000 * $xe10)
+    #set($branch1100 = $moduleRoot +  1100 * $xe10)
+    #set($branch1110 = $moduleRoot +  1110 * $xe10)
+    #set($branch2000 = $moduleRoot +  2000 * $xe10)
+    #set($branch2100 = $moduleRoot +  2100 * $xe10)
+    #set($branch2110 = $moduleRoot +  2110 * $xe10)
+    #set($branch3000 = $moduleRoot +  3000 * $xe10)
+    #set($branch3100 = $moduleRoot +  3100 * $xe10)
+    #set($branch3110 = $moduleRoot +  3110 * $xe10)
+    #set($next = 0)
+--
+--  $module.wrapper.validDefaultLabel
+--
+    #writeModuleTree()
+    #set($web = $isWebModule.evaluate($module))
+    #if($web)
+        #set($pages = $module.displaysList)
+    #else
+        #set($pages = $module.master.displaysList)
+    #end
+    #set($pages = $ColUtils.sort($pages, $byDisplayName))
+    #foreach($page in $pages)
+        #if($web || $module.entitiesList.contains($page.entity))
+            #if($page.master)
+            #elseif("$!page.displayMode" == 'UNSPECIFIED' || "$!page.displayFormat" == 'UNSPECIFIED')
+            #elseif("$!page.displayMode" == 'READING')
+                #if("$!page.displayFormat" == 'TABLE')
+                    #if($page.entity.isEnumerationEntity())
+                        #writeInsertRow($branch1110)
+                    #elseif("$!page.entity.resourceType" == 'CONFIGURATION')
+                        #writeInsertRow($branch1100)
+                    #else
+                        #writeInsertRow($branch1000)
+                    #end
+                #elseif("$!page.displayFormat" == 'DETAIL')
+##                  #writeInsertRow($branch1000)
+                #elseif("$!page.displayFormat" == 'TREE')
+##                  #writeInsertRow($branch1000)
+                #end
+            #elseif("$!page.displayMode" == 'PROCESSING')
+                #if("$!page.displayFormat" == 'CONSOLE')
+                    #if($page.entity.isEnumerationEntity())
+                        #writeInsertRow($branch2110)
+                    #elseif("$!page.entity.resourceType" == 'CONFIGURATION')
+                        #writeInsertRow($branch2100)
+                    #else
+                        #writeInsertRow($branch2000)
+                    #end
+                #end
+            #elseif("$!page.displayMode" == 'WRITING')
+                #if("$!page.displayFormat" == 'TABLE')
+                    #if($page.entity.isEnumerationEntity())
+                        #writeInsertRow($branch3110)
+                    #elseif("$!page.entity.resourceType" == 'CONFIGURATION')
+                        #writeInsertRow($branch3100)
+                    #else
+                        #writeInsertRow($branch3000)
+                    #end
+                #elseif("$!page.displayFormat" == 'DETAIL')
+##                  #writeInsertRow($branch3000)
+                #elseif("$!page.displayFormat" == 'TREE')
+##                  #writeInsertRow($branch3000)
+                #end
+            #end
+        #end
+    #end##foreach-page
+#end##foreach-module
+#*
+update public.opcion_menu set descripcion_opcion_menu = nombre_opcion_menu where descripcion_opcion_menu is null;
+*#
+update public.opcion_menu set clave_opcion_menu = id_opcion_menu||'0' where clave_opcion_menu is null;
+
+update public.opcion_menu set es_opcion_menu_inactiva = true where url_opcion_menu is null and id_opcion_menu not in (
+select id_opcion_menu_superior from public.opcion_menu where id_opcion_menu_superior is not null and es_opcion_menu_inactiva = false);
+
+update public.opcion_menu set es_opcion_menu_inactiva = true where url_opcion_menu is null and id_opcion_menu not in (
+select id_opcion_menu_superior from public.opcion_menu where id_opcion_menu_superior is not null and es_opcion_menu_inactiva = false);
+
+update public.opcion_menu set es_opcion_menu_inactiva = true where url_opcion_menu is null and id_opcion_menu not in (
+select id_opcion_menu_superior from public.opcion_menu where id_opcion_menu_superior is not null and es_opcion_menu_inactiva = false);
+
+update public.opcion_menu set es_opcion_menu_inactiva = true where url_opcion_menu is null and id_opcion_menu not in (
+select id_opcion_menu_superior from public.opcion_menu where id_opcion_menu_superior is not null and es_opcion_menu_inactiva = false);
+
+select id_opcion_menu, codigo_opcion_menu, nombre_opcion_menu, url_opcion_menu, id_opcion_menu_superior
+from public.opcion_menu where es_opcion_menu_inactiva = true order by id_opcion_menu;
+
+#break
+
+#macro(setLocalVariables)
+#set($xe10 = 10000000000)
+#set($xe15 = 1000000000000000)
+#set($xe18 = 1000000000000000000)
+#set($projectCode = $project.alias)
+#set($REDIRECT = 'redirect.html?url=http://localhost:8080/')
+#set($WAR = 'double-u--a--ar')
+#set($WAR = "${project.rootFolderName}-war")
+#set($FACES = '/faces/')
+#end##setLocalVariables
+
+#macro(writeRoot $id $name)
+#set($code = "${projectCode}")
+insert into public.opcion_menu (id_opcion_menu, codigo_opcion_menu, nombre_opcion_menu, es_especial)
+values ($id, '$code', '$name', true);
+#end##writeRoot
+
+#macro(writeModuleTree)
+#writeBranch($moduleRoot "$module.wrapper.validDefaultLabel"                        $xe18)
+#writeBranch($branch1000 "${Bundle.getString('BundleMenus.consulta')}"              $moduleRoot)
+#writeBranch($branch1100 "${Bundle.getString('BundleMenus.configuracion')}"         $branch1000)
+#writeBranch($branch1110 "${Bundle.getString('BundleMenus.configuracion_fija')}"    $branch1100)
+#writeBranch($branch2000 "${Bundle.getString('BundleMenus.procesamiento')}"         $moduleRoot)
+#writeBranch($branch2100 "${Bundle.getString('BundleMenus.configuracion')}"         $branch2000)
+#writeBranch($branch2110 "${Bundle.getString('BundleMenus.configuracion_fija')}"    $branch2100)
+#writeBranch($branch3000 "${Bundle.getString('BundleMenus.registro')}"              $moduleRoot)
+#writeBranch($branch3100 "${Bundle.getString('BundleMenus.configuracion')}"         $branch3000)
+#writeBranch($branch3110 "${Bundle.getString('BundleMenus.configuracion_fija')}"    $branch3100)
+#end##writeModuleTree
+
+#macro(writeBranch $id $name $branch)
+#set($plus = $id - $moduleRoot)
+#if($plus == 0)
+    #set($code = "${projectCode}.${moduleCode}")
+#else
+    #set($code = "${projectCode}.${moduleCode}.${plus}")
+#end
+insert into public.opcion_menu (id_opcion_menu, codigo_opcion_menu, nombre_opcion_menu, id_opcion_menu_superior)
+values ($id, '$code', '$name', $branch);
+#end##writeBranch
+
+#macro(writeInsertRow $branch)
+#set($webPageName = "crop/${page.module.wrapper.dottedAlias.replace('.', '/')}/$!{webPageNamePrefix}${page.name}.jsp")
+#set($webProjectSuffix = $page.module.wrapper.hyphenatedAlias)
+#set($next = $next + 1)
+#set($leaf = $next + $branch)
+#set($name = $StringUtils.capitalize($page.entity.wrapper.validDefaultCollectionLabel))
+#set($url = "${REDIRECT}${WAR}${FACES}${webPageName}&twn=${WAR}-${webProjectSuffix}")
+#if("$!page.displayMode" == 'PROCESSING' && "$!page.displayFormat" == 'CONSOLE')
+    #set($sfn = '')
+    #set($operations = $ColUtils.filter($page.entity.businessOperationsList, $isAccesibleOperation))
+    #foreach($operation in $operations)
+        #set($sfn = "${sfn}-${project.getOperationNumber($operation)}")
+    #end
+    #if($sfn != '')
+        #set($url = "${url}&sfn=${sfn.substring(1)}")
+    #end
+#else
+    #set($url = "${url}&sfn=${project.getOperationNumber($selectOperationKey, $page.entity)}")
+#end
+#writeLeaf($leaf $name $branch $url)
+#end##writeInsertRow
+
+#macro(writeLeaf $id $name $branch $url)
+#set($plus = $id - $moduleRoot)
+#set($code = "${projectCode}.${moduleCode}.${plus}")
+#set($code = "${projectCode}.${moduleCode}.${webPageName.replaceAll('\.jsp$', '').replace('/', '.').replace('-', '_')}")
+insert into public.opcion_menu (id_opcion_menu, codigo_opcion_menu, nombre_opcion_menu, id_opcion_menu_superior, url_opcion_menu)
+values ($id, '$code', '$name', $branch, '$url');
+#end##writeLeaf

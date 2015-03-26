@@ -1,0 +1,66 @@
+    // <editor-fold defaultstate="collapsed" desc="Entity Beans">
+    char bookmark$bookmarkSequence.next();
+
+    private ${entityClassName} ${entityVariableName};
+
+#foreach($operation in $operations)
+    #setOperationVariables()
+    #if($operationNumberConstant != '' && $operationStringConstant != '')
+        #foreach($parameter in $parameters)
+            #setParameterVariables()
+            #if($parameter.isEntity())
+            #if($parameter.isInstanceReferenceField())
+............    private ${entityClassName} ${parameterVariableName}${Campo1};
+            #else
+............    private ${parameterClassName} ${parameterVariableName}${Campo1};
+            #end
+
+            #end
+        #end##foreach-parameter
+    #end
+#end##foreach-operation
+    char bookmark$bookmarkSequence.next();
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="Enterprise Java Beans">
+    char bookmark$bookmarkSequence.next();
+
+#if($isProcessOperationInEntity.evaluate($page.entity))
+    @EJB
+    private BusinessProcessMessengerLocal messenger;
+
+    @EJB
+    private ${entityClassName}BusinessProcessLocal ${entityVariableName}BusinessProcess;
+
+#end
+#if($isUtilityOperationInEntity)
+    @EJB
+    private UtilityProcessMessengerLocal dispatcher;
+
+#end
+#if($isExportOperationInEntity.evaluate($page.entity))
+    @EJB
+    private ExporterBrokerLocal exporter;
+
+#end
+#if($isReportOperationInEntity.evaluate($page.entity))
+    @EJB
+    private ReporterBrokerLocal reporter;
+
+#end
+#if($isProcedureOperationInEntity.evaluate($page.entity))
+    @EJB
+    private SqlAgentBrokerLocal sqlAgent;
+
+#end
+#foreach($referencedEntity in $pageReferencedEntitiesMap)
+    #set($parameterClassName = $referencedEntity.wrapper.javaClassName)
+    #set($parameterVariableName = $referencedEntity.wrapper.javaVariableName)
+    @EJB
+    private ${parameterClassName}FacadeLocal ${parameterVariableName}Facade;
+
+#end##foreach-referencedEntity
+    char bookmark$bookmarkSequence.next();
+    // </editor-fold>
+
+#break

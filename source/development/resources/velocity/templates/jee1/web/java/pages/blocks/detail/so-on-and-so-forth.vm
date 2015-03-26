@@ -1,0 +1,130 @@
+    // <editor-fold defaultstate="collapsed" desc="metodos estandar para refrescar, agregar, editar, deshacer y eliminar de la plantilla #2">
+    public String botonAgregar1_action() {
+        gestor.agregar();
+        return null;
+    }
+
+    public String botonEditar1_action() {
+        gestor.editar();
+        return null;
+    }
+
+    public String botonEliminar1_action() {
+        gestor.eliminar();
+        return null;
+    }
+
+    public String botonAplicar1_action() {
+        gestor.aplicar();
+        return null;
+    }
+
+    public String botonDeshacer1_action() {
+        gestor.deshacer();
+        return null;
+    }
+
+    public String botonConfirmar1_action() {
+        gestor.confirmar();
+        return null;
+    }
+
+    public String botonDescartar1_action() {
+        gestor.descartar();
+        return null;
+    }
+
+    public String botonProcesar1_action() {
+        asistente.procesar();
+        return null;
+    }
+
+    public String botonRefrescar1_action() {
+        gestor.refrescar();
+        return null;
+    }
+
+    public String botonReconsultar1_action() {
+        gestor.reconsultar();
+        return null;
+    }
+
+    public String botonRetornar1_action() {
+        gestor.retornar();
+        return null;
+    }
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="metodos estandar para manejar el cursor">
+#writeCursorButtons(1)
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="metodos estandar para manejar el cursor">
+#writeCursorButtons(2)
+    // </editor-fold>
+
+    public boolean isComandoDisponible() {
+#set($cousin = $FALSE)
+#set($cousin = $module.getConsoleCousinOf($page))
+#if($cousin)
+//      relate $cousin.name @ $module.name ($module.wrapper.hyphenatedAlias) @ $module.master.name ($module.master.wrapper.hyphenatedAlias)
+//      String urx = URX.${cousin.entity.wrapper.javaConstantName}_${cousin.displayMode}_${cousin.displayFormat};
+        return gestor.isLoteSinCambios();
+#else
+    #set($cousin = $project.getConsoleCousinOf($page))
+    #if($cousin)
+//      relate $cousin.name @ $project.name ($project.wrapper.hyphenatedAlias)
+//      String urx = URX.${cousin.entity.wrapper.javaConstantName}_${cousin.displayMode}_${cousin.displayFormat};
+        return gestor.isLoteSinCambios();
+    #else
+        return false;
+    #end
+#end
+    }
+
+#break
+
+#macro(writeCursorButtons $foo)
+    public String botonIrAlPrimero${foo}_action() {
+        gestor.irAlPrimero();
+        return null;
+    }
+
+    public String botonIrAlAnterior${foo}_action() {
+        gestor.irAlAnterior();
+        return null;
+    }
+
+    public String botonIrAlSiguiente${foo}_action() {
+        gestor.irAlSiguiente();
+        return null;
+    }
+
+    public String botonIrAlUltimo${foo}_action() {
+        gestor.irAlUltimo();
+        return null;
+    }
+
+    public String botonProcesarFila${foo}_action() {
+        return null;
+    }
+
+    public String getScriptAbrirVentanaProcesarFila${foo}() {
+#set($cousin = $FALSE)
+#set($cousin = $module.getConsoleCousinOf($page))
+#if($cousin)
+//      relate $cousin.name @ $module.name ($module.wrapper.hyphenatedAlias) @ $module.master.name ($module.master.wrapper.hyphenatedAlias)
+        String urx = URX.${cousin.entity.wrapper.javaConstantName}_${cousin.displayMode}_${cousin.displayFormat};
+        return gestor.getScriptAbrirVentana(urx);
+#else
+    #set($cousin = $project.getConsoleCousinOf($page))
+    #if($cousin)
+//      relate $cousin.name @ $project.name ($project.wrapper.hyphenatedAlias)
+        String urx = URX.${cousin.entity.wrapper.javaConstantName}_${cousin.displayMode}_${cousin.displayFormat};
+        return gestor.getScriptAbrirVentana(urx);
+    #else
+        return null;
+    #end
+#end
+    }
+#end##writeCursorButtons

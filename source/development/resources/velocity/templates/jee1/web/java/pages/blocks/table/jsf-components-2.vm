@@ -1,0 +1,122 @@
+    // <editor-fold defaultstate="collapsed" desc="inicialización de componentes JSF">
+    private void iniciar() throws Exception {
+#foreach($field in $page.rootFields)
+    #setFieldVariables()
+    #if($field.property.isBigDecimalData())
+        #writeBigDecimalInitialization()
+    #elseif($field.property.isDoubleData())
+        #writeDoubleInitialization()
+    #elseif($field.property.isFloatData())
+        #writeFloatInitialization()
+    #elseif($field.property.isDateData())
+        #writeDateInitialization()
+    #elseif($field.property.isTimeData())
+        #writeTimeInitialization()
+    #elseif($field.property.isTimestampData())
+        #writeTimestampInitialization()
+    #end
+    #if($field.property.isNumericPrimitive())
+        #writeRangeValidatorInitialization()
+    #elseif($field.property.isCharacterPrimitive())
+        #writeLengthValidatorInitialization()
+    #end
+#end
+        textoFilasPorPagina1Validator1.setMinimum(1L);
+        textoFilasPorPagina1Validator1.setMaximum(50L);
+#initDataProviders()
+    }
+    // </editor-fold>
+
+#break
+
+#macro(setFieldVariables)
+    #set($fieldClassName = "${field.property.wrapper.javaClassName}")
+    #set($fieldVariableName = "${field.property.wrapper.javaVariableName}")
+    #set($fieldFirstName = "${fieldClassName}1")
+    #set($fieldMiddleName = "${fieldClassName}2")
+    #set($fieldLastName = "${fieldClassName}3")
+#end##setFieldVariables
+
+#macro(writeBigDecimalInitialization)
+    #set($fieldPrecision = $VelocityAid.coalesce($field.property.precision, 16))
+    #set($fieldScale = $VelocityAid.coalesce($field.property.scale, 0))
+    #set($fieldMaxIntegerDigits = $fieldPrecision - $fieldScale)
+        converter${fieldFirstName}.setMinIntegerDigits(1);
+        converter${fieldFirstName}.setMaxIntegerDigits($fieldMaxIntegerDigits);
+        converter${fieldFirstName}.setMaxFractionDigits($fieldScale);
+#end##writeBigDecimalInitialization
+
+#macro(writeDoubleInitialization)
+    #set($pattern = '0.0###############E0')
+        converter${fieldFirstName}.setMinIntegerDigits(1);
+        converter${fieldFirstName}.setMaxIntegerDigits(1);
+        converter${fieldFirstName}.setMaxFractionDigits(16);
+        converter${fieldFirstName}.setPattern("$pattern");
+#end##writeDoubleInitialization
+
+#macro(writeFloatInitialization)
+    #set($pattern = '0.0#######E0')
+        converter${fieldFirstName}.setMinIntegerDigits(1);
+        converter${fieldFirstName}.setMaxIntegerDigits(1);
+        converter${fieldFirstName}.setMaxFractionDigits(8);
+        converter${fieldFirstName}.setPattern("$pattern");
+#end##writeFloatInitialization
+
+#macro(writeDateInitialization)
+        converter${fieldFirstName}.setPattern(TimeUtils.getDateFormat());
+        converter${fieldFirstName}.setType("date");
+#end##writeDateInitialization
+
+#macro(writeTimeInitialization)
+        converter${fieldFirstName}.setPattern(TimeUtils.getTimeFormat());
+        converter${fieldFirstName}.setType("time");
+#end##writeTimeInitialization
+
+#macro(writeTimestampInitialization)
+        converter${fieldFirstName}.setPattern(TimeUtils.getTimestampFormat());
+        converter${fieldFirstName}.setType("both");
+#end##writeTimestampInitialization
+
+#macro(writeLengthValidatorInitialization)
+    #if($field.property.isCharacterData())
+        #set($fieldMaxLength = 1)
+        #set($fieldMinLength = 0)
+    #elseif($field.property.isStringData())
+        #set($fieldMaxLength = $VelocityAid.coalesce($field.property.maxLength, 0))
+        #set($fieldMinLength = $VelocityAid.coalesce($field.property.minLength, 0))
+    #else
+        #set($fieldMaxLength = 0)
+        #set($fieldMinLength = 0)
+    #end
+    #if($fieldMinLength > 0)
+        validator${fieldFirstName}.setMinimum($fieldMinLength);
+    #end
+    #if($fieldMaxLength > 0)
+        validator${fieldFirstName}.setMaximum($fieldMaxLength);
+    #end
+#end##writeLengthValidatorInitialization
+
+#macro(writeRangeValidatorInitialization)
+    #if($field.property.minValue)
+        #set($minValue = $FALSE)
+        #set($minValue = $javaProgrammer.getJavaValue($field.property.minValue))
+        #if($minValue)
+            #if($field.property.isBigDecimalData() || $field.property.isDoubleData() || $field.property.isFloatData())
+........        validator${fieldFirstName}.setMinimum(ObjUtils.toDouble($minValue));
+            #else
+........        validator${fieldFirstName}.setMinimum(ObjUtils.toLong($minValue));
+            #end
+        #end
+    #end
+    #if($field.property.maxValue)
+        #set($maxValue = $FALSE)
+        #set($maxValue = $javaProgrammer.getJavaValue($field.property.maxValue))
+        #if($maxValue)
+            #if($field.property.isBigDecimalData() || $field.property.isDoubleData() || $field.property.isFloatData())
+........        validator${fieldFirstName}.setMaximum(ObjUtils.toDouble($maxValue));
+            #else
+........        validator${fieldFirstName}.setMaximum(ObjUtils.toLong($maxValue));
+            #end
+        #end
+    #end
+#end##writeRangeValidatorInitialization

@@ -1,0 +1,98 @@
+#parseJavaMacros()
+#setJavaVariables()
+#writeJavaLicense()
+#writeJavaPackage()
+#setLocalVariables()
+#addImports($imports)
+#writeJavaImports($imports)
+#writeJavaAuthor('Jorge Campins')
+@Stateless
+public class ${javaClassSimpleName}#writeJavaImplements()
+
+#writeEJBs()
+#foreach($operation in $operations)
+    #writeProcessMethods()
+#end##foreach-operation
+}
+#break
+
+#macro(setLocalVariables)
+    #set($entityClass = $entity.wrapper.javaClassName)
+    #set($entityVar   = $entity.wrapper.javaVariableName)
+    #set($entityVar   = 'instance')
+    #set($operations  = $ColUtils.filter($entity.businessOperationsList, $isProcessOperation))
+    #set($operations  = $ColUtils.sort($operations, $byOperationName))
+    #set($primaryGet  = "get$!{entity.primaryKeyProperty.wrapper.javaClassName}")
+    #set($primaryVar  = "$!{entity.primaryKeyProperty.wrapper.javaVariableName}")
+    #set($primaryVar  = 'id')
+    #setPersistentJavaType("$!{entity.primaryKeyProperty.wrapper.javaPrimitiveType}")
+    #set($primaryType = "$!persistentJavaType")
+    #set($facades = $VelocityAid.getNewLinkedHashSet())
+#end##setLocalVariables
+
+#macro(addImports)
+    #set($entityClass = $entity.wrapper.javaClassName)
+    #set($added = $interfaces.add("${entityClass}BusinessProcessLogicLocal"))
+    #set($added = $imports.add("${entityPackage}.${entityClass}"))
+    #set($added = $imports.add("${baseEntityConstantPackage}.${entityClass}Constants"))
+    #foreach($operation in $operations)
+        #set($message = "${entity.wrapper.javaClassName}${operation.wrapper.javaClassName}Message")
+        #set($added = $imports.add("${messagePackage}.${message}"))
+        #addParameterImports()
+    #end##foreach-operation
+##  #set($added = $imports.add("${project.rootPackageName}.lib.base.util.ObjUtils"))
+    #set($added = $imports.add("${project.rootPackageName}.ejb.core.sqlagent.SqlAgentBrokerLocal"))
+    #set($added = $imports.add('javax.ejb.EJB'))
+    #set($added = $imports.add('javax.ejb.Stateless'))
+#end##addImports
+
+#macro(addParameterImports)
+    #foreach($parameter in $operation.parametersList)
+        #if($parameter.linkedProperty)
+            #if($parameter.isPersistentEntity())
+                #set($added = $imports.add("${facadePackage}.${parameter.root.wrapper.javaClassName}FacadeLocal"))
+                #set($added = $facades.add($parameter.root))
+            #end
+        #end
+    #end##foreach-parameter
+#end##addParameterImports
+
+#macro(writeEJBs)
+    @EJB
+    private SqlAgentBrokerLocal sqlAgent;
+
+#end##writeEJBs
+
+#macro(writeProcessMethods)
+    #set($sql = "${entityClass}Constants.PROCESO_FUNCION_${operation.wrapper.javaConstantName}")
+    #set($message = "${entity.wrapper.javaClassName}${operation.wrapper.javaClassName}Message")
+    #set($process = "${operation.wrapper.javaVariableName}")
+##  // <editor-fold defaultstate="collapsed" desc="$process">
+    #writeOperationJavadocType1()
+    @Override
+    #if("$!operation.operationKind" == 'INSTANCE')
+....    public void ${process}(${message} message, ${entityClass} ${entityVar}) throws Exception {
+    #else
+....    public void ${process}(${message} message) throws Exception {
+    #end
+        if (message == null) {
+            throw new IllegalArgumentException(${message}.class.getSimpleName());
+        }
+    #if("$!operation.operationKind" == 'INSTANCE')
+        if (${entityVar} == null) {
+            throw new IllegalArgumentException(${entityClass}.class.getSimpleName());
+        }
+    #end
+        if (sqlAgent.isStoredProcedure($sql)) {
+            Object[] args = message.getArgumentosProcedimientoSql();
+            sqlAgent.executeProcedure($sql, args);
+            message.setGrabarRastroProcesoPendiente(false);
+            message.setGrabarRastroFuncionPendiente(false);
+            message.setGrabarTareasUsuarioPendiente(false);
+        } else {
+            throw new UnsupportedOperationException();
+        }
+    }
+##  // </editor-fold>
+
+#end##writeProcessMethods

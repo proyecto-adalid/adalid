@@ -1,0 +1,15 @@
+#set($capitalizedComponentName = $StringUtils.capitalize($componentName))
+$tab    private DropDown ${componentName} = new ListaDesplegable();
+
+#if("$!PaginaActualizacion" != '' && "$!divString" == '' && "$!tabString" == '')
+$tab    @Override
+#end
+$tab    public DropDown get${capitalizedComponentName}() {
+$tab        return ${componentName};
+$tab    }
+
+$tab    public void set${capitalizedComponentName}(DropDown dropDown) {
+$tab        ${componentName} = dropDown;
+$tab    }
+
+#break

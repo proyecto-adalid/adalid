@@ -1,0 +1,44 @@
+$tab<!-- detail form body opening -->
+$tab<div class="pos-div-detalle">
+$tab    <h:panelGrid id="panelGrid${panelGridSequence.next()}">
+$tab        <h:panelGrid id="panelGrid${panelGridSequence.next()}">
+$tab            <h:panelGrid id="panelGrid${panelGridSequence.next()}" columns="2">
+$tab                <webuijsf:image id="imagenMensaje1"
+$tab                    rendered="#{${pageBeanName}.gestor.urlImagenSeveridadMensajeDisponible}"
+$tab                    url="#{${pageBeanName}.gestor.urlImagenSeveridadMensaje}"/>
+$tab                <webuijsf:imageHyperlink id="hipervinculoMensaje1"
+$tab                    align="middle"
+$tab                    rendered="#{${pageBeanName}.gestor.mensajeDisponible}"
+$tab                    text="#{${pageBeanName}.gestor.mensaje}"
+$tab                    url="#{${pageBeanName}.gestor.urlAnclaPie1}"/>
+$tab            </h:panelGrid>
+$tab        </h:panelGrid>
+            #if($viewWithMasterHeading)
+$tab        <h:panelGrid id="panelGrid${panelGridSequence.next()}" style="margin-left: 1px">
+                #increaseIndentationBy(3)
+                #parse("$templatePath/blocks/master-heading.vm")
+                #decreaseIndentationBy(3)
+$tab        </h:panelGrid>
+            #end
+$tab        <h:panelGrid id="panelGrid${panelGridSequence.next()}"
+$tab            rendered="#{${pageBeanName}.gestor.filaDisponible}"
+$tab            style="width: ${page.entity.detailViewWidth}px"
+$tab            styleClass="pdq-grid-detalle-1">
+                #increaseIndentationBy(3)
+                #parse("$templatePath/blocks/detail/detail-heading.vm")
+                #parse("$templatePath/blocks/detail/detail-body.vm")
+                #parse("$templatePath/blocks/detail/detail-footing.vm")
+                #decreaseIndentationBy(3)
+$tab        </h:panelGrid>
+$tab        <h:panelGrid id="panelGrid${panelGridSequence.next()}">
+$tab            <h:panelGrid id="panelGrid${panelGridSequence.next()}">
+$tab                <webuijsf:anchor id="anchor${anchorSequence.next()}"/>
+$tab            </h:panelGrid>
+                #increaseIndentationBy(3)
+                #parse("$templatePath/blocks/crud-buttons-grid.vm")
+                #parse("$templatePath/blocks/navigation-hyperlinks-grid.vm")
+                #decreaseIndentationBy(3)
+$tab        </h:panelGrid>
+$tab    </h:panelGrid>
+$tab</div>
+$tab<!-- detail form body closing -->

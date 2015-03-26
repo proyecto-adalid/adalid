@@ -1,0 +1,637 @@
+#parsePostgreSQLMacros()
+#setPostgreSQLVariables()
+#writePostgreSQLLicense()
+#writePostgreSQLAuthor('Jorge Campins')
+#writeDelimiterDirective('??')
+#set($entities = $ColUtils.filter($project.entitiesList, $isEntitySqlCodeGenEnabled, $isProcessOperationInEntity, $isPersistentEntity))
+#set($entities = $ColUtils.sort($entities, $byEntityName))
+#foreach($entity in $entities)
+    #writeTemplate('remark-entity')
+    #writeCreateBusinessFunctions()
+#end##foreach-entity
+#writeGetPage12()
+#writeGetPage34()
+#writeDelimiterDirective(';')
+#break
+
+#macro(writeCreateBusinessFunctions)
+    #set($entityNumber = $project.getEntityNumber($entity))
+    #set($query = $entity.queryTable)
+    #set($entname = $entity.wrapper.sqlName)
+    #set($entname = $entity.wrapper.sqlSchemaQualifiedShortName)
+    #set($tabname = $entity.wrapper.sqlTableName)
+    #set($tabname = $entity.wrapper.sqlSchemaQualifiedShortTableName)
+    #if($entity.isNotTable())
+        #set($lowerEntity = $entity.root)
+        #set($upperEntity = $VelocityAid.coalesce($entity.baseTableRoot, $FALSE))
+    #elseif($entity.isJoinedTable())
+        #set($lowerEntity = $entity.root)
+        #set($upperEntity = $entity.root)
+    #else
+        #set($lowerEntity = $FALSE)
+        #set($upperEntity = $FALSE)
+    #end
+    #if($lowerEntity && $upperEntity)
+        #set($tabview = "${entity.wrapper.sqlSchemaQualifier}seudo_${entity.wrapper.sqlSchemaUnqualifiedShortName}")
+    #else
+        #set($tabview = $tabname)
+    #end
+    #set($primaryKey = $entity.primaryKeyProperty.wrapper.sqlName)
+    #set($bizSuffix = '$biz')
+    #set($logSuffix = '$log')
+    #set($jobSuffix = '$job')
+    #set($valSuffix = '$val')
+    #set($bigVariableName = '_big')
+    #set($bitVariableName = '_bit')
+    #set($csvVariableName = '_csv')
+    #set($msgVariableName = '_msg')
+    #set($logVariableName = '_log')
+    #set($rowVariableName = '_row')
+    #set($strVariableName = '_str')
+    #set($referencedColumns = $VelocityAid.getNewArrayList())
+    #set($added = $referencedColumns.add($entity.primaryKeyProperty))
+    #set($id = "${rowVariableName}.${entity.primaryKeyProperty.wrapper.sqlName}")
+    #if($entity.primaryKeyProperty.wrapper.sqlType != 'bigint')
+        #set($id = "cast($id as bigint)")
+    #end
+    #if($entity.businessKeyProperty)
+        #set($added = $referencedColumns.add($entity.businessKeyProperty))
+        #set($codigo = "${rowVariableName}.${entity.businessKeyProperty.wrapper.sqlName}")
+    #else
+        #set($codigo = 'null')
+    #end
+    #if($entity.nameProperty)
+        #set($added = $referencedColumns.add($entity.nameProperty))
+        #set($nombre = "${rowVariableName}.${entity.nameProperty.wrapper.sqlName}")
+    #else
+        #set($nombre = 'null')
+    #end
+    #if($entity.ownerProperty)
+        #set($added = $referencedColumns.add($entity.ownerProperty))
+        #set($propietario = "${rowVariableName}.${entity.ownerProperty.wrapper.sqlName}")
+        #set($propietario = "${rowVariableName}.${query.getSqlAlias($entity.ownerProperty)}")
+        #if($entity.ownerProperty.wrapper.sqlType != 'bigint')
+            #set($propietario = "cast($propietario as bigint)")
+        #end
+    #else
+        #set($propietario = 'null')
+    #end
+    #if($entity.segmentProperty)
+        #set($added = $referencedColumns.add($entity.segmentProperty))
+        #set($segmento = "${rowVariableName}.${entity.segmentProperty.wrapper.sqlName}")
+        #set($segmento = "${rowVariableName}.${query.getSqlAlias($entity.segmentProperty)}")
+        #if($entity.segmentProperty.wrapper.sqlType != 'bigint')
+            #set($segmento = "cast($segmento as bigint)")
+        #end
+    #else
+        #set($segmento = 'null')
+    #end
+    #set($statement = $query.getSqlSelectStatement($referencedColumns, $TRUE, $FALSE))
+    #set($statement = $statement.replace("$query.sqlJoinQualifier", "${rowVariableName}"))
+    #set($triggers = $entity.triggersList)
+    #set($operations = $ColUtils.filter($entity.operationsList, $isBasicDatabaseOperation))
+    #set($operations = $ColUtils.sort($operations, $byOperationName))
+    #foreach($operation in $operations)
+        #set($basicDatabaseOperationType = "$!operation.basicDatabaseOperationType")
+        #if($basicDatabaseOperationType == 'INSERT' || $basicDatabaseOperationType == 'UPDATE')
+            #set($instanceParameterName = "$!entity.primaryKeyProperty.wrapper.sqlVariableName")
+            #set($instanceParameterType = "$!entity.primaryKeyProperty.wrapper.sqlParameterType")
+            #flagOperationHasTransitionToStateAndTriggers()
+            #if($operationHasTransitionToStateAndTriggers)
+                #set($name       = $javaProgrammer.getJavaLowerConstantName($operation.name))
+                #set($function4  = "${entname}${sql_name_separator}${name}$jobSuffix")
+                #set($drop4rpl   = "$instanceParameterType")
+                #set($create4rpl = "$instanceParameterName $instanceParameterType")
+                #set($raise4pat  = '%')
+                #set($raise4rpl  = "$instanceParameterName")
+                #writeCreateBusinessFunction4()
+            #end
+        #end
+        #if($basicDatabaseOperationType == 'DELETE')
+            #set($instanceParameterName = "$!entity.primaryKeyProperty.wrapper.sqlVariableName")
+            #set($instanceParameterType = "$!entity.primaryKeyProperty.wrapper.sqlParameterType")
+            #if(!$triggers.isEmpty())
+                #set($name       = $javaProgrammer.getJavaLowerConstantName($operation.name))
+                #set($function4  = "${entname}${sql_name_separator}${name}$jobSuffix")
+                #set($drop4rpl   = "$instanceParameterType")
+                #set($create4rpl = "$instanceParameterName $instanceParameterType")
+                #set($raise4pat  = '%')
+                #set($raise4rpl  = "$instanceParameterName")
+                #writeCreateBusinessFunction4D()
+            #end
+        #end
+    #end##foreach-operation
+    #set($operations = $ColUtils.filter($entity.businessOperationsList, $isProcessOperation))
+    #set($operations = $ColUtils.sort($operations, $byOperationName))
+    #foreach($operation in $operations)
+        #set($parameterNames = '')
+        #set($parameterTypes = '')
+        #set($parameterPairs = '')
+        #set($parameterPlaceHolders = '')
+        #set($rastroParameterName = $sqlProgrammer.getSqlVariableName('rastro'))
+        #set($rastroParameterName = $sqlProgrammer.getSqlVariableName('super'))
+        #set($rastroParameterType = 'bigint')
+        #if("$!operation.operationKind" == 'INSTANCE')
+            #set($instanceParameterName = "$!operation.instanceParameter.wrapper.sqlVariableName")
+            #set($instanceParameterType = "$!operation.instanceParameter.wrapper.sqlParameterType")
+            #flagOperationHasTransitionToStateAndTriggers()
+        #else
+            #set($instanceParameterName = '')
+            #set($instanceParameterType = '')
+            #set($operationHasInitialStates = $FALSE)
+            #set($operationHasTransitionToStateAndTriggers = $FALSE)
+        #end
+        #flagOperationHasChecks()
+        #set($setters = '')
+        #foreach($parameter in $operation.parametersList)
+            #set($parameterName = "$parameter.wrapper.sqlVariableName")
+            #set($parameterType = $parameter.wrapper.sqlParameterType)
+            #set($parameterNames = "$parameterNames, $parameterName")
+            #set($parameterTypes = "$parameterTypes, $parameterType")
+            #set($parameterPairs = "$parameterPairs, $parameterName $parameterType")
+            #set($parameterPlaceHolders  = "$parameterPlaceHolders, %")
+            #if($instanceParameterName != '' && $parameter.linkedProperty)
+                #set($setters = "$setters, $parameter.linkedProperty.wrapper.sqlName = $parameter.wrapper.sqlVariableName")
+            #end
+            #if($parameter.isFileReferenceField() && $parameter.joinProperty)
+                #set($path2id = 'archivo_adjunto$id')
+                #set($setters = "$setters, $parameter.joinProperty.wrapper.sqlName = $path2id($parameter.wrapper.sqlVariableName)")
+            #end
+        #end##foreach-parameter
+        #if($operation.instanceParameter)
+            #foreach($property in $operation.instanceParameter.propertiesList)
+                #set($currentValue = $VelocityAid.coalesce($property.wrapper.getSqlCurrentValue(), $FALSE))
+                #if($currentValue)
+                    #set($setters = "$setters, $property.wrapper.sqlName = $currentValue")
+                #end
+            #end
+        #end
+        #if($setters != '')
+            #set($setters = $StringUtils.removeStart($setters, ', '))
+        #end
+        #set($name = $VelocityAid.coalesce($operation.processName, $operation.name))
+        #set($name = $javaProgrammer.getJavaLowerConstantName($name))
+        #if("$!operation.overloading" == 'FALSE')
+            #set($bizSuffix = '$biz')
+        #else
+            #set($bizSuffix = '')
+        #end
+        #set($function1  = "${entname}${sql_name_separator}${name}")
+        #set($function2  = "${entname}${sql_name_separator}${name}$bizSuffix")
+        #set($function3  = "${entname}${sql_name_separator}${name}$logSuffix")
+        #set($function4  = "${entname}${sql_name_separator}${name}$jobSuffix")
+        #set($function5  = "${entname}${sql_name_separator}${name}$valSuffix")
+        #set($drop1rpl   = "$rastroParameterType$parameterTypes")
+        #set($create1rpl = "$rastroParameterName $rastroParameterType$parameterPairs")
+        #set($raise1pat  = "%$parameterPlaceHolders")
+        #set($raise1rpl  = "$rastroParameterName$parameterNames")
+        #if($bizSuffix == '')
+            #set($drop2rpl   = $StringUtils.removeStart($parameterTypes, ', '))
+            #set($create2rpl = $StringUtils.removeStart($parameterPairs, ', '))
+            #set($raise2pat  = $StringUtils.removeStart($parameterPlaceHolders, ', '))
+            #set($raise2rpl  = $StringUtils.removeStart($parameterNames, ', '))
+        #else
+            #set($drop2rpl   = $drop1rpl)
+            #set($create2rpl = $create1rpl)
+            #set($raise2pat  = $raise1pat)
+            #set($raise2rpl  = $raise1rpl)
+        #end
+        #set($drop3rpl   = $drop1rpl)
+        #set($create3rpl = $create1rpl)
+        #set($raise3pat  = $raise1pat)
+        #set($raise3rpl  = $raise1rpl)
+        #set($drop4rpl   = "$instanceParameterType")
+        #set($create4rpl = "$instanceParameterName $instanceParameterType")
+        #set($raise4pat  = '%')
+        #set($raise4rpl  = "$instanceParameterName")
+        #set($drop5rpl   = $drop2rpl)
+        #set($create5rpl = $create2rpl)
+        #set($raise5pat  = $raise2pat)
+        #set($raise5rpl  = $raise2rpl)
+        #writeCreateBusinessFunction1()
+        #writeCreateBusinessFunction2()
+        #writeCreateBusinessFunction3()
+        #if($operationHasTransitionToStateAndTriggers)
+            #writeCreateBusinessFunction4()
+        #end
+        #if($operationHasInitialStates || $operationHasChecks)
+            #writeCreateBusinessFunction5()
+        #end
+    #end##foreach-operation
+#end##writeCreateBusinessFunctions
+
+#macro(writeCreateBusinessFunction1)
+#set($operationNumber = $project.getOperationNumber($operation))
+drop function if exists ${function1}(${drop1rpl}) cascade;
+#writeDelimiter('??')
+create or replace function ${function1}(${create1rpl}) returns integer as $$
+declare
+    $msgVariableName character varying;
+    $logVariableName rastro_proceso%ROWTYPE;
+begin
+    raise notice '${function1}(${raise1pat})', ${raise1rpl};
+    if ($rastroParameterName is not null and $rastroParameterName > 0) then
+        select * into $logVariableName from rastro_proceso where id_rastro_proceso = $rastroParameterName;
+        if not found then
+            $msgVariableName := format(gettext('no existe %s con %s = %s'), 'rastro de proceso', 'id', $rastroParameterName);
+            raise exception using message = $msgVariableName;
+        end if;
+        #set($conditions = "id_rastro_proceso = $rastroParameterName")
+        create temporary table rastro_proceso_temporal on commit drop as select * from rastro_proceso where $conditions;
+        #set($setters010 = "numero_condicion_eje_fun = 21, descripcion_error = gettext('funcion ejecutada exitosamente')")
+        update rastro_proceso_temporal set $setters010;${EOL}## where $conditions;
+    end if;
+#if($operationHasInitialStates || $operationHasChecks)
+    perform ${function5}($!{raise5rpl});
+#end
+    perform ${function2}($!{raise2rpl});
+    if ($rastroParameterName is not null and $rastroParameterName > 0) then
+        perform ${function3}($!{raise3rpl});
+    end if;
+#if($operationHasTransitionToStateAndTriggers)
+    if ($instanceParameterName is not null and $instanceParameterName > 0) then
+        perform ${function4}($!{raise4rpl});
+    end if;
+#end
+    return 0;
+end;
+$$ language plpgsql;
+#writeDelimiter('??')
+#end##writeCreateBusinessFunction1
+
+#macro(writeCreateBusinessFunction2)
+drop function if exists ${function2}(${drop2rpl}) cascade;
+#writeDelimiter('??')
+#if($setters == '')
+--  /*
+#end
+create or replace function ${function2}(${create2rpl}) returns integer as $$
+declare
+    $msgVariableName character varying;
+--  $logVariableName rastro_proceso%ROWTYPE;
+begin
+    raise notice '${function2}(${raise2pat})'#if("$!{raise2rpl}" != ''), ${raise2rpl}#end;
+--  select * into $logVariableName from rastro_proceso_temporal;
+--  if not found then
+--      $msgVariableName := format(gettext('no existe %s con %s = %s'), 'rastro de proceso temporal', 'id', pg_backend_pid());
+--      raise exception using message = $msgVariableName;
+--  end if;
+#if($setters != '')
+    update $tabview set $setters where $primaryKey = $instanceParameterName;
+    if not found then
+        $msgVariableName := format(gettext('no existe %s con %s = %s'), '$entity.wrapper.validDefaultLabel', 'id', $instanceParameterName);
+        raise exception using message = $msgVariableName;
+    end if;
+#end
+    return 0;
+end;
+$$ language plpgsql;
+#writeDelimiter('??')
+#if($setters == '')
+--  */
+#end
+#end##writeCreateBusinessFunction2
+
+#macro(writeCreateBusinessFunction3)
+drop function if exists ${function3}(${drop3rpl}) cascade;
+#writeDelimiter('??')
+create or replace function ${function3}(${create3rpl}) returns integer as $$
+declare
+    $bigVariableName bigint;
+    $msgVariableName character varying;
+    $logVariableName rastro_proceso%ROWTYPE;
+begin
+    raise notice '${function3}(${raise3pat})'#if("$!{raise3rpl}" != ''), ${raise3rpl}#end;
+    select * into $logVariableName from rastro_proceso_temporal;
+    if not found then
+        $msgVariableName := format(gettext('no existe %s con %s = %s'), 'rastro de proceso temporal', 'id', pg_backend_pid());
+        raise exception using message = $msgVariableName;
+    end if;
+--  perform rastro_proceso$update(${rastroParameterName}, 21, null, gettext('funcion ejecutada exitosamente'));
+    #set($numero_condicion_eje_fun = "${logVariableName}.numero_condicion_eje_fun")
+    #set($nombre_archivo = "${logVariableName}.nombre_archivo")
+    #set($descripcion_error = "${logVariableName}.descripcion_error")
+    perform rastro_proceso$update(${rastroParameterName}, $numero_condicion_eje_fun, $nombre_archivo, $descripcion_error);
+    $bigVariableName := rastro_funcion$insert($rastroParameterName);
+#set($parameters = $operation.parametersList)
+#foreach($parameter in $parameters)
+    #if($parameter.isAuditable())
+        #if($parameter.isStringData())
+            #set($foo = $parameter.wrapper.sqlVariableName)
+        #else
+            #set($foo = "cast($parameter.wrapper.sqlVariableName as character varying)")
+        #end
+....    perform rastro_funcion_par$insert($bigVariableName, $project.getParameterNumber($parameter), $foo);
+    #end
+#end##foreach-parameter
+    return 0;
+end;
+$$ language plpgsql;
+#writeDelimiter('??')
+#end##writeCreateBusinessFunction3
+
+#macro(writeCreateBusinessFunction4)
+drop function if exists ${function4}(${drop4rpl}) cascade;
+#writeDelimiter('??')
+create or replace function ${function4}(${create4rpl}) returns integer as $$
+declare
+    $csvVariableName character varying;
+    $msgVariableName character varying;
+--  $rowVariableName $tabview%ROWTYPE;
+    $rowVariableName record;
+begin
+    raise notice '${function4}(${raise4pat})', ${raise4rpl};
+--  select * into $rowVariableName from $tabview where $primaryKey = $instanceParameterName;
+    $statement.replace("$EOL", "$EOL    ")
+    where ${tabname}.${primaryKey} = $instanceParameterName;
+    if not found then
+        $msgVariableName := format(gettext('no existe %s con %s = %s'), '$entity.wrapper.validDefaultLabel', 'id', $instanceParameterName);
+        raise exception using message = $msgVariableName;
+    end if;
+    #foreach($state in $finalStates)
+........--  state: $state.name
+        #set($expname = $state.wrapper.sqlSchemaQualifiedShortExpressionFunctionName)
+        #set($initialStateBusinessOperationsList = $state.initialStateBusinessOperationsList)
+        #if(!$initialStateBusinessOperationsList.isEmpty())
+........    if ($expname($instanceParameterName)) then
+            #foreach($isbop in $initialStateBusinessOperationsList)
+                #set($isbopno = $project.getOperationNumber($isbop))
+........        $csvVariableName := concat_csv($csvVariableName, $isbopno); -- $isbop.name
+            #end##foreach-isbop
+            #foreach($trigger in $triggers)
+                #set($funcion = $project.getOperationNumber($trigger.operation))
+                #if("$!trigger.operation.operationKind" == 'INSTANCE')
+                    #set($instanceOperation = $TRUE)
+                #else
+                    #set($instanceOperation = $FALSE)
+                #end
+                #if($trigger.state == $state)
+............    --  trigger: $trigger.name ($trigger.state.name, $trigger.operation.name)
+............        perform tarea_usuario$insert(${funcion}#if($instanceOperation), $id, $codigo, $nombre, $propietario, $segmento#end);
+                #end
+            #end##foreach-trigger
+........    end if;
+        #end
+    #end##foreach-state
+    perform tarea_usuario$cancelar$batch($entityNumber, $id, $csvVariableName);
+    return 0;
+end;
+$$ language plpgsql;
+#writeDelimiter('??')
+#end##writeCreateBusinessFunction4
+
+#macro(writeCreateBusinessFunction4D)
+drop function if exists ${function4}(${drop4rpl}) cascade;
+#writeDelimiter('??')
+create or replace function ${function4}(${create4rpl}) returns integer as $$
+declare
+    $csvVariableName character varying;
+begin
+    raise notice '${function4}(${raise4pat})', ${raise4rpl};
+    perform tarea_usuario$cancelar$batch($entityNumber, $instanceParameterName, $csvVariableName);
+    return 0;
+end;
+$$ language plpgsql;
+#writeDelimiter('??')
+#end##writeCreateBusinessFunction4D
+
+#macro(writeCreateBusinessFunction5)
+#clearQueryTablesMap()
+#set($parameters = $operation.parametersList)
+#set($checkReferencedColumns = $operation.checkReferencedColumnsList)
+drop function if exists ${function5}(${drop5rpl}) cascade;
+#writeDelimiter('??')
+create or replace function ${function5}(${create5rpl}) returns boolean as $$
+declare
+    $bigVariableName bigint;
+    $bitVariableName boolean;
+    $msgVariableName character varying;
+    $strVariableName character varying := '%s con %s = %s no cumple con los requisitos para ejecutar esta funcion';
+#if(!$checkReferencedColumns.isEmpty())
+    #foreach($parameter in $parameters)
+        #if($parameter.isPersistentEntity())
+            #set($parameterQueryTable = $parameter.queryTable)
+            #if($parameterQueryTable.containsAny($checkReferencedColumns))
+                #set($parameterRecordName = "${rowVariableName}${parameter.wrapper.sqlVariableName}")
+                #set($added = $queryTablesMap.put($parameterRecordName, $parameterQueryTable))
+............    ${parameterRecordName} record;
+            #end
+        #end
+    #end##foreach-parameter
+#end
+begin
+    raise notice '${function5}(${raise5pat})'#if("$!{raise5rpl}" != ''), ${raise5rpl}#end;
+#if(!$initialStates.isEmpty())
+....    $bitVariableName := false;
+    #foreach($state in $initialStates)
+        #set($expname = $state.wrapper.sqlName)
+        #set($expname = $state.wrapper.sqlExpressionFunctionName)
+        #set($expname = $state.wrapper.sqlSchemaQualifiedShortExpressionFunctionName)
+....--
+....--  state: $state.name
+....--
+....    if ($bitVariableName is false) then
+....        $bitVariableName := ${expname}($instanceParameterName);
+....    end if;
+    #end
+....--
+....--  raise exception if the instance is not in a valid state
+....--
+....    if ($bitVariableName is not true) then
+....        $msgVariableName := format(gettext($strVariableName), '$entity.wrapper.validDefaultLabel', 'id', $instanceParameterName);
+....        raise exception using message = $msgVariableName;
+....    end if;
+#end
+#if(!$checkReferencedColumns.isEmpty())
+    #foreach($parameter in $parameters)
+        #if($parameter.isPersistentEntity())
+            #set($parameterQueryTable = $parameter.queryTable)
+            #if($parameterQueryTable.containsAny($checkReferencedColumns))
+                #set($parameterRecordName = "${rowVariableName}${parameter.wrapper.sqlVariableName}")
+                #set($parameterSelectStatement = $parameterQueryTable.getSqlSelectStatement($checkReferencedColumns, $TRUE, $FALSE))
+                #set($parameterSelectStatement = $parameterSelectStatement.replace("$parameterQueryTable.sqlJoinQualifier", "${parameterRecordName}"))
+                #set($parameterTableName = $parameter.wrapper.sqlTableName)
+                #set($parameterPrimaryKey = $parameter.primaryKeyProperty.wrapper.sqlName)
+                #set($parameterWhereClause = "${parameter.wrapper.sqlTableName}.${parameterPrimaryKey} = ${parameter.wrapper.sqlVariableName}")
+............--
+............--  select: $parameterRecordName
+............--
+............    $parameterSelectStatement.replace("${EOL}", "${EOL}    ")
+............    where $parameterWhereClause;
+            #end
+        #end
+    #end##foreach-parameter
+#end
+#set($sqlQualifier = $VelocityAid.valueOf($SqlQualifierType, 'SUFFIX'))
+#set($checkPrefix = 'los argumentos de la operación no cumplen con la restricción')
+#foreach($check in $checksList)
+    #set($checkName = "${entity.wrapper.sqlName}.${operation.wrapper.sqlName}.${check.wrapper.sqlName}")
+    #set($checkStr1 = "$!check.wrapper.defaultErrorMessageChoice")
+    #set($checkStr2 = "$!check.wrapper.defaultDescription")
+    #set($checkStr3 = "$!checkPrefix $checkName")
+    #set($checkText = "$!StrUtils.coalesce($checkStr1, $checkStr2, $checkStr3)")
+##  #set($checkText = "$!check.name: $checkText")
+    #set($checkText = "$!StrUtils.getStringAscii($checkText)")
+--
+--  check: $check.name
+--#*
+    #set($parameterizedExpression = $check.wrapper.getSqlParameterizedExpression($queryTablesMap, $sqlQualifier))
+    #set($expressionParametersMap = $parameterizedExpression.parametersMap)
+    #set($expressionNamedValueMap = $parameterizedExpression.namedValuesMap)
+    #foreach($expressionNamedValue in $expressionNamedValueMap)
+    --  $expressionNamedValue: $expressionNamedValueMap.get($expressionNamedValue)
+    #end
+    #foreach($expressionParameterKey in $expressionParametersMap.keySet())
+    --  $expressionParameterKey: $expressionParametersMap.get($expressionParameterKey)
+    #end
+--  $bitVariableName := $parameterizedExpression.expression;
+--*#
+    $bitVariableName := $check.wrapper.getSqlExpression($queryTablesMap, $sqlQualifier);
+    $strVariableName := '$checkText';
+    if ($bitVariableName is not true) then
+        $msgVariableName := gettext($strVariableName);
+        raise exception using message = $msgVariableName;
+    end if;
+#end
+    return true;
+end;
+$$ language plpgsql;
+#writeDelimiter('??')
+#end##writeCreateBusinessFunction5
+
+#macro(clearQueryTablesMap)
+#if($queryTablesMap)
+....$queryTablesMap.clear()##
+#else
+    #set($queryTablesMap = $VelocityAid.getNewLinkedHashMap())
+#end
+#end##clearQueryTablesMap
+
+#macro(flagOperationHasTransitionToState)
+    #set($operationHasTransitionToState = $FALSE)
+    #set($finalStates = $operation.finalStatesList)
+    #if(!$finalStates.isEmpty())
+        #set($operationHasTransitionToState = $TRUE)
+    #end
+#end##flagOperationHasTransitionToState
+
+#macro(flagOperationHasTransitionToStateAndTriggers)
+    #set($operationHasInitialStates = $FALSE)
+    #set($initialStates = $operation.initialStatesList)
+    #if(!$initialStates.isEmpty())
+        #set($operationHasInitialStates = $TRUE)
+    #end
+    #set($operationHasTransitionToStateAndTriggers = $FALSE)
+    #if(!$triggers.isEmpty())
+        #set($finalStates = $operation.finalStatesList)
+        #if(!$finalStates.isEmpty())
+            #set($operationHasTransitionToStateAndTriggers = $TRUE)
+        #end
+    #end
+#end##flagOperationHasTransitionToStateAndTriggers
+
+#macro(flagOperationHasChecks)
+    #set($operationHasChecks = $FALSE)
+    #set($checksList = $operation.checksList)
+    #if(!$checksList.isEmpty())
+        #set($operationHasChecks = $TRUE)
+    #end
+#end##flagOperationHasChecks
+
+#macro(writeGetOperationNumberGetter)
+#set($dictionary = $project.operationsDictionary)
+#set($keys = $VelocityAid.sortedPropertyNames($dictionary))
+drop function if exists get_operation_number(character varying) cascade;
+#writeDelimiter('??')
+create or replace function get_operation_number(_key$ character varying) returns bigint as $$
+begin
+    return
+        case _key$
+#foreach($key in $keys)
+        when '$key' then $dictionary.getProperty($key)
+#end
+        else null end;
+end;
+$$ language plpgsql;
+#writeDelimiter('??')
+#end##writeGetOperationNumberGetter
+
+#macro(writeGetParameterNumberGetter)
+#set($dictionary = $project.parametersDictionary)
+#set($keys = $VelocityAid.sortedPropertyNames($dictionary))
+drop function if exists get_parameter_number(character varying) cascade;
+#writeDelimiter('??')
+create or replace function get_parameter_number(_key$ character varying) returns bigint as $$
+begin
+    return
+        case _key$
+#foreach($key in $keys)
+        when '$key' then $dictionary.getProperty($key)
+#end
+        else null end;
+end;
+$$ language plpgsql;
+#writeDelimiter('??')
+#end##writeGetParameterNumberGetter
+
+#macro(writeGetPage12)
+drop function if exists get_resource_page(character varying) cascade;
+#writeDelimiter('??')
+create or replace function get_resource_page(_key$ character varying) returns character varying as $$
+begin
+    #set($treeMap = $VelocityAid.getNewTreeMap())
+    #set($modules = $ColUtils.filter($project.modulesList, $isWebModule))
+    #set($modules = $ColUtils.sort($modules, $byProjectDeclaringFieldName))
+    #foreach($module in $modules)
+        #set($pages = $module.displaysList)
+        #set($pages = $ColUtils.sort($pages, $byDisplayName))
+        #foreach($page in $pages)
+            #if($page.master)
+            #elseif($page.entity && "$!page.displayMode" == 'READING' && "$!page.displayFormat" == 'DETAIL')
+                #set($added = $treeMap.put($page.entity.wrapper.sqlSchemaQualifiedShortName, $page.name))
+            #end
+        #end
+        #foreach($page in $pages)
+            #if($page.master)
+            #elseif($page.entity && "$!page.displayMode" == 'WRITING' && "$!page.displayFormat" == 'DETAIL')
+                #set($added = $treeMap.put($page.entity.wrapper.sqlSchemaQualifiedShortName, $page.name))
+            #end
+        #end
+    #end
+    return
+        case _key$
+    #foreach($key in $treeMap.keySet())
+        when '$key' then '$treeMap.get($key)'
+    #end
+        else null end;
+end;
+$$ language plpgsql;
+#end##writeGetPage12
+
+#macro(writeGetPage34)
+drop function if exists get_function_page(character varying) cascade;
+#writeDelimiter('??')
+create or replace function get_function_page(_key$ character varying) returns character varying as $$
+begin
+    #set($treeMap = $VelocityAid.getNewTreeMap())
+    #set($modules = $ColUtils.filter($project.modulesList, $isWebModule))
+    #set($modules = $ColUtils.sort($modules, $byProjectDeclaringFieldName))
+    #foreach($module in $modules)
+        #set($pages = $module.displaysList)
+        #set($pages = $ColUtils.sort($pages, $byDisplayName))
+        #foreach($page in $pages)
+            #if($page.master)
+            #elseif($page.entity && "$!page.displayMode" == 'PROCESSING' && "$!page.displayFormat" == 'CONSOLE')
+                #set($added = $treeMap.put($page.entity.wrapper.sqlSchemaQualifiedShortName, $page.name))
+            #end
+        #end
+    #end
+    return
+        case _key$
+    #foreach($key in $treeMap.keySet())
+        when '$key' then '$treeMap.get($key)'
+    #end
+        else null end;
+end;
+$$ language plpgsql;
+#end##writeGetPage34

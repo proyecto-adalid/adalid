@@ -1,0 +1,70 @@
+#break
+
+#macro(writeRecursoConsultableImport)
+#if($esRecursoConsultable)
+    #set($added = $imports.add("${project.rootPackageName}.lib.core.db.xdp.RecursoConsultableDataProvider"))
+    #set($added = $interfaces.add('RecursoConsultableDataProvider'))
+#end
+#end##writeRecursoConsultableImport
+
+#macro(writeRecursoConsultableImplementation)
+#if($esRecursoConsultable)
+    public static final long FUNCION_SELECT_RECURSO = ${project.getOperationNumber($selectOperationKey, $entity)}L;
+
+    @Override
+    public long getFuncionConsultarRecurso() {
+        return FUNCION_SELECT_RECURSO;
+    }
+
+    @Override
+    public void ejecutarFuncionSelect() throws ExcepcionAplicacion {
+        if (isFuncionSelectAutorizada()) {
+            ejecutarFuncionSelect(getFuncionSelect());
+        } else {
+            ejecutarFuncionSelect(getFuncionConsultarRecurso());
+        }
+    }
+
+    @Override
+    public void ejecutarFuncionSelect(long funcion) throws ExcepcionAplicacion {
+        ejecutarFuncionSelect(funcion, new FiltroBusqueda());
+    }
+
+    @Override
+    public void ejecutarFuncionSelect(Long filtro) throws ExcepcionAplicacion {
+        if (isFuncionSelectAutorizada()) {
+            ejecutarFuncionSelect(getFuncionSelect(), filtro);
+        } else {
+            ejecutarFuncionSelect(getFuncionConsultarRecurso(), filtro);
+        }
+    }
+
+    @Override
+    public void ejecutarFuncionSelect(long funcion, Long filtro) throws ExcepcionAplicacion {
+        if (filtro == null) {
+            ejecutarFuncionSelect(funcion, new FiltroBusqueda());
+        } else {
+            ejecutarFuncionSelect(funcion, new FiltroBusqueda(filtro));
+        }
+    }
+
+    @Override
+    public void ejecutarFuncionSelect(FiltroBusqueda filtro) throws ExcepcionAplicacion {
+        if (isFuncionSelectAutorizada()) {
+            ejecutarFuncionSelect(getFuncionSelect(), filtro);
+        } else {
+            ejecutarFuncionSelect(getFuncionConsultarRecurso(), filtro);
+        }
+    }
+
+    @Override
+    public void ejecutarFuncionSelect(long funcion, FiltroBusqueda filtro) throws ExcepcionAplicacion {
+        if (funcion == $FUNCION_SELECT) {
+            consultar${entity.wrapper.javaClassName}(filtro);
+        } else {
+            throw new UnsupportedOperationException();
+        }
+    }
+
+#end
+#end##writeRecursoConsultableImplementation

@@ -1,0 +1,53 @@
+#parse("$templatePath/blocks/set-field-variables.vm")
+$tab<!-- detail body opening -->
+    #parse("$templatePath/blocks/detail/grid.vm")
+    #parse("$templatePath/blocks/detail/tab.vm")
+$tab<!-- detail body closing -->
+#break
+
+#macro(writeIdentificacionFila1)
+$tab    <h:panelGrid id="panelGrid${panelGridSequence.next()}"
+$tab        styleClass="pdq-grid-etiqueta-1">
+$tab        <webuijsf:label id="etiquetaIdentificacionFila1"
+$tab            binding="#{${pageBeanName}.etiquetaIdentificacionFila1}"
+$tab            text="#{${pageBeanName}.gestor.i18n.textoEtiquetaIdentificacionFila}"
+$tab            toolTip="#{${pageBeanName}.gestor.i18n.toolTipEtiquetaIdentificacionFila}"/>
+$tab    </h:panelGrid>
+$tab    <h:panelGrid id="panelGrid${panelGridSequence.next()}"
+$tab        columns="2"
+$tab        styleClass="pdq-grid-elemento-1">
+$tab        <webuijsf:staticText id="textoIdentificacionFila1"
+$tab            style="font-weight: bold"
+$tab            text="#{${pageBeanName}.gestor.identificacionFila}"/>
+$tab        <webuijsf:image id="imagenFilaProcesada1"
+$tab            toolTip="#{${pageBeanName}.gestor.toolTipImagenFilaProcesada}"
+$tab            url="#{${pageBeanName}.gestor.urlImagenFilaProcesada}"/>
+$tab    </h:panelGrid>
+#end##writeIdentificacionFila1
+
+#macro(writeDenominacionFilaMaestro1)
+$tab    <h:panelGrid id="panelGrid${panelGridSequence.next()}"
+$tab        rendered="#{${pageBeanName}.gestor.paginaConsultaConMaestro}"
+$tab        styleClass="pdq-grid-etiqueta-1" >
+$tab        <webuijsf:label id="etiquetaDenominacionFilaMaestro1"
+$tab            binding="#{${pageBeanName}.etiquetaDenominacionFilaMaestro1}"
+    #if($page.reference)
+##              text="$page.reference.wrapper.xmlValidDefaultShortLabel"
+$tab            text="BundleParametros.${page.entity.wrapper.sqlSchemaQualifiedShortName}.${page.reference.wrapper.sqlName}"
+    #else
+$tab            text="#{${pageBeanName}.gestor.i18n.textoEtiquetaDenominacionFilaMaestro}"
+    #end
+$tab            toolTip="#{${pageBeanName}.gestor.i18n.toolTipEtiquetaDenominacionFilaMaestro}"/>
+$tab    </h:panelGrid>
+$tab    <h:panelGrid id="panelGrid${panelGridSequence.next()}"
+$tab        columns="2"
+$tab        rendered="#{${pageBeanName}.gestor.paginaConsultaConMaestro}"
+$tab        styleClass="pdq-grid-elemento-1">
+$tab        <webuijsf:staticText id="textoDenominacionFilaMaestro1"
+$tab            style="font-weight: bold"
+$tab            text="#{${pageBeanName}.gestor.denominacionFilaMaestro}"/>
+$tab        <webuijsf:image id="imagenFilaMaestro1"
+$tab            toolTip="#{${pageBeanName}.gestor.toolTipImagenFilaProcesada}"
+$tab            url="#{${pageBeanName}.gestor.urlImagenMaestroFilaProcesada}"/>
+$tab    </h:panelGrid>
+#end##writeDenominacionFilaMaestro1

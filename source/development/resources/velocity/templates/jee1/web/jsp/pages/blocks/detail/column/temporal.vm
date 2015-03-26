@@ -1,0 +1,70 @@
+#if($field.property.isDateData())
+    #set($fieldMaxLength = 10)##dd-mm-yyyy
+#elseif($field.property.isTimeData())
+    #set($fieldMaxLength = 8)##hh:mm AM/PM
+#elseif($field.property.isTimestampData())
+    #set($fieldMaxLength = 22)##dd-mm-yyyy hh:mm:ss AM/PM
+#else
+    #set($fieldMaxLength = 0)
+#end
+$tab<h:panelGrid id="panelGrid${panelGridSequence.next()}"
+    #if($tabString == '')
+$tab    rendered="#{${pageBeanName}.asistente.grid${fieldClassName}Rendered}"
+    #else
+$tab    rendered="#{${pageBeanName}.asistente.grid${fieldClassName}RenderedInsideTabs}"
+    #end
+$tab    styleClass="pdq-grid-etiqueta-1">
+$tab    <webuijsf:label id="label${fieldFirstName}${tabString}"
+$tab        binding="#{${pageBeanName}.label${fieldFirstName}${tabString}}"
+$tab        for="${campo1}${tabString}"
+##          text="$field.property.wrapper.xmlValidDefaultShortLabel"/>
+$tab        text="BundleParametros.${page.entity.wrapper.sqlSchemaQualifiedShortName}.${field.property.wrapper.sqlName}"/>
+$tab</h:panelGrid>
+$tab<h:panelGrid id="panelGrid${panelGridSequence.next()}"
+$tab    columns="7"
+    #if($tabString == '')
+$tab    rendered="#{${pageBeanName}.asistente.grid${fieldClassName}Rendered}"
+    #else
+$tab    rendered="#{${pageBeanName}.asistente.grid${fieldClassName}RenderedInsideTabs}"
+    #end
+$tab    styleClass="pdq-grid-elemento-1">
+    #if($field.property.isDateData())
+$tab    <webuijsf:calendar id="${campo1}${tabString}"
+$tab        binding="#{${pageBeanName}.${campo1}${tabString}}"
+$tab        converter="#{${pageBeanName}.converter${fieldFirstName}}"
+$tab        maxDate="#{${pageBeanName}.gestor.defaultMaxDate}"
+$tab        minDate="#{${pageBeanName}.gestor.defaultMinDate}"
+$tab        readOnly="$fieldReadOnly"
+$tab        required="$fieldRequired"
+$tab        selectedDate="#{${sourceVar}.${fieldVariableName}}"
+##          toolTip="$field.property.wrapper.xmlValidDefaultTooltip"/>
+$tab        toolTip="BundleParametros.${page.entity.wrapper.sqlSchemaQualifiedShortName}.${field.property.wrapper.sqlName}"
+$tab        validatorExpression="#{${pageBeanName}.${campo1}_validate}"/>
+    #else
+$tab    <webuijsf:textField id="${campo1}${tabString}"
+$tab        binding="#{${pageBeanName}.${campo1}${tabString}}"
+$tab        columns="20"
+$tab        converter="#{${pageBeanName}.converter${fieldFirstName}}"
+        #if($fieldMaxLength > 0)
+$tab        maxLength="$fieldMaxLength"
+        #end
+$tab        readOnly="$fieldReadOnly"
+$tab        required="$fieldRequired"
+$tab        text="#{${sourceVar}.${fieldVariableName}}"
+##          toolTip="$field.property.wrapper.xmlValidDefaultTooltip"/>
+$tab        toolTip="BundleParametros.${page.entity.wrapper.sqlSchemaQualifiedShortName}.${field.property.wrapper.sqlName}"
+$tab        validatorExpression="#{${pageBeanName}.${campo1}_validate}"/>
+    #end
+$tab    <webuijsf:staticText id="${campo1}${tabString}Texto1"
+$tab        binding="#{${pageBeanName}.${campo1}${tabString}Texto1}"
+$tab        converter="#{${pageBeanName}.converter${fieldFirstName}}"/>
+$tab    <webuijsf:message id="message${fieldFirstName}${tabString}"
+$tab        for="${campo1}${tabString}"/>
+$tab    <webuijsf:helpInline id="helpInline${fieldFirstName}${tabString}"
+$tab        binding="#{${pageBeanName}.helpInline${fieldFirstName}${tabString}}"
+$tab        rendered="#{SessionBean1.contextoSesion.helpInlineRendered}"
+$tab        styleClass="pdq-helpInline-field"
+##          text="$field.property.wrapper.xmlValidDefaultShortDescription"
+$tab        text="BundleParametros.${page.entity.wrapper.sqlSchemaQualifiedShortName}.${field.property.wrapper.sqlName}"
+$tab        type="field"/>
+$tab</h:panelGrid>

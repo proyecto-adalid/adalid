@@ -1,0 +1,62 @@
+    // <editor-fold defaultstate="collapsed" desc="metodos para establecer las opciones de las pestañas">
+    char bookmark$bookmarkSequence.next();
+
+#foreach($tab in $entity.tabsList)
+    public boolean isTab${tab.wrapper.javaCapitalizedName}Rendered() {
+        return bean.getGestor().isFilaNoProcesada() && isTab${tab.wrapper.javaCapitalizedName}Filtered();
+    }
+#*
+    /**
+    #foreach($tabField in $tab.tabFieldsList)
+     * $tabField.property.name
+    #end##foreach-tabField
+     */
+*#
+    public boolean isTab${tab.wrapper.javaCapitalizedName}Filtered() {
+    #if($tab.renderingFilter)
+        String string;
+        Object object;
+        RowKey rowKey = bean.getGestor().getCurrentRowKey();
+        if (bean.get${EntityDataProvider}().isNotRowAvailable(rowKey)) {
+            return false;
+        }
+        #set($parameterizedExpression = $tab.renderingFilter.wrapper.javaParameterizedExpression)
+        #set($parametersMap = $parameterizedExpression.parametersMap)
+        #set($queryTable = $entity.queryTable)
+        #foreach($parameterKey in $parametersMap.keySet())
+            #set($dataArtifact = $parametersMap.get($parameterKey))
+            #setArtifactVariables($dataArtifact)
+            #if($dataArtifact == $entity)
+........        string = "$!sqlProgrammer.getSqlAlias($dataArtifact.primaryKeyProperty, $queryTable)";
+........        object = bean.get${EntityDataProvider}().getValue(string, rowKey);
+            #elseif($dataArtifact.isProperty())
+........        string = "$!sqlProgrammer.getSqlAlias($dataArtifact, $queryTable)";
+........        object = bean.get${EntityDataProvider}().getValue(string, rowKey);
+            #else
+........        string = null;
+........        object = null;
+            #end
+....        $artifactJavaType $parameterKey = $artifactObjUtilsMethod(object);
+....        /**/
+        #end
+        #set($maxLineLength = 0)
+        #set($newLineString = '<EOL>')
+        #set($string2split = "$!parameterizedExpression.expression")
+        #set($string2split = "return $string2split;")
+        #set($string2split = $string2split.replace("&&", "${newLineString}${TAB}&&"))
+        #set($string2split = $string2split.replace("||", "${newLineString}${TAB}||"))
+        #set($string2split = $string2split.replace("), ", "),${newLineString}${TAB}"))
+        #set($string2lines = $VelocityAid.split($string2split, $maxLineLength, $newLineString, $FALSE, $TAB))
+        #foreach($line in $string2lines)
+....        ${line}
+        #end
+    #else
+        return true;
+    #end
+    }
+
+#end##foreach-tab
+    char bookmark$bookmarkSequence.next();
+    // </editor-fold>
+
+#break

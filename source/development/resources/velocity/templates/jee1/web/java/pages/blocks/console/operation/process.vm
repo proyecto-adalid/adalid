@@ -1,0 +1,68 @@
+#writeOperationJavadocType1()
+    private String ${operationName}() throws Exception {
+    #foreach($parameter in $operation.parametersList)
+        #setParameterVariables()
+        #if($parameter.isFileReferenceField())
+            #if("$!parameter.uploadStorageOption" == 'FILE')
+                #set($uploadStorageOption = 'EnumOpcionUpload.ARCHIVO')
+            #elseif("$!parameter.uploadStorageOption" == 'ROW')
+                #set($uploadStorageOption = 'EnumOpcionUpload.FILA')
+            #else
+                #set($uploadStorageOption = 'EnumOpcionUpload.FILA_Y_ARCHIVO')
+            #end
+            #if("$!multipartUpload" == 'true')
+........        if (${campo1}_doubtful) {
+........            TLC.getBitacora().error(CBM.UPLOAD_ROW_EXCEPTION_4);
+........            return null;
+........        }
+........        String carpeta = ${entityClassName}Constants.CODIGO_DOMINIO_RECURSO;
+........        EnumOpcionUpload opcion = $uploadStorageOption;
+........        CampoArchivoMultiPart ${campo1}MultiPart = JSF.upload(${campo1}, carpeta, opcion);
+            #else
+........        JSF.upload(${campo1}, ${entityClassName}Constants.CODIGO_DOMINIO_RECURSO, $uploadStorageOption);
+            #end
+        #end
+    #end##foreach-parameter
+    #set($message = "${page.entity.wrapper.javaClassName}${operation.wrapper.javaClassName}Message")
+        ${message} message = new ${message}();
+    #foreach($parameter in $operation.parametersList)
+        #setParameterVariables()
+##      message.setArgumento${parameter.wrapper.javaClassName}($parameterCoalesceToDefaultValue);
+        message.setArgumento${parameter.wrapper.javaClassName}($parameterValueExpression);
+    #end##foreach-parameter
+    #if($operation.instanceParameter)
+        #set($parameter = $operation.instanceParameter)
+        #setParameterVariables()
+        if (${parameterVariableName}${Campo1} != null) {
+        #if($esRecursoIdentificable)
+            message.setIdRecurso(${parameterVariableName}${Campo1}.getIdentificacionRecurso());
+        #elseif($esRecursoEnumerable)
+            message.setIdRecurso(${parameterVariableName}${Campo1}.getNumeroRecurso());
+        #end
+        #if($esRecursoVersionable)
+            message.setVersionRecurso(${parameterVariableName}${Campo1}.getVersionRecurso());
+        #end
+        #if($esRecursoCodificable)
+            message.setCodigoRecurso(${parameterVariableName}${Campo1}.getCodigoRecurso());
+        #end
+        #if($esRecursoNombrable)
+            message.setNombreRecurso(${parameterVariableName}${Campo1}.getNombreRecurso());
+        #end
+        #if($esRecursoPersonalizable)
+            message.setIdPropietarioRecurso(${parameterVariableName}${Campo1}.getPropietarioRecurso());
+        #end
+        #if($esRecursoSegmentable)
+            message.setIdSegmentoRecurso(${parameterVariableName}${Campo1}.getSegmentoRecurso());
+        #end
+        }
+    #end
+        TLC.getControlador().ponerProcesoPendiente(message);
+    #if($operation.asynchronous)
+        requestReply(message);
+    #else
+        ${entityVariableName}BusinessProcess.${operationName}(message);
+    #end
+        return null;
+    }
+
+#break

@@ -1,0 +1,49 @@
+#parsePostgreSQLMacros()
+#setPostgreSQLVariables()
+#writePostgreSQLLicense()
+#writePostgreSQLAuthor('Jorge Campins')
+#set($entities = $ColUtils.filter($project.entitiesList, $isEntitySqlCodeGenEnabled, $isPersistentEntityTable))
+#set($entities = $ColUtils.sort($entities, $byEntityName))
+#foreach($entity in $entities)
+    #writeTemplate('remark-entity')
+    #writeCreateTable()
+#end##foreach-entity
+#break
+
+#macro(writeCreateTable)
+    #resetSQLVariables()
+    #set($table = $entity.wrapper.sqlTableName)
+    #set($table = $entity.wrapper.sqlSchemaQualifiedShortTableName)
+    #writeCreateTableHeader()
+    #set($properties = $entity.columnsList)
+    #set($propertiesSize = $properties.size())
+    #set($comma = ',')
+    #foreach($property in $properties)
+        #if($foreach.last)
+            #set($comma = '')
+        #end
+        #set($name = $property.wrapper.sqlName)
+        #set($type = $property.wrapper.sqlType)
+        #if("$!property.wrapper.sqlNull" == '')
+            #set($null = '')
+        #else
+            #set($null = " $property.wrapper.sqlNull")
+        #end
+        #writeCreateTableColumn()
+    #end##foreach-property
+    #writeCreateTableFooter()
+#end##writeCreateTable
+
+#macro(writeCreateTableHeader)
+create table $table
+    (
+#end##writeCreateTableHeader
+
+#macro(writeCreateTableColumn)
+    $name $type$null$comma
+#end##writeCreateTableColumn
+
+#macro(writeCreateTableFooter)
+    );
+
+#end##writeCreateTableFooter

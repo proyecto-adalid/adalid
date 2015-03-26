@@ -1,0 +1,102 @@
+#parseJavaMacros()
+#setJavaVariables()
+#writeJavaLicense()
+#writeJavaPackage()
+#setLocalVariables()
+#addImports()
+#writeJavaImports($imports)
+#writeJavaAuthor('Jorge Campins')
+@Local
+public interface ${javaClassSimpleName} extends ${entityClass}FacadeBase {
+
+#if($override || $targetApplicationServerCode == 'jboss')
+    @Override
+#end
+    ${entity.wrapper.javaClassName} find(Object id);
+
+#if($override || $targetApplicationServerCode == 'jboss')
+    @Override
+#end
+    ${entity.wrapper.javaClassName} find(Object id, boolean refresh);
+
+#if($entity.characterKeyProperty)
+    #if($override || $targetApplicationServerCode == 'jboss')
+....    @Override
+    #end
+    ${entity.wrapper.javaClassName} findByCodigo(String codigo);
+
+    #if($override || $targetApplicationServerCode == 'jboss')
+....    @Override
+    #end
+    ${entity.wrapper.javaClassName} findByCodigo(String codigo, boolean refresh);
+
+#end
+#if($override || $targetApplicationServerCode == 'jboss')
+    @Override
+#end
+    List<${entity.wrapper.javaClassName}> findAll();
+
+#if($override || $targetApplicationServerCode == 'jboss')
+    @Override
+#end
+    List<${entity.wrapper.javaClassName}> findAll(boolean refresh);
+
+#if($override || $targetApplicationServerCode == 'jboss')
+    @Override
+#end
+    List<${entity.wrapper.javaClassName}> findByQuery(String query);
+
+#if($override || $targetApplicationServerCode == 'jboss')
+    @Override
+#end
+    List<${entity.wrapper.javaClassName}> findByQuery(String query, boolean refresh);
+
+#if($override || $targetApplicationServerCode == 'jboss')
+    @Override
+#end
+    List<${entity.wrapper.javaClassName}> findByQuery(String query, EnumTipoQuery tipo);
+
+#if($override || $targetApplicationServerCode == 'jboss')
+    @Override
+#end
+    List<${entity.wrapper.javaClassName}> findByQuery(String query, EnumTipoQuery tipo, boolean refresh);
+
+#if($override || $targetApplicationServerCode == 'jboss')
+    @Override
+#end
+    List<${entity.wrapper.javaClassName}> findByQuery(String query, EnumTipoQuery tipo, int max);
+
+#if($override || $targetApplicationServerCode == 'jboss')
+    @Override
+#end
+    List<${entity.wrapper.javaClassName}> findByQuery(String query, EnumTipoQuery tipo, int max, boolean refresh);
+
+    void flush();
+
+    void merge(${entity.wrapper.javaClassName} ${entity.wrapper.javaVariableName});
+
+    void persist(${entity.wrapper.javaClassName} ${entity.wrapper.javaVariableName});
+
+    void refresh(${entity.wrapper.javaClassName} ${entity.wrapper.javaVariableName});
+
+    void remove(${entity.wrapper.javaClassName} ${entity.wrapper.javaVariableName});
+
+}
+#break
+
+#macro(setLocalVariables)
+#set($entityClass = "$!{entity.wrapper.javaClassName}")
+#set($pack1 = "$!package")
+#set($pack2 = "$!entityPackage")
+#set($override = $TRUE)
+#end##setLocalVariables
+
+#macro(addImports)
+#set($added = $imports.add("${baseFacadePackage}.${entityClass}FacadeBase"))
+#if($pack2 != '' && $pack2 != $pack1)
+    #set($added = $imports.add("${pack2}.${entityClass}"))
+#end
+#set($added = $imports.add("${project.rootPackageName}.lib.base.enumeration.EnumTipoQuery"))
+#set($added = $imports.add('java.util.List'))
+#set($added = $imports.add('javax.ejb.Local'))
+#end##addImports

@@ -1,0 +1,13 @@
+#break
+
+#macro(upperEntityColumnNames $qualifier)
+#foreach($upperEntityColumn in $upperEntityColumns)
+....${qualifier}$upperEntityColumn.wrapper.sqlName#if($foreach.last)#else, #end
+#end
+#end##upperEntityColumnNames
+
+#macro(upperEntityColumnPattern $qualifier)
+#foreach($upperEntityColumn in $upperEntityColumns)
+....%#if($foreach.last)#else, #end
+#end
+#end##upperEntityColumnPattern

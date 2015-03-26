@@ -1,0 +1,18 @@
+$tab<h:panelGrid id="panelGrid${panelGridSequence.next()}"
+$tab    rendered="#{${pageBeanName}.grid${operation.wrapper.javaClassName}Rendered}"
+$tab    styleClass="pdq-grid-etiqueta-1">
+$tab    <webuijsf:label id="etiquetaListaTipoInforme${operation.wrapper.javaClassName}1"
+$tab        for="listaTipoInforme${operation.wrapper.javaClassName}1"
+$tab        text="#{${pageBeanName}.gestor.i18n.textoEtiquetaListaFormatoInforme}"/>
+$tab</h:panelGrid>
+$tab<h:panelGrid id="panelGrid${panelGridSequence.next()}"
+$tab    rendered="#{${pageBeanName}.grid${operation.wrapper.javaClassName}Rendered}"
+$tab    styleClass="pdq-grid-elemento-1">
+$tab    <webuijsf:dropDown id="listaTipoInforme${operation.wrapper.javaClassName}1"
+$tab        binding="#{${pageBeanName}.listaTipoInforme${operation.wrapper.javaClassName}1}"
+$tab        converter="#{${pageBeanName}.listaTipoInforme${operation.wrapper.javaClassName}1Converter}"
+$tab        items="#{${pageBeanName}.selectOptions${operation.wrapper.javaClassName}}"
+$tab        required="false"
+$tab        selected="#{${pageBeanName}.tipoInforme${operation.wrapper.javaClassName}}"
+$tab        toolTip="#{${pageBeanName}.gestor.i18n.toolTipListaFormatoInforme}"/>
+$tab</h:panelGrid>

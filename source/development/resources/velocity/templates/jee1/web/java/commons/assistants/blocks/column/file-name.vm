@@ -1,0 +1,51 @@
+    // <editor-fold defaultstate="collapsed" desc="${fieldClassName}">
+    #parse("$templatePath/blocks/column/validator-expression.vm")
+
+    /**
+     * ${campo1}Boton3.onClick
+     */
+    public String getScript${Campo1}Boton3() {
+        if (bean.getGestor().isFilaNoDisponible()) {
+            return null;
+        }
+        RowKey rowKey = bean.getGestor().getCurrentRowKey();
+        boolean rowAvailable = bean.get${EntityDataProvider}().isRowAvailable(rowKey);
+        String nombre = rowAvailable ? bean.get${EntityDataProvider}().get${fieldClassName}(rowKey) : null;
+        return JSF.getOpenFileWindowJavaScript(nombre);
+    }
+
+    /**
+     * ${campo1}Boton3.rendered
+     */
+    public boolean is${Campo1}Boton3Rendered() {
+        return getText${Campo1}Boton3() != null;
+    }
+
+    /**
+     * ${campo1}Boton3.text
+     */
+    public String getText${Campo1}Boton3() {
+        if (bean.getGestor().isFilaNoDisponible()) {
+            return null;
+        }
+        RowKey rowKey = bean.getGestor().getCurrentRowKey();
+        boolean rowAvailable = bean.get${EntityDataProvider}().isRowAvailable(rowKey);
+        String nombre = rowAvailable ? bean.get${EntityDataProvider}().get${fieldClassName}(rowKey) : null;
+        return JSF.getFileExtension(nombre);
+    }
+
+    /**
+     * ${campo1}Boton3.toolTip
+     */
+    public String getToolTip${Campo1}Boton3() {
+        if (bean.getGestor().isFilaNoDisponible()) {
+            return null;
+        }
+        RowKey rowKey = bean.getGestor().getCurrentRowKey();
+        boolean rowAvailable = bean.get${EntityDataProvider}().isRowAvailable(rowKey);
+        String nombre = rowAvailable ? bean.get${EntityDataProvider}().get${fieldClassName}(rowKey) : null;
+        return JSF.getFileURL(nombre);
+    }
+    // </editor-fold>
+
+#break

@@ -1,0 +1,32 @@
+    // <editor-fold defaultstate="collapsed" desc="implementacion estandar de la interfaz PaginaActualizacion">
+    @Override
+    public long getFuncionCrearRecurso() {
+#if($page.entity.insertEnabled && "$!page.displayMode" == 'WRITING')
+        return ${entityDataProviderClass}.FUNCION_INSERT_${page.entity.wrapper.javaConstantName};
+#else
+//      return ${entityDataProviderClass}.FUNCION_INSERT_${page.entity.wrapper.javaConstantName};
+        return -1L;
+#end
+    }
+
+    @Override
+    public long getFuncionModificarRecurso() {
+#if($page.entity.updateEnabled && "$!page.displayMode" == 'WRITING')
+        return ${entityDataProviderClass}.FUNCION_UPDATE_${page.entity.wrapper.javaConstantName};
+#else
+//      return ${entityDataProviderClass}.FUNCION_UPDATE_${page.entity.wrapper.javaConstantName};
+        return -1L;
+#end
+    }
+
+    @Override
+    public long getFuncionEliminarRecurso() {
+#if($page.entity.deleteEnabled && "$!page.displayMode" == 'WRITING')
+        return ${entityDataProviderClass}.FUNCION_DELETE_${page.entity.wrapper.javaConstantName};
+#else
+//      return ${entityDataProviderClass}.FUNCION_DELETE_${page.entity.wrapper.javaConstantName};
+        return -1L;
+#end
+    }
+    // </editor-fold>
+

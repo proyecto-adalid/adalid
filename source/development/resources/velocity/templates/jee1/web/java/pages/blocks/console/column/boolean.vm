@@ -1,0 +1,25 @@
+#set($componentName = "label${fieldFirstName}")
+#parse("$templatePath/blocks/webuijsf/label.vm")
+#set($componentName = "campo${fieldFirstName}")
+#if($parameter.booleanDisplayType == 'CHECKBOX' && $parameter.isRequiredParameter())
+    #parse("$templatePath/blocks/webuijsf/check-box.vm")
+#else
+    #parse("$templatePath/blocks/webuijsf/drop-down.vm")
+#end
+#set($componentName = "helpInline${fieldFirstName}")
+#parse("$templatePath/blocks/webuijsf/help-inline.vm")
+#set($componentName = "converter${fieldFirstName}")
+#set($componentClassName = "${parameter.dataType.simpleName}Converter")
+#parse("$templatePath/blocks/webuijsf/component.vm")
+#writeValidatorExpression()
+#parse("$templatePath/blocks/console/column/shared.vm")
+#break
+
+#macro(writeValidatorExpression)
+    /**
+     * ${campo1}.validatorExpression
+     */
+    public void ${campo1}_validate(FacesContext context, UIComponent component, Object value) {
+    }
+
+#end##writeValidatorExpression

@@ -1,0 +1,26 @@
+    // <editor-fold defaultstate="collapsed" desc="implementacion estandar de la interfaz PaginaConsultaConMaestro">
+    private String ETIQUETA_CLASE_MAESTRO = BundleWebui.getString("${pageBeanName}_ETIQUETA_CLASE_MAESTRO");
+
+    @Override
+    public String getEtiquetaClaseMaestro() {
+        return ETIQUETA_CLASE_MAESTRO;
+    }
+
+    @Override
+    public RecursoCachedRowSetDataProvider getRecursoMaestroDataProvider() {
+        if ($recursoMaestroDataProvider == null) {
+            String nombreClaseRecurso = gestor.getNombreClaseRecursoMaestroPagina("${page.master.wrapper.javaClassName}");
+            $recursoMaestroDataProvider = getContextoDatosEstandar().getDataProvider(nombreClaseRecurso);
+        }
+        return $recursoMaestroDataProvider;
+    }
+
+    @Override
+    public String getColumnaIdentificacionRecursoMaestro() {
+        return ${entityDataProviderClass}.COLUMNA_${page.reference.wrapper.javaConstantName};
+    }
+#if($viewWithMasterHeading)
+    #parse("$templatePath/blocks/master-heading.vm")
+#end
+    // </editor-fold>
+

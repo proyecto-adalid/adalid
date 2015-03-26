@@ -1,0 +1,12 @@
+#set($capitalizedComponentName = $StringUtils.capitalize($componentName))
+$tab    private Button ${componentName} = new BotonAlternativo();
+
+$tab    public Button get${capitalizedComponentName}() {
+$tab        return ${componentName};
+$tab    }
+
+$tab    public void set${capitalizedComponentName}(Button button) {
+$tab        ${componentName} = button;
+$tab    }
+
+#break

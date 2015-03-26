@@ -1,0 +1,44 @@
+#set($divString = 'DivFiltro1')
+#foreach($field in $page.rootFields)
+    #if($field.property.equals($page.reference))
+    #elseif($field.property.isSearchField())
+        #setFieldVariables()
+        #if($field.property.isEntity())
+            #if($fieldSearchType == 'LIST')
+                #parse("$templatePath/blocks/table/search-field/entity-list.vm")
+            #elseif($fieldSearchType == 'DISPLAY')
+                #parse("$templatePath/blocks/table/search-field/entity.vm")
+            #else
+                #parse("$templatePath/blocks/table/search-field/numeric.vm")
+            #end
+        #elseif($field.property.isBooleanPrimitive())
+            #parse("$templatePath/blocks/table/search-field/boolean.vm")
+        #elseif($field.property.isCharacterPrimitive())
+            #parse("$templatePath/blocks/table/search-field/character.vm")
+        #elseif($field.property.isNumericPrimitive())
+            #parse("$templatePath/blocks/table/search-field/numeric.vm")
+        #elseif($field.property.isTemporalPrimitive())
+            #parse("$templatePath/blocks/table/search-field/temporal.vm")
+        #end
+    #end
+#end
+#set($divString = '')
+#break
+
+#macro(setFieldVariables)
+    #set($fieldClassName = "${field.property.wrapper.javaClassName}")
+    #set($fieldVariableName = "${field.property.wrapper.javaVariableName}")
+    #set($fieldFirstName = "${fieldClassName}1")
+    #set($fieldMiddleName = "${fieldClassName}2")
+    #set($fieldLastName = "${fieldClassName}3")
+    #set($fieldSearchType = "$!field.property.searchType")
+    #set($fieldSqlName = "${field.property.wrapper.sqlName}")
+    #set($fieldForeignCodeVariableName = "$!field.foreignCodeField.wrapper.javaVariableName")
+    #set($fieldForeignNameVariableName = "$!field.foreignNameField.wrapper.javaVariableName")
+    #set($fieldForeignCodeSqlName = "$!field.foreignCodeField.wrapper.sqlName")
+    #set($fieldForeignNameSqlName = "$!field.foreignNameField.wrapper.sqlName")
+    #set($fieldRequired = 'false')
+    #set($fieldReadOnly = 'false')
+    #set($Campo1 = "Campo$fieldFirstName")
+    #set($campo1 = "campo$fieldFirstName")
+#end##setFieldVariables

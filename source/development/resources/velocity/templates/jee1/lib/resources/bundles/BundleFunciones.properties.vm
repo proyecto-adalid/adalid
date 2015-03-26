@@ -1,0 +1,45 @@
+#parsePropertiesMacros()
+#setPropertiesVariables()
+#writePropertiesLicense()
+#writePropertiesAuthor('Jorge Campins')
+locale.language.tag=$project.locale.toLanguageTag()
+
+#set($entities = $ColUtils.filter($project.entitiesList, $isPersistentEntity))
+#set($entities = $ColUtils.sort($entities, $byEntityName))
+#foreach($entity in $entities)
+    #set($atleast1 = $FALSE)
+    #set($entity_name = $javaProgrammer.getJavaLowerConstantName($entity.name))
+    #set($entity_name = $entity.wrapper.sqlSchemaQualifiedShortName)
+    #foreach($operation in $entity.operationsList)
+        #set($operation_name = '')
+        #set($operation_type = "$!operation.operationType")
+        #if($operation_type == 'CRUD')
+        #elseif($operation_type == 'EXPORT')
+            #set($operation_name = $VelocityAid.coalesce($operation.exportName,    $operation.name))
+        #elseif($operation_type == 'REPORT')
+            #set($operation_name = $VelocityAid.coalesce($operation.reportName,    $operation.name))
+        #elseif($operation_type == 'PROCEDURE')
+            #set($operation_name = $VelocityAid.coalesce($operation.procedureName, $operation.name))
+        #elseif($operation_type == 'PROCESS')
+            #set($operation_name = $VelocityAid.coalesce($operation.processName,   $operation.name))
+        #end
+        #if($operation_name != '')
+            #set($atleast1 = $TRUE)
+            #set($operation_jlcn = $javaProgrammer.getJavaLowerConstantName($operation.name))
+            #set($operation_name = $javaProgrammer.getJavaLowerConstantName($operation_name))
+            #writeBundleFuncionesOperation()
+        #end
+    #end##foreach-operation
+#if($atleast1)
+
+#end
+#end##foreach-entity
+#break
+
+#macro(writeBundleFuncionesOperation)
+${entity_name}.${operation_jlcn}=$operation.wrapper.bundleValidDefaultShortLabel
+${entity_name}.${operation_jlcn}.label=$operation.wrapper.bundleValidDefaultLabel
+${entity_name}.${operation_jlcn}.short_label=$operation.wrapper.bundleValidDefaultShortLabel
+${entity_name}.${operation_jlcn}.tooltip=$operation.wrapper.bundleValidDefaultTooltip
+${entity_name}.${operation_jlcn}.inline_help=$operation.wrapper.bundleValidDefaultShortDescription
+#end##writeBundleFuncionesOperation

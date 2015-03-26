@@ -1,0 +1,88 @@
+#parsePropertiesMacros()
+#setPropertiesVariables()
+#writePropertiesLicense()
+#writePropertiesAuthor('Jorge Campins')
+locale.language.tag=$project.locale.toLanguageTag()
+
+#set($entities = $ColUtils.filter($project.entitiesList, $isPersistentEntity))
+#set($entities = $ColUtils.sort($entities, $byEntityName))
+#foreach($entity in $entities)
+    #writeBundleParametrosEntity()
+#end##foreach-entity
+#break
+
+#macro(writeBundleParametrosEntity)
+    #set($prefix1 = "${entity.wrapper.sqlName}")
+    #set($prefix1 = "${entity.wrapper.sqlSchemaQualifiedShortName}")
+    #set($properties = $entity.propertiesList)
+    #foreach($property in $properties)
+        #writeBundleParametros1($property)
+    #end##foreach-property
+    #set($views = $entity.viewsList)
+    #foreach($view in $views)
+        #writeBundleParametrosView()
+    #end##foreach-view
+    #set($operations = $entity.operationsList)
+    #foreach($operation in $operations)
+        #writeBundleParametrosOperation()
+    #end##foreach-operation
+#end##writeBundleParametrosEntity
+
+#macro(writeBundleParametrosView)
+    #set($prefix1 = "${entity.wrapper.sqlName}.${view.wrapper.sqlName}")
+    #set($prefix1 = "${entity.wrapper.sqlSchemaQualifiedShortName}.${view.wrapper.sqlName}")
+    #set($fields = $view.viewFields)   
+    #foreach($field in $fields)
+        #writeBundleParametros3($field)
+    #end##foreach-field
+#end##writeBundleParametrosView
+
+#macro(writeBundleParametrosOperation)
+    #set($prefix1 = "${entity.wrapper.sqlName}.${operation.wrapper.sqlName}")
+    #set($prefix1 = "${entity.wrapper.sqlSchemaQualifiedShortName}.${operation.wrapper.sqlName}")
+    #set($parameters = $operation.parametersList)
+    #foreach($parameter in $parameters)
+        #writeBundleParametros1($parameter)
+    #end##foreach-parameter
+#end##writeBundleParametrosOperation
+
+#macro(writeBundleParametros1 $artifact1)
+    #set($prefix2 = "${prefix1}")
+    #writeBundleParametros2($artifact1)
+    #set($prefix2 = "${prefix1}.$artifact1.wrapper.sqlName")
+    #if($artifact1.businessKeyProperty.wrapper)
+        #writeBundleParametros2($artifact1.businessKeyProperty)
+    #end
+    #if($artifact1.nameProperty.wrapper)
+        #writeBundleParametros2($artifact1.nameProperty)
+    #end
+#end##writeBundleParametros1
+
+#macro(writeBundleParametros2 $artifact2)
+    #set($key = "${prefix2}.${artifact2.wrapper.sqlName}")
+    #set($label = "$!artifact2.wrapper.bundleValidDefaultLabel")
+    #set($shortLabel = "$!artifact2.wrapper.bundleValidDefaultShortLabel")
+    #set($tooltip = "$!artifact2.wrapper.bundleValidDefaultTooltip")
+    #set($shortDescription = "$!artifact2.wrapper.bundleDefaultShortDescription")
+    #writeBundleParametrosArtifact()
+#end##writeBundleParametros2
+
+#macro(writeBundleParametros3 $artifact3)
+    #set($key = "${prefix1}.$StrUtils.getLowerHumplessCase(${artifact3.column.partialName})")
+    #set($label = "$!artifact3.wrapper.bundleDefaultLabel")
+    #set($shortLabel = "$!artifact3.wrapper.bundleDefaultShortLabel")
+    #set($tooltip = "$!artifact3.wrapper.bundleDefaultTooltip")
+    #set($shortDescription = "$!artifact3.wrapper.bundleDefaultShortDescription")
+    #writeBundleParametrosArtifact()
+#end##writeBundleParametros3
+
+#macro(writeBundleParametrosArtifact)
+${key}.label=$label
+${key}.short_label=$shortLabel
+${key}.tooltip=$tooltip
+${key}.inline_help=$shortDescription
+#if($artifact2.searchQueryFilter)
+....${key}.filter_error=$!artifact2.searchQueryFilter.wrapper.bundleDefaultErrorMessageChoice
+#end
+
+#end##writeBundleParametrosArtifact

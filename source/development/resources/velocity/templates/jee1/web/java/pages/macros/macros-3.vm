@@ -1,0 +1,9 @@
+#break
+
+#macro(traceModulePage)
+//      found: $modulePage.name @ $module.name ($module.wrapper.hyphenatedAlias) @ $module.master.name ($module.master.wrapper.hyphenatedAlias)
+#end##traceModulePage
+
+#macro(traceProjectPage)
+//      found: $projectPage.name @ $project.name ($project.wrapper.hyphenatedAlias)
+#end

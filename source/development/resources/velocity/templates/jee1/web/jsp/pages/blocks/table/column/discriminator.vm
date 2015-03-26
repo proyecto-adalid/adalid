@@ -1,0 +1,4 @@
+$tab    <webuijsf:button id="${campo1}Boton4"
+$tab        binding="#{${pageBeanName}.${campo1}Boton4}"
+$tab        onClick="#{${pageBeanName}.asistente.script${Campo1}Boton4}"
+$tab        rendered="#{${pageBeanName}.asistente.${campo1}Boton4Rendered}"/>

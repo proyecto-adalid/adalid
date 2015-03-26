@@ -1,0 +1,241 @@
+#parsePostgreSQLMacros()
+#setPostgreSQLVariables()
+#writePostgreSQLLicense()
+#writePostgreSQLAuthor('Jorge Campins')
+#writeDelimiterDirective('??')
+#set($entities = $ColUtils.filter($project.entitiesList, $isEntitySqlCodeGenEnabled, $isPersistentEntityTable))
+#set($entities = $ColUtils.sort($entities, $byEntityName))
+#foreach($entity in $entities)
+    #writeTemplate('remark-entity')
+    #writeCreateTriggerFunctions()
+#end##foreach-entity
+#writeDelimiterDirective(';')
+#break
+
+#macro(writeCreateTriggerFunctions)
+    #resetSQLVariables()
+    #writeCreateTriggerFunctionSettings()
+    #writeTemplate('remark-table')
+    #set($triggers = $VelocityAid.values($DatabaseTriggerType))
+    #foreach($trigger in $triggers)
+        #writeCreateTriggerFunction()
+    #end##foreach-trigger
+    #writeTriggerUserDefinedFunctions()
+#end##writeCreateTriggerFunctions
+
+#macro(writeCreateTriggerFunctionSettings)
+    #set($entityNumber = $project.getEntityNumber($entity))
+    #set($entityTriggers = $entity.triggersList)
+    #set($table = $entity.wrapper.sqlTableName)
+    #set($table = $entity.wrapper.sqlSchemaQualifiedShortTableName)
+    #set($primaryKey = $entity.primaryKeyProperty.wrapper.sqlName)
+    #set($enabled  = '   ')
+    #set($disabled = '-- ')
+    #if($entity.triggerBeforeValueEnabled)
+        #set($bv = $enabled)
+    #else
+        #set($bv = $disabled)
+    #end
+    #if($entity.triggerAfterValueEnabled)
+        #set($av = $enabled)
+    #else
+        #set($av = $disabled)
+    #end
+    #if($entity.triggerBeforeCheckEnabled)
+        #set($bc = $enabled)
+    #else
+        #set($bc = $disabled)
+    #end
+    #if($entity.triggerAfterCheckEnabled)
+        #set($ac = $enabled)
+    #else
+        #set($ac = $disabled)
+    #end
+    #set($discriminatorTabName = '')
+    #set($discriminatorKeyName = '')
+    #set($discriminatorColName = '')
+    #set($discriminated = $FALSE)
+    #set($strategy = "$!entity.inheritanceMappingStrategy")
+    #if($entity.discriminatorProperty && $strategy == 'SINGLE_TABLE')
+        #set($discriminatorTabName = $entity.discriminatorProperty.declaringFieldPersistentEntityRoot.wrapper.sqlName)
+        #set($discriminatorTabName = $entity.discriminatorProperty.declaringFieldPersistentEntityRoot.wrapper.sqlSchemaQualifiedShortTableName)
+        #set($discriminatorKeyName = $entity.discriminatorProperty.declaringFieldPersistentEntityRoot.primaryKeyProperty.wrapper.sqlName)
+        #set($discriminatorColName = $entity.discriminatorProperty.wrapper.sqlName)
+        #set($discriminated = $TRUE)
+    #end
+#end##writeCreateTriggerFunctionSettings
+
+#macro(writeCreateTriggerFunction)
+#set($function = "${table}${sql_name_separator}${trigger.adverb}_${trigger.verb}_${trigger.level}()")
+drop function if exists $function cascade;
+#writeDelimiter('??')
+create or replace function $function returns trigger as $$
+#if($discriminated && ${trigger.adverb} == 'before' && ${trigger.verb} != 'delete')
+declare
+    $discriminatorColName$ ${discriminatorTabName}.${discriminatorColName}%TYPE;
+begin
+    #if($discriminatorTabName == $table)
+    $discriminatorColName$ = new.$discriminatorColName;
+    #else
+    select  $discriminatorColName
+    into    $discriminatorColName$
+    from    $discriminatorTabName
+    where   $discriminatorKeyName = new.$primaryKey;
+    /**/
+    #end
+#else
+begin
+#end
+    raise notice '${function}';
+#if(${trigger.level} == 'row')
+    #if(${trigger.adverb} == 'before')
+        #if(${trigger.verb} == 'delete')
+        #elseif(${trigger.verb} == 'insert')
+            #writeCreateTriggerFunctionBeforeInsertOrUpdateRow('new' "default")
+        #elseif(${trigger.verb} == 'update')
+            #writeCreateTriggerFunctionBeforeInsertOrUpdateRow('new, old' "default")
+        #end
+    #elseif(${trigger.adverb} == 'after')
+        #if(${trigger.verb} == 'delete')
+            #writeCreateTriggerFunctionAfterDelete()
+        #elseif(${trigger.verb} == 'insert')
+            #writeCreateTriggerFunctionAfterInsertOrUpdate($entity.insertOperation $TRUE)
+        #elseif(${trigger.verb} == 'update')
+            #writeCreateTriggerFunctionAfterInsertOrUpdate($entity.updateOperation $FALSE)
+        #end
+    #end
+#end
+    return $trigger.returnVariable;
+end;
+$$ language plpgsql;
+#writeDelimiter('??')
+#end##writeCreateTriggerFunction
+
+#macro(writeCreateTriggerFunctionBeforeInsertOrUpdateRow $params $valtype)
+#if($discriminated)
+    #writeCreateTriggerFunctionBlock($params $valtype $entity)
+    #set($extensions = $entity.extensionsList)
+    #foreach($extension in $extensions)
+        #writeCreateTriggerFunctionBlock($params $valtype $extension)
+    #end
+#else
+    #writeCreateTriggerFunctionBlockBody($params $valtype $entity)
+#end
+#end##writeCreateTriggerFunctionBeforeInsertOrUpdateRow
+
+#macro(writeCreateTriggerFunctionAfterDelete)
+    #if(!$entityTriggers.isEmpty())
+....    perform ${table}${sql_name_separator}${trigger.verb}${sql_name_separator}job(old.$primaryKey);
+    #end
+#end##writeCreateTriggerFunctionAfterDelete
+
+#macro(writeCreateTriggerFunctionAfterInsertOrUpdate $operation $forReal)
+    #if($forReal)
+        #set($x = '    ')
+    #else
+        #set($x = '--  ')
+    #end
+    #flagOperationHasTransitionToStateAndTriggers($operation)
+    #if($operationHasTransitionToStateAndTriggers)
+........${x}perform ${table}${sql_name_separator}${trigger.verb}${sql_name_separator}job(new.$primaryKey);
+    #end
+#end##writeCreateTriggerFunctionAfterInsertOrUpdate
+
+#macro(writeCreateTriggerFunctionBlock $params $valtype $thing)
+    #if($thing.discriminatorValue)
+        #set($discriminatorValueCheck = "$discriminatorColName$ = $thing.wrapper.sqlDiscriminatorValue")
+    #else
+        #set($discriminatorValueCheck = "$discriminatorColName$ is null")
+    #end
+    #writeCreateTriggerFunctionBlockHeading($params $valtype $thing)
+    #increaseIndentation()
+    #writeCreateTriggerFunctionBlockBody($params $valtype $thing)
+    #decreaseIndentation()
+    #writeCreateTriggerFunctionBlockFooting($params $valtype $thing)
+#end##writeCreateTriggerFunctionBlock
+
+#macro(writeCreateTriggerFunctionBlockHeading $params $valtype $thing)
+$tab    if ($discriminatorValueCheck) then
+#end##writeCreateTriggerFunctionBlockHeading
+
+#macro(writeCreateTriggerFunctionBlockBody $params $valtype $thing)
+#set($thingName = $thing.wrapper.sqlName)
+#set($thingName = $thing.wrapper.sqlSchemaQualifiedShortName)
+$tab$bv new = ${thingName}${sql_name_separator}before_value($params);
+$tab    new = ${thingName}${sql_name_separator}${valtype}_value($params);
+$tab$av new = ${thingName}${sql_name_separator}after_value($params);
+$tab    new = ${thingName}${sql_name_separator}convert(new);
+$tab$bc perform ${thingName}${sql_name_separator}before_check($params);
+$tab    perform ${thingName}${sql_name_separator}check(new);
+$tab$ac perform ${thingName}${sql_name_separator}after_check($params);
+#end##writeCreateTriggerFunctionBlockBody
+
+#macro(writeCreateTriggerFunctionBlockFooting $params $valtype $thing)
+$tab    end if;
+#end##writeCreateTriggerFunctionBlockFooting
+
+#macro(writeTriggerUserDefinedFunctions)
+#set($new = $sqlProgrammer.getSqlVariableName('new'))
+#set($old = $sqlProgrammer.getSqlVariableName('old'))
+#set($udf_return_type  = $table)
+#set($udf_return_value = $new)
+#if($entity.triggerBeforeValueEnabled)
+    #writeTriggerUserDefinedFunctionTemplates('before_value')
+#end
+#if($entity.triggerAfterValueEnabled)
+    #writeTriggerUserDefinedFunctionTemplates('after_value')
+#end
+#set($udf_return_type  = 'boolean')
+#set($udf_return_value = 'true')
+#if($entity.triggerBeforeCheckEnabled)
+    #writeTriggerUserDefinedFunctionTemplates('before_check')
+#end
+#if($entity.triggerAfterCheckEnabled)
+    #writeTriggerUserDefinedFunctionTemplates('after_check')
+#end
+#end##writeTriggerUserDefinedFunctions
+
+#macro(writeTriggerUserDefinedFunctionTemplates $udf_type)
+    #set($udf_drop_rpl   = "$table")
+    #set($udf_create_rpl = "$new $table")
+    #set($udf_raise_pat  = "new=%")
+    #set($udf_raise_rpl  = "$new")
+    #writeTriggerUserDefinedFunctionTemplate($udf_type)
+    #set($udf_drop_rpl   = "$table, $table")
+    #set($udf_create_rpl = "$new $table, $old $table")
+    #set($udf_raise_pat  = "new=%, old=%")
+    #set($udf_raise_rpl  = "$new, $old")
+    #writeTriggerUserDefinedFunctionTemplate($udf_type)
+#end##writeTriggerUserDefinedFunctionTemplates
+
+#macro(writeTriggerUserDefinedFunctionTemplate $udf_type)
+#set($function = "${table}${sql_name_separator}${udf_type}")
+--
+--  user defined function template for $function($udf_create_rpl)
+--
+drop function if exists $function($udf_drop_rpl) cascade;
+#writeDelimiter('??')
+create or replace function $function($udf_create_rpl)
+returns $udf_return_type as $$
+begin
+    raise notice '${table}${sql_name_separator}${udf_type}($udf_raise_pat)', $udf_raise_rpl;
+    return $udf_return_value;
+end;
+$$ language plpgsql;
+#writeDelimiter('??')
+#end##writeTriggerUserDefinedFunctionTemplate
+
+#macro(flagOperationHasTransitionToStateAndTriggers $operation)
+    #set($operationHasInitialStates = $FALSE)
+    #set($initialStates = $operation.initialStatesList)
+    #if(!$initialStates.isEmpty())
+        #set($operationHasInitialStates = $TRUE)
+    #end
+    #set($operationHasTransitionToStateAndTriggers = $FALSE)
+    #if(!$entityTriggers.isEmpty())
+        #set($finalStates = $operation.finalStatesList)
+        #if(!$finalStates.isEmpty())
+            #set($operationHasTransitionToStateAndTriggers = $TRUE)
+        #end
+    #end
+#end##flagOperationHasTransitionToStateAndTriggers

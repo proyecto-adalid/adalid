@@ -1,0 +1,30 @@
+#parsePropertiesMacros()
+#setPropertiesVariables()
+#writePropertiesLicense()
+#writePropertiesAuthor('Jorge Campins')
+#break
+
+#set($entities = $ColUtils.filter($project.entitiesList, $isPersistentEntity))
+#set($entities = $ColUtils.sort($entities, $byEntityName))
+#foreach($entity in $entities)
+    #set($key = $entity.wrapper.sqlName)
+    #set($key = $entity.wrapper.sqlSchemaQualifiedShortName)
+#*
+    #if($entity.segmentReferenceProperty)
+        #writeBundleSegmentosEntityReference($entity.segmentReferenceProperty)
+    #elseif("$!entity.segmentReferenceFieldName" == "{master}")
+        #writeBundleSegmentosEntityMasterReference()
+    #end
+*#
+#end##foreach-entity
+#break
+
+#macro(writeBundleSegmentosEntityReference $ref)
+${key}.columna=${ref.wrapper.sqlName}
+${key}.funcion=${ref.root.wrapper.sqlSchemaQualifiedShortName}_select_segmento
+#end##writeBundleSegmentosEntityReference
+
+#macro(writeBundleSegmentosEntityMasterReference)
+${key}.columna={master}
+${key}.funcion={master}_select_segmento
+#end##writeBundleSegmentosEntityMasterReference

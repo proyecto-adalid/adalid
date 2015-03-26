@@ -1,0 +1,19 @@
+#break
+
+#macro(writeRecursoLocalizableImport)
+#if($esRecursoLocalizable)
+    #set($added = $imports.add("${project.rootPackageName}.lib.base.interfaces.RecursoLocalizable"))
+    #set($added = $interfaces.add('RecursoLocalizable'))
+#end
+#end##writeRecursoLocalizableImport
+
+#macro(writeRecursoLocalizableImplementation)
+#if($esRecursoLocalizable)
+    #set($property = $entity.urlProperty)
+    @Override
+    public ${property.wrapper.javaPrimitiveType} getUrl() {
+        return get${property.wrapper.javaClassName}();
+    }
+
+#end
+#end##writeRecursoLocalizableImplementation

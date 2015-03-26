@@ -1,0 +1,56 @@
+    // <editor-fold defaultstate="collapsed" desc="procesar">
+    char bookmark$bookmarkSequence.next();
+
+    public void procesar() {
+        if (bean.get$EntityDataProvider().isFuncionBusinessProcessAutorizada()) {
+            bean.getGestor().procesar(new RowProcessor() {
+
+                @Override
+                public void processRow(RowKey rowKey) throws Exception {
+                    procesar(rowKey);
+                }
+
+            });
+        }
+    }
+
+    protected void procesar(RowKey rowKey) throws Exception {
+        long f = bean.get$EntityDataProvider().getFuncionBusinessProcess();
+        boolean b = bean.get$EntityDataProvider().esFilaValidaParaProcesar(rowKey, f);
+        if (!b) {
+#foreach($operation in $operations)
+    #setOperationVariables()
+        } else if (f == ${operationNumberConstantName}) {
+            _${operationName}(rowKey);
+#end##foreach-operation
+        }
+    }
+
+#foreach($operation in $operations)
+    #setOperationVariables()
+    #if($operationType == '')
+    #elseif($operationType == 'EXPORT')
+        #parse("$templatePath/blocks/block-3-export.vm")
+    #elseif($operationType == 'REPORT')
+        #parse("$templatePath/blocks/block-3-report.vm")
+    #elseif($operationType == 'PROCEDURE')
+##      #parse("$templatePath/blocks/block-3-procedure.vm")
+        #parse("$templatePath/blocks/block-3-process.vm")
+    #elseif($operationType == 'PROCESS')
+        #parse("$templatePath/blocks/block-3-process.vm")
+    #end
+#end##foreach-operation
+#if($entityHasSimpleProcessOperations)
+    protected AbstractMessage requestReply(AbstractMessage message) throws Exception {
+        ObjectMessage solicitud = getMessenger().postRequest(message);
+        ObjectMessage respuesta = getMessenger().receiveReply(solicitud);
+        AbstractMessage mensaje = respuesta == null ? (AbstractMessage) solicitud.getObject() : (AbstractMessage) respuesta.getObject();
+        TLC.getBitacora().add(mensaje);
+        return mensaje;
+    }
+
+#end
+    char bookmark$bookmarkSequence.next();
+    // </editor-fold>
+
+#break

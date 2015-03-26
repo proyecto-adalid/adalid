@@ -1,0 +1,12 @@
+#set($capitalizedComponentName = $StringUtils.capitalize($componentName))
+$tab    private HelpInline ${componentName} = new AyudaEnLinea();
+
+$tab    public HelpInline get${capitalizedComponentName}() {
+$tab        return ${componentName};
+$tab    }
+
+$tab    public void set${capitalizedComponentName}(HelpInline helpInline) {
+$tab        ${componentName} = helpInline;
+$tab    }
+
+#break

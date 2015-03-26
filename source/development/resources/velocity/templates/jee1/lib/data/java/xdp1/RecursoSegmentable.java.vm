@@ -1,0 +1,109 @@
+#break
+
+#macro(writeRecursoSegmentableImport)
+#if($esRecursoSegmentable)
+    #set($added = $imports.add("${project.rootPackageName}.lib.core.db.xdp.RecursoSegmentableDataProvider"))
+    #set($added = $interfaces.add('RecursoSegmentableDataProvider'))
+#end
+#end##writeRecursoSegmentableImport
+
+#macro(writeRecursoSegmentableImplementation)
+#if($esRecursoSegmentable)
+    #set($property = $entity.segmentProperty)
+##  public static final String COLUMNA_SEGMENTO_RECURSO = "${property.wrapper.sqlName}";
+    public static final String COLUMNA_SEGMENTO_RECURSO = "${query.getSqlAlias($property)}";
+
+    public static final String COLUMNA_CALIFICADA_SEGMENTO_RECURSO = "${query.getSqlQualifiedName($property)}";
+
+    public static final String ETIQUETA_SEGMENTO_RECURSO = BundleWebui.getString("xdp.etiqueta_segmento_recurso");
+
+    @Override
+    public String getColumnaSegmentoRecurso() {
+        return COLUMNA_SEGMENTO_RECURSO;
+    }
+
+    @Override
+    public String getEtiquetaSegmentoRecurso() {
+        return ETIQUETA_SEGMENTO_RECURSO;
+    }
+
+    @Override
+    public Long getSegmentoRecurso() {
+    #if($dataProviderColumns.contains($property))
+    #if(${property.wrapper.javaPrimitiveType} == 'Integer')
+        return NumUtils.toLong(get${property.wrapper.javaClassName}());
+    #else
+        return get${property.wrapper.javaClassName}();
+    #end
+    #else
+    #if(${property.wrapper.javaPrimitiveType} == 'Integer')
+        return NumUtils.toLong(super.getValue(COLUMNA_SEGMENTO_RECURSO));
+    #else
+        return (${property.wrapper.javaPrimitiveType}) super.getValue(COLUMNA_SEGMENTO_RECURSO);
+    #end
+    #end
+    }
+
+    @Override
+    public Long getSegmentoRecurso(RowKey rowKey) {
+    #if($dataProviderColumns.contains($property))
+    #if(${property.wrapper.javaPrimitiveType} == 'Integer')
+        return NumUtils.toLong(get${property.wrapper.javaClassName}(rowKey));
+    #else
+        return get${property.wrapper.javaClassName}(rowKey);
+    #end
+    #else
+    #if(${property.wrapper.javaPrimitiveType} == 'Integer')
+        return NumUtils.toLong(super.getValue(COLUMNA_SEGMENTO_RECURSO, rowKey));
+    #else
+        return (${property.wrapper.javaPrimitiveType}) super.getValue(COLUMNA_SEGMENTO_RECURSO, rowKey);
+    #end
+    #end
+    }
+
+    @Override
+    public void setSegmentoRecurso(Long segmentoRecurso) {
+    #if($dataProviderColumns.contains($property))
+    #if(${property.wrapper.javaPrimitiveType} == 'Integer')
+        set${property.wrapper.javaClassName}(NumUtils.toInteger(segmentoRecurso));
+    #else
+        set${property.wrapper.javaClassName}(segmentoRecurso);
+    #end
+    #end
+    }
+
+    @Override
+    public void setSegmentoRecurso(RowKey rowKey, Long segmentoRecurso) {
+    #if($dataProviderColumns.contains($property))
+    #if(${property.wrapper.javaPrimitiveType} == 'Integer')
+        set${property.wrapper.javaClassName}(rowKey, NumUtils.toInteger(segmentoRecurso));
+    #else
+        set${property.wrapper.javaClassName}(rowKey, segmentoRecurso);
+    #end
+    #end
+    }
+
+    @Override
+    public void setSegmentoRecurso(Integer segmentoRecurso) {
+    #if($dataProviderColumns.contains($property))
+    #if(${property.wrapper.javaPrimitiveType} == 'Integer')
+        set${property.wrapper.javaClassName}(segmentoRecurso);
+    #else
+        set${property.wrapper.javaClassName}(NumUtils.toLong(segmentoRecurso));
+    #end
+    #end
+    }
+
+    @Override
+    public void setSegmentoRecurso(RowKey rowKey, Integer segmentoRecurso) {
+    #if($dataProviderColumns.contains($property))
+    #if(${property.wrapper.javaPrimitiveType} == 'Integer')
+        set${property.wrapper.javaClassName}(rowKey, segmentoRecurso);
+    #else
+        set${property.wrapper.javaClassName}(rowKey, NumUtils.toLong(segmentoRecurso));
+    #end
+    #end
+    }
+
+#end
+#end##writeRecursoSegmentableImplementation

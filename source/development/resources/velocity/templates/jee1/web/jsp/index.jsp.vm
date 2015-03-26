@@ -1,0 +1,333 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+#parseJSPMacros()
+#setJSPVariables()
+#writeXMLDeclaration()
+#writeJSPLicense()
+#writeJSPAuthor('Jorge Campins')
+<%@ page import="${project.rootPackageName}.lib.base.bundle.BundleWebui" %>
+<%@ page import="${project.rootPackageName}.lib.base.util.TimeUtils" %>
+<%@ page import="${project.rootPackageName}.lib.core.control.UsuarioAutenticado" %>
+<%@ page import="${project.rootPackageName}.lib.core.control.UsuarioAutenticadoCachingServiceLocator" %>
+<%@ page import="${project.rootPackageName}.lib.core.util.EA" %>
+<%@ page import="java.util.Locale" %>
+<%--
+  if (request.getParameter("login") == null) {
+    response.sendRedirect("index.jsp?login=" + (System.currentTimeMillis() - session.getCreationTime()));
+    return;
+  }
+--%>
+<%
+    boolean dynrbac = EA.isDynamicAccess();
+    UsuarioAutenticado ua = UsuarioAutenticadoCachingServiceLocator.getInstance(request.getUserPrincipal());
+    String nombre = ua == null ? null : ua.getNombreUsuario();
+    Locale locale = request.getLocale();
+    String title  = BundleWebui.getString("index.jsp.title", locale);
+    String entapp = request.getContextPath().substring(1, request.getContextPath().indexOf("-"));
+    String prefix = entapp == null ? null : entapp.toUpperCase() + "_";
+    String dirvar = prefix == null ? null : prefix + "DIR";
+    String dbvar1 = prefix == null ? null : prefix + "JDBC_DRIVER";
+    String dbvar2 = prefix == null ? null : prefix + "JDBC_URL";
+    String dbvar3 = prefix == null ? null : prefix + "JDBC_USER";
+    String dbvar4 = prefix == null ? null : prefix + "JDBC_PASSWORD";
+    /*
+    String dirstr = dirvar == null ? null : System.getenv(dirvar);
+    String dbstr1 = dbvar1 == null ? null : System.getenv(dbvar1);
+    String dbstr2 = dbvar2 == null ? null : System.getenv(dbvar2);
+    String dbstr3 = dbvar3 == null ? null : System.getenv(dbvar3);
+    String dbstr4 = dbvar4 == null ? null : System.getenv(dbvar4);
+    boolean dirok = dirstr != null && (new java.io.File(dirstr)).isDirectory();
+    boolean dbcok = dbstr1 != null && dbstr2 != null && dbstr3 != null && dbstr4 != null;
+    */
+    String dirstr = dirvar;
+    String dbstr1 = dbvar1;
+    String dbstr2 = dbvar2;
+    String dbstr3 = dbvar3;
+    String dbstr4 = dbvar4;
+    boolean dirok = true;
+    boolean dbcok = true;
+%>
+<html>
+    <head>
+        <title><% out.print(title); %></title>
+    </head>
+    <body bgcolor="#fafafa" style="font-family: Arial,Helvetica,sans-serif; font-size: 100%" onload="initialize()">
+        <script type="text/javascript">
+            //
+            var MZFF = 'http://www.mozilla-europe.org/es/firefox/';
+            //
+            var HOME = 'http://www.google.com/';
+            //
+            function initialize() {
+                var MZ = 'Mozilla';
+                var FF = 'Firefox';
+                var V1 = 3;
+                var V2 = 0;
+                var V3 = 7;
+                var V4 = 0;
+                //  alert(navigator.appCodeName + ', ' + navigator.appName + ', ' + navigator.appVersion + ', ' + navigator.userAgent);
+                var nv = getParametro(unescape(location.search), '?', FF + '=', '&');
+                //  alert(unescape(location.search) + ', [' + nv + ']');
+                if (nv == '') {
+                    var w1 = 0;
+                    var w2 = 0;
+                    var w3 = 0;
+                    var w4 = 0;
+                    if (navigator.userAgent.indexOf(MZ) == 0 && navigator.userAgent.indexOf(FF) > 0) {
+                        w1 = Number(getParametro(navigator.userAgent, FF,  '/', '.'));
+                        if (isNaN(w1)) {
+                            w1 = Number(getParametro(navigator.userAgent, FF,  '/', ' '));
+                        } else {
+                            w2 = Number(getParametro(navigator.userAgent, FF + '/' + w1,  '.', '.'));
+                            if (isNaN(w2)) {
+                                w2 = Number(getParametro(navigator.userAgent, FF + '/' + w1,  '.', ' '));
+                            } else {
+                                w3 = Number(getParametro(navigator.userAgent, FF + '/' + w1 + '.' + w2,  '.', '.'));
+                                if (isNaN(w3)) {
+                                    w3 = Number(getParametro(navigator.userAgent, FF + '/' + w1 + '.' + w2,  '.', ' '));
+                                } else {
+                                    w4 = Number(getParametro(navigator.userAgent, FF + '/' + w1 + '.' + w2 + '.' + w3,  '.', '.'));
+                                    if (isNaN(w4)) {
+                                        w4 = Number(getParametro(navigator.userAgent, FF + '/' + w1 + '.' + w2 + '.' + w3,  '.', ' '));
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    if (isNaN(w1)) w1 = 0;
+                    if (isNaN(w2)) w2 = 0;
+                    if (isNaN(w3)) w3 = 0;
+                    if (isNaN(w4)) w4 = 0;
+                    //  alert(navigator.userAgent + '\n' + w1 + '.' + w2 + '.' + w3 + '.' + w4);
+                    if (w1 > V1) {
+                        return true;
+                    } else if (w1 == V1 && w2 > V2) {
+                        return true;
+                    } else if (w1 == V1 && w2 == V2 && w3 > V3) {
+                        return true;
+                    } else if (w1 == V1 && w2 == V2 && w3 == V3 && w4 >= V4) {
+                        return true;
+                    } else {
+                        var url = location.protocol + '//' + location.host + location.pathname + '?' + FF + '=' + w1 + '.' + w2 + '.' + w3 + '.' + w4;
+                        location.replace(url);
+                    }
+                }
+                return true;
+            }
+            function gomzff() {
+                location.href = MZFF;
+                return false;
+            }
+            function gohome() {
+                location.href = HOME;
+                return false;
+            }
+            function go(jsp) {
+                var context   = getParametro(location.pathname, '', '/', '/');
+                var url       = location.protocol + '//' + location.host + '/' + context + '/redirect.html?jsp=' + jsp;
+                var target    = getDefaultWindowName();
+                var features  = getEspecificacionesVentana();
+                /*
+                alert(url);
+                 */
+                open(url, target, features);
+                return false;
+            }
+            function go2(jsp, folder) {
+                var context   = getParametro(location.pathname, '', '/', '/');
+                var twn       = folder.replace(/\-/gi, '_');
+                var url       = location.protocol + '//' + location.host + '/' + context + '/redirect.html?jsp=' + jsp + '&twn=' + twn;
+                var target    = getDefaultWindowName();
+                var features  = getEspecificacionesVentana();
+                /*
+                alert(url);
+                 */
+                open(url, target, features);
+                return false;
+            }
+            //
+            function getDefaultWindowName() {
+                var ctx = getParametro(location.pathname, '', '/', '/');
+                var wcx = ctx.replace(/\-/gi, '_');
+                var pos = wcx.indexOf('_');
+                var dwn = pos > 0 ? wcx.substring(0, pos) : wcx;
+                //  alert('current window name = ' + window.name + ', context = ' + ctx + ', default window name = ' + dwn);
+                return dwn;
+            }
+            //
+            function getEspecificacionesVentana() {
+                var features  = 'resizable,scrollbars,status';
+                /**/
+                var IE  = (navigator.appName.indexOf('Microsoft') == 0); // Microsoft Internet Explorer
+                if (IE) {
+                    return features;
+                }
+                /**/
+                var avaWidth  = screen.availWidth;       //  amount of horizontal space in pixels available to the window
+                var avaHeight = screen.availHeight;      //  height of the screen, in pixels, minus permanent or semipermanent user interface features displayed by the operating system
+                var avaLeft   = screen.availLeft;        //  first available pixel available from the left side of the screen
+                var avaTop    = screen.availTop;         //  y-coordinate of the first pixel that is not allocated to permanent or semipermanent user interface features
+                /**/
+                if (isNaN(avaWidth))   avaWidth  = 0;
+                if (isNaN(avaHeight))  avaHeight = 0;
+                if (isNaN(avaLeft))    avaLeft   = 0;
+                if (isNaN(avaTop))     avaTop    = 0;
+                /**/
+                if (avaWidth > 0 && avaHeight > 0) {
+                    var maxWidth  = 1280;
+                    var maxHeight = 960;
+                    /**/
+                    var outWidth  = avaWidth;
+                    var outHeight = avaHeight;
+                    var scrX      = avaLeft;
+                    var scrY      = avaTop;
+                    /**/
+                    if (outWidth  > maxWidth)  outWidth  = maxWidth;
+                    if (outHeight > maxHeight) outHeight = maxHeight;
+                    scrX = (avaWidth  - outWidth)  / 2;
+                    scrY = (avaHeight - outHeight) / 2;
+                    /**/
+                    features += ',outerWidth=' + outWidth + ',outerHeight=' + outHeight + ',screenX=' + scrX + ',screenY=' + scrY;
+                }
+                /*
+                alert(features);
+                 */
+                return features;
+            }
+            //
+            function getParametro(str, kw0, kw1, kw2) {
+                // Obtiene la posicion donde comenzar a buscar
+                var ix0 = kw0 == '' ?  0  : str.indexOf(kw0);
+                if (ix0 == -1) return '';
+                ix0 += kw0.length;
+                // Obtiene la posicion donde comienza el valor
+                var ix1 = kw1 == '' ? ix0 : str.indexOf(kw1, ix0);
+                if (ix1 == -1) return '';
+                ix1 += kw1.length;
+                // Obtiene la posicion donde termina el valor
+                var ix2 = kw2 == '' ? ix1 : str.indexOf(kw2, ix1);
+                if (ix2 == -1) ix2 = str.length;
+                // Obtiene el valor
+                var valor = str.substring(ix1, ix2);
+                // Retorna el valor
+                return valor;
+            }
+            //
+        </script>
+        <!--<form>-->
+        <div>
+            <img onclick="gohome()" alt="" src="resources/masthead_left.png"  style="float: left"/>
+            <img onclick="gohome()" alt="" src="resources/masthead_right.png" style="float: right"/>
+        </div>
+        <div style="clear: both"/>
+        <div style="background-color: #e5e9ed; border: 1px solid gray">
+            <div style="display: table; height: 36px">
+                <div style="display: table-cell; vertical-align: middle">
+                    <b style="margin-left: 4px">
+                        <font size="4" color="black">
+                            <% out.print(BundleWebui.getString("${project.wrapper.hyphenatedAlias}", locale)); %>
+                        </font>
+                    </b>
+                </div>
+            </div>
+        </div>
+        <div style="float: left">
+            <img onclick="gohome()" alt="" src="resources/mastbody.png"/>
+        </div>
+        <div style="float: left; margin-left: 36px">
+            <%
+              if (request.getUserPrincipal() != null) {
+            %>
+            <%--
+            <br><br>
+            Se ha conectado con el usuario <b><%= request.getUserPrincipal().getName() %></b>
+            --%>
+            <%--
+              if (request.getParameter("login") != null) {
+            --%>
+            <%--
+            <br><br>
+            Su sesi&#243;n de trabajo es la <b><%= session.getId() %></b>
+            <br><br>
+            Su sesi&#243;n de trabajo comenz&#243; a las <b><%= session.getCreationTime() + Long.valueOf(request.getParameter("login")) %></b>
+            <br><br>
+            Ahora son las <b><%= System.currentTimeMillis() %></b>
+            <br><br>
+            Han transcurrido <b><%= System.currentTimeMillis() - session.getCreationTime() - Long.valueOf(request.getParameter("login")) %> milisegundos</b>
+            --%>
+            <%--
+              if ((System.currentTimeMillis() - session.getCreationTime()) - 1000L < Long.valueOf(request.getParameter("login"))) {
+            --%>
+            <%--
+            <br>
+            <b>
+                Ha comenzado una nueva sesi&#243;n de trabajo
+            </b>
+            --%>
+            <%--
+              } else {
+            --%>
+            <br>
+            <a>
+                <% out.print(BundleWebui.getString("index.jsp.txt10", locale)); %>
+            </a>
+            <%--
+              }
+            --%>
+            <br><br>
+            <a href='#' onclick="return go('copy/Menu')">
+                <% out.print(BundleWebui.getString("index.jsp.txt20", locale)); %>
+            </a>
+            <br><br>
+            <a href='#' onclick="return go('copy/Favoritos')">
+                <% out.print(BundleWebui.getString("index.jsp.txt30", locale)); %>
+            </a>
+            <br><br>
+            <a href='#' onclick="return go2('crop/tarea/TareaUsuario11', '${project.rootFolderName}-war-tarea')">
+                <% out.print(BundleWebui.getString("index.jsp.txt40", locale)); %>
+            </a>
+            <br><br>
+            <%
+              if (dynrbac) {
+            %>
+            <a href='#' onclick="return go('copy/Password')">
+                <% out.print(BundleWebui.getString("index.jsp.txt50", locale)); %>
+            </a>
+            <br><br>
+            <%
+              }
+            %>
+            <a>
+                <% out.print(BundleWebui.getString("index.jsp.txt90", locale)); %>
+            </a>
+            <%--
+              }
+            --%>
+            <%
+              }
+            %>
+        </div>
+        <div style="clear: both"/>
+        <div style="background-color: #e5e9ed; border: 1px solid gray; height: 36px">
+            <div style="display: table; height: 36px; float: left">
+                <div style="display: table-cell; vertical-align: middle">
+                    <b style="margin-left: 4px">
+                        <font size="2" color="black">
+                            <% out.print(nombre); %>
+                        </font>
+                    </b>
+                </div>
+            </div>
+            <div style="display: table; height: 36px; float: right">
+                <div style="display: table-cell; vertical-align: middle">
+                    <b style="margin-right: 4px">
+                        <font size="2" color="black">
+                            <% out.print(TimeUtils.defaultTimestampString()); %>
+                        </font>
+                    </b>
+                </div>
+            </div>
+        </div>
+        <div style="clear: both"/>
+        <!--</form>-->
+    </body>
+</html>

@@ -1,0 +1,33 @@
+#foreach($field in $page.rootMasterHeadingFields)
+    #setFieldVariables()
+    #if($field.property.isEntity())
+        #parse("$templatePath/blocks/detail-table/master-heading-field/entity.vm")
+    #elseif($field.property.isBooleanPrimitive())
+        #parse("$templatePath/blocks/detail-table/master-heading-field/boolean.vm")
+    #elseif($field.property.isCharacterPrimitive())
+        #parse("$templatePath/blocks/detail-table/master-heading-field/character.vm")
+    #elseif($field.property.isNumericPrimitive())
+        #parse("$templatePath/blocks/detail-table/master-heading-field/numeric.vm")
+    #elseif($field.property.isTemporalPrimitive())
+        #parse("$templatePath/blocks/detail-table/master-heading-field/temporal.vm")
+    #end
+#end
+#break
+
+#macro(setFieldVariables)
+    #set($fieldClassName = "${field.property.wrapper.javaClassName}")
+    #set($fieldVariableName = "${field.property.wrapper.javaVariableName}")
+    #set($fieldFirstName = "${fieldClassName}1")
+    #set($fieldMiddleName = "${fieldClassName}2")
+    #set($fieldLastName = "${fieldClassName}3")
+    #set($fieldSearchType = "$!field.property.searchType")
+    #set($fieldSqlName = "${field.property.wrapper.sqlName}")
+    #set($fieldForeignCodeVariableName = "$!field.foreignCodeField.wrapper.javaVariableName")
+    #set($fieldForeignNameVariableName = "$!field.foreignNameField.wrapper.javaVariableName")
+    #set($fieldForeignCodeSqlName = "$!field.foreignCodeField.wrapper.sqlName")
+    #set($fieldForeignNameSqlName = "$!field.foreignNameField.wrapper.sqlName")
+    #set($fieldRequired = 'false')
+    #set($fieldReadOnly = 'true')
+    #set($Campo1 = "Campo$fieldFirstName")
+    #set($campo1 = "campo$fieldFirstName")
+#end##setFieldVariables

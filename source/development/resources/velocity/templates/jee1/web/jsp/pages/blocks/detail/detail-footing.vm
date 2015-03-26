@@ -1,0 +1,16 @@
+$tab<!-- detail footing opening -->
+$tab<h:panelGrid id="panelGrid${panelGridSequence.next()}" styleClass="pdq-grid-detalle-pie">
+$tab    <h:panelGrid id="panelGrid${panelGridSequence.next()}" columns="2">
+            #increaseIndentationBy(2)
+            #parse("$templatePath/blocks/detail/cursor-buttons-grid.vm")
+            #decreaseIndentationBy(2)
+$tab        <h:panelGrid id="panelGrid${panelGridSequence.next()}" styleClass="pdq-grid-detalle-mensajes">
+$tab            <h:panelGrid id="panelGrid${panelGridSequence.next()}" styleClass="pdq-grid-detalle-mensajes-2">
+$tab                <webuijsf:staticText id="textoMensajeCambiosPorConfirmar1"
+$tab                    style="font-weight: bold"
+$tab                    text="#{${pageBeanName}.gestor.mensajeCambiosPorConfirmar}"/>
+$tab            </h:panelGrid>
+$tab        </h:panelGrid>
+$tab    </h:panelGrid>
+$tab</h:panelGrid>
+$tab<!-- detail footing closing -->

@@ -1,0 +1,123 @@
+#parseJavaMacros()
+#setJavaVariables()
+#writeJavaLicense()
+#writeJavaPackage()
+#set($added = $imports.add("${project.rootPackageName}.ejb.core.jms.BusinessProcessMessage"))
+#set($added = $imports.add("${project.rootPackageName}.lib.base.entity.enumeration.TipoRastroFunEnumeration"))
+#set($added = $imports.add("${project.rootPackageName}.lib.core.enumeration.EnumTipoDatoSQL"))
+#set($added = $imports.add('java.io.Serializable'))
+#set($added = $interfaces.add('Serializable'))
+#writeJavaImports($imports)
+#setOperationLoggingName()
+#set($parameters = $operation.parametersList)
+#writeJavaAuthor('Jorge Campins')
+public class ${javaClassSimpleName} extends BusinessProcessMessage#writeJavaImplements()
+
+#set($rpl = $VelocityAid.getNewArrayList())
+#foreach($parameter in $parameters)
+    #writeParameterNumber()
+#end##foreach-parameter
+#foreach($parameter in $parameters)
+    #addItToRPL("${parameter.wrapper.javaPrimitiveType}" "${parameter.wrapper.javaVariableName}")
+    #writeField("${parameter.wrapper.javaPrimitiveType}" "${parameter.wrapper.javaVariableName}")
+#end##foreach-parameter
+    public ${javaClassSimpleName}() {
+        super();
+        setFuncion(${project.getOperationNumber($operation)}L);
+#if($operationLoggingName != '')
+        setTipoRastroFuncion(TipoRastroFunEnumeration.$operationLoggingName);
+#end
+    }
+
+#if($parameters.size() > 0)
+    public ${javaClassSimpleName}($StringUtils.join($rpl, ', ')) {
+        this();
+    #foreach($parameter in $parameters)
+        #set($name = $parameter.wrapper.javaVariableName)
+        this.$name = $name;
+    #end##foreach-parameter
+    }
+
+#end
+#writeGetArrayArgumentosConRastro()
+#foreach($parameter in $parameters)
+    #writeFieldAccessors("${parameter.wrapper.javaPrimitiveType}" "${parameter.wrapper.javaVariableName}")
+#end##foreach-parameter
+}
+#break
+
+#macro(writeParameterNumber)
+    public static final long PARAMETRO_${parameter.wrapper.javaConstantName} = ${project.getParameterNumber($parameter)}L;
+
+#end##writeParameterNumber
+
+#macro(addItToRPL $type $name)
+    #setPersistentJavaType($type)
+    #set($added = $rpl.add("$persistentJavaType ${name}"))
+#end##addItToRPL
+
+#macro(writeField $type $name)
+    #setPersistentJavaType($type)
+    private $persistentJavaType $name;
+
+#end##writeField
+
+#macro(writeFieldAccessors $type $name)
+    #setPersistentJavaType($type)
+    #set($Name = $StringUtils.capitalize($name))
+    public ${persistentJavaType} getArgumento${Name}() {
+        return ${name};
+    }
+
+    public void setArgumento${Name}(${persistentJavaType} ${name}) {
+        this.${name} = ${name};
+    }
+
+#end##writeFieldAccessors
+
+#macro(writeGetArrayArgumentosConRastro)
+    #set($argcount = $parameters.size())
+    #set($argcount = $argcount + 1)
+    public Object[] getArgumentosProcedimientoSql() {
+##      return #writeArrayArgumentosConRastro()
+        Object[] argumentos = new Object[$argcount];
+        int i = 0;
+        argumentos[i++] = getRastro() == null ? EnumTipoDatoSQL.valueOf(Long.class) : getRastro();
+    #foreach($parameter in $parameters)
+        #set($fee = "${parameter.wrapper.javaVariableName}")
+        #set($faa = "EnumTipoDatoSQL.valueOf(${parameter.wrapper.javaPrimitiveType}.class)")
+        #set($foo = "$fee == null ? $faa : $fee")
+        #set($added = $rpl.add($foo))
+        argumentos[i++] = $foo;
+    #end##foreach-parameter
+        return argumentos;
+    }
+
+#end##writeGetArrayArgumentosConRastro
+
+#macro(writeArrayArgumentosConRastro)
+$rpl.clear()##
+#set($tab = $StringUtils.repeat($TAB, 4))
+#set($added = $rpl.add('getRastro()'))
+#foreach($parameter in $parameters)
+    #set($fee = "${parameter.wrapper.javaVariableName}")
+    #set($faa = "EnumTipoDatoSQL.valueOf(${parameter.wrapper.javaPrimitiveType}.class)")
+    #set($foo = "$fee == null ? $faa : $fee")
+    #set($added = $rpl.add($foo))
+#end##foreach-parameter
+new Object[]{$StringUtils.join($rpl, ",$EOL$tab")};
+#end##writeArrayArgumentosConRastro
+
+#macro(setOperationLoggingName)
+    #if("$!operation.operationLogging" == '')
+        #set($operationLoggingName = '')
+    #elseif("$!operation.operationLogging" == 'BOTH')
+        #set($operationLoggingName = 'AMBOS')
+    #elseif("$!operation.operationLogging" == 'FAILURE')
+        #set($operationLoggingName = 'ERROR')
+    #elseif("$!operation.operationLogging" == 'SUCCESS')
+        #set($operationLoggingName = 'EXITO')
+    #else
+        #set($operationLoggingName = '')
+    #end
+#end##setOperationLoggingName

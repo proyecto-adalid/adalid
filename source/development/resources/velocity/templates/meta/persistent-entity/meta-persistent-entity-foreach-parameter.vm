@@ -1,0 +1,45 @@
+#if($parametersList && $parametersList.size()>0)
+##${tab}  for each one of the $parametersList.size() parameters in $parametersList
+#else
+    #break
+#end
+#foreach($parameter in $parametersList)
+##
+##  ParameterField annotation
+##
+#if(!$parameter.parameterFieldString.isEmpty())
+${tab}@ParameterField($parameter.parameterFieldString)
+#end
+##
+##  FileReference annotation
+##
+#if($parameter.fileReference)
+${tab}@FileReference
+#end
+##
+##  BigDecimalField annotation
+##
+#if(!$parameter.bigDecimalFieldString.isEmpty())
+${tab}@BigDecimalField($parameter.bigDecimalFieldString)
+#end
+##
+##  StringField annotation
+##
+#if(!$parameter.stringFieldString.isEmpty())
+${tab}@StringField($parameter.stringFieldString)
+#end
+##
+##  TimeField annotation
+##
+#if(!$parameter.timeFieldString.isEmpty())
+${tab}@TimeField($parameter.timeFieldString)
+#end
+##
+##  TimestampField annotation
+##
+#if(!$parameter.timestampFieldString.isEmpty())
+${tab}@TimestampField($parameter.timestampFieldString)
+#end
+${tab}protected $parameter.parameterType $parameter.name;
+
+#end

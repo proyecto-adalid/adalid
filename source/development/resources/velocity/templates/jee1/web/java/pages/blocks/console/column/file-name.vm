@@ -1,0 +1,50 @@
+#set($componentName = "label${fieldFirstName}")
+#parse("$templatePath/blocks/webuijsf/label.vm")
+#set($componentName = "campo${fieldFirstName}")
+#if("$!multipartUpload" == 'true')
+    #parse("$templatePath/blocks/webuijsf/inputfile.vm")
+#else
+    #parse("$templatePath/blocks/webuijsf/upload.vm")
+#end
+#set($componentName = "helpInline${fieldFirstName}")
+#parse("$templatePath/blocks/webuijsf/help-inline.vm")
+#if("$!multipartUpload" == 'true')
+    #writeValidatorExpression()
+#end
+#parse("$templatePath/blocks/console/column/shared.vm")
+#break
+
+#macro(writeValidatorExpression)
+    #set($parameterSearchQueryKey = "${page.entity.wrapper.sqlName}.${operation.wrapper.sqlName}.${parameter.wrapper.sqlName}")
+    #set($parameterSearchQueryKey = "${page.entity.wrapper.sqlSchemaQualifiedShortName}.${operation.wrapper.sqlName}.${parameter.wrapper.sqlName}")
+    #set($validInputFileTypes = '')
+    #foreach($mimeType in $parameter.validInputFileTypes)
+        #set($validInputFileTypes = "$validInputFileTypes, ""$mimeType.name().toLowerCase()""")
+    #end
+    #if($validInputFileTypes != '')
+        #set($validInputFileTypes = $validInputFileTypes.substring(2))
+    #end
+    private boolean ${campo1}_doubtful = true;
+
+    /**
+     * ${campo1}.validatorExpression
+     */
+    public void ${campo1}_validate(FacesContext context, UIComponent component, Object value) {
+        String label = BundleParametros.getLabel("${parameterSearchQueryKey}");
+        if (JSF.isValidPart(value)) {
+        #if($validInputFileTypes != '')
+            JSF.validateInputFile((Part) value, label, $parameter.maxInputFileSize, new String[]{$validInputFileTypes});
+        #else
+            JSF.validateInputFile((Part) value, label, $parameter.maxInputFileSize);
+        #end
+    #if($fieldRequired)
+        } else {
+            String summary = Bitacora.getTextoMensaje(CBM.NOT_NULL_CONSTRAINT_VIOLATION, label);
+            FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_ERROR, summary, null);
+            throw new ValidatorException(message);
+    #end
+        }
+        ${campo1}_doubtful = false;
+    }
+
+#end##writeValidatorExpression

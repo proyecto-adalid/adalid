@@ -1,0 +1,255 @@
+#if($instanceOperation || $operation.parametersList.size() > 0)
+    #set($exportQueryType = "$!operation.queryType")
+#else
+    #set($exportQueryType = 'UNSPECIFIED')
+#end
+#writeOperationJavadocType1()
+    private String ${operationName}() throws Exception {
+    #if($operation.view)
+        String export = getExportIdentifier${operationClassName}();
+    #else
+        String export = $operationExportConstantName;
+    #end
+        long function = $operationNumberConstantName;
+#if($exportQueryType == 'DYNAMIC' || $exportQueryType == 'PARAMETERIZED')
+        Map parameters = new LinkedHashMap();
+    #foreach($parameter in $operation.parametersList)
+        #setParameterVariables()
+##      parameters.put("${parameter.wrapper.sqlName}", $parameterCoalesceToDefaultValue);
+        parameters.put("${parameter.wrapper.sqlName}", $parameterValueExpression);
+    #end##foreach-parameter
+#end
+#set($vista = "$!{operation.viewName}")
+#if($vista == '')
+    #set($vista = "consulta_${page.entity.wrapper.sqlName}")
+    #set($vista = "${page.entity.wrapper.sqlSchemaQualifier}consulta_${page.entity.wrapper.sqlSchemaUnqualifiedShortName}")
+#end
+#if($exportQueryType == 'DYNAMIC')
+    #if($operation.view)
+        String select = getSelectStatement${operationClassName}();
+    #else
+        String select = "select * from ${vista}";
+    #end
+        String criteria = "";
+        ArrayList arguments = new ArrayList();
+        Object argument;
+    #foreach($parameter in $operation.parametersList)
+        #setParameterVariables()
+        #if("$!parameter.linkedColumnName" != '')
+            #set($name = $parameter.linkedColumnName)
+        #elseif($parameter.linkedProperty)
+            #set($name = ${parameter.linkedProperty.wrapper.sqlName})
+        #else
+            #set($name = ${parameter.wrapper.sqlName})
+        #end
+        argument = parameters.get("${parameter.wrapper.sqlName}");
+        if (argument != null) {
+            criteria += " and ($sqlProgrammer.getSqlStandardRelationalExpression($name, ${parameter.linkedColumnOperator}))";
+            arguments.add(argument);
+        }
+    #end##foreach-parameter
+        ObjectMessage solicitud;
+        if (criteria.length() > 0) {
+        #if($operation.view)
+            select = Utils.addWhereClause(select, criteria.substring(5));
+        #else
+            select += " where (" + criteria.substring(5) + ")";
+        #end
+            solicitud = exporter.executeExport(export, function, select, arguments.toArray());
+        } else {
+            solicitud = exporter.executeExport(export, function, select);
+        }
+#elseif($exportQueryType == 'PARAMETERIZED')
+        solicitud = exporter.executeExport(export, function);
+#else
+        solicitud = exporter.executeExport(export, function);
+#end
+        receiveReply(solicitud);
+        return null;
+    }
+
+#if($operation.view)
+    #set($entityView = $operation.view)
+    #set($entityViewColumnsMap = $entityView.entity.queryTable.selectColumnsMap)
+    #writeExportSelectOptionsGetter()
+    #writeExportSelectStatementGetter1()
+    #if($entityView.isSelectable())
+        #writeExportSelectStatementGetter2('DETAIL')
+    #end
+    #if($entityView.isSummarizable())
+        #writeExportSelectStatementGetter2('SUMMARY')
+    #end
+#end
+#break
+
+#macro(writeExportSelectOptionsGetter)
+    private DropDown listaTipoInforme${operationClassName}1 = new ${project.rootPackageName}.lib.core.jsf.component.ListaDesplegable();
+
+    public DropDown getListaTipoInforme${operationClassName}1() {
+        return listaTipoInforme${operationClassName}1;
+    }
+
+    public void setListaTipoInforme${operationClassName}1(DropDown dd) {
+        this.listaTipoInforme${operationClassName}1 = dd;
+    }
+
+    private IntegerConverter listaTipoInforme${operationClassName}1Converter = new IntegerConverter();
+
+    public IntegerConverter getListaTipoInforme${operationClassName}1Converter() {
+        return listaTipoInforme${operationClassName}1Converter;
+    }
+
+    public void setListaTipoInforme${operationClassName}1Converter(IntegerConverter ic) {
+        this.listaTipoInforme${operationClassName}1Converter = ic;
+    }
+
+    private Integer tipoInforme${operationClassName};
+
+    public Integer getTipoInforme${operationClassName}() {
+        return tipoInforme${operationClassName};
+    }
+
+    public void setTipoInforme${operationClassName}(Integer tipoInforme${operationClassName}) {
+        this.tipoInforme${operationClassName} = tipoInforme${operationClassName};
+    }
+
+    public Object getSelectOptions${operationClassName}() {
+        EnumTipoInforme[] values = new EnumTipoInforme[]{
+        #if($entityView.isSummarizable())
+            EnumTipoInforme.DETALLE, EnumTipoInforme.RESUMEN
+        #elseif($entityView.isSelectable())
+            EnumTipoInforme.DETALLE
+        #end
+        };
+        return JSF.getListaOpciones(values, false, false);
+    }
+
+#end##writeExportSelectOptionsGetter
+
+#macro(writeExportSelectStatementGetter1)
+    private String getExportIdentifier${operationClassName}() {
+        String export = $operationExportConstantName;
+        #if($entityView.isChartable() || $entityView.isSummarizable())
+....        EnumTipoInforme tipo = tipoInforme${operationClassName} == null ? null : EnumTipoInforme.valueOf(tipoInforme${operationClassName});
+....        String suffix = tipo == null ? "" : "." + StrUtils.getIdentificadorSqlLowerCase(tipo.name());
+....        return export + suffix;
+        #elseif($entityView.isSelectable())
+....        String suffix = "." + StrUtils.getIdentificadorSqlLowerCase(EnumTipoInforme.DETALLE.name());
+....        return export + suffix;
+        #else
+....        return export;
+        #end
+    }
+
+    private String getSelectStatement${operationClassName}() {
+        String select = "select * from ${vista}";
+        #if($entityView.isSummarizable())
+....        EnumTipoInforme tipo = tipoInforme${operationClassName} == null ? null : EnumTipoInforme.valueOf(tipoInforme${operationClassName});
+....        if (tipo == null) {
+....            return select;
+....        }
+....        switch (tipo) {
+....            case DETALLE:
+                    #set($opcion = $VelocityAid.valueOf($SelectOption, 'DETAIL'))
+....                return getSelectStatement$StringUtils.capitalize($opcion.nameTag)${operationClassName}();
+....            case RESUMEN:
+                    #set($opcion = $VelocityAid.valueOf($SelectOption, 'SUMMARY'))
+....                return getSelectStatement$StringUtils.capitalize($opcion.nameTag)${operationClassName}();
+....            default:
+....                return select;
+....        }
+        #elseif($entityView.isSelectable())
+            #set($opcion = $VelocityAid.valueOf($SelectOption, 'DETAIL'))
+....        return getSelectStatement$StringUtils.capitalize($opcion.nameTag)${operationClassName}();
+        #else
+....        return select;
+        #end
+    }
+
+#end##writeExportSelectStatementGetter1
+
+#macro(writeExportSelectStatementGetter2 $option)
+    #set($opcion = $VelocityAid.valueOf($SelectOption, $option))
+    #if($opcion)
+#*
+        #set($selectStatement = "$!entityView.getSelectStatement($vista, $opcion)")
+        #if($selectStatement != '')
+            #set($selectStatement = $selectStatement.replace(' FROM ',     " ""${EOL}${TAB}${TAB}${TAB}+ ""FROM "))
+            #set($selectStatement = $selectStatement.replace(' GROUP BY ', " ""${EOL}${TAB}${TAB}${TAB}+ ""GROUP BY "))
+            #set($selectStatement = $selectStatement.replace(' ORDER BY ', " ""${EOL}${TAB}${TAB}${TAB}+ ""ORDER BY "))
+            #set($selectStatement = $selectStatement.toLowerCase())
+........    private String getSelectStatement$StringUtils.capitalize($opcion.nameTag)${operationClassName}() {
+........        return "$selectStatement";
+........    }
+........
+        #end
+*###
+        #set($viewSelect = $VelocityAid.coalesce($entityView.getViewSelect($vista, $opcion), $FALSE))
+        #if($viewSelect)
+........    private String getSelectStatement$StringUtils.capitalize($opcion.nameTag)${operationClassName}() {
+            #if($viewSelect.isDistinct())
+........        String statement = "SELECT DISTINCT ";
+            #else
+........        String statement = "SELECT ";
+            #end
+            #set($viewSelectColumns = $VelocityAid.coalesce($viewSelect.columns, $FALSE))
+            #if($viewSelectColumns)
+                #foreach($viewSelectColumn in $viewSelectColumns)
+                    #set($substringBeforeAS  = $StringUtils.substringBefore($viewSelectColumn, ' AS '))
+                    #set($substringAfterAS   = $StringUtils.substringAfter($viewSelectColumn, ' AS '))
+                    #set($substringBeforeDUS = $StringUtils.substringBefore($substringAfterAS, '__'))
+                    #set($substringAfterDUS  = $StringUtils.substringAfter($substringAfterAS, '__'))
+                    #set($getAliasMethod = 'alias1')
+                    #set($getAliasParameters = '')
+                    #if($substringAfterDUS != '')
+                        #set($entityViewColumnsMapKey = $substringAfterDUS)
+                        #set($getAliasMethod = 'alias2')
+                        #set($getAliasParameters = """$substringBeforeDUS"", ")
+                    #elseif($substringBeforeDUS != '')
+                        #set($entityViewColumnsMapKey = $substringBeforeDUS)
+                    #else
+                        #set($entityViewColumnsMapKey = $substringBeforeAS)
+                    #end
+                    #set($viewSelectProperty = $VelocityAid.coalesce($entityViewColumnsMap.get($entityViewColumnsMapKey), $FALSE))
+                    #if($viewSelectProperty)
+                        #set($bundleKey = "${entityView.entity.wrapper.sqlSchemaQualifiedShortName}")
+                        #set($bundleKey = "${bundleKey}.${entityView.wrapper.sqlName}")
+                        #set($bundleKey = "${bundleKey}.$StrUtils.getLowerHumplessCase(${viewSelectProperty.partialName})")
+                        #set($bundleKey = """${bundleKey}"", ")
+                        #set($getAliasParameters = "$getAliasParameters$bundleKey")
+                        #set($bundleKey = "${viewSelectProperty.declaringEntityRoot.wrapper.sqlSchemaQualifiedShortName}")
+                        #set($bundleKey = "${bundleKey}.${viewSelectProperty.wrapper.sqlName}")
+                        #set($bundleKey = """${bundleKey}"", ")
+                        #set($getAliasParameters = "$getAliasParameters$bundleKey")
+                        #set($defaultStr = """${viewSelectProperty.wrapper.wordyAlias}""")
+                        #set($getAliasParameters = "$getAliasParameters$defaultStr")
+                        #set($viewSelectExpression = "$substringBeforeAS AS "" + ${getAliasMethod}($getAliasParameters) + """)
+                    #else
+                        #set($viewSelectExpression = "$viewSelectColumn")
+                    #end
+............        statement += "$viewSelectExpression#if(!$foreach.last),#end ";
+                #end##foreach-viewSelectColumn
+            #else
+........        statement += "* ";
+            #end
+........        statement += "FROM $viewSelect.from ";
+            #set($viewSelectGroupBy = $VelocityAid.coalesce($viewSelect.groupBy, $FALSE))
+            #if($viewSelectGroupBy)
+........        statement += "GROUP BY ";
+                #foreach($viewSelectGroupBy in $viewSelectGroupBy)
+............        statement += "$viewSelectGroupBy#if(!$foreach.last),#end ";
+                #end##foreach-viewSelectGroupBy
+            #end
+            #set($viewSelectOrderBy = $VelocityAid.coalesce($viewSelect.orderBy, $FALSE))
+            #if($viewSelectOrderBy)
+........        statement += "ORDER BY ";
+                #foreach($viewSelectOrderBy in $viewSelectOrderBy)
+............        statement += "$viewSelectOrderBy#if(!$foreach.last),#end ";
+                #end##foreach-viewSelectOrderBy
+            #end
+........        return statement;
+........    }
+........
+        #end
+    #end
+#end##writeExportSelectStatementGetter2

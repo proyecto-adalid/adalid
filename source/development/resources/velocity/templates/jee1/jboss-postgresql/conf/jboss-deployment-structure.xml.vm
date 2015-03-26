@@ -1,0 +1,24 @@
+#parseXMLMacros()
+#setXMLVariables()
+#writeXMLDeclaration()
+#writeXMLLicense()
+#writeXMLAuthor('Jorge Campins')
+<jboss-deployment-structure>
+    <ear-subdeployments-isolated>false</ear-subdeployments-isolated>
+    <deployment>
+        <dependencies>
+            <module name="com.sun.jsf-impl" slot="main" export="true" services="export" />
+            <module name="javax.faces.api" export="true" />
+            <!-- additional dependencies -->
+            <module name="com.microsoft.core.fonts" export="true" />
+            <module name="net.sourceforge.jasperreports" export="true" />
+            <module name="org.apache.commons.collections" export="true" />
+            <module name="org.apache.commons.io" export="true" />
+            <module name="org.apache.commons.lang" export="true" />
+            <module name="org.apache.log4j" export="true" />
+            <module name="org.apache.velocity" export="true" />
+            <module name="org.joda.time" export="true" />
+            <module name="org.postgresql.pgjdbc4" export="true" />
+        </dependencies>
+    </deployment>
+</jboss-deployment-structure>

@@ -1,0 +1,67 @@
+    // <editor-fold defaultstate="collapsed" desc="implementacion estandar de la interfaz PaginaActualizacionConOperacion">
+    char bookmark$bookmarkSequence.next();
+
+    @EJB
+    private UtilityProcessMessengerLocal dispatcher;
+
+#if($isUtilityOperationInEntity)
+//  @Override
+    public Object getDispatcher() {
+        return dispatcher;
+    }
+
+#end
+    @EJB
+    private ExporterBrokerLocal exporter;
+
+#if($isExportOperationInEntity.evaluate($page.entity))
+    @Override
+    public Object getExporter() {
+        return exporter;
+    }
+
+#end
+    @EJB
+    private ReporterBrokerLocal reporter;
+
+#if($isReportOperationInEntity.evaluate($page.entity))
+    @Override
+    public Object getReporter() {
+        return reporter;
+    }
+
+#end
+#if($isProcedureOperationInEntity.evaluate($page.entity))
+    @EJB
+    private SqlAgentBrokerLocal sqlAgent;
+
+    @Override
+    public Object getSqlAgent() {
+        return sqlAgent;
+    }
+
+#end
+#if($isProcessOperationInEntity.evaluate($page.entity))
+    #set($entityBusinessProcessLocal = "${page.entity.wrapper.javaClassName}BusinessProcessLocal")
+    #set($entityBusinessProcess = "${page.entity.wrapper.javaVariableName}BusinessProcess")
+    #set($EntityBusinessProcess = "${page.entity.wrapper.javaClassName}BusinessProcess")
+    @EJB
+    ${entityBusinessProcessLocal} ${entityBusinessProcess};
+
+    @Override
+    public Object get${EntityBusinessProcess}() {
+        return ${entityBusinessProcess};
+    }
+
+    @EJB
+    private BusinessProcessMessengerLocal messenger;
+
+    @Override
+    public Object getMessenger() {
+        return messenger;
+    }
+
+#end
+    char bookmark$bookmarkSequence.next();
+    // </editor-fold>
+

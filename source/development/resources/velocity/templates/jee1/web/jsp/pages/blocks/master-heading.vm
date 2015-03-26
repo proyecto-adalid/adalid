@@ -1,0 +1,20 @@
+#set($divString = 'DivMaestro1')
+#set($master = "${pageBeanName}.encabezadoMaestro")
+$tab<!-- master heading -->
+$tab<h:panelGrid id="panelGrid${panelGridSequence.next()}"
+$tab            style="width: ${masterHeadingViewWidth}px"
+$tab            styleClass="pdq-grid-maestro-1">
+$tab    <h:panelGrid id="panelGrid${panelGridSequence.next()}" styleClass="pdq-grid-detalle-cab">
+$tab        <h:panelGrid id="panelGrid${panelGridSequence.next()}">
+$tab            <webuijsf:label id="label${divString}"
+$tab                binding="#{${master}.label${divString}}"
+$tab                text="BundleDominios.${page.master.wrapper.sqlSchemaQualifiedShortName}"/>
+$tab        </h:panelGrid>
+$tab    </h:panelGrid>
+$tab    <h:panelGrid id="panelGrid${panelGridSequence.next()}" columns="2">
+            #increaseIndentationBy(2)
+            #parse("$templatePath/blocks/master-heading-field.vm")
+            #decreaseIndentationBy(2)
+$tab    </h:panelGrid>
+$tab</h:panelGrid>
+#set($divString = '')

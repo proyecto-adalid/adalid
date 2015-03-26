@@ -1,0 +1,126 @@
+    // <editor-fold defaultstate="collapsed" desc="metodos estandar para el manejo de eventos de la pagina: init, preprocess, prerender y destroy">
+    @PostConstruct
+    public void postConstruct() {
+        if (EAB.CUSTOM_LIFECYCLE_CALLBACK_METHODS_ENABLED) {
+            init();
+        }
+    }
+
+    @Override
+    public void init() {
+        super.init();
+        gestor.preiniciar();
+        if (gestor.isPaginaAutorizada()) {
+            try {
+                iniciar();
+            } catch (Exception e) {
+                log(${project.rootPackageName}.lib.base.bundle.BundleWebui.getString("bean.initialization.error"), e);
+                throw e instanceof FacesException ? (FacesException) e : new FacesException(e);
+            }
+            gestor.iniciar();
+            inicializar();
+            instanciar();
+        }
+    }
+
+    private void inicializar() {
+        Long funcion = getContextoPeticion().getIdentificacionFuncionReferencia();
+        if (funcion != null) {
+            Option[] opciones = getOpcionesListaFuncionAccion();
+            for (Option option : opciones) {
+                if (funcion.equals(option.getValue())) {
+                    gestor.setValorListaFuncionAccion1(funcion);
+                    break;
+                }
+            }
+        }
+        #foreach($operation in $operations)
+            #setOperationVariables()
+            #if($operationNumberConstant != '' && $operationStringConstant != '')
+                #foreach($parameter in $operation.parametersList)
+                    #setParameterVariables()
+                    #if("$!multipartUpload" == 'true' && $parameter.isFileReferenceField())
+................//      ObjUtils.setComponentValue(${campo1}, ${parameterInitialValueExpression});
+                    #else
+................        ObjUtils.setComponentValue(${campo1}, ${parameterInitialValueExpression});
+                    #end
+                #end##foreach-parameter
+            #end
+        #end##foreach-operation
+    }
+
+    private void instanciar() {
+        #if($isInstanceReferenceFieldPresent)
+        Long id = getContextoPeticion().getIdentificacionRecurso();
+        if (id != null) {
+            ${entityVariableName} = ${entityVariableName}Facade.find(id, true);
+            if (${entityVariableName} != null) {
+                // set each instance reference component value#*
+                #if($esRecursoCodificable)
+                String string = ${entityVariableName}.getCodigoRecurso();
+                if (string != null) {
+                    #foreachInstanceReferenceFieldSetText('string' 5)
+                }
+                #else
+                    #foreachInstanceReferenceFieldSetText('id' 4)
+                #end
+                *#
+                #foreachInstanceReferenceFieldSetText(${entityVariableName} 4)
+            }
+            long f = LongUtils.valueOf(gestor.getValorListaFuncionAccion1());
+            if (f != 0) {
+                listaFuncionAccion1_validate(f);
+            }
+        }
+        #end
+    }
+
+    @Override
+    public void preprocess() {
+        super.preprocess();
+        gestor.preprocesar();
+    }
+
+    @Override
+    public void prerender() {
+        super.prerender();
+        if (gestor.getIdentificacionOpcionSeleccionada(listaFuncionAccion1) == null) {
+            TLC.getBitacora().info(gestor.getI18n().getInlineHelpListaFuncionAccion());
+        }
+        gestor.prepresentar();
+    }
+
+    @PreDestroy
+    public void preDestroy() {
+        if (EAB.CUSTOM_LIFECYCLE_CALLBACK_METHODS_ENABLED) {
+            destroy();
+        }
+    }
+
+    @Override
+    public void destroy() {
+        super.destroy();
+    }
+    // </editor-fold>
+
+#break
+
+#macro(foreachInstanceReferenceFieldSetText $fee $faa)
+    #set($foo = $StringUtils.repeat($TAB, $faa))
+    #foreach($operation in $operations)
+        #setOperationVariables()
+        #if($operationNumberConstant != '' && $operationStringConstant != '')
+            #foreach($parameter in $parameters)
+                #setParameterVariables()
+                #if($parameter.isInstanceReferenceField())
+                    #writeSetText($fee $foo)
+                #end
+            #end##foreach-parameter
+        #end
+    #end##foreach-operation
+#end##foreachInstanceReferenceFieldSetText
+
+#macro(writeSetText $fee $foo)
+##  ${foo}//${campo1}.setText(${fee});
+....${foo}ObjUtils.setComponentValue(${campo1}, ${fee});
+#end##writeSetText

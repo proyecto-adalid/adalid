@@ -1,0 +1,27 @@
+#*
+select
+table_name,
+null as default_label,
+null as default_collection_label,
+null as resource_type,
+false as is_enumerable,
+true as is_independent
+from information_schema.tables
+where table_catalog='$database'
+and table_schema='$schema'
+and table_type='BASE TABLE'
+order by table_name
+*#
+select distinct
+table_name,
+null as default_label,
+null as default_collection_label,
+null as resource_type,
+case when(numero_tipo_recurso=12) then(true) else(false) end as is_enumerable,
+true as is_independent
+from information_schema.tables
+left outer join clase_recurso on clase_recurso.codigo_clase_recurso=table_name
+where table_catalog='$database'
+and table_schema='$schema'
+and table_type='BASE TABLE'
+order by table_name

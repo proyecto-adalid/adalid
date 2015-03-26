@@ -1,0 +1,77 @@
+    // <editor-fold defaultstate="collapsed" desc="implementacion estandar de la interfaz PaginaBasicaConAccionMultiple">
+    private Label etiquetaListaFuncionAccion1 = new ${project.rootPackageName}.lib.core.jsf.component.Etiqueta();
+
+    public Label getEtiquetaListaFuncionAccion1() {
+        return etiquetaListaFuncionAccion1;
+    }
+
+    public void setEtiquetaListaFuncionAccion1(Label l) {
+        this.etiquetaListaFuncionAccion1 = l;
+    }
+
+    private DropDown listaFuncionAccion1 = new ${project.rootPackageName}.lib.core.jsf.component.ListaDesplegable();
+
+    @Override
+    public DropDown getListaFuncionAccion1() {
+        return listaFuncionAccion1;
+    }
+
+    public void setListaFuncionAccion1(DropDown component) {
+        this.listaFuncionAccion1 = component;
+    }
+
+    private LongConverter converterListaFuncionAccion1 = new LongConverter();
+
+    public LongConverter getConverterListaFuncionAccion1() {
+        return converterListaFuncionAccion1;
+    }
+
+    public void setConverterListaFuncionAccion1(LongConverter component) {
+        this.converterListaFuncionAccion1 = component;
+    }
+
+    private HelpInline helpInlineListaFuncionAccion1 = new ${project.rootPackageName}.lib.core.jsf.component.AyudaEnLinea();
+
+    public HelpInline getHelpInlineListaFuncionAccion1() {
+        return helpInlineListaFuncionAccion1;
+    }
+
+    public void setHelpInlineListaFuncionAccion1(HelpInline hi) {
+        this.helpInlineListaFuncionAccion1 = hi;
+    }
+
+    private StaticText listaFuncionAccion1Texto1 = new ${project.rootPackageName}.lib.core.jsf.component.TextoEstaticoAlternativo();
+
+    public StaticText getListaFuncionAccion1Texto1() {
+        return listaFuncionAccion1Texto1;
+    }
+
+    public void setListaFuncionAccion1Texto1(StaticText component) {
+        this.listaFuncionAccion1Texto1 = component;
+    }
+
+    @Override
+    public Option[] getOpcionesListaFuncionAccion() {
+        long value;
+        String label;
+        ArrayList<Option> opciones = new ArrayList<>();
+        opciones.add(gestor.getOpcionSeleccioneUnaOpcionListaFuncionAccion());
+#foreach($operation in $operations)
+    #setOperationVariables()
+    #if($operationNumberConstant != '' && $operationLabelConstant != '')
+        value = ${operationNumberConstant};
+        label = ${operationLabelConstant};
+        opciones.add(gestor.getOpcionFuncion(value, label));
+    #end
+#end##foreach-operation
+        return gestor.getOpcionesListaFuncionAccionAutorizadas(opciones);
+    }
+
+    public String getInlineHelpListaFuncionAccion() {
+        String etiqueta = gestor.getEtiquetaOpcionSeleccionada(listaFuncionAccion1);
+        String descripcion = gestor.getDescripcionOpcionSeleccionada(listaFuncionAccion1);
+        return StringUtils.isBlank(descripcion) || descripcion.equalsIgnoreCase(etiqueta) ? "" : descripcion;
+    }
+    // </editor-fold>
+
+#break

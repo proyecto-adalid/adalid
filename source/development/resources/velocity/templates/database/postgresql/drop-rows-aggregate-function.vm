@@ -1,0 +1,32 @@
+#parsePostgreSQLMacros()
+#setPostgreSQLVariables()
+#writePostgreSQLLicense()
+#writePostgreSQLAuthor('Jorge Campins')
+#set($entities = $ColUtils.filter($project.entitiesList, $isEntitySqlCodeGenEnabled, $isPersistentEntityWithTable))
+#set($entities = $ColUtils.sort($entities, $byEntityName))
+#foreach($entity in $entities)
+    #writeTemplate('remark-entity')
+    #writeDropRowsAggregateFunctions()
+#end##foreach-entity
+#break
+
+#macro(writeDropRowsAggregateFunctions)
+    #resetSQLVariables()
+    #set($expressions = $entity.expressionsList)
+    #foreach($expression in $expressions)
+        #if($expression.isRowsAggregateExpression())
+            #if($expression.dimension)
+                #set($argtype  = "${expression.dimension.wrapper.sqlType}")
+            #else
+                #set($argtype  = '')
+            #end
+            #set($expname = $expression.wrapper.sqlExpressionSelectFunctionName)
+            #set($expname = $expression.wrapper.sqlSchemaQualifiedShortExpressionSelectFunctionName)
+            #writeDropRowsAggregateFunction("${expname}($argtype)")
+        #end
+    #end##foreach-expression
+#end##writeDropRowsAggregateFunctions
+
+#macro(writeDropRowsAggregateFunction $function)
+drop function if exists $function cascade;
+#end##writeDropRowsAggregateFunction

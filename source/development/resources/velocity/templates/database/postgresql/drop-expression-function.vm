@@ -1,0 +1,33 @@
+#parsePostgreSQLMacros()
+#setPostgreSQLVariables()
+#writePostgreSQLLicense()
+#writePostgreSQLAuthor('Jorge Campins')
+#set($entities = $ColUtils.filter($project.entitiesList, $isEntitySqlCodeGenEnabled, $isPersistentEntityWithTable))
+#set($entities = $ColUtils.sort($entities, $byEntityName))
+#foreach($entity in $entities)
+    #writeTemplate('remark-entity')
+    #writeDropExpressionFunctions()
+#end##foreach-entity
+#break
+
+#macro(writeDropExpressionFunctions)
+    #resetSQLVariables()
+    #set($table = $entity.wrapper.sqlTableName)
+    #set($table = $entity.wrapper.sqlSchemaQualifiedShortTableName)
+    #set($keytype = $entity.primaryKeyProperty.wrapper.sqlType)
+    #set($checks = $entity.checksList)
+    #set($states = $entity.statesList)
+    #set($expressions = $entity.expressionsList)
+    #foreach($expression in $expressions)
+        #if($expression.isCrossReferencedExpression() || $states.contains($expression) || ($expression.isNotInherited() && !$checks.contains($expression)))
+            #set($expname = $expression.wrapper.sqlExpressionFunctionName)
+            #set($expname = $expression.wrapper.sqlSchemaQualifiedShortExpressionFunctionName)
+            #writeDropExpressionFunction("${expname}(${keytype})")
+##          #writeDropExpressionFunction("${expname}(${table})")
+        #end
+    #end##foreach-expression
+#end##writeDropExpressionFunctions
+
+#macro(writeDropExpressionFunction $function)
+drop function if exists $function cascade;
+#end##writeDropExpressionFunction

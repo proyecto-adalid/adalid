@@ -1,0 +1,264 @@
+    // <editor-fold defaultstate="collapsed" desc="metodos para establecer las opciones de las cuadrículas">
+    char bookmark$bookmarkSequence.next();
+
+#foreach($property in $entity.dataProviderColumnsList)
+    #if(!$property.isHiddenField())
+        #setFieldVariables()
+        #set($insertable = $property.isCreateField())
+        #set($updateable = $property.isUpdateField())
+        #set($enclosingTabs = $property.enclosingTabs)
+        #isFieldReadOnly()
+        #isColumnRendered()
+        #isLastColumnRendered()
+        #isGridRendered()
+        #isTabGridRendered()
+        #isFieldRendered()
+        #isFieldRenderingFiltered()
+        #isFieldRequired()
+        #isFieldModifyingFiltered()
+        #isFieldNullifyingFiltered()
+##      #isAnyTabWithFieldFiltered()
+    #end
+#end##foreach-property
+    char bookmark$bookmarkSequence.next();
+    // </editor-fold>
+
+#break
+
+#macro(isFieldReadOnly)
+    public boolean isField${fieldClassName}ReadOnly() {
+        return isField${fieldClassName}ReadOnlyAccess() || !isField${fieldClassName}ModifyingFiltered();
+    }
+
+    protected boolean isField${fieldClassName}ReadOnlyAccess() {
+    #if($insertable || $updateable)
+        #if("$!property.propertyAccess" == 'RESTRICTED_READING' || "$!property.propertyAccess" == 'RESTRICTED_WRITING')
+....        String parametro = ${entityDataProviderClass}.COLUMNA_${property.wrapper.javaConstantName};
+        #end
+    #end
+    #if($insertable && $updateable)
+        #if("$!property.propertyAccess" == 'RESTRICTED_READING' || "$!property.propertyAccess" == 'RESTRICTED_WRITING')
+....        return (bean.getGestor().isFilaNoCreada() || bean.getGestor().isParametroFuncionCrearNoAutorizado(parametro))
+....            && (bean.getGestor().isFilaNoModificada() || bean.getGestor().isParametroFuncionModificarNoAutorizado(parametro));
+        #else
+....        return bean.getGestor().isFilaNoProcesada();
+        #end
+    #elseif($insertable)
+        #if("$!property.propertyAccess" == 'RESTRICTED_READING' || "$!property.propertyAccess" == 'RESTRICTED_WRITING')
+....        return bean.getGestor().isFilaNoCreada() || bean.getGestor().isParametroFuncionCrearNoAutorizado(parametro);
+        #else
+....        return bean.getGestor().isFilaNoCreada();
+        #end
+    #elseif($updateable)
+        #if("$!property.propertyAccess" == 'RESTRICTED_READING' || "$!property.propertyAccess" == 'RESTRICTED_WRITING')
+....        return bean.getGestor().isFilaNoModificada() || bean.getGestor().isParametroFuncionModificarNoAutorizado(parametro);
+        #else
+....        return bean.getGestor().isFilaNoModificada();
+        #end
+    #else
+        return true;
+    #end
+    }
+
+#end##isFieldReadOnly
+
+#macro(isColumnRendered)
+    public boolean isColumn${fieldClassName}Rendered() {
+    #if("$!property.propertyAccess" == 'RESTRICTED_READING')
+        String parametro = ${entityDataProviderClass}.COLUMNA_${property.wrapper.javaConstantName};
+        return bean.getGestor().isParametroFuncionConsultarAutorizado(parametro);
+    #else
+        return true;
+    #end
+    }
+
+#end##isColumnRendered
+
+#macro(isLastColumnRendered)
+    public boolean isColumn${fieldLastName}Rendered() {
+        return isColumn${fieldClassName}Rendered() && bean.getGestor().isFuncionCheckChangesHabilitada();
+    }
+
+#end##isLastColumnRendered
+
+#macro(isGridRendered)
+    public boolean isGrid${fieldClassName}Rendered() {
+    #if($enclosingTabs.isEmpty())
+        return isColumn${fieldClassName}Rendered() && isField${fieldClassName}Rendered();
+    #else
+        #if($insertable && $updateable)
+....        return isColumn${fieldClassName}Rendered() && bean.getGestor().isFilaProcesada();
+        #elseif($insertable)
+....        return isColumn${fieldClassName}Rendered() && bean.getGestor().isFilaCreada();
+        #elseif($updateable)
+....        return isColumn${fieldClassName}Rendered() && bean.getGestor().isFilaModificada();
+        #else
+....        return false;
+        #end
+    #end
+    }
+
+#end##isGridRendered
+
+#macro(isTabGridRendered)
+    public boolean isGrid${fieldClassName}RenderedInsideTabs() {
+        return isColumn${fieldClassName}Rendered() && bean.getGestor().isFilaNoProcesada() && isField${fieldClassName}RenderingFiltered();
+    }
+
+#end##isTabGridRendered
+
+#macro(isFieldRendered)
+    public boolean isField${fieldClassName}Rendered() {
+    #if($insertable && $updateable)
+        return isField${fieldClassName}RenderingFiltered();
+    #elseif($insertable)
+//      return bean.getGestor().isFilaCreada() || bean.getGestor().isFilaNoModificada() && isField${fieldClassName}RenderingFiltered();
+        return isField${fieldClassName}RenderingFiltered();
+    #elseif($updateable || $property.isBusinessKeyProperty() || $property.isNameProperty())
+        return bean.getGestor().isFilaModificada() || bean.getGestor().isFilaNoCreada() && isField${fieldClassName}RenderingFiltered();
+    #else
+        return bean.getGestor().isFilaNoProcesada() && isField${fieldClassName}RenderingFiltered();
+    #end
+    }
+
+#end##isFieldRendered
+
+#macro(isFieldRenderingFiltered)
+    protected boolean isField${fieldClassName}RenderingFiltered() {
+    #if($property.renderingFilter)
+        #writeFilaNoProcesadaFilterBlock($property.renderingFilter $TRUE)
+    #else
+        return true;
+    #end
+    }
+
+#end##isFieldRenderingFiltered
+
+#macro(isFieldRequired)
+    public boolean isField${fieldClassName}Required() {
+    #if($property.requiringFilter)
+        #writeFilaProcesadaFilterBlock($property.requiringFilter $FALSE)
+    #else
+        return $property.isRequiredProperty();
+    #end
+    }
+
+#end##isFieldRequired
+
+#macro(isFieldModifyingFiltered)
+    protected boolean isField${fieldClassName}ModifyingFiltered() {
+    #if($property.modifyingFilter)
+        #writeFilaProcesadaFilterBlock($property.modifyingFilter $FALSE)
+    #else
+        return true;
+    #end
+    }
+
+#end##isFieldModifyingFiltered
+
+#macro(isFieldNullifyingFiltered)
+    protected boolean isField${fieldClassName}NullifyingFiltered() {
+    #if($property.nullifyingFilter)
+        #writeFilaProcesadaFilterBlock($property.nullifyingFilter $FALSE)
+    #else
+        return false;
+    #end
+    }
+
+#end##isFieldNullifyingFiltered
+
+#macro(writeFilaProcesadaFilterBlock $filter $otherwise)
+##      String key;
+        Object obj;
+        RowKey rowKey = bean.getGestor().getCurrentRowKey();
+        if (bean.get${EntityDataProvider}().isNotRowAvailable(rowKey)) {
+            return false;
+        }
+        if (bean.getGestor().isFilaNoProcesada()) {
+            return $otherwise;
+        }
+        #set($parameterizedExpression = $filter.wrapper.javaParameterizedExpression)
+        #set($parametersMap = $parameterizedExpression.parametersMap)
+        #setIndentation(1)
+        #clearEntityBeanParametersList()
+        #foreach($parameterKey in $parametersMap.keySet())
+            #writeGetEntityBean()
+        #end
+        #foreach($parameterKey in $parametersMap.keySet())
+##..//      key = "$parameterKey";
+            #writeAssignObjValue()
+....        $artifactJavaType $parameterKey = $artifactObjUtilsMethod(obj);
+        #end
+        #set($maxLineLength = 0)
+        #set($newLineString = '<EOL>')
+        #set($string2split = "$!parameterizedExpression.expression")
+        #set($string2split = "return $string2split;")
+        #set($string2split = $string2split.replace("&&", "${newLineString}${TAB}&&"))
+        #set($string2split = $string2split.replace("||", "${newLineString}${TAB}||"))
+        #set($string2split = $string2split.replace("), ", "),${newLineString}${TAB}"))
+        #set($string2lines = $VelocityAid.split($string2split, $maxLineLength, $newLineString, $FALSE, $TAB))
+        #foreach($line in $string2lines)
+....        ${line}
+        #end
+#end##writeFilaProcesadaFilterBlock
+
+#macro(writeFilaNoProcesadaFilterBlock $filter $otherwise)
+        String string;
+        Object object;
+        RowKey rowKey = bean.getGestor().getCurrentRowKey();
+        if (bean.get${EntityDataProvider}().isNotRowAvailable(rowKey)) {
+            return false;
+        }
+        if (bean.getGestor().isFilaProcesada()) {
+            return $otherwise;
+        }
+        #set($parameterizedExpression = $filter.wrapper.javaParameterizedExpression)
+        #set($parametersMap = $parameterizedExpression.parametersMap)
+        #set($queryTable = $entity.queryTable)
+        #foreach($parameterKey in $parametersMap.keySet())
+            #set($dataArtifact = $parametersMap.get($parameterKey))
+            #setArtifactVariables($dataArtifact)
+            #if($dataArtifact == $entity)
+........        string = "$!sqlProgrammer.getSqlAlias($dataArtifact.primaryKeyProperty, $queryTable)";
+........        object = bean.get${EntityDataProvider}().getValue(string, rowKey);
+            #elseif($dataArtifact.isProperty())
+........        string = "$!sqlProgrammer.getSqlAlias($dataArtifact, $queryTable)";
+........        object = bean.get${EntityDataProvider}().getValue(string, rowKey);
+            #else
+........        string = null;
+........        object = null;
+            #end
+....        $artifactJavaType $parameterKey = $artifactObjUtilsMethod(object);
+....        /**/
+        #end
+        #set($maxLineLength = 0)
+        #set($newLineString = '<EOL>')
+        #set($string2split = "$!parameterizedExpression.expression")
+        #set($string2split = "return $string2split;")
+        #set($string2split = $string2split.replace("&&", "${newLineString}${TAB}&&"))
+        #set($string2split = $string2split.replace("||", "${newLineString}${TAB}||"))
+        #set($string2split = $string2split.replace("), ", "),${newLineString}${TAB}"))
+        #set($string2lines = $VelocityAid.split($string2split, $maxLineLength, $newLineString, $FALSE, $TAB))
+        #foreach($line in $string2lines)
+....        ${line}
+        #end
+#end##writeFilaNoProcesadaFilterBlock
+
+#macro(isAnyTabWithFieldFiltered)
+    protected boolean isAnyTabWithField${fieldClassName}Filtered() {
+    #if($enclosingTabs.isEmpty())
+        return false;
+    #else
+        #set($inicioDeLinea = 'return')
+        #set($finDeLinea = '')
+        #foreach($tab in $enclosingTabs)
+            #if($foreach.last)
+                #set($finDeLinea = ';')
+            #end
+....        $inicioDeLinea isTab${tab.wrapper.javaCapitalizedName}Filtered()$finDeLinea
+            #set($inicioDeLinea = '    ||')
+        #end##foreach-tab
+    #end
+    }
+
+#end##isAnyTabWithFieldFiltered

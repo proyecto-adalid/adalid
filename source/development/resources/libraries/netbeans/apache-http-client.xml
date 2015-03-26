@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<library xmlns="http://www.netbeans.org/ns/library-declaration/3" version="3.0">
+    <name>apache-http-client</name>
+    <type>j2se</type>
+    <display-name>apache-http-client</display-name>
+    <volume>
+        <type>classpath</type>
+        <resource>jar:file:/C:/workspace/third-party/lib/httpcomponents-client-4.3.2/lib/commons-codec-1.6.jar!/</resource>
+        <resource>jar:file:/C:/workspace/third-party/lib/httpcomponents-client-4.3.2/lib/commons-logging-1.1.3.jar!/</resource>
+        <resource>jar:file:/C:/workspace/third-party/lib/httpcomponents-client-4.3.2/lib/fluent-hc-4.3.2.jar!/</resource>
+        <resource>jar:file:/C:/workspace/third-party/lib/httpcomponents-client-4.3.2/lib/httpclient-4.3.2.jar!/</resource>
+        <resource>jar:file:/C:/workspace/third-party/lib/httpcomponents-client-4.3.2/lib/httpclient-cache-4.3.2.jar!/</resource>
+        <resource>jar:file:/C:/workspace/third-party/lib/httpcomponents-client-4.3.2/lib/httpcore-4.3.1.jar!/</resource>
+        <resource>jar:file:/C:/workspace/third-party/lib/httpcomponents-client-4.3.2/lib/httpmime-4.3.2.jar!/</resource>
+    </volume>
+    <volume>
+        <type>src</type>
+    </volume>
+    <volume>
+        <type>javadoc</type>
+    </volume>
+    <volume>
+        <type>maven-pom</type>
+    </volume>
+</library>

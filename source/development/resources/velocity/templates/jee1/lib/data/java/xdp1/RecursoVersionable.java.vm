@@ -1,0 +1,49 @@
+#break
+
+#macro(writeRecursoVersionableImport)
+#if($esRecursoVersionable)
+    #set($added = $imports.add("${project.rootPackageName}.lib.core.db.xdp.RecursoVersionableDataProvider"))
+    #set($added = $interfaces.add('RecursoVersionableDataProvider'))
+#end
+#end##writeRecursoVersionableImport
+
+#macro(writeRecursoVersionableImplementation)
+#if($esRecursoVersionable)
+    #set($property = $entity.versionProperty)
+##  public static final String COLUMNA_VERSION_RECURSO = "${property.wrapper.sqlName}";
+    public static final String COLUMNA_VERSION_RECURSO = "${query.getSqlAlias($property)}";
+
+    public static final String ETIQUETA_VERSION_RECURSO = BundleWebui.getString("xdp.etiqueta_version_recurso");
+
+    @Override
+    public String getColumnaVersionRecurso() {
+        return COLUMNA_VERSION_RECURSO;
+    }
+
+    @Override
+    public String getEtiquetaVersionRecurso() {
+        return ETIQUETA_VERSION_RECURSO;
+    }
+
+    @Override
+    public ${property.wrapper.javaPrimitiveType} getVersionRecurso() {
+        return get${property.wrapper.javaClassName}();
+    }
+
+    @Override
+    public ${property.wrapper.javaPrimitiveType} getVersionRecurso(RowKey rowKey) {
+        return get${property.wrapper.javaClassName}(rowKey);
+    }
+
+    @Override
+    public void setVersionRecurso(${property.wrapper.javaPrimitiveType} versionRecurso) {
+        set${property.wrapper.javaClassName}(versionRecurso);
+    }
+
+    @Override
+    public void setVersionRecurso(RowKey rowKey, ${property.wrapper.javaPrimitiveType} versionRecurso) {
+        set${property.wrapper.javaClassName}(rowKey, versionRecurso);
+    }
+
+#end
+#end##writeRecursoVersionableImplementation

@@ -1,0 +1,21 @@
+#set($capitalizedComponentName = $StringUtils.capitalize($componentName))
+$tab    private Calendar ${componentName} = new Calendario();
+
+#if("$!PaginaActualizacion" != '' && "$!divString" == '' && "$!tabString" == '')
+$tab    @Override
+#end
+$tab    public Calendar get${capitalizedComponentName}() {
+$tab        return ${componentName};
+$tab    }
+
+$tab    public void set${capitalizedComponentName}(Calendar calendar) {
+$tab        ${componentName} = calendar;
+$tab    }
+
+$tab    public void set${capitalizedComponentName}(TextField textField) {
+$tab        if (${componentName} instanceof Calendar) {
+$tab            ${componentName} = (Calendar) textField;
+$tab        }
+$tab    }
+
+#break

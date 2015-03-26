@@ -1,0 +1,110 @@
+#parseJavaMacros()
+#parse("$templatePath/macros/macros-1.vm")
+#parse("$templatePath/macros/macros-2.vm")
+#parse("$templatePath/macros/macros-3.vm")
+#parse("$templatePath/macros/macros-4.vm")
+#parse("$templatePath/macros/macros-5.vm")
+#setJavaVariables()
+#parse('templates/jee1/macros/macros-1.vm')
+#parse('templates/jee1/lib/data/java/XDP0.java.vm')
+#setVariablesRecurso($entity)
+#setLocalVariables()
+#writeJavaLicense()
+#writeJavaPackage()
+#addImports()
+#writeJavaImports($imports)
+#writeJavaAuthor('Jorge Campins')
+public class ${javaClassSimpleName}#writeJavaImplements()
+
+    protected ${PaginaActualizacion} bean;
+
+    public static ${javaClassSimpleName} newInstance(${PaginaActualizacion} pagina) {
+        Class<?> clase = ${javaClassSimpleName}.class;
+        TypeValuePair parametro = new TypeValuePair(${PaginaActualizacion}.class, pagina);
+        String subclase = ClassX.get().subclassName(clase, "page_adjutant");
+        Object instance = ClassX.get().newInstance(clase, subclase, parametro);
+        return (${javaClassSimpleName}) instance;
+    }
+
+    public ${javaClassSimpleName}(${PaginaActualizacion} pagina) {
+        bean = pagina;
+    }
+
+    public void iniciar() {
+    }
+
+    public void preprocesar() {
+        #if(!$entity.checksList.isEmpty())
+....        setRowChecker();
+        #end
+    }
+
+    public void prepresentar() {
+    }
+
+    public void destroy() {
+        bean = null;
+    }
+
+#parse("$templatePath/blocks/block-1.vm")
+#parse("$templatePath/blocks/block-2.vm")
+#parse("$templatePath/blocks/block-3.vm")
+#foreach($property in $entity.dataProviderColumnsList)
+    #if(!$property.isHiddenField())
+        #setFieldVariables()
+        #if($property.isEntity())
+            #parse("$templatePath/blocks/column/entity-intro.vm")
+            #if($fieldSearchType == 'DISPLAY')
+                #parse("$templatePath/blocks/column/entity.vm")
+            #elseif($fieldSearchType == 'LIST')
+                #parse("$templatePath/blocks/column/entity-list.vm")
+            #else
+                #parse("$templatePath/blocks/column/validate.vm")
+            #end
+        #elseif($property.isBinaryPrimitive())
+        #elseif($property.isCharacterPrimitive())
+            #if($property.isFileReferenceField())
+                #parse("$templatePath/blocks/column/file-name.vm")
+            #elseif($property.isUrlProperty())
+                #parse("$templatePath/blocks/column/url.vm")
+            #else
+                #parse("$templatePath/blocks/column/character.vm")
+            #end
+        #else
+            #parse("$templatePath/blocks/column/validate.vm")
+        #end
+        #if($property.isDiscriminatorProperty())
+            #parse("$templatePath/blocks/column/discriminator.vm")
+        #end
+    #end
+#end##foreach-property
+#parse("$templatePath/blocks/block-4.vm")
+#parse("$templatePath/blocks/block-5.vm")
+#parse("$templatePath/blocks/block-6.vm")
+}
+#break
+
+#macro(setLocalVariables)
+    #set($bookmarkSequence = $Sequence.startWith(1))
+    #set($PaginaActualizacion = "PaginaActualizacion${entity.wrapper.javaClassName}")
+    #set($entityClassName = "${entity.wrapper.javaClassName}")
+    #set($entityVariableName = "${entity.wrapper.javaVariableName}")
+    #set($entityBusinessProcess = "${entityClassName}BusinessProcess")
+    #set($entityBusinessProcessLocal = "${entityBusinessProcess}Local")
+    #set($entityPrimaryKeyClassName = "${entity.root.primaryKeyProperty.wrapper.javaCapitalizedName}")
+    #set($entityPrimaryKeyVariableName = "${entity.root.primaryKeyProperty.wrapper.javaUncapitalizedName}")
+    #set($operations = $ColUtils.filter($entity.businessOperationsList, $isAccesibleOperation, $isInstanceOperation, $isSimpleOperation))
+##  #set($operations = $ColUtils.sort($operations, $byOperationName))
+    #set($entityHasSimpleProcessOperations = $FALSE)
+    #foreach($operation in $operations)
+        #if($isProcessOperation.evaluate($operation))
+            #set($entityHasSimpleProcessOperations = $TRUE)
+            #break
+        #end
+    #end##foreach-operation
+    #setMainDataProviderVariables()
+#end##setLocalVariables
+
+#macro(addImports)
+    #addPaginaActualizacionImports()
+#end##addImports

@@ -1,0 +1,99 @@
+#if($parameter.isEnumerationEntity())
+    #writeEnumerationOptionsGetter()
+#elseif($fieldSearchType == 'LIST')
+    #writeEntityOptionsGetter()
+#end
+
+    public void ${campo1}_validate(FacesContext context, UIComponent component, Object value) {
+        ${campo1}_validate(value);
+    }
+
+    private void ${campo1}_validate(Object value) {
+#if($parameter.isInstanceReferenceField())
+    #set($facadeVariableNamePrefix = $entityVariableName)
+#else
+    #set($facadeVariableNamePrefix = $parameterVariableName)
+#end
+//      ${parameterVariableName}${Campo1} = ${facadeVariableNamePrefix}Facade.find($parameterValueExpression, true);
+        ${parameterVariableName}${Campo1} = ${facadeVariableNamePrefix}Facade.find($!{parameterObjUtilsMethod}(value), true);
+#if($parameter.isInstanceReferenceField())
+        ${entityVariableName} = ${parameterVariableName}${Campo1};
+#end
+    }
+
+#break
+
+#macro(writeEnumerationOptionsGetter)
+    public Object getOptions${Campo1}() {
+        #set($enum = "${parameter.root.wrapper.javaClassName}Enumeration")
+        #if($parameter.searchInstanceArray)
+....//      ${enum}[] values = ${enum}.values();
+....        ${enum}[] values = new ${enum}[]{
+            #set($comma = ',')
+            #foreach($element in $parameter.searchInstanceArray)
+                #if($foreach.last)
+                    #set($comma = '')
+                #end
+##              ${enum}.$element.wrapper.sqlName.toUpperCase()$comma
+....            ${enum}.$element.wrapper.javaConstantName$comma
+            #end
+....        };
+        #else
+....        ${enum}[] values = ${enum}.values();
+        #end
+        return JSF.getListaOpciones(values, true, false);
+    }
+#end##writeEnumerationOptionsGetter
+
+#macro(writeEntityOptionsGetter)
+    #set($sqlParametersMapSize = -1)
+    #if($parameter.searchQueryFilter)
+        #set($parameterQueryTable = $parameter.queryTable)
+        #set($sqlQualifier = $VelocityAid.valueOf($SqlQualifierType, 'SUFFIX'))
+        #set($sqlExpression = $parameter.searchQueryFilter.wrapper.getSqlParameterizedExpression($parameterQueryTable, $sqlQualifier))
+        #set($sqlParametersMap = $sqlExpression.parametersMap)
+        #set($sqlParametersMapSize = $sqlParametersMap.size())
+        #if($sqlParametersMapSize == 0)
+            #set($parameterSearchQueryKey = "${page.entity.wrapper.sqlName}.${operation.wrapper.sqlName}.${parameter.wrapper.sqlName}")
+            #set($parameterSearchQueryKey = "${page.entity.wrapper.sqlSchemaQualifiedShortName}.${operation.wrapper.sqlName}.${parameter.wrapper.sqlName}")
+........    private ConsultaBusqueda consultaBusqueda${Campo1} = ConsultaBusquedaBuilder.getConsultaBusqueda("$parameterSearchQueryKey");
+
+        #end
+    #end
+    public Object getOptions${Campo1}() {
+    #if($fieldSearchListStyle == 'CHARACTER_KEY')
+        #set($enumColumnaEtiqueta = 'COLUMNA_CODIGO')
+        #set($sortedByLabel = 'true')
+    #elseif($fieldSearchListStyle == 'NAME')
+        #set($enumColumnaEtiqueta = 'COLUMNA_NOMBRE')
+        #set($sortedByLabel = 'true')
+    #elseif($fieldSearchListStyle == 'CHARACTER_KEY_AND_NAME')
+        #set($enumColumnaEtiqueta = 'AMBAS_COLUMNAS')
+        #set($sortedByLabel = 'true')
+    #elseif($fieldSearchListStyle == 'PRIMARY_KEY_AND_CHARACTER_KEY')
+        #set($enumColumnaEtiqueta = 'ID_Y_CODIGO')
+        #set($sortedByLabel = 'false')
+    #elseif($fieldSearchListStyle == 'PRIMARY_KEY_AND_NAME')
+        #set($enumColumnaEtiqueta = 'ID_Y_NOMBRE')
+        #set($sortedByLabel = 'false')
+    #else
+        #set($enumColumnaEtiqueta = 'COLUMNA_CODIGO')
+        #set($sortedByLabel = 'true')
+    #end
+    #if($parameter.isInstanceReferenceField())
+        #set($facadeVariableNamePrefix = $entityVariableName)
+    #else
+        #set($facadeVariableNamePrefix = $parameterVariableName)
+    #end
+    #if($sqlParametersMapSize == 0)
+        String query = consultaBusqueda${Campo1}.getQuerySql();
+        List<${parameterClassName}> list = ${facadeVariableNamePrefix}Facade.findByQuery(query, EnumTipoQuery.NATIVE, true);
+    #elseif($sqlParametersMapSize > 0)
+        // TODO: WHERE $sqlExpression.expression
+        List<${parameterClassName}> list = ${facadeVariableNamePrefix}Facade.findAll();
+    #else
+        List<${parameterClassName}> list = ${facadeVariableNamePrefix}Facade.findAll();
+    #end
+        return JSF.getListaOpciones(list, true, EnumColumnaEtiqueta.$enumColumnaEtiqueta, $sortedByLabel);
+    }
+#end##writeEntityOptionsGetter

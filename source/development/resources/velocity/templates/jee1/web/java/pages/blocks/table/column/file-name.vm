@@ -1,0 +1,6 @@
+#parse("$templatePath/blocks/table/column/character.vm")
+#set($componentName = "tableColumn${fieldLastName}")
+#parse("$templatePath/blocks/webuijsf/table-column.vm")
+#set($componentName = "campo${fieldFirstName}Boton3")
+#parse("$templatePath/blocks/webuijsf/button-2.vm")
+#break

@@ -1,0 +1,21 @@
+#set($textGetterProperty = $field.property)
+#set($componentName = "${campo1}${divString}Texto1")
+#parse("$templatePath/blocks/detail-table/master-heading-field/text-getter.vm")
+#set($componentName = "label${fieldFirstName}${divString}")
+#parse("$templatePath/blocks/webuijsf/label.vm")
+#set($componentName = "helpInline${fieldFirstName}${divString}")
+#parse("$templatePath/blocks/webuijsf/help-inline.vm")
+#set($componentName = "converter${fieldFirstName}${divString}")
+#setNumericConverterClassName()
+#parse("$templatePath/blocks/webuijsf/component.vm")
+#break
+
+#macro(setNumericConverterClassName)
+    #if($field.property.isBigDecimalData() || $field.property.isDoubleData() || $field.property.isFloatData())
+        #set($componentClassName = 'NumberConverter')
+    #elseif($field.property.isEntity())
+        #set($componentClassName = "${field.property.primaryKeyProperty.dataType.simpleName}Converter")
+    #else
+        #set($componentClassName = "${field.property.dataType.simpleName}Converter")
+    #end
+#end##setNumericConverterClassName

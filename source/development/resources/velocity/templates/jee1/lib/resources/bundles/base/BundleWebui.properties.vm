@@ -1,0 +1,348 @@
+DateTimeConverter.date.pattern=dd/MM/yyyy
+DateTimeConverter.time.pattern=hh:mm aa
+DateTimeConverter.both.pattern=dd/MM/yyyy hh:mm:ss aa
+
+${pound} <login.jsp>
+login.jsp.title=Inicio de Sesi${backslash}u00f3n
+login.jsp.txt10=Usuario
+login.jsp.txt20=Contrase${backslash}u00f1a
+login.jsp.txt30=Iniciar Sesi${backslash}u00f3n
+${pound} </login.jsp>
+
+${pound} <error.jsp>
+error.jsp.title=Inicio de Sesi${backslash}u00f3n
+error.jsp.txt10=Usuario o Contrase${backslash}u00f1a inv${backslash}u00e1lida
+error.jsp.txt30=Reintentar
+${pound} </error.jsp>
+
+${pound} <index.jsp>
+index.jsp.title=Men${backslash}u00fa Principal
+index.jsp.txt10=Ha comenzado una nueva sesi${backslash}u00f3n de trabajo
+index.jsp.txt20=Haga clic aqu${backslash}u00ed para ir al Men${backslash}u00fa de Inicio
+index.jsp.txt30=Haga clic aqu${backslash}u00ed para ir a su Lista de Favoritos
+index.jsp.txt40=Haga clic aqu${backslash}u00ed para ir a su Lista de Tareas
+index.jsp.txt50=Haga clic aqu${backslash}u00ed para ir a cambiar su contrase${backslash}u00f1a
+index.jsp.txt90=La acci${backslash}u00f3n "Salir" del navegador finalizar${backslash}u00e1 su sesi${backslash}u00f3n
+${pound} </index.jsp>
+
+${pound} <reject.jsp>
+reject.jsp.title=Control de Acceso
+reject.jsp.txt05=Se ha denegado el acceso a la p${backslash}u00e1gina solicitada
+reject.jsp.txt10=Haga clic aqu${backslash}u00ed para regresar
+reject.jsp.txt20=Haga clic aqu${backslash}u00ed para ir al Men${backslash}u00fa de Inicio
+reject.jsp.txt30=Haga clic aqu${backslash}u00ed para ir a su Lista de Favoritos
+${pound} </reject.jsp>
+
+${pound} <${project.alias}.ejb.core.Bundle>
+${pound} AuditorBean
+rastro.no.existe=rastro {0} no existe
+rastro.no.previo=rastro {0} no se puede colocar en condicion {1}
+${pound} NotifierBean
+notificacion.destinatario.asunto=Notificaci${backslash}u00f3n de tareas pendientes
+notificacion.destinatario.mensaje=Usted tiene una o mas tareas pendientes; por favor consulte su Lista de Tareas.
+notificacion.supervisor.asunto=Notificaci${backslash}u00f3n de tareas pendientes de sus supervisados
+notificacion.supervisor.mensaje=Uno o mas de sus supervisados tiene una o mas tareas pendientes; por favor consulte la Lista de Tareas.
+${pound} StateTransitionChecker
+cambio_condicion_invalido=cambio inv${backslash}u00e1lido de condici${backslash}u00f3n de {0}: no se permite cambiar de "{1}" a "{2}"
+cambio_condicion_repetido=cambio inv${backslash}u00e1lido de condici${backslash}u00f3n de {0}: ya se encuentra en condici${backslash}u00f3n "{1}"
+${pound} ImageInfo
+formato_imagen_invalido=el archivo no tiene un formato de imagen v${backslash}u00e1lido
+${pound} ArchivoAdjuntoBusinessProcessLogicBean
+archivo_adjunto.archivo_no_existe=archivo {0} no existe
+archivo_adjunto.archivo_ya_existe=archivo {0} ya existe
+${pound} UsuarioBusinessProcessLogicBean
+usuario.designar_super_sin_errores = el usuario {0} ha sido designado como s${backslash}u00faper-usuario
+usuario.anular_super_sin_errores = la designaci${backslash}u00f3n como sup${backslash}u00e9r-usuario del usuario {0} ha sido anulada
+usuario.desactivar_sin_errores = el usuario {0} ha sido desactivado
+usuario.reactivar_sin_errores = el usuario {0} ha sido reactivado
+usuario.sincronizar_sin_errores = el usuario {0} ha sido sincronizado
+usuario.asignar_password_sin_errores = una nueva contrase${backslash}u00f1a ha sido asignada al usuario {0}
+usuario.asignar_supervisor_sin_errores = un nuevo supervisor ha sido asignado al usuario {0}
+usuario.cambiar_password_sin_errores = la contrase${backslash}u00f1a del usuario {0} ha sido modificada
+usuario.es_actual=el usuario {0} es el usuario actual
+usuario.no_actual=el usuario {0} no es el usuario actual
+usuario.es_super_usuario=el usuario {0} ya es s${backslash}u00faper-usuario
+usuario.no_super_usuario=el usuario {0} no es s${backslash}u00faper-usuario
+usuario.es_inactivo=el usuario {0} ya est${backslash}u00e1 inactivo
+usuario.no_inactivo=el usuario {0} ya est${backslash}u00e1 activo
+usuario.password_no_actual=contrase${backslash}u00f1a inv${backslash}u00e1lida
+usuario.password_no_igual=la nueva contrase${backslash}u00f1a no es igual a la confirmaci${backslash}u00f3n de la nueva contrase${backslash}u00f1a
+${pound} </${project.alias}.ejb.core.Bundle>
+
+${pound} <${project.alias}.lib.base.Bundle>
+${pound} StrUtils
+null_value.string=?
+id_prefix.string=${pound}
+by_connective.string = Por
+${pound} Bit
+bit.si=S${backslash}u00ed
+bit.no=No
+bit.activo=Activo
+bit.inactivo=Inactivo
+bit.encendido=Encendido
+bit.apagado=Apagado
+bit.positivo=Positivo
+bit.negativo=Negativo
+bit.presente=Presente
+bit.ausente=Ausente
+bit.verdadero=Verdadero
+bit.falso=Falso
+bit.nulo=Valor nulo
+${pound} EnumFormatoGuardar
+EnumFormatoGuardar.ARCHIVO=Archivo
+EnumFormatoGuardar.INFORME=Informe
+${pound} EnumTipoInforme
+EnumTipoInforme.DETALLE=Detalle
+EnumTipoInforme.RESUMEN=Resumen
+EnumTipoInforme.GRAFICO=Gráfico
+${pound} ListOptions
+seleccione_una_opcion=(elija una opci${backslash}u00f3n)
+${pound} </${project.alias}.lib.base.Bundle>
+
+${pound} <${project.alias}.lib.core.Bundle>
+${pound} STP
+string.valor.nulo=?
+${pound} GestorBusquedaReferencia
+string.recurso.sin.nombre=
+string.recurso.no.referenciable=recurso no referenciable
+string.codigo.recurso=c${backslash}u00f3digo del recurso
+string.nombre.recurso=nombre del recurso
+${pound} CXH & RecursoCachedRowSetDataProvider
+database.action.command=procesar
+database.select.command=seleccionar
+database.insert.command=agregar
+database.update.command=modificar
+database.delete.command=eliminar
+database.commit.command=confirmar
+${pound} SeveridadMensaje
+severidad.mensaje.traza=Traza
+severidad.mensaje.informativo=Informaci${backslash}u00f3n
+severidad.mensaje.advertencia=ADVERTENCIA
+severidad.mensaje.error=ERROR
+severidad.mensaje.fatal=ERROR GRAVE
+${pound} OpcionZumNodo
+opcion.zum.nodo.todo=Todos los recursos
+opcion.zum.nodo.seleccionado=Recurso seleccionado y sus dependientes
+opcion.zum.nodo.superior=Superior del recurso seleccionado y sus dependientes
+${pound} JSF
+hyperlink.inicio.text=Inicio
+hyperlink.inicio.toolTip=Ir al Men${backslash}u00fa de Inicio
+hyperlink.detalle.text=Detalle
+hyperlink.detalle.toolTip=Ver detalle...
+${pound} BotonBuscar
+BotonBuscar.text=Buscar
+BotonBuscar.toolTip=Buscar...
+${pound} BotonVerDetalle
+BotonVerDetalle.text=Ver detalle
+BotonVerDetalle.toolTip=Ver detalle...
+${pound} BotonVerDetalleHoja
+BotonVerDetalleHoja.text=Ver mas detalle
+BotonVerDetalleHoja.toolTip=Ver mas detalle...
+${pound} HipervinculoBuscar
+HipervinculoBuscar.text=Buscar
+HipervinculoBuscar.toolTip=Buscar...
+${pound} HipervinculoVerDetalle
+HipervinculoVerDetalle.text=Ver detalle
+HipervinculoVerDetalle.toolTip=Ver detalle...
+${pound} Botones
+botonAbrirBitacoraFunciones.text=Bit${backslash}u00e1cora de Funciones
+botonAbrirBitacoraFunciones.toolTip=Abrir la bit${backslash}u00e1cora de ejecuci${backslash}u00f3n de funciones
+botonAbrirBitacoraInformes.text=Bit${backslash}u00e1cora de Informes
+botonAbrirBitacoraInformes.toolTip=Abrir la bit${backslash}u00e1cora de ejecuci${backslash}u00f3n de informes
+botonAbrirBitacoraProcesos.text=Bit${backslash}u00e1cora de Procesos
+botonAbrirBitacoraProcesos.toolTip=Abrir la bit${backslash}u00e1cora de ejecuci${backslash}u00f3n de procesos
+botonAbrirFavoritos.text=Favoritos
+botonAbrirFavoritos.toolTip=Abrir la p${backslash}u00e1gina de Favoritos
+botonAgregarFavoritos.text=Favoritos
+botonAgregarFavoritos.toolTip=Agregar a Favoritos
+botonAbrirTareas.text=Tareas
+botonAbrirTareas.toolTip=Abrir la p${backslash}u00e1gina de Tareas
+botonAgregar.text=Agregar
+botonAgregar.toolTip=Agregar
+botonAplicar.text=Aplicar
+botonAplicar.toolTip=Aplicar
+botonAplicarFiltro.text=Aplicar
+botonAplicarFiltro.toolTip=Aplicar los criterios de b${backslash}u00fasqueda a la consulta
+botonAplicarVisor.text=Aplicar
+botonAplicarVisor.toolTip=Aplicar la vista a la consulta
+botonAplicarZum.text=Aplicar
+botonAplicarZum.toolTip=Aplicar Zum
+botonAyudar.text=Ayuda
+botonAyudar.toolTip=Abrir la p${backslash}u00e1gina de ayuda
+botonBorrarCriterio.text=Borrar
+botonBorrarCriterio.toolTip=Borrar el criterio
+botonBuscarFiltro1.text=Buscar
+botonBuscarFiltro1.toolTip=Abrir la p${backslash}u00e1gina de gesti${backslash}u00f3n de filtros de b${backslash}u00fasqueda
+botonBuscarFiltro2.text=Buscar
+botonBuscarFiltro2.toolTip=Abrir la p${backslash}u00e1gina de gesti${backslash}u00f3n de criterios de b${backslash}u00fasqueda
+botonBuscarVista1.text=Buscar
+botonBuscarVista1.toolTip=Abrir la p${backslash}u00e1gina de gesti${backslash}u00f3n de vistas
+botonBuscarVista2.text=Buscar
+botonBuscarVista2.toolTip=Abrir la p${backslash}u00e1gina de gesti${backslash}u00f3n de columnas de vistas
+botonCambiarPassword.text=Cambiar contrase${backslash}u00f1a
+botonCambiarPassword.toolTip=Abrir la p${backslash}u00e1gina para cambiar la contrase${backslash}u00f1a
+botonCerrar.text=Cerrar
+botonCerrar.toolTip=Cerrar esta ventana
+botonComandoAbrir.text=Abrir
+botonComandoAbrir.toolTip=Abrir la p${backslash}u00e1gina seleccionada
+botonComandoGuardar.text=Guardar
+botonComandoGuardar.toolTip=Guardar la consulta en el formato seleccionado
+botonComandoVer.text=Ver
+botonComandoVer.toolTip=Visualizar la consulta en el formato seleccionado
+botonConfirmar.text=Confirmar
+botonConfirmar.toolTip=Confirmar
+botonDescartar.text=Descartar
+botonDescartar.toolTip=Descartar
+botonDeshacer.text=Deshacer
+botonDeshacer.toolTip=Deshacer
+botonDetallarFila.text=detallar
+botonDetallarFila.toolTip=Seleccionar y ver detalle
+botonEditar.text=Editar
+botonEditar.toolTip=Editar
+botonEjecutarInforme.text=PDF
+botonEjecutarInforme.toolTip=Guardar la consulta como un informe en formato PDF
+botonEliminar.text=Eliminar
+botonEliminar.toolTip=Eliminar
+botonEscogerFila.text=escoger
+botonEscogerFila.toolTip=Seleccionar
+botonExportarArchivo.text=CSV
+botonExportarArchivo.toolTip=Guardar la consulta como un archivo en formato CSV
+botonIrAlAnterior.text=Ir al anterior
+botonIrAlAnterior.toolTip=Ir al anterior
+botonIrAlPrimero.text=Ir al primero
+botonIrAlPrimero.toolTip=Ir al primero
+botonIrAlSiguiente.text=Ir al siguiente
+botonIrAlSiguiente.toolTip=Ir al siguiente
+botonIrAlUltimo.text=Ir al ${backslash}u00faltimo
+botonIrAlUltimo.toolTip=Ir al ${backslash}u00faltimo
+botonProcesar.text=Procesar
+botonProcesar.toolTip=Procesar los recursos seleccionados
+botonProcesarFila.text=Procesar
+botonProcesarFila.toolTip=Abrir la p${backslash}u00e1gina de ejecuci${backslash}u00f3n de procesos de negocio
+botonQuitarFiltro.text=Quitar
+botonQuitarFiltro.toolTip=Quitar los criterios de b${backslash}u00fasqueda de la consulta
+botonQuitarZum.text=Quitar
+botonQuitarZum.toolTip=Quitar Zum
+botonReconsultar.text=Restaurar
+botonReconsultar.toolTip=Volver a consultar, restaurando los criterios de b${backslash}u00fasqueda de la ${backslash}u00faltima consulta
+botonRefrescar.text=Refrescar
+botonRefrescar.toolTip=Refrescar
+botonRepaginar.text=Repaginar
+botonRepaginar.toolTip=Ir a la p${backslash}u00e1gina que contiene el recurso seleccionado
+botonRestaurarFiltro.text=Restaurar
+botonRestaurarFiltro.toolTip=Restaurar y aplicar los criterios de b${backslash}u00fasqueda de la ${backslash}u00faltima consulta
+botonOcultarFiltro.text=Ocultar
+botonOcultarFiltro.toolTip=Ocultar los criterios de b${backslash}u00fasqueda de la ${backslash}u00faltima consulta
+botonMostrarFiltro.text=Filtrar
+botonMostrarFiltro.toolTip=Mostrar los criterios de b${backslash}u00fasqueda de la ${backslash}u00faltima consulta
+botonOcultarVisor.text=Ocultar
+botonOcultarVisor.toolTip=Ocultar el cuadro para guardar los resultados de la consulta
+botonMostrarVisor.text=Guardar
+botonMostrarVisor.toolTip=Mostrar el cuadro para guardar los resultados de la consulta
+botonGuardarResultadoConsulta.text=Guardar
+botonGuardarResultadoConsulta.toolTip=Guardar los resultados de la consulta
+botonRetornar.text=Retornar
+botonRetornar.toolTip=Retornar
+botonRetornarFila.text=retornar
+botonRetornarFila.toolTip=Seleccionar y retornar
+botonVerArbol.text=Arbol
+botonVerArbol.toolTip=Ver los recursos en un "${backslash}u00e1rbol de jerarqu${backslash}u00eda"
+botonVerDetalle.text=Detalle
+botonVerDetalle.toolTip=Ver el detalle del recurso seleccionado
+botonVerTabla.text=Tabla
+botonVerTabla.toolTip=Ver los recursos en formato tabular
+${pound} Checkboxes
+checkboxSeleccionMultiple.toolTip=Haga clic aqui para seleccionar las filas que desee editar, deshacer, eliminar o procesar
+${pound} Etiquetas
+etiquetaIdentificacionFila.text=${pound}
+etiquetaIdentificacionFila.toolTip=N${backslash}u00famero de secuencia del recurso dentro del resultado de la consulta
+etiquetaDenominacionFilaMaestro.text=maestro
+etiquetaDenominacionFilaMaestro.toolTip=Maestro
+etiquetaListaComandoAbrir.text=Abrir
+etiquetaListaComandoGuardar.text=Guardar
+etiquetaListaComandoVer.text=Ver
+etiquetaListaFiltro.text=filtro
+etiquetaListaFormatoGuardar.text=formato
+etiquetaListaFormatoInforme.text=tipo
+etiquetaListaFuncionAccion.text=acci${backslash}u00f3n
+etiquetaListaFuncionEdicion.text=edici${backslash}u00f3n
+etiquetaListaOpcionZum.text=zum
+etiquetaListaVista.text=vista
+etiquetaTextoFilasPorPagina.text=filas por p${backslash}u00e1gina
+etiquetaTextoFiltro1.text=c${backslash}u00f3digo
+etiquetaTextoFiltro2.text=nombre
+${pound} Imagenes
+imagenFilaProcesada.toolTip=Recurso agregado o modificado pero que a${backslash}u00fan no ha sido confirmado
+imagenFilaNoProcesada.toolTip=Haga clic aqui para seleccionar el recurso y ver el detalle
+${pound} Listas
+listaComandoAbrir.opcion1=Abrir...
+listaComandoAbrir.toolTip=Seleccione una p${backslash}u00e1gina y haga clic en el bot${backslash}u00f3n contiguo para abrirla
+listaComandoGuardar.opcion1=Guardar...
+listaComandoGuardar.toolTip=Seleccione un formato y haga clic en el bot${backslash}u00f3n contiguo para guardar la consulta en ese formato
+listaComandoVer.opcion1=Ver...
+listaComandoVer.toolTip=Seleccione un formato y haga clic en el bot${backslash}u00f3n contiguo para ver la consulta en ese formato
+listaFiltro.opcion1=(elija un filtro)
+listaFiltro.toolTip=Seleccione un filtro de b${backslash}u00fasqueda para acotar el conjunto de filas resultantes
+listaFormatoGuardar.opcion1=(elija un formato)
+listaFormatoGuardar.toolTip=Seleccione un formato para guardar la consulta
+listaFormatoInforme.opcion1=(elija un tipo)
+listaFormatoInforme.toolTip=Seleccione un tipo de informe para guardar la consulta
+listaFuncionAccion.opcion1=(elija una funci${backslash}u00f3n)
+listaFuncionAccion.toolTip=Seleccione una funci${backslash}u00f3n para procesar los recursos seleccionados con esa funci${backslash}u00f3n
+listaFuncionAccion.inlineHelp=Seleccione la funci${backslash}u00f3n que desea ejecutar; luego especif${backslash}u00edque los par${backslash}u00e1metros requeridos y, finalmente, haga clic en el bot${backslash}u00f3n "Procesar"
+listaFuncionEdicion.opcion1=(elija una funci${backslash}u00f3n)
+listaFuncionEdicion.toolTip=Seleccione una funci${backslash}u00f3n para modificar los recursos seleccionados
+listaFuncionEdicion.inlineHelp=Seleccione una funci${backslash}u00f3n para modificar los recursos seleccionados
+listaOpcionZum.opcion1=(elija una opci${backslash}u00f3n)
+listaOpcionZum.toolTip=Seleccione una opci${backslash}u00f3n para acotar el conjunto de filas visibles
+listaVista.opcion1=(elija una vista)
+listaVista.toolTip=Seleccione una vista para guardar la consulta
+${pound} Beans
+bean.initialization.error=Error al intentar inicializar los componentes administrados
+bean.session.reset=Ha comenzado una nueva sesi${backslash}u00f3n
+${pound} Alertas
+funcion_buscar_recurso_no_disponible=La funci${backslash}u00f3n "buscar recurso" no est${backslash}u00e1 disponible
+funcion_ver_detalle_recurso_no_disponible=La funci${backslash}u00f3n "ver detalle del recurso" no est${backslash}u00e1 disponible
+favorito_agregado_exitosamente=La p${backslash}u00e1gina ha sido agregada a su Lista de Favoritos
+filtro_solo_filas_agregadas=Un filtro de b${backslash}u00fasqueda autom${backslash}u00e1tico solo permite ver las filas recientemente agregadas; puede quitar este filtro, o restaurar el anterior, despu${backslash}u00e9s de confirmar o descartar los cambios
+filtro_solo_nodos_agregados=Un filtro de b${backslash}u00fasqueda autom${backslash}u00e1tico no permite ver el ${backslash}u00e1rbol; puede quitar este filtro, o restaurar el anterior, despu${backslash}u00e9s de confirmar o descartar los cambios
+${pound} Tabs
+hiddenStaticTextTab.text=Haga clic sobre alguna de las pesta${backslash}u00f1as disponibles
+${pound} </${project.alias}.lib.core.Bundle>
+
+${pound} <${project.alias}.lib.core.db.xdp>
+#*
+xdp.etiqueta_identificacion_recurso=identificaci${backslash}u00f3n
+xdp.etiqueta_version_recurso=versi${backslash}u00f3n
+xdp.etiqueta_numero_recurso=n${backslash}u00famero
+xdp.etiqueta_codigo_recurso=c${backslash}u00f3digo
+xdp.etiqueta_nombre_recurso=nombre
+xdp.etiqueta_descripcion_recurso=descripci${backslash}u00f3n
+xdp.etiqueta_es_recurso_inactivo=inactivo
+xdp.etiqueta_recurso_superior=superior
+xdp.etiqueta_propietario_recurso=propietario
+xdp.etiqueta_segmento_recurso=segmento
+*###
+xdp.etiqueta_identificacion_recurso=#bundleKeyPropertyLabel('PRIMARY_KEY')
+xdp.etiqueta_version_recurso=#bundleKeyPropertyLabel('VERSION')
+xdp.etiqueta_numero_recurso=#bundleKeyPropertyLabel('NUMERIC_KEY')
+xdp.etiqueta_codigo_recurso=#bundleKeyPropertyLabel('CHARACTER_KEY')
+xdp.etiqueta_nombre_recurso=#bundleKeyPropertyLabel('NAME')
+xdp.etiqueta_descripcion_recurso=#bundleKeyPropertyLabel('DESCRIPTION')
+xdp.etiqueta_es_recurso_inactivo=#bundleKeyPropertyLabel('INACTIVE_INDICATOR')
+xdp.etiqueta_recurso_superior=#bundleKeyPropertyLabel('PARENT')
+xdp.etiqueta_propietario_recurso=#bundleKeyPropertyLabel('OWNER')
+xdp.etiqueta_segmento_recurso=#bundleKeyPropertyLabel('SEGMENT')
+${pound} </${project.alias}.lib.core.db.xdp>
+
+${pound} <jasper>
+PAGE_NUMBER_STRING_1=p${backslash}u00e1gina
+PAGE_NUMBER_STRING_2=de
+${pound} </jasper>
+#break
+
+#macro(bundleKeyPropertyLabel $foo)
+#set($keyProperty = $VelocityAid.valueOf($KeyProperty, $foo))
+#set($keyPropertyLabel = $keyProperty.label)
+$bundleProgrammer.getValueString($keyPropertyLabel)
+#end##bundleKeyPropertyLabel

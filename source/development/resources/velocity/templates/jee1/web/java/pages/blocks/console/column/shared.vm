@@ -1,0 +1,36 @@
+    /**
+     * ${campo1}.required
+     */
+    public boolean is${Campo1}Required() {
+    #if($parameter.requiringFilter)
+        #writeBooleanExpression($parameter.requiringFilter)
+    #else
+        return $parameter.isRequiredParameter();
+    #end
+    }
+
+#break
+
+#macro(writeBooleanExpression $booleanExpression)
+        Object obj;
+    #set($parameterizedExpression = $booleanExpression.wrapper.javaParameterizedExpression)
+    #set($expressionParametersMap = $parameterizedExpression.parametersMap)
+    #set($namedValuesMap = $parameterizedExpression.namedValuesMap)
+        #writeNamedValues()
+        #foreach($expressionParameterKey in $expressionParametersMap.keySet())
+            #writeAssignObjValue()
+....        $artifactJavaType $expressionParameterKey = $artifactObjUtilsMethod(obj);
+        #end
+        #set($maxLineLength = 0)
+        #set($newLineString = '<EOL>')
+        #set($string2split = "$!parameterizedExpression.expression")
+        #set($string2split = "return $string2split;")
+        #set($string2split = $string2split.replace(":", "${newLineString}${TAB}:"))
+        #set($string2split = $string2split.replace("&&", "${newLineString}${TAB}&&"))
+        #set($string2split = $string2split.replace("||", "${newLineString}${TAB}||"))
+        #set($string2split = $string2split.replace("), ", "),${newLineString}${TAB}"))
+        #set($string2lines = $VelocityAid.split($string2split, $maxLineLength, $newLineString, $FALSE, $TAB))
+        #foreach($line in $string2lines)
+....        ${line}
+        #end
+#end##writeBooleanExpression

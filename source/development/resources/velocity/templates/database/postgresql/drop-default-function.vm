@@ -1,0 +1,27 @@
+#parsePostgreSQLMacros()
+#setPostgreSQLVariables()
+#writePostgreSQLLicense()
+#writePostgreSQLAuthor('Jorge Campins')
+#set($entities = $ColUtils.filter($project.entitiesList, $isEntitySqlCodeGenEnabled, $isPersistentEntityWithTable))
+#set($entities = $ColUtils.sort($entities, $byEntityName))
+#foreach($entity in $entities)
+    #writeTemplate('remark-entity')
+    #writeDropDefaultFunctions()
+#end##foreach-entity
+#break
+
+#macro(writeDropDefaultFunctions)
+    #resetSQLVariables()
+    #set($entname = $entity.wrapper.sqlName)
+    #set($entname = $entity.wrapper.sqlSchemaQualifiedShortName)
+    #set($table = $entity.wrapper.sqlTableName)
+    #set($table = $entity.wrapper.sqlSchemaQualifiedShortTableName)
+    #set($keytype = $entity.primaryKeyProperty.wrapper.sqlType)
+    #set($foo = "${sql_name_separator}default_value")
+##  #writeDropDefaultFunction("${entname}${foo}(${keytype})")
+##  #writeDropDefaultFunction("${entname}${foo}(${table})")
+#end##writeDropDefaultFunctions
+
+#macro(writeDropDefaultFunction $function)
+drop function if exists $function cascade;
+#end##writeDropDefaultFunction

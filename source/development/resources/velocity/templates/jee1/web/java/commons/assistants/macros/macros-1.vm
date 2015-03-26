@@ -1,0 +1,11 @@
+#break
+
+#macro(setMainDataProviderVariables)
+    #if($entity)
+        #set($xdpno = "${entity.wrapper.dataProviderSuffix}")
+        #set($entityDataProviderPackage = "${project.rootPackageName}.lib.data.provider.xdp${xdpno}")
+        #set($entityDataProviderClass = "${entity.wrapper.javaClassName}CachedRowSetDataProvider${xdpno}")
+        #set($entityDataProvider = "${entity.wrapper.javaVariableName}DataProvider")
+        #set($EntityDataProvider = "${entity.wrapper.javaClassName}DataProvider")
+    #end
+#end##setMainDataProviderVariables

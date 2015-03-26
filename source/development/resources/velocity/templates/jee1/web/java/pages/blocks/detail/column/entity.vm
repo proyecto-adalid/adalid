@@ -1,0 +1,36 @@
+#set($componentName = "label${fieldFirstName}${tabString}")
+#parse("$templatePath/blocks/webuijsf/label.vm")
+#set($componentName = "campo${fieldFirstName}${tabString}")
+#parse("$templatePath/blocks/webuijsf/text-field.vm")
+#set($componentName = "campo${fieldFirstName}${tabString}Texto1")
+#parse("$templatePath/blocks/webuijsf/static-text-1.vm")
+#set($componentName = "helpInline${fieldFirstName}${tabString}")
+#parse("$templatePath/blocks/webuijsf/help-inline.vm")
+#set($componentName = "campo${fieldFirstName}${tabString}Boton1")
+#parse("$templatePath/blocks/webuijsf/button-1.vm")
+#if($fieldForeignNameSqlName == '')
+    #set($componentName = "campo${fieldFirstName}${tabString}Boton3")
+    #parse("$templatePath/blocks/webuijsf/button-2.vm")
+#end
+#if($fieldForeignNameSqlName != '')
+    #set($componentName = "label${fieldMiddleName}${tabString}")
+    #parse("$templatePath/blocks/webuijsf/label.vm")
+    #set($componentName = "campo${fieldFirstName}${tabString}Texto2")
+    #parse("$templatePath/blocks/webuijsf/static-text-2.vm")
+    #set($componentName = "campo${fieldFirstName}${tabString}Boton2")
+    #parse("$templatePath/blocks/webuijsf/button-2.vm")
+#end
+#if($tabString == '')
+    #writeValidatorExpression()
+#end
+#break
+
+#macro(writeValidatorExpression)
+    /**
+     * ${campo1}.validatorExpression
+     */
+    public void ${campo1}_validate(FacesContext context, UIComponent component, Object value) {
+        asistente.${campo1}_validate(context, component, value);
+    }
+
+#end##writeValidatorExpression

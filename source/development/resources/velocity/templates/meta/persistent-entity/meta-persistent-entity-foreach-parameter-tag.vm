@@ -1,0 +1,26 @@
+#foreach($parameter in $parametersList)
+#if($parameter.alias&&!$parameter.alias.isEmpty())
+${tab}${parameter.name}.setAlias("${parameter.alias}");
+#end
+#if($parameter.defaultDescription&&!$parameter.defaultDescription.isEmpty())
+${tab}${parameter.name}.setDefaultDescription("${parameter.defaultDescription}");
+#end
+#if($parameter.defaultShortDescription&&!$parameter.defaultShortDescription.isEmpty())
+${tab}${parameter.name}.setDefaultShortDescription("${parameter.defaultShortDescription}");
+#end
+#if($parameter.defaultLabel&&!$parameter.defaultLabel.isEmpty())
+${tab}${parameter.name}.setDefaultLabel("${parameter.defaultLabel}");
+#end
+#if($parameter.defaultShortLabel&&!$parameter.defaultShortLabel.isEmpty())
+${tab}${parameter.name}.setDefaultShortLabel("${parameter.defaultShortLabel}");
+#end
+#if($parameter.defaultTooltip&&!$parameter.defaultTooltip.isEmpty())
+${tab}${parameter.name}.setDefaultTooltip("${parameter.defaultTooltip}");
+#end
+#if($parameter.initialValueString&&!$parameter.initialValueString.isEmpty())
+${tab}${parameter.name}.setInitialValue(${parameter.initialValueString});
+#end
+#if($parameter.defaultValueString&&!$parameter.defaultValueString.isEmpty())
+${tab}${parameter.name}.setDefaultValue(${parameter.defaultValueString});
+#end
+#end

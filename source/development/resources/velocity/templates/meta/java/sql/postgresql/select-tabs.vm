@@ -1,0 +1,13 @@
+/*
+select distinct
+'tab'||crs.id_clase_recurso_seccion as tab_name,
+etiqueta_clase_recurso_seccion as default_label,
+codigo_parametro as column_name
+from clase_recurso cr
+inner join clase_recurso_seccion crs on crs.id_clase_recurso=cr.id_clase_recurso
+inner join clase_recurso_parametro crp on crp.id_clase_recurso=cr.id_clase_recurso and crp.id_clase_recurso_seccion=crs.id_clase_recurso_seccion
+inner join parametro p on p.id_parametro=crp.id_parametro
+where codigo_clase_recurso='$table'
+order by crs.orden_presentacion, crs.id_clase_recurso_seccion, crp.orden_presentacion, crp.id_clase_recurso_parametro
+*/
+select distinct '' as tab_name, '' as default_label, '' as column_name where false

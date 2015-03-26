@@ -1,0 +1,14 @@
+#foreach($parameter in $operation.parametersList)
+    #setParameterVariables()
+    private $parameterJavaType ${operationName}_${parameter.wrapper.javaVariableName}_initialValue() {
+    #if($parameter.wrapper.javaInitialValue)
+        return $parameter.wrapper.javaInitialValue;
+    #elseif($parameter.initialValue.isExpression())
+        #writeValueExpression($parameter.initialValue)
+    #else
+        return null;
+    #end
+    }
+
+#end##foreach-parameter
+#break

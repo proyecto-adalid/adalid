@@ -1,0 +1,1164 @@
+#parseXMLMacros()
+#setXMLVariables()
+#writeXMLDeclaration()
+#writeXMLLicense()
+#writeXMLAuthor('Jorge Campins')
+#setGlobalVariables()
+#setLocalVariables()
+#writeReport()
+#break
+
+#macro(setLocalVariables)
+    #set($report = $operation.operationViewReport)
+    #set($vista = "$!{operation.viewName}")
+    #if($vista == '')
+        #set($vista = "consulta_${report.entity.wrapper.sqlName}")
+        #set($vista = "${report.entity.wrapper.sqlSchemaQualifier}consulta_${report.entity.wrapper.sqlSchemaUnqualifiedShortName}")
+    #end
+    #set($opcion = $VelocityAid.valueOf($SelectOption, 'CHART'))
+    #set($queryString = "$!report.view.getSelectStatement($vista, $opcion)")
+    #if($queryString == '')
+        #set($queryString = "select * from ${vista}")
+    #end
+    #set($repAggCount = $report.aggregations.size())
+    ## -----------------------------------------------------------------------------
+    #set($bigPageHead = 'false')
+    ## -----------------------------------------------------------------------------
+    #set($imagewdthH1 = 0)##max=160
+    #set($imagehghtH1 = 0)##max=32
+    #set($imagepathH1 = '')
+    #set($imagewdthH2 = 0)##max=160
+    #set($imagehghtH2 = 0)##max=32
+    #set($imagepathH2 = '')
+    #set($textcdataH1 = '')
+    #set($textcdataH2 = '')
+    #set($textcdataH3 = '')
+    #set($textcdataH4 = '')
+    #set($textcdataH5 = '')
+    #set($textcdataH6 = '')
+    #set($textcdataH7 = '')
+    #set($textcdataH8 = '')
+    #set($textcdataF1 = '')
+    #set($textcdataF2 = '')
+    ## -----------------------------------------------------------------------------
+    #set($imagewdthH1 = 70)
+    #set($imagehghtH1 = 30)
+    #set($imagepathH1 = '$P{PAGE_HEADER_IMAGE_1}')
+    #set($imagewdthH2 = 70)
+    #set($imagehghtH2 = 30)
+    #set($imagepathH2 = '$P{PAGE_HEADER_IMAGE_2}')
+    #set($imagepathH2 = '')
+    ## -----------------------------------------------------------------------------
+    #set($pagenumberv = '$V{PAGE_NUMBER}')
+    #set($pagenumber1 = '$R{PAGE_NUMBER_STRING_1}')
+    #set($pagenumber2 = '$R{PAGE_NUMBER_STRING_2}')
+    #set($pagenumber1 = '')
+    #set($pagenumber2 = '')
+    ## -----------------------------------------------------------------------------
+    #set($locale = '$P{REPORT_LOCALE}')
+    #set($bundleKey = """${report.entity.wrapper.sqlSchemaQualifiedShortName}.${operation.view.wrapper.sqlName}""")
+    #if($bigPageHead == 'true')
+        #set($pageHeaderHeight = 64)
+        #set($textcdataH2 = '')
+        #set($textcdataH5 = """${report.title}""")
+        #set($textcdataH5 = "JRBundleDominios.getLabel($locale, $bundleKey).toUpperCase()")
+    #else
+        #set($pageHeaderHeight = 32)
+        #set($textcdataH2 = """${report.title}""")
+        #set($textcdataH2 = "JRBundleDominios.getLabel($locale, $bundleKey).toUpperCase()")
+        #set($textcdataH5 = '')
+    #end
+    #set($pageFooterHeight = 20)
+    ## -----------------------------------------------------------------------------
+    #set($detailHeaderLineHeight = 20)
+    #set($detailFooterLineHeight = 0)
+    #set($detailLineHeight = 16)
+    #set($controlHeaderLineHeightArray = $VelocityAid.getNewArrayList())
+    #set($added = $controlHeaderLineHeightArray.add(24))
+    #set($added = $controlHeaderLineHeightArray.add(24))
+    #set($added = $controlHeaderLineHeightArray.add(20))
+    #set($added = $controlHeaderLineHeightArray.add(20))
+    #set($added = $controlHeaderLineHeightArray.add(18))
+    #set($added = $controlHeaderLineHeightArray.add(18))
+    #set($controlFooterLineHeightArray = $VelocityAid.getNewArrayList())
+    #set($added = $controlFooterLineHeightArray.add(24))
+    #set($added = $controlFooterLineHeightArray.add(24))
+    #set($added = $controlFooterLineHeightArray.add(20))
+    #set($added = $controlFooterLineHeightArray.add(20))
+    #set($added = $controlFooterLineHeightArray.add(18))
+    #set($added = $controlFooterLineHeightArray.add(18))
+    ## -----------------------------------------------------------------------------
+    #set($textcdataF1 = '$P{END_USER_NAME}')
+    ## -----------------------------------------------------------------------------
+    #set($BOF = '$F{')
+    #set($EOF = '}')
+    #set($BOP = '$P{')
+    #set($EOP = '}')
+    #set($BOR = '$R{')
+    #set($EOR = '}')
+    #set($BOV = '$V{')
+    #set($EOV = '}')
+    ## -----------------------------------------------------------------------------
+    #set($pageWidth       = 1008)
+    #set($pageHeight      = 612)
+    #set($leftMargin      = 24)
+    #set($rightMargin     = 24)
+    #set($topMargin       = 24)
+    #set($bottomMargin    = 24)
+    ## -----------------------------------------------------------------------------
+    #set($availableHeight = $pageHeight - $topMargin - $bottomMargin - $pageHeaderHeight - $pageFooterHeight)
+    #set($columnWidth0101 = $pageWidth - $leftMargin - $rightMargin)
+    #set($columnWidth0102 = $columnWidth0101 / 2)
+    #set($columnWidth0103 = $columnWidth0101 / 3)
+    #set($columnWidth0104 = $columnWidth0101 / 4)
+    #set($columnWidth0105 = $columnWidth0101 / 5)
+    #set($columnWidth0106 = $columnWidth0101 / 6)
+    #set($columnWidth0108 = $columnWidth0101 / 8)
+    #set($columnWidth0110 = $columnWidth0101 / 10)
+    #set($columnWidth0112 = $columnWidth0101 / 12)
+    #set($columnWidth0116 = $columnWidth0101 / 16)
+    #set($columnWidth0203 = $columnWidth0101 - $columnWidth0103)
+    #set($columnWidth0304 = $columnWidth0101 - $columnWidth0104)
+    #set($columnWidth0405 = $columnWidth0101 - $columnWidth0105)
+    #set($columnWidth0506 = $columnWidth0101 - $columnWidth0106)
+    #set($columnWidth0708 = $columnWidth0101 - $columnWidth0108)
+    #set($columnWidth0910 = $columnWidth0101 - $columnWidth0110)
+    #set($columnWidth1112 = $columnWidth0101 - $columnWidth0112)
+    #set($columnWidth1516 = $columnWidth0101 - $columnWidth0116)
+    ## -----------------------------------------------------------------------------
+    #set($columnWidth0512 = $columnWidth0112 * 5)
+    #set($columnWidth0712 = $columnWidth0101 - $columnWidth0512)
+    ## -----------------------------------------------------------------------------
+    #set($columnWidth0716 = $columnWidth0116 * 7)
+    #set($columnWidth0916 = $columnWidth0101 - $columnWidth0716)
+    ## -----------------------------------------------------------------------------
+    #set($textAlignment = 'Left')
+    #set($verticalAlignment = 'Middle')
+    ## -----------------------------------------------------------------------------
+#end##setLocalVariables
+
+#macro(writeReport)
+    #writeJasperReport()
+    #writeIReportProperties()
+    #writeImports()
+    #writeTemplates()
+    #writeSubDataset()
+    #writeParameters()
+    #writeQuery()
+    #writeFields()
+    #writeGroups()
+    #writePageHeader()
+    #writeDetail()
+    #writePageFooter()
+</jasperReport>
+#end##writeReport
+
+#macro(writeJasperReport)
+<jasperReport
+    xmlns="http://jasperreports.sourceforge.net/jasperreports"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd"
+    name="$StringUtils.removeEndIgnoreCase($file, '.jrxml')"
+    columnCount="1"
+    printOrder="Vertical"
+    orientation="Landscape"
+    pageWidth="$pageWidth"
+    pageHeight="$pageHeight"
+    columnWidth="$columnWidth0101"
+    columnSpacing="0"
+    leftMargin="$leftMargin"
+    rightMargin="$rightMargin"
+    topMargin="$topMargin"
+    bottomMargin="$bottomMargin"
+    whenNoDataType="NoPages"
+    isTitleNewPage="false"
+    isSummaryNewPage="false">
+#end##writeJasperReport
+
+#macro(writeIReportProperties)
+    <property name="ireport.scriptlethandling" value="0"/>
+    <property name="ireport.encoding" value="UTF-8"/>
+    <property name="ireport.zoom" value="1.0"/>
+    <property name="ireport.x" value="0"/>
+    <property name="ireport.y" value="0"/>
+#end##writeIReportProperties
+
+#macro(writeImports)
+    <import value="java.math.BigDecimal"/>
+    <import value="java.util.*"/>
+    <import value="org.apache.commons.lang.StringUtils"/>
+    <import value="org.apache.commons.lang.StringEscapeUtils"/>
+    <import value="${project.rootPackageName}.lib.base.bundle.*"/>
+    <import value="${project.rootPackageName}.lib.base.enumeration.*"/>
+    <import value="${project.rootPackageName}.lib.base.entity.enumeration.*"/>
+    <import value="${project.rootPackageName}.lib.base.util.*"/>
+#end##writeImports
+
+#macro(writeTemplates)
+    <template><![CDATA[${BOP}CUSTOM_STYLE_TEMPLATE${EOP}]]></template>
+#end##writeTemplates
+
+#macro(writeSubDataset)
+    <subDataset name="ChartDataset">
+        #writeSubDatasetParameters()
+        #buildSubDatasetQueryString()
+        #writeSubDatasetQueryString()
+        #writeSubDatasetFields()
+    </subDataset>
+#end##writeSubDataset
+
+#macro(writeSubDatasetParameters)
+    #writeSubDatasetParametersX()
+    #foreach($group in $report.groups)
+        #if($group.isDetail() || $group.isLastControl())
+        #else
+            #writeSubDatasetParameter()
+        #end
+    #end##foreach-group
+#end##writeSubDatasetParameters
+
+#macro(writeSubDatasetParametersX)
+        <parameter name="SI" class="java.lang.String" isForPrompting="false">
+            <defaultValueExpression><![CDATA[JRBundleWebui.getString($locale, "bit.si")]]></defaultValueExpression>
+        </parameter>
+        <parameter name="NO" class="java.lang.String" isForPrompting="false">
+            <defaultValueExpression><![CDATA[JRBundleWebui.getString($locale, "bit.no")]]></defaultValueExpression>
+        </parameter>
+        <parameter name="NULO" class="java.lang.String" isForPrompting="false">
+            <defaultValueExpression><![CDATA[JRBundleWebui.getString($locale, "bit.nulo")]]></defaultValueExpression>
+        </parameter>
+        <parameter name="CHART_DATASET_WHERE_CLAUSE" class="java.lang.String" isForPrompting="false">
+            <defaultValueExpression><![CDATA[""]]></defaultValueExpression>
+        </parameter>
+    #foreach($parameter in $operation.parametersList)
+        <parameter name="$parameter.wrapper.sqlName" class="$parameter.wrapper.javaPrimitiveTypeName" isForPrompting="false"/>
+    #end##foreach-parameter
+#end##writeSubDatasetParametersX
+
+#macro(writeSubDatasetParameter)
+        <parameter name="group_field__$group.field.name" class="$group.field.javaClassName" isForPrompting="false"/>
+#end##writeSubDatasetParameter
+
+#macro(buildSubDatasetQueryString)
+##  #set($subDatasetQueryString = "SELECT${EOL} $report.lastControlGroup.field.name")
+    #set($field = $report.lastControlGroup.field)
+    #setReportFieldVariables()
+    #if($dataClassName == 'BooleanData')
+#*
+        #set($name = 'CASE')
+        #set($name = "${name} WHEN($field.name IS TRUE)")
+        #set($name = "${name} THEN(${BOP}SI${EOP})")
+        #set($name = "${name} WHEN($field.name IS FALSE)")
+        #set($name = "${name} THEN(${BOP}NO${EOP})")
+        #set($name = "${name} ELSE(${BOP}NULO${EOP})")
+        #set($name = "${name} END AS ${field.name}")
+*###
+        #set($name = 'CASE')
+        #set($name = "${name} WHEN($field.name IS TRUE)")
+        #set($name = "${name} THEN(${BOP}SI${EOP})")
+        #set($name = "${name} ELSE(${BOP}NO${EOP})")
+        #set($name = "${name} END AS ${field.name}")
+        #set($plotLabelRotation='0.0')
+    #else
+        #set($name = $field.name)
+        #set($plotLabelRotation='45.0')
+    #end
+    #set($subDatasetQueryString = "SELECT${EOL} ${name}")
+    #foreach($group in $report.groups)
+        #if($group.isDetail())
+            #foreach($field in $group.fields)
+                #if($field.isCountAtHand())
+                    #setSubDatasetAggregationFieldName('COUNT')
+                    #set($subDatasetQueryString = "$subDatasetQueryString,${EOL} ${name}")
+                #end
+                #if($field.isMinAtHand())
+                    #setSubDatasetAggregationFieldName('MINIMUM')
+                    #set($subDatasetQueryString = "$subDatasetQueryString,${EOL} ${name}")
+                #end
+                #if($field.isMaxAtHand())
+                    #setSubDatasetAggregationFieldName('MAXIMUM')
+                    #set($subDatasetQueryString = "$subDatasetQueryString,${EOL} ${name}")
+                #end
+                #if($field.isSumAtHand())
+                    #setSubDatasetAggregationFieldName('SUM')
+                    #set($subDatasetQueryString = "$subDatasetQueryString,${EOL} ${name}")
+                #end
+                #if($field.isAverageAtHand())
+                    #setSubDatasetAggregationFieldName('AVERAGE')
+                    #set($subDatasetQueryString = "$subDatasetQueryString,${EOL} ${name}")
+                #end
+                #if($field.isDeviationAtHand())
+                    #setSubDatasetAggregationFieldName('DEVIATION')
+                    #set($subDatasetQueryString = "$subDatasetQueryString,${EOL} ${name}")
+                #end
+            #end##foreach-field
+        #end
+    #end##foreach-group
+    #set($subDatasetQueryString = "$subDatasetQueryString${EOL} FROM $vista")
+    #set($subDatasetQueryString = "$subDatasetQueryString${EOL} WHERE ${report.lastControlGroup.field.name} IS NOT NULL")
+    #set($whereAndKeyword = ' AND ')
+    #foreach($group in $report.groups)
+        #if($group.isDetail() || $group.isLastControl())
+        #else
+            #set($subDatasetQueryString = "$subDatasetQueryString${EOL}${whereAndKeyword}${group.field.name} = ${BOP}group_field__${group.field.name}${EOP}")
+            #set($whereAndKeyword = ' AND ')
+        #end
+    #end##foreach-group
+    #set($BOPX = '$P!{')
+    #set($subDatasetQueryString = "$subDatasetQueryString${EOL} ${BOPX}CHART_DATASET_WHERE_CLAUSE${EOP}")
+##  #set($subDatasetQueryString = "$subDatasetQueryString${EOL} GROUP BY $report.lastControlGroup.field.name")
+    #set($subDatasetQueryString = "$subDatasetQueryString${EOL} GROUP BY 1")
+##  #set($subDatasetQueryString = "$subDatasetQueryString${EOL} ORDER BY $report.lastControlGroup.field.name")
+    #set($subDatasetQueryString = "$subDatasetQueryString${EOL} ORDER BY 1")
+#end##buildSubDatasetQueryString
+
+#macro(setSubDatasetAggregationFieldName $aggregation)
+    #set($calculation = $report.getAggregateFunctionName($aggregation))
+    #set($name = "${calculation}(${field.name}) AS ${aggregation.toLowerCase()}__${field.name}")
+#end##setSubDatasetAggregationFieldName
+
+#macro(writeSubDatasetQueryString)
+        <queryString><![CDATA[$subDatasetQueryString]]></queryString>
+#end##writeSubDatasetQueryString
+
+#macro(writeSubDatasetFields)
+    #foreach($group in $report.groups)
+        #if($group.isDetail())
+            #foreach($field in $group.fields)
+                #if($field.isCountAtHand())
+                    #writeSubDatasetVariable('COUNT' 'Count')
+                #end
+                #if($field.isMinAtHand())
+                    #writeSubDatasetVariable('MINIMUM' 'Lowest')
+                #end
+                #if($field.isMaxAtHand())
+                    #writeSubDatasetVariable('MAXIMUM' 'Highest')
+                #end
+                #if($field.isSumAtHand())
+                    #writeSubDatasetVariable('SUM' 'Sum')
+                #end
+                #if($field.isAverageAtHand())
+                    #writeSubDatasetVariable('AVERAGE' 'Average')
+                #end
+                #if($field.isDeviationAtHand())
+                    #writeSubDatasetVariable('DEVIATION' 'StandardDeviation')
+                #end
+            #end##foreach-field
+        #elseif($group.isLastControl())
+            #set($field = $group.field)
+            #setReportFieldVariables()
+            #writeSubDatasetField()
+        #end
+    #end##foreach-group
+#end##writeSubDatasetFields
+
+#macro(writeSubDatasetField)
+        <field name="$field.name" class="$javaClassName"/>
+#end##writeSubDatasetField
+
+#macro(writeSubDatasetVariable $aggregation $calculation)
+    #set($name = "${aggregation.toLowerCase()}__${field.name}")
+    #if("$calculation" == 'Count')
+        #set($class = 'java.lang.Long')
+    #else
+        #set($class = $field.javaClassName)
+    #end
+    #writeSubDatasetVariableField()
+#end##writeSubDatasetVariable
+
+#macro(writeSubDatasetVariableField)
+        <field name="$name" class="$class"/>
+#end##writeSubDatasetVariableField
+
+#macro(writeParameters)
+    <parameter name="ENTERPRISE_APPLICATION_CODE" class="java.lang.String" isForPrompting="false">
+        <defaultValueExpression><![CDATA["${project.rootPackageName}"]]></defaultValueExpression>
+    </parameter>
+    <parameter name="ENTERPRISE_APPLICATION_NAME" class="java.lang.String" isForPrompting="false">
+        <defaultValueExpression><![CDATA[JRBundleWebui.getString($locale, ${BOP}ENTERPRISE_APPLICATION_CODE${EOP})]]></defaultValueExpression>
+    </parameter>
+    <parameter name="RESOURCES_DIR" class="java.lang.String" isForPrompting="false">
+        <defaultValueExpression><![CDATA["./resources/"]]></defaultValueExpression>
+    </parameter>
+    <parameter name="CUSTOM_STYLE_TEMPLATE" class="java.lang.String" isForPrompting="false">
+        <defaultValueExpression><![CDATA[${BOP}RESOURCES_DIR${EOP} + ${BOP}ENTERPRISE_APPLICATION_CODE${EOP} + "0.jrtx"]]></defaultValueExpression>
+    </parameter>
+    <parameter name="PAGE_HEADER_IMAGE_1" class="java.lang.String" isForPrompting="false">
+        <defaultValueExpression><![CDATA[${BOP}RESOURCES_DIR${EOP} + ${BOP}ENTERPRISE_APPLICATION_CODE${EOP} + "1.png"]]></defaultValueExpression>
+    </parameter>
+    <parameter name="PAGE_HEADER_IMAGE_2" class="java.lang.String" isForPrompting="false">
+        <defaultValueExpression><![CDATA[${BOP}RESOURCES_DIR${EOP} + ${BOP}ENTERPRISE_APPLICATION_CODE${EOP} + "2.png"]]></defaultValueExpression>
+    </parameter>
+    <parameter name="SUBREPORTS_DIR" class="java.lang.String" isForPrompting="false">
+        <defaultValueExpression><![CDATA["./subreports/"]]></defaultValueExpression>
+    </parameter>
+    <parameter name="SUPER_REPORT" class="java.lang.String" isForPrompting="false">
+        <defaultValueExpression><![CDATA[""]]></defaultValueExpression>
+    </parameter>
+    <parameter name="END_USER_CODE" class="java.lang.String" isForPrompting="false">
+        <defaultValueExpression><![CDATA[""]]></defaultValueExpression>
+    </parameter>
+    <parameter name="END_USER_NAME" class="java.lang.String" isForPrompting="false">
+        <defaultValueExpression><![CDATA[""]]></defaultValueExpression>
+    </parameter>
+    <parameter name="SQL_SELECT_STATEMENT" class="java.lang.String" isForPrompting="false">
+        <defaultValueExpression><![CDATA[""]]></defaultValueExpression>
+    </parameter>
+    <parameter name="SQL_WHERE_CLAUSE" class="java.lang.String" isForPrompting="false">
+        <defaultValueExpression><![CDATA[""]]></defaultValueExpression>
+    </parameter>
+    <parameter name="SQL_LIMIT_CLAUSE" class="java.lang.String" isForPrompting="false">
+        <defaultValueExpression><![CDATA[""]]></defaultValueExpression>
+    </parameter>
+    <parameter name="CHART_DATASET_WHERE_CLAUSE" class="java.lang.String" isForPrompting="false">
+        <defaultValueExpression><![CDATA[""]]></defaultValueExpression>
+    </parameter>
+    #foreach($parameter in $operation.parametersList)
+....    <parameter name="$parameter.wrapper.sqlName" class="$parameter.wrapper.javaPrimitiveTypeName" isForPrompting="false"/>
+    #end##foreach-parameter
+#end##writeParameters
+
+#macro(writeQuery)
+    <queryString><![CDATA[$queryString]]></queryString>
+#end##writeQuery
+
+#macro(writeFields)
+    #foreach($group in $report.groups)
+        #if($group.isDetail() || $group.isLastControl())
+        #else
+            #foreach($field in $group.fields)
+                #writeField()
+            #end##foreach-field
+        #end
+    #end##foreach-group
+#end##writeFields
+
+#macro(writeField)
+    <field name="$field.name" class="$field.javaClassName"/>
+#end##writeField
+
+#macro(writeGroups)
+    #set($detailHeight = 0)
+    #set($allHeadersHeight = 0)
+    #foreach($group in $report.groups)
+        #set($minHeightToStartNewPage = $group.resetMinHeightToStartNewPage())
+    #end
+    #foreach($group1 in $report.groups)
+        #if($group1.isDetail())
+            #set($detailHeight = $availableHeight - $allHeadersHeight)
+            #set($increment = $detailHeight)
+        #else
+            #if($group1.sequence < 5)
+                #set($groupSequence = $group1.sequence)
+            #else
+                #set($groupSequence = 5)
+            #end
+            #set($headerLineHeight = $controlHeaderLineHeightArray.get($groupSequence))
+            #set($footerLineHeight = $controlFooterLineHeightArray.get($groupSequence))
+            #set($increment = $headerLineHeight * $group1.visibleFieldsCount)
+            #set($allHeadersHeight = $allHeadersHeight + $increment)
+        #end
+        #foreach($group2 in $report.groups)
+            #if($group2.sequence <= $group1.sequence)
+                #set($minHeightToStartNewPage = $group2.increaseMinHeightToStartNewPage($increment))
+            #end
+        #end
+    #end
+    #foreach($group in $report.groups)
+        #if($group.isDetail())
+            #set($headerLineHeight = $detailHeaderLineHeight)
+            #set($footerLineHeight = $detailFooterLineHeight)
+            #set($headerHeight = $headerLineHeight)
+            #set($footerHeight = $footerLineHeight)
+            #set($isReprintHeaderOnEachPage = 'true')
+            #set($isStartNewPage = 'false')
+            #set($styleNumber = '-')
+        #else
+            #if($group.sequence < 5)
+                #set($groupSequence = $group.sequence)
+            #else
+                #set($groupSequence = 5)
+            #end
+            #set($headerLineHeight = $controlHeaderLineHeightArray.get($groupSequence))
+            #set($footerLineHeight = $controlFooterLineHeightArray.get($groupSequence))
+            #set($headerHeight = $headerLineHeight * $group.visibleFieldsCount)
+##          #set($footerHeight = $footerLineHeight * $repAggCount * 3)
+            #set($footerHeight = $footerLineHeight * $repAggCount + $detailLineHeight * $repAggCount * 2)
+            #set($isReprintHeaderOnEachPage = 'true')
+            #set($isStartNewPage = 'true')
+            #set($styleNumber = "$groupSequence")
+        #end
+        #set($minHeightToStartNewPage = $group.minHeightToStartNewPage)
+        #if($minHeightToStartNewPage >= $availableHeight)
+            #set($minHeightToStartNewPage = $headerHeight)
+        #end
+        #if($group.isDetail())
+        #elseif($group.isLastControl())
+        #else
+            #writeControlGroup()
+        #end
+    #end##foreach-group
+#end##writeGroups
+
+#macro(writePageHeader)
+    <pageHeader>
+        <band height="$pageHeaderHeight" splitType="Stretch">
+            <frame>
+                <reportElement
+                    style="ph-band1"
+                    x="0"
+                    y="0"
+                    width="$columnWidth0101"
+                    height="$pageHeaderHeight"
+                    key="frame"/>
+            #if($imagepathH1 == '')
+                <staticText>
+                    <reportElement
+                        style="ph-text1"
+                        x="0"
+                        y="0"
+                        width="$columnWidth0106"
+                        height="32"
+                        key="staticText"/>
+                    #increaseIndentationBy(5)
+                    #writeBox('' '' '')
+                    #writeTextElement('Left' '')
+                    #decreaseIndentationBy(5)
+                    <text><![CDATA[$textcdataH1]]></text>
+                </staticText>
+            #else
+                <image onErrorType="Icon" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self">
+                    <reportElement
+                        style="ph-text1"
+                        x="0"
+                        y="0"
+                        width="$imagewdthH1"
+                        height="$imagehghtH1"
+                        key="image-1"/>
+                    <imageExpression class="java.lang.String"><![CDATA[$imagepathH1]]></imageExpression>
+                </image>
+            #end
+            #if($pageHeaderHeight == 64)
+                <staticText>
+                    <reportElement
+                        style="ph-text1"
+                        x="$columnWidth0106"
+                        y="0"
+                        width="$columnWidth0103"
+                        height="32"
+                        key="staticText"/>
+                    #increaseIndentationBy(5)
+                    #writeBox('' '' '')
+                    #writeTextElement('Center' '')
+                    #decreaseIndentationBy(5)
+                    <text><![CDATA[$textcdataH2]]></text>
+                </staticText>
+                <staticText>
+                    <reportElement
+                        style="ph-text1"
+                        x="$columnWidth0102"
+                        y="0"
+                        width="$columnWidth0103"
+                        height="32"
+                        key="staticText"/>
+                    #increaseIndentationBy(5)
+                    #writeBox('' '' '')
+                    #writeTextElement('Center' '')
+                    #decreaseIndentationBy(5)
+                    <text><![CDATA[$textcdataH3]]></text>
+                </staticText>
+            #else
+                <textField
+                    isBlankWhenNull="true"
+                    isStretchWithOverflow="true"
+                    evaluationTime="Report">
+                    <reportElement
+                        style="ph-text1"
+                        stretchType="RelativeToBandHeight"
+                        x="$columnWidth0106"
+                        y="0"
+                        width="$columnWidth0203"
+                        height="32"
+                        key="textField"/>
+                    #increaseIndentationBy(5)
+                    #writeBox('' '' '')
+                    #writeTextElement('Center' '')
+                    #decreaseIndentationBy(5)
+                    <textFieldExpression><![CDATA[$textcdataH2]]></textFieldExpression>
+                </textField>
+            #end
+            #if($imagepathH2 == '')
+                <staticText>
+                    <reportElement
+                        style="ph-text1"
+                        x="$columnWidth0506"
+                        y="0"
+                        width="$columnWidth0106"
+                        height="32"
+                        key="staticText"/>
+                    #increaseIndentationBy(5)
+                    #writeBox('' '' '')
+                    #writeTextElement('Right' '')
+                    #decreaseIndentationBy(5)
+                    <text><![CDATA[$textcdataH4]]></text>
+                </staticText>
+            #else
+                #set($nextx = $columnWidth0101 - $imagewdthH2)
+                <image onErrorType="Icon" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self">
+                    <reportElement
+                        x="$nextx"
+                        y="0"
+                        width="$imagewdthH2"
+                        height="$imagehghtH2"
+                        key="image-2"/>
+                    <imageExpression class="java.lang.String"><![CDATA[$imagepathH2]]></imageExpression>
+                </image>
+            #end
+            #if($pageHeaderHeight == 64)
+                <textField
+                    isBlankWhenNull="true"
+                    isStretchWithOverflow="true"
+                    evaluationTime="Report">
+                    <reportElement
+                        style="ph-text2"
+                        stretchType="RelativeToBandHeight"
+                        x="0"
+                        y="32"
+                        width="$columnWidth0102"
+                        height="32"
+                        key="textField"/>
+                    #increaseIndentationBy(5)
+                    #writeBox('' '' '')
+                    #writeTextElement('Left' '')
+                    #decreaseIndentationBy(5)
+                    <textFieldExpression><![CDATA[$textcdataH5]]></textFieldExpression>
+                </textField>
+                <staticText>
+                    <reportElement
+                        style="ph-text2"
+                        x="$columnWidth0102"
+                        y="32"
+                        width="$columnWidth0103"
+                        height="32"
+                        key="staticText"/>
+                    #increaseIndentationBy(5)
+                    #writeBox('' '' '')
+                    #writeTextElement('Left' '')
+                    #decreaseIndentationBy(5)
+                    <text><![CDATA[$textcdataH6]]></text>
+                </staticText>
+                <staticText>
+                    <reportElement
+                        style="ph-text2"
+                        x="$columnWidth0506"
+                        y="32"
+                        width="$columnWidth0106"
+                        height="32"
+                        key="staticText"/>
+                    #increaseIndentationBy(5)
+                    #writeBox('' '' '')
+                    #writeTextElement('Left' '')
+                    #decreaseIndentationBy(5)
+                    <text><![CDATA[$textcdataH7]]></text>
+                </staticText>
+            #end
+            </frame>
+        </band>
+    </pageHeader>
+#end##writePageHeader
+
+#macro(writeControlGroup)
+    <group name="$group.name"
+        isReprintHeaderOnEachPage="$isReprintHeaderOnEachPage"
+        isStartNewPage="$isStartNewPage"
+        minHeightToStartNewPage="$minHeightToStartNewPage">
+        <groupExpression><![CDATA[${BOF}${group.name}${EOF}]]></groupExpression>
+    #if($headerHeight > 0)
+        <groupHeader>
+            <band height="$headerHeight" splitType="Prevent">
+                <printWhenExpression><![CDATA[Boolean.TRUE]]></printWhenExpression>
+                <frame>
+                    <reportElement
+                        style="gh${styleNumber}band1"
+                        x="0"
+                        y="0"
+                        width="$columnWidth0101"
+                        height="$headerHeight"
+                        key="frame"/>
+                    #set($topPosition = 0)
+                    #foreach($field in $group.fields)
+                        #setReportFieldVariables()
+                        #if($w > 0)
+                            #if($field.pixels < $columnWidth0304)
+                                #set($reportElementWidth1 = $columnWidth0104)
+                                #set($reportElementWidth2 = $columnWidth0304)
+                            #elseif($field.pixels > $columnWidth0708)
+                                #set($reportElementWidth1 = $columnWidth0108)
+                                #set($reportElementWidth2 = $columnWidth0708)
+                            #else
+                                #set($reportElementWidth1 = $columnWidth0101 - $field.pixels)
+                                #set($reportElementWidth2 = $field.pixels)
+                            #end
+                            #writeControlHeaderFields()
+                            #set($topPosition = $topPosition + $headerLineHeight)
+                        #end
+                    #end##foreach-field
+                </frame>
+            </band>
+        </groupHeader>
+    #end
+    </group>
+#end##writeControlGroup
+
+#macro(writeControlHeaderFields)
+    <textField
+        isBlankWhenNull="true"
+        isStretchWithOverflow="false"
+        evaluationTime="Report">
+        <reportElement
+            style="gh${styleNumber}text1"
+            stretchType="RelativeToBandHeight"
+            x="0"
+            y="$topPosition"
+            width="$reportElementWidth1"
+            height="$headerLineHeight"
+            key="textField"/>
+        #increaseIndentationBy(6)
+        #writeBox('' '' '')
+        #writeTextElement('Left' '')
+        #decreaseIndentationBy(6)
+        #setFieldLabelTextData()
+        <textFieldExpression><![CDATA[$textcdata]]></textFieldExpression>
+    </textField>
+    <textField
+        pattern="$pattern"
+        isBlankWhenNull="true"
+        isStretchWithOverflow="false"
+        evaluationTime="Now"
+        hyperlinkType="None"
+        hyperlinkTarget="Self">
+        <reportElement
+            style="gh${styleNumber}text2"
+            stretchType="RelativeToBandHeight"
+            x="$reportElementWidth1"
+            y="$topPosition"
+            width="$reportElementWidth2"
+            height="$headerLineHeight"
+            key="textField"/>
+        #increaseIndentationBy(6)
+        #writeBox('' '' '')
+        #writeTextElement('Left' '')
+        #decreaseIndentationBy(6)
+        <textFieldExpression class="$javaClassName"><![CDATA[$fieldExpression]]></textFieldExpression>
+    </textField>
+#end##writeControlHeaderFields
+
+#macro(writeDetail)
+    #set($field = $report.lastControlGroup.field)
+    #setFieldLabelTextData()
+    <detail>
+        <band height="$detailHeight">
+            <bar3DChart>
+                <chart>
+                    <reportElement x="0" y="0" width="$columnWidth0101" height="$detailHeight"/>
+                    <chartTitle position="Bottom">
+                        <font size="14" isBold="true"/>
+                        <titleExpression><![CDATA[${textcdata}]]></titleExpression>
+                    </chartTitle>
+                    <chartSubtitle/>
+                    <chartLegend position="Top"/>
+                </chart>
+                <categoryDataset>
+                    <dataset>
+                        <datasetRun subDataset="ChartDataset">
+                            #writeChartDatasetParameters()
+                        </datasetRun>
+                    </dataset>
+                    #writeChartDatasetFields()
+                </categoryDataset>
+                <bar3DPlot isShowLabels="true">
+                    <plot labelRotation="$plotLabelRotation">
+#***
+                        <seriesColor seriesOrder="0"  color="#FF5555"/>
+                        <seriesColor seriesOrder="1"  color="#5555FF"/>
+                        <seriesColor seriesOrder="2"  color="#55FF55"/>
+                        <seriesColor seriesOrder="3"  color="#FFFF55"/>
+                        <seriesColor seriesOrder="4"  color="#FF55FF"/>
+                        <seriesColor seriesOrder="5"  color="#55FFFF"/>
+                        <seriesColor seriesOrder="6"  color="#FFAFAF"/>
+                        <seriesColor seriesOrder="7"  color="#808080"/>
+                        <seriesColor seriesOrder="8"  color="#C00000"/>
+                        <seriesColor seriesOrder="9"  color="#0000C0"/>
+                        <seriesColor seriesOrder="10" color="#00C000"/>
+                        <seriesColor seriesOrder="11" color="#C0C000"/>
+                        <seriesColor seriesOrder="12" color="#C000C0"/>
+                        <seriesColor seriesOrder="13" color="#00C0C0"/>
+                        <seriesColor seriesOrder="14" color="#404040"/>
+                        <seriesColor seriesOrder="15" color="#FF4040"/>
+                        <seriesColor seriesOrder="16" color="#4040FF"/>
+                        <seriesColor seriesOrder="17" color="#40FF40"/>
+                        <seriesColor seriesOrder="18" color="#FFFF40"/>
+                        <seriesColor seriesOrder="19" color="#FF40FF"/>
+                        <seriesColor seriesOrder="20" color="#40FFFF"/>
+                        <seriesColor seriesOrder="21" color="#C0C0C0"/>
+                        <seriesColor seriesOrder="22" color="#800000"/>
+                        <seriesColor seriesOrder="23" color="#000080"/>
+                        <seriesColor seriesOrder="24" color="#008000"/>
+                        <seriesColor seriesOrder="25" color="#808000"/>
+                        <seriesColor seriesOrder="26" color="#800080"/>
+                        <seriesColor seriesOrder="27" color="#008080"/>
+                        <seriesColor seriesOrder="28" color="#FF8080"/>
+                        <seriesColor seriesOrder="29" color="#8080FF"/>
+                        <seriesColor seriesOrder="30" color="#80FF80"/>
+                        <seriesColor seriesOrder="31" color="#FFFF80"/>
+                        <seriesColor seriesOrder="32" color="#FF80FF"/>
+                        <seriesColor seriesOrder="33" color="#80FFFF"/>
+*###
+                    #foreach($color in $operation.chartColorList)
+                        <seriesColor seriesOrder="$foreach.index" color="$ColorUtils.hexColorCode($color).toUpperCase()"/>
+                    #end
+                    </plot>
+                    <itemLabel/>
+                    <categoryAxisFormat>
+                            <axisFormat/>
+                    </categoryAxisFormat>
+                    <valueAxisFormat>
+                            <axisFormat/>
+                    </valueAxisFormat>
+                </bar3DPlot>
+            </bar3DChart>
+        </band>
+    </detail>
+#end##writeDetail
+
+#macro(writeChartDatasetParameters)
+    #writeChartDatasetParametersX()
+    #foreach($parameter in $operation.parametersList)
+        #writeChartDatasetParameter1()
+    #end##foreach-parameter
+    #foreach($group in $report.groups)
+        #if($group.isDetail() || $group.isLastControl())
+        #else
+            #writeChartDatasetParameter2()
+        #end
+    #end##foreach-group
+#end##writeChartDatasetParameters
+
+#macro(writeChartDatasetParametersX)
+                            <datasetParameter name="CHART_DATASET_WHERE_CLAUSE">
+                                <datasetParameterExpression><![CDATA[${BOP}CHART_DATASET_WHERE_CLAUSE${EOP}]]></datasetParameterExpression>
+                            </datasetParameter>
+#end##writeChartDatasetParametersX
+
+#macro(writeChartDatasetParameter1)
+                            <datasetParameter name="$parameter.wrapper.sqlName">
+                                <datasetParameterExpression><![CDATA[${BOP}${parameter.wrapper.sqlName}${EOP}]]></datasetParameterExpression>
+                            </datasetParameter>
+#end##writeChartDatasetParameter1
+
+#macro(writeChartDatasetParameter2)
+                            <datasetParameter name="group_field__$group.field.name">
+                                <datasetParameterExpression><![CDATA[${BOF}${group.field.name}${EOF}]]></datasetParameterExpression>
+                            </datasetParameter>
+#end##writeChartDatasetParameter2
+
+#macro(writeChartDatasetFields)
+    #foreach($group in $report.groups)
+        #if($group.isDetail())
+            #foreach($field in $group.fields)
+                #if($field.isCountAtHand())
+                    #writeChartDatasetVariable('COUNT' 'Count')
+                #end
+                #if($field.isMinAtHand())
+                    #writeChartDatasetVariable('MINIMUM' 'Lowest')
+                #end
+                #if($field.isMaxAtHand())
+                    #writeChartDatasetVariable('MAXIMUM' 'Highest')
+                #end
+                #if($field.isSumAtHand())
+                    #writeChartDatasetVariable('SUM' 'Sum')
+                #end
+                #if($field.isAverageAtHand())
+                    #writeChartDatasetVariable('AVERAGE' 'Average')
+                #end
+                #if($field.isDeviationAtHand())
+                    #writeChartDatasetVariable('DEVIATION' 'StandardDeviation')
+                #end
+            #end##foreach-field
+        #end
+    #end##foreach-group
+#end##writeChartDatasetFields
+
+#macro(writeChartDatasetVariable $aggregation)
+    #setSeriesExpressionTextData()
+    #set($name = "${aggregation.toLowerCase()}__${field.name}")
+                    <categorySeries>
+                        <seriesExpression><![CDATA[$textcdata]]></seriesExpression>
+                        <categoryExpression><![CDATA[${BOF}${report.lastControlGroup.field.name}${EOF}]]></categoryExpression>
+                        <valueExpression><![CDATA[${BOF}${name}${EOF}]]></valueExpression>
+                    </categorySeries>
+#end##writeChartDatasetVariable
+
+#macro(writePageFooter)
+    <pageFooter>
+        <band height="$pageFooterHeight" splitType="Stretch">
+            <frame>
+                <reportElement
+                    style="pf-band1"
+                    x="0"
+                    y="0"
+                    width="$columnWidth0101"
+                    height="$pageFooterHeight"
+                    key="frame"/>
+                <textField
+                    isBlankWhenNull="true"
+                    isStretchWithOverflow="true"
+                    evaluationTime="Report"
+                    pattern="dd/MM/yyyy"
+                    hyperlinkType="None"
+                    hyperlinkTarget="Self">
+                    <reportElement
+                        style="pf-text2"
+                        stretchType="RelativeToBandHeight"
+                        x="0"
+                        y="0"
+                        width="$columnWidth0103"
+                        height="20"
+                        key="textField"/>
+                    #increaseIndentationBy(5)
+                    #writeBox('' '' '')
+                    #writeTextElement('Left' '')
+                    #decreaseIndentationBy(5)
+                    <textFieldExpression class="java.util.Date"><![CDATA[new Date()]]></textFieldExpression>
+                </textField>
+                <textField
+                    isBlankWhenNull="true"
+                    isStretchWithOverflow="true"
+                    evaluationTime="Page"
+                    hyperlinkType="None"
+                    hyperlinkTarget="Self">
+                    <reportElement
+                        style="pf-text2"
+                        stretchType="RelativeToBandHeight"
+                        x="$columnWidth0103"
+                        y="0"
+                        width="$columnWidth0106"
+                        height="20"
+                        key="textField"/>
+                    #increaseIndentationBy(5)
+                    #writeBox('' '' '')
+                    #writeTextElement('Right' '')
+                    #decreaseIndentationBy(5)
+                    #if($pagenumber1 == '')
+                        #set($textcdata = "$pagenumberv")
+                    #else
+                        #set($textcdata = "$pagenumber1 + "" "" + $pagenumberv")
+                    #end
+                    <textFieldExpression class="java.lang.String"><![CDATA[$textcdata]]></textFieldExpression>
+                </textField>
+                <textField
+                    isBlankWhenNull="true"
+                    isStretchWithOverflow="true"
+                    evaluationTime="Report"
+                    hyperlinkType="None"
+                    hyperlinkTarget="Self">
+                    <reportElement
+                        style="pf-text2"
+                        stretchType="RelativeToBandHeight"
+                        x="$columnWidth0102"
+                        y="0"
+                        width="$columnWidth0106"
+                        height="20"
+                        key="textField"/>
+                    #increaseIndentationBy(5)
+                    #writeBox('' '' '')
+                    #writeTextElement('Left' '')
+                    #decreaseIndentationBy(5)
+                    #if($pagenumber2 == '')
+                        #set($textcdata = """/ "" + $pagenumberv")
+                    #else
+                        #set($textcdata = "$pagenumber2 + "" "" + $pagenumberv")
+                    #end
+                    <textFieldExpression class="java.lang.String"><![CDATA[$textcdata]]></textFieldExpression>
+                </textField>
+                <textField
+                    isBlankWhenNull="true"
+                    isStretchWithOverflow="true"
+                    evaluationTime="Report"
+                    hyperlinkType="None"
+                    hyperlinkTarget="Self">
+                    <reportElement
+                        style="pf-text2"
+                        stretchType="RelativeToBandHeight"
+                        x="$columnWidth0203"
+                        y="0"
+                        width="$columnWidth0103"
+                        height="20"
+                        key="textField"/>
+                    #increaseIndentationBy(5)
+                    #writeBox('' '' '')
+                    #writeTextElement('Right' '')
+                    #decreaseIndentationBy(5)
+                    <textFieldExpression class="java.lang.String"><![CDATA[$textcdataF1]]></textFieldExpression>
+                </textField>
+            </frame>
+        </band>
+    </pageFooter>
+#end##writePageFooter
+
+#macro(writeBox $lineWidth $lineStyle $lineColor)
+#end##writeBox
+
+## -----------------------------------------------------------------------------
+## writeBox jasperreports-3.x.x
+## -----------------------------------------------------------------------------
+$tab<box>
+    #increaseIndentation()
+    #writePen($lineWidth $lineStyle $lineColor)
+    #decreaseIndentation()
+$tab</box>
+## -----------------------------------------------------------------------------
+
+#macro(writeGraphicElement $lineWidth $lineStyle $lineColor)
+$tab<graphicElement>
+    #increaseIndentation()
+    #writePen($lineWidth $lineStyle $lineColor)
+    #decreaseIndentation()
+$tab</graphicElement>
+#end##writeGraphicElement
+
+#macro(writePen $lineWidth $lineStyle $lineColor)
+#set($lw = '0.0')
+#set($ls = 'Solid')
+#set($lc = '#000000')
+#if($!lineWidth != '')
+    #set($lw = $lineWidth)
+#end
+#if($!lineStyle != '')
+    #set($ls = $lineStyle)
+#end
+#if($!lineColor != '')
+    #set($lc = $lineColor)
+#end
+$tab<pen lineWidth="$lw" lineStyle="$ls" lineColor="$lc"/>
+#end##writePen
+
+#macro(writeTextElement $horizontalAlignment $verticalAlignment)
+#set($ha = 'Left')
+#set($va = 'Middle')
+#if($!horizontalAlignment != '')
+    #set($ha = $horizontalAlignment)
+#end
+#if($!verticalAlignment != '')
+    #set($va = $verticalAlignment)
+#end
+$tab<textElement textAlignment="$ha" verticalAlignment="$va"/>
+#end##writeTextElement
+
+## -----------------------------------------------------------------------------
+## writeTextElement jasperreports-3.x.x
+## -----------------------------------------------------------------------------
+$tab<textElement textAlignment="$ha" verticalAlignment="$va">
+$tab    <font fontName="$fn" size="$fs" isBold="$fb" isItalic="$fi" isUnderline="$fu" isStrikeThrough="$fx" isPdfEmbedded="true"/>
+$tab</textElement>
+## -----------------------------------------------------------------------------
+
+#macro(setReportFieldVariables)
+    #set($dataClassName = "$!field.dataClassName")
+    #set($javaClassName = "$!field.javaClassName")
+    #set($fieldExpression = "$BOF$field.name$EOF")
+    #set($groupVariableExpression = "$BOV$!{aggregation.name().toLowerCase()}__${field.name}__${group.name}$EOV")
+    #set($summaryVariableExpression = "$BOV$!{aggregation.name().toLowerCase()}__${field.name}$EOV")
+    #set($w = $field.pixels)
+    #if($w < 0)
+        #set($w = 0)
+    #end
+    #if("$dataClassName" == 'BigDecimalData')
+        #set($fieldPrecision = $VelocityAid.coalesce($field.property.precision, 16))
+        #set($fieldScale = $VelocityAid.coalesce($field.property.scale, 0))
+        #set($fieldMaxIntegerDigits = $fieldPrecision - $fieldScale)
+        #if($fieldScale > 0)
+            #set($decLess = '#,##0')
+            #set($dotZero = ".$StringUtils.repeat('0', $fieldScale)")
+            #set($pattern = "${decLess}${dotZero};-${decLess}${dotZero}")
+        #else
+            #set($pattern = '#,##0;-#,##0')
+        #end
+        #set($textAlignment='Right')
+    #elseif("$dataClassName" == 'BigIntegerData' || "$dataClassName" == 'LongData')
+        #set($pattern = '#,##0;-#,##0')
+        #set($textAlignment='Right')
+    #elseif("$dataClassName" == 'BooleanData')
+        #set($javaClassName = 'java.lang.String')
+        #set($fieldExpression = "EnumBit.valueOf($BOF$field.name$EOF).getLabel()")
+        #set($fieldExpression = "JRBundleWebui.getBooleanLabel($locale, $BOF$field.name$EOF)")
+        #set($pattern = '')
+        #set($textAlignment='Center')
+    #elseif("$dataClassName" == 'ByteData' || "$dataClassName" == 'ShortData' || "$dataClassName" == 'IntegerData')
+        #set($pattern = '#,##0;-#,##0')
+        #set($textAlignment='Right')
+    #elseif("$dataClassName" == 'CharacterData' || "$dataClassName" == 'StringData')
+        #set($pattern = '')
+        #set($textAlignment='Left')
+    #elseif("$dataClassName" == 'DateData')
+        #set($pattern = 'dd/MM/yyyy')
+        #set($textAlignment='Center')
+    #elseif("$dataClassName" == 'TimeData')
+        #set($pattern = 'hh:mm aa')
+        #set($textAlignment='Center')
+    #elseif("$dataClassName" == 'TimestampData')
+        #set($pattern = 'dd/MM/yyyy hh:mm aa')
+        #set($textAlignment='Center')
+    #elseif("$dataClassName" == 'DoubleData' || "$dataClassName" == 'FloatData')
+        #set($pattern = '0.0##############E0;-0.0##############E0')
+        #set($textAlignment='Right')
+    #else
+        #set($w = 0)
+        #set($pattern = '')
+        #set($textAlignment='Left')
+    #end
+#end##setReportFieldVariables
+
+#macro(setFieldLabelTextData)
+    #set($bundleKey = "${report.view.entity.wrapper.sqlSchemaQualifiedShortName}")
+    #set($bundleKey = "${bundleKey}.${report.view.wrapper.sqlName}")
+    #set($bundleKey = "${bundleKey}.$StrUtils.getLowerHumplessCase(${field.property.partialName})")
+    #set($bundleKey = """${bundleKey}""")
+    #set($coalesce1 = "JRBundleParametros.getTrimmedToNullLabel($locale, $bundleKey)")
+    #set($bundleKey = "${field.property.declaringEntityRoot.wrapper.sqlSchemaQualifiedShortName}")
+    #set($bundleKey = "${bundleKey}.${field.property.wrapper.sqlName}")
+    #set($bundleKey = """${bundleKey}""")
+    #set($coalesce2 = "JRBundleParametros.getTrimmedToNullLabel($locale, $bundleKey)")
+    #set($coalesce3 = """${field.property.wrapper.wordyAlias}""")
+    #set($textcdata = "StrUtils.coalesce($coalesce1, $coalesce2, $coalesce3)")
+#end##setFieldLabelTextData
+
+#macro(setSeriesExpressionTextData)
+    #set($viewFieldAggregation = $VelocityAid.valueOf($ViewFieldAggregation, "$aggregation"))
+    #if($viewFieldAggregation)
+        #set($fieldAggregationTag = "$!viewFieldAggregation.nameTag")
+    #else
+        #set($fieldAggregationTag = "$aggregation")
+    #end
+    #set($bundleKey = "tipo_agregacion.$fieldAggregationTag.toLowerCase()")
+    #set($bundleKey = """${bundleKey}""")
+    #set($fee = "JRBundleEnums.getString($locale, $bundleKey).toLowerCase()")
+    #set($faa = """ / """)
+    #setFieldShortLabelTextData()
+##  #set($textcdata = "$fee + $faa + StringUtils.capitalize($textcdata)")
+    #set($textcdata = "$fee + $faa + $textcdata")
+#end##setSeriesExpressionTextData
+
+#macro(setFieldShortLabelTextData)
+    #set($bundleKey = "${report.view.entity.wrapper.sqlSchemaQualifiedShortName}")
+    #set($bundleKey = "${bundleKey}.${report.view.wrapper.sqlName}")
+    #set($bundleKey = "${bundleKey}.$StrUtils.getLowerHumplessCase(${field.property.partialName})")
+    #set($bundleKey = """${bundleKey}""")
+    #set($coalesce1 = "JRBundleParametros.getTrimmedToNullShortLabel($locale, $bundleKey)")
+    #set($bundleKey = "${field.property.declaringEntityRoot.wrapper.sqlSchemaQualifiedShortName}")
+    #set($bundleKey = "${bundleKey}.${field.property.wrapper.sqlName}")
+    #set($bundleKey = """${bundleKey}""")
+    #set($coalesce2 = "JRBundleParametros.getTrimmedToNullShortLabel($locale, $bundleKey)")
+    #set($coalesce3 = """${field.property.wrapper.wordyAlias}""")
+    #set($textcdata = "StrUtils.coalesce($coalesce1, $coalesce2, $coalesce3)")
+#end##setFieldShortLabelTextData

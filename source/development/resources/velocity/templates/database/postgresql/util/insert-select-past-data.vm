@@ -1,0 +1,424 @@
+#parsePostgreSQLMacros()
+#setPostgreSQLVariables()
+#writePostgreSQLLicense()
+#writePostgreSQLAuthor('Jorge Campins')
+#setLocalVariables()
+#writeCreateMidwaySchema()
+#if("$!skipCreateCurrentKeyFunctions" == '')
+    #writeCreateCurrentKeyFunctions()
+    #overwriteCreateCurrentKeyFunctions()
+#end
+#if("$!skipCreateInsertFunctions" == '')
+    #writeCreateInsertFunctions()
+    #writeCreateInsertSelectFunction()
+#end
+#break
+
+#macro(setLocalVariables)
+    #set($entities = $ColUtils.filter($project.entitiesList, $isEntitySqlCodeGenEnabled, $isPersistentEntityTable))
+    #set($entities = $ColUtils.sort($entities, $byEntityName))
+    #set($sourceSchema = 'former')
+    #set($targetSchema = 'public')
+    #set($midwaySchema = 'midway')
+    #set($sourceQualifier = "${sourceSchema}.")
+    #set($targetQualifier = "${targetSchema}.")
+    #set($midwayQualifier = "${midwaySchema}.")
+    #set($currentKeyOf = "${midwayQualifier}current_key_of_")
+    #set($currentKeyOfFunctions = $VelocityAid.getNewTreeSet())
+    #set($specialTableNames = $VelocityAid.getNewTreeSet())
+    #set($mesaTables = $VelocityAid.getNewTreeSet())
+    #set($metaTables = $VelocityAid.getNewTreeSet())
+    #set($joinClauses = $VelocityAid.getNewLinkedHashMap())
+    #set($whereClauses = $VelocityAid.getNewLinkedHashMap())
+    #addMetaTables()
+    #addSelectClauses()
+#end##setLocalVariables
+
+#macro(addMetaTables)
+    #set($added = $mesaTables.add('meta.entidad.comun.control.acceso.Rol'))
+    #set($added = $metaTables.add('meta.entidad.comun.configuracion.basica'))
+#end##addMetaTables
+
+#macro(addSelectClauses)
+#*
+    #set($tabla = 'caso_prueba')
+    #set($added = $specialTableNames.add($tabla))
+    #set($where = "(${tabla}.funcion is null or ${currentKeyOf}funcion(${tabla}.funcion) is not null)")
+    #set($added = $whereClauses.put($tabla, $where))
+*###
+    #set($tabla = 'conjunto_segmento')
+    #set($added = $specialTableNames.add($tabla))
+    #set($where = "${currentKeyOf}clase_recurso(${tabla}.id_clase_recurso) is not null")
+    #set($added = $whereClauses.put($tabla, $where))
+##
+    #set($tabla = 'elemento_segmento')
+    #set($added = $specialTableNames.add($tabla))
+    #set($joint = "inner join ${sourceQualifier}conjunto_segmento")
+    #set($joint = "$joint on conjunto_segmento.id_conjunto_segmento = ${tabla}.id_conjunto_segmento")
+    #set($added = $joinClauses.put($tabla, $joint))
+    #set($where = "${currentKeyOf}clase_recurso(conjunto_segmento.id_clase_recurso) is not null")
+    #set($added = $whereClauses.put($tabla, $where))
+##
+    #set($tabla = 'filtro_funcion')
+    #set($added = $specialTableNames.add($tabla))
+    #set($where = "${currentKeyOf}funcion(${tabla}.id_funcion) is not null")
+    #set($added = $whereClauses.put($tabla, $where))
+##
+    #set($tabla = 'filtro_funcion_par')
+    #set($added = $specialTableNames.add($tabla))
+    #set($joint = "inner join ${sourceQualifier}filtro_funcion")
+    #set($joint = "$joint on filtro_funcion.id_filtro_funcion = ${tabla}.id_filtro_funcion")
+    #set($added = $joinClauses.put($tabla, $joint))
+    #set($where = "${currentKeyOf}funcion_parametro(${tabla}.id_funcion_parametro) is not null")
+    #set($where = "$where and ${currentKeyOf}funcion(filtro_funcion.id_funcion) is not null")
+    #set($added = $whereClauses.put($tabla, $where))
+##
+    #set($tabla = 'pagina_usuario')
+    #set($added = $specialTableNames.add($tabla))
+    #set($where = "${tabla}.id_usuario>10000")
+    #set($where = "$where and ${currentKeyOf}pagina(${tabla}.id_pagina) is not null")
+    #set($added = $whereClauses.put($tabla, $where))
+##
+    #set($tabla = 'rastro_funcion')
+    #set($added = $specialTableNames.add($tabla))
+    #set($where = "${currentKeyOf}funcion(${tabla}.id_funcion) is not null")
+    #set($added = $whereClauses.put($tabla, $where))
+##
+    #set($tabla = 'rastro_funcion_par')
+    #set($added = $specialTableNames.add($tabla))
+    #set($joint = "inner join ${sourceQualifier}rastro_funcion")
+    #set($joint = "$joint on rastro_funcion.id_rastro_funcion = ${tabla}.id_rastro_funcion")
+    #set($added = $joinClauses.put($tabla, $joint))
+    #set($where = "${currentKeyOf}parametro(${tabla}.id_parametro) is not null")
+    #set($where = "$where and ${currentKeyOf}funcion(rastro_funcion.id_funcion) is not null")
+    #set($added = $whereClauses.put($tabla, $where))
+##
+    #set($tabla = 'rastro_informe')
+    #set($added = $specialTableNames.add($tabla))
+    #set($where = "${currentKeyOf}funcion(${tabla}.id_funcion) is not null")
+    #set($added = $whereClauses.put($tabla, $where))
+##
+    #set($tabla = 'rastro_proceso')
+    #set($added = $specialTableNames.add($tabla))
+    #set($where = "${currentKeyOf}funcion(${tabla}.id_funcion) is not null")
+    #set($added = $whereClauses.put($tabla, $where))
+##
+    #set($tabla = 'rol')
+    #set($added = $specialTableNames.add($tabla))
+    #set($where = "${tabla}.id_rol>10000")
+    #set($added = $whereClauses.put($tabla, $where))
+##
+    #set($tabla = 'rol_filtro_funcion')
+    #set($added = $specialTableNames.add($tabla))
+    #set($joint = "inner join ${sourceQualifier}filtro_funcion")
+    #set($joint = "$joint on filtro_funcion.id_filtro_funcion = ${tabla}.id_filtro_funcion")
+    #set($added = $joinClauses.put($tabla, $joint))
+    #set($where = "${tabla}.id_rol>10000")
+    #set($where = "${currentKeyOf}rol(${tabla}.id_rol) is not null")
+    #set($where = "$where and ${currentKeyOf}funcion(filtro_funcion.id_funcion) is not null")
+    #set($added = $whereClauses.put($tabla, $where))
+##
+    #set($tabla = 'rol_funcion')
+    #set($added = $specialTableNames.add($tabla))
+    #set($where = "${tabla}.id_rol>10000")
+    #set($where = "$where and ${currentKeyOf}funcion(${tabla}.id_funcion) is not null")
+    #set($added = $whereClauses.put($tabla, $where))
+##
+    #set($tabla = 'rol_funcion_par')
+    #set($added = $specialTableNames.add($tabla))
+    #set($joint = "inner join ${sourceQualifier}rol_funcion")
+    #set($joint = "$joint on rol_funcion.id_rol_funcion = ${tabla}.id_rol_funcion")
+    #set($added = $joinClauses.put($tabla, $joint))
+    #set($where = "rol_funcion.id_rol>10000")
+    #set($where = "$where and ${currentKeyOf}funcion_parametro(${tabla}.id_funcion_parametro) is not null")
+    #set($where = "$where and ${currentKeyOf}funcion(rol_funcion.id_funcion) is not null")
+    #set($added = $whereClauses.put($tabla, $where))
+##
+    #set($tabla = 'rol_pagina')
+    #set($added = $specialTableNames.add($tabla))
+    #set($where = "${tabla}.id_rol>10000")
+    #set($where = "${currentKeyOf}rol(${tabla}.id_rol) is not null")
+    #set($where = "$where and ${currentKeyOf}pagina(${tabla}.id_pagina) is not null")
+    #set($added = $whereClauses.put($tabla, $where))
+##
+    #set($tabla = 'rol_usuario')
+    #set($added = $specialTableNames.add($tabla))
+    #set($where = "${tabla}.id_rol>10000 and ${tabla}.id_usuario>10000")
+    #set($where = "${currentKeyOf}rol(${tabla}.id_rol) is not null")
+    #set($where = "$where and ${tabla}.id_usuario>10000")
+    #set($added = $whereClauses.put($tabla, $where))
+##
+    #set($tabla = 'tarea_usuario')
+    #set($added = $specialTableNames.add($tabla))
+    #set($where = "${tabla}.destinatario>10000")
+    #set($where = "$where and ${currentKeyOf}funcion(${tabla}.funcion) is not null")
+    #set($added = $whereClauses.put($tabla, $where))
+##
+    #set($tabla = 'usuario')
+    #set($added = $specialTableNames.add($tabla))
+    #set($where = "${tabla}.id_usuario>10000")
+    #set($added = $whereClauses.put($tabla, $where))
+##
+    #set($tabla = '')
+    #set($joint = '')
+    #set($where = '')
+#end##addSelectClauses
+
+#macro(writeCreateMidwaySchema)
+drop schema if exists ${midwaySchema} cascade;
+create schema ${midwaySchema};
+
+#end##writeCreateMidwaySchema
+
+#macro(writeDropCurrentKeyFunctions)
+    #foreach($entity in $entities)
+        #setEntityVariables()
+        #if($currentKeyFlag)
+            #if($ckfname != '')
+                #writeDropCurrentKeyFunction()
+            #end
+        #end
+    #end##foreach-entity
+
+#end##writeDropCurrentKeyFunctions
+
+#macro(writeDropCurrentKeyFunction)
+drop function if exists ${ckfname}(${pkptype}, boolean);
+drop function if exists ${ckfname}(${pkptype});
+#end##writeDropCurrentKeyFunction
+
+#macro(writeCreateCurrentKeyFunctions)
+    #foreach($entity in $entities)
+        #setEntityVariables()
+        #if($currentKeyFlag)
+            #if($ckfname != '')
+                #writeCreateCurrentKeyFunction()
+            #end
+        #end
+    #end##foreach-entity
+#end##writeCreateCurrentKeyFunctions
+
+#macro(writeCreateCurrentKeyFunction)
+create or replace function ${ckfname}(${pkptype}) returns ${pkptype} as $$
+declare
+    _oldkey$ alias for $1;
+    _newkey$ ${pkptype};
+begin
+    _newkey$ := ${ckfname}(_oldkey$, false);
+    return _newkey$;
+end;
+$$ language plpgsql;
+
+create or replace function ${ckfname}(${pkptype}, boolean) returns ${pkptype} as $$
+declare
+    _oldkey$ alias for $1;
+    _strict$ alias for $2;
+    _newkey$ ${pkptype};
+begin
+    if _oldkey$ is null then
+        return null;
+    end if;
+    /**/
+    select  ${targetQualifier}${tabname}.${pkpname}
+    into    _newkey$
+    from    ${targetQualifier}${tabname},
+            ${sourceQualifier}${tabname}
+    where   ${sourceQualifier}${tabname}.${bkpname} = ${targetQualifier}${tabname}.${bkpname}
+    and     ${sourceQualifier}${tabname}.${pkpname} = _oldkey$;
+    /**/
+    if not found then
+        if _strict$ is true then
+            raise exception 'current key of ${tabname}.${pkpname} % is null', _oldkey$;
+        else
+            raise warning 'current key of ${tabname}.${pkpname} % is null', _oldkey$;
+        end if;
+    end if;
+    /**/
+    return _newkey$;
+end;
+$$ language plpgsql;
+
+#end##writeCreateCurrentKeyFunction
+
+#macro(writeDropInsertFunctions)
+    #foreach($entity in $entities)
+        #setEntityVariables()
+        #if($insertSelectFlag)
+            #if($isfname != '')
+                #writeDropInsertFunction()
+            #end
+        #end
+    #end##foreach-entity
+
+#end##writeDropInsertFunctions
+
+#macro(writeDropInsertFunction)
+drop function if exists ${isfname}();
+#end##writeDropInsertFunction
+
+#macro(writeCreateInsertFunctions)
+    #foreach($entity in $entities)
+        #setEntityVariables()
+        #if($insertSelectFlag)
+            #if($isfname != '')
+                #writeCreateInsertFunction()
+            #end
+        #end
+    #end##foreach-entity
+#end##writeCreateInsertFunctions
+
+#macro(writeCreateInsertFunction)
+#set($properties = $entity.columnsList)
+#set($propertiesSize = $properties.size())
+create or replace function ${isfname}() returns integer as $$
+declare
+    rows integer;
+begin
+    insert into ${targetQualifier}${tabname}
+        (
+        #foreach($property in $properties)
+....        $property.wrapper.sqlName#if($foreach.last)#else,#end$EMPTY
+        #end##foreach-property
+        )
+    select
+    #foreach($property in $properties)
+        #if($property.isEntity())
+            #if($property.isEnumerationEntity())
+                #writeCurrentValueOfProperty('enum')
+            #elseif($mesaTables.contains($property.class.package.name) || $mesaTables.contains($property.class.name))
+                #writeCurrentValueOfProperty('mesa')
+            #elseif($metaTables.contains($property.class.package.name) || $metaTables.contains($property.class.name))
+                #writeCurrentValueOfProperty('meta')
+            #else
+                #writeProperty()
+            #end
+        #else
+            #writeProperty()
+        #end
+    #end##foreach-property
+    from ${sourceQualifier}${tabname}
+    #if($joinClauses.containsKey(${tabname}))
+        #set($joint = $joinClauses.get(${tabname}))
+        #set($joint = $StringUtils.replace($joint, ' on ',  "${EOL}${TAB}on "))
+        #set($joint = $StringUtils.replace($joint, ' and ', "${EOL}${TAB}and "))
+....    $joint
+    #end
+    #if($whereClauses.containsKey(${tabname}))
+        #set($where = $whereClauses.get(${tabname}))
+        #set($where = $StringUtils.replace($where, ' and ', "${EOL}${TAB}and "))
+....    where $where
+    #end
+    order by ${tabname}.${pkpname};
+    /**/
+    get diagnostics rows = row_count;
+    return rows;
+end;
+$$ language plpgsql;
+
+#end##writeCreateInsertFunction
+
+#macro(writeCurrentValueOfProperty $foo)
+    #if($foreach.last)
+        #set($comma = $EMPTY)
+    #else
+        #set($comma = ',')
+    #end
+    #set($ckf = "${currentKeyOf}${property.wrapper.sqlTableName}")
+    #if($currentKeyOfFunctions.contains($ckf))
+        ${ckf}(${tabname}.${property.wrapper.sqlName})$comma
+    #else
+        ${tabname}.${property.wrapper.sqlName}$comma -- WARNING: ${foo}-table key conversion required
+    #end
+#end##writeCurrentValueOfProperty
+
+#macro(writeProperty)
+        ${tabname}.${property.wrapper.sqlName}#if($foreach.last)#else,#end$EMPTY
+#end##writeProperty
+
+#macro(writeCreateInsertSelectFunction)
+create or replace function ${midwayQualifier}insert_select() returns void as $$
+declare
+    rows integer;
+begin
+    raise notice 'insert select';
+    perform ${targetQualifier}create_defaults();
+    perform ${targetQualifier}drop_indexes();
+    perform ${targetQualifier}drop_foreign_keys();
+    perform ${targetQualifier}drop_unique_keys();
+    perform ${targetQualifier}drop_primary_keys();
+    #foreach($entity in $entities)
+        #setEntityVariables()
+        #if($insertSelectFlag)
+            #if($isfname != '')
+                #writeInsertSelect()
+            #end
+        #end
+    #end##foreach-entity
+    perform ${targetQualifier}drop_defaults();
+    perform ${targetQualifier}create_primary_keys();
+    perform ${targetQualifier}create_unique_keys();
+    perform ${targetQualifier}create_foreign_keys();
+    perform ${targetQualifier}create_indexes();
+end;
+$$ language plpgsql;
+#end##writeCreateInsertSelectFunction
+
+#macro(writeInsertSelect)
+    raise notice 'insert select $tabname';
+    alter table ${targetQualifier}$tabname disable trigger user;
+    rows := ${isfname}();
+    alter table ${targetQualifier}$tabname enable trigger user;
+    raise notice 'insert select $tabname % rows', rows;
+#end##writeInsertSelect
+
+#macro(setEntityVariables)
+    #set($tabname = "$!entity.wrapper.sqlTableName")
+    #set($pkpname = "$!entity.primaryKeyProperty.wrapper.sqlName")
+    #set($pkptype = "$!entity.primaryKeyProperty.wrapper.sqlType")
+    #set($bkpname = "$!entity.businessKeyProperty.wrapper.sqlName")
+    #set($bkptype = "$!entity.businessKeyProperty.wrapper.sqlType")
+    #if($tabname == '' || $pkpname == '' || $pkptype == '')
+        #set($isfname = '')
+    #else
+        #set($isfname = "${midwayQualifier}insert_select_${tabname}")
+    #end
+    #if($tabname == '' || $pkpname == '' || $pkptype == '' || $bkpname == '' || $bkptype == '')
+        #set($ckfname = '')
+    #else
+        #set($ckfname = "${currentKeyOf}${tabname}")
+        #set($added = $currentKeyOfFunctions.add($ckfname))
+    #end
+    #if($entity.isEnumerationEntity())
+        #set($currentKeyFlag = $TRUE)
+    #elseif($mesaTables.contains($entity.class.package.name) || $mesaTables.contains($entity.class.name))
+        #set($currentKeyFlag = $TRUE)
+    #elseif($metaTables.contains($entity.class.package.name) || $metaTables.contains($entity.class.name))
+        #set($currentKeyFlag = $TRUE)
+    #else
+        #set($currentKeyFlag = $FALSE)
+    #end
+    #if($entity.isEnumerationEntity())
+        #set($insertSelectFlag = $FALSE)
+    #elseif($metaTables.contains($entity.class.package.name) || $metaTables.contains($entity.class.name))
+        #set($insertSelectFlag = $FALSE)
+    #else
+        #set($insertSelectFlag = $TRUE)
+    #end
+#end##setEntityVariables
+
+#macro(overwriteCreateCurrentKeyFunctions)
+create or replace function ${currentKeyOf}rol(bigint) returns bigint as $$
+declare
+    _oldkey$ alias for $1;
+    _newkey$ bigint;
+begin
+    if (_oldkey$ > 10000) then
+        _newkey$ := _oldkey$;
+    else
+        _newkey$ := ${currentKeyOf}rol(_oldkey$, false);
+    end if;
+    return _newkey$;
+end;
+$$ language plpgsql;
+
+#end##overwriteCreateCurrentKeyFunctions

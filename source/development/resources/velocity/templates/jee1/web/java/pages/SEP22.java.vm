@@ -1,0 +1,99 @@
+#parseJavaMacros()
+#parse("$templatePath/macros/macros-1.vm")
+#parse("$templatePath/macros/macros-2.vm")
+#setJavaVariables()
+#setLocalVariables()
+#writeJavaLicense()
+#writeJavaPackage()
+#addImports()
+#writeJavaImports($imports)
+#addInterfaces()
+#writeJavaAuthor('Jorge Campins')
+public class ${javaClassSimpleName} extends AbstractPageBean1#writeJavaImplements()
+
+    public ${javaClassSimpleName}() {
+        super();
+    }
+
+    #parse("$templatePath/blocks/PaginaAbstracta.vm")
+    #parse("$templatePath/blocks/PaginaBasica.vm")
+    #parse("$templatePath/blocks/PaginaConsulta.vm")
+    #parse("$templatePath/blocks/PaginaConsultaSinFiltro.vm")
+    #if($page.master)
+        #parse("$templatePath/blocks/PaginaConsultaConMaestro.vm")
+    #end
+    #parse("$templatePath/blocks/PaginaActualizacion.vm")
+    #parse("$templatePath/blocks/detail/PaginaActualizacion.vm")
+    #parse("$templatePath/blocks/PaginaActualizacionConAccionMultiple.vm")
+    #parse("$templatePath/blocks/PaginaActualizacionConEdicionMultiple.vm")
+    #parse("$templatePath/blocks/PaginaActualizacionConAsistente.vm")
+    #parse("$templatePath/blocks/PaginaActualizacionConOperacion.vm")
+    #parse("$templatePath/blocks/data-providers.vm")
+    #parse("$templatePath/blocks/detail/jsf-components-0.vm")
+    #parse("$templatePath/blocks/detail/cursor-buttons.vm")
+    #parse("$templatePath/blocks/detail/cursor-buttons.vm")
+    #parse("$templatePath/blocks/crud-buttons.vm")
+    #parse("$templatePath/blocks/navigation-hyperlinks.vm")
+    #parse("$templatePath/blocks/detail/jsf-components-1.vm")
+    #parse("$templatePath/blocks/detail/jsf-components-2.vm")
+    #parse("$templatePath/blocks/jsf-context-beans.vm")
+    #parse("$templatePath/blocks/jsf-events.vm")
+    #parse("$templatePath/blocks/detail/so-on-and-so-forth.vm")
+}
+#break
+
+#macro(setLocalVariables)
+    #set($pageBeanName = "$!{webPageNamePrefix}${page.name}")
+    #set($pagePagePath = "crop/${module.wrapper.dottedAlias.replace('.', '/')}/$!{pageBeanName}")
+    #set($bookmarkSequence = $Sequence.startWith(1))
+    #set($crudButtonsSequence = $Sequence.startWith(1))
+    #set($cursorButtonsSequence = $Sequence.startWith(1))
+    #set($tabSequence = $Sequence.startWith(1))
+    #set($sourceVar = "${pageBeanName}.recursoDataProvider")
+##  #set($PaginaActualizacion = "PaginaActualizacion${page.displaySet.wrapper.javaClassName}")
+    #set($PaginaActualizacion = "PaginaActualizacion${page.entity.wrapper.javaClassName}")
+    #set($encabezadoMaestro = 'encabezadoMaestro')
+    #set($divString = '')
+    #set($tabString = '')
+    #if($page.entity.isDetailViewWithMasterHeading())
+        #if($page.rootMasterHeadingFields.isEmpty())
+            #set($viewWithMasterHeading = $FALSE)
+            #set($masterHeadingViewWidth = 0)
+        #else
+            #set($viewWithMasterHeading = $TRUE)
+            #set($masterHeadingViewWidth = $page.entity.detailViewWidth)
+        #end
+    #else
+        #set($viewWithMasterHeading = $FALSE)
+        #set($masterHeadingViewWidth = 0)
+    #end
+    #setDataProviderVariables()
+#end##setLocalVariables
+
+#macro(addImports)
+##  #set($added = $imports.add("${project.rootPackageName}.web.${module.wrapper.dottedAlias}.assistants.AsistentePaginaActualizacion${page.displaySet.wrapper.javaClassName}"))
+##  #set($added = $imports.add("${project.rootPackageName}.web.${module.wrapper.dottedAlias}.interfaces.${PaginaActualizacion}"))
+    #set($added = $imports.add("${project.rootPackageName}.web.commons.assistants.AsistentePaginaActualizacion${page.entity.wrapper.javaClassName}"))
+    #set($added = $imports.add("${project.rootPackageName}.web.commons.interfaces.${PaginaActualizacion}"))
+    #set($added = $imports.add("${project.rootPackageName}.lib.base.util.ObjUtils"))
+    #set($added = $imports.add("${project.rootPackageName}.lib.base.util.TimeUtils"))
+    #set($added = $imports.add("${project.rootPackageName}.lib.core.app.TLC"))
+    #addDataProviderImports()
+    #addPageBeanImports()
+#end##addImports
+
+#macro(addInterfaces)
+    #set($added = $interfaces.add("PaginaAbstracta"))
+    #set($added = $interfaces.add("PaginaBasica"))
+    #set($added = $interfaces.add("PaginaConsulta"))
+##  #set($added = $interfaces.add("PaginaConsultaConArbol"))
+##  #set($added = $interfaces.add("PaginaConsultaConFiltro"))
+    #if($page.master)
+        #set($added = $interfaces.add("PaginaConsultaConMaestro"))
+    #end
+##  #set($added = $interfaces.add("PaginaConsultaConTabla"))
+    #set($added = $interfaces.add("PaginaActualizacion"))
+    #set($added = $interfaces.add("PaginaActualizacionConAccionMultiple"))
+    #set($added = $interfaces.add("PaginaActualizacionConEdicionMultiple"))
+    #set($added = $interfaces.add("${PaginaActualizacion}"))
+#end##addInterfaces

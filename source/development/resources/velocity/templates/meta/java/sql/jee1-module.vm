@@ -1,0 +1,30 @@
+#parseJavaMacros()
+#setJavaVariables()
+#writeJavaLicense()
+#writeJavaPackage()
+#setLocalVariables()
+#writeJavaImports($imports)
+#writeJavaAuthor('Jorge Campins')
+public class ${javaClassSimpleName} extends Project {
+
+    {
+        setAlias("Modulo1");
+        setDefaultLabel("Módulo 1");
+        setDefaultDescription("Módulo 1");
+    }
+
+#set($tables = $ColUtils.filter($reader.tables, $isFairTable))
+#set($tables = $ColUtils.sort($tables, $byTableName))
+#foreach($table in $tables)
+    #if(!$reader.tablesInheritSet.contains($table.name))
+    $table.capitalizedJavaName $table.decapitalizedJavaName;
+
+    #end
+#end
+}
+#break
+
+#macro(setLocalVariables)
+    #set($added = $imports.add("adalid.core.Project"))
+    #set($added = $imports.add("${entitiesPackage}.*"))
+#end

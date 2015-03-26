@@ -1,0 +1,29 @@
+#if($parameter.isDateData())
+    #set($componentTemplateName = 'calendar')
+#else
+    #set($componentTemplateName = 'text-field')
+#end
+#set($componentName = "label${fieldFirstName}")
+#parse("$templatePath/blocks/webuijsf/label.vm")
+#set($componentName = "campo${fieldFirstName}")
+#parse("$templatePath/blocks/webuijsf/${componentTemplateName}.vm")
+#set($componentName = "helpInline${fieldFirstName}")
+#parse("$templatePath/blocks/webuijsf/help-inline.vm")
+#set($componentName = "converter${fieldFirstName}")
+#set($componentClassName = 'SqlTimestampConverter')
+#set($componentClassName = "DateTimeConverter")
+#set($componentClassName = "DateTimeConverter${EOL}com.sun.rave.faces.converter.SqlTimestampConverter")
+#set($componentClassName = "DateTimeConverter${EOL}ConvertidorFechaHora")
+#parse("$templatePath/blocks/webuijsf/component.vm")
+#writeValidatorExpression()
+#parse("$templatePath/blocks/console/column/shared.vm")
+#break
+
+#macro(writeValidatorExpression)
+    /**
+     * ${campo1}.validatorExpression
+     */
+    public void ${campo1}_validate(FacesContext context, UIComponent component, Object value) {
+    }
+
+#end##writeValidatorExpression

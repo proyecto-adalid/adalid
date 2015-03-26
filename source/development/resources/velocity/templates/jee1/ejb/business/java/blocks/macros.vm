@@ -1,0 +1,60 @@
+#break
+
+#macro(writeValueExpression $valueExpression)
+    #set($parameterizedExpression = $valueExpression.wrapper.javaParameterizedExpression)
+    #set($expressionParametersMap = $parameterizedExpression.parametersMap)
+    #set($namedValuesMap = $parameterizedExpression.namedValuesMap)
+        #foreach($expressionParameterKey in $expressionParametersMap.keySet())
+            #writeAssignObjValue()
+        #end
+        #set($maxLineLength = 0)
+        #set($newLineString = '<EOL>')
+        #set($string2split = "$!parameterizedExpression.expression")
+        #set($string2split = "obj = $string2split;")
+        #set($string2split = $string2split.replace(":", "${newLineString}${TAB}:"))
+        #set($string2split = $string2split.replace("&&", "${newLineString}${TAB}&&"))
+        #set($string2split = $string2split.replace("||", "${newLineString}${TAB}||"))
+        #set($string2split = $string2split.replace("), ", "),${newLineString}${TAB}"))
+        #set($string2lines = $VelocityAid.split($string2split, $maxLineLength, $newLineString, $FALSE, $TAB))
+        #foreach($line in $string2lines)
+....        ${line}
+        #end
+        return $parameterObjUtilsMethod(obj);
+#end##writeValueExpression
+
+#macro(writeAssignObjValue)
+    #set($expressionParameterPath = '')
+    #set($lastArtifact = $FALSE)
+    #set($expressionParameter = $expressionParametersMap.get($expressionParameterKey))
+    #set($expressionParameterPathList = $expressionParameter.parameterPathList)
+    #if($expressionParameter.isTemporalPrimitive())
+        #set($parameterJavaType = 'java.util.Date')
+    #else
+        #set($parameterJavaType = $expressionParameter.wrapper.javaPrimitiveType)
+    #end
+    #foreach($artifact in $expressionParameterPathList)
+        #setArtifactVariables($artifact)
+        #if($expressionParameterPath == '')
+            #if($artifact.isEntity())
+                #set($expressionParameterPath = "${artifact.wrapper.javaVariableName}")
+........        $parameterJavaType $expressionParameterKey = ${expressionParameterPath} == null ? null
+            #else
+                #set($artifactValueExpression = "message.getArgumento${artifact.wrapper.javaClassName}()")
+........        $parameterJavaType $expressionParameterKey = ${artifactValueExpression};
+            #end
+        #else
+            #set($expressionParameterPath = "${expressionParameterPath}.get${artifact.wrapper.javaCapitalizedName}()")
+            #if($artifact.isEntity())
+....            : ${expressionParameterPath} == null ? null
+            #end
+        #end
+        #set($lastArtifact = $artifact)
+    #end
+    #if($expressionParameterPath != '')
+        #if($lastArtifact.isEntity())
+            : ${expressionParameterPath}.get${lastArtifact.primaryKeyProperty.wrapper.javaCapitalizedName}();
+        #else
+            : ${expressionParameterPath};
+        #end
+    #end
+#end##writeAssignObjValue

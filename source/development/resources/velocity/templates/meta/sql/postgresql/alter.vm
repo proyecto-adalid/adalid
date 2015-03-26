@@ -1,0 +1,75 @@
+#parsePostgreSQLMacros()
+#setPostgreSQLVariables()
+#writePostgreSQLLicense()
+#writePostgreSQLAuthor('Jorge Campins')
+#if($merger.testingPhase)
+....begin transaction;
+#end
+#if(!$merger.warnings.isEmpty())
+..../*
+    #foreach($list in $merger.warnings.values())
+        #foreach($warning in $list)
+........ * WARNING: $warning
+        #end
+    #end
+....*/
+#end
+#foreach($table in $merger.droppedTables)
+....drop table if exists ${merger.oldSchema}.${table.name} cascade;
+#end
+#foreach($table in $merger.addedTables)
+....create table ${merger.oldSchema}.${table.name} (
+    #foreach($column in $table.columns)
+        #if($column.nullable)
+            #set($nullable = '')
+        #else
+            #set($nullable = ' not null')
+        #end
+        #if("$!column.sqlDefaultValue" == '')
+            #set($default = '')
+        #else
+            #set($default = " default $column.sqlDefaultValue")
+        #end
+....    $column.name $column.sqlType$nullable$default#if(!$foreach.last),#end$EMPTY
+    #end##foreach-property
+....);
+#end
+#foreach($column in $merger.droppedColumns)
+....alter table ${merger.oldSchema}.${column.table.name} drop column if exists ${column.name} cascade;
+#end
+#foreach($column in $merger.addedColumns)
+    #if($column.nullable)
+        #set($nullable = '')
+    #else
+        #set($nullable = ' not null')
+    #end
+    #if("$!column.sqlDefaultValue" == '')
+        #set($default = '')
+    #else
+        #set($default = " default $column.sqlDefaultValue")
+    #end
+....alter table ${merger.oldSchema}.${column.table.name} add column $column.name $column.sqlType$nullable$default;
+#end
+#foreach($name in $merger.modifiedColumnNames)
+    #set($new1 = $merger.newColumns.get($name))
+    #set($old1 = $merger.oldColumns.get($name))
+    #if("$!new1.sqlType" != "$!old1.sqlType")
+........alter table ${merger.oldSchema}.${old1.table.name} alter column $old1.name type $new1.sqlType; -- $old1.sqlType
+    #end
+    #if($new1.nullable && $old1.nullable)
+    #elseif($new1.nullable)
+........alter table ${merger.oldSchema}.${old1.table.name} alter column $old1.name drop not null;
+    #elseif($old1.nullable)
+........alter table ${merger.oldSchema}.${old1.table.name} alter column $old1.name set not null;
+    #end
+    #if("$!new1.sqlDefaultValue" == "$!old1.sqlDefaultValue")
+    #elseif("$!new1.sqlDefaultValue" != '')
+........alter table ${merger.oldSchema}.${old1.table.name} alter column $old1.name set default $new1.sqlDefaultValue;
+    #elseif("$!old1.sqlDefaultValue" != '')
+........alter table ${merger.oldSchema}.${old1.table.name} alter column $old1.name drop default; -- $old1.sqlDefaultValue
+    #end
+#end
+#if($merger.testingPhase)
+....rollback transaction;
+#end
+#break

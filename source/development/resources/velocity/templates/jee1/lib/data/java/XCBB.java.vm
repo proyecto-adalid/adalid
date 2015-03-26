@@ -1,0 +1,110 @@
+#parseJavaMacros()
+#setJavaVariables()
+#writeJavaLicense()
+#writeJavaPackage()
+#set($added = $imports.add("${project.rootPackageName}.lib.core.app.ConsultaBusqueda"))
+#writeJavaImports($imports)
+#writeJavaAuthor('Jorge Campins')
+#set($entities = $ColUtils.filter($project.entitiesList, $isPersistentEntity))
+#set($entities = $ColUtils.sort($entities, $byEntityName))
+#set($filteredEntitiesMap = $VelocityAid.getNewLinkedHashMap())
+public class ${javaClassSimpleName}#writeJavaImplements()
+
+    public static ConsultaBusqueda getConsultaBusqueda(String key) {
+        if (key == null || key.trim().isEmpty()) {
+            return null;
+        #foreach($entity in $entities)
+            #set($codex = "$entity.wrapper.sqlName")
+            #set($codex = "$entity.wrapper.sqlSchemaQualifiedShortName")
+            #set($columns = $entity.dataProviderColumnsList)
+            #foreach($column in $columns)
+                #if($column.isPersistentEntity() && !$column.isPersistentEnumerationEntity() && !$column.isHiddenField() && $column.searchQueryFilter)
+                    #set($searchQueryKey = "${codex}.${column.wrapper.sqlName}")
+                    #writeConsultaBusqueda1($column)
+                #end
+            #end##foreach-column
+            #set($operations = $ColUtils.filter($entity.businessOperationsList, $isAccesibleOperation))
+            #foreach($operation in $operations)
+                #foreach($parameter in $operation.parametersList)
+                    #if($parameter.isPersistentEntity() && !$parameter.isPersistentEnumerationEntity() && $parameter.searchQueryFilter)
+                        #set($searchQueryKey = "${codex}.${operation.wrapper.sqlName}.${parameter.wrapper.sqlName}")
+                        #writeConsultaBusqueda1($parameter)
+                    #end
+                #end##foreach-parameter
+            #end##foreach-operation
+        #end##foreach-entity
+        } else {
+            return null;
+        }
+    }
+
+#set($sqlQualifier  = $VelocityAid.valueOf($SqlQualifierType, 'ALIAS'))
+#set($maxLineLength = $JAVA_RIGHT_MARGIN - 18)
+#set($newLineString = '<EOL>')
+#foreach($mapkey in $filteredEntitiesMap.keySet())
+    #set($entity = $filteredEntitiesMap.get($mapkey))
+    #set($searchQueryTable = $entity.searchQueryTable)
+    #set($string2split = "$searchQueryTable.sqlSelectStatement.replace($EOL, $newLineString)")
+    #set($string2lines = $VelocityAid.split($string2split, $maxLineLength, $newLineString))
+    // <editor-fold defaultstate="collapsed" desc="SELECT_$mapkey">
+    private static final String SELECT_$mapkey = ""
+        #foreach($line in $string2lines)
+        + "${line} "
+        #end
+        + "";
+    // </editor-fold>
+
+#end
+#foreach($entity in $entities)
+    #set($codex = "$entity.wrapper.sqlName")
+    #set($codex = "$entity.wrapper.sqlSchemaQualifiedShortName")
+    #set($columns = $entity.dataProviderColumnsList)
+    #foreach($column in $columns)
+        #if($column.isPersistentEntity() && !$column.isPersistentEnumerationEntity() && !$column.isHiddenField() && $column.searchQueryFilter)
+            #set($searchQueryKey = "${codex}.${column.wrapper.sqlName}")
+            #writeConsultaBusqueda2($column)
+        #end
+    #end##foreach-column
+    #set($operations = $ColUtils.filter($entity.businessOperationsList, $isAccesibleOperation))
+    #foreach($operation in $operations)
+        #foreach($parameter in $operation.parametersList)
+            #if($parameter.isPersistentEntity() && !$parameter.isPersistentEnumerationEntity() && $parameter.searchQueryFilter)
+                #set($searchQueryKey = "${codex}.${operation.wrapper.sqlName}.${parameter.wrapper.sqlName}")
+                #writeConsultaBusqueda2($parameter)
+            #end
+        #end##foreach-parameter
+    #end##foreach-operation
+#end##foreach-entity
+}
+#break
+
+#macro(writeConsultaBusqueda1 $entidad)
+    #set($added = $filteredEntitiesMap.put($entidad.root.wrapper.javaConstantName, $entidad.root))
+        } else if (key.equals("$searchQueryKey")) {
+            return ${searchQueryKey.replace('.', '$')}();
+#end##writeConsultaBusqueda1
+
+#macro(writeConsultaBusqueda2 $entidad)
+    #set($queryTable = $entidad.queryTable)
+    #set($sqlExpression = $entidad.searchQueryFilter.wrapper.getSqlParameterizedExpression($queryTable, $sqlQualifier))
+    #set($string2split = "$!sqlExpression.expression")
+    #set($string2lines = $VelocityAid.split($string2split, $maxLineLength))
+    private static ConsultaBusqueda ${searchQueryKey.replace('.', '$')}() {
+        ConsultaBusqueda cb = new ConsultaBusqueda();
+        cb.setId("$searchQueryKey");
+        cb.setSelect(SELECT_$entidad.root.wrapper.javaConstantName);
+    #if($string2lines.isEmpty())
+        cb.setCriterios("");
+    #elseif($string2lines.size() == 1)
+        cb.setCriterios("$string2split");
+    #else
+        cb.setCriterios(""
+            #foreach($line in $string2lines)
+            + "${line} "
+            #end
+            + "");
+    #end
+        return cb;
+    }
+
+#end##writeConsultaBusqueda2

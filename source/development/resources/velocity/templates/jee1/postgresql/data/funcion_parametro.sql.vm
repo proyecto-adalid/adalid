@@ -1,0 +1,230 @@
+#parsePostgreSQLMacros()
+#setPostgreSQLVariables()
+#writePostgreSQLLicense()
+#writePostgreSQLAuthor('Jorge Campins')
+#parse('templates/jee1/lib/data/java/XDP0.java.vm')
+#set($entities = $ColUtils.filter($project.entitiesList, $isPersistentEntity))
+#set($entities = $ColUtils.sort($entities, $byEntityName))
+#set($operationKeys = $VelocityAid.getNewTreeSet())
+#set($added = $operationKeys.add($selectOperationKey))
+#set($added = $operationKeys.add($insertOperationKey))
+#set($added = $operationKeys.add($updateOperationKey))
+#foreach($entity in $entities)
+    #setVariablesRecurso($entity)
+    #set($entityNumber = $project.getEntityNumber($entity))
+    #set($entityName = $entity.wrapper.sqlName)
+    #foreach($key in $operationKeys)
+        #set($operationName = "${entityName}.${key}")
+        #set($operationNumber = $project.getOperationNumber($key, $entity))
+        #setEnabledIndicator()
+        #if(!$enabled)
+        #elseif($key == $selectOperationKey)
+            #set($map = $entity.queryTable.selectColumnsMap)
+            #foreach($column_name in $map.keySet())
+                #set($property = $map.get($column_name))
+                #set($codigo = "${entityName}.${key}.${column_name}")
+                #set($codigo = "${entity.wrapper.sqlSchemaQualifiedShortName}.${key}.${column_name}")
+                #if($property.declaringEntity == $entity)
+                    #set($nombre = $property.wrapper.validDefaultShortLabel)
+                #else
+                    #set($nombre = '')
+                    #set($separator = ' / ')
+                    #set($propertyPathList = $property.propertyPathList)
+                    #foreach($artifact in $propertyPathList)
+                        #set($nombre = "$nombre$separator$artifact.wrapper.getValidDefaultShortLabel($FALSE)")
+                    #end
+                    #set($nombre = $StringUtils.substringAfter($nombre, $separator))
+                #end
+                #if($property.isHiddenField() || $property.isPassword() || $property.isPrimaryKeyProperty() || $property.isVersionProperty())
+                    #set($search = $FALSE)
+                #elseif($property.isSearchField() || $property.isFilterField())
+                    #set($search = $TRUE)
+                #else
+                    #set($search = $FALSE)
+                #end
+                #writeInsertRow($property)
+            #end
+        #else
+            #set($dataProviderColumns = $entity.dataProviderColumnsList)
+            #foreach($property in $dataProviderColumns)
+                #set($codigo = "${entityName}.${key}.${property.wrapper.sqlName}")
+                #set($codigo = "${entity.wrapper.sqlSchemaQualifiedShortName}.${key}.${property.wrapper.sqlName}")
+                #set($nombre = "${property.wrapper.validDefaultLabel}")
+                #set($search = $FALSE)
+                #writeInsertRow($property)
+            #end##foreach-property
+        #end
+    #end##foreach-key
+#end##foreach-entity
+#break
+
+#macro(setEnabledIndicator)
+    #set($enabled = $FALSE)
+    #if($key == '')
+    #elseif($key == $selectOperationKey)
+        #set($enabled = $TRUE)
+    #elseif($key == $insertOperationKey)
+##      #if($entity.selectEnabled)
+            #set($enabled = $entity.insertEnabled)
+##      #end
+    #elseif($key == $updateOperationKey)
+##      #if($entity.selectEnabled)
+            #set($enabled = $entity.updateEnabled)
+##      #end
+    #elseif($key == $deleteOperationKey)
+##      #if($entity.selectEnabled)
+            #set($enabled = $entity.deleteEnabled)
+##      #end
+    #end
+#end##setEnabledIndicator
+
+#macro(writeInsertRow $parameter)
+insert
+into public.funcion_parametro
+    (
+    id_funcion_parametro,
+    codigo_funcion_parametro,
+    nombre_funcion_parametro,
+    detalle_funcion_parametro,
+    descripcion_funcion_parametro,
+    numero_tipo_dato_par,
+    id_funcion,
+    id_parametro,
+    numero_tipo_parametro,
+    id_funcion_referencia,
+    numero_tipo_valor,
+    id_clase_recurso_valor,
+    criterio_busqueda,
+    acceso_restringido,
+    es_parametro_sin_rastro,
+    es_parametro_segmento
+    )
+values
+    (
+##
+##  id_funcion_parametro
+##
+    nextval('public.funcion_parametro_sq___'),
+##
+##  codigo_funcion_parametro
+##
+    '$codigo',
+##
+##  nombre_funcion_parametro
+##
+    '$nombre.toLowerCase()', -- $property.pathString
+##
+##  detalle_funcion_parametro
+##
+#if( $parameter.defaultTooltip )
+    '$parameter.defaultTooltip',
+#else
+    null,
+#end
+##
+##  descripcion_funcion_parametro
+##
+#if( $parameter.defaultDescription )
+    '$parameter.defaultDescription',
+#else
+    null,
+#end
+##
+##  numero_tipo_dato_par
+##
+#if($parameter.isBinaryPrimitive())
+    7, -- $!parameter.wrapper.sqlType
+#elseif($parameter.isBooleanPrimitive())
+    6, -- $!parameter.wrapper.sqlType
+#elseif($parameter.isBigIntegerData() || $parameter.isLongData() || "$!parameter.wrapper.sqlType" == 'bigint')
+    5, -- $!parameter.wrapper.sqlType
+#elseif($parameter.isIntegerData() || "$!parameter.wrapper.sqlType" == 'integer')
+    4, -- $!parameter.wrapper.sqlType
+#elseif($parameter.isTemporalPrimitive())
+    3, -- $!parameter.wrapper.sqlType
+#elseif($parameter.isNumericPrimitive())
+    2, -- $!parameter.wrapper.sqlType
+#elseif($parameter.isCharacterPrimitive())
+    1, -- $!parameter.wrapper.sqlType
+#else
+    0, -- $!parameter.wrapper.sqlType
+#end
+##
+##  id_funcion
+##
+    $operationNumber, -- $operationName
+##
+##  id_parametro
+##
+    $project.getParameterNumber($parameter), -- $parameter.fullName
+##
+##  numero_tipo_parametro
+##
+#if($parameter.isSearchField() || $parameter.isFilterField())
+    3, -- Opcional
+#else
+    2, -- Omitido
+#end
+##
+##  id_funcion_referencia
+##
+#if($parameter.isEntity())
+    $project.getOperationNumber($selectOperationKey, $parameter), -- ${parameter.wrapper.sqlName}.$selectOperationKey
+#else
+    null,
+#end
+##
+##  numero_tipo_valor
+##
+#if($parameter.isEntity())
+    23, -- Recurso
+#else
+    11, -- Continuo
+#end
+##
+##  id_clase_recurso_valor
+##
+#if($parameter.isEntity())
+    $project.getEntityNumber($parameter), -- $parameter.wrapper.sqlName
+#else
+    null,
+#end
+##
+##  criterio_busqueda
+##
+#if($search)
+    true, -- Criterio de Busqueda
+#else
+    false, -- No es Criterio de Busqueda
+#end
+##
+##  acceso_restringido
+##
+#if("$!parameter.propertyAccess" == 'UNRESTRICTED')
+    false, -- Acceso sin restricciones
+#elseif("$!parameter.propertyAccess" == 'RESTRICTED_READING' && $key == $selectOperationKey)
+    true, -- Acceso Restringido
+#elseif(("$!parameter.propertyAccess" == 'RESTRICTED_READING' || "$!parameter.propertyAccess" == 'RESTRICTED_WRITING') && ($key == $insertOperationKey || $key == $updateOperationKey))
+    true, -- Acceso Restringido
+#else
+    false, -- Acceso sin restricciones
+#end
+##
+##  es_parametro_sin_rastro
+##
+#if($parameter.isAuditable())
+    false, -- Con Rastro
+#else
+    true, -- Sin rastro
+#end
+##
+##  es_parametro_segmento
+##
+#if($esRecursoSegmentable && $parameter == $entity.segmentProperty)
+    true -- Segmento
+#else
+    false -- No es Segmento
+#end
+    );
+
+#end##writeInsertRow

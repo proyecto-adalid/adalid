@@ -1,0 +1,32 @@
+    // <editor-fold defaultstate="collapsed" desc="${fieldClassName}">
+    /**
+     * ${campo1}.validatorExpression
+     */
+    public void ${campo1}_validate(FacesContext context, UIComponent component, Object value) {
+//      Object object = $!{fieldObjUtilsMethod}(bean.get${Campo1}());
+        RowKey rowKey = bean.getGestor().getCurrentRowKey();
+        if (rowKey != null) {
+            bean.get${EntityDataProvider}().set${fieldClassName}(rowKey, null);
+            #set($fieldRegularExpression = "$!property.pattern.pattern()")
+            #if($fieldRegularExpression == '')
+            if (value != null) {
+                bean.get${EntityDataProvider}().set${fieldClassName}(rowKey, $!{fieldObjUtilsMethod}(value));
+            }
+            #else
+            if (value instanceof String) {
+                String valor = (String) value;
+                String regex = "$fieldRegularExpression";
+                if (valor.matches(regex)) {
+                    bean.get${EntityDataProvider}().set${fieldClassName}(rowKey, $!{fieldObjUtilsMethod}(value));
+                } else {
+                    String summary = Bitacora.getTextoMensaje(CBM.CHECK_CHANGES_EXCEPTION_6, regex);
+                    FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_ERROR, summary, null);
+                    throw new ValidatorException(message);
+                }
+            }
+            #end
+        }
+    }
+    // </editor-fold>
+
+#break

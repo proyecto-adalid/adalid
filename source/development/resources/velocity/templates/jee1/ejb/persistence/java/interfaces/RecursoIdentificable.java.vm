@@ -1,0 +1,34 @@
+#break
+
+#macro(writeRecursoIdentificableImport)
+#if($esRecursoIdentificable)
+    #set($added = $imports.add("${project.rootPackageName}.lib.base.interfaces.RecursoIdentificable"))
+    #set($added = $interfaces.add('RecursoIdentificable'))
+#end
+#end##writeRecursoIdentificableImport
+
+#macro(writeRecursoIdentificableImplementation)
+#if($esRecursoIdentificable)
+    #set($property = $entity.primaryKeyProperty)
+    @Override
+    public String getColumnaIdentificacionRecurso() {
+        return ${javaClassSimpleName}Constants.COLUMNA_IDENTIFICACION_RECURSO;
+    }
+
+    @Override
+    public String getEtiquetaIdentificacionRecurso() {
+        return ${javaClassSimpleName}Constants.ETIQUETA_IDENTIFICACION_RECURSO;
+    }
+
+    @Override
+    public ${property.wrapper.javaPrimitiveType} getIdentificacionRecurso() {
+        return get${property.wrapper.javaClassName}();
+    }
+
+    @Override
+    public void setIdentificacionRecurso(${property.wrapper.javaPrimitiveType} identificacionRecurso) {
+        set${property.wrapper.javaClassName}(identificacionRecurso);
+    }
+
+#end
+#end##writeRecursoIdentificableImplementation

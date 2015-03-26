@@ -1,0 +1,31 @@
+#parsePostgreSQLMacros()
+#setPostgreSQLVariables()
+#writePostgreSQLLicense()
+#writePostgreSQLAuthor('Jorge Campins')
+select setval('public.rol_sq___', 1000);
+#set($modules = $ColUtils.filter($project.modulesList, $isRoleModule))
+#set($modules = $ColUtils.sort($modules, $byProjectName))
+#foreach($module in $modules)
+    #writeInsertRow()
+#end##foreach-module
+select setval('public.rol_sq___', 10000);
+#break
+
+#macro(writeInsertRow)
+insert
+into public.rol
+    (
+    id_rol,
+    codigo_rol,
+    nombre_rol,
+    numero_tipo_rol
+    )
+select
+    nextval('public.rol_sq___'),
+    codigo_tipo_rol||'$module.name',
+    codigo_tipo_rol||' de $module.wrapper.validDefaultLabel',
+    numero_tipo_rol
+from public.tipo_rol
+order by numero_tipo_rol
+;
+#end##writeInsertRow

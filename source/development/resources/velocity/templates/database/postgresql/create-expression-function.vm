@@ -1,0 +1,95 @@
+#parsePostgreSQLMacros()
+#setPostgreSQLVariables()
+#writePostgreSQLLicense()
+#writePostgreSQLAuthor('Jorge Campins')
+#writeDelimiterDirective('??')
+#set($entities = $ColUtils.filter($project.entitiesList, $isEntitySqlCodeGenEnabled, $isPersistentEntityWithTable))
+#set($entities = $ColUtils.sort($entities, $byEntityName))
+#foreach($entity in $entities)
+    #writeTemplate('remark-entity')
+    #writeCreateExpressionFunctions()
+#end##foreach-entity
+#writeDelimiterDirective(';')
+#break
+
+#macro(writeCreateExpressionFunctions)
+    #resetSQLVariables()
+    #set($table = $entity.wrapper.sqlTableName)
+    #set($table = $entity.wrapper.sqlSchemaQualifiedShortTableName)
+    #set($query = $entity.queryTable)
+    #set($keyname = $entity.primaryKeyProperty.wrapper.sqlName)
+    #set($keytype = $entity.primaryKeyProperty.wrapper.sqlType)
+    #set($varname = $entity.primaryKeyProperty.wrapper.sqlVariableName)
+    #set($msgname = $sqlProgrammer.getSqlVariableName('msg'))
+    #set($rowname = $query.sqlJoinQualifier)
+    #set($checks = $entity.checksList)
+    #set($states = $entity.statesList)
+    #set($expressions = $entity.expressionsList)
+    #foreach($expression in $expressions)
+        #if($expression.isCrossReferencedExpression() || $states.contains($expression) || ($expression.isNotInherited() && !$checks.contains($expression)))
+            #set($expname = $expression.wrapper.sqlName)
+            #set($expname = $expression.wrapper.sqlExpressionFunctionName)
+            #set($expname = $expression.wrapper.sqlSchemaQualifiedShortExpressionFunctionName)
+            #set($exptype = $expression.wrapper.sqlType)
+            #set($exppath = $expression.pathString)
+            #set($sqlExpression = $VelocityAid.coalesce($expression.wrapper.getSqlExpression($query), $FALSE))
+            #set($refcols = $expression.getReferencedColumnsList())
+            #set($joins = $expression.getReferencedJoinsMap($query))
+            #writeCreateExpressionFunction()
+        #end
+    #end##foreach-expression
+#end##writeCreateExpressionFunctions
+
+#macro(writeCreateExpressionFunction)
+#if($sqlExpression)
+    #set($rettype = $exptype)
+#else
+    #set($rettype = 'boolean')
+#end
+--  $exppath
+#set($function1 = "${expname}(${keytype})")
+#set($function2 = "${expname}(${varname} ${keytype})")
+#set($function3 = "${expname}(%)")
+drop function if exists $function1 cascade;
+#writeDelimiter('??')
+create or replace function $function2 returns $rettype as $$
+declare
+    $msgname character varying;
+    $rowname ${table};
+begin
+    raise notice '${function3}', ${varname};
+    select * into $rowname from ${table} where ${keyname} = ${varname};
+    if not found then
+        $msgname := format(gettext('no existe %s con %s = %s'), '$entity.wrapper.validDefaultLabel', 'id', $varname);
+        raise exception using message = $msgname;
+    end if;
+    return ${expname}($rowname);
+end;
+$$ language plpgsql;
+#writeDelimiter('??')
+
+#set($function1 = "${expname}(${table})")
+#set($function2 = "${expname}($rowname ${table})")
+#set($function3 = "${expname}(%)")
+drop function if exists $function1 cascade;
+#writeDelimiter('??')
+create or replace function $function2 returns $rettype as $$
+declare
+    #foreach($key in $joins.keySet())
+    $key record;
+    #end##foreach-join
+begin
+    raise notice '${function3}', ${rowname};
+    #foreach($key in $joins.keySet())
+    #set($join = $joins.get($key))
+--  $key
+    #set($statement = $join.getSqlSelectStatement($refcols, $TRUE, $TRUE, $FALSE))
+    $statement.replace("$EOL", "$EOL    ");
+
+    #end##foreach-join
+    return $sqlExpression;
+end;
+$$ language plpgsql;
+#writeDelimiter('??')
+
+#end##writeCreateExpressionFunction

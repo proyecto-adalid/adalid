@@ -1,0 +1,227 @@
+#parsePostgreSQLMacros()
+#setPostgreSQLVariables()
+#writePostgreSQLLicense()
+#writePostgreSQLAuthor('Jorge Campins')
+#set($groups = $project.processingGroups)
+#set($entities = $ColUtils.filter($project.entitiesList, $isPersistentEntity))
+#set($entities = $ColUtils.sort($entities, $byEntityName))
+#foreach($entity in $entities)
+    #set($entityNumber = $project.getEntityNumber($entity))
+    #set($opCodePrefix = "$entity.wrapper.sqlName")
+    #set($opCodePrefix = "$entity.wrapper.sqlSchemaQualifiedShortName")
+    #set($operations = $entity.operationsList)
+    #set($operations = $ColUtils.sort($operations, $byOperationName))
+    #foreach($operation in $operations)
+        #setOperationVariables()
+        #writeErrorMessages()
+        #if($enabled)
+            #writeOperationRow()
+        #else
+            #writeSkipOperationMessage()
+        #end
+    #end##foreach-operation
+#end##foreach-entity
+#break
+
+#macro(setOperationVariables)
+    #set($enabled = $FALSE)
+    #set($operationCode = "${opCodePrefix}.${operation.wrapper.sqlName}")
+    #set($operationName = "${operation.wrapper.validDefaultShortDescription}")
+    #set($operationTypeString = "$!operation.operationType")
+    #if("$!operation.operationType" == '')
+        #set($operationTypeNumber = '??')
+    #elseif("$!operation.operationType" == 'CRUD')
+        #setCrudOperationVariables()
+    #elseif("$!operation.operationType" == 'EXPORT')
+        #set($operationTypeNumber = '23')
+        #set($enabled = $TRUE)
+    #elseif("$!operation.operationType" == 'REPORT')
+        #set($operationTypeNumber = '22')
+        #set($enabled = $TRUE)
+    #elseif("$!operation.operationType" == 'PROCEDURE')
+        #set($operationTypeNumber = '13')
+        #set($enabled = $TRUE)
+    #elseif("$!operation.operationType" == 'PROCESS')
+        #set($operationTypeNumber = '41')
+        #set($enabled = $TRUE)
+    #else
+        #set($operationTypeNumber = '??')
+    #end
+    #setOperationLoggingNumber()
+#end##setOperationVariables
+
+#macro(setCrudOperationVariables)
+    #set($operationName = "${operation.wrapper.sqlName} ${entity.wrapper.validDefaultLabel}")
+    #set($operationTypeString = "$!operation.basicDatabaseOperationType")
+    #if("$!operation.basicDatabaseOperationType" == '')
+        #set($operationTypeNumber = '??')
+    #elseif("$!operation.basicDatabaseOperationType" == 'SELECT')
+        #set($operationTypeNumber = '21')
+        #set($enabled = $TRUE)
+    #elseif("$!operation.basicDatabaseOperationType" == 'INSERT')
+        #set($operationTypeNumber = '31')
+##      #if($entity.selectEnabled)
+            #set($enabled = $entity.insertEnabled)
+##      #end
+    #elseif("$!operation.basicDatabaseOperationType" == 'UPDATE')
+        #set($operationTypeNumber = '32')
+##      #if($entity.selectEnabled)
+            #set($enabled = $entity.updateEnabled)
+##      #end
+    #elseif("$!operation.basicDatabaseOperationType" == 'DELETE')
+        #set($operationTypeNumber = '33')
+##      #if($entity.selectEnabled)
+            #set($enabled = $entity.deleteEnabled)
+##      #end
+    #else
+        #set($operationTypeNumber = '??')
+    #end
+#end##setCrudOperationVariables
+
+#macro(setOperationLoggingNumber)
+    #if("$!operation.operationLogging" == '')
+        #set($operationLoggingNumber = '0')
+    #elseif("$!operation.operationLogging" == 'BOTH')
+        #set($operationLoggingNumber = '3')
+    #elseif("$!operation.operationLogging" == 'FAILURE')
+        #set($operationLoggingNumber = '2')
+    #elseif("$!operation.operationLogging" == 'SUCCESS')
+        #set($operationLoggingNumber = '1')
+    #else
+        #set($operationLoggingNumber = '0')
+    #end
+#end##setOperationLoggingNumber
+
+#macro(writeErrorMessages)
+#if($operationTypeNumber == '??')
+--  ERROR: $operationCode operationType == "$!operation.operationType" && basicDatabaseOperationType == "$!operation.basicDatabaseOperationType"
+#end
+#if($entity != $operation.declaringEntity)
+--  ERROR: $operationCode entity != operation.declaringEntity ($entity != $operation.declaringEntity)
+#end
+#end##writeErrorMessages
+
+#macro(writeSkipOperationMessage)
+--  INFO: skipping $operationTypeString $operationCode
+
+#end##writeSkipOperationMessage
+
+#macro(writeOperationRow)
+insert
+into public.funcion
+    (
+    id_funcion,
+    codigo_funcion,
+    nombre_funcion,
+    descripcion_funcion,
+    numero_tipo_funcion,
+    numero_tipo_rastro_fun,
+    id_dominio,
+    clausula_where,
+    clausula_order,
+    es_publica,
+    es_programatica,
+    es_protegida,
+    es_personalizable,
+    es_segmentable,
+    es_heredada,
+    id_grupo_proceso
+    )
+values
+    (
+##
+##  id_funcion
+##
+    $project.getOperationNumber($operation), -- id
+##
+##  codigo_funcion
+##
+    '${operationCode}', -- codigo
+##
+##  nombre_funcion
+##
+    cast('${operationName}' as varchar(200)), -- nombre
+##
+##  descripcion_funcion
+##
+#if( $operation.wrapper.defaultDescription )
+    '$operation.wrapper.defaultDescription', -- descripcion
+#else
+    null, -- descripcion
+#end
+##
+##  numero_tipo_funcion
+##
+    $operationTypeNumber, -- tipo funcion ($operationTypeString)
+##
+##  numero_tipo_rastro_fun
+##
+    $operationLoggingNumber, -- tipo rastro funcion ($!operation.operationLogging)
+##
+##  id_dominio
+##
+    $entityNumber, -- dominio ($entity.wrapper.sqlName)
+##
+##  clausula_where
+##
+    null, -- clausula where
+##
+##  clausula_order
+##
+    null, -- clausula order
+##
+##  es_publica
+##
+#if("$!operation.operationAccess" == 'PUBLIC')
+    true, -- publica ($!operation.operationAccess)
+#else
+    false, -- publica
+#end
+##
+##  es_programatica
+##
+#if("$!operation.operationAccess" == 'PRIVATE')
+    true, -- programatica ($!operation.operationAccess)
+#else
+    false, -- programatica
+#end
+##
+##  es_protegida
+##
+#if("$!operation.operationAccess" == 'PROTECTED')
+    true, -- protegida ($!operation.operationAccess)
+#else
+    false, -- protegida
+#end
+##
+##  es_personalizable
+##
+#if($entity.ownerProperty)
+    true, -- personalizable ($entity.ownerProperty.wrapper.sqlName)
+#else
+    false, -- personalizable
+#end
+##
+##  es_segmentable
+##
+#if($entity.segmentProperty)
+    true, -- segmentable ($entity.segmentProperty.wrapper.sqlName)
+#else
+    false, -- segmentable
+#end
+##
+##  es_heredada
+##
+    $operation.isInherited(), -- heredada
+##
+##  id_grupo_proceso
+##
+#set($processingGroup = $SetUtils.getIndex($groups, $operation.processingGroup) + 1)
+#if($processingGroup > 0)
+    $processingGroup -- grupo proceso ($operation.processingGroup)
+#else
+    null -- grupo proceso
+#end
+    );
+
+#end##writeOperationRow

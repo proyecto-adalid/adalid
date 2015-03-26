@@ -1,0 +1,80 @@
+#if($entity.deleteFilter)
+    #set($filterEntity = $entity)
+    #set($filterExpression = $entity.deleteFilter)
+    #set($filterErrorMessageBundle = 'BundleDominios')
+    #set($filterErrorMessageBundleMethod = 'getFilterError')
+    #set($filterErrorMessageBundleKey = "${codex}.delete")
+    @Override
+    protected boolean esFilaEliminable(RowKey rowKey, long funcion) {
+        boolean es = super.esFilaEliminable(rowKey, funcion);
+        #writeFilterExpression()
+        return es;
+    }
+
+#end
+    @Override
+    protected void preRemoveRow(RowKey rowKey, long funcion) {
+        if (funcion == ${FUNCION_DELETE}) {
+            preEliminar${entity.wrapper.javaClassName}(rowKey);
+        }
+    }
+
+    protected void preEliminar${entity.wrapper.javaClassName}(RowKey rowKey) {
+        if (isNotRowAvailable(rowKey)) {
+            return;
+        }
+        RastroFuncion rastro = getRastroFuncion(rowKey, ${FUNCION_DELETE});
+        #addParametros()
+##      TLC.getControlador().grabarRastroFuncion(rastro);
+        getRastrosFuncion().put(rowKey.getRowId(), rastro);
+    }
+
+#break
+
+#*
+    public void eliminar${entity.wrapper.javaClassName}(Set rowSet) throws ExcepcionAplicacion {
+        removeRow(rowSet, ${FUNCION_DELETE});
+    }
+
+    public void eliminar${entity.wrapper.javaClassName}(RowKey rowKey) throws ExcepcionAplicacion {
+        removeRow(rowKey, ${FUNCION_DELETE});
+    }
+
+    @Override
+    protected boolean esFilaEliminable(RowKey rowKey, long funcion) {
+        boolean es = false;
+        if (funcion == ${FUNCION_DELETE}) {
+            es = esFilaEliminableConEliminar${entity.wrapper.javaClassName}(rowKey);
+            return es;
+        }
+        return es;
+    }
+
+    protected boolean esFilaEliminableConEliminar${entity.wrapper.javaClassName}(RowKey rowKey) {
+        boolean es = isRowAvailable(rowKey);
+//      es &= esFilaRecursoActivo(rowKey, ${FUNCION_DELETE});
+        es &= esFilaRecursoPropio(rowKey, ${FUNCION_DELETE});
+        es &= esFilaSegmentoAutorizado(rowKey, ${FUNCION_DELETE});
+        return es;
+    }
+
+    @Override
+    protected void preRemoveRow(RowKey rowKey, long funcion) {
+        if (funcion == ${FUNCION_DELETE}) {
+            preEliminar${entity.wrapper.javaClassName}(rowKey);
+        }
+    }
+
+    protected void preEliminar${entity.wrapper.javaClassName}(RowKey rowKey) {
+    }
+
+    @Override
+    protected void posRemoveRow(RowKey rowKey, long funcion) {
+        if (funcion == ${FUNCION_DELETE}) {
+            posEliminar${entity.wrapper.javaClassName}(rowKey);
+        }
+    }
+
+    protected void posEliminar${entity.wrapper.javaClassName}(RowKey rowKey) {
+    }
+*#

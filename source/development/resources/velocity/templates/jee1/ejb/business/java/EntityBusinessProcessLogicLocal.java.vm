@@ -1,0 +1,31 @@
+#parseJavaMacros()
+#setJavaVariables()
+#writeJavaLicense()
+#writeJavaPackage()
+#set($operations = $ColUtils.filter($entity.businessOperationsList, $isProcessOperation))
+#set($operations = $ColUtils.sort($operations, $byOperationName))
+#foreach($operation in $operations)
+    #set($message = "${entity.wrapper.javaClassName}${operation.wrapper.javaClassName}Message")
+    #set($added = $imports.add("${messagePackage}.${message}"))
+#end##foreach-operation
+#set($added = $imports.add("${entityPackage}.${entity.wrapper.javaClassName}"))
+#set($added = $imports.add('javax.ejb.Local'))
+#writeJavaImports($imports)
+#writeJavaAuthor('Jorge Campins')
+@Local
+public interface ${javaClassSimpleName}#writeJavaImplements()
+
+#foreach($operation in $operations)
+    #set($message = "${entity.wrapper.javaClassName}${operation.wrapper.javaClassName}Message")
+    #set($entity1 = "${entity.wrapper.javaClassName}")
+    #set($entity2 = "${entity.wrapper.javaVariableName}")
+    #writeOperationJavadocType1()
+#if("$!operation.operationKind" == 'INSTANCE')
+    void ${operation.wrapper.javaVariableName}($message message, $entity1 $entity2) throws Exception;
+#else
+    void ${operation.wrapper.javaVariableName}($message message) throws Exception;
+#end
+
+#end##foreach-operation
+}
+#break

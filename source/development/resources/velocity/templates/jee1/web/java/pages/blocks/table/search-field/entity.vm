@@ -1,0 +1,234 @@
+#set($componentName = "label${fieldFirstName}${divString}")
+#parse("$templatePath/blocks/webuijsf/label.vm")
+#set($componentName = "campo${fieldFirstName}${divString}")
+#parse("$templatePath/blocks/webuijsf/text-field.vm")
+#set($componentName = "campo${fieldFirstName}${divString}Texto1")
+#parse("$templatePath/blocks/webuijsf/static-text-1.vm")
+#set($componentName = "campo${fieldFirstName}${divString}Boton1")
+#parse("$templatePath/blocks/webuijsf/button-1.vm")
+#if($fieldForeignNameSqlName == '')
+    #set($componentName = "campo${fieldFirstName}${divString}Boton3")
+    #parse("$templatePath/blocks/webuijsf/button-2.vm")
+#end
+#if($fieldForeignNameSqlName != '')
+    #set($componentName = "label${fieldMiddleName}${divString}")
+    #parse("$templatePath/blocks/webuijsf/label.vm")
+    #set($componentName = "campo${fieldFirstName}${divString}Texto2")
+    #parse("$templatePath/blocks/webuijsf/static-text-2.vm")
+    #set($componentName = "campo${fieldFirstName}${divString}Boton2")
+    #parse("$templatePath/blocks/webuijsf/button-2.vm")
+#end
+##------------------------------------------------------------------------------
+#set($componentName = "campo${fieldFirstName}${divString}")
+#set($ComponentName = "Campo${fieldFirstName}${divString}")
+#set($componentValueAttr = 'text')
+#set($componentClassName = 'Recurso')
+#set($componentClassSimpleName = $componentClassName)
+#parse("$templatePath/blocks/table/search-field/any.vm")
+#writeEntitySearchFieldMethods()
+#break
+
+#macro(writeEntitySearchFieldMethods)
+    #setSearchFieldReferenceVariables()
+        private Converter ${componentName}Converter = new ConvertidorRecurso() {
+
+        #if($field.property.root.characterKeyProperty)
+            @Override
+            protected Recurso find(String codigo) {
+                return ObjUtils.toRecurso(get${field.property.root.wrapper.javaClassName}Facade().findByCodigo(codigo));
+            }
+
+        #end
+            @Override
+            protected Recurso find(Long id) {
+                return ObjUtils.toRecurso(get${field.property.root.wrapper.javaClassName}Facade().find(id));
+            }
+
+        };
+
+        public Converter get${ComponentName}Converter() {
+            return ${componentName}Converter;
+        }
+
+        /**
+         * ${componentName}.toolTip
+         */
+        public String get${ComponentName}ToolTip() {
+        #if($field.property.root.nameProperty)
+            Recurso recurso = get${ComponentName}Text();
+            if (recurso instanceof RecursoNombrable) {
+                RecursoNombrable recursoNombrable = (RecursoNombrable) recurso;
+                return recursoNombrable.getNombreRecurso();
+            }
+        #end
+            return null;
+        }
+
+        /**
+         * ${componentName}Boton1.onClick
+         */
+        public String get${ComponentName}Boton1OnClick() {
+            long dominio = ${referenceClassName}Constants.ID_DOMINIO_RECURSO;
+            long funcion = ${referenceClassName}Constants.${referenceSelectFunctionConstantName};
+            String campo = ${componentName}.getClientId(getFacesContext());
+            String boton = botonAplicarFiltro1.getClientId(getFacesContext());
+            #writeScriptBoton1SwitchX()
+        }
+
+        /**
+         * ${componentName}Boton1.rendered
+         */
+        public boolean get${ComponentName}Boton1Rendered() {
+            return true;
+        }
+
+        /**
+         * ${componentName}Boton2.onClick
+         */
+        public String get${ComponentName}Boton2OnClick() {
+            #writeScriptBoton2SwitchX()
+        }
+
+        /**
+         * ${componentName}Boton2.rendered
+         */
+        public boolean get${ComponentName}Boton2Rendered() {
+    #if($referenceNamePropertyClassName != '')
+            return true;
+    #else
+            return false;
+    #end
+        }
+
+        /**
+         * ${componentName}Boton3.onClick
+         */
+        public String get${ComponentName}Boton3OnClick() {
+            return get${ComponentName}Boton2OnClick();
+        }
+
+        /**
+         * ${componentName}Boton3.rendered
+         */
+        public boolean get${ComponentName}Boton3Rendered() {
+    #if($referenceNamePropertyClassName == '')
+            return true;
+    #else
+            return false;
+    #end
+        }
+
+#end##writeEntitySearchFieldMethods
+
+#macro(setSearchFieldReferenceVariables)
+#set($referenceClassName = "${field.property.root.wrapper.javaClassName}")
+#set($referencePrimaryKeyClassName = "$!{field.property.root.primaryKeyProperty.wrapper.javaCapitalizedName}")
+#set($referenceCharacterKeyClassName = "$!{field.property.root.characterKeyProperty.wrapper.javaCapitalizedName}")
+#set($referenceNamePropertyClassName = "$!{field.property.root.nameProperty.wrapper.javaCapitalizedName}")
+#set($referenceSelectFunctionConstantName = "FUNCION_SELECT_${field.property.root.wrapper.javaConstantName}")
+#set($referenceReadingTablePage  = $FALSE)
+#set($referenceWritingTablePage  = $FALSE)
+#set($referenceReadingDetailPage = $FALSE)
+#set($referenceWritingDetailPage = $FALSE)
+#set($referenceReadingTablePage  = $project.getReadingTableAlternativeTo( $page, $field.property.root))
+#set($referenceWritingTablePage  = $project.getWritingTableAlternativeTo( $page, $field.property.root))
+#set($referenceReadingDetailPage = $project.getReadingDetailAlternativeTo($page, $field.property.root))
+#set($referenceWritingDetailPage = $project.getWritingDetailAlternativeTo($page, $field.property.root))
+#end##setSearchFieldReferenceVariables
+
+#macro(writeScriptBoton1SwitchX)
+    #if($fieldSearchDisplayMode == 'WRITING')
+        #if($referenceWritingTablePage)
+            #writeScriptBoton1Switch1()
+        #elseif($referenceReadingTablePage)
+            #writeScriptBoton1Switch2()
+        #else
+            #writeScriptBoton1($FALSE)
+        #end
+    #elseif($fieldSearchDisplayMode == 'READING')
+        #if($referenceReadingTablePage)
+            #writeScriptBoton1Switch2()
+        #else
+            #writeScriptBoton1($FALSE)
+        #end
+    #elseif($referenceReadingTablePage)
+        #writeScriptBoton1Switch2()
+    #else
+        #writeScriptBoton1($FALSE)
+    #end
+#end##writeScriptBoton1SwitchX
+
+#macro(writeScriptBoton1Switch1)
+    #if($page.module.equals($referenceWritingTablePage.module))
+        #writeScriptBoton1Switch2()
+    #else
+        #writeScriptBoton1($referenceWritingTablePage)
+    #end
+#end##writeScriptBoton1Switch1
+
+#macro(writeScriptBoton1Switch2)
+    #if($page.module.equals($referenceReadingTablePage.module))
+        #writeScriptBoton1($FALSE)
+    #else
+        #writeScriptBoton1($referenceReadingTablePage)
+    #end
+#end##writeScriptBoton1Switch2
+
+#macro(writeScriptBoton1 $cousin)
+    #if($cousin)
+            String urx = URX.${cousin.entity.wrapper.javaConstantName}_${cousin.displayMode}_${cousin.displayFormat};
+            return gestor.getScriptAbrirVentanaBuscarCodigo(urx, dominio, funcion, campo, boton);
+    #else
+            return gestor.getScriptAbrirVentanaBuscarCodigo(dominio, funcion, campo, boton);
+    #end
+#end##writeScriptBoton1
+
+#macro(writeScriptBoton2SwitchX)
+    #if($fieldSearchDisplayMode == 'WRITING')
+        #if($referenceWritingDetailPage)
+            #writeScriptBoton2Switch1()
+        #elseif($referenceReadingDetailPage)
+            #writeScriptBoton2Switch2()
+        #else
+            #writeScriptBoton2($FALSE)
+        #end
+    #elseif($fieldSearchDisplayMode == 'READING')
+        #if($referenceReadingDetailPage)
+            #writeScriptBoton2Switch2()
+        #else
+            #writeScriptBoton2($FALSE)
+        #end
+    #elseif($referenceReadingDetailPage)
+        #writeScriptBoton2Switch2()
+    #else
+        #writeScriptBoton2($FALSE)
+    #end
+#end##writeScriptBoton2SwitchX
+
+#macro(writeScriptBoton2Switch1)
+    #if($page.module.equals($referenceWritingDetailPage.module))
+        #writeScriptBoton2Switch2()
+    #else
+        #writeScriptBoton2($referenceWritingDetailPage)
+    #end
+#end##writeScriptBoton2Switch1
+
+#macro(writeScriptBoton2Switch2)
+    #if($page.module.equals($referenceReadingDetailPage.module))
+        #writeScriptBoton2($FALSE)
+    #else
+        #writeScriptBoton2($referenceReadingDetailPage)
+    #end
+#end##writeScriptBoton2Switch2
+
+#macro(writeScriptBoton2 $cousin)
+    #if($cousin)
+            Recurso recurso = get${ComponentName}Text();
+            if (recurso instanceof RecursoIdentificable) {
+                RecursoIdentificable recursoIdentificable = (RecursoIdentificable) recurso;
+                String urx = URX.${cousin.entity.wrapper.javaConstantName}_${cousin.displayMode}_${cousin.displayFormat};
+                return gestor.getScriptAbrirVentanaVerDetalle(urx, recursoIdentificable.getIdentificacionRecurso());
+            }
+    #end
+            return null;
+#end##writeScriptBoton2

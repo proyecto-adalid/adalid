@@ -1,0 +1,89 @@
+#set($fieldColumns = 20)
+#set($fieldMaxLength = 0)
+#if($field.foreignCodeField)
+    #set($fieldMaxLength = $VelocityAid.coalesce($field.foreignCodeField.property.maxLength, 0))
+    #if($fieldMaxLength == 0 || $fieldMaxLength > 200)
+        #set($fieldColumns = $fieldColumnsLimit)
+    #elseif($fieldMaxLength <= 10)
+        #set($fieldColumns = 10)
+    #elseif($fieldMaxLength <= 20)
+        #set($fieldColumns = 20)
+    #elseif($fieldMaxLength <= 50)
+        #set($fieldColumns = $fieldColumnsLimit)
+    #else
+        #set($fieldColumns = $fieldColumnsLimit)
+    #end
+#end
+$tab<webuijsf:tableColumn id="tableColumn${fieldFirstName}"
+$tab    binding="#{${pageBeanName}.tableColumn${fieldFirstName}}"
+    #if(!$field.property.headertextlessField)
+##      headerText="$field.property.wrapper.xmlValidDefaultShortLabel"
+$tab    headerText="BundleParametros.${page.entity.wrapper.sqlSchemaQualifiedShortName}.${field.property.wrapper.sqlName}"
+    #end
+##      rendered="true"
+$tab    rendered="#{${pageBeanName}.asistente.column${fieldClassName}Rendered}"
+    #if($fieldForeignCodeSqlName == '')
+$tab    sort="$fieldSqlName">
+    #else
+$tab    sort="$fieldForeignCodeSqlName">
+    #end
+$tab    <webuijsf:label id="label${fieldFirstName}"
+$tab        binding="#{${pageBeanName}.label${fieldFirstName}}"
+$tab        for="${campo1}"/>
+$tab    <webuijsf:textField id="${campo1}"
+$tab        binding="#{${pageBeanName}.$campo1}"
+$tab        columns="$fieldColumns"
+        #if($fieldMaxLength > 0)
+$tab        maxLength="$fieldMaxLength"
+        #end
+$tab        readOnly="$fieldReadOnly"
+$tab        rendered="$fieldRendered"
+$tab        required="$fieldRequired"
+$tab        text="#{${pageBeanName}.asistente.text${Campo1}}"
+##          toolTip="#{${pageBeanName}.asistente.toolTip${Campo1}}"
+$tab        toolTip="BundleParametros.${page.entity.wrapper.sqlSchemaQualifiedShortName}.${field.property.wrapper.sqlName}"
+$tab        validatorExpression="#{${pageBeanName}.${campo1}_validate}"/>
+$tab    <webuijsf:staticText id="${campo1}Texto1"
+$tab        binding="#{${pageBeanName}.${campo1}Texto1}"#if($fieldForeignCodeSqlName == '')/>${EOL}#else${EOL}#end
+        #if($fieldForeignCodeSqlName != '')
+$tab        text="#{${sourceVar}.value['$fieldForeignCodeSqlName']}"/>
+        #end
+$tab    <webuijsf:message id="message${fieldFirstName}"
+$tab        for="${campo1}"/>
+$tab</webuijsf:tableColumn>
+    #if($fieldSearchType == 'DISPLAY')
+$tab<webuijsf:tableColumn id="tableColumn${fieldLastName}"
+$tab    align="center"
+##      rendered="#{${pageBeanName}.gestor.funcionCheckChangesHabilitada}">
+$tab    rendered="#{${pageBeanName}.asistente.column${fieldLastName}Rendered}">
+$tab    <webuijsf:button id="${campo1}Boton1"
+$tab        binding="#{${pageBeanName}.${campo1}Boton1}"
+$tab        onClick="#{${pageBeanName}.asistente.script${Campo1}Boton1}"/>
+$tab</webuijsf:tableColumn>
+        #if($fieldForeignNameSqlName == '')
+$tab<webuijsf:tableColumn id="tableColumn${fieldMiddleName}"
+$tab    align="center"
+$tab    rendered="#{${pageBeanName}.asistente.column${fieldClassName}Rendered}">
+$tab    <webuijsf:button id="${campo1}Boton3"
+$tab        binding="#{${pageBeanName}.${campo1}Boton3}"
+$tab        onClick="#{${pageBeanName}.asistente.script${Campo1}Boton3}"
+$tab        rendered="#{${pageBeanName}.asistente.${campo1}Boton3Rendered}"/>
+$tab</webuijsf:tableColumn>
+        #else
+$tab<webuijsf:tableColumn id="tableColumn${fieldMiddleName}"
+$tab    binding="#{${pageBeanName}.tableColumn${fieldMiddleName}}"
+    #if(!$field.property.headertextlessField)
+##      headerText="$field.foreignNameField.property.wrapper.xmlValidDefaultShortLabel"
+$tab    headerText="BundleParametros.${page.entity.wrapper.sqlSchemaQualifiedShortName}.${field.property.wrapper.sqlName}.${field.foreignNameField.property.wrapper.sqlName}"
+    #end
+##      rendered="true"
+$tab    rendered="#{${pageBeanName}.asistente.column${fieldClassName}Rendered}"
+$tab    sort="$fieldForeignNameSqlName">
+$tab    <webuijsf:imageHyperlink id="${campo1}Hiper2"
+$tab        binding="#{${pageBeanName}.${campo1}Hiper2}"
+$tab        onClick="#{${pageBeanName}.asistente.script${Campo1}Hiper2}"
+$tab        toolTip="#{${pageBeanName}.asistente.toolTip${Campo1}}"
+$tab        text="#{${sourceVar}.value['$fieldForeignNameSqlName']}"/>
+$tab</webuijsf:tableColumn>
+        #end
+    #end

@@ -1,0 +1,327 @@
+#parsePostgreSQLMacros()
+#setPostgreSQLVariables()
+#writePostgreSQLLicense()
+#writePostgreSQLAuthor('Jorge Campins')
+#writeDDL()
+#writeInsertValues()
+#break
+
+#macro(writeDDL)
+DROP TABLE IF EXISTS java_package CASCADE;
+CREATE TABLE java_package
+    (
+    name character varying(100) NOT NULL,
+    CONSTRAINT java_package_pkey PRIMARY KEY (name)
+    );
+
+DROP TABLE IF EXISTS java_class CASCADE;
+CREATE TABLE java_class
+    (
+    kind character varying(100) NOT NULL,
+    abstract boolean NOT NULL,
+    static boolean NOT NULL,
+    final boolean NOT NULL,
+    name character varying(100) NOT NULL,
+    simple_name character varying(100) NOT NULL,
+    comment_text character varying,
+    raw_comment_text character varying,
+    java_package character varying(100) NOT NULL,
+    CONSTRAINT java_class_pkey PRIMARY KEY (name),
+    CONSTRAINT java_class_fk01 FOREIGN KEY (java_package) REFERENCES java_package (name)
+    );
+
+CREATE INDEX java_class_ix01 ON java_class (simple_name);
+CREATE INDEX java_class_fk01 ON java_class (java_package);
+
+DROP TABLE IF EXISTS java_class_class CASCADE;
+CREATE TABLE java_class_class
+    (
+    name character varying(100) NOT NULL,
+    java_class character varying(100) NOT NULL,
+    level integer NOT NULL,
+    CONSTRAINT java_class_class_pkey PRIMARY KEY (name, java_class),
+    CONSTRAINT java_class_class_fk01 FOREIGN KEY (name) REFERENCES java_class (name),
+    CONSTRAINT java_class_class_fk02 FOREIGN KEY (java_class) REFERENCES java_class (name)
+    );
+
+CREATE INDEX java_class_class_fk01 ON java_class_class (name);
+CREATE INDEX java_class_class_fk02 ON java_class_class (java_class);
+
+DROP TABLE IF EXISTS java_property CASCADE;
+CREATE TABLE java_property
+    (
+    kind character varying(100) NOT NULL,
+    type character varying(100) NOT NULL,
+    name character varying(100) NOT NULL,
+    valid boolean NOT NULL,
+    java_class character varying(100) NOT NULL,
+    CONSTRAINT java_property_pkey PRIMARY KEY (name, java_class),
+    CONSTRAINT java_property_fk01 FOREIGN KEY (java_class) REFERENCES java_class (name)
+    );
+
+CREATE INDEX java_property_fk01 ON java_property (java_class);
+
+DROP TABLE IF EXISTS java_member CASCADE;
+CREATE TABLE java_member
+    (
+    kind character varying(100) NOT NULL,
+    abstract boolean NOT NULL,
+    static boolean NOT NULL,
+    final boolean NOT NULL,
+    type character varying(100) NOT NULL,
+    name character varying(100) NOT NULL,
+    parameters character varying(100) NOT NULL,
+    comment_text character varying,
+    raw_comment_text character varying,
+    java_property character varying(100),
+    java_class character varying(100) NOT NULL,
+    CONSTRAINT java_member_pkey PRIMARY KEY (kind, name, parameters, java_class),
+    CONSTRAINT java_member_fk01 FOREIGN KEY (java_class) REFERENCES java_class (name)
+    );
+
+CREATE INDEX java_member_fk01 ON java_member (java_class);
+
+create view java_property_summary as
+    select
+        jp.kind,
+        jp.type,
+        jp.name as property,
+        jp.java_class as class,
+        case when(jp.valid is true) then 'YES' else 'NO' end as valid,
+        array_to_string(array(
+            select method.name||method.parameters
+            from java_member method
+            where method.kind='GETTER'
+            and method.java_property=jp.name
+            and method.java_class=jp.java_class
+            ), ', ', '?') as getters,
+        array_to_string(array(
+            select method.name||method.parameters
+            from java_member method
+            where method.kind='SETTER'
+            and method.java_property=jp.name
+            and method.java_class=jp.java_class
+            ), ', ', '?') as setters
+    from
+        java_property jp
+    order by
+        jp.java_class, jp.name;
+
+create view java_member_summary as
+    select
+        jm.kind,
+        jm.abstract,
+        jm.static,
+        jm.final,
+        jm.type,
+        jm.name||jm.parameters as method,
+        jm.comment_text,
+        jm.raw_comment_text,
+        jc.name as class,
+        jcc1.level,
+        jcc1.java_class as source
+    from
+        java_class jc
+    inner join
+        java_class_class jcc1 on jcc1.name = jc.name
+    inner join
+        java_member jm on jm.java_class = jcc1.java_class
+    where
+        jm.abstract is false
+--  and (
+--      jc.abstract is false or not exists (select 1 from java_class_class jcc2 where jcc2.java_class = jc.name and jcc2.java_class <> jcc2.name)
+--      )
+    order by
+        jc.name, jcc1.level, jm.name, jm.parameters;
+
+#end##writeDDL
+
+#macro(writeInsertValues)
+    #writeInsertValuesIntoPackage()
+    #writeInsertValuesIntoClassClass()
+    #writeSelectCounters()
+    #writeSelectSummary()
+#end##writeInsertValues
+
+#macro(writeInsertValuesIntoPackage)
+    #set($packages = $root.specifiedPackages())
+....$Arrays.sort($packages)##
+    #foreach($package in $packages)
+........insert into java_package (name)
+....    values ('$package.name()');
+        #writeInsertValuesIntoClass($package.annotationTypes())
+        #writeInsertValuesIntoClass($package.enums())
+        #writeInsertValuesIntoClass($package.errors())
+        #writeInsertValuesIntoClass($package.exceptions())
+        #writeInsertValuesIntoClass($package.interfaces())
+        #writeInsertValuesIntoClass($package.ordinaryClasses())
+    #end
+#end##writeInsertValuesIntoPackage
+
+#macro(writeInsertValuesIntoClass $classes)
+....$Arrays.sort($classes)##
+    #foreach($class in $classes)
+        #if($class.containingClass())
+        #else
+            #setMetaClassValues()
+............insert into java_class (kind, abstract, static, final, name, simple_name, comment_text, raw_comment_text, java_package)
+........    values ($kind, $abstract, $static, $final, $name, $simple_name, $comment_text, $raw_comment_text, $java_package);
+            #if($class.isAnnotationType())
+                #writeInsertValuesIntoMethod($class.elements())
+            #elseif($class.isEnum())
+                #writeInsertValuesIntoField($class.enumConstants())
+            #end
+            #writeInsertValuesIntoField($class.fields())
+            #writeInsertValuesIntoProperty()
+            #writeInsertValuesIntoMethod($class.methods())
+        #end
+    #end
+#end##writeInsertValuesIntoClass
+
+#macro(setMetaClassValues)
+    #set($kind = "'$MetaDoclet.kind($class)'")
+    #set($abstract = "$class.isAbstract()")
+    #set($static = "$class.isStatic()")
+    #set($final = "$class.isFinal()")
+    #set($name = "'$class.qualifiedName()'")
+    #set($simple_name = "'$class.name()'")
+    #set($comment_text = "'$!MetaDoclet.commentText($class)'")
+    #if($comment_text == '''''')
+        #set($comment_text = 'null')
+    #end
+    #set($raw_comment_text = "'$!MetaDoclet.rawCommentText($class)'")
+    #if($raw_comment_text == '''''')
+        #set($raw_comment_text = 'null')
+    #end
+    #set($java_package = "'$class.containingPackage().name()'")
+#end##setMetaClassValues
+
+#macro(writeInsertValuesIntoField $fields)
+....$Arrays.sort($fields)##
+    #foreach($field in $fields)
+        #if($field.isSynthetic())
+        #else
+            #setMetaFieldValues()
+............insert into java_member (kind, abstract, static, final, type, name, parameters, comment_text, raw_comment_text, java_property, java_class)
+........    values ($kind, $abstract, $static, $final, $type, $name, $parameters, $comment_text, $raw_comment_text, $java_property, $java_class);
+        #end
+    #end
+#end##writeInsertValuesIntoField
+
+#macro(setMetaFieldValues)
+    #set($kind = "'$MetaDoclet.kind($field)'")
+    #set($abstract = 'false')
+    #set($static = "$field.isStatic()")
+    #set($final = "$field.isFinal()")
+    #set($type = "'$field.type().simpleTypeName()'")
+    #set($name = "'$field.name()'")
+    #set($parameters = "''")
+    #set($comment_text = "'$!MetaDoclet.commentText($field)'")
+    #if($comment_text == '''''')
+        #set($comment_text = 'null')
+    #end
+    #set($raw_comment_text = "'$!MetaDoclet.rawCommentText($field)'")
+    #if($raw_comment_text == '''''')
+        #set($raw_comment_text = 'null')
+    #end
+    #set($java_property = 'null')
+    #set($java_class = "'$class.qualifiedName()'")
+#end##setMetaFieldValues
+
+#macro(writeInsertValuesIntoProperty)
+    #set($properties = $MetaDoclet.properties($class))
+....$Arrays.sort($properties)##
+    #foreach($property in $properties)
+        #if(!$property.indeterminate())
+            #setMetaPropertyValues()
+............insert into java_property (kind, type, name, valid, java_class)
+........    values ($kind, $type, $name, $valid, $java_class);
+##          #writeInsertValuesIntoPropertyMethod($property.getters() 'GETTER')
+##          #writeInsertValuesIntoPropertyMethod($property.setters() 'SETTER')
+        #end
+    #end
+#end##writeInsertValuesIntoProperty
+
+#macro(setMetaPropertyValues)
+    #set($kind = "'$property.kind()'")
+    #set($type = "'$property.type().simpleTypeName()'")
+    #set($name = "'$property.name()'")
+    #set($valid = "$property.valid()")
+    #set($java_class = "'$class.qualifiedName()'")
+#end##setMetaPropertyValues
+
+#macro(writeInsertValuesIntoConstructor)
+#end##writeInsertValuesIntoConstructor
+
+#macro(writeInsertValuesIntoMethod $methods)
+....$Arrays.sort($methods)##
+    #foreach($method in $methods)
+        #if($method.isSynthetic())
+        #else
+            #setMetaMethodValues()
+............insert into java_member (kind, abstract, static, final, type, name, parameters, comment_text, raw_comment_text, java_property, java_class)
+........    values ($kind, $abstract, $static, $final, $type, $name, $parameters, $comment_text, $raw_comment_text, $java_property, $java_class);
+        #end
+    #end
+#end##writeInsertValuesIntoMethod
+
+#macro(setMetaMethodValues)
+    #set($kind = "'$MetaDoclet.kind($method)'")
+    #set($abstract = "$method.isAbstract()")
+    #set($static = "$method.isStatic()")
+    #set($final = "$method.isFinal()")
+    #set($type = "'$method.returnType().simpleTypeName()'")
+    #set($name = "'$method.name()'")
+    #if($method.isAnnotationTypeElement())
+        #set($parameters = "''")
+    #else
+        #set($parameters = "'$method.flatSignature()'")
+    #end
+    #set($comment_text = "'$!MetaDoclet.commentText($method)'")
+    #if($comment_text == '''''')
+        #set($comment_text = 'null')
+    #end
+    #set($raw_comment_text = "'$!MetaDoclet.rawCommentText($method)'")
+    #if($raw_comment_text == '''''')
+        #set($raw_comment_text = 'null')
+    #end
+    #set($java_property = "'$!MetaDoclet.property($method)'")
+    #if($java_property == '''''')
+        #set($java_property = 'null')
+    #end
+    #set($java_class = "'$class.qualifiedName()'")
+#end##setMetaMethodValues
+
+#macro(writeInsertValuesIntoClassClass)
+    #foreach($package in $packages)
+        #set($classes = $package.ordinaryClasses())
+........$Arrays.sort($classes)##
+        #foreach($class in $classes)
+            #if($class.containingClass())
+            #else
+                #set($level = 0)
+                #set($superclasses = $MetaDoclet.classes($class))
+                #foreach($superclass in $superclasses)
+                    #set($level = $level + 1)
+....................insert into java_class_class (name, java_class, level)
+................    values ('$class.qualifiedName()', '$superclass.qualifiedName()', $level);
+                #end
+            #end
+        #end
+    #end
+#end##writeInsertValuesIntoClassClass
+
+#macro(writeSelectCounters)
+....select count(*) from java_package;
+....select count(*) from java_class;
+....select count(*) from java_property;
+....select count(*) from java_member;
+....select count(*) from java_class_class;
+#end##writeSelectCounters
+
+#macro(writeSelectSummary)
+..../*
+....select class, property, type, kind, valid, getters, setters from java_property_summary;
+....select class, level, source, kind, static, final, type, method, comment_text, raw_comment_text from java_member_summary;
+....*/
+#end##writeSelectSummary

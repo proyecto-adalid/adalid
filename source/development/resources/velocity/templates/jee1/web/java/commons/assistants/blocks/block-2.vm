@@ -1,0 +1,146 @@
+    // <editor-fold defaultstate="collapsed" desc="metodos para establecer las opciones de las listas desplegables">
+    char bookmark$bookmarkSequence.next();
+
+    public Option[] getOpcionesListaFuncionEdicion() {
+        return new Option[]{};
+    }
+
+    public Option[] getOpcionesListaFuncionAccion() {
+        if (bean == null) {
+            return new Option[]{};
+        }
+        long value;
+        String label;
+        ArrayList<Option> opciones = new ArrayList<>();
+        opciones.add(bean.getGestor().getOpcionSeleccioneUnaOpcionListaFuncionAccion());
+#foreach($operation in $operations)
+    #setOperationVariables()
+        value = ${operationNumberConstantName};
+        label = ${operationLabelConstantName};
+        opciones.add(bean.getGestor().getOpcionFuncion(value, label));
+#end##foreach-operation
+        return bean.getGestor().getOpcionesListaFuncionAccionAutorizadas(opciones);
+    }
+
+#foreach($property in $entity.dataProviderColumnsList)
+    #if(!$property.isHiddenField())
+        #setFieldVariables()
+        #if($property.isBooleanPrimitive())
+            #writeBooleanPrimitiveOptionsGetter()
+        #elseif($property.isEnumerationEntity())
+            #writeEnumerationOptionsGetter()
+        #elseif($property.isEntity() && $fieldSearchType == 'LIST')
+            #writeEntityOptionsGetter()
+        #end
+    #end
+#end##foreach-property
+    char bookmark$bookmarkSequence.next();
+    // </editor-fold>
+
+#break
+
+#macro(writeBooleanPrimitiveOptionsGetter)
+    public Object getOptions${Campo1}() {
+        #set($enum = 'EnumOpcionBinaria')
+        ${enum}[] values = ${enum}.values();
+        return JSF.getListaOpciones(values, true, false);
+    }
+
+#end##writeBooleanPrimitiveOptionsGetter
+
+#macro(writeEnumerationOptionsGetter)
+    public Object getOptions${Campo1}() {
+        #set($enum = "${property.root.wrapper.javaClassName}Enumeration")
+        #if($property.searchInstanceArray)
+....//      ${enum}[] values = ${enum}.values();
+....        ${enum}[] values = new ${enum}[]{
+            #set($comma = ',')
+            #foreach($element in $property.searchInstanceArray)
+                #if($foreach.last)
+                    #set($comma = '')
+                #end
+##              ${enum}.$element.wrapper.sqlName.toUpperCase()$comma
+....            ${enum}.$element.wrapper.javaConstantName$comma
+            #end
+....        };
+        #else
+....        ${enum}[] values = ${enum}.values();
+        #end
+        return JSF.getListaOpciones(values, true, false);
+    }
+
+#end##writeEnumerationOptionsGetter
+
+#macro(writeEntityOptionsGetter)
+    //#*
+    #set($sqlParametersMapSize = -1)
+    #if($property.searchQueryFilter)
+        #set($parameterQueryTable = $property.queryTable)
+        #set($sqlQualifier = $VelocityAid.valueOf($SqlQualifierType, 'SUFFIX'))
+        #set($sqlExpression = $property.searchQueryFilter.wrapper.getSqlParameterizedExpression($parameterQueryTable, $sqlQualifier))
+        #set($sqlParametersMap = $sqlExpression.parametersMap)
+        #set($sqlParametersMapSize = $sqlParametersMap.size())
+        #if($sqlParametersMapSize == 0)
+            #set($parameterSearchQueryKey = "${entity.wrapper.sqlName}.${property.wrapper.sqlName}")
+            #set($parameterSearchQueryKey = "${entity.wrapper.sqlSchemaQualifiedShortName}.${property.wrapper.sqlName}")
+........    protected ConsultaBusqueda consultaBusqueda${fieldClassName} = ConsultaBusquedaBuilder.getConsultaBusqueda("$parameterSearchQueryKey");
+
+        #end
+    #end
+    *#
+    #set($resetFiltroConsultaBusqueda = $FALSE)
+    #if($property.searchQueryFilter)
+        #if($property.filterInactiveIndicatorProperty && $property.root.inactiveIndicatorProperty)
+            #set($resetFiltroConsultaBusqueda = $TRUE)
+        #elseif($property.filterOwnerProperty && $property.root.ownerProperty)
+            #set($resetFiltroConsultaBusqueda = $TRUE)
+        #elseif($property.filterSegmentProperty && $property.root.segmentProperty)
+            #set($resetFiltroConsultaBusqueda = $TRUE)
+        #end
+    #end
+    public Object getOptions${Campo1}() {
+    #if($fieldSearchListStyle == 'CHARACTER_KEY')
+        #set($enumColumnaEtiqueta = 'COLUMNA_CODIGO')
+        #set($sortedByLabel = 'true')
+    #elseif($fieldSearchListStyle == 'NAME')
+        #set($enumColumnaEtiqueta = 'COLUMNA_NOMBRE')
+        #set($sortedByLabel = 'true')
+    #elseif($fieldSearchListStyle == 'CHARACTER_KEY_AND_NAME')
+        #set($enumColumnaEtiqueta = 'AMBAS_COLUMNAS')
+        #set($sortedByLabel = 'true')
+    #elseif($fieldSearchListStyle == 'PRIMARY_KEY_AND_CHARACTER_KEY')
+        #set($enumColumnaEtiqueta = 'ID_Y_CODIGO')
+        #set($sortedByLabel = 'false')
+    #elseif($fieldSearchListStyle == 'PRIMARY_KEY_AND_NAME')
+        #set($enumColumnaEtiqueta = 'ID_Y_NOMBRE')
+        #set($sortedByLabel = 'false')
+    #else
+        #set($enumColumnaEtiqueta = 'COLUMNA_CODIGO')
+        #set($sortedByLabel = 'true')
+    #end
+    #set($clazz = $property.root.wrapper.javaClassName)
+#*
+    #if($sqlParametersMapSize == 0)
+        String query = consultaBusqueda${fieldClassName}.getQuerySql();
+        List<? extends ${clazz}Base> list = get${clazz}Facade().findByQuery(query, EnumTipoQuery.NATIVE, true);
+    #elseif($sqlParametersMapSize > 0)
+        // TODO: WHERE $sqlExpression.expression
+        List<? extends ${clazz}Base> list = get${clazz}Facade().findAll();
+    #else
+        List<? extends ${clazz}Base> list = get${clazz}Facade().findAll();
+    #end
+*###
+    #if($property.searchQueryFilter)
+        resetConsultaBusqueda${fieldClassName}();
+        #if($resetFiltroConsultaBusqueda)
+....        resetFiltroConsultaBusqueda${fieldClassName}();
+        #end
+        String query = consultaBusqueda${fieldClassName}.getQuerySql();
+        List<? extends ${clazz}Base> list = get${clazz}Facade().findByQuery(query, EnumTipoQuery.NATIVE, true);
+    #else
+        List<? extends ${clazz}Base> list = get${clazz}Facade().findAll();
+    #end
+        return JSF.getListaOpciones(list, true, EnumColumnaEtiqueta.$enumColumnaEtiqueta, $sortedByLabel);
+    }
+
+#end##writeEntityOptionsGetter

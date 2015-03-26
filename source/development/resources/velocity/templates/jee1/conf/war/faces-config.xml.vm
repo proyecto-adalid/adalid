@@ -1,0 +1,251 @@
+#parseXMLMacros()
+#setXMLVariables()
+#writeXMLDeclaration()
+#writeXMLLicense()
+#writeXMLAuthor('Jorge Campins')
+<!-- =========== FULL CONFIGURATION FILE ================================== -->
+<faces-config version="1.2"
+    xmlns="http://java.sun.com/xml/ns/javaee"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-facesconfig_1_2.xsd">
+    <application>
+        <resource-bundle>
+            <base-name>${project.rootPackageName}.lib.base.bundle.crop.BundleWebui</base-name>
+            <var>bundle</var>
+        </resource-bundle>
+    </application>
+    <managed-bean>
+        <managed-bean-name>ApplicationBean1</managed-bean-name>
+        <managed-bean-class>${project.rootPackageName}.web.ApplicationBean1</managed-bean-class>
+        <managed-bean-scope>application</managed-bean-scope>
+    </managed-bean>
+    <managed-bean>
+        <managed-bean-name>RequestBean1</managed-bean-name>
+        <managed-bean-class>${project.rootPackageName}.web.RequestBean1</managed-bean-class>
+        <managed-bean-scope>request</managed-bean-scope>
+    </managed-bean>
+    <managed-bean>
+        <managed-bean-name>SessionBean1</managed-bean-name>
+        <managed-bean-class>${project.rootPackageName}.web.SessionBean1</managed-bean-class>
+        <managed-bean-scope>session</managed-bean-scope>
+    </managed-bean>
+    <!-- ${project.rootPackageName}.web.fragments -->
+    <managed-bean>
+        <managed-bean-name>FragmentoCabeza2</managed-bean-name>
+        <managed-bean-class>${project.rootPackageName}.web.fragments.FragmentoCabeza2</managed-bean-class>
+        <managed-bean-scope>request</managed-bean-scope>
+    </managed-bean>
+    <managed-bean>
+        <managed-bean-name>FragmentoCabeza2M</managed-bean-name>
+        <managed-bean-class>${project.rootPackageName}.web.fragments.FragmentoCabeza2M</managed-bean-class>
+        <managed-bean-scope>request</managed-bean-scope>
+    </managed-bean>
+    <managed-bean>
+        <managed-bean-name>FragmentoCabeza2P</managed-bean-name>
+        <managed-bean-class>${project.rootPackageName}.web.fragments.FragmentoCabeza2P</managed-bean-class>
+        <managed-bean-scope>request</managed-bean-scope>
+    </managed-bean>
+    <managed-bean>
+        <managed-bean-name>FragmentoFiltro1</managed-bean-name>
+        <managed-bean-class>${project.rootPackageName}.web.fragments.FragmentoFiltro1</managed-bean-class>
+        <managed-bean-scope>request</managed-bean-scope>
+    </managed-bean>
+    <managed-bean>
+        <managed-bean-name>FragmentoFiltro2</managed-bean-name>
+        <managed-bean-class>${project.rootPackageName}.web.fragments.FragmentoFiltro2</managed-bean-class>
+        <managed-bean-scope>request</managed-bean-scope>
+    </managed-bean>
+    <managed-bean>
+        <managed-bean-name>FragmentoPie2</managed-bean-name>
+        <managed-bean-class>${project.rootPackageName}.web.fragments.FragmentoPie2</managed-bean-class>
+        <managed-bean-scope>request</managed-bean-scope>
+    </managed-bean>
+    <!-- ${project.rootPackageName}.web.context -->
+    <managed-bean>
+        <managed-bean-name>DataBean</managed-bean-name>
+        <managed-bean-class>${project.rootPackageName}.web.context.DataBean</managed-bean-class>
+        <managed-bean-scope>session</managed-bean-scope>
+    </managed-bean>
+    <!-- ${project.rootPackageName}.web.pages -->
+    <managed-bean>
+        <managed-bean-name>copy$Favoritos</managed-bean-name>
+        <managed-bean-class>${project.rootPackageName}.web.pages.Favoritos</managed-bean-class>
+        <managed-bean-scope>request</managed-bean-scope>
+    </managed-bean>
+    <managed-bean>
+        <managed-bean-name>copy$Menu</managed-bean-name>
+        <managed-bean-class>${project.rootPackageName}.web.pages.Menu</managed-bean-class>
+        <managed-bean-scope>request</managed-bean-scope>
+    </managed-bean>
+    <managed-bean>
+        <managed-bean-name>copy$Password</managed-bean-name>
+        <managed-bean-class>${project.rootPackageName}.web.pages.Password</managed-bean-class>
+        <managed-bean-scope>request</managed-bean-scope>
+    </managed-bean>
+    <!-- ${project.rootPackageName}.web.recurso.context -->
+    <managed-bean>
+        <managed-bean-name>RecursoDataBean</managed-bean-name>
+        <managed-bean-class>${project.rootPackageName}.web.recurso.context.DataBean</managed-bean-class>
+        <managed-bean-scope>session</managed-bean-scope>
+    </managed-bean>
+    <!-- ${project.rootPackageName}.web.recurso.pages -->
+    <managed-bean>
+        <managed-bean-name>copy$recurso$Recurso1</managed-bean-name>
+        <managed-bean-class>${project.rootPackageName}.web.recurso.pages.Recurso1</managed-bean-class>
+        <managed-bean-scope>request</managed-bean-scope>
+    </managed-bean>
+    <managed-bean>
+        <managed-bean-name>copy$recurso$Recurso3</managed-bean-name>
+        <managed-bean-class>${project.rootPackageName}.web.recurso.pages.Recurso3</managed-bean-class>
+        <managed-bean-scope>request</managed-bean-scope>
+    </managed-bean>
+    <navigation-rule>
+        <from-view-id>/copy/recurso/Recurso1.jsp</from-view-id>
+        <navigation-case>
+            <from-outcome>arbol</from-outcome>
+            <to-view-id>/copy/recurso/Recurso3.jsp</to-view-id>
+        </navigation-case>
+    </navigation-rule>
+    <navigation-rule>
+        <from-view-id>/copy/recurso/Recurso3.jsp</from-view-id>
+        <navigation-case>
+            <from-outcome>tabla</from-outcome>
+            <to-view-id>/copy/recurso/Recurso1.jsp</to-view-id>
+        </navigation-case>
+    </navigation-rule>
+    <!-- ${project.rootPackageName}.web.recurso_filtro.context -->
+    <managed-bean>
+        <managed-bean-name>RecursoFiltroDataBean</managed-bean-name>
+        <managed-bean-class>${project.rootPackageName}.web.recurso_filtro.context.DataBean</managed-bean-class>
+        <managed-bean-scope>session</managed-bean-scope>
+    </managed-bean>
+    <!-- ${project.rootPackageName}.web.recurso_filtro.pages -->
+    <managed-bean>
+        <managed-bean-name>copy$recurso_filtro$RecursoFiltro1</managed-bean-name>
+        <managed-bean-class>${project.rootPackageName}.web.recurso_filtro.pages.RecursoFiltro1</managed-bean-class>
+        <managed-bean-scope>request</managed-bean-scope>
+    </managed-bean>
+    <managed-bean>
+        <managed-bean-name>copy$recurso_filtro$RecursoFiltro3</managed-bean-name>
+        <managed-bean-class>${project.rootPackageName}.web.recurso_filtro.pages.RecursoFiltro3</managed-bean-class>
+        <managed-bean-scope>request</managed-bean-scope>
+    </managed-bean>
+    <navigation-rule>
+        <from-view-id>/copy/recurso_filtro/RecursoFiltro1.jsp</from-view-id>
+        <navigation-case>
+            <from-outcome>arbol</from-outcome>
+            <to-view-id>/copy/recurso_filtro/RecursoFiltro3.jsp</to-view-id>
+        </navigation-case>
+    </navigation-rule>
+    <navigation-rule>
+        <from-view-id>/copy/recurso_filtro/RecursoFiltro3.jsp</from-view-id>
+        <navigation-case>
+            <from-outcome>tabla</from-outcome>
+            <to-view-id>/copy/recurso_filtro/RecursoFiltro1.jsp</to-view-id>
+        </navigation-case>
+    </navigation-rule>
+#set($modules = $ColUtils.filter($project.modulesList, $isWebModule))
+#set($modules = $ColUtils.sort($modules, $byProjectName))
+#foreach($module in $modules)
+    #writeWebModule()
+#end##foreach-module
+</faces-config>
+#break
+
+#macro(writeWebModule)
+    #set($dollar = '$')
+    #set($stroke = '/')
+    #set($webPageBeanPrefix = "crop$dollar$module.wrapper.dottedAlias.replace('.', $dollar)$dollar")
+    #set($webPagePathPrefix = "crop$stroke$module.wrapper.dottedAlias.replace('.', $stroke)$stroke")
+    #set($webPackageName = "${project.rootPackageName}.web.${module.wrapper.dottedAlias}")
+    <!-- ${webPackageName}.context -->
+    #writeContextManagedBean()
+#*
+    <!-- ${webPackageName}.fragments -->
+    #set($pages = $ColUtils.filter($module.displaysList, $isTableViewDisplay))
+    #foreach($page in $pages)
+        #writePageFilterManagedBean()
+    #end##foreach-page
+*#
+    <!-- ${webPackageName}.pages -->
+    #set($pages = $module.displaysList)
+    #foreach($page in $pages)
+        #writePageManagedBean()
+        #if("$page.displayFormat" == 'DETAIL')
+            #set($detailCousin = $FALSE)
+        #elseif($module.getDetailSiblingOf($page))
+            #set($detailCousin = $FALSE)
+        #else
+            #set($detailCousin = $VelocityAid.coalesce($module.getDetailCousinOf($page), $FALSE))
+        #end
+        #set($siblings = $page.siblings)
+        #set($siblings = $ColUtils.sort($siblings, $byDisplayName))
+        #set($children = $ColUtils.filter($page.children, $isTableViewDisplay))
+        #set($children = $ColUtils.sort($children, $byDisplayName))
+        #if($siblings.isEmpty() && $children.isEmpty())
+            #if($detailCousin)
+                #writeNavigationRule()
+            #end
+        #else
+            #writeNavigationRule()
+        #end
+    #end##foreach-page
+#end##writeWebModule
+
+#macro(writeContextManagedBean)
+    #set($managedBeanName = "${javaProgrammer.getJavaClassName($module.alias)}ContextDataBean")
+    <managed-bean>
+        <managed-bean-name>${managedBeanName}</managed-bean-name>
+        <managed-bean-class>${webPackageName}.context.ContextDataBean</managed-bean-class>
+        <managed-bean-scope>session</managed-bean-scope>
+    </managed-bean>
+#end##writeContextManagedBean
+
+#macro(writePageFilterManagedBean)
+    <managed-bean>
+        <managed-bean-name>FragmentoFiltro${page.name}</managed-bean-name>
+        <managed-bean-class>${webPackageName}.filters.FragmentoFiltro${page.name}</managed-bean-class>
+        <managed-bean-scope>request</managed-bean-scope>
+    </managed-bean>
+#end##writePageFilterManagedBean
+
+#macro(writePageManagedBean)
+    <managed-bean>
+        <managed-bean-name>${webPageBeanPrefix}$!{webPageNamePrefix}${page.name}</managed-bean-name>
+        <managed-bean-class>${webPackageName}.pages.$!{webPageNamePrefix}${page.name}</managed-bean-class>
+        <managed-bean-scope>request</managed-bean-scope>
+    </managed-bean>
+#end##writePageManagedBean
+
+#macro(writeNavigationRule)
+    <navigation-rule>
+        <from-view-id>/${webPagePathPrefix}$!{webPageNamePrefix}${page.name}.jsp</from-view-id>
+        #foreach($sibling in $siblings)
+            #writeSiblingsNavigationCase()
+        #end##foreach-sibling
+        #if($detailCousin)
+        <!--
+            cousin $detailCousin.name @ $module.name ($module.wrapper.hyphenatedAlias) @ $module.master.name ($module.master.wrapper.hyphenatedAlias)
+        -->
+            #set($sibling = $detailCousin)
+            #writeSiblingsNavigationCase()
+        #end
+        #foreach($child in $children)
+            #writeChildrenNavigationCase()
+        #end##foreach-child
+    </navigation-rule>
+#end##writeNavigationRule
+
+#macro(writeSiblingsNavigationCase)
+        <navigation-case>
+            <from-outcome>$sibling.displayFormat.outcome</from-outcome>
+            <to-view-id>/${webPagePathPrefix}$!{webPageNamePrefix}${sibling.name}.jsp</to-view-id>
+        </navigation-case>
+#end##writeSiblingsNavigationCase
+
+#macro(writeChildrenNavigationCase)
+        <navigation-case>
+            <from-outcome>case$foreach.count</from-outcome>
+            <to-view-id>/${webPagePathPrefix}$!{webPageNamePrefix}${child.name}.jsp</to-view-id>
+        </navigation-case>
+#end##writeChildrenNavigationCase

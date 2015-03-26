@@ -1,0 +1,2 @@
+#set($es_informe_resumido = '0')
+#parse("$templatePath/report-10x.jrxml.vm")

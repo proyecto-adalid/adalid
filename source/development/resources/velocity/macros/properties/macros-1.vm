@@ -1,0 +1,24 @@
+#break
+
+#macro(setPropertiesVariables)
+    #setGlobalVariables()
+#end##setPropertiesVariables
+
+#macro(writePropertiesLicense)
+    #if("$!writeLicense" == '')
+        #set($writeLicense = 'on')
+    #end
+    #if($writeLicense == 'on')
+        #include('licenses/license-properties.txt')
+    #end
+#end##writePropertiesLicense
+
+#macro(writePropertiesAuthor $author)
+    #if("$!writeLicense" == 'on')
+##
+# author: adalid $adalidMajorVersionNumber (template by $author)
+# template: $template.replace('\\', '/')
+# template-author: $author
+#
+    #end
+#end##writePropertiesAuthor

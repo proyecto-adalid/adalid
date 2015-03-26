@@ -1,0 +1,25 @@
+#set($referenceClassName = "${property.root.wrapper.javaClassName}")
+#set($referencePrimaryKeyClassName = "$!{property.root.primaryKeyProperty.wrapper.javaCapitalizedName}")
+    // <editor-fold defaultstate="collapsed" desc="${fieldClassName}">
+    /**
+     * ${campo1}.validatorExpression
+     */
+    public void ${campo1}_validate(FacesContext context, UIComponent component, Object value) {
+//      Object object = $!{fieldObjUtilsMethod}(bean.get${Campo1}());
+        RowKey rowKey = bean.getGestor().getCurrentRowKey();
+        if (rowKey != null) {
+            ${fieldVariableName}Map.remove(rowKey);
+            bean.get${EntityDataProvider}().set${fieldClassName}(rowKey, null);
+            boolean rowAvailable = bean.get${EntityDataProvider}().isRowAvailable(rowKey);
+            if (rowAvailable) {
+                ${referenceClassName}Base ${fieldVariableName} = get${referenceClassName}Facade().find($!{fieldObjUtilsMethod}(value), true);
+                if (${fieldVariableName} != null) {
+                    ${fieldVariableName}Map.put(rowKey, ${fieldVariableName});
+                    bean.get${EntityDataProvider}().set${fieldClassName}(rowKey, ${fieldVariableName}.get${referencePrimaryKeyClassName}());
+                }
+            }
+        }
+    }
+    // </editor-fold>
+
+#break

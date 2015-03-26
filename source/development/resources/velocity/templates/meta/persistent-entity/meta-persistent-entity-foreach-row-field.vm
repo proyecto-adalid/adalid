@@ -1,0 +1,12 @@
+#if($rowsList && $rowsList.size()>0)
+#else
+    #break
+#end
+#foreach($row in $rowsList)
+#set($rowFieldsList = $VelocityAid.coalesce($row.rowFieldsList, $FALSE))
+#if($rowFieldsList && $rowFieldsList.size()>0)
+#foreach($rowField in $rowFieldsList)
+${tab}${row.name}.newInstanceField(${rowField.name}, ${rowField.valueString});
+#end
+#end
+#end

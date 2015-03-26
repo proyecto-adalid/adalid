@@ -1,0 +1,114 @@
+    // <editor-fold defaultstate="collapsed" desc="inicialización de componentes JSF">
+    private void iniciar() throws Exception {
+#foreach($operation in $operations)
+    #setOperationVariables()
+    #foreach($parameter in $parameters)
+        #setParameterVariables()
+        #if($parameter.isBigDecimalData())
+            #writeBigDecimalInitialization()
+        #elseif($parameter.isDoubleData())
+            #writeDoubleInitialization()
+        #elseif($parameter.isFloatData())
+            #writeFloatInitialization()
+        #elseif($parameter.isDateData())
+            #writeDateInitialization()
+        #elseif($parameter.isTimeData())
+            #writeTimeInitialization()
+        #elseif($parameter.isTimestampData())
+            #writeTimestampInitialization()
+        #end
+        #if($parameter.isNumericPrimitive())
+            #writeRangeValidatorInitialization()
+        #elseif($parameter.isCharacterPrimitive())
+            #writeLengthValidatorInitialization()
+        #end
+    #end##foreach-parameter
+#end##foreach-operation
+    }
+    // </editor-fold>
+
+#break
+
+#macro(writeBigDecimalInitialization)
+    #set($fieldPrecision = $VelocityAid.coalesce($parameter.precision, 16))
+    #set($fieldScale = $VelocityAid.coalesce($parameter.scale, 0))
+    #set($fieldMaxIntegerDigits = $fieldPrecision - $fieldScale)
+        converter${fieldFirstName}.setMinIntegerDigits(1);
+        converter${fieldFirstName}.setMaxIntegerDigits($fieldMaxIntegerDigits);
+        converter${fieldFirstName}.setMaxFractionDigits($fieldScale);
+#end##writeBigDecimalInitialization
+
+#macro(writeDoubleInitialization)
+    #set($pattern = '0.0###############E0')
+        converter${fieldFirstName}.setMinIntegerDigits(1);
+        converter${fieldFirstName}.setMaxIntegerDigits(1);
+        converter${fieldFirstName}.setMaxFractionDigits(16);
+        converter${fieldFirstName}.setPattern("$pattern");
+#end##writeDoubleInitialization
+
+#macro(writeFloatInitialization)
+    #set($pattern = '0.0#######E0')
+        converter${fieldFirstName}.setMinIntegerDigits(1);
+        converter${fieldFirstName}.setMaxIntegerDigits(1);
+        converter${fieldFirstName}.setMaxFractionDigits(8);
+        converter${fieldFirstName}.setPattern("$pattern");
+#end##writeFloatInitialization
+
+#macro(writeDateInitialization)
+        converter${fieldFirstName}.setPattern(TimeUtils.getDateFormat());
+        converter${fieldFirstName}.setType("date");
+#end##writeDateInitialization
+
+#macro(writeTimeInitialization)
+        converter${fieldFirstName}.setPattern(TimeUtils.getTimeFormat());
+        converter${fieldFirstName}.setType("time");
+#end##writeTimeInitialization
+
+#macro(writeTimestampInitialization)
+        converter${fieldFirstName}.setPattern(TimeUtils.getTimestampFormat());
+        converter${fieldFirstName}.setType("both");
+#end##writeTimestampInitialization
+
+#macro(writeLengthValidatorInitialization)
+    #if($parameter.isCharacterData())
+        #set($fieldMaxLength = 1)
+        #set($fieldMinLength = 0)
+    #elseif($parameter.isStringData())
+        #set($fieldMaxLength = $VelocityAid.coalesce($parameter.maxLength, 0))
+        #set($fieldMinLength = $VelocityAid.coalesce($parameter.minLength, 0))
+    #else
+        #set($fieldMaxLength = 0)
+        #set($fieldMinLength = 0)
+    #end
+    #if($fieldMinLength > 0)
+        validator${fieldFirstName}.setMinimum($fieldMinLength);
+    #end
+    #if($fieldMaxLength > 0)
+        validator${fieldFirstName}.setMaximum($fieldMaxLength);
+    #end
+#end##writeLengthValidatorInitialization
+
+#macro(writeRangeValidatorInitialization)
+    #if($parameter.minValue)
+        #set($minValue = $FALSE)
+        #set($minValue = $javaProgrammer.getJavaValue($parameter.minValue))
+        #if($minValue)
+            #if($parameter.isBigDecimalData() || $parameter.isDoubleData() || $parameter.isFloatData())
+........        validator${fieldFirstName}.setMinimum(ObjUtils.toDouble($minValue));
+            #else
+........        validator${fieldFirstName}.setMinimum(ObjUtils.toLong($minValue));
+            #end
+        #end
+    #end
+    #if($parameter.maxValue)
+        #set($maxValue = $FALSE)
+        #set($maxValue = $javaProgrammer.getJavaValue($parameter.maxValue))
+        #if($maxValue)
+            #if($parameter.isBigDecimalData() || $parameter.isDoubleData() || $parameter.isFloatData())
+........        validator${fieldFirstName}.setMaximum(ObjUtils.toDouble($maxValue));
+            #else
+........        validator${fieldFirstName}.setMaximum(ObjUtils.toLong($maxValue));
+            #end
+        #end
+    #end
+#end##writeRangeValidatorInitialization

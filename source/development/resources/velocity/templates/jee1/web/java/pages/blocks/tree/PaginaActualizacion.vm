@@ -1,0 +1,9 @@
+    // <editor-fold defaultstate="collapsed" desc="implementacion estandar de la interfaz PaginaActualizacionConArbol">
+    private GestorPaginaActualizacionConArbol gestor = GestorPaginaActualizacionConArbol.newInstance(this);
+
+    @Override
+    public GestorPaginaActualizacionConArbol getGestor() {
+        return gestor;
+    }
+    // </editor-fold>
+

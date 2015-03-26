@@ -1,0 +1,39 @@
+#break
+
+#macro(setOperationVariables)
+    #set($operationName = "$operation.wrapper.javaVariableName")
+    #set($operationClassName = "$operation.wrapper.javaClassName")
+    #set($operationConstantName = "$operation.wrapper.javaConstantName")
+    #set($operationType = "$!operation.operationType")
+    #set($operationNumberConstantName = "${entityClassName}Constants.FUNCION_${operation.operationType}_${operationConstantName}")
+    #set($operationExportConstantName = "${entityClassName}Constants.ARCHIVO_FUNCION_${operationConstantName}")
+    #set($operationReportConstantName = "${entityClassName}Constants.INFORME_FUNCION_${operationConstantName}")
+    #set($operationProcedureConstantName = "${entityClassName}Constants.PROCEDIMIENTO_FUNCION_${operationConstantName}")
+    #set($operationProcessConstantName = "${entityClassName}Constants.PROCESO_FUNCION_${operationConstantName}")
+    #set($operationStringConstantName = '')
+    #if($operationType == 'CRUD')
+    #elseif($operationType == 'EXPORT')
+        #set($operationStringConstantName = $operationExportConstantName)
+    #elseif($operationType == 'REPORT')
+        #set($operationStringConstantName = $operationReportConstantName)
+    #elseif($operationType == 'PROCEDURE')
+        #set($operationStringConstantName = $operationProcedureConstantName)
+    #elseif($operationType == 'PROCESS')
+        #set($operationStringConstantName = $operationProcessConstantName)
+    #end
+    #if($operationStringConstantName == '')
+        #set($operationLabelConstantName = '')
+    #else
+        #set($operationLabelConstantName = "${entityClassName}Constants.ETIQUETA_FUNCION_${operation.operationType}_${operationConstantName}")
+    #end
+    #if("$!operation.operationKind" == 'CLASS')
+        #set($classOperation = $TRUE)
+    #else
+        #set($classOperation = $FALSE)
+    #end
+    #if("$!operation.operationKind" == 'INSTANCE')
+        #set($instanceOperation = $TRUE)
+    #else
+        #set($instanceOperation = $FALSE)
+    #end
+#end##setOperationVariables

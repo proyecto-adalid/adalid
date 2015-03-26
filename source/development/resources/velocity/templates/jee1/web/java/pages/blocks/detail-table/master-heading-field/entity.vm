@@ -1,0 +1,17 @@
+#if($fieldForeignCodeSqlName != '')
+    #set($textGetterProperty = $field.foreignCodeField.property)
+#else
+    #set($textGetterProperty = $field.property)
+#end
+#set($componentName = "${campo1}${divString}Texto1")
+#parse("$templatePath/blocks/detail-table/master-heading-field/text-getter.vm")
+#if($fieldForeignNameSqlName != '')
+    #set($textGetterProperty = $field.foreignNameField.property)
+    #set($componentName = "${campo1}${divString}Texto2")
+    #parse("$templatePath/blocks/detail-table/master-heading-field/text-getter.vm")
+#end
+#set($componentName = "label${fieldFirstName}${divString}")
+#parse("$templatePath/blocks/webuijsf/label.vm")
+#set($componentName = "helpInline${fieldFirstName}${divString}")
+#parse("$templatePath/blocks/webuijsf/help-inline.vm")
+#break

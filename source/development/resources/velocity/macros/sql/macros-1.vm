@@ -1,0 +1,69 @@
+#break
+
+#macro(setSQLVariables)
+    #set($globalConstraintCount = 0)
+    #set($globalPrimaryKeyAffix = '_pk')
+    #set($globalForeignKeyAffix = '_fk')
+    #set($globalUniqueKeyAffix = '_uk')
+    #set($globalIndexAffix = '_ix')
+    #set($globalCheckAffix = '_ck')
+    #set($globalSequenceAffix = '_sq')
+    #set($globalConstraintSerial = '')
+    #set($globalConstraintSuffix = '___')
+    #set($sqlMaxIdentifierLength = 65535)
+#end
+
+#macro(resetSQLVariables)
+    #set($globalConstraintCount = 0)
+#end
+
+#macro(setGlobalPrimaryKeyName $entity)
+    #setGlobalConstraintName($entity $globalPrimaryKeyAffix)
+#end
+
+#macro(setGlobalForeignKeyName $entity)
+    #setGlobalConstraintFullName($entity $globalForeignKeyAffix)
+#end
+
+#macro(setGlobalUniqueKeyName $entity)
+    #setGlobalConstraintFullName($entity $globalUniqueKeyAffix)
+#end
+
+#macro(setGlobalIndexName $entity)
+    #setGlobalConstraintFullName($entity $globalIndexAffix)
+#end
+
+#macro(setGlobalCheckName $entity)
+    #setGlobalConstraintFullName($entity $globalCheckAffix)
+#end
+
+#macro(setGlobalSequenceName $entity)
+    #setGlobalConstraintName($entity $globalSequenceAffix)
+#end
+
+#macro(setGlobalConstraintName $entity $globalConstraintAffix)
+#***
+    #set($globalConstraintName = "${entity.wrapper.sqlSchemaUnqualifiedShortName}${globalConstraintAffix}")
+    #set($globalConstraintName = "${globalConstraintName}${globalConstraintSuffix}")
+*###
+    #set($globalConstraintName = $entity.wrapper.getSuffixedSqlName("${globalConstraintAffix}${globalConstraintSuffix}"))
+#end
+
+#macro(setGlobalConstraintFullName $entity $globalConstraintAffix)
+    #setGlobalConstraintSerial()
+#***
+    #set($globalConstraintName = "${entity.wrapper.sqlSchemaUnqualifiedShortName}${globalConstraintAffix}")
+    #set($globalConstraintName = "${globalConstraintName}${globalConstraintSerial}")
+    #set($globalConstraintName = "${globalConstraintName}${globalConstraintSuffix}")
+*###
+    #set($globalConstraintName = $entity.wrapper.getSuffixedSqlName("${globalConstraintAffix}${globalConstraintSerial}${globalConstraintSuffix}"))
+#end
+
+#macro(setGlobalConstraintSerial)
+    #set($globalConstraintCount = $globalConstraintCount + 1)
+    #set($globalConstraintSerial = "_$StringUtils.leftPad($globalConstraintCount.toString(), 3, '0')")
+#end
+
+#macro(removeGlobalConstraintNameSuffix)
+    #set($globalConstraintName = $StringUtils.removeEnd($globalConstraintName, $globalConstraintSuffix))
+#end

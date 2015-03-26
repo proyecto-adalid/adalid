@@ -1,0 +1,41 @@
+#break
+
+#macro(setArtifactVariables $artifact)
+    #set($artifactJavaType = $artifact.wrapper.javaPrimitiveType)
+    #set($artifactClassName = $artifact.root.wrapper.javaClassName)
+    #set($artifactCapitalizedName = $artifact.wrapper.javaCapitalizedName)
+    #set($artifactUncapitalizedName = $artifact.wrapper.javaUncapitalizedName)
+    #set($artifact_Campo1 = "Campo$!{operationQualifier}$!{artifact.wrapper.javaCapitalizedName}1")
+    #set($artifact_campo1 = "campo$!{operationQualifier}$!{artifact.wrapper.javaCapitalizedName}1")
+    #set($artifactObjUtilsMethod = '')
+    #set($artifactValueExpression = $VelocityAid.coalesce($artifact.wrapper.javaDefaultValue, 'null'))
+    #if($artifact.isEntity())
+        #set($artifactObjUtilsMethod = "ObjUtils.to$!{artifact.primaryKeyProperty.dataType.simpleName}")
+        #if("$!artifact.searchType" == 'LIST')
+            #set($artifactValueExpression = "${artifactObjUtilsMethod}(${artifact_campo1})")
+        #elseif("$!artifact.searchType" == 'DISPLAY')
+            #set($artifactValueExpression = "${artifactObjUtilsMethod}(${artifact.root.wrapper.javaVariableName}${artifact_Campo1})")
+        #else
+            #set($artifactValueExpression = "${artifactObjUtilsMethod}(${artifact_campo1})")
+        #end
+    #elseif($artifact.isBinaryPrimitive())
+        #set($artifactObjUtilsMethod = "ObjUtils.to$!{artifact.dataType.simpleName}")
+        #set($artifactValueExpression = "${artifactObjUtilsMethod}(${artifact_campo1})")
+    #elseif($artifact.isBooleanPrimitive())
+        #set($artifactObjUtilsMethod = 'ObjUtils.toBoolean')
+        #set($artifactValueExpression = "${artifactObjUtilsMethod}(${artifact_campo1})")
+    #elseif($artifact.isCharacterPrimitive())
+        #set($artifactObjUtilsMethod = "ObjUtils.to$!{artifact.dataType.simpleName}")
+        #if($artifact.isFileReferenceField())
+            #set($artifactValueExpression = "${artifactObjUtilsMethod}(${artifact_campo1})")
+        #else
+            #set($artifactValueExpression = "${artifactObjUtilsMethod}(${artifact_campo1})")
+        #end
+    #elseif($artifact.isNumericPrimitive())
+        #set($artifactObjUtilsMethod = "ObjUtils.to$!{artifact.dataType.simpleName}")
+        #set($artifactValueExpression = "${artifactObjUtilsMethod}(${artifact_campo1})")
+    #elseif($artifact.isTemporalPrimitive())
+        #set($artifactObjUtilsMethod = "ObjUtils.to$!{artifact.dataType.simpleName}")
+        #set($artifactValueExpression = "${artifactObjUtilsMethod}(${artifact_campo1})")
+    #end
+#end##setArtifactVariables

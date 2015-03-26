@@ -1,0 +1,36 @@
+$tab<!-- table form body opening -->
+$tab<div class="pos-div-detalle">
+$tab    <h:panelGrid id="panelGrid${panelGridSequence.next()}">
+$tab        <h:panelGrid id="panelGrid${panelGridSequence.next()}">
+$tab            <h:panelGrid id="panelGrid${panelGridSequence.next()}" columns="2">
+$tab                <webuijsf:image id="imagenMensaje1"
+$tab                    rendered="#{${pageBeanName}.gestor.urlImagenSeveridadMensajeDisponible}"
+$tab                    url="#{${pageBeanName}.gestor.urlImagenSeveridadMensaje}"/>
+$tab                <webuijsf:imageHyperlink id="hipervinculoMensaje1"
+$tab                    align="middle"
+$tab                    rendered="#{${pageBeanName}.gestor.mensajeDisponible}"
+$tab                    text="#{${pageBeanName}.gestor.mensaje}"
+$tab                    url="#{${pageBeanName}.gestor.urlAnclaPie1}"/>
+$tab            </h:panelGrid>
+$tab        </h:panelGrid>
+$tab    </h:panelGrid>
+#if($viewWithMasterHeading)
+$tab    <h:panelGrid id="panelGrid${panelGridSequence.next()}">
+            #increaseIndentationBy(2)
+            #parse("$templatePath/blocks/master-heading.vm")
+            #decreaseIndentationBy(2)
+$tab    </h:panelGrid>
+#end
+        #increaseIndentationBy(1)
+        #parse("$templatePath/blocks/table/table-viewer.vm")
+        #parse("$templatePath/blocks/table/table-filter.vm")
+        #decreaseIndentationBy(1)
+$tab    <h:panelGrid id="panelGrid${panelGridSequence.next()}">
+            #increaseIndentationBy(2)
+            #parse("$templatePath/blocks/table/table-heading.vm")
+            #parse("$templatePath/blocks/table/table-body.vm")
+            #parse("$templatePath/blocks/table/table-footing.vm")
+            #decreaseIndentationBy(2)
+$tab    </h:panelGrid>
+$tab</div>
+$tab<!-- table form body closing -->

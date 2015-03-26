@@ -1,0 +1,50 @@
+$tab<!-- tree form body opening -->
+$tab<div class="pdq-div-filtro-1">
+$tab    <h:panelGrid id="panelGrid${panelGridSequence.next()}" columns="4" rendered="#{${pageBeanName}.gestor.funcionZoomHabilitada}">
+$tab        <webuijsf:label id="etiquetaListaOpcionZum1"
+$tab            binding="#{${pageBeanName}.etiquetaListaOpcionZum1}"
+$tab            for="listaOpcionZum1"
+$tab            text="#{${pageBeanName}.gestor.i18n.textoEtiquetaListaOpcionZum}"/>
+$tab        <webuijsf:dropDown id="listaOpcionZum1"
+$tab            binding="#{${pageBeanName}.listaOpcionZum1}"
+$tab            converter="#{${pageBeanName}.converterListaOpcionZum1}"
+$tab            items="#{${pageBeanName}.gestor.opcionesZumNodo}"
+$tab            required="true"
+$tab            selected="#{${pageBeanName}.opcionZumSeleccionada}"
+$tab            toolTip="#{${pageBeanName}.gestor.i18n.toolTipListaOpcionZum}"/>
+$tab        <webuijsf:button id="botonAplicarZum1"
+$tab            actionExpression="#{${pageBeanName}.botonAplicarZum1_action}"
+$tab            binding="#{${pageBeanName}.botonAplicarZum1}"
+$tab            styleClass="pdq-button-1"
+$tab            text="#{${pageBeanName}.gestor.i18n.textoBotonAplicarZum}"
+$tab            toolTip="#{${pageBeanName}.gestor.i18n.toolTipBotonAplicarZum}"/>
+$tab        <webuijsf:button id="botonQuitarZum1"
+$tab            actionExpression="#{${pageBeanName}.botonQuitarZum1_action}"
+$tab            binding="#{${pageBeanName}.botonQuitarZum1}"
+$tab            styleClass="pdq-button-1"
+$tab            text="#{${pageBeanName}.gestor.i18n.textoBotonQuitarZum}"
+$tab            toolTip="#{${pageBeanName}.gestor.i18n.toolTipBotonQuitarZum}"/>
+$tab    </h:panelGrid>
+$tab</div>
+$tab<div class="pos-div-detalle">
+$tab    <h:panelGrid id="panelGrid${panelGridSequence.next()}">
+$tab        <h:panelGrid id="panelGrid${panelGridSequence.next()}">
+$tab            <h:panelGrid id="panelGrid${panelGridSequence.next()}" columns="2">
+$tab                <webuijsf:image id="imagenMensaje1"
+$tab                    rendered="#{${pageBeanName}.gestor.urlImagenSeveridadMensajeDisponible}"
+$tab                    url="#{${pageBeanName}.gestor.urlImagenSeveridadMensaje}"/>
+$tab                <webuijsf:imageHyperlink id="hipervinculoMensaje1"
+$tab                    align="middle"
+$tab                    rendered="#{${pageBeanName}.gestor.mensajeDisponible}"
+$tab                    text="#{${pageBeanName}.gestor.mensaje}"
+$tab                    url="#{${pageBeanName}.gestor.urlAnclaPie1}"/>
+$tab            </h:panelGrid>
+$tab        </h:panelGrid>
+            #increaseIndentationBy(2)
+            #parse("$templatePath/blocks/tree/tree-heading.vm")
+            #parse("$templatePath/blocks/tree/tree-body.vm")
+            #parse("$templatePath/blocks/tree/tree-footing.vm")
+            #decreaseIndentationBy(2)
+$tab    </h:panelGrid>
+$tab</div>
+$tab<!-- tree form body closing -->

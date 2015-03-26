@@ -1,0 +1,34 @@
+#parsePostgreSQLMacros()
+#setPostgreSQLVariables()
+#writePostgreSQLLicense()
+#writePostgreSQLAuthor('Jorge Campins')
+#set($entities = $ColUtils.filter($project.entitiesList, $isEntitySqlCodeGenEnabled, $isPersistentEntityTable))
+#set($entities = $ColUtils.sort($entities, $byEntityName))
+#foreach($entity in $entities)
+    #writeTemplate('remark-entity')
+    #writeCreateDefaults()
+#end##foreach-entity
+#break
+
+#macro(writeCreateDefaults)
+    #resetSQLVariables()
+    #set($table = $entity.wrapper.sqlTableName)
+    #set($table = $entity.wrapper.sqlSchemaQualifiedShortTableName)
+    #set($properties = $entity.columnsList)
+    #foreach($property in $properties)
+        #set($colname = $property.wrapper.sqlName)
+        #set($defaultValue = $VelocityAid.coalesce($property.wrapper.sqlDefaultValue, $FALSE))
+        #if($defaultValue)
+            #writeCreateDefaultStatement()
+        #end
+    #end##foreach-property
+#end##writeCreateDefaults
+
+#macro(writeCreateDefaultStatement)
+#if($StringUtils.containsIgnoreCase($defaultValue, 'current_user'))
+    #set($x = '--')
+#else
+    #set($x = '')
+#end
+${x}alter table $table alter column $colname set default $defaultValue;
+#end##writeCreateDefaultStatement

@@ -1,0 +1,27 @@
+#*
+select
+table_name,
+null as default_label,
+null as default_collection_label,
+'operation' as resource_type,
+false as is_enumerable,
+true as is_independent
+from information_schema.tables
+where table_catalog='$database'
+and table_schema='$schema'
+and table_type='BASE TABLE'
+order by table_name
+*#
+select distinct
+table_name,
+nombre_clase_recurso as default_label,
+nombre_dominio as default_collection_label,
+case when(numero_tipo_recurso<20) then('configuration') else('operation') end as resource_type,
+case when(numero_tipo_recurso=12) then(true) else(false) end as is_enumerable,
+case when(es_clase_recurso_independiente=0) then(false) else(true) end as is_independent
+from information_schema.tables
+left outer join dominio inner join clase_recurso on clase_recurso.id_clase_recurso=dominio.id_clase_recurso on dominio.codigo_dominio=table_name
+where table_catalog='$database'
+and table_schema='$schema'
+and table_type='BASE TABLE'
+order by table_name

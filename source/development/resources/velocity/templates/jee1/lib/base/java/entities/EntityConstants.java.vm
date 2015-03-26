@@ -1,0 +1,179 @@
+#parseJavaMacros()
+#setJavaVariables()
+#writeJavaLicense()
+#writeJavaPackage()
+#parse('templates/jee1/lib/data/java/XDP0.java.vm')
+#setVariablesRecurso($entity)
+#set($added = $imports.add("${project.rootPackageName}.lib.base.bundle.BundleWebui"))
+#writeJavaImports($imports)
+#set($query = $entity.queryTable)
+#set($ENTITY_NAME = $entity.wrapper.javaConstantName)
+#set($FUNCION_SELECT = "FUNCION_SELECT_${ENTITY_NAME}")
+#set($FUNCION_INSERT = "FUNCION_INSERT_${ENTITY_NAME}")
+#set($FUNCION_UPDATE = "FUNCION_UPDATE_${ENTITY_NAME}")
+#set($FUNCION_DELETE = "FUNCION_DELETE_${ENTITY_NAME}")
+#writeJavaAuthor('Jorge Campins')
+public class ${javaClassSimpleName}#writeJavaImplements()
+
+    public static final long ID_DOMINIO_RECURSO = ${entityNumber}L;
+
+    public static final String CODIGO_DOMINIO_RECURSO = "${codex}";
+
+    public static final String CODIGO_ENTIDAD_RECURSO = "${entity.wrapper.sqlSchemaQualifiedShortBundleKey}";
+
+#foreach($property in $dataProviderColumns)
+    public static final String COLUMNA_${property.wrapper.javaConstantName} = "${query.getSqlAlias($property)}";
+
+#end##foreach-property
+#if($esRecursoIdentificable)
+    #set($property = $entity.primaryKeyProperty)
+    public static final String COLUMNA_IDENTIFICACION_RECURSO = "${query.getSqlAlias($property)}";
+
+    public static final String ETIQUETA_IDENTIFICACION_RECURSO = BundleWebui.getString("xdp.etiqueta_identificacion_recurso");
+
+#end
+#if($esRecursoVersionable)
+    #set($property = $entity.versionProperty)
+    public static final String COLUMNA_VERSION_RECURSO = "${query.getSqlAlias($property)}";
+
+    public static final String ETIQUETA_VERSION_RECURSO = BundleWebui.getString("xdp.etiqueta_version_recurso");
+
+#end
+#if($esRecursoEnumerable)
+    #set($property = $entity.numericKeyProperty)
+    public static final String COLUMNA_NUMERO_RECURSO = "${query.getSqlAlias($property)}";
+
+    public static final String ETIQUETA_NUMERO_RECURSO = BundleWebui.getString("xdp.etiqueta_numero_recurso");
+
+#end
+#if($esRecursoCodificable)
+    #set($property = $entity.characterKeyProperty)
+    public static final String COLUMNA_CODIGO_RECURSO = "${query.getSqlAlias($property)}";
+
+    public static final String ETIQUETA_CODIGO_RECURSO = BundleWebui.getString("xdp.etiqueta_codigo_recurso");
+
+#end
+#if($esRecursoNombrable)
+    #set($property = $entity.nameProperty)
+    public static final String COLUMNA_NOMBRE_RECURSO = "${query.getSqlAlias($property)}";
+
+    public static final String ETIQUETA_NOMBRE_RECURSO = BundleWebui.getString("xdp.etiqueta_nombre_recurso");
+
+#end
+#if($esRecursoDescriptible)
+    #set($property = $entity.descriptionProperty)
+    public static final String COLUMNA_DESCRIPCION_RECURSO = "${query.getSqlAlias($property)}";
+
+    public static final String ETIQUETA_DESCRIPCION_RECURSO = BundleWebui.getString("xdp.etiqueta_descripcion_recurso");
+
+#end
+#if($esRecursoDesactivable)
+    #set($property = $entity.inactiveIndicatorProperty)
+    public static final String COLUMNA_ES_RECURSO_INACTIVO = "${query.getSqlAlias($property)}";
+
+    public static final String ETIQUETA_ES_RECURSO_INACTIVO = BundleWebui.getString("xdp.etiqueta_es_recurso_inactivo");
+
+#end
+#if($esRecursoJerarquizable)
+    #set($property = $entity.parentProperty)
+    public static final String COLUMNA_RECURSO_SUPERIOR = "${query.getSqlAlias($property)}";
+
+    public static final String ETIQUETA_RECURSO_SUPERIOR = BundleWebui.getString("xdp.etiqueta_recurso_superior");
+
+#end
+#if($esRecursoPersonalizable)
+    #set($property = $entity.ownerProperty)
+    public static final String COLUMNA_PROPIETARIO_RECURSO = "${query.getSqlAlias($property)}";
+
+    public static final String ETIQUETA_PROPIETARIO_RECURSO = BundleWebui.getString("xdp.etiqueta_propietario_recurso");
+
+#end
+#if($esRecursoSegmentable)
+    #set($property = $entity.segmentProperty)
+    public static final String COLUMNA_SEGMENTO_RECURSO = "${query.getSqlAlias($property)}";
+
+    public static final String ETIQUETA_SEGMENTO_RECURSO = BundleWebui.getString("xdp.etiqueta_segmento_recurso");
+
+#end
+#if($esRecursoConsultable)
+    public static final long FUNCION_SELECT_RECURSO = ${project.getOperationNumber($selectOperationKey, $entity)}L;
+
+#end
+    public static final long $FUNCION_SELECT = ${project.getOperationNumber($selectOperationKey, $entity)}L;
+
+    public static final long $FUNCION_INSERT = ${project.getOperationNumber($insertOperationKey, $entity)}L;
+
+    public static final long $FUNCION_UPDATE = ${project.getOperationNumber($updateOperationKey, $entity)}L;
+
+    public static final long $FUNCION_DELETE = ${project.getOperationNumber($deleteOperationKey, $entity)}L;
+
+#foreach($operation in $entity.operationsList)
+    #set($NAME = $operation.wrapper.javaConstantName)
+    #set($TYPE = "$!operation.operationType")
+    #if($StrUtils.equalsAny($TYPE, 'EXPORT', 'REPORT', 'PROCEDURE', 'PROCESS'))
+        #writeOperationNumber()
+    #end
+#end##foreach-property
+#foreach($operation in $entity.operationsList)
+    #set($NAME = $operation.wrapper.javaConstantName)
+    #set($TYPE = "$!operation.operationType")
+    #set($TIPO = '')
+    #set($name = '')
+    #if($TYPE == 'CRUD')
+    #elseif($TYPE == 'EXPORT')
+        #set($TIPO = 'ARCHIVO')
+        #set($name = $VelocityAid.coalesce($operation.exportName,    $operation.name))
+    #elseif($TYPE == 'REPORT')
+        #set($TIPO = 'INFORME')
+        #set($name = $VelocityAid.coalesce($operation.reportName,    $operation.name))
+    #elseif($TYPE == 'PROCEDURE')
+        #set($TIPO = 'PROCEDIMIENTO')
+        #set($name = $VelocityAid.coalesce($operation.procedureName, $operation.name))
+    #elseif($TYPE == 'PROCESS')
+        #set($TIPO = 'PROCESO')
+        #set($name = $VelocityAid.coalesce($operation.processName,   $operation.name))
+    #end
+    #if($TIPO != '')
+        #set($jlcn = $javaProgrammer.getJavaLowerConstantName($operation.name))
+        #set($name = $javaProgrammer.getJavaLowerConstantName($name))
+        #writeOperationString()
+    #end
+#end##foreach-operation
+#if($esRecursoConReferencias)
+    #writeRecursoConReferenciasConstants()
+#end
+}
+#break
+
+#macro(writeOperationNumber)
+    public static final long FUNCION_${TYPE}_${NAME} = ${project.getOperationNumber($operation)}L;
+
+#end##writeOperationNumber
+
+#macro(writeOperationString)
+    public static final String ETIQUETA_FUNCION_${TYPE}_${NAME} = "${codex}.${jlcn}";
+
+##  public static final String ${TIPO}_FUNCION_${NAME} = "${codex}.${name}";
+    public static final String ${TIPO}_FUNCION_${NAME} = "${codex}.${jlcn}";
+
+#end##writeOperationString
+
+#macro(writeRecursoConReferenciasConstants)
+#if($esRecursoConReferencias)
+    #foreach($property in $dataProviderColumns)
+        #if($property.isPersistentEntity() && !$property.isPersistentEnumerationEntity())
+            #set($root = $property.root)
+            #set($str0 = "$!root.wrapper.sqlSchemaQualifiedShortName")
+            #set($str1 = "$!root.primaryKeyProperty.wrapper.sqlName")
+            #set($str2 = "$!root.ownerProperty.wrapper.sqlName")
+            #set($str3 = "$!root.segmentProperty.wrapper.sqlName")
+            #writeRecursoConReferenciasOperationNumberAndStrings("COLUMNA_${property.wrapper.javaConstantName}")
+        #end
+    #end##foreach-property
+#end
+#end##writeRecursoConReferenciasConstants
+
+#macro(writeRecursoConReferenciasOperationNumberAndStrings $COLUMNA)
+    public static final long FUNCION_REFERENCIA_${COLUMNA} = ${project.getOperationNumber($selectOperationKey, $root)}L;
+
+#end##writeRecursoConReferenciasOperationNumberAndStrings

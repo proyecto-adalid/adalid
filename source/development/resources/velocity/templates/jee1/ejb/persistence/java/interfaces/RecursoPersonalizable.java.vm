@@ -1,0 +1,49 @@
+#break
+
+#macro(writeRecursoPersonalizableImport)
+#if($esRecursoPersonalizable)
+    #set($added = $imports.add("${project.rootPackageName}.lib.base.interfaces.RecursoPersonalizable"))
+    #set($added = $interfaces.add('RecursoPersonalizable'))
+#end
+#end##writeRecursoPersonalizableImport
+
+#macro(writeRecursoPersonalizableImplementation)
+#if($esRecursoPersonalizable)
+    #set($property = $entity.ownerProperty)
+    @Override
+    public String getColumnaPropietarioRecurso() {
+        return ${javaClassSimpleName}Constants.COLUMNA_PROPIETARIO_RECURSO;
+    }
+
+    @Override
+    public String getEtiquetaPropietarioRecurso() {
+        return ${javaClassSimpleName}Constants.ETIQUETA_PROPIETARIO_RECURSO;
+    }
+
+    @Override
+    public ${property.wrapper.javaPrimitiveType} getPropietarioRecurso() {
+    #if($dataProviderColumns.contains($property))
+        return ${property.wrapper.javaVariableName} == null ? null : ${property.wrapper.javaVariableName}.getIdentificacionRecurso();
+    #else
+##      return ${property.pathString};
+        #set($propertyPathList = $property.propertyPathList)
+        #set($propertyPathString = '')
+        #set($propertyPathSeparator = '')
+        #foreach($artifact in $propertyPathList)
+            #set($propertyPathString = "$propertyPathString$propertyPathSeparator$artifact.wrapper.javaVariableName")
+....        if ($propertyPathString == null) {
+....            return null;
+....        }
+            #set($propertyPathSeparator = '.')
+        #end
+        return ${propertyPathString}.getIdentificacionRecurso();
+    #end
+    }
+
+##  @Override
+##  public void setPropietarioRecurso(${property.wrapper.javaPrimitiveType} propietarioRecurso) {
+##      set${property.wrapper.javaClassName}(propietarioRecurso);
+##  }
+##
+#end
+#end##writeRecursoPersonalizableImplementation

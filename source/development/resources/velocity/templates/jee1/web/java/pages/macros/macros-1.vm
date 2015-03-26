@@ -1,0 +1,129 @@
+#break
+
+#macro(setDataProviderVariables)
+    #if($page.entity)
+        #set($xdpno = "${page.entity.wrapper.dataProviderSuffix}")
+        #set($entityDataProviderPackage = "${project.rootPackageName}.lib.data.provider.xdp${xdpno}")
+        #set($entityDataProviderClass = "${page.entity.wrapper.javaClassName}CachedRowSetDataProvider${xdpno}")
+        #set($entityDataProvider = "${page.entity.wrapper.javaVariableName}DataProvider")
+        #set($entityCachedRowSet = "${page.entity.wrapper.javaVariableName}CachedRowSet")
+        #set($EntityDataProvider = "${page.entity.wrapper.javaClassName}DataProvider")
+        #set($EntityCachedRowSet = "${page.entity.wrapper.javaClassName}CachedRowSet")
+    #end
+    #if($page.master)
+        #set($xdpno = "${page.master.wrapper.dataProviderSuffix}")
+        #set($masterDataProviderPackage = "${project.rootPackageName}.lib.data.provider.xdp${xdpno}")
+        #set($masterDataProviderClass = "${page.master.wrapper.javaClassName}CachedRowSetDataProvider${xdpno}")
+        #set($masterDataProvider = "${page.master.wrapper.javaVariableName}DataProvider")
+        #set($masterCachedRowSet = "${page.master.wrapper.javaVariableName}CachedRowSet")
+        #set($MasterDataProvider = "${page.master.wrapper.javaClassName}DataProvider")
+        #set($MasterCachedRowSet = "${page.master.wrapper.javaClassName}CachedRowSet")
+        #set($recursoMaestroDataProvider = 'recursoMaestroDataProvider')
+        #if($viewWithMasterHeading)
+            #set($masterEntityClass = "${page.master.wrapper.javaClassName}")
+            #set($masterFacadeLocal = "${page.master.wrapper.javaClassName}FacadeLocal")
+            #set($masterEntity = "${page.master.wrapper.javaVariableName}Master")
+            #set($masterFacade = "${page.master.wrapper.javaVariableName}Facade")
+        #end
+    #end
+    #set($added = $imports.add("${project.rootPackageName}.lib.core.web.app.ContextoDatosEstandar"))
+#end##setDataProviderVariables
+
+#macro(addDataProviderImports)
+    #set($added = $imports.add("${project.rootPackageName}.lib.core.db.xdp.RecursoCachedRowSetDataProvider"))
+##  #set($pageEntitiesMap = $VelocityAid.getNewLinkedHashMap())
+##  #set($pageReferencedEntitiesMap = $VelocityAid.getNewLinkedHashMap())
+    #if($page.entity)
+        #set($clazz = "${entityDataProviderPackage}.${entityDataProviderClass}")
+        #set($added = $imports.add($clazz))
+##      #set($added = $pageEntitiesMap.put($clazz, $page.entity))
+    #end
+    #if($page.master)
+        #set($clazz = "${masterDataProviderPackage}.${masterDataProviderClass}")
+        #set($added = $imports.add($clazz))
+##      #set($added = $pageEntitiesMap.put($clazz, $page.master))
+        #if($viewWithMasterHeading)
+            #set($added = $imports.add("${entityPackage}.${masterEntityClass}"))
+            #set($added = $imports.add("${facadePackage}.${masterFacadeLocal}"))
+        #end
+    #end
+##  #foreach($field in $page.rootFields)
+##      #if($field.property.isEntity())
+##          #set($xdpno = "${field.property.root.wrapper.dataProviderSuffix}")
+##          #set($xdpck = "${project.rootPackageName}.lib.data.provider.xdp${xdpno}")
+##          #set($clazz = "${xdpck}.${field.property.root.wrapper.javaClassName}CachedRowSetDataProvider${xdpno}")
+##          #set($added = $imports.add($clazz))
+##          #set($added = $pageEntitiesMap.put($clazz, $field.property.root))
+##          #set($added = $pageReferencedEntitiesMap.put($clazz, $field.property.root))
+##      #end
+##  #end
+    #if($page.entity)
+        #set($isUtilityOperationInEntity = $TRUE)
+        #set($added = $imports.add('javax.jms.JMSException'))
+        #set($added = $imports.add('javax.jms.ObjectMessage'))
+        #set($added = $imports.add("${project.rootPackageName}.ejb.core.jms.UtilityProcessMessengerLocal"))
+        #set($added = $imports.add("${project.rootPackageName}.lib.core.jms.message.AbstractMessage"))
+        #if($isExportOperationInEntity.evaluate($page.entity))
+            #set($added = $imports.add("${project.rootPackageName}.ejb.core.exporter.ExporterBrokerLocal"))
+        #end
+        #if($isReportOperationInEntity.evaluate($page.entity))
+            #set($added = $imports.add("${project.rootPackageName}.ejb.core.reporter.ReporterBrokerLocal"))
+        #end
+        #if($isProcedureOperationInEntity.evaluate($page.entity))
+            #set($added = $imports.add("${project.rootPackageName}.ejb.core.sqlagent.SqlAgentBrokerLocal"))
+        #end
+        #if($isProcessOperationInEntity.evaluate($page.entity))
+            #set($added = $imports.add("${project.rootPackageName}.ejb.business.process.${page.entity.wrapper.javaClassName}BusinessProcessLocal"))
+            #set($added = $imports.add("${project.rootPackageName}.ejb.core.jms.BusinessProcessMessengerLocal"))
+        #end
+        #set($added = $imports.add("${project.rootPackageName}.ejb.core.exporter.ExporterBrokerLocal"))
+        #set($added = $imports.add("${project.rootPackageName}.ejb.core.reporter.ReporterBrokerLocal"))
+    #end
+#end##addDataProviderImports
+
+#macro(initDataProviders)
+#if($page.entity)
+    #writeDataProviderInitialization($entityDataProvider $entityCachedRowSet)
+    #if($page.master)
+##      #writeDataProviderInitialization($masterDataProvider $masterCachedRowSet)
+        #writeMasterDataProviderInitialization($masterDataProvider $masterCachedRowSet)
+    #end
+##  #foreach($referencedEntity in $pageReferencedEntitiesMap)
+##      #set($dataProvider = "${referencedEntity.wrapper.javaVariableName}ReferenceDataProvider")
+##      #set($cachedRowSet = "${referencedEntity.wrapper.javaVariableName}ReferenceCachedRowSet")
+##      #writeDataProviderInitialization($dataProvider $cachedRowSet)
+##  #end
+#end
+#end##initDataProviders
+
+#macro(writeDataProviderInitialization $dataProvider $cachedRowSet)
+    #set($managedBeanName = "${javaProgrammer.getJavaClassName($module.alias)}ContextDataBean")
+##      ${dataProvider}.setCachedRowSet((javax.sql.rowset.CachedRowSet) getValue("#{${managedBeanName}.${cachedRowSet}}"));
+        ${dataProvider}.setCachedRowSet(getCachedRowSetValue("#{${managedBeanName}.${cachedRowSet}}"));
+#end##writeDataProviderInitialization
+
+#macro(writeMasterDataProviderInitialization $dataProvider $cachedRowSet)
+    #set($managedBeanName = "${javaProgrammer.getJavaClassName($module.alias)}ContextDataBean")
+##      ${dataProvider}.setCachedRowSet((javax.sql.rowset.CachedRowSet) getValue("#{${managedBeanName}.${cachedRowSet}}"));
+//      ${dataProvider}.setCachedRowSet(getCachedRowSetValue("#{${managedBeanName}.${cachedRowSet}}"));
+#end##writeMasterDataProviderInitialization
+
+#macro(destroyDataProviders)
+#if($page.entity)
+    #writeDataProviderDestroyer($entityDataProvider)
+    #if($page.master)
+##      #writeDataProviderDestroyer($masterDataProvider)
+        #writeDataProviderDestroyer($recursoMaestroDataProvider)
+    #end
+##  #foreach($referencedEntity in $pageReferencedEntitiesMap)
+##      #set($dataProvider = "${referencedEntity.wrapper.javaVariableName}ReferenceDataProvider")
+##      #writeDataProviderDestroyer($dataProvider)
+##  #end
+#end
+#end##destroyDataProviders
+
+#macro(writeDataProviderDestroyer $dataProvider)
+        if (${dataProvider} != null) {
+            ${dataProvider}.close();
+        }
+#end##writeDataProviderDestroyer

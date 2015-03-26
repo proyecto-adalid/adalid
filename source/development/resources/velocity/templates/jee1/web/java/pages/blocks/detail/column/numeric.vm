@@ -1,0 +1,47 @@
+#set($componentName = "label${fieldFirstName}${tabString}")
+#parse("$templatePath/blocks/webuijsf/label.vm")
+#set($componentName = "campo${fieldFirstName}${tabString}")
+#parse("$templatePath/blocks/webuijsf/text-field.vm")
+#set($componentName = "campo${fieldFirstName}${tabString}Texto1")
+#parse("$templatePath/blocks/webuijsf/static-text-1.vm")
+#set($componentName = "helpInline${fieldFirstName}${tabString}")
+#parse("$templatePath/blocks/webuijsf/help-inline.vm")
+#set($componentName = "converter${fieldFirstName}${tabString}")
+#setNumericConverterClassName()
+#parse("$templatePath/blocks/webuijsf/component.vm")
+#set($componentName = "validator${fieldFirstName}${tabString}")
+#setNumericValidatorClassName()
+#parse("$templatePath/blocks/webuijsf/component.vm")
+#if($tabString == '')
+    #writeValidatorExpression()
+#end
+#break
+
+#macro(setNumericConverterClassName)
+    #if($field.property.isBigDecimalData() || $field.property.isDoubleData() || $field.property.isFloatData())
+        #set($componentClassName = 'NumberConverter')
+    #elseif($field.property.isEntity())
+        #set($componentClassName = "${field.property.primaryKeyProperty.dataType.simpleName}Converter")
+    #else
+        #set($componentClassName = "${field.property.dataType.simpleName}Converter")
+    #end
+#end##setNumericConverterClassName
+
+#macro(setNumericValidatorClassName)
+    #if($field.property.isBigDecimalData() || $field.property.isDoubleData() || $field.property.isFloatData())
+        #set($componentClassName = 'DoubleRangeValidator')
+    #else
+        #set($componentClassName = 'LongRangeValidator')
+    #end
+#end##setNumericValidatorClassName
+
+#macro(writeValidatorExpression)
+    /**
+     * ${campo1}.validatorExpression
+     */
+    public void ${campo1}_validate(FacesContext context, UIComponent component, Object value) {
+        validator${fieldFirstName}.validate(context, component, value);
+        asistente.${campo1}_validate(context, component, value);
+    }
+
+#end##writeValidatorExpression

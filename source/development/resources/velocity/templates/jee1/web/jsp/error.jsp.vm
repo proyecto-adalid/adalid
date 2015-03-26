@@ -1,0 +1,75 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+#parseJSPMacros()
+#setJSPVariables()
+#writeXMLDeclaration()
+#writeJSPLicense()
+#writeJSPAuthor('Jorge Campins')
+<%@ page import="${project.rootPackageName}.lib.base.bundle.BundleWebui" %>
+<%@ page import="java.util.Locale" %>
+<%
+    Locale locale = request.getLocale();
+    String submit = BundleWebui.getString("error.jsp.txt30", locale);
+%>
+<html>
+    <head>
+        <title><% out.print(BundleWebui.getString("error.jsp.title", locale)); %></title>
+    </head>
+    <body bgcolor="#fafafa" style="font-family: Arial,Helvetica,sans-serif" onload="initialize()" onunload="terminate()">
+        <script type="text/javascript">
+            function initialize() {
+                boton.focus();
+            }
+            function terminate() {
+                var winname = window.name.replace(/\_/gi, '/');
+                window.name = winname;
+            }
+        </script>
+        <!--<form>-->
+            <div>
+                <img alt="" src="resources/masthead_left.png" style="float: left"/>
+                <img alt="" src="resources/masthead_right.png" style="float: right"/>
+            </div>
+            <div style="clear: both"/>
+            <div style="background-color: #e5e9ed; border: 1px solid gray">
+                <div style="display: table; height: 36px">
+                    <div style="display: table-cell; vertical-align: middle">
+                        <b style="margin-left: 4px">
+                            <font size="4" color="black">
+                                <% out.print(BundleWebui.getString("${project.wrapper.hyphenatedAlias}", locale)); %>
+                            </font>
+                        </b>
+                    </div>
+                </div>
+            </div>
+            <div style="float: left">
+                <img onclick="gohome()" alt="" src="resources/mastbody.png"/>
+            </div>
+            <div style="float: left; margin-left: 12px; margin-top: 8px">
+                <table border="0" cellspacing="5" style="margin-left: 4px; margin-top: 12px; font-size: 1em">
+                    <tr>
+                        <th align="right"><img alt="" src="resources/failed_medium.gif"/></th>
+                        <td align="left">
+                            <b>
+                                <% out.print(BundleWebui.getString("error.jsp.txt10", locale)); %>
+                            </b>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th align="right"></th>
+                        <td align="left">
+                            <input id="boton" type="submit" style="margin-top: 12px" value="<%=submit%>" onclick="history.back()"/>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            <div style="clear: both"/>
+            <div style="background-color: #e5e9ed; border: 1px solid gray">
+                <div style="display: table; height: 36px">
+                    <div style="display: table-cell; vertical-align: middle">
+                        <a style="margin-left: 4px; color: #e5e9ed"></a>
+                    </div>
+                </div>
+            </div>
+        <!--</form>-->
+    </body>
+</html>

@@ -1,0 +1,23 @@
+select distinct
+column_name, ordinal_position, data_type, character_maximum_length, numeric_precision, numeric_scale, datetime_precision, column_default,
+case when(is_nullable='NO')then(false) else(true) end as is_nullable,
+case when(pkc.oid is null) then(false) else(true) end as is_primary_key,
+case when(uqc.oid is null) then(false) else(true) end as is_unique_key,
+#*
+case when(ckc.oid is null) then(false) else(true) end as is_booleanish,
+*#
+case when(data_type='integer' and column_name like'es\_%') then(true) else(false) end as is_booleanish,
+ftab.relname as foreign_table_name
+from information_schema.columns
+inner join pg_namespace nsp on nsp.nspname=table_schema
+inner join pg_class tab on tab.relname=table_name and tab.relnamespace=nsp.oid
+left outer join pg_constraint pkc on pkc.contype='p' and pkc.conrelid=tab.oid and array_upper(pkc.conkey,1)=1 and pkc.conkey[1]=ordinal_position
+left outer join pg_constraint uqc on uqc.contype='u' and uqc.conrelid=tab.oid and array_upper(uqc.conkey,1)=1 and uqc.conkey[1]=ordinal_position
+left outer join pg_constraint ckc on ckc.contype='c' and ckc.conrelid=tab.oid and array_upper(ckc.conkey,1)=1 and ckc.conkey[1]=ordinal_position
+and ckc.consrc = '(('||column_name||' >= 0) AND ('||column_name||' <= 1))'
+left outer join(pg_constraint fkc inner join pg_class ftab on ftab.oid=fkc.confrelid)
+on fkc.contype='f' and fkc.conrelid=tab.oid and array_upper(fkc.conkey,1)=1 and fkc.conkey[1]=ordinal_position
+where table_catalog='$database'
+and table_schema='$schema'
+and table_name='$table'
+order by ordinal_position

@@ -1,0 +1,8 @@
+$tab<!-- tree footing opening -->
+$tab<h:panelGrid id="panelGrid${panelGridSequence.next()}">
+        #increaseIndentationBy(1)
+        #parse("$templatePath/blocks/crud-buttons-grid.vm")
+        #parse("$templatePath/blocks/navigation-hyperlinks-grid.vm")
+        #decreaseIndentationBy(1)
+$tab</h:panelGrid>
+$tab<!-- tree footing closing -->

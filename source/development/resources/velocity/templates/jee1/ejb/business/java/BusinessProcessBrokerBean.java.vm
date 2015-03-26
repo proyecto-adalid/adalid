@@ -1,0 +1,121 @@
+#parseJavaMacros()
+#setJavaVariables()
+#writeJavaLicense()
+#writeJavaPackage()
+#set($entities = $ColUtils.filter($project.entitiesList, $isPersistentEntity, $isProcessOperationInEntity))
+#set($entities = $ColUtils.sort($entities, $byEntityName))
+#addImports()
+#writeJavaImports($imports)
+#writeJavaAuthor('Jorge Campins')
+@Stateless
+public class BusinessProcessBrokerBean implements BusinessProcessBrokerLocal {
+
+    // <editor-fold defaultstate="collapsed" desc="@EJB">
+    #writeBusinessProcessLocalEJBs()
+    @EJB
+    private RastroProcesoFacadeLocal rastroProcesoFacade;
+    // </editor-fold>
+
+    @Override
+    public BusinessProcessMessage processBusinessProcessMessage(BusinessProcessMessage message) {
+        message = (BusinessProcessMessage) Auditor.ponerProcesoEnEjecucion(message);
+        if (CondicionEjeFunEnumeration.EJECUCION_EN_PROGRESO.equals(message.getCondicion())) {
+            message.setSubprocesos(0);
+            message.setGrabarRastroProcesoPendiente(true);
+            message.setGrabarRastroFuncionPendiente(true);
+            message.setGrabarTareasUsuarioPendiente(true);
+            try {
+                // <editor-fold defaultstate="collapsed">
+                #writeExecuteProcess()
+                // </editor-fold>
+            } catch (Exception ex) {
+                Auditor.grabarRastroProceso(message, ex);
+                TLC.getBitacora().fatal(message.getMensajeCorto());
+                TLC.getBitacora().fatal(CBM.PROCESS_EXECUTION_ABEND, message.getRastro());
+                throw ex instanceof EJBException ? (EJBException) ex : new EJBException(ex);
+            }
+        }
+        return message;
+    }
+
+    @Override
+    public BusinessProcessMessage processRedeliveredBusinessProcessMessage(BusinessProcessMessage message) {
+        try {
+            message.setCondicion(CondicionEjeFunEnumeration.EJECUCION_CANCELADA);
+            message.setMensaje(TLC.getBitacora().error(CBM.PROCESS_EXECUTION_ABEND, message.getRastro()));
+            RastroProceso rastro = rastroProcesoFacade.find(message.getRastro(), true);
+            if (rastro != null) {
+                Integer numeroCondicionEjeFun = rastro.getNumeroCondicionEjeFun().getNumeroCondicionEjeFun();
+                message.setCondicion(CondicionEjeFunEnumeration.valueOf(numeroCondicionEjeFun));
+                message.setMensaje(rastro.getDescripcionError());
+            }
+        } catch (Throwable throwable) {
+            TLC.getBitacora().error(throwable);
+        }
+        return message;
+    }
+
+}
+#break
+
+#macro(addImports)
+    #foreach($entity in $entities)
+        #set($added = $imports.add("${processPackage}.${entity.wrapper.javaClassName}BusinessProcessLocal"))
+        #set($operations = $ColUtils.filter($entity.businessOperationsList, $isProcessOperation))
+        #set($operations = $ColUtils.sort($operations, $byOperationName))
+        #foreach($operation in $operations)
+            #set($message = "${entity.wrapper.javaClassName}${operation.wrapper.javaClassName}Message")
+            #set($added = $imports.add("${messagePackage}.${message}"))
+        #end##foreach-operation
+    #end##foreach-entity
+    #set($added = $imports.add("${project.rootPackageName}.ejb.core.jms.BusinessProcessBrokerLocal"))
+    #set($added = $imports.add("${project.rootPackageName}.ejb.core.jms.BusinessProcessMessage"))
+    #set($added = $imports.add("${project.rootPackageName}.ejb.persistence.entity.RastroProceso"))
+    #set($added = $imports.add("${project.rootPackageName}.ejb.persistence.facade.RastroProcesoFacadeLocal"))
+    #set($added = $imports.add("${project.rootPackageName}.lib.base.constant.CBM"))
+    #set($added = $imports.add("${project.rootPackageName}.lib.base.entity.enumeration.CondicionEjeFunEnumeration"))
+    #set($added = $imports.add("${project.rootPackageName}.lib.core.app.TLC"))
+    #set($added = $imports.add("${project.rootPackageName}.lib.core.control.Auditor"))
+    #set($added = $imports.add('javax.ejb.EJB'))
+    #set($added = $imports.add('javax.ejb.EJBException'))
+    #set($added = $imports.add('javax.ejb.Stateless'))
+#end##addImports
+
+#macro(writeBusinessProcessLocalEJBs)
+    #foreach($entity in $entities)
+    @EJB
+    private ${entity.wrapper.javaClassName}BusinessProcessLocal ${entity.wrapper.javaVariableName};
+
+    #end##foreach-entity
+#end##writeBusinessProcessLocalEJBs
+
+#macro(writeExecuteProcess)
+    #set($ifkw = 'if')
+    #foreach($entity in $entities)
+        #set($bpl = $entity.wrapper.javaVariableName)
+        #set($operations = $ColUtils.filter($entity.businessOperationsList, $isProcessOperation))
+        #set($operations = $ColUtils.sort($operations, $byOperationName))
+        #foreach($operation in $operations)
+            #set($message = "${entity.wrapper.javaClassName}${operation.wrapper.javaClassName}Message")
+            #set($process = "${operation.wrapper.javaVariableName}")
+                #writeExecuteProcessIfElseIf()
+            #set($ifkw = '} else if')
+        #end##foreach-operation
+    #end##foreach-entity
+    #if($ifkw != 'if')
+        #writeExecuteProcessElse()
+    #end
+#end##writeExecuteProcess
+
+#macro(writeExecuteProcessIfElseIf)
+                $ifkw (message instanceof ${message}) {
+                    message = ${bpl}.${process}((${message}) message);
+#end##writeExecuteProcessIfElseIf
+
+#macro(writeExecuteProcessElse)
+                } else {
+                    message.setCondicion(CondicionEjeFunEnumeration.EJECUCION_CANCELADA);
+                    message.setMensaje(TLC.getBitacora().error(CBM.PROCESS_EXECUTION_ABEND,
+                        message.getRastro() + "(" + message.getClass().getName() + ")"));
+                }
+#end##writeExecuteProcessElse

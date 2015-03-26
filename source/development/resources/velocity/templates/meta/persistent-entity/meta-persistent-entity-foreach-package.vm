@@ -1,0 +1,2 @@
+
+#set($added = $imports.add("adalid.core.*"))

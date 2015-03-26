@@ -1,0 +1,87 @@
+#setGlobalVariables()
+#parse('templates/jee1/macros/macros-3.vm')
+#setTargetEnvironmentVariables()
+annotation.processing.enabled=true
+annotation.processing.enabled.in.editor=false
+annotation.processing.processors.list=
+annotation.processing.run.all.processors=true
+annotation.processing.source.output=${dollar}{build.generated.sources.dir}/ap-source-output
+application.title=${project.alias}-resources
+application.vendor=Jorge Campins
+build.classes.dir=${dollar}{build.dir}/classes
+build.classes.excludes=**/*.java,**/*.form
+${pound} This directory is removed when the project is cleaned:
+build.dir=build
+build.generated.dir=${dollar}{build.dir}/generated
+build.generated.sources.dir=${dollar}{build.dir}/generated-sources
+${pound} Only compile against the classpath explicitly listed here:
+build.sysclasspath=ignore
+build.test.classes.dir=${dollar}{build.dir}/test/classes
+build.test.results.dir=${dollar}{build.dir}/test/results
+${pound} Uncomment to specify the preferred debugger connection transport:
+${pound}debug.transport=dt_socket
+debug.classpath=${backslash}
+    ${dollar}{run.classpath}
+debug.test.classpath=${backslash}
+    ${dollar}{run.test.classpath}
+${pound} This directory is removed when the project is cleaned:
+dist.dir=dist
+dist.jar=${dollar}{dist.dir}/${project.alias}-resources.jar
+dist.javadoc.dir=${dollar}{dist.dir}/javadoc
+endorsed.classpath=
+excludes=
+includes=**
+jar.archive.disabled=${dollar}{jnlp.enabled}
+jar.compress=false
+jar.index=${dollar}{jnlp.enabled}
+javac.classpath=
+${pound} Space-separated list of extra javac options
+javac.compilerargs=
+javac.deprecation=false
+javac.processorpath=${backslash}
+    ${dollar}{javac.classpath}
+javac.source=$targetShortJavaVersion
+javac.target=$targetShortJavaVersion
+javac.test.classpath=${backslash}
+    ${dollar}{javac.classpath}:${backslash}
+    ${dollar}{build.classes.dir}
+javac.test.processorpath=${backslash}
+    ${dollar}{javac.test.classpath}
+javadoc.additionalparam=
+javadoc.author=false
+javadoc.encoding=${dollar}{source.encoding}
+javadoc.noindex=false
+javadoc.nonavbar=false
+javadoc.notree=false
+javadoc.private=false
+javadoc.splitindex=true
+javadoc.use=true
+javadoc.version=false
+javadoc.windowtitle=
+jnlp.codebase.type=no.codebase
+jnlp.descriptor=application
+jnlp.enabled=false
+jnlp.mixed.code=default
+jnlp.offline-allowed=false
+jnlp.signed=false
+jnlp.signing=
+jnlp.signing.alias=
+jnlp.signing.keystore=
+meta.inf.dir=${dollar}{src.dir}/META-INF
+mkdist.disabled=true
+platform.active=default_platform
+run.classpath=${backslash}
+    ${dollar}{javac.classpath}:${backslash}
+    ${dollar}{build.classes.dir}
+${pound} Space-separated list of JVM arguments used when running the project.
+${pound} You may also define separate properties like run-sys-prop.name=value instead of -Dname=value.
+${pound} To set system properties for unit tests define test-sys-prop.name=value:
+run.jvmargs=
+run.test.classpath=${backslash}
+    ${dollar}{javac.test.classpath}:${backslash}
+    ${dollar}{build.test.classes.dir}
+source.encoding=UTF-8
+src.dir=src/code
+src.copy.dir=src/copy
+src.crop.dir=src/crop
+test.src.dir=test

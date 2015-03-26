@@ -1,0 +1,77 @@
+#if("$!property.urlDisplayType" == 'BUTTON')
+    #set($sufijoComponenteAlternativo = 'Boton3')
+#elseif("$!property.urlDisplayType" == 'HYPERLINK')
+    #set($sufijoComponenteAlternativo = 'Hiper3')
+#else
+    #set($sufijoComponenteAlternativo = '')
+#end
+    // <editor-fold defaultstate="collapsed" desc="${fieldClassName}">
+    #parse("$templatePath/blocks/column/validator-expression.vm")
+#if($sufijoComponenteAlternativo != '')
+
+    /**
+     * ${campo1}${sufijoComponenteAlternativo}.onClick
+     */
+    public String getScript${Campo1}${sufijoComponenteAlternativo}() {
+        return null;
+    }
+
+    /**
+     * ${campo1}${sufijoComponenteAlternativo}.url
+     */
+    public String getUrl${Campo1}${sufijoComponenteAlternativo}() {
+        if (bean.getGestor().isFilaNoDisponible()) {
+            return null;
+        }
+        RowKey rowKey = bean.getGestor().getCurrentRowKey();
+        boolean rowAvailable = bean.get${EntityDataProvider}().isRowAvailable(rowKey);
+    #if("$!property.urlType" == 'INTERNAL')
+        String urx = rowAvailable ? bean.get${EntityDataProvider}().get${fieldClassName}(rowKey) : null;
+        String url = urx == null ? null : URX.REDIRECT + "?url=" + JSF.encodeURX(urx) + "&twn=" + URX.getTargetWindowName(urx);
+    #else
+        String url = rowAvailable ? bean.get${EntityDataProvider}().get${fieldClassName}(rowKey) : null;
+    #end
+        return url;
+    }
+
+    /**
+     * ${campo1}${sufijoComponenteAlternativo}.text
+     */
+    public String getText${Campo1}${sufijoComponenteAlternativo}() {
+        if (bean.getGestor().isFilaNoDisponible()) {
+            return null;
+        }
+        RowKey rowKey = bean.getGestor().getCurrentRowKey();
+        boolean rowAvailable = bean.get${EntityDataProvider}().isRowAvailable(rowKey);
+        String url = rowAvailable ? bean.get${EntityDataProvider}().get${fieldClassName}(rowKey) : null;
+        return url;
+    }
+
+    /**
+     * ${campo1}${sufijoComponenteAlternativo}.toolTip
+     */
+    public String getToolTip${Campo1}${sufijoComponenteAlternativo}() {
+        if (bean.getGestor().isFilaNoDisponible()) {
+            return null;
+        }
+        RowKey rowKey = bean.getGestor().getCurrentRowKey();
+        boolean rowAvailable = bean.get${EntityDataProvider}().isRowAvailable(rowKey);
+        String url = rowAvailable ? bean.get${EntityDataProvider}().get${fieldClassName}(rowKey) : null;
+        return url;
+    }
+
+    /**
+     * ${campo1}${sufijoComponenteAlternativo}.rendered
+     */
+    public boolean is${Campo1}${sufijoComponenteAlternativo}Rendered() {
+        if (bean.getGestor().isFilaNoDisponible()) {
+            return false;
+        }
+        RowKey rowKey = bean.getGestor().getCurrentRowKey();
+        boolean rowAvailable = bean.get${EntityDataProvider}().isRowAvailable(rowKey);
+        return rowAvailable && bean.get${EntityDataProvider}().get${fieldClassName}(rowKey) != null;
+    }
+#end
+    // </editor-fold>
+
+#break

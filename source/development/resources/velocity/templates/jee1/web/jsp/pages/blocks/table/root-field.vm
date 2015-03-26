@@ -1,0 +1,31 @@
+#foreach($field in $page.rootFields)
+    #if($field.property.equals($page.reference))
+    #elseif($field.property.isTableField())
+        #setFieldVariables()
+        #if($field.property.isEntity())
+            #if($fieldSearchType == 'LIST')
+                #parse("$templatePath/blocks/table/column/entity-list.vm")
+            #elseif($fieldSearchType == 'DISPLAY')
+                #parse("$templatePath/blocks/table/column/entity.vm")
+            #else
+                #parse("$templatePath/blocks/table/column/numeric.vm")
+            #end
+        #elseif($field.property.isBinaryPrimitive())
+            #parse("$templatePath/blocks/table/column/binary.vm")
+        #elseif($field.property.isBooleanPrimitive())
+            #parse("$templatePath/blocks/table/column/boolean.vm")
+        #elseif($field.property.isCharacterPrimitive())
+            #if($field.property.isFileReferenceField())
+                #parse("$templatePath/blocks/table/column/file-name.vm")
+            #elseif($field.property.isUrlProperty())
+                #parse("$templatePath/blocks/table/column/url.vm")
+            #else
+                #parse("$templatePath/blocks/table/column/character.vm")
+            #end
+        #elseif($field.property.isNumericPrimitive())
+            #parse("$templatePath/blocks/table/column/numeric.vm")
+        #elseif($field.property.isTemporalPrimitive())
+            #parse("$templatePath/blocks/table/column/temporal.vm")
+        #end
+    #end
+#end

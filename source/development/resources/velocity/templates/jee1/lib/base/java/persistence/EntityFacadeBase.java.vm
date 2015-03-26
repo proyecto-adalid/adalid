@@ -1,0 +1,62 @@
+#parseJavaMacros()
+#setJavaVariables()
+#writeJavaLicense()
+#writeJavaPackage()
+#setLocalVariables()
+#addImports()
+#writeJavaImports($imports)
+#writeJavaAuthor('Jorge Campins')
+public interface ${javaClassSimpleName}#writeJavaImplements()
+
+    ${entityClass} find(Object id);
+
+    ${entityClass} find(Object id, boolean refresh);
+
+#if($entity.characterKeyProperty)
+    ${entityClass} findByCodigo(String codigo);
+
+    ${entityClass} findByCodigo(String codigo, boolean refresh);
+
+#end
+    List<? extends ${entityClass}> findAll();
+
+    List<? extends ${entityClass}> findAll(boolean refresh);
+
+    List<? extends ${entityClass}> findByQuery(String query);
+
+    List<? extends ${entityClass}> findByQuery(String query, boolean refresh);
+
+    List<? extends ${entityClass}> findByQuery(String query, EnumTipoQuery tipo);
+
+    List<? extends ${entityClass}> findByQuery(String query, EnumTipoQuery tipo, boolean refresh);
+
+    List<? extends ${entityClass}> findByQuery(String query, EnumTipoQuery tipo, int max);
+
+    List<? extends ${entityClass}> findByQuery(String query, EnumTipoQuery tipo, int max, boolean refresh);
+#*
+//  void flush();
+//
+//  void merge(${entityClass} ${entity.wrapper.javaVariableName});
+//
+//  void persist(${entityClass} ${entity.wrapper.javaVariableName});
+//
+//  void refresh(${entityClass} ${entity.wrapper.javaVariableName});
+//
+//  void remove(${entityClass} ${entity.wrapper.javaVariableName});
+*#
+}
+#break
+
+#macro(setLocalVariables)
+#set($entityClass = "$!{entity.wrapper.javaClassName}Base")
+#set($pack1 = "$!package")
+#set($pack2 = "$!baseEntityPackage")
+#end##setLocalVariables
+
+#macro(addImports)
+#if($pack2 != '' && $pack2 != $pack1)
+    #set($added = $imports.add("${pack2}.${entityClass}"))
+#end
+#set($added = $imports.add("${project.rootPackageName}.lib.base.enumeration.EnumTipoQuery"))
+#set($added = $imports.add('java.util.List'))
+#end##addImports

@@ -1,0 +1,55 @@
+#set($fieldMaxLength = 0)
+#set($fieldMinLength = 0)
+#set($fieldRegularExpression = '')
+#set($componentTemplateName = 'text-field')
+#if($parameter.isCharacterData())
+    #set($fieldMaxLength = 1)
+    #set($fieldMinLength = 0)
+#elseif($parameter.isStringData())
+    #set($fieldMaxLength = $VelocityAid.coalesce($parameter.maxLength, 0))
+    #set($fieldMinLength = $VelocityAid.coalesce($parameter.minLength, 0))
+    #if($fieldMaxLength == 0 || $fieldMaxLength > 200)
+        #set($componentTemplateName = 'text-area')
+    #elseif($parameter.isPassword())
+        #set($componentTemplateName = 'password-field')
+    #end
+    #set($fieldRegularExpression = "$!parameter.pattern.pattern()")
+#end
+#set($componentName = "label${fieldFirstName}")
+#parse("$templatePath/blocks/webuijsf/label.vm")
+#set($componentName = "campo${fieldFirstName}")
+#parse("$templatePath/blocks/webuijsf/${componentTemplateName}.vm")
+#set($componentName = "helpInline${fieldFirstName}")
+#parse("$templatePath/blocks/webuijsf/help-inline.vm")
+#if($fieldMaxLength > 0 || $fieldMinLength > 0)
+    #set($componentName = "validator${fieldFirstName}")
+    #set($componentClassName = 'LengthValidator')
+    #parse("$templatePath/blocks/webuijsf/component.vm")
+#end
+#writeValidatorExpression()
+#parse("$templatePath/blocks/console/column/shared.vm")
+#break
+
+#macro(writeValidatorExpression)
+    /**
+     * ${campo1}.validatorExpression
+     */
+    public void ${campo1}_validate(FacesContext context, UIComponent component, Object value) {
+    #if($fieldMaxLength > 0 || $fieldMinLength > 0)
+        validator${fieldFirstName}.validate(context, component, value);
+    #end
+    #if($fieldRegularExpression != '')
+        if (value instanceof String) {
+            String valor = (String) value;
+            String regex = "$fieldRegularExpression";
+            if (valor.matches(regex)) {
+            } else {
+                String summary = Bitacora.getTextoMensaje(CBM.CHECK_CHANGES_EXCEPTION_6, regex);
+                FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_ERROR, summary, null);
+                throw new ValidatorException(message);
+            }
+        }
+    #end
+    }
+
+#end##writeValidatorExpression

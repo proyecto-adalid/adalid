@@ -1,0 +1,123 @@
+    #if($operationChecklist.isEmpty() && $operationStatelist.isEmpty())
+    #else
+....    private boolean ${operationName}Allowed() {
+        #if($operationStatelist.isEmpty())
+....        boolean allow = true;
+        #else
+....        boolean allow;
+....        List<String> args = new ArrayList<>();
+            #set($stateEntity = $FALSE)
+            #set($stateExpression = $FALSE)
+            #set($stateErrorMessageBundle = '')
+            #set($stateErrorMessageBundleMethod = '')
+            #set($stateErrorMessageBundleKey = '')
+            #foreach($state in $operationStatelist)
+                #if($foreach.first)
+............        allow = ${state.wrapper.javaVariableName}();
+                #else
+............        if (!allow) {
+............            allow = ${state.wrapper.javaVariableName}();
+............        }
+                #end
+                #set($stateEntity = $page.entity)
+                #set($stateExpression = $state)
+                #set($stateErrorMessageBundle = 'BundleDominios')
+                #set($stateErrorMessageBundleMethod = 'getStateError')
+                #set($stateErrorMessageBundleKey = "${page.entity.wrapper.sqlName}.${state.wrapper.sqlName}")
+                #set($stateErrorMessageBundleKey = "${page.entity.wrapper.sqlSchemaQualifiedShortName}.${state.wrapper.sqlName}")
+                #set($stateExpressionDefaultErrorMessage = "$!state.wrapper.bundleDefaultErrorMessageChoice")
+                #if($stateExpressionDefaultErrorMessage != '')
+............        if (!allow) {
+............//          args.add("$stateExpressionDefaultErrorMessage");
+............            args.add(${stateErrorMessageBundle}.${stateErrorMessageBundleMethod}("${stateErrorMessageBundleKey}"));
+............        }
+                #end
+            #end
+            #writeStateExpressionErrorMessageJoin()
+        #end
+        #if(!$operationChecklist.isEmpty())
+....        boolean check;
+        #end
+        #foreach($check in $operationChecklist)
+....        check = ${operationName}_${check.wrapper.javaVariableName}();
+....        allow &= check;
+        #end
+....        return allow;
+....    }
+
+        #foreach($check in $operationChecklist)
+            #writeExpression()
+        #end
+    #end
+#break
+
+#macro(writeExpression)
+    private boolean ${operationName}_${check.wrapper.javaVariableName}() {
+        Object obj;
+        #set($errorMessageBundleKey = "<${page.entity.wrapper.sqlName}.${operation.wrapper.sqlName}.${check.wrapper.sqlName}>")
+        #set($errorMessageBundleKey = "<${page.entity.wrapper.sqlSchemaQualifiedShortName}.${operation.wrapper.sqlName}.${check.wrapper.sqlName}>")
+        #set($parameterizedExpression = $check.wrapper.javaParameterizedExpression)
+        #set($expressionParametersMap = $parameterizedExpression.parametersMap)
+        #set($namedValuesMap = $parameterizedExpression.namedValuesMap)
+        #writeNamedValues()
+        #foreach($expressionParameterKey in $expressionParametersMap.keySet())
+            #writeAssignObjValue()
+....        $artifactJavaType $expressionParameterKey = $artifactObjUtilsMethod(obj);
+        #end
+        #set($maxLineLength = 0)
+        #set($newLineString = '<EOL>')
+        #set($string2split = "$!parameterizedExpression.expression")
+        #set($string2split = "boolean check = $string2split;")
+        #set($string2split = $string2split.replace(":", "${newLineString}${TAB}:"))
+        #set($string2split = $string2split.replace("&&", "${newLineString}${TAB}&&"))
+        #set($string2split = $string2split.replace("||", "${newLineString}${TAB}||"))
+        #set($string2split = $string2split.replace("), ", "),${newLineString}${TAB}"))
+        #set($string2lines = $VelocityAid.split($string2split, $maxLineLength, $newLineString, $FALSE, $TAB))
+        #foreach($line in $string2lines)
+....        ${line}
+        #end
+        if (!check) {
+            #set($expressionDefaultErrorMessage = "$!check.wrapper.bundleDefaultErrorMessageChoice")
+            #if($expressionDefaultErrorMessage != '')
+....//          TLC.getBitacora().error("$expressionDefaultErrorMessage");
+            #end
+            TLC.getBitacora().error("${errorMessageBundleKey}");
+        }
+        return check;
+    }
+
+#end##writeExpression
+
+#macro(writeStateExpressionErrorMessage)
+    #set($parameterSearchQueryKey = "${page.entity.wrapper.sqlName}.${operation.wrapper.sqlName}.${operation.instanceParameter.wrapper.sqlName}")
+    #set($parameterSearchQueryKey = "${page.entity.wrapper.sqlSchemaQualifiedShortName}.${operation.wrapper.sqlName}.${operation.instanceParameter.wrapper.sqlName}")
+        if (!allow) {
+            String arg0 = BundleParametros.getLabel("${parameterSearchQueryKey}");
+            String arg1 = ObjUtils.toString($entityVariableName);
+            #if($stateExpression)
+                #set($stateExpressionDefaultErrorMessage = "$!stateExpression.wrapper.bundleDefaultErrorMessageChoice")
+            #else
+                #set($stateExpressionDefaultErrorMessage = '')
+            #end
+            #if($stateExpressionDefaultErrorMessage == '')
+....            TLC.getBitacora().error(CBM.RECURSO_NO_PROCESABLE, arg0, arg1, "");
+            #else
+....//          String arg2 = "$stateExpressionDefaultErrorMessage";
+....            String arg2 = StrUtils.enclose(${stateErrorMessageBundle}.${stateErrorMessageBundleMethod}("${stateErrorMessageBundleKey}"));
+....            TLC.getBitacora().error(CBM.RECURSO_NO_PROCESABLE, arg0, arg1, arg2);
+            #end
+            return false;
+        }
+#end##writeStateExpressionErrorMessage
+
+#macro(writeStateExpressionErrorMessageJoin)
+    #set($parameterSearchQueryKey = "${page.entity.wrapper.sqlName}.${operation.wrapper.sqlName}.${operation.instanceParameter.wrapper.sqlName}")
+    #set($parameterSearchQueryKey = "${page.entity.wrapper.sqlSchemaQualifiedShortName}.${operation.wrapper.sqlName}.${operation.instanceParameter.wrapper.sqlName}")
+        if (!allow) {
+            String arg0 = BundleParametros.getLabel("${parameterSearchQueryKey}");
+            String arg1 = ObjUtils.toString($entityVariableName);
+            String arg2 = StrUtils.enclose(StringUtils.join(args, "; "));
+            TLC.getBitacora().error(CBM.RECURSO_NO_PROCESABLE, arg0, arg1, arg2);
+            return false;
+        }
+#end##writeStateExpressionErrorMessageJoin

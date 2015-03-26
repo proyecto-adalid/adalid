@@ -1,0 +1,46 @@
+#set($children = $ColUtils.filter($page.children, $isTableViewDisplay))
+#if(!$children.isEmpty())
+    // <editor-fold defaultstate="collapsed" desc="definición de hipervínculos de navegación">
+    #set($children = $ColUtils.sort($children, $byDisplayName))
+    #foreach($child in $children)
+        #set($foo = $foreach.count)
+        #writeNavigationHyperlink($foo)
+        #if($foreach.hasNext)
+
+        #end
+    #end
+    // </editor-fold>
+
+#end
+#break
+
+#macro(writeNavigationHyperlink $foo)
+    /**
+     * ${child.name} hyperlink
+     */
+    private ImageHyperlink imageHyperlink$foo = new Hipervinculo();
+
+    public ImageHyperlink getImageHyperlink$foo() {
+        return imageHyperlink$foo;
+    }
+
+    public void setImageHyperlink$foo(ImageHyperlink imageHyperlink) {
+        imageHyperlink$foo = imageHyperlink;
+    }
+
+    public String imageHyperlink${foo}_action() {
+        if (gestor.vincular()) {
+        } else {
+            return null;
+        }
+        return "case$foo";
+    }
+
+    public boolean isImageHyperlink${foo}Disabled() {
+        return gestor.isFuncionOpenLinkInhabilitada() || !gestor.isFilaAmaestrable("$child.reference.fullName");
+    }
+
+    public boolean isImageHyperlink${foo}Rendered() {
+        return TLC.getControlador().esFuncionAutorizada(${project.getOperationNumber($selectOperationKey, $child.entity)}L);
+    }
+#end##writeNavigationHyperlink

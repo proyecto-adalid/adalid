@@ -1,0 +1,76 @@
+#parseJavaMacros()
+#setJavaVariables()
+#writeJavaLicense()
+#writeJavaPackage()
+#setLocalVariables()
+#writeJavaImports($imports)
+#writeJavaAuthor('Jorge Campins')
+public class ${javaClassSimpleName} extends ProyectoBase {
+
+    public static void main(String[] args) {
+//      Maestro.setLocale(Locale.ENGLISH);
+        Maestro.setLocale(Locale.forLanguageTag("es"));
+        Maestro.setAlertLoggingLevel(LoggingLevel.OFF);
+//      Maestro.setDetailLoggingLevel(LoggingLevel.INFO);
+//      Maestro.setTrackingLoggingLevel(LoggingLevel.INFO);
+        Maestro maestro = new Maestro();
+//      maestro.setDefaultLabel("Enterprise Resource Management");
+        maestro.setDefaultLabel("Gestión de Recursos Empresariales");
+//      maestro.setDefaultDescription("Enterprise Resource Management");
+        maestro.setDefaultDescription("Gestión de Recursos Empresariales");
+        if (maestro.build()) {
+            maestro.setAlias("$reader.database.toLowerCase()");
+            maestro.generate(PLATAFORMA_BASE);
+            maestro.generate(PLATAFORMA_NETBEANS_POSTGRESQL_GLASSFISH);
+        }
+    }
+
+    @ProjectModule(menu = Kleenean.TRUE, role = Kleenean.TRUE)
+    Modulo1 mod1;
+
+//  @ProjectModule(menu = Kleenean.TRUE, role = Kleenean.TRUE)
+//  Modulo2 mod2;
+//
+//  @ProjectModule(menu = Kleenean.TRUE, role = Kleenean.TRUE)
+//  Modulo3 mod3;
+//
+//  @ProjectModule(menu = Kleenean.TRUE, role = Kleenean.TRUE)
+//  Modulo4 mod4;
+//
+//  @ProjectModule(menu = Kleenean.TRUE, role = Kleenean.TRUE)
+//  Modulo5 mod5;
+//
+//  @ProjectModule(menu = Kleenean.TRUE, role = Kleenean.TRUE)
+//  Modulo6 mod6;
+//
+//  @ProjectModule(menu = Kleenean.TRUE, role = Kleenean.TRUE)
+//  Modulo7 mod7;
+//
+//  @ProjectModule(menu = Kleenean.TRUE, role = Kleenean.TRUE)
+//  Modulo8 mod8;
+//
+//  @ProjectModule(menu = Kleenean.TRUE, role = Kleenean.TRUE)
+//  Modulo9 mod9;
+//
+    @ProjectModule(menu = Kleenean.TRUE, role = Kleenean.TRUE)
+    ControlAcceso modx;
+
+    @ProjectModule(menu = Kleenean.TRUE, role = Kleenean.TRUE)
+    Auditoria mody;
+
+    @ProjectModule(menu = Kleenean.TRUE, role = Kleenean.TRUE)
+    ControlPruebas modz;
+
+}
+#break
+
+#macro(setLocalVariables)
+    #set($added = $imports.add("adalid.commons.enums.LoggingLevel"))
+    #set($added = $imports.add("adalid.core.annotations.ProjectModule"))
+    #set($added = $imports.add("adalid.core.enums.Kleenean"))
+    #set($added = $imports.add("java.util.Locale"))
+    #set($added = $imports.add("meta.proyecto.base.ProyectoBase"))
+    #set($added = $imports.add("meta.proyecto.comun.Auditoria"))
+    #set($added = $imports.add("meta.proyecto.comun.ControlAcceso"))
+    #set($added = $imports.add("meta.proyecto.comun.ControlPruebas"))
+#end

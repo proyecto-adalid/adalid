@@ -1,0 +1,16 @@
+$tab<webuijsf:tableColumn id="tableColumn2"
+$tab    binding="#{${pageBeanName}.tableColumn2}"
+$tab    rendered="false">
+$tab    <webuijsf:imageHyperlink id="hipervinculoAccionFila1"
+$tab        actionExpression="#{${pageBeanName}.hipervinculoAccionFila1_action}"
+$tab        binding="#{${pageBeanName}.hipervinculoAccionFila1}"
+$tab        disabled="#{${pageBeanName}.gestor.loteConCambios}"
+$tab        imageURL="#{${pageBeanName}.gestor.urlImagenEjecutarVinculo}"
+$tab        onClick="#{${pageBeanName}.scriptAbrirVentanaAccionFila1}"
+$tab        text="${pageName}_hipervinculoAccionFila1_text"
+$tab        toolTip="${pageName}_hipervinculoAccionFila1_toolTip"/>
+$tab</webuijsf:tableColumn>
+#break
+
+$tab        text="Accion1"
+$tab        toolTip="#{bundle.${pageName}_hipervinculoAccionFila1_toolTip}"/>

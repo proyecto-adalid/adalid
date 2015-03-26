@@ -1,0 +1,37 @@
+#parsePropertiesMacros()
+#setPropertiesVariables()
+#writePropertiesLicense()
+#writePropertiesAuthor('Jorge Campins')
+locale.language.tag=$project.locale.toLanguageTag()
+
+#set($entities = $ColUtils.filter($project.entitiesList, $isPersistentEnumerationEntity))
+#set($entities = $ColUtils.sort($entities, $byEntityName))
+#foreach($entity in $entities)
+    #writeBundleEnumsEntity()
+#end##foreach-entity
+#break
+
+#macro(writeBundleEnumsEntity)
+    #set($atleast1 = $FALSE)
+    #set($rows = $entity.insertableRowsList)
+    #foreach($row in $rows)
+        #set($atleast1 = $TRUE)
+##      #set($key = "${entity.wrapper.sqlName}.${row.wrapper.sqlName}")
+##      #set($key = "${entity.wrapper.sqlSchemaQualifiedShortName}.${row.wrapper.sqlName}")
+##      #set($key = "${entity.wrapper.bundleKey}.${row.wrapper.bundleKey}")
+        #set($key = "${entity.wrapper.sqlSchemaQualifiedShortBundleKey}.${row.wrapper.bundleKey}")
+        #if($row.instanceKeyLabel)
+            #set($value = $row.instanceKeyLabel)
+        #else
+            #set($value = $row.wrapper.wordyName)
+        #end
+        #writeBundleEnumsRow()
+    #end##foreach-row
+#if($atleast1)
+
+#end
+#end##writeBundleEnumsEntity
+
+#macro(writeBundleEnumsRow)
+${key}=$!bundleProgrammer.getValueString($value)
+#end##writeBundleEnumsRow

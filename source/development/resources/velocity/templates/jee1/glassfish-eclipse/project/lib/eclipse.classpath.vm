@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+    <classpathentry kind="src" path="src/java/code"/>
+    <classpathentry kind="src" path="src/java/copy"/>
+    <classpathentry kind="src" path="src/java/crop"/>
+    <classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/adalid-compile-lib-1"/>
+    <classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/glassfish-core-modules"/>
+    <classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/jsf12-support"/>
+    <classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/woodstock-components"/>
+    <classpathentry kind="con" path="org.eclipse.jst.j2ee.internal.module.container"/>
+    <classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/jre7">
+        <attributes>
+            <attribute name="owner.project.facets" value="java"/>
+        </attributes>
+    </classpathentry>
+    <classpathentry kind="output" path="build"/>
+</classpath>

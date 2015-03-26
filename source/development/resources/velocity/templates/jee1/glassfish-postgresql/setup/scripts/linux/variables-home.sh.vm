@@ -1,0 +1,11 @@
+#setGlobalVariables()
+#parse('templates/jee1/macros/macros-3.vm')
+#setTargetEnvironmentVariables()
+${pound}!/bin/bash
+export JAVA_HOME=/opt/Java/jdk${targetJavaVersion}
+export GLASSFISH_HOME=/opt/glassfish-${targetGlassFishVersion}/glassfish
+export POSTGRESQL_HOME=/opt/PostgreSQL/${targetPostgreSQLVersion}
+export THIRD_PARTY_HOME=/opt/third-party
+export JAVA_VERSION=${targetJavaVersion}
+export GLASSFISH_VERSION=${targetGlassFishVersion}
+export POSTGRESQL_VERSION=${targetPostgreSQLVersion}

@@ -1,0 +1,12 @@
+#set($capitalizedComponentName = $StringUtils.capitalize($componentName))
+$tab    private Label ${componentName} = new Etiqueta();
+
+$tab    public Label get${capitalizedComponentName}() {
+$tab        return ${componentName};
+$tab    }
+
+$tab    public void set${capitalizedComponentName}(Label label) {
+$tab        ${componentName} = label;
+$tab    }
+
+#break

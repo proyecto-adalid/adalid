@@ -1,0 +1,13 @@
+$tab<webuijsf:tableColumn id="tableColumn3"
+$tab    align="right"
+$tab    binding="#{${pageBeanName}.tableColumn3}" 
+$tab    headerText="#{${pageBeanName}.gestor.i18n.textoEtiquetaIdentificacionFila}"
+$tab    toolTip="#{${pageBeanName}.gestor.i18n.toolTipEtiquetaIdentificacionFila}">
+$tab    <webuijsf:imageHyperlink id="hipervinculoDetallarFila1"
+$tab        actionExpression="#{${pageBeanName}.hipervinculoDetallarFila1_action}"
+$tab        binding="#{${pageBeanName}.hipervinculoDetallarFila1}" 
+$tab        imageURL="#{${pageBeanName}.gestor.urlImagenFilaProcesada}"
+$tab        textPosition="left"
+$tab        text="#{${pageBeanName}.gestor.identificacionFila}" 
+$tab        toolTip="#{${pageBeanName}.gestor.toolTipImagenFilaProcesada}"/>
+$tab</webuijsf:tableColumn>

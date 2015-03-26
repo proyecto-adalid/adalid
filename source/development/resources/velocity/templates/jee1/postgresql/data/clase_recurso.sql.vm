@@ -1,0 +1,296 @@
+#parsePostgreSQLMacros()
+#setPostgreSQLVariables()
+#writePostgreSQLLicense()
+#writePostgreSQLAuthor('Jorge Campins')
+#writeGetPage11()
+#writeGetPage12()
+#writeGetPage34()
+#set($entities = $ColUtils.filter($project.entitiesList, $isPersistentEntity))
+#set($entities = $ColUtils.sort($entities, $byEntityName))
+#foreach($entity in $entities)
+    #writeInsertRow()
+#end##foreach-entity
+update public.clase_recurso set es_clase_recurso_segmento=true where id_clase_recurso in (
+select distinct id_clase_recurso_segmento from public.clase_recurso where id_clase_recurso_segmento is not null);
+#break
+
+#macro(writeInsertRow)
+#set($codex = "$entity.wrapper.sqlName")
+#set($codex = "$entity.wrapper.sqlSchemaQualifiedShortName")
+insert
+into public.clase_recurso
+    (
+    id_clase_recurso,
+    codigo_clase_recurso,
+    nombre_clase_recurso,
+    descripcion_clase_recurso,
+    paquete_clase_recurso,
+    es_clase_recurso_independiente,
+    es_clase_recurso_sin_detalle,
+    es_clase_recurso_con_arbol,
+    es_clase_recurso_insertable,
+    es_clase_recurso_modificable,
+    es_clase_recurso_eliminable,
+    es_clase_recurso_extendida,
+    numero_tipo_clase_recurso,
+    numero_tipo_recurso,
+    id_clase_recurso_segmento,
+    id_funcion_seleccion,
+#*
+    id_pagina_seleccion,
+    id_pagina_detalle,
+    id_pagina_funcion,
+*###
+    pagina_seleccion,
+    pagina_detalle,
+    pagina_funcion
+    )
+values
+    (
+##
+##  id_clase_recurso
+##
+    $project.getEntityNumber($entity),
+##
+##  codigo_clase_recurso
+##
+    '$codex',
+##
+##  nombre_clase_recurso
+##
+#if( $entity.wrapper.validDefaultShortDescription )
+    '$entity.wrapper.validDefaultShortDescription',
+#else
+    null,
+#end
+##
+##  descripcion_clase_recurso
+##
+#if( $entity.wrapper.defaultDescription )
+    '$entity.wrapper.defaultDescription',
+#else
+    null,
+#end
+##
+##  paquete_clase_recurso
+##
+    '$entity.class.package.name',
+##
+##  es_clase_recurso_independiente
+##
+#if($entity.existentiallyIndependent)
+    true,
+#else
+    false,
+#end
+##
+##  es_clase_recurso_sin_detalle
+##
+#if($entity.detailViewEnabled)## && $entity.selectEnabled
+    false,
+#else
+    true,
+#end
+##
+##  es_clase_recurso_con_arbol
+##
+#if($entity.treeViewEnabled)## && $entity.selectEnabled
+    true,
+#else
+    false,
+#end
+##
+##  es_clase_recurso_insertable
+##
+#if($entity.insertEnabled)## && $entity.selectEnabled
+    true,
+#else
+    false,
+#end
+##
+##  es_clase_recurso_modificable
+##
+#if($entity.updateEnabled)## && $entity.selectEnabled
+    true,
+#else
+    false,
+#end
+##
+##  es_clase_recurso_eliminable
+##
+#if($entity.deleteEnabled)## && $entity.selectEnabled
+    true,
+#else
+    false,
+#end
+##
+##  es_clase_recurso_extendida
+##
+    false,
+##
+##  numero_tipo_clase_recurso
+##
+#if($entity.table)
+    1,
+#else
+    2,
+#end
+##
+##  numero_tipo_recurso
+##
+#if($entity.isPersistentEnumerationEntity())
+    12,
+#elseif("$!entity.resourceType" == 'CONFIGURATION')
+    13,
+#else
+    21,
+#end
+##
+##  id_clase_recurso_segmento
+##
+#if($entity.segmentProperty)
+    ${project.getEntityNumber($entity.segmentProperty)},
+#else
+    null,
+#end
+##
+##  id_funcion_seleccion
+##
+    ${project.getOperationNumber($selectOperationKey, $entity)},
+##
+##  id_pagina_seleccion
+##
+#*
+#if($pages11.containsKey($codex))
+    #set($webPageName = $pages11.get($codex))
+    #set($webPageNumber = $project.getPageNumber($webPageName))
+#else
+    #set($webPageNumber = '?')
+#end
+#if($webPageNumber == '?')
+    null,
+#else
+    $webPageNumber, -- $webPageName
+#end
+*###
+##
+##  id_pagina_detalle
+##
+#*
+#if($pages12.containsKey($codex))
+    #set($webPageName = $pages12.get($codex))
+    #set($webPageNumber = $project.getPageNumber($webPageName))
+#else
+    #set($webPageNumber = '?')
+#end
+#if($webPageNumber == '?')
+    null,
+#else
+    $webPageNumber, -- $webPageName
+#end
+*###
+##
+##  id_pagina_funcion
+##
+#*
+#if($pages34.containsKey($codex))
+    #set($webPageName = $pages34.get($codex))
+    #set($webPageNumber = $project.getPageNumber($webPageName))
+#else
+    #set($webPageNumber = '?')
+#end
+#if($webPageNumber == '?')
+    null,
+#else
+    $webPageNumber, -- $webPageName
+#end
+*###
+##
+##  pagina_seleccion
+##
+#if($pages11.containsKey($codex))
+    '$pages11.get($codex)',
+#else
+    null,
+#end
+##
+##  pagina_detalle
+##
+#set($codex = $entity.wrapper.sqlSchemaQualifiedShortName)
+#if($pages12.containsKey($codex))
+    '$pages12.get($codex)',
+#else
+    null,
+#end
+##
+##  pagina_funcion
+##
+#set($codex = $entity.wrapper.sqlSchemaQualifiedShortName)
+#if($pages34.containsKey($codex))
+    '$pages34.get($codex)'
+#else
+    null
+#end
+    );
+
+#end##writeInsertRow
+
+#macro(writeGetPage11)
+    #set($pages11 = $VelocityAid.getNewTreeMap())
+    #set($modules = $ColUtils.filter($project.modulesList, $isWebModule))
+    #set($modules = $ColUtils.sort($modules, $byProjectDeclaringFieldName))
+    #foreach($module in $modules)
+        #set($pages = $module.displaysList)
+        #set($pages = $ColUtils.sort($pages, $byDisplayName))
+        #foreach($page in $pages)
+            #if($page.master)
+            #elseif($page.entity && "$!page.displayMode" == 'READING' && "$!page.displayFormat" == 'TABLE')
+                #set($added = $pages11.put($page.entity.wrapper.sqlSchemaQualifiedShortName, $page.name))
+            #end
+        #end
+        #foreach($page in $pages)
+            #if($page.master)
+            #elseif($page.entity && "$!page.displayMode" == 'WRITING' && "$!page.displayFormat" == 'TABLE')
+                #set($added = $pages11.put($page.entity.wrapper.sqlSchemaQualifiedShortName, $page.name))
+            #end
+        #end
+    #end
+#end##writeGetPage11
+
+#macro(writeGetPage12)
+    #set($pages12 = $VelocityAid.getNewTreeMap())
+    #set($modules = $ColUtils.filter($project.modulesList, $isWebModule))
+    #set($modules = $ColUtils.sort($modules, $byProjectDeclaringFieldName))
+    #foreach($module in $modules)
+        #set($pages = $module.displaysList)
+        #set($pages = $ColUtils.sort($pages, $byDisplayName))
+        #foreach($page in $pages)
+            #if($page.master)
+            #elseif($page.entity && "$!page.displayMode" == 'READING' && "$!page.displayFormat" == 'DETAIL')
+                #set($added = $pages12.put($page.entity.wrapper.sqlSchemaQualifiedShortName, $page.name))
+            #end
+        #end
+        #foreach($page in $pages)
+            #if($page.master)
+            #elseif($page.entity && "$!page.displayMode" == 'WRITING' && "$!page.displayFormat" == 'DETAIL')
+                #set($added = $pages12.put($page.entity.wrapper.sqlSchemaQualifiedShortName, $page.name))
+            #end
+        #end
+    #end
+#end##writeGetPage12
+
+#macro(writeGetPage34)
+    #set($pages34 = $VelocityAid.getNewTreeMap())
+    #set($modules = $ColUtils.filter($project.modulesList, $isWebModule))
+    #set($modules = $ColUtils.sort($modules, $byProjectDeclaringFieldName))
+    #foreach($module in $modules)
+        #set($pages = $module.displaysList)
+        #set($pages = $ColUtils.sort($pages, $byDisplayName))
+        #foreach($page in $pages)
+            #if($page.master)
+            #elseif($page.entity && "$!page.displayMode" == 'PROCESSING' && "$!page.displayFormat" == 'CONSOLE')
+                #set($added = $pages34.put($page.entity.wrapper.sqlSchemaQualifiedShortName, $page.name))
+            #end
+        #end
+    #end
+#end##writeGetPage34

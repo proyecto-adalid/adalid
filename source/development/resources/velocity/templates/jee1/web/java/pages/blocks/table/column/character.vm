@@ -1,0 +1,52 @@
+#set($fieldMaxLength = 0)
+#set($fieldMinLength = 0)
+#set($componentTemplateName = 'text-field')
+#if($field.property.isCharacterData())
+    #set($fieldMaxLength = 1)
+    #set($fieldMinLength = 0)
+#elseif($field.property.isStringData())
+    #set($fieldMaxLength = $VelocityAid.coalesce($field.property.maxLength, 0))
+    #set($fieldMinLength = $VelocityAid.coalesce($field.property.minLength, 0))
+    #if($fieldMaxLength == 0 || $fieldMaxLength > 200)
+        #set($componentTemplateName = 'text-field')
+    #elseif($field.property.isPassword())
+        #set($componentTemplateName = 'password-field')
+    #end
+#end
+#set($componentName = "tableColumn${fieldFirstName}")
+#parse("$templatePath/blocks/webuijsf/table-column.vm")
+#set($componentName = "label${fieldFirstName}")
+#parse("$templatePath/blocks/webuijsf/label.vm")
+#set($componentName = "campo${fieldFirstName}")
+#parse("$templatePath/blocks/webuijsf/${componentTemplateName}.vm")
+#if($field.property.isPassword())
+#elseif($field.property.isUrlProperty() && "$!field.property.urlDisplayType" == 'BUTTON')
+    #set($componentName = "campo${fieldFirstName}${tabString}Boton3")
+    #parse("$templatePath/blocks/webuijsf/image-hyperlink-3.vm")
+#elseif($field.property.isUrlProperty() && "$!field.property.urlDisplayType" == 'HYPERLINK')
+    #set($componentName = "campo${fieldFirstName}${tabString}Hiper3")
+    #parse("$templatePath/blocks/webuijsf/image-hyperlink-3.vm")
+#else
+    #set($componentName = "campo${fieldFirstName}Texto1")
+    #parse("$templatePath/blocks/webuijsf/static-text-1.vm")
+#end
+#if($fieldMaxLength > 0 || $fieldMinLength > 0)
+    #set($componentName = "validator${fieldFirstName}")
+    #set($componentClassName = 'LengthValidator')
+    #parse("$templatePath/blocks/webuijsf/component.vm")
+#end
+#writeValidatorExpression()
+#break
+
+#macro(writeValidatorExpression)
+    /**
+     * ${campo1}.validatorExpression
+     */
+    public void ${campo1}_validate(FacesContext context, UIComponent component, Object value) {
+    #if($fieldMaxLength > 0 || $fieldMinLength > 0)
+        validator${fieldFirstName}.validate(context, component, value);
+    #end
+        asistente.${campo1}_validate(context, component, value);
+    }
+
+#end##writeValidatorExpression

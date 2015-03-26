@@ -1,0 +1,81 @@
+#parseJavaMacros()
+#setJavaVariables()
+#writeJavaLicense()
+#writeJavaPackage()
+#setLocalVariables()
+#writeJavaImports($imports)
+#writeJavaAuthor('Jorge Campins')
+public class ${javaClassSimpleName} {
+
+    public static final boolean CUSTOM_LIFECYCLE_CALLBACK_METHODS_ENABLED = $customLifecycleCallbackMethodsEnabled;
+
+    public static final String PROJECT_LANGUAGE_TAG = "$!project.locale.toLanguageTag()";
+
+    public static final String PROJECT_DEFAULT_LANGUAGE_TAG = "$!project.defaultLocale.toLanguageTag()";
+
+    public static final String DATABASE_SERVER_CODE = "$targetDatabaseServerCode";
+
+    public static final String DATABASE_SERVER_NAME = "$targetDatabaseServerName";
+
+    public static final String DATABASE_RESOURCE_NAME = "jdbc/${project.databaseName}";
+
+    public static final String DATABASE_RESOURCE_MAPPED_NAME = "${prefix1}jdbc/${project.databaseName}";
+
+    public static final String ENTERPRISE_APPLICATION_CODE = "${project.wrapper.hyphenatedAlias}";
+#*
+    public static final String ENTERPRISE_APPLICATION_NAME = BundleWebui.getString(ENTERPRISE_APPLICATION_CODE);
+*#
+    public static final String ENTERPRISE_APPLICATION_SERVER_CODE = "$targetApplicationServerCode";
+
+    public static final String ENTERPRISE_APPLICATION_SERVER_NAME = "$targetApplicationServerName";
+
+    public static final String MAILER_BEAN_SESSION = "${prefix3}mail/${prefix0}MailerBeanSession";
+
+    #writeJavaMessageServiceConstants()
+}
+#break
+
+#macro(setLocalVariables)
+    #set($prefix0 = "${javaProgrammer.getJavaVariableName($project.alias)}")
+    #set($prefix1 = '')
+    #set($prefix2 = '')
+    #set($prefix3 = '')
+    #set($customLifecycleCallbackMethodsEnabled = 'false')
+    #if($targetApplicationServerCode == 'jboss')
+        #set($prefix1 = 'java:/')
+        #set($prefix2 = 'jms/')
+        #set($prefix3 = 'java:jboss/')
+        #set($customLifecycleCallbackMethodsEnabled = 'true')
+    #end
+##  #set($added = $imports.add("${project.rootPackageName}.lib.base.bundle.BundleWebui"))
+#end##setLocalVariables
+
+#macro(writeJavaMessageServiceConstants)
+    #set($string = $prefix0)
+    #set($array1 = $VelocityAid.array('Business', 'Utility'))
+    #set($array2 = $VelocityAid.array('Reply', 'Request', 'Return'))
+    #foreach($string1 in $array1)
+        #set($STRING1 = $string1.toUpperCase())
+        #writeMessageFactory()
+        #foreach($string2 in $array2)
+            #set($STRING2 = $string2.toUpperCase())
+            #writeMessageQueue()
+        #end
+    #end
+#end##writeJavaMessageServiceConstants
+
+#macro(writeMessageFactory)
+    public static final String ${STRING1}_FACTORY_NAME = "jms/${string}${string1}ProcessMessageFactory";
+
+    public static final String ${STRING1}_FACTORY_MAPPED_NAME = "java:/jms/${string}${string1}ProcessMessageFactory";
+
+#end##writeMessageFactory
+
+#macro(writeMessageQueue)
+    public static final String ${STRING1}_${STRING2}_DESTINATION = "${prefix2}${string}${string1}Process${string2}MessageQueue";
+
+    public static final String ${STRING1}_${STRING2}_QUEUE_NAME = "jms/${string}${string1}Process${string2}MessageQueue";
+
+    public static final String ${STRING1}_${STRING2}_QUEUE_MAPPED_NAME = "java:/jms/${string}${string1}Process${string2}MessageQueue";
+
+#end##writeMessageQueue

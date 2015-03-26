@@ -1,0 +1,87 @@
+#if($entity.updateFilter)
+    #set($filterEntity = $entity)
+    #set($filterExpression = $entity.updateFilter)
+    #set($filterErrorMessageBundle = 'BundleDominios')
+    #set($filterErrorMessageBundleMethod = 'getFilterError')
+    #set($filterErrorMessageBundleKey = "${codex}.update")
+    @Override
+    protected boolean esFilaModificable(RowKey rowKey, long funcion) {
+        boolean es = super.esFilaModificable(rowKey, funcion);
+        #writeFilterExpression()
+        return es;
+    }
+
+#end
+#break
+
+    @Override
+    protected void posEditRow(RowKey rowKey, long funcion) {
+        super.posEditRow(rowKey, funcion);
+        #foreach($property in $dataProviderColumns)
+            #if($property.isUpdateField())
+                #if("$!property.defaultCondition" == 'UNCONDITIONALLY' || "$!property.defaultCondition" == 'UNCONDITIONALLY_ON_UPDATE')
+                    #set($value = "$!property.wrapper.javaDefaultValue")
+                    #if($value != '' && $value != 'null')
+................        set${property.wrapper.javaClassName}(rowKey, $value);
+                    #end
+                #end
+            #end
+        #end##foreach-property
+    }
+
+#*
+    public void modificar${entity.wrapper.javaClassName}(Set rowSet) throws ExcepcionAplicacion {
+        editRow(rowSet, ${FUNCION_UPDATE});
+    }
+
+    public void modificar${entity.wrapper.javaClassName}(RowKey rowKey) throws ExcepcionAplicacion {
+        editRow(rowKey, ${FUNCION_UPDATE});
+    }
+
+    @Override
+    protected boolean esFilaModificable(RowKey rowKey, long funcion) {
+        boolean es = false;
+        if (funcion == ${FUNCION_UPDATE}) {
+            es = esFilaModificableConModificar${entity.wrapper.javaClassName}(rowKey);
+            return es;
+        }
+        return es;
+    }
+
+    protected boolean esFilaModificableConModificar${entity.wrapper.javaClassName}(RowKey rowKey) {
+        boolean es = isRowAvailable(rowKey);
+        es &= esFilaRecursoActivo(rowKey, ${FUNCION_UPDATE});
+        es &= esFilaRecursoPropio(rowKey, ${FUNCION_UPDATE});
+        es &= esFilaSegmentoAutorizado(rowKey, ${FUNCION_UPDATE});
+        return es;
+    }
+
+    @Override
+    protected void posEditRow(RowKey rowKey, long funcion) {
+        if (funcion == ${FUNCION_UPDATE}) {
+            posModificar${entity.wrapper.javaClassName}(rowKey);
+        }
+    }
+
+    protected void posModificar${entity.wrapper.javaClassName}(RowKey rowKey) {
+    }
+
+    protected boolean esFilaValidaParaModificar${entity.wrapper.javaClassName}(RowKey rowKey) {
+        boolean es = isRowAvailable(rowKey);
+##  #checkRecursoSegmentableValidoParaModificar()
+    #if($esRecursoConReferencias)
+        es &= esFilaConReferenciasValidas(rowKey);
+    #end
+##      es &= esFilaModificable(rowKey, ${FUNCION_UPDATE});
+        return es;
+    }
+*#
+
+#macro(checkRecursoSegmentableValidoParaModificar)
+    #if($esRecursoSegmentable)
+        if (es && isColumnaModificable(COLUMNA_SEGMENTO_RECURSO)) {
+            setSegmento(rowKey);
+            es = esFilaSegmentoAutorizado(rowKey, ${FUNCION_UPDATE});
+        }
+    #end
+#end##checkRecursoSegmentableValidoParaModificar

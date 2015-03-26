@@ -1,0 +1,13 @@
+$tab<jsp:root
+$tab    version="2.1"
+$tab    xmlns:f="http://java.sun.com/jsf/core"
+$tab    xmlns:h="http://java.sun.com/jsf/html"
+$tab    xmlns:jsp="http://java.sun.com/JSP/Page" 
+$tab    xmlns:webuijsf="http://www.sun.com/webui/webuijsf">
+$tab    <jsp:directive.page contentType="text/html;charset=UTF-8" pageEncoding="UTF-8"/>
+$tab    <f:view>
+            #increaseIndentationBy(2)
+            #parse("$templatePath/blocks/page.vm")
+            #decreaseIndentationBy(2)
+$tab    </f:view>
+$tab</jsp:root>

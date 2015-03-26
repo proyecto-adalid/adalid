@@ -1,0 +1,20 @@
+$tab    public Object get${StringUtils.capitalize($componentName)}Text() {
+$tab        if ($masterEntity == null) {
+$tab            return null;
+$tab        }
+            #set($propertyPathList = $textGetterProperty.propertyPathList)
+            #set($propertyPathString = $masterEntity)
+            #foreach($artifact in $propertyPathList)
+                #set($textPropertyGetter = "get${artifact.wrapper.javaCapitalizedName}()")
+                #if($foreach.last)
+........$tab        return ${propertyPathString}.${textPropertyGetter};
+                #else
+                    #set($propertyPathString = "${propertyPathString}.${textPropertyGetter}")
+........$tab        if ($propertyPathString == null) {
+........$tab            return null;
+........$tab        }
+                #end
+            #end
+$tab    }
+
+#break

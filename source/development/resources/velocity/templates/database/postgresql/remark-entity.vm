@@ -1,0 +1,10 @@
+#break
+-- -----------------------------------------------------------------------------------------------------------
+-- entity class: $entity.class.name
+   #if($entity.baseClass)
+## entity base class: $entity.baseClass.name
+   #end
+   #if($entity.baseTableClass)
+-- entity base table class: $entity.baseTableClass.name
+   #end
+-- -----------------------------------------------------------------------------------------------------------

@@ -1,0 +1,63 @@
+#break
+
+#macro(writeRecursoConReferenciasConstants)
+#if($esRecursoConReferencias)
+    #foreach($property in $dataProviderColumns)
+        #if($property.isPersistentEntity() && !$property.isPersistentEnumerationEntity())
+            #set($root = $property.root)
+            #set($str0 = "$!root.wrapper.sqlSchemaQualifiedShortName")
+            #set($str1 = "$!root.primaryKeyProperty.wrapper.sqlName")
+            #set($str2 = "$!root.ownerProperty.wrapper.sqlName")
+            #set($str3 = "$!root.segmentProperty.wrapper.sqlName")
+            #writeRecursoConReferenciasOperationNumberAndStrings("COLUMNA_${property.wrapper.javaConstantName}")
+        #end
+    #end##foreach-property
+#end
+#end##writeRecursoConReferenciasConstants
+
+#macro(writeRecursoConReferenciasOperationNumberAndStrings $COLUMNA)
+    private static final long FUNCION_REFERENCIA_${COLUMNA} = ${project.getOperationNumber($selectOperationKey, $root)}L;
+
+    private static final String[] STRINGS_REFERENCIA_${COLUMNA} = {"$str0", "$str1", "$str2", "$str3"};
+
+#end##writeRecursoConReferenciasOperationNumberAndStrings
+
+#macro(writeRecursoConReferenciasImplementation)
+#if($esRecursoConReferencias)
+    @Override
+    protected boolean esFilaValida(RowKey rowKey, long funcion) {
+        boolean es = super.esFilaValida(rowKey, funcion);
+        if (!es) {
+            return false;
+        }
+        Object recurso;
+        long funcionReferencia;
+        String[] stringsReferencia;
+        try {
+    #foreach($property in $dataProviderColumns)
+        #if($property.isPersistentEntity() && !$property.isPersistentEnumerationEntity())
+            #writeRecursoConReferenciasCheck("COLUMNA_${property.wrapper.javaConstantName}")
+        #end
+    #end##foreach-property
+            return es;
+        } catch (SQLException ex) {
+            TLC.getBitacora().fatal(ex);
+            return false;
+        }
+    }
+
+#end
+#end##writeRecursoConReferenciasImplementation
+
+#macro(writeRecursoConReferenciasCheck $COLUMNA)
+            if (getCachedRowSet().columnUpdated(${COLUMNA})) {
+                recurso = get${property.wrapper.javaClassName}(rowKey);
+                funcionReferencia = FUNCION_REFERENCIA_${COLUMNA};
+                stringsReferencia = STRINGS_REFERENCIA_${COLUMNA};
+                if (TLC.getControlador().esReferenciaAutorizada(recurso, funcionReferencia, stringsReferencia)) {
+                } else {
+                    TLC.getBitacora().error(CBM.RECURSO_NO_REFERENCIABLE, "<" + ${COLUMNA} + ">", "", "");
+                    es = false;
+                }
+            }
+#end##writeRecursoConReferenciasCheck

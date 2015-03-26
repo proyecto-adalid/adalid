@@ -1,0 +1,40 @@
+#parsePostgreSQLMacros()
+#setPostgreSQLVariables()
+#writePostgreSQLLicense()
+#writePostgreSQLAuthor('Jorge Campins')
+#setLocalVariables()
+#writeDropDefaultsFunctions()
+#writeDropForeignKeyFunctions()
+#writeDropIndexFunctions()
+#writeDropPrimaryKeyFunctions()
+#writeDropUniqueKeyFunctions()
+#break
+
+#macro(setLocalVariables)
+    #set($schemaQualifier = '')
+#end##setLocalVariables
+
+#macro(writeDropDefaultsFunctions)
+drop function if exists ${schemaQualifier}drop_defaults();
+drop function if exists ${schemaQualifier}create_defaults();
+#end##writeDropDefaultsFunctions
+
+#macro(writeDropForeignKeyFunctions)
+drop function if exists ${schemaQualifier}drop_foreign_keys();
+drop function if exists ${schemaQualifier}create_foreign_keys();
+#end##writeDropForeignKeyFunctions
+
+#macro(writeDropIndexFunctions)
+drop function if exists ${schemaQualifier}drop_indexes();
+drop function if exists ${schemaQualifier}create_indexes();
+#end##writeDropIndexFunctions
+
+#macro(writeDropPrimaryKeyFunctions)
+drop function if exists ${schemaQualifier}drop_primary_keys();
+drop function if exists ${schemaQualifier}create_primary_keys();
+#end##writeDropPrimaryKeyFunctions
+
+#macro(writeDropUniqueKeyFunctions)
+drop function if exists ${schemaQualifier}drop_unique_keys();
+drop function if exists ${schemaQualifier}create_unique_keys();
+#end##writeDropUniqueKeyFunctions

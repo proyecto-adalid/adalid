@@ -1,0 +1,8 @@
+$tab<!-- tree body opening -->
+$tab<webuijsf:tree 
+$tab    binding="#{${pageBeanName}.tree1}" 
+$tab    id="tree1" 
+$tab    rendered="#{${pageBeanName}.gestor.filaDisponible}"
+$tab    style="#{${pageBeanName}.gestor.estiloArbol}" 
+$tab    styleClass="pdq-tree-1"/>
+$tab<!-- tree body closing -->

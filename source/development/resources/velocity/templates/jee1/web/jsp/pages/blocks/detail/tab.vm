@@ -1,0 +1,28 @@
+#if($page.entity.tabsList.isEmpty())
+    #break
+#end
+$tab<webuijsf:tabSet
+$tab    id="tabSet1"
+$tab    binding="#{${pageBeanName}.tabSet}"
+$tab    lite="true"
+$tab    mini="true"
+$tab    rendered="#{${pageBeanName}.gestor.filaNoProcesada}">
+    #foreach($entityTab in $page.entity.tabsList)
+        #set($tabNumber = $tabSequence.next())
+        #set($tabNumber = $entityTab.sequenceNumber)
+        #set($tabString = "Tab$tabNumber")
+$tab    <webuijsf:tab id="tab$tabNumber"
+$tab        binding="#{${pageBeanName}.tab$tabNumber}"
+$tab        rendered="#{${pageBeanName}.asistente.tab${entityTab.wrapper.javaCapitalizedName}Rendered}"
+##          text="$entityTab.wrapper.xmlValidDefaultShortLabel">
+$tab        text="BundleDominios.${page.entity.wrapper.sqlSchemaQualifiedShortName}.${entityTab.wrapper.sqlName}">
+$tab        <h:panelGrid id="panelGrid${panelGridSequence.next()}" columns="2">
+                #increaseIndentationBy(3)
+                #foreach($tabField in $entityTab.tabFieldsList)
+                    #parse("$templatePath/blocks/detail/tab-field.vm")
+                #end##foreach-tabField
+                #decreaseIndentationBy(3)
+$tab        </h:panelGrid>
+$tab    </webuijsf:tab>
+    #end##foreach-tab
+$tab</webuijsf:tabSet>

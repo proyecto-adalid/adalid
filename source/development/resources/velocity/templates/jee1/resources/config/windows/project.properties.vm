@@ -1,0 +1,25 @@
+#parsePropertiesMacros()
+#setPropertiesVariables()
+#writePropertiesLicense()
+#writePropertiesAuthor('Jorge Campins')
+RBAC=${project.roleBasedAccessControllerName}
+CONTENT_ROOT_DIR=${dollar}CONTENT_ROOT_DIR
+HOME_DIR=${dollar}HOME_DIR
+JDBC_DRIVER=${dollar}JDBC_DRIVER
+JDBC_URL=${dollar}JDBC_URL
+JDBC_USER=${dollar}JDBC_USER
+JDBC_PASSWORD=${dollar}JDBC_PASSWORD
+JDBC_DATASOURCE=java:comp/env/jdbc/${dollar}LOWER_CASE_CODE
+JNDI_EJB_FACADE_LOCATOR=java:comp/env/ejb/FacadeBeanLocator
+JNDI_EJB_LOOKUP_PATTERN=${dollar}JNDI_EJB_LOOKUP_PATTERN
+VELOCITY_PROPERTIES_FILE=${dollar}VELOCITY_PROPERTIES_FILE
+VELOCITY_FILE_RESOURCE_LOADER_PATH=${dollar}VELOCITY_FILE_RESOURCE_LOADER_PATH
+EXPORT_RUNNER_CMD=Exporter.bat
+EXPORT_RUNNER_DIR=${dollar}HOME_DIR/resources/scripts/windows/
+EXPORT_SOURCE_DIR=${dollar}HOME_DIR/resources/reporting/jasper/reports/
+REPORT_RUNNER_CMD=Reporter.bat
+REPORT_RUNNER_DIR=${dollar}HOME_DIR/resources/scripts/windows/
+REPORT_SOURCE_DIR=${dollar}HOME_DIR/resources/reporting/jasper/reports/
+SQLPRC_RUNNER_CMD=SqlAgent.bat
+SQLPRC_RUNNER_DIR=${dollar}HOME_DIR/resources/scripts/windows/
+SQLPRC_SOURCE_DIR=${dollar}HOME_DIR/resources/database/${dollar}JDBC_DATABASE/

@@ -1,0 +1,10 @@
+#setGlobalVariables()
+#parse('templates/jee1/macros/macros-3.vm')
+#setTargetEnvironmentVariables()
+set JAVA_HOME=%ProgramFiles%${backslash}Java${backslash}jdk${targetJavaVersion}
+set JBOSS_HOME=%SystemDrive%${backslash}jboss-as-${targetJBossVersion}
+set POSTGRESQL_HOME=%ProgramFiles%${backslash}PostgreSQL${backslash}${targetPostgreSQLVersion}
+set THIRD_PARTY_HOME=%SystemDrive%${backslash}workspace${backslash}third-party
+set JAVA_VERSION=${targetJavaVersion}
+set JBOSS_VERSION=${targetJBossVersion}
+set POSTGRESQL_VERSION=${targetPostgreSQLVersion}

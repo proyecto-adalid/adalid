@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project-modules id="moduleCoreId" project-version="1.5.0">
+    <wb-module deploy-name="${project.alias}">
+        <wb-resource deploy-path="/" source-path="/EarContent" tag="defaultRootSource"/>
+        <dependent-module archiveName="${project.alias}-ejb.jar" deploy-path="/" handle="module:/resource/${project.alias}-ejb/${project.alias}-ejb">
+            <dependent-object/>
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="${project.alias}-lib.jar" deploy-path="/lib" handle="module:/resource/${project.alias}-lib/${project.alias}-lib">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="${project.alias}-resources.jar" deploy-path="/lib" handle="module:/resource/${project.alias}-resources/${project.alias}-resources">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="${project.alias}-war.war" deploy-path="/" handle="module:/resource/${project.alias}-war/${project.alias}-war">
+            <dependent-object/>
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        #set($dir = 'third-party')
+        #writeDependentModule($dir 'lib' 'commons-beanutils-1.8.2.jar')
+        #writeDependentModule($dir 'lib' 'commons-collections-3.2.1.jar')
+        #writeDependentModule($dir 'lib' 'commons-digester-2.1.jar')
+        #writeDependentModule($dir 'lib' 'commons-fileupload-1.2.2.jar')
+        #writeDependentModule($dir 'lib' 'commons-io-2.1.jar')
+        #writeDependentModule($dir 'lib' 'commons-javaflow-20060411.jar')
+        #writeDependentModule($dir 'lib' 'commons-lang-2.6.jar')
+        #writeDependentModule($dir 'lib' 'commons-logging-1.1.2.jar')
+        #writeDependentModule($dir 'lib' 'iText-2.1.7.jar')
+        #writeDependentModule($dir 'lib' 'jasperreports-5.5.1.jar')
+        #writeDependentModule($dir 'lib' 'jasperreports-fonts-5.5.1.jar')
+        #writeDependentModule($dir 'lib' 'jasperreports-functions-5.5.1.jar')
+        #writeDependentModule($dir 'lib' 'jasperreports-javaflow-5.5.1.jar')
+        #writeDependentModule($dir 'lib' 'jcommon-1.0.15.jar')
+        #writeDependentModule($dir 'lib' 'jdt-compiler-3.1.1.jar')
+        #writeDependentModule($dir 'lib' 'jfreechart-1.0.12.jar')
+        #writeDependentModule($dir 'lib' 'joda-time-1.6.2.jar')
+        #writeDependentModule($dir 'lib' 'jxl-2.6.10.jar')
+        #writeDependentModule($dir 'lib' 'log4j-1.2.16.jar')
+        #writeDependentModule($dir 'lib' 'spring.jar')
+        #writeDependentModule($dir 'lib' 'velocity-1.7.jar')
+        #writeDependentModule($dir 'lib/visualweb2/modules/ext' 'appbase.jar')
+        #writeDependentModule($dir 'lib/visualweb2/modules/ext' 'dataprovider.jar')
+        #writeDependentModule($dir 'lib/visualweb2/modules/ext' 'errorhandler.jar')
+        #writeDependentModule($dir 'lib/visualweb2/modules/ext' 'jsf-extensions-common-0.1.jar')
+        #writeDependentModule($dir 'lib/visualweb2/modules/ext' 'jsf-extensions-dynamic-faces-0.1.jar')
+        #writeDependentModule($dir 'lib/visualweb2/modules/ext' 'jsfcl.jar')
+        #writeDependentModule($dir 'lib/visualweb2/modules/ext' 'json-2.jar')
+        #writeDependentModule($dir 'lib/visualweb2/modules/ext' 'shale-remoting-1.0.4.jar')
+        #writeDependentModule($dir 'lib/visualweb2/modules/ext' 'sqlx.jar')
+        #writeDependentModule($dir 'lib/visualweb2/modules/ext' 'webui-jsf.jar')
+        #writeDependentModule($dir 'lib/visualweb2/modules/ext' 'webui-jsf-suntheme.jar')
+        #writeDependentModule($dir 'lib/visualweb2/modules/ext/locale' 'webui-jsf_es.jar')
+        #writeDependentModule($dir 'lib/visualweb2/modules/ext/locale' 'webui-jsf-suntheme_es.jar')
+    </wb-module>
+</project-modules>
+#break
+
+#macro(writeDependentModule $dir $subdir $jar)
+        <dependent-module archiveName="$jar" deploy-path="/lib" handle="module:/classpath/lib/$dir/$subdir/$jar">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+#end##writeDependentModule

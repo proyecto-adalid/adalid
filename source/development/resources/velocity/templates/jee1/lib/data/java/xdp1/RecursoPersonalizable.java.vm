@@ -1,0 +1,63 @@
+#break
+
+#macro(writeRecursoPersonalizableImport)
+#if($esRecursoPersonalizable)
+    #set($added = $imports.add("${project.rootPackageName}.lib.core.db.xdp.RecursoPersonalizableDataProvider"))
+    #set($added = $interfaces.add('RecursoPersonalizableDataProvider'))
+#end
+#end##writeRecursoPersonalizableImport
+
+#macro(writeRecursoPersonalizableImplementation)
+#if($esRecursoPersonalizable)
+    #set($property = $entity.ownerProperty)
+##  public static final String COLUMNA_PROPIETARIO_RECURSO = "${property.wrapper.sqlName}";
+    public static final String COLUMNA_PROPIETARIO_RECURSO = "${query.getSqlAlias($property)}";
+
+    public static final String COLUMNA_CALIFICADA_PROPIETARIO_RECURSO = "${query.getSqlQualifiedName($property)}";
+
+    public static final String ETIQUETA_PROPIETARIO_RECURSO = BundleWebui.getString("xdp.etiqueta_propietario_recurso");
+
+    @Override
+    public String getColumnaPropietarioRecurso() {
+        return COLUMNA_PROPIETARIO_RECURSO;
+    }
+
+    @Override
+    public String getEtiquetaPropietarioRecurso() {
+        return ETIQUETA_PROPIETARIO_RECURSO;
+    }
+
+    @Override
+    public ${property.wrapper.javaPrimitiveType} getPropietarioRecurso() {
+    #if($dataProviderColumns.contains($property))
+        return get${property.wrapper.javaClassName}();
+    #else
+        return (${property.wrapper.javaPrimitiveType}) super.getValue(COLUMNA_PROPIETARIO_RECURSO);
+    #end
+    }
+
+    @Override
+    public ${property.wrapper.javaPrimitiveType} getPropietarioRecurso(RowKey rowKey) {
+    #if($dataProviderColumns.contains($property))
+        return get${property.wrapper.javaClassName}(rowKey);
+    #else
+        return (${property.wrapper.javaPrimitiveType}) super.getValue(COLUMNA_PROPIETARIO_RECURSO, rowKey);
+    #end
+    }
+
+    @Override
+    public void setPropietarioRecurso(${property.wrapper.javaPrimitiveType} propietarioRecurso) {
+    #if($dataProviderColumns.contains($property))
+        set${property.wrapper.javaClassName}(propietarioRecurso);
+    #end
+    }
+
+    @Override
+    public void setPropietarioRecurso(RowKey rowKey, ${property.wrapper.javaPrimitiveType} propietarioRecurso) {
+    #if($dataProviderColumns.contains($property))
+        set${property.wrapper.javaClassName}(rowKey, propietarioRecurso);
+    #end
+    }
+
+#end
+#end##writeRecursoPersonalizableImplementation

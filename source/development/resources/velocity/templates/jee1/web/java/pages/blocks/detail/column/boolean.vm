@@ -1,0 +1,30 @@
+#set($componentName = "label${fieldFirstName}${tabString}")
+#parse("$templatePath/blocks/webuijsf/label.vm")
+#if($field.property.booleanDisplayType != 'CHECKBOX' || $field.property.isNullable())
+    #set($componentName = "campo${fieldFirstName}${tabString}")
+    #parse("$templatePath/blocks/webuijsf/drop-down.vm")
+    #set($componentName = "campo${fieldFirstName}${tabString}Texto1")
+    #parse("$templatePath/blocks/webuijsf/static-text-1.vm")
+#else
+    #set($componentName = "campo${fieldFirstName}${tabString}")
+    #parse("$templatePath/blocks/webuijsf/check-box.vm")
+#end
+#set($componentName = "helpInline${fieldFirstName}${tabString}")
+#parse("$templatePath/blocks/webuijsf/help-inline.vm")
+#set($componentName = "converter${fieldFirstName}${tabString}")
+#set($componentClassName = "${field.property.dataType.simpleName}Converter")
+#parse("$templatePath/blocks/webuijsf/component.vm")
+#if($tabString == '')
+    #writeValidatorExpression()
+#end
+#break
+
+#macro(writeValidatorExpression)
+    /**
+     * ${campo1}.validatorExpression
+     */
+    public void ${campo1}_validate(FacesContext context, UIComponent component, Object value) {
+        asistente.${campo1}_validate(context, component, value);
+    }
+
+#end##writeValidatorExpression

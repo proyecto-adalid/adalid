@@ -1,0 +1,106 @@
+    protected void preCommitCrear${entity.wrapper.javaClassName}(RowKey rowKey) {
+        if (isNotRowAvailable(rowKey)) {
+            return;
+        }
+        #setTipoRastroFuncion($entity.insertOperation)
+        RastroFuncion rastro = getRastroFuncion(rowKey, ${FUNCION_INSERT});
+        #addParametros()
+##      TLC.getControlador().grabarRastroFuncion(rastro);
+        getRastrosFuncion().put(rowKey.getRowId(), rastro);
+        #writeSeudoTareaUsuarioAfterInsertOrUpdate($entity.insertOperation $FALSE)
+    }
+
+    protected void preCommitModificar${entity.wrapper.javaClassName}(RowKey rowKey) {
+        if (isNotRowAvailable(rowKey)) {
+            return;
+        }
+        #foreach($property in $dataProviderColumns)
+            #if(!$property.isUpdateField())
+                #if("$!property.defaultCondition" == 'UNCONDITIONALLY' || "$!property.defaultCondition" == 'UNCONDITIONALLY_ON_UPDATE')
+                    #set($value = "$!property.wrapper.javaDefaultValue")
+                    #if($value != '' && $value != 'null')
+................        set${property.wrapper.javaClassName}(rowKey, $value);
+                    #end
+                #end
+            #end
+        #end##foreach-property
+        #setTipoRastroFuncion($entity.updateOperation)
+        RastroFuncion rastro = getRastroFuncion(rowKey, ${FUNCION_UPDATE});
+        #addParametros()
+##      TLC.getControlador().grabarRastroFuncion(rastro);
+        getRastrosFuncion().put(rowKey.getRowId(), rastro);
+        #writeSeudoTareaUsuarioAfterInsertOrUpdate($entity.updateOperation $TRUE)
+    }
+
+    protected void preCommitEliminar${entity.wrapper.javaClassName}(RowKey rowKey) {
+        #setTipoRastroFuncion($entity.deleteOperation)
+    }
+#*
+    protected void posCommitCrear${entity.wrapper.javaClassName}(RowKey rowKey) {
+        if (isNotRowAvailable(rowKey)) {
+            return;
+        }
+#if($esRecursoIdentificable)
+        TLC.getControlador().grabarTareasUsuario(CODIGO_DOMINIO_RECURSO, "insert", getIdentificacionRecurso(rowKey));
+#elseif($esRecursoEnumerable)
+        TLC.getControlador().grabarTareasUsuario(CODIGO_DOMINIO_RECURSO, "insert", getNumeroRecurso(rowKey));
+#end
+    }
+
+    protected void posCommitModificar${entity.wrapper.javaClassName}(RowKey rowKey) {
+        if (isNotRowAvailable(rowKey)) {
+            return;
+        }
+#if($esRecursoIdentificable)
+        TLC.getControlador().grabarTareasUsuario(CODIGO_DOMINIO_RECURSO, "update", getIdentificacionRecurso(rowKey));
+#elseif($esRecursoEnumerable)
+        TLC.getControlador().grabarTareasUsuario(CODIGO_DOMINIO_RECURSO, "update", getNumeroRecurso(rowKey));
+#end
+    }
+*#
+#break
+
+#macro(setTipoRastroFuncion $basicDatabaseOperation)
+    #if("$!basicDatabaseOperation.operationLogging" == '')
+        #set($operationLoggingName = '')
+    #elseif("$!basicDatabaseOperation.operationLogging" == 'BOTH')
+        #set($operationLoggingName = 'AMBOS')
+    #elseif("$!basicDatabaseOperation.operationLogging" == 'FAILURE')
+        #set($operationLoggingName = 'ERROR')
+    #elseif("$!basicDatabaseOperation.operationLogging" == 'SUCCESS')
+        #set($operationLoggingName = 'EXITO')
+    #else
+        #set($operationLoggingName = '')
+    #end
+    #if($operationLoggingName != '')
+        setTipoRastroFuncion(TipoRastroFunEnumeration.$operationLoggingName);
+    #end
+#end##setTipoRastroFuncion
+
+#macro(writeSeudoTareaUsuarioAfterInsertOrUpdate $basicDatabaseOperation $forReal)
+    #if($forReal)
+        #set($x = '  ')
+    #else
+        #set($x = '//')
+    #end
+    #flagOperationHasTransitionToStateAndTriggers($basicDatabaseOperation)
+    #if($operationHasTransitionToStateAndTriggers)
+$x      SeudoTareaUsuario seudo = getSeudoTareaUsuario(rowKey, DB.$basicDatabaseOperation.wrapper.javaConstantName);
+$x      listaTareasUsuario.add(seudo);
+    #end
+#end##writeSeudoTareaUsuarioAfterInsertOrUpdate
+
+#macro(flagOperationHasTransitionToStateAndTriggers $basicDatabaseOperation)
+    #set($operationHasInitialStates = $FALSE)
+    #set($initialStates = $basicDatabaseOperation.initialStatesList)
+    #if(!$initialStates.isEmpty())
+        #set($operationHasInitialStates = $TRUE)
+    #end
+    #set($operationHasTransitionToStateAndTriggers = $FALSE)
+    #if(!$triggers.isEmpty())
+        #set($finalStates = $basicDatabaseOperation.finalStatesList)
+        #if(!$finalStates.isEmpty())
+            #set($operationHasTransitionToStateAndTriggers = $TRUE)
+        #end
+    #end
+#end##flagOperationHasTransitionToStateAndTriggers

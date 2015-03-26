@@ -1,0 +1,9 @@
+#if($operationsList && $operationsList.size()>0)
+#foreach($operation in $operationsList)
+#set($capitalOperationName = $StringUtils.capitalize($operation.name))
+${tab}$capitalOperationName $operation.name;
+
+#end
+#else
+    #break
+#end

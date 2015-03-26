@@ -1,0 +1,26 @@
+#
+#   stack example
+#
+#if($expressionsList && $expressionsList.size()>0)
+$tab//  for each one of the $expressionsList.size() expressions in $expressionsList
+#else
+    #break
+#end
+#increaseIndentation()
+#foreach($expression in $expressionsList)
+$tab//  Expression $expression
+    #if($expression)
+        #set($pushedItem = $expressionsListStack.push($expressionsList))
+        #increaseIndentation()
+        #set($expressionsList = $VelocityAid.coalesce($expression.expressionsList, $FALSE))
+        #writeTemplate($foreachExpression)
+        #decreaseIndentation()
+        #set($expressionsList = $expressionsListStack.pop())
+    #end
+#end
+#decreaseIndentation()
+#break
+
+#macro(showExpressionsListsStack)
+$tab//  Expression stack = $expressionsListStack.size(), $expressionsListStack
+#end

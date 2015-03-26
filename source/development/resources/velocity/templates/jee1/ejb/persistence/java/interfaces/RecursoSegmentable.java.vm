@@ -1,0 +1,62 @@
+#break
+
+#macro(writeRecursoSegmentableImport)
+#if($esRecursoSegmentable)
+    #set($added = $imports.add("${project.rootPackageName}.lib.base.interfaces.RecursoSegmentable"))
+    #set($added = $interfaces.add('RecursoSegmentable'))
+#end
+#end##writeRecursoSegmentableImport
+
+#macro(writeRecursoSegmentableImplementation)
+#if($esRecursoSegmentable)
+    #set($property = $entity.segmentProperty)
+    @Override
+    public String getColumnaSegmentoRecurso() {
+        return ${javaClassSimpleName}Constants.COLUMNA_SEGMENTO_RECURSO;
+    }
+
+    @Override
+    public String getEtiquetaSegmentoRecurso() {
+        return ${javaClassSimpleName}Constants.ETIQUETA_SEGMENTO_RECURSO;
+    }
+
+    @Override
+    public Long getSegmentoRecurso() {
+    #if($dataProviderColumns.contains($property))        
+        #if(${property.wrapper.javaPrimitiveType} == 'Integer')
+....        return ${property.wrapper.javaVariableName} == null ? null : NumUtils.toLong(${property.wrapper.javaVariableName}.getNumeroRecurso());
+        #else
+....        return ${property.wrapper.javaVariableName} == null ? null : ${property.wrapper.javaVariableName}.getIdentificacionRecurso();
+        #end
+    #else
+##      return ${property.pathString};
+        #set($propertyPathList = $property.propertyPathList)
+        #set($propertyPathString = '')
+        #set($propertyPathSeparator = '')
+        #foreach($artifact in $propertyPathList)
+            #set($propertyPathString = "$propertyPathString$propertyPathSeparator$artifact.wrapper.javaVariableName")
+....        if ($propertyPathString == null) {
+....            return null;
+....        }
+            #set($propertyPathSeparator = '.')
+        #end
+        #if(${property.wrapper.javaPrimitiveType} == 'Integer')
+....        return NumUtils.toLong(${propertyPathString}.getNumeroRecurso());
+        #else
+....        return ${propertyPathString}.getIdentificacionRecurso();
+        #end
+    #end
+    }
+
+##  @Override
+##  public void setSegmentoRecurso(Long segmentoRecurso) {
+##      set${property.wrapper.javaClassName}(segmentoRecurso);
+##  }
+##
+##  @Override
+##  public void setSegmentoRecurso(Integer segmentoRecurso) {
+##      set${property.wrapper.javaClassName}(segmentoRecurso);
+##  }
+##
+#end
+#end##writeRecursoSegmentableImplementation

@@ -1,0 +1,21 @@
+#parseXMLMacros()
+#setXMLVariables()
+#writeXMLDeclaration()
+#writeXMLLicense()
+#writeXMLAuthor('Jorge Campins')
+#set($projectAlias = "${javaProgrammer.getJavaVariableName($project.alias)}")
+<jboss-web>
+    <context-root>/${projectAlias}-war</context-root>
+    <resource-ref>
+        <res-ref-name>jdbc/${projectAlias}</res-ref-name> <!-- Logical name only. -->
+        <jndi-name>java:/jdbc/${projectAlias}</jndi-name> <!-- Real JNDI name. -->
+    </resource-ref>
+    <security-domain>java:/jaas/${projectAlias}-policy</security-domain>
+    <!--<valve>
+        <class-name>org.apache.catalina.authenticator.SingleSignOn</class-name>
+            <param>
+                <param-name>maxEmptyLife</param-name>
+                <param-value>900</param-value>
+            </param>
+    </valve>-->
+</jboss-web>

@@ -1,0 +1,112 @@
+#parsePostgreSQLMacros()
+#setPostgreSQLVariables()
+#writePostgreSQLLicense()
+#writePostgreSQLAuthor('Jorge Campins')
+#writeDelimiterDirective('??')
+#set($entities = $ColUtils.filter($project.entitiesList, $isEntitySqlCodeGenEnabled, $isPersistentEntityWithTable))
+#set($entities = $ColUtils.sort($entities, $byEntityName))
+#foreach($entity in $entities)
+    #writeTemplate('remark-entity')
+    #writeCreateCheckFunctions()
+#end##foreach-entity
+#writeDelimiterDirective(';')
+#break
+
+#macro(writeCreateCheckFunctions)
+    #resetSQLVariables()
+    #set($entname = $entity.wrapper.sqlName)
+    #set($entname = $entity.wrapper.sqlSchemaQualifiedShortName)
+    #set($table = $entity.wrapper.sqlTableName)
+    #set($table = $entity.wrapper.sqlSchemaQualifiedShortTableName)
+    #set($query = $entity.queryTable)
+    #set($refcols = $entity.checksColumnsList)
+    #set($joins = $entity.checksJoinsMap)
+    #set($joinsCount = $joins.size())
+    #set($keyname = $entity.primaryKeyProperty.wrapper.sqlName)
+    #set($keytype = $entity.primaryKeyProperty.wrapper.sqlType)
+    #set($varname = $entity.primaryKeyProperty.wrapper.sqlVariableName)
+    #set($rowname = $query.sqlJoinQualifier)
+    #set($expressions = $entity.checksList)
+    #set($checksCount = $expressions.size())
+    #writeCreateCheckFunctionHeading()
+    #foreach($expression in $expressions)
+        #setGlobalCheckName($entity)
+        #set($constraint = $globalConstraintName)
+        #set($expname = $expression.wrapper.sqlName)
+        #set($exptype = $expression.wrapper.sqlType)
+        #set($sqlExpression = $VelocityAid.coalesce($expression.wrapper.getSqlExpression($query), $FALSE))
+        #if($sqlExpression)
+            #writeCreateCheckFunctionCheckBlock()
+        #end
+    #end##foreach-expression
+    #writeCreateCheckFunctionFooting()
+#end##writeCreateCheckFunctions
+
+#macro(writeCreateCheckFunctionHeading)
+#set($function1 = "${entname}${sql_name_separator}check(${keytype})")
+#set($function2 = "${entname}${sql_name_separator}check(${varname} ${keytype})")
+#set($function3 = "${entname}${sql_name_separator}check(%)")
+drop function if exists $function1 cascade;
+#writeDelimiter('??')
+create or replace function $function2 returns boolean as $$
+declare
+    $rowname ${table};
+begin
+    raise notice '${function3}', ${varname};
+    select * into $rowname from ${table} where ${keyname} = ${varname};
+    return ${entname}${sql_name_separator}check($rowname);
+end;
+$$ language plpgsql;
+#writeDelimiter('??')
+
+#set($function1 = "${entname}${sql_name_separator}check(${table})")
+#set($function2 = "${entname}${sql_name_separator}check($rowname ${table})")
+#set($function3 = "${entname}${sql_name_separator}check(%)")
+drop function if exists $function1 cascade;
+#writeDelimiter('??')
+create or replace function $function2 returns boolean as $$
+declare
+#if($joinsCount > 0)
+    #foreach($key in $joins.keySet())
+    $key record;
+    #end##foreach-join
+#end
+    boolean1$ boolean := true;
+    integer1$ integer := 0;
+    varchar1$ varchar := '';
+begin
+    raise notice '${function3}', ${rowname};
+    #foreach($key in $joins.keySet())
+    #set($join = $joins.get($key))
+--  record $key
+    #set($statement = $join.getSqlSelectStatement($refcols, $TRUE, $TRUE, $FALSE))
+    $statement.replace("$EOL", "$EOL    ");
+
+    #end##foreach-join
+#end##writeCreateCheckFunctionHeading
+
+#macro(writeCreateCheckFunctionCheckBlock)
+--  expression $expression.name, constraint $constraint
+    boolean1$ := $sqlExpression;
+    if boolean1$ is not true then
+        integer1$ := integer1$ + 1;
+        varchar1$ := varchar1$ || '$constraint;';
+    end if;
+
+#end##writeCreateCheckFunctionCheckBlock
+
+#macro(writeCreateCheckFunctionFooting)
+#if($checksCount > 0)
+--  raise exception if any expression failed
+    if integer1$ > 0 then
+        varchar1$ := integer1$ || ';' || varchar1$;
+        raise exception '%', varchar1$;
+    end if;
+
+#end
+    return true;
+end;
+$$ language plpgsql;
+#writeDelimiter('??')
+
+#end##writeCreateCheckFunctionFooting

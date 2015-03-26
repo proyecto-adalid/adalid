@@ -1,0 +1,33 @@
+#if($field.property.isDateData())
+    #set($componentTemplateName = 'calendar')
+#else
+    #set($componentTemplateName = 'text-field')
+#end
+#set($componentName = "label${fieldFirstName}${tabString}")
+#parse("$templatePath/blocks/webuijsf/label.vm")
+#set($componentName = "campo${fieldFirstName}${tabString}")
+#parse("$templatePath/blocks/webuijsf/${componentTemplateName}.vm")
+#set($componentName = "campo${fieldFirstName}${tabString}Texto1")
+#parse("$templatePath/blocks/webuijsf/static-text-1.vm")
+#set($componentName = "helpInline${fieldFirstName}${tabString}")
+#parse("$templatePath/blocks/webuijsf/help-inline.vm")
+#set($componentName = "converter${fieldFirstName}${tabString}")
+#set($componentClassName = 'SqlTimestampConverter')
+#set($componentClassName = "DateTimeConverter")
+#set($componentClassName = "DateTimeConverter${EOL}com.sun.rave.faces.converter.SqlTimestampConverter")
+#set($componentClassName = "DateTimeConverter${EOL}ConvertidorFechaHora")
+#parse("$templatePath/blocks/webuijsf/component.vm")
+#if($tabString == '')
+    #writeValidatorExpression()
+#end
+#break
+
+#macro(writeValidatorExpression)
+    /**
+     * ${campo1}.validatorExpression
+     */
+    public void ${campo1}_validate(FacesContext context, UIComponent component, Object value) {
+        asistente.${campo1}_validate(context, component, value);
+    }
+
+#end##writeValidatorExpression

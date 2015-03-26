@@ -1,0 +1,27 @@
+#parsePostgreSQLMacros()
+#setPostgreSQLVariables()
+#writePostgreSQLLicense()
+#writePostgreSQLAuthor('Jorge Campins')
+#set($entities = $ColUtils.filter($project.entitiesList, $isEntitySqlCodeGenEnabled, $isPersistentEntityTable))
+#set($entities = $ColUtils.sort($entities, $byEntityName))
+#foreach($entity in $entities)
+    #writeTemplate('remark-entity')
+    #writeDropTriggers()
+#end##foreach-entity
+#break
+
+#macro(writeDropTriggers)
+    #resetSQLVariables()
+    #set($table = $entity.wrapper.sqlTableName)
+    #set($table = $entity.wrapper.sqlSchemaQualifiedShortTableName)
+    #writeTemplate('remark-table')
+    #set($triggers = $VelocityAid.values($DatabaseTriggerType))
+    #foreach($trigger in $triggers)
+        #writeDropTrigger()
+    #end##foreach-trigger
+#end##writeDropTriggers
+
+#macro(writeDropTrigger)
+#set($triname = "${entity.wrapper.sqlSchemaUnqualifiedShortTableName}${sql_name_separator}${trigger.adverb}_${trigger.verb}_${trigger.level}")
+drop trigger if exists ${triname} on ${table} cascade;
+#end##writeDropTrigger

@@ -1,0 +1,28 @@
+    /**
+     * ${campo1}Boton4.onClick
+     */
+    public String getScript${Campo1}Boton4() {
+        RowKey rowKey = bean.getGestor().getCurrentRowKey();
+        boolean rowAvailable = bean.get${EntityDataProvider}().isRowAvailable(rowKey);
+        if (rowAvailable) {
+            String pagina = bean.getClass().getSimpleName();
+            String referencia = "${property.name}_" + bean.get${EntityDataProvider}().get${fieldClassName}(rowKey);
+            String urx = BaseBundle.getReferenceDetailPage(pagina, referencia);
+            if (StringUtils.isNotBlank(urx)) {
+                return bean.getGestor().getScriptAbrirVentanaVerDetalle(urx,
+                    bean.get${EntityDataProvider}().getIdentificacionRecurso(rowKey));
+            }
+        }
+        return null;
+    }
+
+    /**
+     * ${campo1}Boton4.rendered
+     */
+    public boolean is${Campo1}Boton4Rendered() {
+        RowKey rowKey = bean.getGestor().getCurrentRowKey();
+        boolean rowAvailable = bean.get${EntityDataProvider}().isRowAvailable(rowKey);
+        return rowAvailable && bean.get${EntityDataProvider}().get${fieldClassName}(rowKey) != null;
+    }
+
+#break

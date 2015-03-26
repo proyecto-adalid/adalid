@@ -1,0 +1,26 @@
+#if($upperEntity)
+    #set($upperEntityTabName = $upperEntity.wrapper.sqlName)
+    #set($upperEntityTabName = $upperEntity.wrapper.sqlSchemaQualifiedShortName)
+    #set($upperEntityKeyName = $upperEntity.primaryKeyProperty.wrapper.sqlName)
+    #raiseNotice()
+....${tab}delete from $upperEntityTabName where ${upperEntityKeyName} = old.${upperEntityKeyName};
+    #if($raiseNotices)
+....${tab}/**/
+    #end
+    #set($lowerEntity = $lowerStack.push($lowerEntity))
+    #set($upperEntity = $upperStack.push($upperEntity))
+    #set($lowerEntity = $upperEntity)
+    #set($upperEntity = $VelocityAid.coalesce($upperEntity.baseTableRoot, $FALSE))
+    #if($upperEntity)
+        #parse($template)
+    #end
+    #set($lowerEntity = $lowerStack.pop())
+    #set($upperEntity = $upperStack.pop())
+#end
+#break
+
+#macro(raiseNotice)
+#if($raiseNotices)
+....${tab}raise notice 'delete $upperEntityTabName (${upperEntityKeyName} = %)', old.${upperEntityKeyName};
+#end
+#end##raiseNotice

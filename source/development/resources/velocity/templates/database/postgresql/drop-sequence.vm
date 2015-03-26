@@ -1,0 +1,24 @@
+#parsePostgreSQLMacros()
+#setPostgreSQLVariables()
+#writePostgreSQLLicense()
+#writePostgreSQLAuthor('Jorge Campins')
+#set($entities = $ColUtils.filter($project.entitiesList, $isEntitySqlCodeGenEnabled, $isPersistentEntityTable))
+#set($entities = $ColUtils.sort($entities, $byEntityName))
+#foreach($entity in $entities)
+    #writeTemplate('remark-entity')
+    #writeDropSequence()
+#end##foreach-entity
+#break
+
+#macro(writeDropSequence)
+    #resetSQLVariables()
+    #set($table = $entity.wrapper.sqlTableName)
+    #set($table = $entity.wrapper.sqlSchemaQualifiedShortTableName)
+    #setGlobalSequenceName($entity)
+    #set($sequence = $globalConstraintName)
+    #writeDropSequenceStatement()
+#end##writeDropSequence
+
+#macro(writeDropSequenceStatement)
+drop sequence if exists $sequence cascade;
+#end##writeDropSequenceStatement

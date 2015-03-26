@@ -1,0 +1,53 @@
+#foreach($referenceKey in $entity.referencesMap.keySet())
+    #set($reference = $entity.referencesMap.get($referenceKey))
+    #set($declaring = $reference.declaringEntity)
+    #if($declaring.masterDetailFilterByReferenceMap.containsKey($reference))
+        #set($masterDetailFilter = $declaring.masterDetailFilterByReferenceMap.get($reference))
+        #if(!$writtenExpressionNames.contains($masterDetailFilter.name))
+            #set($added = $writtenExpressionNames.add($masterDetailFilter.name))
+            #set($expression = $entity.expressionsMap.get($masterDetailFilter.name))
+            #writeMasterDetailFilter()
+        #end
+    #end
+#end
+#writeFilaAmaestrable()
+#break
+
+#macro(writeMasterDetailFilter)
+    /**
+     * $expression.name $!expression.wrapper.javaDefaultDescription.
+     */
+    public boolean ${expression.wrapper.javaVariableName}(RowKey rowKey) {
+        boolean es = isRowAvailable(rowKey);
+        #set($filterEntity = $entity)
+        #set($filterExpression = $expression)
+        #set($filterErrorMessageBundle = '')
+        #set($filterErrorMessageBundleMethod = '')
+        #set($filterErrorMessageBundleKey = '')
+        #writeFilterExpression()
+        return es;
+    }
+
+#end
+
+#macro(writeFilaAmaestrable)
+    @Override
+    public boolean esFilaAmaestrable(RowKey rowKey, String referencia) {
+        boolean es = super.esFilaAmaestrable(rowKey, referencia);
+        if (es) {
+        #foreach($referenceKey in $entity.referencesMap.keySet())
+            #set($reference = $entity.referencesMap.get($referenceKey))
+            #set($declaring = $reference.declaringEntity)
+            #if($declaring.masterDetailFilterByReferenceMap.containsKey($reference))
+                #set($masterDetailFilter = $declaring.masterDetailFilterByReferenceMap.get($reference))
+                #set($expression = $entity.expressionsMap.get($masterDetailFilter.name))
+....            if (referencia.equals("$reference.fullName")) {
+....                return ${expression.wrapper.javaVariableName}(rowKey);
+....            }
+            #end
+        #end
+        }
+        return true;
+    }
+
+#end

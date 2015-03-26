@@ -1,0 +1,34 @@
+    // <editor-fold defaultstate="collapsed" desc="implementacion estandar de la interfaz PaginaConsultaConFiltro">
+    @Override
+    public void consultar() {
+##      Long filtro = getContextoPeticion().getFiltroFuncionSelect();
+##      String codigo = getContextoPeticion().getCodigoFuncionSelect();
+##      String nombre = getContextoPeticion().getNombreFuncionSelect();
+##      FiltroBusqueda filtroBusqueda = gestor.getFiltroBusqueda(filtro, codigo, nombre);
+        FiltroBusqueda filtroBusqueda = gestor.getFiltroBusquedaFuncionSelect();
+        consultar(filtroBusqueda);
+    }
+
+    @Override
+    public void consultar(Long filtro) {
+        try {
+            ${page.entity.wrapper.javaVariableName}DataProvider.consultar${page.entity.wrapper.javaClassName}(filtro);
+        } catch (Exception ex) {
+            gestor.handle(ex);
+        } finally {
+            setConsultaPendiente(false);
+        }
+    }
+
+    @Override
+    public void consultar(FiltroBusqueda filtro) {
+        try {
+            ${page.entity.wrapper.javaVariableName}DataProvider.consultar${page.entity.wrapper.javaClassName}(filtro);
+        } catch (Exception ex) {
+            gestor.handle(ex);
+        } finally {
+            setConsultaPendiente(false);
+        }
+    }
+    // </editor-fold>
+

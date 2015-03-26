@@ -1,0 +1,16 @@
+select distinct
+in2.relname as index_name,
+in1.indisunique as is_unique,
+indexof(cast(in1.indkey as int[]), cast(att.attnum as int)) + 1 as ordinal_position,
+att.attname as column_name,
+case in1.indoption[indexof(cast(in1.indkey as int[]), cast(att.attnum as int))] when(0) then 'asc' else 'desc' end as column_option
+from information_schema.tables
+inner join pg_namespace nsp on nsp.nspname=table_schema
+inner join pg_class tab on tab.relname=table_name and tab.relnamespace=nsp.oid
+inner join pg_index in1 on in1.indrelid=tab.oid and (in1.indisunique is not true or in1.indnatts>1)
+inner join pg_class in2 on in2.oid=in1.indexrelid
+inner join pg_attribute att on att.attrelid=tab.oid and att.attnum=ANY(in1.indkey)
+where table_catalog='$database'
+and table_schema='$schema'
+and table_name='$table'
+order by 1, 3;

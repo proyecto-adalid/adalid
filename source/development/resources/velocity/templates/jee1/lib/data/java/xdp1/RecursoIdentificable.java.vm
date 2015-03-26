@@ -1,0 +1,49 @@
+#break
+
+#macro(writeRecursoIdentificableImport)
+#if($esRecursoIdentificable)
+    #set($added = $imports.add("${project.rootPackageName}.lib.core.db.xdp.RecursoIdentificableDataProvider"))
+    #set($added = $interfaces.add('RecursoIdentificableDataProvider'))
+#end
+#end##writeRecursoIdentificableImport
+
+#macro(writeRecursoIdentificableImplementation)
+#if($esRecursoIdentificable)
+    #set($property = $entity.primaryKeyProperty)
+##  public static final String COLUMNA_IDENTIFICACION_RECURSO = "${property.wrapper.sqlName}";
+    public static final String COLUMNA_IDENTIFICACION_RECURSO = "${query.getSqlAlias($property)}";
+
+    public static final String ETIQUETA_IDENTIFICACION_RECURSO = BundleWebui.getString("xdp.etiqueta_identificacion_recurso");
+
+    @Override
+    public String getColumnaIdentificacionRecurso() {
+        return COLUMNA_IDENTIFICACION_RECURSO;
+    }
+
+    @Override
+    public String getEtiquetaIdentificacionRecurso() {
+        return ETIQUETA_IDENTIFICACION_RECURSO;
+    }
+
+    @Override
+    public ${property.wrapper.javaPrimitiveType} getIdentificacionRecurso() {
+        return get${property.wrapper.javaClassName}();
+    }
+
+    @Override
+    public ${property.wrapper.javaPrimitiveType} getIdentificacionRecurso(RowKey rowKey) {
+        return get${property.wrapper.javaClassName}(rowKey);
+    }
+
+    @Override
+    public void setIdentificacionRecurso(${property.wrapper.javaPrimitiveType} identificacionRecurso) {
+        set${property.wrapper.javaClassName}(identificacionRecurso);
+    }
+
+    @Override
+    public void setIdentificacionRecurso(RowKey rowKey, ${property.wrapper.javaPrimitiveType} identificacionRecurso) {
+        set${property.wrapper.javaClassName}(rowKey, identificacionRecurso);
+    }
+
+#end
+#end##writeRecursoIdentificableImplementation

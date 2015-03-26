@@ -1,0 +1,25 @@
+#break
+
+#macro(writeOperationJavadocType1)
+#if($operation.asynchronous)
+    #set($operationKeywordsString = "ASYNCHRONOUS")
+#else
+    #set($operationKeywordsString = "SYNCHRONOUS")
+#end
+#set($operationKeywordsString = "${operationKeywordsString} $!operation.operationKind")
+#if($operation.queryType)
+    #set($operationKeywordsString = "${operationKeywordsString} $operation.queryType")
+#end
+#set($operationKeywordsString = "${operationKeywordsString} $!operation.operationType")
+#set($javadocMaxLineLength = $JAVA_RIGHT_MARGIN - 8)
+#set($javadocLines = $VelocityAid.javadocLines($!{operation.wrapper.javaDefaultDescription}, $javadocMaxLineLength))
+    /**
+     * $!{operationKeywordsString} ${operation.wrapper.javaName}.
+#if(!$javadocLines.isEmpty())
+     * <p>
+    #foreach($javadocString in $javadocLines)
+     * $javadocString
+    #end
+#end
+     */
+#end##writeOperationJavadocType1

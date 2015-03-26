@@ -1,0 +1,249 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+    <head>
+        <title>remitiendo...</title>
+    </head>
+    <body>
+        <script type="text/javascript">
+            //
+            var IE  = (navigator.appName.indexOf('Microsoft') == 0); // Microsoft Internet Explorer
+            var NS  = (navigator.appName.indexOf('Netscape' ) == 0); // Netscape
+            //
+            //  var DEFAULT_PROTOCOL  = 'http:';
+            //  var DEFAULT_HOST      = 'localhost:8080';
+            //  var DEFAULT_HOST_NAME = 'localhost';
+            //  var DEFAULT_PORT      = '8080';
+            var DEFAULT_ROOT      = 'http://localhost:8080/';
+            //
+            var REDIRECT_MODE     = 'RedirectMode';
+            var REDIRECT_OPEN     = '0';
+            var REDIRECT_SELF     = '1';
+            //
+            var SESSION_FRAME     = 'SessionFrame';
+            var SESSION_STAMP     = 'SessionStamp';
+            var SESSION_STATE     = 'SessionState';
+            var SESSION_RESTART   = '0';
+            var SESSION_REDIRECT  = '1';
+            //
+            function getCurrentTimeMillis() {
+                //  var currentDate = new Date();
+                //  return currentDate.getTime();
+                return 0;
+            }
+            //
+            function getDefaultWindowName() {
+                var ctx = getParametro(location.pathname, '', '/', '/');
+                var wcx = ctx.replace(/${backslash}-/gi, '_');
+                var pos = wcx.indexOf('_');
+                var dwn = pos > 0 ? wcx.substring(0, pos) : wcx;
+                //  alert('current window name = ' + window.name + ', context = ' + ctx + ', default window name = ' + dwn);
+                return dwn;
+            }
+            //
+            function getEspecificacionesVentana(tipoVentana) {
+                var features  = 'resizable,scrollbars,status';
+                /**/
+                if (IE) {
+                    return features;
+                }
+                /**/
+                var bigEnough = true;
+                var barHeight = 0;                       //  window title bar height
+                var minWidth  = 640;                     //  minimum width
+                var minHeight = 320;                     //  minimum height
+                /**/
+                var avaWidth  = screen.availWidth;       //  amount of horizontal space in pixels available to the window
+                var avaHeight = screen.availHeight;      //  height of the screen, in pixels, minus permanent or semipermanent user interface features displayed by the operating system
+                var avaLeft   = screen.availLeft;        //  first available pixel available from the left side of the screen
+                var avaTop    = screen.availTop;         //  y-coordinate of the first pixel that is not allocated to permanent or semipermanent user interface features
+                /**/
+                var outWidth  = window.outerWidth;       //  width of the outside of the browser window
+                var outHeight = window.outerHeight;      //  height of the outside of the browser window
+                var scrLeft   = window.screenX;          //  horizontal distance of the left border of the user's browser from the left side of the screen
+                var scrTop    = window.screenY;          //  vertical distance of the top border of the user's browser from the top side of the screen
+                /**/
+                if (isNaN(avaWidth))   avaWidth  = 0;
+                if (isNaN(avaHeight))  avaHeight = 0;
+                if (isNaN(avaLeft))    avaLeft   = 0;
+                if (isNaN(avaTop))     avaTop    = 0;
+                /**/
+                if (isNaN(outWidth))   outWidth  = avaWidth;
+                if (isNaN(outHeight))  outHeight = avaHeight;
+                if (isNaN(scrLeft))    scrLeft   = avaLeft;
+                if (isNaN(scrTop))     scrTop    = avaTop;
+                /**/
+                if (outWidth  > avaWidth)  outWidth  = avaWidth;
+                if (outHeight > avaHeight) outHeight = avaHeight;
+                if (scrLeft   < avaLeft)   scrLeft   = avaLeft;
+                if (scrTop    < avaTop)    scrTop    = avaTop;
+                /**/
+                if (avaWidth  < minWidth)  bigEnough = false;
+                if (avaHeight < minHeight) bigEnough = false;
+                /**/
+                if (outWidth  < minWidth)  outWidth  = minWidth;
+                if (outHeight < minHeight) outHeight = minHeight;
+                /**/
+                var newWidth  = avaWidth;
+                var newHeight = avaHeight;
+                var newLeft   = avaLeft;
+                var newTop    = avaTop;
+                /**/
+                if (tipoVentana == 'ayuda') {
+                    /**/
+                    features += ',menubar,toolbar';
+                    /**/
+                    minWidth  = Math.round(avaWidth * 2 / 5);
+                    newWidth  = minWidth;
+                    newHeight = avaHeight;
+                    newLeft   = scrLeft < avaLeft + avaWidth / 2 ? avaLeft + avaWidth - newWidth : avaLeft;
+                    newTop    = avaTop;
+                }
+                if (tipoVentana == 'popup') {
+                    /*
+                    features += ',dependent,dialog';
+                     */
+                    newWidth  = outWidth;
+                    newHeight = outHeight - barHeight;
+                    newLeft   = scrLeft;
+                    newTop    = scrTop    + barHeight;
+                }
+                if (bigEnough) {
+                    if (newWidth  < minWidth)  newWidth  = minWidth;
+                    if (newHeight < minHeight) newHeight = minHeight;
+                    if (avaLeft + avaWidth < newLeft + newWidth) {
+                        if (avaLeft + avaWidth < newLeft + minWidth) {
+                            newWidth = minWidth;
+                            newLeft  = avaLeft + avaWidth - newWidth;
+                        } else {
+                            newWidth = avaLeft + avaWidth - newLeft;
+                        }
+                    }
+                    if (avaTop + avaHeight < newTop + newHeight) {
+                        if (avaTop + avaHeight < newTop + minHeight) {
+                            newHeight = minHeight;
+                            newTop    = avaTop + avaHeight - newHeight;
+                        } else {
+                            newHeight = avaTop + avaHeight - newTop;
+                        }
+                    }
+                    features += ',outerWidth=' + newWidth + ',outerHeight=' + newHeight + ',screenX=' + newLeft + ',screenY=' + newTop;
+                }
+                /*
+                alert(features);
+                 */
+                return features;
+            }
+            //
+            function getParametro(str, kw0, kw1, kw2) {
+                // Obtiene la posicion donde comenzar a buscar
+                var ix0 = kw0 == '' ?  0  : str.indexOf(kw0);
+                if (ix0 == -1) return '';
+                ix0 += kw0.length;
+                // Obtiene la posicion donde comienza el valor
+                var ix1 = kw1 == '' ? ix0 : str.indexOf(kw1, ix0);
+                if (ix1 == -1) return '';
+                ix1 += kw1.length;
+                // Obtiene la posicion donde termina el valor
+                var ix2 = kw2 == '' ? ix1 : str.indexOf(kw2, ix1);
+                if (ix2 == -1) ix2 = str.length;
+                // Obtiene el valor
+                var valor = str.substring(ix1, ix2);
+                // Retorna el valor
+                return valor;
+            }
+            //
+            function closeVentana(urx, twn) {
+                //  alert('name=' + window.name + ', close(' + urx + ', ' + twn + ')');
+                if (IE) {
+                    return null;
+                }
+                var wcx = twn.replace(/${backslash}-/gi, '_');
+                var wfx = 'resizable,scrollbars,status';
+                var wrx = window.open(urx, wcx, wfx);
+                wrx.close();
+                return wrx;
+            }
+            //
+            function openVentana(urx, twn) {
+                //  alert('name=' + window.name + ', open(' + urx + ', ' + twn + ')');
+                var wcx = twn.replace(/${backslash}-/gi, '_');
+                var wfx = getEspecificacionesVentana('popup');
+                var rpl = '?' + REDIRECT_MODE + '=' + REDIRECT_OPEN
+                        + '&' + SESSION_FRAME + '=' + wcx
+                        + '&' + SESSION_STAMP + '=' + getCurrentTimeMillis()
+                        + '&' + SESSION_STATE + '=' + SESSION_RESTART;
+                var wrx = window.open(urx + rpl, wcx, wfx);
+                wrx.opener = window.opener;
+                wrx.focus();
+                return wrx;
+            }
+            //
+            function selfClose() {
+                //  alert('name=' + window.name);
+                var urx = location.protocol + '//' + location.host;
+                location.replace(urx); // después de este replace las funciones de este documento ya no estan disponibles
+                window.close();
+            }
+            //
+            function selfReplace(urx) {
+                var state = getParametro(unescape(location.search), '?', SESSION_STATE + '=', '&');
+                if (state == '') state = SESSION_RESTART;
+                var rpl = '?' + REDIRECT_MODE + '=' + REDIRECT_SELF
+                        + '&' + SESSION_FRAME + '=' + window.name
+                        + '&' + SESSION_STAMP + '=' + getCurrentTimeMillis()
+                        + '&' + SESSION_STATE + '=' + state;
+                location.replace(urx + rpl); // después de este replace las funciones de este documento ya no estan disponibles
+            }
+            //
+            function tieneSufijo(str, kw0) {
+                var ix0 = kw0 == '' ?  0  : str.indexOf(kw0);
+                return (ix0 >= 0 && ix0 + kw0.length == str.length);
+            }
+            //
+            //  alert(window.name + ', ' + location.href);
+            //
+            //  document.title = window.name;
+            //  window.status  = window.name;
+            //
+            var ur0 = location.protocol + '//' + location.host + '/';
+            var hp0 = location.host;
+            var ur1 = location.protocol + '//' + location.host + location.pathname;
+            var pr1 = getParametro(ur1, '://', '/', '/'); // project (context)
+            var dw1 = getDefaultWindowName();
+            if (window.name == '' || pr1 == '' || dw1 == '' || window.name.indexOf(dw1) != 0) {
+                selfClose();
+            } else {
+                var ur2 = getParametro(unescape(location.search), '?', 'url=', '&');
+                var jsp = getParametro(unescape(location.search), '?', 'jsp=', '&');
+                var twn = getParametro(unescape(location.search), '?', 'twn=', '&');
+                if (ur2 == '' && jsp != '') {
+                    ur2 = ur0 + pr1 + '/faces/' + jsp + '.jsp';
+                }
+                if (ur2 == '') {
+                    selfClose();
+                } else {
+                    var pr2 = getParametro(ur2, '://', '/', '/'); // project (context)
+                    if (pr2 == '') {
+                        selfClose();
+                    } else {
+                        if (ur2.indexOf(DEFAULT_ROOT) == 0) {
+                            var rex = new RegExp(DEFAULT_ROOT, 'gi');
+                            ur2 = ur2.replace(rex, ur0);
+                        }
+                        if (twn == '') {
+                            twn = pr2;
+                        }
+                        var wc2 = twn.replace(/${backslash}-/gi, '_');
+                        if (wc2 == window.name) {
+                            selfReplace(ur2);
+                        } else {
+                            closeVentana(ur0, twn);
+                            openVentana(ur2, twn);
+                            selfClose();
+                        }
+                    }
+                }
+            }
+        </script>
+    </body>
+</html>

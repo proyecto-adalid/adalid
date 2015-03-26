@@ -1,0 +1,15 @@
+    public boolean isGrid${operationClassName}Rendered() {
+        long f = LongUtils.valueOf(gestor.getValorListaFuncionAccion1());
+        return f == ${operationNumberConstant};
+    }
+
+    private void ${operationName}_validate() {
+    #foreach($parameter in $operation.parametersList)
+        #if($parameter.isEntity())
+            #setParameterVariables()
+....        ${campo1}_validate(ObjUtils.toString(${campo1}));
+        #end
+    #end##foreach-parameter
+    }
+
+#break

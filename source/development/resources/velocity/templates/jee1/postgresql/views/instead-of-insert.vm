@@ -1,0 +1,40 @@
+#if($upperEntity)
+    #set($lowerEntity = $lowerStack.push($lowerEntity))
+    #set($upperEntity = $upperStack.push($upperEntity))
+    #set($lowerEntity = $upperEntity)
+    #set($upperEntity = $VelocityAid.coalesce($upperEntity.baseTableRoot, $FALSE))
+    #if($upperEntity)
+        #parse($template)
+    #end
+    #set($lowerEntity = $lowerStack.pop())
+    #set($upperEntity = $upperStack.pop())
+    #set($upperEntityTabName = $upperEntity.wrapper.sqlName)
+    #set($upperEntityTabName = $upperEntity.wrapper.sqlSchemaQualifiedShortName)
+    #set($upperEntityKeyName = $upperEntity.primaryKeyProperty.wrapper.sqlName)
+    #set($upperEntityColumns = $upperEntity.getMatchingColumnsList($lowerEntity.propertiesList))
+    #raiseNotice()
+    #if($discriminatorColumn != '' && $discriminatorValue !='')
+        #foreach($upperEntityColumn in $upperEntityColumns)
+            #if($upperEntityColumn.wrapper.sqlName == $discriminatorColumn)
+                #writeDiscriminatorValueAssignment()
+                #break
+            #end
+        #end
+    #end
+....${tab}insert into $upperEntityTabName (#upperEntityColumnNames(''))
+....${tab}values (#upperEntityColumnNames('new.'));
+....${tab}/**/
+#end
+#break
+
+#macro(raiseNotice)
+#if($raiseNotices)
+....${tab}raise notice 'insert $upperEntityTabName (#upperEntityColumnPattern())', #upperEntityColumnNames('new.');
+#end
+#end##raiseNotice
+
+#macro(writeDiscriminatorValueAssignment)
+....${tab}if (new.$discriminatorColumn is null) then
+....${tab}    new.$discriminatorColumn = $discriminatorValue;
+....${tab}end if;
+#end##writeDiscriminatorValueAssignment

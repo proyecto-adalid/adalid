@@ -1,0 +1,55 @@
+#if($parameter.isDateData())
+    #set($fieldMaxLength = 10)##dd-mm-yyyy
+#elseif($parameter.isTimeData())
+    #set($fieldMaxLength = 8)##hh:mm AM/PM
+#elseif($parameter.isTimestampData())
+    #set($fieldMaxLength = 22)##dd-mm-yyyy hh:mm:ss AM/PM
+#else
+    #set($fieldMaxLength = 0)
+#end
+$tab<h:panelGrid id="panelGrid${panelGridSequence.next()}"
+$tab    rendered="#{${pageBeanName}.grid${operation.wrapper.javaClassName}Rendered}"
+$tab    styleClass="pdq-grid-etiqueta-1">
+$tab    <webuijsf:label id="label${fieldFirstName}"
+$tab        binding="#{${pageBeanName}.label${fieldFirstName}}"
+$tab        for="${campo1}"
+##          text="$parameter.wrapper.xmlValidDefaultShortLabel"/>
+$tab        text="${fieldBundleParametrosKey}"/>
+$tab</h:panelGrid>
+$tab<h:panelGrid id="panelGrid${panelGridSequence.next()}"
+$tab    columns="7"
+$tab    rendered="#{${pageBeanName}.grid${operation.wrapper.javaClassName}Rendered}"
+$tab    styleClass="pdq-grid-elemento-1">
+    #if($parameter.isDateData())
+$tab    <webuijsf:calendar id="${campo1}"
+$tab        binding="#{${pageBeanName}.${campo1}}"
+$tab        converter="#{${pageBeanName}.converter${fieldFirstName}}"
+$tab        maxDate="#{${pageBeanName}.gestor.defaultMaxDate}"
+$tab        minDate="#{${pageBeanName}.gestor.defaultMinDate}"
+$tab        required="$fieldRequired"
+##          toolTip="$parameter.wrapper.xmlValidDefaultTooltip"/>
+$tab        toolTip="${fieldBundleParametrosKey}"
+$tab        validatorExpression="#{${pageBeanName}.${campo1}_validate}"/>
+    #else
+$tab    <webuijsf:textField id="${campo1}"
+$tab        binding="#{${pageBeanName}.${campo1}}"
+$tab        columns="20"
+$tab        converter="#{${pageBeanName}.converter${fieldFirstName}}"
+        #if($fieldMaxLength > 0)
+$tab        maxLength="$fieldMaxLength"
+        #end
+$tab        required="$fieldRequired"
+##          toolTip="$parameter.wrapper.xmlValidDefaultTooltip"/>
+$tab        toolTip="${fieldBundleParametrosKey}"
+$tab        validatorExpression="#{${pageBeanName}.${campo1}_validate}"/>
+    #end
+$tab    <webuijsf:message id="message${fieldFirstName}"
+$tab        for="${campo1}"/>
+$tab    <webuijsf:helpInline id="helpInline${fieldFirstName}"
+$tab        binding="#{${pageBeanName}.helpInline${fieldFirstName}}"
+$tab        rendered="#{SessionBean1.contextoSesion.helpInlineRendered}"
+$tab        styleClass="pdq-helpInline-field"
+##          text="$parameter.wrapper.xmlValidDefaultShortDescription"
+$tab        text="${fieldBundleParametrosKey}"
+$tab        type="field"/>
+$tab</h:panelGrid>

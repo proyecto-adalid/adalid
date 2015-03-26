@@ -1,0 +1,88 @@
+#parsePostgreSQLMacros()
+#setPostgreSQLVariables()
+#writePostgreSQLLicense()
+#writePostgreSQLAuthor('Jorge Campins')
+#writeDelimiterDirective('??')
+#set($entities = $ColUtils.filter($project.entitiesList, $isEntitySqlCodeGenEnabled, $isProcessOperationInEntity, $isPersistentEntity))
+#set($entities = $ColUtils.sort($entities, $byEntityName))
+#foreach($entity in $entities)
+    #writeTemplate('remark-entity')
+    #writeDropBusinessFunctions()
+#end##foreach-entity
+#writeDelimiterDirective(';')
+#break
+
+#macro(writeDropBusinessFunctions)
+    #set($entname = $entity.wrapper.sqlName)
+    #set($entname = $entity.wrapper.sqlSchemaQualifiedShortName)
+    #set($tabname = $entity.wrapper.sqlTableName)
+    #set($tabname = $entity.wrapper.sqlSchemaQualifiedShortTableName)
+    #set($bizSuffix = '$biz')
+    #set($logSuffix = '$log')
+    #set($jobSuffix = '$job')
+    #set($valSuffix = '$val')
+    #set($operations = $ColUtils.filter($entity.operationsList, $isBasicDatabaseOperation))
+    #set($operations = $ColUtils.sort($operations, $byOperationName))
+    #foreach($operation in $operations)
+        #set($basicDatabaseOperationType = "$!operation.basicDatabaseOperationType")
+        #if($basicDatabaseOperationType == 'INSERT' || $basicDatabaseOperationType == 'UPDATE' || $basicDatabaseOperationType == 'DELETE')
+            #set($instanceParameterType = "$!entity.primaryKeyProperty.wrapper.sqlParameterType")
+            #set($name       = $javaProgrammer.getJavaLowerConstantName($operation.name))
+            #set($function4  = "${entname}${sql_name_separator}${name}$jobSuffix")
+            #set($drop4rpl   = "$instanceParameterType")
+            #writeDropBusinessFunctionsDrop4()
+        #end
+    #end##foreach-operation
+    #set($operations = $ColUtils.filter($entity.businessOperationsList, $isProcessOperation))
+    #set($operations = $ColUtils.sort($operations, $byOperationName))
+    #foreach($operation in $operations)
+        #set($parameterNames = '')
+        #set($parameterTypes = '')
+        #set($parameterPairs = '')
+        #set($parameterPlaceHolders = '')
+        #set($rastroParameterType = 'bigint')
+        #if("$!operation.operationKind" == 'INSTANCE')
+            #set($instanceParameterType = "$!operation.instanceParameter.wrapper.sqlParameterType")
+        #else
+            #set($instanceParameterType = '')
+        #end
+        #foreach($parameter in $operation.parametersList)
+            #set($parameterType = $parameter.wrapper.sqlParameterType)
+            #set($parameterTypes = "$parameterTypes, $parameterType")
+        #end##foreach-parameter
+        #set($name = $VelocityAid.coalesce($operation.processName, $operation.name))
+        #set($name = $javaProgrammer.getJavaLowerConstantName($name))
+        #if("$!operation.overloading" == 'FALSE')
+            #set($bizSuffix = '$biz')
+        #else
+            #set($bizSuffix = '')
+        #end
+        #set($function1  = "${entname}${sql_name_separator}${name}")
+        #set($function2  = "${entname}${sql_name_separator}${name}$bizSuffix")
+        #set($function3  = "${entname}${sql_name_separator}${name}$logSuffix")
+        #set($function4  = "${entname}${sql_name_separator}${name}$jobSuffix")
+        #set($function5  = "${entname}${sql_name_separator}${name}$valSuffix")
+        #set($drop1rpl   = "$rastroParameterType$parameterTypes")
+        #if($bizSuffix == '')
+            #set($drop2rpl   = $StringUtils.removeStart($parameterTypes, ', '))
+        #else
+            #set($drop2rpl   = $drop1rpl)
+        #end
+        #set($drop3rpl   = $drop1rpl)
+        #set($drop4rpl   = "$instanceParameterType")
+        #set($drop5rpl   = $drop2rpl)
+        #writeDropBusinessFunctionsDrop()
+    #end##foreach-operation
+#end##writeDropBusinessFunctions
+
+#macro(writeDropBusinessFunctionsDrop)
+drop function if exists ${function1}(${drop1rpl}) cascade;
+drop function if exists ${function2}(${drop2rpl}) cascade;
+drop function if exists ${function3}(${drop3rpl}) cascade;
+drop function if exists ${function4}(${drop4rpl}) cascade;
+drop function if exists ${function5}(${drop5rpl}) cascade;
+#end##writeDropBusinessFunctionsDrop
+
+#macro(writeDropBusinessFunctionsDrop4)
+drop function if exists ${function4}(${drop4rpl}) cascade;
+#end##writeDropBusinessFunctionsDrop4

@@ -1,0 +1,87 @@
+    // <editor-fold defaultstate="collapsed" desc="implementacion estandar de la interfaz PaginaConsultaConArbol">
+    @Override
+    public Integer getOpcionZumSeleccionada() {
+        return ${page.entity.wrapper.javaVariableName}DataProvider.getOpcionZumNodo() == null ? null
+            : (${page.entity.wrapper.javaVariableName}DataProvider.getOpcionZumNodo().intValue());
+    }
+
+    @Override
+    public void setOpcionZumSeleccionada(Integer opcionZumSeleccionada) {
+        EnumOpcionZumNodo opcion = opcionZumSeleccionada == null ? null
+            : EnumOpcionZumNodo.valueOf(opcionZumSeleccionada);
+        /**/
+        ${page.entity.wrapper.javaVariableName}DataProvider.setOpcionZumNodo(opcion);
+    }
+
+    @Override
+    public Object getColumnaEtiqueta() {
+        return EnumColumnaEtiqueta.AMBAS_COLUMNAS;
+    }
+
+    @Override
+    public String getVinculoPaginaConsultaConTabla() {
+#set($sibling = $FALSE)
+#set($sibling = $module.getTableSiblingOf($page))
+#if($sibling)
+//      relate $sibling.name @ $module.name ($module.wrapper.hyphenatedAlias) @ $module.master.name ($module.master.wrapper.hyphenatedAlias)
+        return "$Bundle.getString('DisplayFormat.TABLE.outcome')";
+#else
+    #set($sibling = $project.getTableSiblingOf($page))
+    #if($sibling)
+//      relate $sibling.name @ $project.name ($project.wrapper.hyphenatedAlias)
+        return "$Bundle.getString('DisplayFormat.TABLE.outcome')";
+    #else
+        return null;
+    #end
+#end
+    }
+
+    @Override
+    public String getVinculoPaginaConsultaDetalle() {
+#set($sibling = $FALSE)
+#set($sibling = $module.getDetailSiblingOf($page))
+#if($sibling)
+//      relate $sibling.name @ $module.name ($module.wrapper.hyphenatedAlias) @ $module.master.name ($module.master.wrapper.hyphenatedAlias)
+        return "$Bundle.getString('DisplayFormat.DETAIL.outcome')";
+#else
+    #set($sibling = $project.getDetailSiblingOf($page))
+    #if($sibling)
+//      relate $sibling.name @ $project.name ($project.wrapper.hyphenatedAlias)
+        return "$Bundle.getString('DisplayFormat.DETAIL.outcome')";
+    #else
+        #set($cousin = $FALSE)
+        #set($cousin = $module.getDetailCousinOf($page))
+        #if($cousin)
+....//      cousin $cousin.name @ $module.name ($module.wrapper.hyphenatedAlias) @ $module.master.name ($module.master.wrapper.hyphenatedAlias)
+....        return "$Bundle.getString('DisplayFormat.DETAIL.outcome')";
+        #else
+            #set($cousin = $project.getDetailCousinOf($page))
+            #if($cousin)
+........//      cousin $cousin.name @ $project.name ($project.wrapper.hyphenatedAlias)
+........        return "$Bundle.getString('DisplayFormat.DETAIL.outcome')";
+            #else
+                return null;
+            #end
+        #end
+    #end
+#end
+    }
+
+    @Override
+    public String accionEscogerNodo() {
+        gestor.escoger();
+        return null;
+    }
+
+    @Override
+    public void consultar() {
+        try {
+            ${page.entity.wrapper.javaVariableName}DataProvider.consultar${page.entity.wrapper.javaClassName}();
+        } catch (Exception ex) {
+            gestor.handle(ex);
+        } finally {
+            setConsultaPendiente(false);
+        }
+    }
+    // </editor-fold>
+

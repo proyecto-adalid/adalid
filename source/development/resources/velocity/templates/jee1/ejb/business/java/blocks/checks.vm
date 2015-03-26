@@ -1,0 +1,156 @@
+#parse("$templatePath/blocks/macros.vm")
+#foreach($operation in $operations)
+    #setOperationVariables()
+    #if($operationNumberConstant == '' || $operationStringConstant == '')
+    #elseif($operation.checksList.isEmpty() && $operation.initialStatesList.isEmpty())
+    #else
+    // <editor-fold defaultstate="collapsed" desc="métodos de $operationVariableName">
+        #writeCheckOperationMethod()
+    // </editor-fold>
+
+    #end
+#end##foreach-operation
+#break
+
+#macro(writeCheckOperationMethod)
+    @Override
+    #if("$!operation.operationKind" == 'INSTANCE')
+....    public boolean ${operationName}Allowed(${message} message, ${entityClass} ${entityVar}) {
+    #else
+....    public boolean ${operationName}Allowed(${message} message) {
+    #end
+    #clearEntityBeanLists()
+    #foreach($parameter in $operation.parametersList)
+        #if($parameter.isPersistentEntity())
+            #setParameterVariables()
+            #set($facade = "${parameterVariableName}Facade")
+            #set($getter = "message.getArgumento${fieldClassName}()")
+            #set($object = "${facade}.find($getter, true)")
+            #set($added = $entityBeanArgumentsList.add("$fieldVariableName"))
+            #set($added = $entityBeanParametersList.add("$parameterClassName $fieldVariableName"))
+            #if($parameter.isInstanceReferenceField())
+........        $parameterClassName $fieldVariableName = ${entityVar};
+            #else
+........        $parameterClassName $fieldVariableName = ${object};
+            #end
+        #end
+    #end##foreach-parameter
+    #set($argList = '')
+    #set($parList = '')
+    #if($entityBeanArgumentsList.isEmpty() || $entityBeanParametersList.isEmpty())
+    #else
+        #set($argList = $StringUtils.join($entityBeanArgumentsList, ', '))
+        #set($parList = $StringUtils.join($entityBeanParametersList, ', '))
+    #end
+        boolean check;
+    #if("$!operation.operationKind" != 'INSTANCE' || $operationStatelist.isEmpty())
+        boolean allow = true;
+    #else
+        boolean allow = false;
+        #set($stateEntity = $FALSE)
+        #set($stateExpression = $FALSE)
+        #set($stateErrorMessageBundle = '')
+        #set($stateErrorMessageBundleMethod = '')
+        #set($stateErrorMessageBundleKey = '')
+        #foreach($state in $operationStatelist)
+....        check = ${state.wrapper.javaVariableName}(${entityVar});
+....        allow |= check;
+            #if($foreach.first && $foreach.last)
+                #set($stateEntity = $entity)
+                #set($stateExpression = $state)
+                #set($stateErrorMessageBundle = 'BundleDominios')
+                #set($stateErrorMessageBundleMethod = 'getStateError')
+                #set($stateErrorMessageBundleKey = "${entity.wrapper.sqlName}.${state.wrapper.sqlName}")
+                #set($stateErrorMessageBundleKey = "${entity.wrapper.sqlSchemaQualifiedShortName}.${state.wrapper.sqlName}")
+            #end
+        #end
+        #writeStateExpressionErrorMessage()
+    #end
+    #foreach($check in $operationChecklist)
+        #if($argList == '')
+....        check = ${operationName}_${check.wrapper.javaVariableName}(message);
+        #else
+....        check = ${operationName}_${check.wrapper.javaVariableName}(message, $argList);
+        #end
+        allow &= check;
+    #end
+        return allow;
+    }
+    #foreach($check in $operationChecklist)
+
+        #writeExpression()
+    #end
+#end##writeCheckOperationMethod
+
+#macro(clearEntityBeanLists)
+#if($entityBeanArgumentsList)
+....$entityBeanArgumentsList.clear()##
+#else
+    #set($entityBeanArgumentsList = $VelocityAid.getNewArrayList())
+#end
+#if($entityBeanParametersList)
+....$entityBeanParametersList.clear()##
+#else
+    #set($entityBeanParametersList = $VelocityAid.getNewArrayList())
+#end
+#end##clearEntityBeanLists
+
+#macro(writeExpression)
+#if($parList == '')
+    private boolean ${operationName}_${check.wrapper.javaVariableName}(${message} message) {
+#else
+    private boolean ${operationName}_${check.wrapper.javaVariableName}(${message} message, $parList) {
+#end
+        #set($errorMessageBundleKey = "<${entity.wrapper.sqlName}.${operation.wrapper.sqlName}.${check.wrapper.sqlName}>")
+        #set($errorMessageBundleKey = "<${entity.wrapper.sqlSchemaQualifiedShortName}.${operation.wrapper.sqlName}.${check.wrapper.sqlName}>")
+        #set($parameterizedExpression = $check.wrapper.javaParameterizedExpression)
+        #set($expressionParametersMap = $parameterizedExpression.parametersMap)
+        #set($namedValuesMap = $parameterizedExpression.namedValuesMap)
+        #foreach($expressionParameterKey in $expressionParametersMap.keySet())
+            #writeAssignObjValue()
+        #end
+        #set($maxLineLength = 0)
+        #set($newLineString = '<EOL>')
+        #set($string2split = "$!parameterizedExpression.expression")
+        #set($string2split = "boolean check = $string2split;")
+        #set($string2split = $string2split.replace(":", "${newLineString}${TAB}:"))
+        #set($string2split = $string2split.replace("&&", "${newLineString}${TAB}&&"))
+        #set($string2split = $string2split.replace("||", "${newLineString}${TAB}||"))
+        #set($string2split = $string2split.replace("), ", "),${newLineString}${TAB}"))
+        #set($string2lines = $VelocityAid.split($string2split, $maxLineLength, $newLineString, $FALSE, $TAB))
+        #foreach($line in $string2lines)
+....        ${line}
+        #end
+        if (!check) {
+            #set($expressionDefaultErrorMessage = "$!check.wrapper.bundleDefaultErrorMessageChoice")
+            #if($expressionDefaultErrorMessage != '')
+....//          TLC.getBitacora().error("$expressionDefaultErrorMessage");
+            #end
+            TLC.getBitacora().error("${errorMessageBundleKey}");
+        }
+        return check;
+    }
+#end##writeExpression
+
+#macro(writeStateExpressionErrorMessage)
+    #set($parameterSearchQueryKey = "${entity.wrapper.sqlName}.${operation.wrapper.sqlName}.${operation.instanceParameter.wrapper.sqlName}")
+    #set($parameterSearchQueryKey = "${entity.wrapper.sqlSchemaQualifiedShortName}.${operation.wrapper.sqlName}.${operation.instanceParameter.wrapper.sqlName}")
+        if (!allow) {
+            String arg0 = BundleParametros.getLabel("${parameterSearchQueryKey}");
+//          String arg1 = ObjUtils.toString($entityVariableName);
+            String arg1 = ObjUtils.toString($entityVar);
+            #if($stateExpression)
+                #set($stateExpressionDefaultErrorMessage = "$!stateExpression.wrapper.bundleDefaultErrorMessageChoice")
+            #else
+                #set($stateExpressionDefaultErrorMessage = '')
+            #end
+            #if($stateExpressionDefaultErrorMessage == '')
+....            TLC.getBitacora().error(CBM.RECURSO_NO_PROCESABLE, arg0, arg1, "");
+            #else
+....//          String arg2 = "$stateExpressionDefaultErrorMessage";
+....            String arg2 = StrUtils.enclose(${stateErrorMessageBundle}.${stateErrorMessageBundleMethod}("${stateErrorMessageBundleKey}"));
+....            TLC.getBitacora().error(CBM.RECURSO_NO_PROCESABLE, arg0, arg1, arg2);
+            #end
+            return false;
+        }
+#end##writeStateExpressionErrorMessage

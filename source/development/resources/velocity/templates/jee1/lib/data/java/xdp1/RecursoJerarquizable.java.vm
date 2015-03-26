@@ -1,0 +1,49 @@
+#break
+
+#macro(writeRecursoJerarquizableImport)
+#if($esRecursoJerarquizable)
+    #set($added = $imports.add("${project.rootPackageName}.lib.core.db.xdp.RecursoJerarquizableDataProvider"))
+    #set($added = $interfaces.add('RecursoJerarquizableDataProvider'))
+#end
+#end##writeRecursoJerarquizableImport
+
+#macro(writeRecursoJerarquizableImplementation)
+#if($esRecursoJerarquizable)
+    #set($property = $entity.parentProperty)
+##  public static final String COLUMNA_RECURSO_SUPERIOR = "${property.wrapper.sqlName}";
+    public static final String COLUMNA_RECURSO_SUPERIOR = "${query.getSqlAlias($property)}";
+
+    public static final String ETIQUETA_RECURSO_SUPERIOR = BundleWebui.getString("xdp.etiqueta_recurso_superior");
+
+    @Override
+    public String getColumnaRecursoSuperior() {
+        return COLUMNA_RECURSO_SUPERIOR;
+    }
+
+    @Override
+    public String getEtiquetaRecursoSuperior() {
+        return ETIQUETA_RECURSO_SUPERIOR;
+    }
+
+    @Override
+    public ${property.wrapper.javaPrimitiveType} getRecursoSuperior() {
+        return get${property.wrapper.javaClassName}();
+    }
+
+    @Override
+    public ${property.wrapper.javaPrimitiveType} getRecursoSuperior(RowKey rowKey) {
+        return get${property.wrapper.javaClassName}(rowKey);
+    }
+
+    @Override
+    public void setRecursoSuperior(${property.wrapper.javaPrimitiveType} recursoSuperior) {
+        set${property.wrapper.javaClassName}(recursoSuperior);
+    }
+
+    @Override
+    public void setRecursoSuperior(RowKey rowKey, ${property.wrapper.javaPrimitiveType} recursoSuperior) {
+        set${property.wrapper.javaClassName}(rowKey, recursoSuperior);
+    }
+
+#end
+#end##writeRecursoJerarquizableImplementation

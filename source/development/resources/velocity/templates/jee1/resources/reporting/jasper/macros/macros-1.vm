@@ -1,0 +1,82 @@
+#break
+
+#macro(writeBox $lineWidth $lineStyle $lineColor)
+#end##writeBox
+
+## -----------------------------------------------------------------------------
+## writeBox jasperreports-3.x.x
+## -----------------------------------------------------------------------------
+$tab<box>
+    #increaseIndentation()
+    #writePen($lineWidth $lineStyle $lineColor)
+    #decreaseIndentation()
+$tab</box>
+## -----------------------------------------------------------------------------
+
+#macro(writeGraphicElement $lineWidth $lineStyle $lineColor)
+$tab<graphicElement>
+    #increaseIndentation()
+    #writePen($lineWidth $lineStyle $lineColor)
+    #decreaseIndentation()
+$tab</graphicElement>
+#end##writeGraphicElement
+
+#macro(writePen $lineWidth $lineStyle $lineColor)
+#set($lw = '0.0')
+#set($ls = 'Solid')
+#set($lc = '#000000')
+#if($!lineWidth != '')
+    #set($lw = $lineWidth)
+#end
+#if($!lineStyle != '')
+    #set($ls = $lineStyle)
+#end
+#if($!lineColor != '')
+    #set($lc = $lineColor)
+#end
+$tab<pen lineWidth="$lw" lineStyle="$ls" lineColor="$lc"/>
+#end##writePen
+
+#macro(writeTextElement $fontname $fontsize $bold $italic $underline $strike $horizontalAlignment $verticalAlignment)
+#set($fn = 'Arial')
+#set($fs = '10')
+#set($fb = 'false')
+#set($fi = 'false')
+#set($fu = 'false')
+#set($fx = 'false')
+#set($ha = 'Left')
+#set($va = 'Middle')
+#if($!fontname != '')
+    #set($fn = $fontname)
+#end
+#if($!fontsize != '')
+    #set($fs = $fontsize)
+#end
+#if($!bold == 'true')
+    #set($fb = $bold)
+#end
+#if($!italic == 'true')
+    #set($fi = $italic)
+#end
+#if($!underline == 'true')
+    #set($fu = $underline)
+#end
+#if($!strike == 'true')
+    #set($fx = $strike)
+#end
+#if($!horizontalAlignment != '')
+    #set($ha = $horizontalAlignment)
+#end
+#if($!verticalAlignment != '')
+    #set($va = $verticalAlignment)
+#end
+$tab<textElement textAlignment="$ha" verticalAlignment="$va"/>
+#end##writeTextElement
+
+## -----------------------------------------------------------------------------
+## writeTextElement jasperreports-3.x.x
+## -----------------------------------------------------------------------------
+$tab<textElement textAlignment="$ha" verticalAlignment="$va">
+$tab    <font fontName="$fn" size="$fs" isBold="$fb" isItalic="$fi" isUnderline="$fu" isStrikeThrough="$fx" isPdfEmbedded="true"/>
+$tab</textElement>
+## -----------------------------------------------------------------------------

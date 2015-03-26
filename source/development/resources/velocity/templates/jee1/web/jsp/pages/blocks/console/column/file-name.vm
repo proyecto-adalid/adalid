@@ -1,0 +1,53 @@
+#set($fieldRows = 0)
+#set($fieldColumns = 0)
+#set($fieldMaxLength = 0)
+#set($fieldMaxLength = $VelocityAid.coalesce($parameter.maxLength, 0))
+#if($fieldMaxLength == 0 || $fieldMaxLength > 200)
+    #set($fieldRows = 3)
+    #set($fieldColumns = 100)
+#elseif($fieldMaxLength <= 10)
+    #set($fieldColumns = 10)
+#elseif($fieldMaxLength <= 20)
+    #set($fieldColumns = 20)
+#elseif($fieldMaxLength <= 50)
+    #set($fieldColumns = 50)
+#else
+    #set($fieldColumns = 100)
+#end
+$tab<h:panelGrid id="panelGrid${panelGridSequence.next()}"
+$tab    rendered="#{${pageBeanName}.grid${operation.wrapper.javaClassName}Rendered}"
+$tab    styleClass="pdq-grid-etiqueta-1">
+$tab    <webuijsf:label id="label${fieldFirstName}"
+$tab        binding="#{${pageBeanName}.label${fieldFirstName}}"
+$tab        for="${campo1}"
+##          text="$parameter.wrapper.xmlValidDefaultShortLabel"/>
+$tab        text="${fieldBundleParametrosKey}"/>
+$tab</h:panelGrid>
+$tab<h:panelGrid id="panelGrid${panelGridSequence.next()}"
+$tab    columns="7"
+$tab    rendered="#{${pageBeanName}.grid${operation.wrapper.javaClassName}Rendered}"
+$tab    styleClass="pdq-grid-elemento-1">
+#if("$!multipartUpload" == 'true')
+$tab    <h:inputFile id="${campo1}"
+$tab        required="$fieldRequired"
+$tab        validator="#{${pageBeanName}.${campo1}_validate}"
+$tab        value="#{${pageBeanName}.${campo1}}"/>
+#else
+$tab    <webuijsf:upload id="${campo1}"
+$tab        binding="#{${pageBeanName}.${campo1}}"
+$tab        columns="$fieldColumns"
+$tab        required="$fieldRequired"
+##          toolTip="$parameter.wrapper.xmlValidDefaultTooltip"/>
+$tab        toolTip="${fieldBundleParametrosKey}"/>
+#end
+$tab    <webuijsf:message id="message${fieldFirstName}"
+$tab        for="${campo1}"/>
+$tab    <webuijsf:helpInline id="helpInline${fieldFirstName}"
+$tab        binding="#{${pageBeanName}.helpInline${fieldFirstName}}"
+$tab        rendered="#{SessionBean1.contextoSesion.helpInlineRendered}"
+$tab        styleClass="pdq-helpInline-field"
+##          text="$parameter.wrapper.xmlValidDefaultShortDescription"
+$tab        text="${fieldBundleParametrosKey}"
+$tab        type="field"/>
+$tab</h:panelGrid>
+#break

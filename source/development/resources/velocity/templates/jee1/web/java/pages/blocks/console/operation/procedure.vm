@@ -1,0 +1,21 @@
+#writeOperationJavadocType1()
+    private String ${operationName}() throws Exception {
+        String procedure = $operationProcedureConstantName;
+        long function = $operationNumberConstantName;
+    #if($instanceOperation || $operation.parametersList.size() > 0)
+        ArrayList arguments = new ArrayList();
+    #end
+    #foreach($parameter in $operation.parametersList)
+        #setParameterVariables()
+##      arguments.add($parameterCoalesceToDefaultValue);
+        arguments.add($parameterValueExpression);
+    #end##foreach-parameter
+    #if($instanceOperation || $operation.parametersList.size() > 0)
+        sqlAgent.executeProcedure(procedure, function, arguments.toArray());
+    #else
+        sqlAgent.executeProcedure(procedure, function);
+    #end
+        return null;
+    }
+
+#break

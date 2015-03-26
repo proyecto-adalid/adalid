@@ -1,0 +1,5 @@
+#set($targetPostgreSQLVersion = "$!project.environmentVariables.get('postgresql.version')")
+#if($targetPostgreSQLVersion == '')
+    #set($targetPostgreSQLVersion = '9.2')
+#end
+#break

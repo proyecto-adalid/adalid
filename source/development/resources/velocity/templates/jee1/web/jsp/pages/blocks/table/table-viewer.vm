@@ -1,0 +1,86 @@
+#set($viewer = "${pageBeanName}.visor")
+$tab<h:panelGrid id="panelGrid${panelGridSequence.next()}" columns="3"
+$tab    rendered="#{${pageBeanName}.funcionViewViewerHabilitada}">
+$tab    <h:panelGrid id="panelGrid${panelGridSequence.next()}" styleClass="pdq-grid-visor-1">
+$tab        <h:panelGrid id="panelGrid${panelGridSequence.next()}" columns="2">
+$tab            <h:panelGrid id="panelGrid${panelGridSequence.next()}">
+$tab                <webuijsf:label id="etiquetaListaFormatoGuardar1"
+$tab                    for="listaFormatoGuardar1"
+$tab                    text="#{${pageBeanName}.gestor.i18n.textoEtiquetaListaFormatoGuardar}"/>
+$tab            </h:panelGrid>
+$tab            <h:panelGrid id="panelGrid${panelGridSequence.next()}">
+$tab                <webuijsf:dropDown id="listaFormatoGuardar1"
+$tab                    binding="#{${viewer}.listaFormatoGuardar1}"
+$tab                    converter="#{${viewer}.listaFormatoGuardar1Converter}"
+$tab                    items="#{${viewer}.opcionesListaFormatoGuardar}"
+$tab                    required="false"
+$tab                    selected="#{${viewer}.formatoGuardar}"
+$tab                    toolTip="#{${pageBeanName}.gestor.i18n.toolTipListaFormatoGuardar}"/>
+$tab            </h:panelGrid>
+$tab            <h:panelGrid id="panelGrid${panelGridSequence.next()}">
+$tab                <webuijsf:label id="etiquetaListaFormatoInforme1"
+$tab                    for="listaFormatoInforme1"
+$tab                    text="#{${pageBeanName}.gestor.i18n.textoEtiquetaListaFormatoInforme}"/>
+$tab            </h:panelGrid>
+$tab            <h:panelGrid id="panelGrid${panelGridSequence.next()}">
+$tab                <webuijsf:dropDown id="listaFormatoInforme1"
+$tab                    binding="#{${viewer}.listaFormatoInforme1}"
+$tab                    converter="#{${viewer}.listaFormatoInforme1Converter}"
+$tab                    items="#{${viewer}.opcionesListaFormatoInforme}"
+$tab                    required="false"
+$tab                    selected="#{${viewer}.formatoInforme}"
+$tab                    toolTip="#{${pageBeanName}.gestor.i18n.toolTipListaFormatoInforme}"/>
+$tab            </h:panelGrid>
+$tab            <h:panelGrid id="panelGrid${panelGridSequence.next()}">
+$tab                <webuijsf:label id="etiquetaListaVista1"
+$tab                    for="listaVista1"
+$tab                    text="#{${pageBeanName}.gestor.i18n.textoEtiquetaListaVista}"/>
+$tab            </h:panelGrid>
+$tab            <h:panelGrid id="panelGrid${panelGridSequence.next()}" columns="3">
+$tab                <webuijsf:dropDown id="listaVista1"
+$tab                    binding="#{${viewer}.listaVista1}"
+$tab                    converter="#{${viewer}.longConverter1}"
+$tab                    items="#{${viewer}.itemsListaVista1}"
+$tab                    onChange="webui.suntheme4_2.common.timeoutSubmitForm(this.form, 'listaVista1');"
+$tab                    required="false"
+$tab                    selected="#{${pageBeanName}.${entityDataProvider}.vistaFuncionSelect}"
+$tab                    toolTip="#{${pageBeanName}.gestor.i18n.toolTipListaVista}"/>
+$tab                <webuijsf:button id="botonBuscarVista1"
+$tab                    imageURL="/resources/search.gif"
+$tab                    onClick="#{${viewer}.scriptBotonBuscarVista1}"
+$tab                    text="#{${pageBeanName}.gestor.i18n.textoBotonBuscarVista1}"
+$tab                    toolTip="#{${pageBeanName}.gestor.i18n.toolTipBotonBuscarVista1}"/>
+$tab                <webuijsf:button id="botonBuscarVista2"
+$tab                    imageURL="/resources/detail.gif"
+$tab                    onClick="#{${viewer}.scriptBotonBuscarVista2}"
+$tab                    text="#{${pageBeanName}.gestor.i18n.textoBotonBuscarVista2}"
+$tab                    toolTip="#{${pageBeanName}.gestor.i18n.toolTipBotonBuscarVista2}"/>
+$tab            </h:panelGrid>
+$tab        </h:panelGrid>
+$tab    </h:panelGrid>
+$tab    <h:panelGrid id="panelGrid${panelGridSequence.next()}" style="float:left">
+$tab        <webuijsf:button id="botonAplicarVisor1"
+$tab            actionExpression="#{${viewer}.botonAplicarVisor1_action}"
+$tab            binding="#{${viewer}.botonAplicarVisor1}"
+$tab            style="margin-left: 12px"
+$tab            styleClass="pdq-button-1"
+$tab            text="#{${pageBeanName}.gestor.i18n.textoBotonAplicarVisor}"
+$tab            toolTip="#{${pageBeanName}.gestor.i18n.toolTipBotonAplicarVisor}"
+$tab            visible="false"/>
+$tab        <webuijsf:button id="botonGuardarResultadoConsulta1"
+$tab            actionExpression="#{${viewer}.botonGuardarResultadoConsulta1_action}"
+$tab            binding="#{${viewer}.botonGuardarResultadoConsulta1}"
+$tab            style="margin-left: 12px"
+$tab            styleClass="pdq-button-1"
+$tab            text="#{${pageBeanName}.gestor.i18n.textoBotonGuardarResultadoConsulta}"
+$tab            toolTip="#{${pageBeanName}.gestor.i18n.toolTipBotonGuardarResultadoConsulta}"/>
+$tab        <webuijsf:button id="botonOcultarVisor1"
+$tab            actionExpression="#{${viewer}.botonOcultarVisor1_action}"
+$tab            style="margin-left: 12px"
+$tab            styleClass="pdq-button-1"
+$tab            text="#{${pageBeanName}.gestor.i18n.textoBotonOcultarVisor}"
+$tab            toolTip="#{${pageBeanName}.gestor.i18n.toolTipBotonOcultarVisor}"/>
+$tab    </h:panelGrid>
+$tab    <webuijsf:hiddenField id="campoAplicarVisor1" binding="#{${viewer}.campoAplicarVisor1}"/>
+$tab</h:panelGrid>
+#break

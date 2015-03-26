@@ -1,0 +1,15 @@
+#parsePostgreSQLMacros()
+#setPostgreSQLVariables()
+#writePostgreSQLLicense()
+#writePostgreSQLAuthor('Jorge Campins')
+#writeInsertSSCC()
+update public.aplicacion set url_aplicacion = '/'||codigo_aplicacion where url_aplicacion is null;
+#break
+
+#macro(writeInsertSSCC)
+#set($codigo = "$!{project.rootFolderName}-war")
+#set($nombre = "$!{project.wrapper.validDefaultShortDescription}")
+insert into public.aplicacion (id_aplicacion, codigo_aplicacion, nombre_aplicacion, descripcion_aplicacion, es_especial)
+values (10101, '${codigo}', '${nombre}', '${nombre}, versión ${implementationVersionStamp}', true);
+
+#end##writeInsertSSCC

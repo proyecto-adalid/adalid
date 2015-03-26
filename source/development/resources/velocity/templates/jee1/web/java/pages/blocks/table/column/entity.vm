@@ -1,0 +1,32 @@
+#set($componentName = "tableColumn${fieldFirstName}")
+#parse("$templatePath/blocks/webuijsf/table-column.vm")
+#set($componentName = "label${fieldFirstName}")
+#parse("$templatePath/blocks/webuijsf/label.vm")
+#set($componentName = "campo${fieldFirstName}")
+#parse("$templatePath/blocks/webuijsf/text-field.vm")
+#set($componentName = "campo${fieldFirstName}Texto1")
+#parse("$templatePath/blocks/webuijsf/static-text-1.vm")
+#set($componentName = "tableColumn${fieldLastName}")
+#parse("$templatePath/blocks/webuijsf/table-column.vm")
+#set($componentName = "campo${fieldFirstName}Boton1")
+#parse("$templatePath/blocks/webuijsf/button-1.vm")
+#set($componentName = "campo${fieldFirstName}Boton3")
+#parse("$templatePath/blocks/webuijsf/button-2.vm")
+#if($fieldForeignNameSqlName != '')
+    #set($componentName = "tableColumn${fieldMiddleName}")
+    #parse("$templatePath/blocks/webuijsf/table-column.vm")
+    #set($componentName = "campo${fieldFirstName}Hiper2")
+    #parse("$templatePath/blocks/webuijsf/image-hyperlink-2.vm")
+#end
+#writeValidatorExpression()
+#break
+
+#macro(writeValidatorExpression)
+    /**
+     * ${campo1}.validatorExpression
+     */
+    public void ${campo1}_validate(FacesContext context, UIComponent component, Object value) {
+        asistente.${campo1}_validate(context, component, value);
+    }
+
+#end##writeValidatorExpression

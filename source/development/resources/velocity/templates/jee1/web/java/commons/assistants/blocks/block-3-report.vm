@@ -1,0 +1,68 @@
+#if($instanceOperation || $operation.parametersList.size() > 0)
+    #set($reportQueryType = "$!operation.queryType")
+#else
+    #set($reportQueryType = 'UNSPECIFIED')
+#end
+#writeOperationJavadocType1()
+    protected boolean _${operationName}(RowKey rowKey) throws Exception {
+        bean.getGestor().setReadOnlyProcessing(true);
+        String report = $operationReportConstantName;
+        long function = $operationNumberConstantName;
+#if($reportQueryType == 'DYNAMIC' || $reportQueryType == 'PARAMETERIZED')
+        Map parameters = new LinkedHashMap();
+    #foreach($parameter in $operation.parametersList)
+        #if($parameter.isInstanceReferenceField())
+            #set($value = "bean.get$EntityDataProvider().get${entityPrimaryKeyClassName}(rowKey)")
+        #else
+            #set($value = $VelocityAid.coalesce($parameter.wrapper.javaInitialValue, $parameter.wrapper.javaDefaultValue, 'null'))
+            #set($value = $VelocityAid.coalesce($parameter.wrapper.javaInitialValue, 'null'))
+        #end
+        #if($parameter.isInstanceReferenceField())
+            #set($x = '  ')
+        #else
+            #set($x = '//')
+        #end
+$x      parameters.put("${parameter.wrapper.sqlName}", $value);
+    #end##foreach-parameter
+#end
+#set($vista = "consulta_${entity.wrapper.sqlName}")
+#set($vista = "${entity.wrapper.sqlSchemaQualifier}consulta_${entity.wrapper.sqlSchemaUnqualifiedShortName}")
+#if($reportQueryType == 'DYNAMIC')
+        String select = "select * from ${vista}";
+        String criteria = "";
+        ArrayList arguments = new ArrayList();
+        Object argument;
+    #foreach($parameter in $operation.parametersList)
+        #if("$!parameter.linkedColumnName" != '')
+            #set($name = $parameter.linkedColumnName)
+        #elseif($parameter.linkedProperty)
+            #set($name = ${parameter.linkedProperty.wrapper.sqlName})
+        #else
+            #set($name = ${parameter.wrapper.sqlName})
+        #end
+        #if($parameter.isInstanceReferenceField())
+            #set($x = '  ')
+        #else
+            #set($x = '//')
+        #end
+$x      argument = parameters.get("${parameter.wrapper.sqlName}");
+$x      if (argument != null) {
+$x          criteria += " and ($sqlProgrammer.getSqlStandardRelationalExpression($name, ${parameter.linkedColumnOperator}))";
+$x          arguments.add(argument);
+$x      }
+    #end##foreach-parameter
+        if (criteria.length() > 0) {
+            select += " where (" + criteria.substring(5) + ")";
+            getReporter().executeReport(report, function, select, arguments.toArray(), parameters);
+        } else {
+            getReporter().executeReport(report, function, select);
+        }
+#elseif($reportQueryType == 'PARAMETERIZED')
+        getReporter().executeReport(report, function, parameters);
+#else
+        getReporter().executeReport(report, function);
+#end
+        return true;
+    }
+
+#break

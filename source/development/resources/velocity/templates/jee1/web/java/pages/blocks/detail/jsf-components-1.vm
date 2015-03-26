@@ -1,0 +1,23 @@
+    // <editor-fold defaultstate="collapsed" desc="definición de otros componentes JSF">
+    private Label etiquetaIdentificacionFila1 = new Etiqueta();
+
+    public Label getEtiquetaIdentificacionFila1() {
+        return etiquetaIdentificacionFila1;
+    }
+
+    public void setEtiquetaIdentificacionFila1(Label l) {
+        etiquetaIdentificacionFila1 = l;
+    }
+
+    private Label etiquetaDenominacionFilaMaestro1 = new Etiqueta();
+
+    public Label getEtiquetaDenominacionFilaMaestro1() {
+        return etiquetaDenominacionFilaMaestro1;
+    }
+
+    public void setEtiquetaDenominacionFilaMaestro1(Label l) {
+        etiquetaDenominacionFilaMaestro1 = l;
+    }
+    // </editor-fold>
+
+#break

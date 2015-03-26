@@ -1,0 +1,120 @@
+#parsePostgreSQLMacros()
+#setPostgreSQLVariables()
+#writePostgreSQLLicense()
+#writePostgreSQLAuthor('Jorge Campins')
+#setLocalVariables()
+#writeCreateDefaultsFunctions()
+#writeCreateForeignKeyFunctions()
+#writeCreateIndexFunctions()
+#writeCreatePrimaryKeyFunctions()
+#writeCreateUniqueKeyFunctions()
+#break
+
+#macro(setLocalVariables)
+    #set($schemaQualifier = '')
+#end##setLocalVariables
+
+#macro(writeCreateDefaultsFunctions)
+create or replace function ${schemaQualifier}drop_defaults() returns void as $$
+begin
+raise notice 'drop defaults';
+#set($writeLicense = 'off')
+#parse('templates/database/postgresql/drop-default.vm')
+#set($writeLicense = 'on')
+end;
+$$ language plpgsql;
+
+create or replace function ${schemaQualifier}create_defaults() returns void as $$
+begin
+raise notice 'create defaults';
+#set($writeLicense = 'off')
+#parse('templates/database/postgresql/create-default.vm')
+#set($writeLicense = 'on')
+end;
+$$ language plpgsql;
+
+#end##writeCreateDefaultsFunctions
+
+#macro(writeCreateForeignKeyFunctions)
+create or replace function ${schemaQualifier}drop_foreign_keys() returns void as $$
+begin
+raise notice 'drop foreign keys';
+#set($writeLicense = 'off')
+#parse('templates/database/postgresql/drop-foreign-key.vm')
+#set($writeLicense = 'on')
+end;
+$$ language plpgsql;
+
+create or replace function ${schemaQualifier}create_foreign_keys() returns void as $$
+begin
+raise notice 'create foreign keys';
+#set($writeLicense = 'off')
+#parse('templates/database/postgresql/create-foreign-key.vm')
+#set($writeLicense = 'on')
+end;
+$$ language plpgsql;
+
+#end##writeCreateForeignKeyFunctions
+
+#macro(writeCreateIndexFunctions)
+create or replace function ${schemaQualifier}drop_indexes() returns void as $$
+begin
+raise notice 'drop indexes';
+#set($writeLicense = 'off')
+#parse('templates/database/postgresql/drop-index.vm')
+#set($writeLicense = 'on')
+end;
+$$ language plpgsql;
+
+create or replace function ${schemaQualifier}create_indexes() returns void as $$
+begin
+raise notice 'create indexes';
+#set($writeLicense = 'off')
+#parse('templates/database/postgresql/create-index.vm')
+#set($writeLicense = 'on')
+end;
+$$ language plpgsql;
+
+#end##writeCreateIndexFunctions
+
+#macro(writeCreatePrimaryKeyFunctions)
+create or replace function ${schemaQualifier}drop_primary_keys() returns void as $$
+begin
+raise notice 'drop primary keys';
+#set($writeLicense = 'off')
+#parse('templates/database/postgresql/drop-primary-key.vm')
+#set($writeLicense = 'on')
+end;
+$$ language plpgsql;
+
+create or replace function ${schemaQualifier}create_primary_keys() returns void as $$
+begin
+raise notice 'create primary keys';
+#set($writeLicense = 'off')
+#parse('templates/database/postgresql/create-primary-key.vm')
+#set($writeLicense = 'on')
+end;
+$$ language plpgsql;
+
+#end##writeCreatePrimaryKeyFunctions
+
+#macro(writeCreateUniqueKeyFunctions)
+create or replace function ${schemaQualifier}drop_unique_keys() returns void as $$
+begin
+raise notice 'drop unique keys';
+#set($writeLicense = 'off')
+#parse('templates/database/postgresql/drop-unique-key.vm')
+#set($writeLicense = 'on')
+end;
+$$ language plpgsql;
+
+create or replace function ${schemaQualifier}create_unique_keys() returns void as $$
+begin
+raise notice 'create unique keys';
+#set($writeLicense = 'off')
+#parse('templates/database/postgresql/create-unique-key.vm')
+#set($writeLicense = 'on')
+end;
+$$ language plpgsql;
+
+#end##writeCreateUniqueKeyFunctions

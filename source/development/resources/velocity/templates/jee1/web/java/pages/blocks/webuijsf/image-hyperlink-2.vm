@@ -1,0 +1,12 @@
+#set($capitalizedComponentName = $StringUtils.capitalize($componentName))
+$tab    private ImageHyperlink ${componentName} = new HipervinculoVerDetalle();
+
+$tab    public ImageHyperlink get${capitalizedComponentName}() {
+$tab        return ${componentName};
+$tab    }
+
+$tab    public void set${capitalizedComponentName}(ImageHyperlink imagehyperlink) {
+$tab        ${componentName} = imagehyperlink;
+$tab    }
+
+#break

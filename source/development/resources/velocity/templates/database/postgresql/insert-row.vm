@@ -1,0 +1,50 @@
+#parsePostgreSQLMacros()
+#setPostgreSQLVariables()
+#writePostgreSQLLicense()
+#writePostgreSQLAuthor('Jorge Campins')
+#set($entities = $ColUtils.filter($project.entitiesList, $isEntitySqlCodeGenEnabled, $isPersistentEntityTable))
+#set($entities = $ColUtils.sort($entities, $byEntityName))
+#foreach($entity in $entities)
+    #writeTemplate('remark-entity')
+    #writeInsertRows()
+#end##foreach-entity
+#break
+
+#macro(writeInsertRows)
+    #resetSQLVariables()
+    #set($table = $entity.wrapper.sqlTableName)
+    #set($table = $entity.wrapper.sqlSchemaQualifiedShortTableName)
+    #writeTemplate('remark-table')
+    #set($rows = $entity.insertableRowsList)
+    #foreach($row in $rows)
+        #writeInsertRow()
+    #end##foreach-row
+#end##writeInsertRows
+
+#macro(writeInsertRow)
+    #set($fields = $row.instanceFieldsList)
+    #set($fieldsSize = $fields.size())
+    #if($fieldsSize != 0)
+........insert
+........into ${table}
+........    (
+        #set($comma = ',')
+        #foreach($field in $fields)
+            #if($foreach.last)
+                #set($comma = '')
+            #end
+........    $field.property.wrapper.sqlName$comma
+        #end
+........    )
+........values
+........    (
+        #set($comma = ',')
+        #foreach($field in $fields)
+            #if($foreach.last)
+                #set($comma = '')
+            #end
+........    $sqlProgrammer.getSqlExpression($field.value)$comma
+        #end
+........    );
+    #end
+#end##writeInsertRow

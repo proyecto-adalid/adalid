@@ -1,0 +1,96 @@
+#parsePropertiesMacros()
+#setPropertiesVariables()
+#writePropertiesLicense()
+#writePropertiesAuthor('Jorge Campins')
+locale.language.tag=$project.locale.toLanguageTag()
+
+##writeBundleDominiosDefaults()
+#set($entities = $ColUtils.filter($project.entitiesList, $isPersistentEntity))
+#set($entities = $ColUtils.sort($entities, $byEntityName))
+#foreach($entity in $entities)
+    #set($key = $entity.wrapper.sqlName)
+    #set($key = $entity.wrapper.sqlSchemaQualifiedShortName)
+    #set($label = "$!entity.wrapper.bundleValidDefaultLabel")
+    #set($shortLabel = "$!entity.wrapper.bundleValidDefaultShortLabel")
+    #set($tooltip = "$!entity.wrapper.bundleValidDefaultTooltip")
+    #set($shortDescription = "$!bundleProgrammer.getValueString($entity.defaultShortDescription)")
+    #set($collectionLabel = "$!entity.wrapper.bundleValidDefaultCollectionLabel")
+    #set($collectionShortLabel = "$!entity.wrapper.bundleValidDefaultCollectionShortLabel")
+    #writeBundleDominiosEntity()
+#end##foreach-entity
+#break
+
+#macro(writeBundleDominiosDefaults)
+default.limite_filas_funcion_export=$Constants.getDefaultExportRowsLimit()
+default.opcion_orden_funcion_export=$Constants.getDefaultExportSortOption()
+default.limite_filas_funcion_report=$Constants.getDefaultReportRowsLimit()
+default.opcion_orden_funcion_report=$Constants.getDefaultReportSortOption()
+default.limite_filas_funcion_select=$Constants.getDefaultSelectRowsLimit()
+default.opcion_orden_funcion_select=$Constants.getDefaultSelectSortOption()
+
+#end##writeBundleDominiosDefaults
+
+#macro(writeBundleDominiosEntity)
+${key}.label=$label
+${key}.short_label=$shortLabel
+${key}.tooltip=$tooltip
+${key}.inline_help=$shortDescription
+${key}.collection_label=$collectionLabel
+${key}.collection_short_label=$collectionShortLabel
+#if($entity.updateFilter)
+    #writeBundleDominiosErrorMessageChoice("${key}.update.filter_error" $entity.updateFilter)
+#end
+#if($entity.deleteFilter)
+    #writeBundleDominiosErrorMessageChoice("${key}.delete.filter_error" $entity.deleteFilter)
+#end
+
+#foreach($stateKey in $entity.statesMap.keySet())
+    #set($state = $entity.statesMap.get($stateKey))
+    #set($key = "${entity.wrapper.sqlName}.${state.wrapper.sqlName}")
+    #set($key = "${entity.wrapper.sqlSchemaQualifiedShortName}.${state.wrapper.sqlName}")
+    #set($label = "$!state.wrapper.bundleValidDefaultLabel")
+    #set($shortLabel = "$!state.wrapper.bundleValidDefaultShortLabel")
+    #set($tooltip = "$!state.wrapper.bundleValidDefaultTooltip")
+    #set($shortDescription = "$!bundleProgrammer.getValueString($state.defaultShortDescription)")
+    #writeBundleDominiosEntityElement()
+    #writeBundleDominiosErrorMessageChoice("${key}.state_error" $state)
+    #if($foreach.last)
+
+    #end
+#end##foreach-stateKey
+#foreach($entityTab in $entity.tabsList)
+    #set($key = "${entity.wrapper.sqlName}.${entityTab.wrapper.sqlName}")
+    #set($key = "${entity.wrapper.sqlSchemaQualifiedShortName}.${entityTab.wrapper.sqlName}")
+    #set($label = "$!entityTab.wrapper.bundleValidDefaultLabel")
+    #set($shortLabel = "$!entityTab.wrapper.bundleValidDefaultShortLabel")
+    #set($tooltip = "$!entityTab.wrapper.bundleValidDefaultTooltip")
+    #set($shortDescription = "$!bundleProgrammer.getValueString($entityTab.defaultShortDescription)")
+    #writeBundleDominiosEntityElement()
+    #if($foreach.last)
+
+    #end
+#end##foreach-entityTab
+#foreach($entityView in $entity.viewsList)
+    #set($key = "${entity.wrapper.sqlName}.${entityView.wrapper.sqlName}")
+    #set($key = "${entity.wrapper.sqlSchemaQualifiedShortName}.${entityView.wrapper.sqlName}")
+    #set($label = "$!entityView.wrapper.bundleValidDefaultLabel")
+    #set($shortLabel = "$!entityView.wrapper.bundleValidDefaultShortLabel")
+    #set($tooltip = "$!entityView.wrapper.bundleValidDefaultTooltip")
+    #set($shortDescription = "$!bundleProgrammer.getValueString($entityView.defaultShortDescription)")
+    #writeBundleDominiosEntityElement()
+    #if($foreach.last)
+
+    #end
+#end##foreach-entityView
+#end##writeBundleDominiosEntity
+
+#macro(writeBundleDominiosErrorMessageChoice $errorMessageChoiceKey $expression)
+${errorMessageChoiceKey}=$!expression.wrapper.bundleDefaultErrorMessageChoice
+#end##writeBundleDominiosErrorMessageChoice
+
+#macro(writeBundleDominiosEntityElement)
+${key}.label=$label
+${key}.short_label=$shortLabel
+${key}.tooltip=$tooltip
+${key}.inline_help=$shortDescription
+#end##writeBundleDominiosEntityElement

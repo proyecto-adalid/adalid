@@ -1,0 +1,79 @@
+#set($managedBeanName = "${javaProgrammer.getJavaClassName($module.alias)}ContextDataBean")
+    private ContextoDatosEstandar getContextoDatosEstandar() {
+        return (ContextoDatosEstandar) getBean("$managedBeanName");
+    }
+
+#if($page.entity)
+    // <editor-fold defaultstate="collapsed" desc="definición de data-providers">
+    char bookmark$bookmarkSequence.next();
+
+    #if("$!page.displayFormat" != 'TREE')
+        #set($override = $TRUE)
+    #else
+        #set($override = $FALSE)
+    #end
+    #if($page.entity)
+        #set($clazz = $entityDataProviderClass)
+        #set($lower = $entityDataProvider)
+        #set($upper = $EntityDataProvider)
+        #writeDataProviderGetterAndSetter($override)
+    #end
+    #set($override = $FALSE)
+    #if($page.master)
+        #set($clazz = $masterDataProviderClass)
+        #set($lower = $masterDataProvider)
+        #set($upper = $MasterDataProvider)
+##      #writeDataProviderGetterAndSetter($override)
+        #writeMasterDataProviderGetterAndSetter()
+    #end
+##  #foreach($referencedEntity in $pageReferencedEntitiesMap)
+##      #set($xdpno = "${referencedEntity.wrapper.dataProviderSuffix}")
+##      #set($clazz = "${referencedEntity.wrapper.javaClassName}CachedRowSetDataProvider${xdpno}")
+##      #set($upper = "${referencedEntity.wrapper.javaClassName}ReferenceDataProvider")
+##      #set($lower = "${referencedEntity.wrapper.javaVariableName}ReferenceDataProvider")
+##      #writeDataProviderGetterAndSetter($override)
+##  #end
+    char bookmark$bookmarkSequence.next();
+    // </editor-fold>
+
+#end
+#break
+
+#macro(writeDataProviderGetterAndSetter $override)
+    private ${clazz} ${lower} = ${clazz}.newInstance();
+
+#if($override)
+    @Override
+#end
+    public ${clazz} get${upper}() {
+        return ${lower};
+    }
+
+    public void set${upper}(${clazz} crsdp) {
+        ${lower} = crsdp;
+    }
+
+#end##writeDataProviderGetterAndSetter
+
+#macro(writeMasterDataProviderGetterAndSetter)
+#*
+    private ${clazz} ${lower};
+
+    public ${clazz} get${upper}() {
+        if (${lower} == null) {
+            String nombreClaseRecurso = gestor.getNombreClaseRecursoMaestroPagina("${page.master.wrapper.javaClassName}");
+            RecursoCachedRowSetDataProvider provider = getContextoDatosEstandar().getDataProvider(nombreClaseRecurso);
+            if (provider instanceof $clazz) {
+                ${lower} = ($clazz) provider;
+            }
+        }
+        return ${lower};
+    }
+
+    public void set${upper}(${clazz} crsdp) {
+        ${lower} = crsdp;
+    }
+*###
+    private RecursoCachedRowSetDataProvider $recursoMaestroDataProvider;
+
+#end##writeMasterDataProviderGetterAndSetter

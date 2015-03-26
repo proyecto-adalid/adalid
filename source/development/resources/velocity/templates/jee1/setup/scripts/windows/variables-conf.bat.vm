@@ -1,0 +1,8 @@
+#setGlobalVariables()
+REM la variable DATE_COMMAND_FORMAT especifica el formato de fecha
+REM su valor debe corresponder al formato de fecha de la configuración regional de windows
+REM el valor debe ser DMY (dia, mes y año), MDY (mes, dia y año) o YMD (año, mes y dia)
+set DATE_COMMAND_FORMAT=DMY
+set EEAS=$targetApplicationServer
+set DBMS=$targetDatabaseServer
+

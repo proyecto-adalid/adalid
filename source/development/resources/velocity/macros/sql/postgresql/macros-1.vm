@@ -1,0 +1,51 @@
+#break
+
+#macro(setPostgreSQLVariables)
+    #setGlobalVariables()
+    #setSQLVariables()
+#end##setPostgreSQLVariables
+
+#macro(writePostgreSQLLicense)
+    #if("$!writeLicense" == '')
+        #set($writeLicense = 'on')
+    #end
+    #if($writeLicense == 'on')
+        #include('licenses/license-java.txt')
+    #end
+#end##writePostgreSQLLicense
+
+#macro(writePostgreSQLAuthor $author)
+    #if("$!writeLicense" == 'on')
+/*
+ * author: adalid $adalidMajorVersionNumber
+ * template: $template.replace('\\', '/')
+ * template-author: $author
+        #if($manifest)
+ * built-by: $!builtBy
+ * built-timestamp: $!buildTimestamp
+ * extension-name: $!extensionName
+ * implementation-version: $!implementationVersion
+ * implementation-date: $!implementationDate
+ * implementation-timestamp: $!implementationTimestamp
+        #end
+ */
+    #end
+#end##writePostgreSQLAuthor
+
+#macro(writeTemplate $template)
+    #if($template)
+        #parse("templates/database/postgresql/${template}.vm")
+    #end
+#end##writeTemplate
+
+#macro(writeDelimiter $delimiter)
+    #if($delimiter)
+--  $delimiter
+    #end
+#end##writeDelimiter
+
+#macro(writeDelimiterDirective $delimiter)
+    #if($delimiter)
+--  delimiter $delimiter
+    #end
+#end##writeDelimiter

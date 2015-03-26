@@ -1,0 +1,33 @@
+#*
+select
+routine_name
+from information_schema.routines
+where routine_catalog='$database'
+and routine_schema='$schema'
+and routine_type='FUNCTION'
+order by routine_name
+*#
+select  distinct
+        trim(both '_' from replace(replace(codigo_funcion, codigo_dominio, ''), '__', '_')) as routine_name,
+        codigo_parametro as parameter_name,
+        cast(case numero_tipo_dato_parametro
+	when(1) then 'character'
+	when(2) then 'numeric'
+	when(3) then 'timestamp'
+	when(4) then 'integer'
+	when(5) then 'bigint'
+	when(6) then 'boolean'
+	end as varchar(100)) as data_type,
+        case when(numero_tipo_parametro=1) then(true) else(false) end as is_required,
+        case when(numero_tipo_parametro in(2,4)) then(true) else(false) end as is_hidden,
+        valor_omision as parameter_default,
+        codigo_funcion,
+        id_funcion_parametro
+from    funcion
+inner	join dominio on	dominio.id_dominio = funcion.id_dominio
+left	outer join (funcion_parametro
+inner 	join parametro on parametro.id_parametro = funcion_parametro.id_parametro)
+on      funcion_parametro.id_funcion = funcion.id_funcion
+where	numero_tipo_funcion = 13
+and     codigo_dominio='$table'
+order	by codigo_funcion, id_funcion_parametro;

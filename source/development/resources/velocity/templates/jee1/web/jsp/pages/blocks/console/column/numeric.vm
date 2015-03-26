@@ -1,0 +1,45 @@
+#if($parameter.isByteData())
+    #set($fieldMaxLength = 4)##-256
+#elseif($parameter.isShortData())
+    #set($fieldMaxLength = 7)##-32,768
+#elseif($parameter.isIntegerData())
+    #set($fieldMaxLength = 14)##-2.147.483.648
+#elseif($parameter.isLongData())
+    #set($fieldMaxLength = 26)##-9.223.372.036.854.775.808
+#else
+    #set($fieldMaxLength = 0)
+#end
+$tab<h:panelGrid id="panelGrid${panelGridSequence.next()}"
+$tab    rendered="#{${pageBeanName}.grid${operation.wrapper.javaClassName}Rendered}"
+$tab    styleClass="pdq-grid-etiqueta-1">
+$tab    <webuijsf:label id="label${fieldFirstName}"
+$tab        binding="#{${pageBeanName}.label${fieldFirstName}}"
+$tab        for="${campo1}"
+##          text="$parameter.wrapper.xmlValidDefaultShortLabel"/>
+$tab        text="${fieldBundleParametrosKey}"/>
+$tab</h:panelGrid>
+$tab<h:panelGrid id="panelGrid${panelGridSequence.next()}"
+$tab    columns="7"
+$tab    rendered="#{${pageBeanName}.grid${operation.wrapper.javaClassName}Rendered}"
+$tab    styleClass="pdq-grid-elemento-1">
+$tab    <webuijsf:textField id="${campo1}"
+$tab        binding="#{${pageBeanName}.${campo1}}"
+$tab        columns="20"
+$tab        converter="#{${pageBeanName}.converter${fieldFirstName}}"
+        #if($fieldMaxLength > 0)
+$tab        maxLength="$fieldMaxLength"
+        #end
+$tab        required="$fieldRequired"
+##          toolTip="$parameter.wrapper.xmlValidDefaultTooltip"
+$tab        toolTip="${fieldBundleParametrosKey}"
+$tab        validatorExpression="#{${pageBeanName}.${campo1}_validate}"/>
+$tab    <webuijsf:message id="message${fieldFirstName}"
+$tab        for="${campo1}"/>
+$tab    <webuijsf:helpInline id="helpInline${fieldFirstName}"
+$tab        binding="#{${pageBeanName}.helpInline${fieldFirstName}}"
+$tab        rendered="#{SessionBean1.contextoSesion.helpInlineRendered}"
+$tab        styleClass="pdq-helpInline-field"
+##          text="$parameter.wrapper.xmlValidDefaultShortDescription"
+$tab        text="${fieldBundleParametrosKey}"
+$tab        type="field"/>
+$tab</h:panelGrid>

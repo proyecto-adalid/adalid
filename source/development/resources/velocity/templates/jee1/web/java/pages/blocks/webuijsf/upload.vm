@@ -1,0 +1,15 @@
+#set($capitalizedComponentName = $StringUtils.capitalize($componentName))
+$tab    private Upload ${componentName} = new CampoArchivo();
+
+#if("$!PaginaActualizacion" != '' && "$!divString" == '' && "$!tabString" == '')
+$tab    @Override
+#end
+$tab    public Upload get${capitalizedComponentName}() {
+$tab        return ${componentName};
+$tab    }
+
+$tab    public void set${capitalizedComponentName}(Upload textField) {
+$tab        ${componentName} = textField;
+$tab    }
+
+#break

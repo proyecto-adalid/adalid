@@ -1,0 +1,59 @@
+#parsePostgreSQLMacros()
+#setPostgreSQLVariables()
+#writePostgreSQLLicense()
+#writePostgreSQLAuthor('Jorge Campins')
+#set($entities = $ColUtils.filter($project.entitiesList, $isEntitySqlCodeGenEnabled, $isPersistentEntityTable))
+#set($entities = $ColUtils.sort($entities, $byEntityName))
+#foreach($entity in $entities)
+    #writeTemplate('remark-entity')
+    #writeDropUniqueKeys()
+#end##foreach-entity
+#break
+
+#macro(writeDropUniqueKeys)
+    #resetSQLVariables()
+    #set($table = $entity.wrapper.sqlTableName)
+    #set($table = $entity.wrapper.sqlSchemaQualifiedShortTableName)
+## -----------------------------------------------------------------------------------------------------------
+    #set($properties = $entity.columnsList)
+    #foreach($property in $properties)
+        #if($property.isPrimaryKeyProperty())
+        #elseif($property.isUnique())
+            #set($uk = "$property.wrapper.sqlName")
+            #writeDropUniqueKeyStatement()
+        #end
+    #end##foreach-property
+## -----------------------------------------------------------------------------------------------------------
+    #set($keys = $entity.keysList)
+    #foreach($key in $keys)
+        #if($key.isUnique() && $key.isValidKeyFor($entity))
+            #set($uk = '')
+            #set($fields = $key.keyFieldsList)
+            #set($fieldsSize = $fields.size())
+            #if($fieldsSize != 0)
+                #if($key.isSingleProperty())
+                    #set($property = $key.theProperty)
+                    #if($property.isUnique() || $property.isPrimaryKeyProperty())
+                        #set($uk = 'x')
+                    #end
+                #end
+                #if($uk == '')
+                    #foreach($field in $fields)
+                        #set($uk = "$uk, $field.wrapper.sqlName")## $field.sortOption is not supported by postgresql
+                    #end##foreach-field
+                    #if($uk != '')
+                        #set($uk = $StringUtils.removeStart($uk, ',').trim())
+                        #writeDropUniqueKeyStatement()
+                    #end
+                #end
+            #end
+        #end
+    #end##foreach-key
+## -----------------------------------------------------------------------------------------------------------
+#end##writeDropUniqueKeys
+
+#macro(writeDropUniqueKeyStatement)
+#setGlobalUniqueKeyName($entity)
+#set($constraint = $globalConstraintName)
+alter table if exists $table drop constraint if exists $constraint;
+#end##writeDropUniqueKeyStatement

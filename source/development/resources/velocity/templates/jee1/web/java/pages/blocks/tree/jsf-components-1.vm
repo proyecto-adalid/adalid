@@ -1,0 +1,65 @@
+    // <editor-fold defaultstate="collapsed" desc="definición de otros componentes JSF">
+    private Tree tree1 = new Tree();
+
+    @Override
+    public Tree getTree1() {
+        return tree1;
+    }
+
+    public void setTree1(Tree t) {
+        tree1 = t;
+    }
+
+    private Button botonAplicarZum1 = new Boton();
+
+    public Button getBotonAplicarZum1() {
+        return botonAplicarZum1;
+    }
+
+    public void setBotonAplicarZum1(Button b) {
+        botonAplicarZum1 = b;
+    }
+
+    private Label etiquetaListaOpcionZum1 = new Etiqueta();
+
+    public Label getEtiquetaListaOpcionZum1() {
+        return etiquetaListaOpcionZum1;
+    }
+
+    public void setEtiquetaListaOpcionZum1(Label l) {
+        etiquetaListaOpcionZum1 = l;
+    }
+
+    private Button botonQuitarZum1 = new Boton();
+
+    public Button getBotonQuitarZum1() {
+        return botonQuitarZum1;
+    }
+
+    public void setBotonQuitarZum1(Button b) {
+        botonQuitarZum1 = b;
+    }
+
+    private DropDown listaOpcionZum1 = new ListaDesplegable();
+
+    @Override
+    public DropDown getListaOpcionZum1() {
+        return listaOpcionZum1;
+    }
+
+    public void setListaOpcionZum1(DropDown dd) {
+        listaOpcionZum1 = dd;
+    }
+
+    private IntegerConverter converterListaOpcionZum1 = new IntegerConverter();
+
+    public IntegerConverter getConverterListaOpcionZum1() {
+        return converterListaOpcionZum1;
+    }
+
+    public void setConverterListaOpcionZum1(IntegerConverter ic) {
+        converterListaOpcionZum1 = ic;
+    }
+    // </editor-fold>
+
+#break

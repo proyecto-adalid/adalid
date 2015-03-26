@@ -1,0 +1,97 @@
+#setGlobalVariables()
+#parse('templates/jee1/macros/macros-3.vm')
+#setTargetEnvironmentVariables()
+annotation.processing.enabled=true
+annotation.processing.enabled.in.editor=true
+annotation.processing.processors.list=
+annotation.processing.run.all.processors=true
+annotation.processing.source.output=${dollar}{build.generated.sources.dir}/ap-source-output
+build.classes.dir=${dollar}{build.web.dir}/WEB-INF/classes
+build.classes.excludes=**/*.java,**/*.form
+build.dir=build
+build.generated.dir=${dollar}{build.dir}/generated
+build.generated.sources.dir=${dollar}{build.dir}/generated-sources
+build.test.classes.dir=${dollar}{build.dir}/test/classes
+build.test.results.dir=${dollar}{build.dir}/test/results
+build.web.dir=${dollar}{build.dir}/web
+build.web.excludes=${dollar}{build.classes.excludes}
+client.urlPart=
+compile.jsps=false
+conf.dir=${dollar}{source.root}/conf
+debug.classpath=${dollar}{build.classes.dir}:${dollar}{javac.classpath}
+debug.test.classpath=${backslash}
+    ${dollar}{run.test.classpath}
+display.browser=true
+dist.dir=dist
+dist.ear.war=${dollar}{dist.dir}/${dollar}{war.ear.name}
+dist.javadoc.dir=${dollar}{dist.dir}/javadoc
+dist.war=${dollar}{dist.dir}/${dollar}{war.name}
+#*
+endorsed.classpath=${backslash}
+    ${dollar}{libs.javaee-endorsed-api-6.0.classpath}
+*###
+excludes=
+includes=**
+j2ee.compile.on.save=false
+j2ee.copy.static.files.on.save=false
+j2ee.deploy.on.save=false
+j2ee.platform=1.6
+j2ee.server.type=JBoss4
+jar.compress=false
+javac.classpath=${backslash}
+    ${dollar}{reference.${project.alias}-ejb.dist}:${backslash}
+    ${dollar}{reference.${project.alias}-lib.jar}:${backslash}
+    ${dollar}{libs.adalid-compile-lib-1.classpath}:${backslash}
+    ${dollar}{libs.jsf12-support.classpath}:${backslash}
+    ${dollar}{libs.woodstock-components.classpath}
+${pound} Space-separated list of extra javac options
+javac.compilerargs=
+javac.debug=true
+javac.deprecation=false
+javac.processorpath=${backslash}
+    ${dollar}{javac.classpath}
+javac.source=$targetShortJavaVersion
+javac.target=$targetShortJavaVersion
+javac.test.classpath=${backslash}
+    ${dollar}{javac.classpath}:${backslash}
+    ${dollar}{build.classes.dir}
+javac.test.processorpath=${backslash}
+    ${dollar}{javac.test.classpath}
+javadoc.additionalparam=
+javadoc.author=false
+javadoc.encoding=${dollar}{source.encoding}
+javadoc.noindex=false
+javadoc.nonavbar=false
+javadoc.notree=false
+javadoc.preview=true
+javadoc.private=false
+javadoc.splitindex=true
+javadoc.use=true
+javadoc.version=false
+javadoc.windowtitle=
+lib.dir=${dollar}{web.docbase.dir}/WEB-INF/lib
+persistence.xml.dir=${dollar}{conf.dir}
+platform.active=default_platform
+project.${project.alias}-ejb=../${project.alias}-ejb
+project.${project.alias}-lib=../${project.alias}-lib
+reference.${project.alias}-ejb.dist=${dollar}{project.${project.alias}-ejb}/dist/${project.alias}-ejb.jar
+reference.${project.alias}-lib.jar=${dollar}{project.${project.alias}-lib}/dist/${project.alias}-lib.jar
+resource.dir=setup
+run.test.classpath=${backslash}
+    ${dollar}{javac.test.classpath}:${backslash}
+    ${dollar}{build.test.classes.dir}
+${pound} Space-separated list of JVM arguments used when running a class with a main method or a unit test
+${pound} (you may also define separate properties like run-sys-prop.name=value instead of -Dname=value):
+runmain.jvmargs=
+source.encoding=UTF-8
+source.root=src
+src.dir=${dollar}{source.root}/java/code
+src.java.copy.one.dir=${dollar}{source.root}/java/copy-1
+src.java.copy.two.dir=${dollar}{source.root}/java/copy-2
+src.java.crop.dir=${dollar}{source.root}/java/crop
+test.src.dir=test
+war.content.additional=
+war.ear.name=${dollar}{war.name}
+war.name=${project.alias}-war.war
+web.docbase.dir=web
+webinf.dir=web/WEB-INF

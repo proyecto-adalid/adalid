@@ -1,0 +1,53 @@
+    // <editor-fold defaultstate="collapsed" desc="implementacion estandar de la interfaz PaginaBasica">
+    private Form form1 = new Form();
+
+    @Override
+    public Form getForm1() {
+        return form1;
+    }
+
+    public void setForm1(Form form) {
+        form1 = form;
+    }
+
+    private Breadcrumbs breadcrumbs1 = new Breadcrumbs();
+
+    @Override
+    public Breadcrumbs getBreadcrumbs1() {
+        return breadcrumbs1;
+    }
+
+    public void setBreadcrumbs1(Breadcrumbs breadcrumbs) {
+        breadcrumbs1 = breadcrumbs;
+    }
+
+    private String NOMBRE_PAGINA = BundleWebui.getString("${pageBeanName}");
+
+    @Override
+    public String getNombrePagina() {
+        return NOMBRE_PAGINA;
+    }
+
+    private String ETIQUETA_MIGAS_PAN = BundleWebui.getString("${pageBeanName}_ETIQUETA_MIGAS_PAN");
+
+    @Override
+    public String getEtiquetaMigasPan() {
+        return ETIQUETA_MIGAS_PAN;
+    }
+
+    @Override
+    public ContextoPeticionEstandar getContextoPeticion() {
+        return (ContextoPeticionEstandar) getRequestBean1().getContextoPeticion();
+    }
+
+    @Override
+    public ContextoSesionEstandar getContextoSesion() {
+        return (ContextoSesionEstandar) getSessionBean1().getContextoSesion();
+    }
+
+    @Override
+    public ContextoAplicacionEstandar getContextoAplicacion() {
+        return (ContextoAplicacionEstandar) getApplicationBean1().getContextoAplicacion();
+    }
+    // </editor-fold>
+

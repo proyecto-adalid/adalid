@@ -1,0 +1,7 @@
+#break
+
+#macro(writeTemplate $template)
+    #if($template)
+        #parse("templates/meta/persistent-entity/meta-persistent-entity-${template}.vm")
+    #end
+#end##writeTemplate

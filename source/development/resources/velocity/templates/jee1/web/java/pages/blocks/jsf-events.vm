@@ -1,0 +1,77 @@
+    // <editor-fold defaultstate="collapsed" desc="metodos estandar para el manejo de eventos de la pagina: init, preprocess, prerender y destroy">
+    @PostConstruct
+    public void postConstruct() {
+        if (EAB.CUSTOM_LIFECYCLE_CALLBACK_METHODS_ENABLED) {
+            init();
+        }
+    }
+
+    @Override
+    public void init() {
+        super.init();
+        gestor.preiniciar();
+        if (gestor.isPaginaAutorizada()) {
+            try {
+                iniciar();
+            } catch (Exception e) {
+                log(${project.rootPackageName}.lib.base.bundle.BundleWebui.getString("bean.initialization.error"), e);
+                throw e instanceof FacesException ? (FacesException) e : new FacesException(e);
+            }
+            gestor.iniciar();
+        #if("$!PaginaActualizacion" != '')
+            asistente.iniciar();
+        #end
+        }
+    }
+
+    @Override
+    public void preprocess() {
+        super.preprocess();
+        gestor.preprocesar();
+    #if("$!PaginaActualizacion" != '')
+        asistente.preprocesar();
+    #end
+    }
+
+    @Override
+    public void prerender() {
+        super.prerender();
+        gestor.prepresentar();
+    #if("$!PaginaActualizacion" != '')
+        asistente.prepresentar();
+    #end
+    }
+
+    @PreDestroy
+    public void preDestroy() {
+        if (EAB.CUSTOM_LIFECYCLE_CALLBACK_METHODS_ENABLED) {
+            destroy();
+        }
+    }
+
+    @Override
+    public void destroy() {
+    #if("$!page.displayFormat" == 'TABLE')
+        FacesContext facesContext = getFacesContext();
+        Object estado = tableRowGroup1.saveState(facesContext);
+        getContextoSesion().setEstadoGrupoFilasTabla(getClass().getName(), estado);
+    #end
+    #if("$!fragmentoFiltro" != '')
+        if (${fragmentoFiltro} != null) {
+            ${fragmentoFiltro}.destroy();
+        }
+    #end
+    #if("$!fragmentoVisor" != '')
+        if (${fragmentoVisor} != null) {
+            ${fragmentoVisor}.destroy();
+        }
+    #end
+    #if("$!PaginaActualizacion" != '')
+        asistente.destroy();
+    #end
+    #destroyDataProviders()
+        super.destroy();
+    }
+    // </editor-fold>
+
+#break

@@ -1,0 +1,89 @@
+#break
+
+#macro(setJavaVariables)
+    #setGlobalVariables()
+    #set($imports = $VelocityAid.getNewTreeSet())
+    #set($parents = $VelocityAid.getNewLinkedHashSet())
+    #set($interfaces = $VelocityAid.getNewLinkedHashSet())
+    #set($javaClassSimpleName = $StringUtils.removeEndIgnoreCase($fileName, '.java'))
+    #set($JAVA_RIGHT_MARGIN = 110)
+#end##setJavaVariables
+
+#macro(writeJavaLicense)
+    #if("$!writeLicense" == '')
+        #set($writeLicense = 'on')
+    #end
+    #if($writeLicense == 'on')
+        #include('licenses/license-java.txt')
+    #end
+#end##writeJavaLicense
+
+#macro(writeJavaAuthor $author)
+    #if("$!writeLicense" == 'on')
+/**
+ * @author adalid $adalidMajorVersionNumber (template by $author)
+ */
+    #end
+#end##writeJavaAuthor
+
+#macro(writeJavaPackage $package)
+#if($StringUtils.isNotBlank($package))
+package $package;
+
+#end
+#end##writeJavaPackage
+
+#macro(writeJavaImports $imports)
+#if($imports.size() > 0)
+    #foreach($element in $imports)
+import $element;
+    #end
+
+#end
+#end##writeJavaImports
+
+#macro(writeJavaExtends $parents)
+#set($extends = '')
+#if($parents.size() > 0)
+    #set($extends = $StringUtils.join($parents, ', '))
+    #if($StringUtils.isBlank($extends))
+        #set($extends = '')
+    #elseif($StringUtils.length($extends) > 80)
+        #set($extends = $extends.replace(', ', ",${EOL}${TAB}"))
+        #set($extends = "${EOL}${TAB}extends${EOL}${TAB}$extends")
+    #else
+        #set($extends = "${EOL}${TAB}extends $extends")
+    #end
+#end
+$extends##
+#end##writeJavaExtends
+
+#macro(writeJavaImplements $interfaces)
+#set($implements = '')
+#if($interfaces.size() > 0)
+    #set($implements = $StringUtils.join($interfaces, ', '))
+    #if($StringUtils.isBlank($implements))
+        #set($implements = ' {')
+    #elseif($StringUtils.length($implements) > 80)
+        #set($implements = $implements.replace(', ', ",${EOL}${TAB}"))
+        #set($implements = "${EOL}${TAB}implements${EOL}${TAB}$implements {")
+    #else
+        #set($implements = "${EOL}${TAB}implements $implements {")
+    #end
+#else
+    #set($implements = ' {')
+#end
+$implements
+#end##writeJavaImplements
+
+#macro(setPersistentJavaType $type)
+    #if($type == 'java.sql.Date')
+        #set($persistentJavaType = 'java.util.Date')
+    #elseif($type == 'java.sql.Time')
+        #set($persistentJavaType = 'java.util.Date')
+    #elseif($type == 'java.sql.Timestamp')
+        #set($persistentJavaType = 'java.util.Date')
+    #else
+        #set($persistentJavaType = $type)
+    #end
+#end##setPersistentJavaType

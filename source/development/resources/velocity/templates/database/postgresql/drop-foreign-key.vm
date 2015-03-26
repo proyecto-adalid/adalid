@@ -1,0 +1,52 @@
+#parsePostgreSQLMacros()
+#setPostgreSQLVariables()
+#writePostgreSQLLicense()
+#writePostgreSQLAuthor('Jorge Campins')
+#set($entities = $ColUtils.filter($project.entitiesList, $isEntitySqlCodeGenEnabled, $isPersistentEntityTable))
+#set($entities = $ColUtils.sort($entities, $byEntityName))
+#foreach($entity in $entities)
+    #writeTemplate('remark-entity')
+    #writeDropForeignKeys()
+#end##foreach-entity
+#break
+
+#macro(writeDropForeignKeys)
+    #resetSQLVariables()
+    #set($table = $entity.wrapper.sqlTableName)
+    #set($table = $entity.wrapper.sqlSchemaQualifiedShortTableName)
+    #if($entity.isJoinedTable())
+        #set($fk = "$!entity.primaryKeyProperty.wrapper.sqlName")
+        #set($ft = "$!entity.baseTableRoot.wrapper.sqlTableName")
+        #set($ft = "$!entity.baseTableRoot.wrapper.sqlSchemaQualifiedShortTableName")
+        #set($pk = "$!entity.baseTableRoot.primaryKeyProperty.wrapper.sqlName")
+        #set($dr = 'cascade')
+        #set($ur = 'cascade')
+        #writeDropForeignKeyStatement()
+    #end
+    #set($properties = $entity.columnsList)
+    #foreach($property in $properties)
+        #if($property.foreignKey)
+            #set($fk = "$!property.wrapper.sqlName")
+            #if($property.isTable())
+                #set($ft = "$!property.root.wrapper.sqlTableName")
+                #set($ft = "$!property.root.wrapper.sqlSchemaQualifiedShortTableName")
+                #set($pk = "$!property.root.primaryKeyProperty.wrapper.sqlName")
+            #else
+                #set($ft = "$!property.baseTableRoot.wrapper.sqlTableName")
+                #set($ft = "$!property.baseTableRoot.wrapper.sqlSchemaQualifiedShortTableName")
+                #set($pk = "$!property.baseTableRoot.primaryKeyProperty.wrapper.sqlName")
+            #end
+            #set($dr = "$!property.wrapper.sqlOnDeleteAction")
+            #set($ur = "$!property.wrapper.sqlOnUpdateAction")
+            #writeDropForeignKeyStatement()
+        #end
+    #end##foreach-property
+#end##writeDropForeignKeys
+
+#macro(writeDropForeignKeyStatement)
+#if($fk != '' && $ft != '' && $pk != '')
+    #setGlobalForeignKeyName($entity)
+    #set($constraint = $globalConstraintName)
+....alter table if exists $table drop constraint if exists $constraint;
+#end
+#end##writeDropForeignKeyStatement

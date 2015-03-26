@@ -1,0 +1,11 @@
+Installation of Log4J (http://blogs.oracle.com/naman/entry/configure_log4j_for_use_in)
+
+1. Copy log4j.jar inside the GlassFish_Home/lib.
+2. Put the Log4J configuration file inside GlassFish_Home/domains/domain1/config.
+3. Fire up GlassFish and open the admin web UI inside a browser (for example http://localhost:4848).
+4. Click on 'Server(Admin Server)' -> Click on 'server-config' Configuration -> JVM Settings -> JVM Options.
+5. Add new property '-Dlog4j.configuration=file:///${com.sun.aas.instanceRoot}/config/log4j.properties',
+   as you have copied log4j.properties under config folder in above Step 2.
+6. Click on the Save button.
+7. Restart the GlassFish.
+8. Deploy sample app and check if the Log4J statements are now available.

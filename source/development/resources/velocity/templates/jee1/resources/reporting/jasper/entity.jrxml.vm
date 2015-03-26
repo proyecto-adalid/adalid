@@ -1,0 +1,857 @@
+#parseXMLMacros()
+#setXMLVariables()
+#writeXMLDeclaration()
+#writeXMLLicense()
+#writeXMLAuthor('Jorge Campins')
+#parse("$templatePath/macros/macros-1.vm")
+#setLocalVariables()
+#writeJasperReport()
+#break
+
+#macro(setLocalVariables)
+#set($vista       = "consulta_${entity.wrapper.sqlName}")
+#set($vista       = "${entity.wrapper.sqlSchemaQualifier}consulta_${entity.wrapper.sqlSchemaUnqualifiedShortName}")
+#set($report      = $entity.entityListReport)
+#set($reportName  = $entity.wrapper.sqlName)
+#set($reportName  = $entity.wrapper.sqlSchemaUnqualifiedShortName)
+#set($reportTitle = $entity.wrapper.validDefaultCollectionLabel)
+#set($queryString = "SELECT * FROM $vista")
+#setOrderBy()
+#if($disordered)
+    #set($sortByAlias = $VelocityAid.coalesce($entity.queryTable.getSqlAlias($entity.businessKeyProperty), $FALSE))
+    #if(!$sortByAlias)
+        #set($sortByAlias = $VelocityAid.coalesce($entity.queryTable.getSqlAlias($entity.characterKeyProperty), $FALSE))
+    #end
+    #if(!$sortByAlias)
+        #set($sortByAlias = $VelocityAid.coalesce($entity.queryTable.getSqlAlias($entity.numericKeyProperty), $FALSE))
+    #end
+    #if(!$sortByAlias)
+        #set($sortByAlias = $VelocityAid.coalesce($entity.queryTable.getSqlAlias($entity.primaryKeyProperty), $FALSE))
+    #end
+    #if($sortByAlias)
+        #set($queryString = "$queryString ORDER BY $sortByAlias")
+    #end
+#else
+    #set($queryString = "$queryString ORDER BY $orderby1")
+#end
+## -----------------------------------------------------------------------------
+#set($bigPageHead = 'false')
+## -----------------------------------------------------------------------------
+#set($imagewdthH1 = 0)##max=160
+#set($imagehghtH1 = 0)##max=32
+#set($imagepathH1 = '')
+#set($imagewdthH2 = 0)##max=160
+#set($imagehghtH2 = 0)##max=32
+#set($imagepathH2 = '')
+#set($textcdataH1 = '')
+#set($textcdataH2 = '')
+#set($textcdataH3 = '')
+#set($textcdataH4 = '')
+#set($textcdataH5 = '')
+#set($textcdataH6 = '')
+#set($textcdataH7 = '')
+#set($textcdataH8 = '')
+#set($textcdataF1 = '')
+#set($textcdataF2 = '')
+#set($fontsizePH1 = 14)
+#set($fontsizePH2 = 14)
+#set($fontsizePH3 = 14)
+#set($fontsizePH4 = 14)
+#set($fontsizePH5 = 14)
+#set($fontsizePH6 = 14)
+#set($fontsizePH7 = 14)
+#set($fontsizePH8 = 14)
+#set($fontsizePF1 = 8)
+#set($fontsizePF2 = 8)
+#set($fontsizeGH1 = 14)
+#set($fontsizeGF1 = 14)
+#set($fontsizeGH2 = 14)
+#set($fontsizeGF2 = 14)
+#set($fontsizeGH3 = 12)
+#set($fontsizeGF3 = 12)
+#set($fontsizeGH4 = 12)
+#set($fontsizeGF4 = 12)
+## -----------------------------------------------------------------------------
+#set($imagewdthH1 = 70)
+#set($imagehghtH1 = 30)
+#set($imagepathH1 = '$P{PAGE_HEADER_IMAGE_1}')
+#set($imagewdthH2 = 70)
+#set($imagehghtH2 = 30)
+#set($imagepathH2 = '$P{PAGE_HEADER_IMAGE_2}')
+#set($imagepathH2 = '')
+## -----------------------------------------------------------------------------
+#set($pagenumberv = '$V{PAGE_NUMBER}')
+#set($pagenumber1 = '$R{PAGE_NUMBER_STRING_1}')
+#set($pagenumber2 = '$R{PAGE_NUMBER_STRING_2}')
+#set($pagenumber1 = '')
+#set($pagenumber2 = '')
+## -----------------------------------------------------------------------------
+#set($locale = '$P{REPORT_LOCALE}')
+#set($bundleKey = """${entity.wrapper.sqlSchemaQualifiedShortName}""")
+#if($bigPageHead == 'true')
+    #set($pageHeaderHeight = '64')
+    #set($textcdataH2 = '')
+    #set($textcdataH5 = $StrUtils.getStringAscii($reportTitle).toUpperCase())
+    #set($textcdataH5 = "JRBundleDominios.getCollectionLabel($locale, $bundleKey).toUpperCase()")
+#else
+    #set($pageHeaderHeight = '32')
+    #set($textcdataH2 = $StrUtils.getStringAscii($reportTitle).toUpperCase())
+    #set($textcdataH2 = "JRBundleDominios.getCollectionLabel($locale, $bundleKey).toUpperCase()")
+    #set($textcdataH5 = '')
+#end
+## -----------------------------------------------------------------------------
+#set($textcdataF1 = $StrUtils.getStringAscii($reportTitle))
+#set($textcdataF1 = '$P{END_USER_NAME}')
+## -----------------------------------------------------------------------------
+####($backcolorD1 = '#EEEEEE')##detail
+####($backcolorG1 = '#AAAAAA')##group1
+####($backcolorG2 = '#BBBBBB')##group2
+####($backcolorG3 = '#CCCCCC')##group3
+####($backcolorG4 = '#DDDDDD')##group4
+####($backcolorPH = '#90B7D0')##header
+####($backcolorPF = '#90B7D0')##footer
+#set($backcolorD1 = '#FFFFFF')##detail
+#set($backcolorG1 = '#FFFFFF')##group1
+#set($backcolorG2 = '#FFFFFF')##group2
+#set($backcolorG3 = '#FFFFFF')##group3
+#set($backcolorG4 = '#FFFFFF')##group4
+#set($backcolorPH = '#FFFFFF')##header
+#set($backcolorPF = '#FFFFFF')##footer
+## -----------------------------------------------------------------------------
+#set($BOF = '$F{')
+#set($EOF = '}')
+#set($BOP = '$P{')
+#set($EOP = '}')
+#set($BOR = '$R{')
+#set($EOR = '}')
+#set($BOV = '$V{')
+#set($EOV = '}')
+## -----------------------------------------------------------------------------
+#set($columnWidth0101 = 960)
+#set($columnWidth0102 = 480)
+#set($columnWidth0103 = 320)
+#set($columnWidth0104 = 240)
+#set($columnWidth0105 = 192)
+#set($columnWidth0106 = 160)
+#set($columnWidth0110 = 96)
+#set($columnWidth0506 = 800)
+#set($columnWidth0730 = $columnWidth0103 - $columnWidth0110)
+#set($columnWidth0203 = 640)
+#set($columnWidth0910 = 864)
+## -----------------------------------------------------------------------------
+#set($fontname = 'Arial')
+#set($fontsize = 10)
+#set($textAlignment = 'Left')
+#set($verticalAlignment = 'Middle')
+## -----------------------------------------------------------------------------
+#end##setLocalVariables
+
+#macro(writeJasperReport)
+##  resourceBundle="${project.rootPackageName}.lib.base.bundle.copy.BundleWebui"
+<jasperReport
+    xmlns="http://jasperreports.sourceforge.net/jasperreports"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd"
+    name="$StringUtils.removeEndIgnoreCase($file, '.jrxml')"
+    columnCount="1"
+    printOrder="Vertical"
+    orientation="Landscape"
+    pageWidth="1008"
+    pageHeight="612"
+    columnWidth="$columnWidth0101"
+    columnSpacing="0"
+    leftMargin="24"
+    rightMargin="24"
+    topMargin="24"
+    bottomMargin="24"
+    whenNoDataType="NoPages"
+    isTitleNewPage="false"
+    isSummaryNewPage="false">
+
+    <property name="ireport.scriptlethandling" value="0"/>
+    <property name="ireport.encoding" value="UTF-8"/>
+    <property name="ireport.zoom" value="1.0"/>
+    <property name="ireport.x" value="0"/>
+    <property name="ireport.y" value="0"/>
+
+    <import value="java.math.BigDecimal"/>
+    <import value="java.util.*"/>
+    <import value="${project.rootPackageName}.lib.base.bundle.*"/>
+    <import value="${project.rootPackageName}.lib.base.enumeration.*"/>
+    <import value="${project.rootPackageName}.lib.base.entity.enumeration.*"/>
+    <import value="${project.rootPackageName}.lib.base.util.*"/>
+
+    <template><![CDATA[${BOP}CUSTOM_STYLE_TEMPLATE${EOP}]]></template>
+    <parameter name="ENTERPRISE_APPLICATION_CODE" class="java.lang.String" isForPrompting="false">
+        <defaultValueExpression><![CDATA["$project.wrapper.hyphenatedAlias"]]></defaultValueExpression>
+    </parameter>
+    <parameter name="ENTERPRISE_APPLICATION_NAME" class="java.lang.String" isForPrompting="false">
+        <defaultValueExpression><![CDATA["$project.wrapper.validDefaultShortDescription"]]></defaultValueExpression>
+    </parameter>
+    <parameter name="RESOURCES_DIR" class="java.lang.String" isForPrompting="false">
+        <defaultValueExpression><![CDATA["./resources/"]]></defaultValueExpression>
+    </parameter>
+    <parameter name="CUSTOM_STYLE_TEMPLATE" class="java.lang.String" isForPrompting="false">
+        <defaultValueExpression><![CDATA[${BOP}RESOURCES_DIR${EOP} + ${BOP}ENTERPRISE_APPLICATION_CODE${EOP} + "0.jrtx"]]></defaultValueExpression>
+    </parameter>
+    <parameter name="PAGE_HEADER_IMAGE_1" class="java.lang.String" isForPrompting="false">
+        <defaultValueExpression><![CDATA[${BOP}RESOURCES_DIR${EOP} + ${BOP}ENTERPRISE_APPLICATION_CODE${EOP} + "1.png"]]></defaultValueExpression>
+    </parameter>
+    <parameter name="PAGE_HEADER_IMAGE_2" class="java.lang.String" isForPrompting="false">
+        <defaultValueExpression><![CDATA[${BOP}RESOURCES_DIR${EOP} + ${BOP}ENTERPRISE_APPLICATION_CODE${EOP} + "2.png"]]></defaultValueExpression>
+    </parameter>
+    <parameter name="SUBREPORTS_DIR" class="java.lang.String" isForPrompting="false">
+        <defaultValueExpression><![CDATA["./subreports/"]]></defaultValueExpression>
+    </parameter>
+    <parameter name="SUPER_REPORT" class="java.lang.String" isForPrompting="false">
+        <defaultValueExpression><![CDATA[""]]></defaultValueExpression>
+    </parameter>
+    <parameter name="END_USER_CODE" class="java.lang.String" isForPrompting="false">
+        <defaultValueExpression><![CDATA[""]]></defaultValueExpression>
+    </parameter>
+    <parameter name="END_USER_NAME" class="java.lang.String" isForPrompting="false">
+        <defaultValueExpression><![CDATA[""]]></defaultValueExpression>
+    </parameter>
+    <parameter name="es_informe_resumido" class="java.lang.Integer" isForPrompting="false">
+        <defaultValueExpression><![CDATA[0]]></defaultValueExpression>
+    </parameter>
+    <parameter name="SQL_WHERE_CLAUSE" class="java.lang.String" isForPrompting="false">
+        <defaultValueExpression><![CDATA[""]]></defaultValueExpression>
+    </parameter>
+    <parameter name="SQL_LIMIT_CLAUSE" class="java.lang.String" isForPrompting="false">
+        <defaultValueExpression><![CDATA[""]]></defaultValueExpression>
+    </parameter>
+
+    <queryString><![CDATA[$queryString]]></queryString>
+
+#foreach($group in $report.groups)
+    #foreach($field in $group.fields)
+    #set($javaClassName = "$field.property.dataType.name")
+    #if($javaClassName.startsWith('java.sql.'))
+        #set($javaClassName = 'java.util.Date')
+    #end
+    <field name="$field.name" class="$javaClassName"/>
+    #end##foreach-field
+#end##foreach-group
+
+#set($x = 0)
+#set($y = 0)
+#set($z = $report.interFieldGapWidth)
+#foreach($group in $report.groups)
+    #set($isReprintHeaderOnEachPage = 'false')
+    #set($headerHeight = 24)
+    #set($footerHeight = 24)
+    #if($group.isDetail())
+        #set($isReprintHeaderOnEachPage = 'true')
+        #set($minHeightToStartNewPage = 36)
+        #set($headerHeight = 20)
+        #set($backcolor = $backcolorD1)
+        #set($fontsize = 10)
+        #set($fontbold = 'true')
+        #set($footerHeight = 0)
+    #elseif($group.sequence == 1)
+        #set($minHeightToStartNewPage = 132)
+        #set($backcolor = $backcolorG1)
+        #set($fontsize = $fontsizeGH1)
+        #set($fontbold = 'true')
+    #elseif($group.sequence == 2)
+        #set($minHeightToStartNewPage = 108)
+        #set($backcolor = $backcolorG2)
+        #set($fontsize = $fontsizeGH2)
+        #set($fontbold = 'false')
+    #elseif($group.sequence == 3)
+        #set($minHeightToStartNewPage = 84)
+        #set($backcolor = $backcolorG3)
+        #set($fontsize = $fontsizeGH3)
+        #set($fontbold = 'true')
+    #else
+        #set($minHeightToStartNewPage = 60)
+        #set($backcolor = $backcolorG4)
+        #set($fontsize = $fontsizeGH4)
+        #set($fontbold = 'false')
+    #end
+    #if($group.isDetail())
+    <group name="detailGroup" isReprintHeaderOnEachPage="$isReprintHeaderOnEachPage" minHeightToStartNewPage="$minHeightToStartNewPage">
+        <groupExpression><![CDATA[$!group.expression]]></groupExpression>
+        <groupHeader>
+            <band height="$headerHeight" splitType="Prevent">
+                <printWhenExpression><![CDATA[${BOP}es_informe_resumido${EOP}==0]]></printWhenExpression>
+                <frame>
+                    <reportElement
+                        style="ch-band1"
+                        x="0"
+                        y="0"
+                        width="$columnWidth0101"
+                        height="$headerHeight"
+                        key="frame"/>
+        #set($headerHeightMinus1 = $headerHeight - 1)
+        #foreach($field in $group.fields)
+            #set($w = $field.pixels)
+            #if($w <= 0)
+                #set($w = 0)
+            #elseif($field.property.isBooleanPrimitive())
+                #set($textAlignment='Center')
+            #elseif($field.property.isCharacterPrimitive())
+                #set($textAlignment='Left')
+            #elseif($field.property.isNumericPrimitive())
+                #set($textAlignment='Right')
+            #elseif($field.property.isDateData())
+                #set($textAlignment='Center')
+            #elseif($field.property.isTimeData())
+                #set($textAlignment='Center')
+            #elseif($field.property.isTimestampData())
+                #set($textAlignment='Center')
+            #else
+                #set($w = 0)
+            #end
+            #set($y = $x + $w)
+            #if($w > 0 && $y <= $columnWidth0101)
+                #set($bundleKey = "${entity.wrapper.sqlSchemaQualifiedShortName}")
+                #if($field.parentProperty)
+                    #set($bundleKey = "${bundleKey}.${field.parentProperty.wrapper.sqlName}")
+                #end
+                #set($bundleKey = """${bundleKey}.${field.property.wrapper.sqlName}""")
+                #set($textcdata = """$StrUtils.getStringAscii($field.property.wrapper.validDefaultShortLabel)""")
+                #set($textcdata = "JRBundleParametros.getShortLabel($locale, $bundleKey)")
+                    <textField
+                        isBlankWhenNull="true"
+                        isStretchWithOverflow="true"
+                        evaluationTime="Report">
+                        <reportElement
+                            style="ch-text1"
+                            x="$x"
+                            y="0"
+                            width="$w"
+                            height="$headerHeight"
+                            key="textField"/>
+                        #increaseIndentationBy(6)
+                        #writeBox('' '' '')
+                        #writeTextElement($fontname $fontsize $fontbold '' '' '' $textAlignment '')
+                        #decreaseIndentationBy(6)
+                        <textFieldExpression><![CDATA[$textcdata]]></textFieldExpression>
+                    </textField>
+                #set($x = $y + $z)
+            #end
+        #end##foreach-field
+                </frame>
+            </band>
+        </groupHeader>
+        <groupFooter>
+            <band height="0" splitType="Prevent">
+                <printWhenExpression><![CDATA[${BOP}es_informe_resumido${EOP}==0]]></printWhenExpression>
+            </band>
+        </groupFooter>
+    </group>
+
+    #else
+    <group name="$group.name" isReprintHeaderOnEachPage="$isReprintHeaderOnEachPage" minHeightToStartNewPage="$minHeightToStartNewPage">
+        <groupExpression><![CDATA[$!group.expression]]></groupExpression>
+        <groupHeader>
+            <band height="$headerHeight" splitType="Prevent">
+                <printWhenExpression><![CDATA[Boolean.FALSE]]></printWhenExpression>
+                <frame>
+                    <reportElement
+                        style="gh${group.sequence}band1"
+                        x="0"
+                        y="0"
+                        width="$columnWidth0101"
+                        height="$headerHeight"
+                        key="frame"/>
+                    <staticText>
+                        <reportElement
+                            style="gh${group.sequence}text1"
+                            x="0"
+                            y="0"
+                            width="$columnWidth0106"
+                            height="$headerHeight"
+                            key="staticText"/>
+                        #increaseIndentationBy(6)
+                        #writeBox('' '' '')
+                        #writeTextElement($fontname $fontsize $fontbold '' '' '' 'Left' '')
+                        #decreaseIndentationBy(6)
+                        <text><![CDATA[$!group.defaultShortLabel]]></text>
+                    </staticText>
+                    <textField
+                        isBlankWhenNull="true"
+                        isStretchWithOverflow="true"
+                        evaluationTime="Now"
+                        hyperlinkType="None"
+                        hyperlinkTarget="Self">
+                        <reportElement
+                            style="gh${group.sequence}text2"
+                            stretchType="RelativeToBandHeight"
+                            x="$columnWidth0106"
+                            y="0"
+                            width="$columnWidth0103"
+                            height="$headerHeight"
+                            key="textField"/>
+                        #increaseIndentationBy(6)
+                        #writeBox('' '' '')
+                        #writeTextElement($fontname $fontsize $fontbold '' '' '' 'Left' '')
+                        #decreaseIndentationBy(6)
+                        <textFieldExpression class="java.lang.String"><![CDATA[]]></textFieldExpression>
+                    </textField>
+                    <textField
+                        isBlankWhenNull="true"
+                        isStretchWithOverflow="true"
+                        evaluationTime="Now"
+                        hyperlinkType="None"
+                        hyperlinkTarget="Self">
+                        <reportElement
+                            style="gh${group.sequence}text2"
+                            stretchType="RelativeToBandHeight"
+                            x="$columnWidth0102"
+                            y="0"
+                            width="$columnWidth0102"
+                            height="$headerHeight"
+                            key="textField"/>
+                        #increaseIndentationBy(6)
+                        #writeBox('' '' '')
+                        #writeTextElement($fontname $fontsize $fontbold '' '' '' 'Left' '')
+                        #decreaseIndentationBy(6)
+                        <textFieldExpression class="java.lang.String"><![CDATA[]]></textFieldExpression>
+                    </textField>
+                </frame>
+            </band>
+        </groupHeader>
+        <groupFooter>
+            <band height="$footerHeight" splitType="Prevent">
+                <printWhenExpression><![CDATA[Boolean.FALSE]]></printWhenExpression>
+            </band>
+        </groupFooter>
+    </group>
+
+    #end
+#end##foreach-group
+    <pageHeader>
+        <band height="$pageHeaderHeight" splitType="Stretch">
+            <frame>
+                <reportElement
+                    style="ph-band1"
+                    x="0"
+                    y="0"
+                    width="$columnWidth0101"
+                    height="$pageHeaderHeight"
+                    key="frame"/>
+            #if($imagepathH1 == '')
+                <staticText>
+                    <reportElement
+                        style="ph-text1"
+                        x="0"
+                        y="0"
+                        width="$columnWidth0106"
+                        height="32"
+                        key="staticText"/>
+                    #increaseIndentationBy(5)
+                    #writeBox('' '' '')
+                    #writeTextElement($fontname $fontsizePH1 'true' 'false' '' '' 'Left' '')
+                    #decreaseIndentationBy(5)
+                    <text><![CDATA[$textcdataH1]]></text>
+                </staticText>
+            #else
+                <image onErrorType="Icon" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self">
+                    <reportElement
+                        style="ph-text1"
+                        x="0"
+                        y="0"
+                        width="$imagewdthH1"
+                        height="$imagehghtH1"
+                        key="image-1"/>
+                    <imageExpression class="java.lang.String"><![CDATA[$imagepathH1]]></imageExpression>
+                </image>
+            #end
+            #if($pageHeaderHeight == '64')
+                <staticText>
+                    <reportElement
+                        style="ph-text1"
+                        x="$columnWidth0106"
+                        y="0"
+                        width="$columnWidth0103"
+                        height="32"
+                        key="staticText"/>
+                    #increaseIndentationBy(5)
+                    #writeBox('' '' '')
+                    #writeTextElement($fontname $fontsizePH2 'true' 'true' '' '' 'Center' '')
+                    #decreaseIndentationBy(5)
+                    <text><![CDATA[$textcdataH2]]></text>
+                </staticText>
+                <staticText>
+                    <reportElement
+                        style="ph-text1"
+                        x="$columnWidth0102"
+                        y="0"
+                        width="$columnWidth0103"
+                        height="32"
+                        key="staticText"/>
+                    #increaseIndentationBy(5)
+                    #writeBox('' '' '')
+                    #writeTextElement($fontname $fontsizePH3 'true' 'false' '' '' 'Center' '')
+                    #decreaseIndentationBy(5)
+                    <text><![CDATA[$textcdataH3]]></text>
+                </staticText>
+            #else
+                <textField
+                    isBlankWhenNull="true"
+                    isStretchWithOverflow="true"
+                    evaluationTime="Report">
+                    <reportElement
+                        style="ph-text1"
+                        x="$columnWidth0106"
+                        y="0"
+                        width="$columnWidth0203"
+                        height="32"
+                        key="textField"/>
+                    #increaseIndentationBy(5)
+                    #writeBox('' '' '')
+                    #writeTextElement($fontname $fontsizePH2 'true' 'true' '' '' 'Center' '')
+                    #decreaseIndentationBy(5)
+                    <textFieldExpression><![CDATA[$textcdataH2]]></textFieldExpression>
+                </textField>
+            #end
+            #if($imagepathH2 == '')
+                <staticText>
+                    <reportElement
+                        style="ph-text1"
+                        x="$columnWidth0506"
+                        y="0"
+                        width="$columnWidth0106"
+                        height="32"
+                        key="staticText"/>
+                    #increaseIndentationBy(5)
+                    #writeBox('' '' '')
+                    #writeTextElement($fontname $fontsizePH4 'true' 'false' '' '' 'Right' '')
+                    #decreaseIndentationBy(5)
+                    <text><![CDATA[$textcdataH4]]></text>
+                </staticText>
+            #else
+                #set($nextx = $columnWidth0101 - $imagewdthH2)
+                <image onErrorType="Icon" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self">
+                    <reportElement
+                        x="$nextx"
+                        y="0"
+                        width="$imagewdthH2"
+                        height="$imagehghtH2"
+                        key="image-2"/>
+                    <imageExpression class="java.lang.String"><![CDATA[$imagepathH2]]></imageExpression>
+                </image>
+            #end
+            #if($pageHeaderHeight == '64')
+                <textField
+                    isBlankWhenNull="true"
+                    isStretchWithOverflow="true"
+                    evaluationTime="Report">
+                    <reportElement
+                        style="ph-text2"
+                        x="0"
+                        y="32"
+                        width="$columnWidth0102"
+                        height="32"
+                        key="textField"/>
+                    #increaseIndentationBy(5)
+                    #writeBox('' '' '')
+                    #writeTextElement($fontname $fontsizePH5 'true' 'true' '' '' 'Left' '')
+                    #decreaseIndentationBy(5)
+                    <textFieldExpression><![CDATA[$textcdataH5]]></textFieldExpression>
+                </textField>
+                <staticText>
+                    <reportElement
+                        style="ph-text2"
+                        x="$columnWidth0102"
+                        y="32"
+                        width="$columnWidth0103"
+                        height="32"
+                        key="staticText"/>
+                    #increaseIndentationBy(5)
+                    #writeBox('' '' '')
+                    #writeTextElement($fontname $fontsizePH6 'true' 'false' '' '' 'Left' '')
+                    #decreaseIndentationBy(5)
+                    <text><![CDATA[$textcdataH6]]></text>
+                </staticText>
+                <staticText>
+                    <reportElement
+                        style="ph-text2"
+                        x="$columnWidth0506"
+                        y="32"
+                        width="$columnWidth0106"
+                        height="32"
+                        key="staticText"/>
+                    #increaseIndentationBy(5)
+                    #writeBox('' '' '')
+                    #writeTextElement($fontname $fontsizePH7 'true' 'false' '' '' 'Left' '')
+                    #decreaseIndentationBy(5)
+                    <text><![CDATA[$textcdataH7]]></text>
+                </staticText>
+            #end
+            </frame>
+        </band>
+    </pageHeader>
+
+    <detail>
+        <band height="16" splitType="Stretch">
+            <printWhenExpression><![CDATA[${BOP}es_informe_resumido${EOP}==0]]></printWhenExpression>
+            <frame>
+                <reportElement
+                    style="dx-band1"
+                    x="0"
+                    y="0"
+                    width="$columnWidth0101"
+                    height="16"
+                    key="frame"/>
+#set($x = 0)
+#set($y = 0)
+#set($z = $report.interFieldGapWidth)
+#set($group = $report.detailGroup)
+#foreach($field in $group.fields)
+    #set($javaClassName = "$field.property.dataType.name")
+    #if($javaClassName.startsWith('java.sql.'))
+        #set($javaClassName = 'java.util.Date')
+    #end
+    #set($expression = "$BOF$field.name$EOF")
+    #set($w = $field.pixels)
+    #if($w <= 0)
+        #set($w = 0)
+    #elseif($field.property.isBooleanPrimitive())
+        #set($javaClassName = 'java.lang.String')
+        #set($expression = "EnumBit.valueOf($BOF$field.name$EOF).getLabel()")
+        #set($expression = "JRBundleWebui.getBooleanLabel($locale, $BOF$field.name$EOF)")
+        #set($pattern = '')
+        #set($textAlignment='Center')
+    #elseif($field.property.isCharacterPrimitive())
+        #set($pattern = '')
+        #set($textAlignment='Left')
+    #elseif($field.property.isBigDecimalData())
+        #set($fieldPrecision = $VelocityAid.coalesce($field.property.precision, 16))
+        #set($fieldScale = $VelocityAid.coalesce($field.property.scale, 0))
+        #set($fieldMaxIntegerDigits = $fieldPrecision - $fieldScale)
+        #if($fieldScale > 0)
+            #set($decLess = '#,##0')
+            #set($dotZero = ".$StringUtils.repeat('0', $fieldScale)")
+            #set($pattern = "${decLess}${dotZero};-${decLess}${dotZero}")
+        #else
+            #set($pattern = '#,##0;-#,##0')
+        #end
+        #set($textAlignment='Right')
+    #elseif($field.property.isNumericPrimitive())
+        #set($pattern = '#,##0;-#,##0')
+        #set($textAlignment='Right')
+    #elseif($field.property.isDateData())
+        #set($pattern = 'dd/MM/yyyy')
+        #set($textAlignment='Center')
+    #elseif($field.property.isTimeData())
+        #set($pattern = 'hh:mm aa')
+        #set($textAlignment='Center')
+    #elseif($field.property.isTimestampData())
+        #set($pattern = 'dd/MM/yyyy hh:mm aa')
+        #set($textAlignment='Center')
+    #else
+        #set($w = 0)
+    #end
+    #set($y = $x + $w)
+    #if($w > 0 && $y <= $columnWidth0101)
+                <textField
+                    pattern="$pattern"
+                    isBlankWhenNull="true"
+                    isStretchWithOverflow="true"
+                    evaluationTime="Now"
+                    hyperlinkType="None"
+                    hyperlinkTarget="Self">
+                    <reportElement
+                        style="dx-text1"
+                        stretchType="RelativeToBandHeight"
+                        x="$x"
+                        y="0"
+                        width="$w"
+                        height="16"
+                        key="textField"/>
+                    #increaseIndentationBy(5)
+                    #writeBox('' '' '')
+                    #writeTextElement($fontname '' '' '' '' '' $textAlignment '')
+                    #decreaseIndentationBy(5)
+                    <textFieldExpression class="$javaClassName"><![CDATA[$expression]]></textFieldExpression>
+                </textField>
+        #set($x = $y + $z)
+    #end
+#end##foreach-field
+            </frame>
+        </band>
+    </detail>
+
+    <pageFooter>
+        <band height="20" splitType="Stretch">
+            <frame>
+                <reportElement
+                    style="pf-band1"
+                    x="0"
+                    y="0"
+                    width="$columnWidth0101"
+                    height="20"
+                    key="frame"/>
+                <textField
+                    isBlankWhenNull="true"
+                    isStretchWithOverflow="true"
+                    evaluationTime="Report"
+                    pattern="dd/MM/yyyy"
+                    hyperlinkType="None"
+                    hyperlinkTarget="Self">
+                    <reportElement
+                        style="pf-text2"
+                        stretchType="RelativeToBandHeight"
+                        x="0"
+                        y="0"
+                        width="$columnWidth0103"
+                        height="20"
+                        key="textField"/>
+                    #increaseIndentationBy(5)
+                    #writeBox('' '' '')
+                    #writeTextElement($fontname $fontsizePF1 '' '' '' '' 'Left' '')
+                    #decreaseIndentationBy(5)
+                    <textFieldExpression class="java.util.Date"><![CDATA[new Date()]]></textFieldExpression>
+                </textField>
+                <textField
+                    isBlankWhenNull="true"
+                    isStretchWithOverflow="true"
+                    evaluationTime="Page"
+                    hyperlinkType="None"
+                    hyperlinkTarget="Self">
+                    <reportElement
+                        style="pf-text2"
+                        stretchType="RelativeToBandHeight"
+                        x="$columnWidth0103"
+                        y="0"
+                        width="$columnWidth0106"
+                        height="20"
+                        key="textField"/>
+                    #increaseIndentationBy(5)
+                    #writeBox('' '' '')
+                    #writeTextElement($fontname $fontsizePF1 '' '' '' '' 'Right' '')
+                    #decreaseIndentationBy(5)
+                    #if($pagenumber1 == '')
+                        #set($textcdata = "$pagenumberv")
+                    #else
+                        #set($textcdata = "$pagenumber1 + "" "" + $pagenumberv")
+                    #end
+                    <textFieldExpression class="java.lang.String"><![CDATA[$textcdata]]></textFieldExpression>
+                </textField>
+                <textField
+                    isBlankWhenNull="true"
+                    isStretchWithOverflow="true"
+                    evaluationTime="Report"
+                    hyperlinkType="None"
+                    hyperlinkTarget="Self">
+                    <reportElement
+                        style="pf-text2"
+                        stretchType="RelativeToBandHeight"
+                        x="$columnWidth0102"
+                        y="0"
+                        width="$columnWidth0106"
+                        height="20"
+                        key="textField"/>
+                    #increaseIndentationBy(5)
+                    #writeBox('' '' '')
+                    #writeTextElement($fontname $fontsizePF1 '' '' '' '' 'Left' '')
+                    #decreaseIndentationBy(5)
+                    #if($pagenumber2 == '')
+                        #set($textcdata = """/ "" + $pagenumberv")
+                    #else
+                        #set($textcdata = "$pagenumber2 + "" "" + $pagenumberv")
+                    #end
+                    <textFieldExpression class="java.lang.String"><![CDATA[$textcdata]]></textFieldExpression>
+                </textField>
+                <textField
+                    isBlankWhenNull="true"
+                    isStretchWithOverflow="true"
+                    evaluationTime="Report"
+                    hyperlinkType="None"
+                    hyperlinkTarget="Self">
+                    <reportElement
+                        style="pf-text2"
+                        stretchType="RelativeToBandHeight"
+                        x="$columnWidth0203"
+                        y="0"
+                        width="$columnWidth0103"
+                        height="20"
+                        key="textField"/>
+                    #increaseIndentationBy(5)
+                    #writeBox('' '' '')
+                    #writeTextElement($fontname $fontsizePF1 '' '' '' '' 'Right' '')
+                    #decreaseIndentationBy(5)
+                    <textFieldExpression class="java.lang.String"><![CDATA[$textcdataF1]]></textFieldExpression>
+                </textField>
+            </frame>
+        </band>
+    </pageFooter>
+
+</jasperReport>
+#end##writeJasperReport
+
+#macro(setOrderBy)
+#set($query = $entity.queryTable)
+#set($disordered = $TRUE)
+#if($entity.orderByKey)
+    #if($entity.orderByKey.isValidKeyFor($entity))
+        #set($colname1 = '')
+        #set($colname2 = '')
+        #set($orderby1 = '')
+        #set($orderby2 = '')
+        #foreach($keyField in $entity.orderByKey.keyFieldsList)
+            #set($orderByProperty = $keyField.property)
+            #set($colname1 = "$!{query.getSqlAlias($orderByProperty)}")
+            #set($colname2 = "$!{query.getSqlQualifiedName($orderByProperty)}")
+            #if($colname1 == '' || $colname2 == '')
+                #break
+            #end
+            #set($orderby1 = "$orderby1, $colname1 $!keyField.sqlSortOption")
+            #set($orderby2 = "$orderby2, $colname2 $!keyField.sqlSortOption")
+        #end##foreach
+        #if($colname1 != '' && $colname2 != '')
+            #set($disordered = $FALSE)
+            #set($orderby1 = "$StringUtils.removeStart($orderby1, ',').trim()")
+            #set($orderby2 = "$StringUtils.removeStart($orderby2, ',').trim()")
+        #end
+    #end
+#end
+#if($disordered)
+    #if($entity.orderByProperties)
+        #set($colname1 = '')
+        #set($colname2 = '')
+        #set($orderby1 = '')
+        #set($orderby2 = '')
+        #foreach($orderByProperty in $entity.orderByProperties)
+            #set($colname1 = "$!{query.getSqlAlias($orderByProperty)}")
+            #set($colname2 = "$!{query.getSqlQualifiedName($orderByProperty)}")
+            #if($colname1 == '' || $colname2 == '')
+                #break
+            #end
+            #set($orderby1 = "$orderby1, $colname1")
+            #set($orderby2 = "$orderby2, $colname2")
+        #end##foreach
+        #if($colname1 != '' && $colname2 != '')
+            #set($disordered = $FALSE)
+            #set($orderby1 = "$StringUtils.removeStart($orderby1, ',').trim()")
+            #set($orderby2 = "$StringUtils.removeStart($orderby2, ',').trim()")
+        #end
+    #end
+#end
+#if($disordered)
+    #if($entity.orderByProperty)
+        #set($colname1 = "$!{query.getSqlAlias($entity.orderByProperty)}")
+        #set($colname2 = "$!{query.getSqlQualifiedName($entity.orderByProperty)}")
+        #if($colname1 != '' && $colname2 != '')
+            #set($disordered = $FALSE)
+            #set($orderby1 = " $colname1 $!{entity.selectSortOption} ")
+            #set($orderby2 = " $colname2 $!{entity.selectSortOption} ")
+        #end
+    #end
+#end
+#if($disordered)
+    #if($entity.primaryKeyProperty)
+        #set($colname1 = "$!{query.getSqlAlias($entity.primaryKeyProperty)}")
+        #set($colname2 = "$!{query.getSqlQualifiedName($entity.primaryKeyProperty)}")
+        #if($colname1 != '' && $colname2 != '')
+            #set($disordered = $FALSE)
+            #set($orderby1 = " $colname1 $!{entity.selectSortOption} ")
+            #set($orderby2 = " $colname2 $!{entity.selectSortOption} ")
+        #end
+    #end
+#end
+#end##setOrderBy

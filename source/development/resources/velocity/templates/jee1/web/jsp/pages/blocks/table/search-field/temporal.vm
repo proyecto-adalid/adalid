@@ -1,0 +1,48 @@
+$tab<h:panelGrid id="panelGrid${panelGridSequence.next()}"
+$tab    columns="2"
+$tab    rendered="#{${pageBeanName}.asistente.column${fieldClassName}Rendered}">
+$tab    <webuijsf:image id="image${fieldFirstName}${divString}" url="#{${filter}.${campo1}${divString}ImageUrl}"/>
+$tab    <webuijsf:label id="label${fieldFirstName}${divString}"
+$tab        binding="#{${filter}.label${fieldFirstName}${divString}}"
+$tab        for="${campo1}${divString}"
+$tab        text="BundleParametros.${page.entity.wrapper.sqlSchemaQualifiedShortName}.${field.property.wrapper.sqlName}"/>
+$tab</h:panelGrid>
+$tab<h:panelGrid id="panelGrid${panelGridSequence.next()}"
+$tab    columns="7"
+$tab    rendered="#{${pageBeanName}.asistente.column${fieldClassName}Rendered}"
+$tab    styleClass="pdq-grid-elemento-1">
+    #if($field.property.isDateData())
+$tab    <webuijsf:calendar id="${campo1}${divString}"
+$tab        binding="#{${filter}.${campo1}${divString}}"
+$tab        converter="#{${pageBeanName}.converter${fieldFirstName}}"
+$tab        maxDate="#{${pageBeanName}.gestor.defaultMaxDate}"
+$tab        minDate="#{${pageBeanName}.gestor.defaultMinDate}"
+$tab        readOnly="$fieldReadOnly"
+$tab        required="$fieldRequired"
+$tab        selectedDate="#{${filter}.${campo1}${divString}SelectedDate}"
+$tab        toolTip="BundleParametros.${page.entity.wrapper.sqlSchemaQualifiedShortName}.${field.property.wrapper.sqlName}"/>
+    #else
+$tab    <webuijsf:textField id="${campo1}${divString}"
+$tab        binding="#{${filter}.${campo1}${divString}}"
+$tab        columns="70"
+$tab        converter="#{${pageBeanName}.converter${fieldFirstName}}"
+$tab        readOnly="$fieldReadOnly"
+$tab        required="$fieldRequired"
+$tab        text="#{${filter}.${campo1}${divString}Text}"
+$tab        toolTip="BundleParametros.${page.entity.wrapper.sqlSchemaQualifiedShortName}.${field.property.wrapper.sqlName}"/>
+    #end
+$tab    <webuijsf:staticText id="${campo1}${divString}Texto1"
+$tab        binding="#{${filter}.${campo1}${divString}Texto1}"
+$tab        converter="#{${pageBeanName}.converter${fieldFirstName}}"/>
+$tab    <webuijsf:message id="message${fieldFirstName}${divString}"
+$tab        for="${campo1}${divString}"/>
+$tab</h:panelGrid>
+$tab<h:panelGrid id="panelGrid${panelGridSequence.next()}"
+$tab    rendered="#{${pageBeanName}.asistente.column${fieldClassName}Rendered}">
+$tab    <webuijsf:button id="${campo1}${divString}BotonBorrar1"
+$tab        actionExpression="#{${filter}.${campo1}${divString}BotonBorrar1_action}"
+$tab        disabled="#{${pageBeanName}.gestor.funcionSelectInhabilitada}"
+$tab        imageURL="/resources/minus.gif"
+$tab        text="#{${pageBeanName}.gestor.i18n.textoBotonBorrarCriterio}"
+$tab        toolTip="#{${pageBeanName}.gestor.i18n.toolTipBotonBorrarCriterio}"/>
+$tab</h:panelGrid>

@@ -1,0 +1,103 @@
+#parsePostgreSQLMacros()
+#setPostgreSQLVariables()
+#writePostgreSQLLicense()
+#writePostgreSQLAuthor('Jorge Campins')
+#writeDelimiterDirective('??')
+#set($entities = $ColUtils.filter($project.entitiesList, $isEntitySqlCodeGenEnabled, $isPersistentEntityWithTable))
+#set($entities = $ColUtils.sort($entities, $byEntityName))
+#foreach($entity in $entities)
+    #writeTemplate('remark-entity')
+    #writeCreateConvertFunctions()
+#end##foreach-entity
+#writeDelimiterDirective(';')
+#break
+
+#macro(writeCreateConvertFunctions)
+    #resetSQLVariables()
+    #set($entname = $entity.wrapper.sqlName)
+    #set($entname = $entity.wrapper.sqlSchemaQualifiedShortName)
+    #set($table = $entity.wrapper.sqlTableName)
+    #set($table = $entity.wrapper.sqlSchemaQualifiedShortTableName)
+    #set($query = $entity.queryTable)
+    #set($keyname = $entity.primaryKeyProperty.wrapper.sqlName)
+    #set($keytype = $entity.primaryKeyProperty.wrapper.sqlType)
+    #set($varname = $entity.primaryKeyProperty.wrapper.sqlVariableName)
+    #set($rowname = $query.sqlJoinQualifier)
+    #writeCreateConvertFunctionHeading()
+##  #set($properties = $entity.columnsList)
+    #set($properties = $entity.entityTriggerColumnsList)
+    #foreach($property in $properties)
+        #set($colname = $property.wrapper.sqlName)
+        #if($property.isNumericPrimitive())
+            #writeCreateConvertFunctionConvertNumber()
+        #elseif($property.isStringData())
+            #writeCreateConvertFunctionConvertString()
+        #end
+    #end##foreach-property
+    #writeCreateConvertFunctionFooting()
+#end##writeCreateConvertFunctions
+
+#macro(writeCreateConvertFunctionHeading)
+#set($foo = "${sql_name_separator}convert")
+#set($function1 = "${entname}${foo}(${keytype})")
+#set($function2 = "${entname}${foo}(${varname} ${keytype})")
+#set($function3 = "${entname}${foo}(%)")
+#*
+drop function if exists $function1 cascade;
+#writeDelimiter('??')
+create or replace function $function2 returns ${table} as $$
+declare
+    row1$ ${table};
+    row2$ ${table};
+begin
+    raise notice '${function3}', ${varname};
+    select * into row1$ from ${table} where ${keyname} = ${varname};
+    select * into row2$ from ${entname}${foo}(row1$);
+    return row2$;
+end;
+$$ language plpgsql;
+#writeDelimiter('??')
+
+*#
+#set($function1 = "${entname}${foo}(${table})")
+#set($function2 = "${entname}${foo}($rowname ${table})")
+#set($function3 = "${entname}${foo}(%)")
+drop function if exists $function1 cascade;
+#writeDelimiter('??')
+create or replace function $function2 returns ${table} as $$
+declare
+begin
+    raise notice '${function3}', ${rowname};
+#end##writeCreateConvertFunctionHeading
+
+#macro(writeCreateConvertFunctionConvertNumber)
+#set($divisorRule = "$!property.divisorRule")
+#if($property.divisor < 1)
+#elseif($divisorRule == 'CEILING' || $divisorRule == 'FLOOR' || $divisorRule == 'ROUND')
+    #set($divisorX = "divisor_$divisorRule.toLowerCase()")
+    #set($minValue = $VelocityAid.coalesce($sqlProgrammer.getSqlValue($property.minNumber), 'null'))
+    #set($maxValue = $VelocityAid.coalesce($sqlProgrammer.getSqlValue($property.maxNumber), 'null'))
+    ${rowname}.${colname} := ${divisorX}(${rowname}.${colname}, $property.divisor, $minValue, $maxValue);
+#end
+#end##writeCreateConvertFunctionConvertNumber
+
+#macro(writeCreateConvertFunctionConvertString)
+#if(!$property.allowDiacritics)
+    ${rowname}.${colname} := diacriticless(${rowname}.${colname});
+#end
+#if("$!property.letterCase" == 'CAPITALIZED')
+    ${rowname}.${colname} := initcap(${rowname}.${colname});
+#elseif("$!property.letterCase" == 'LOWER')
+    ${rowname}.${colname} := lower(${rowname}.${colname});
+#elseif("$!property.letterCase" == 'UPPER')
+    ${rowname}.${colname} := upper(${rowname}.${colname});
+#end
+#end##writeCreateConvertFunctionConvertString
+
+#macro(writeCreateConvertFunctionFooting)
+    return $rowname;
+end;
+$$ language plpgsql;
+#writeDelimiter('??')
+
+#end##writeCreateConvertFunctionFooting

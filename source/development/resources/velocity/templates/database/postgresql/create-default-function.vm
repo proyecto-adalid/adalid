@@ -1,0 +1,179 @@
+#parsePostgreSQLMacros()
+#setPostgreSQLVariables()
+#writePostgreSQLLicense()
+#writePostgreSQLAuthor('Jorge Campins')
+#writeDelimiterDirective('??')
+#set($entities = $ColUtils.filter($project.entitiesList, $isEntitySqlCodeGenEnabled, $isPersistentEntityWithTable))
+#set($entities = $ColUtils.sort($entities, $byEntityName))
+#foreach($entity in $entities)
+    #writeTemplate('remark-entity')
+    #writeCreateDefaultFunctions()
+#end##foreach-entity
+#writeDelimiterDirective(';')
+#break
+
+#macro(writeCreateDefaultFunctions)
+    #resetSQLVariables()
+    #set($entname = $entity.wrapper.sqlName)
+    #set($entname = $entity.wrapper.sqlSchemaQualifiedShortName)
+    #set($table = $entity.wrapper.sqlTableName)
+    #set($table = $entity.wrapper.sqlSchemaQualifiedShortTableName)
+    #set($query = $entity.queryTable)
+    #set($refcols = $entity.defaultValueColumnsList)
+    #set($joins = $entity.defaultValueJoinsMap)
+    #set($joinsCount = $joins.size())
+    #set($keyname = $entity.primaryKeyProperty.wrapper.sqlName)
+    #set($keytype = $entity.primaryKeyProperty.wrapper.sqlType)
+    #set($varname = $entity.primaryKeyProperty.wrapper.sqlVariableName)
+    #set($rowname = $query.sqlJoinQualifier)
+    #set($newname = $rowname)
+    #set($oldname = $sqlProgrammer.getSqlVariableName('old'))
+    #set($discriminatorColumn = "$!entity.discriminatorProperty.wrapper.sqlName")
+    #set($discriminatorValue = "$!entity.wrapper.sqlDiscriminatorValue")
+##  #set($properties = $entity.columnsList)
+    #set($properties = $entity.entityTriggerColumnsList)
+    #writeCreateBeforeInsertDefaultFunctionHeading()
+    #foreach($property in $properties)
+        #set($colname = $property.wrapper.sqlName)
+        #if($colname == $discriminatorColumn && $discriminatorValue != '')
+            #set($defaultValue = $discriminatorValue)
+        #else
+            #set($defaultValue = $VelocityAid.coalesce($property.wrapper.getSqlDefaultValue($query), $FALSE))
+        #end
+        #if($defaultValue)
+            #writeCreateBeforeInsertDefaultFunctionDefaultBlock()
+        #end
+    #end##foreach-property
+    #writeCreateBeforeInsertDefaultFunctionFooting()
+    #writeCreateBeforeUpdateDefaultFunctionHeading()
+    #foreach($property in $properties)
+        #set($colname = $property.wrapper.sqlName)
+        #if($colname == $discriminatorColumn && $discriminatorValue != '')
+            #set($defaultValue = $discriminatorValue)
+        #else
+            #set($defaultValue = $VelocityAid.coalesce($property.wrapper.getSqlDefaultValue($query), $FALSE))
+        #end
+        #if($defaultValue)
+            #writeCreateBeforeUpdateDefaultFunctionDefaultBlock()
+        #end
+    #end##foreach-property
+    #writeCreateBeforeUpdateDefaultFunctionFooting()
+#end##writeCreateDefaultFunctions
+
+#macro(writeCreateBeforeInsertDefaultFunctionHeading)
+#set($foo = "${sql_name_separator}default_value")
+#set($function1 = "${entname}${foo}(${keytype})")
+#set($function2 = "${entname}${foo}(${varname} ${keytype})")
+#set($function3 = "${entname}${foo}(%)")
+#*
+drop function if exists $function1 cascade;
+#writeDelimiter('??')
+create or replace function $function2 returns ${table} as $$
+declare
+    row1$ ${table};
+    row2$ ${table};
+begin
+    raise notice '${function3}', ${varname};
+    select * into row1$ from ${table} where ${keyname} = ${varname};
+    select * into row2$ from ${entname}${foo}(row1$);
+    return row2$;
+end;
+$$ language plpgsql;
+#writeDelimiter('??')
+
+*#
+#set($function1 = "${entname}${foo}(${table})")
+#set($function2 = "${entname}${foo}($rowname ${table})")
+#set($function3 = "${entname}${foo}(%)")
+drop function if exists $function1 cascade;
+#writeDelimiter('??')
+create or replace function $function2 returns ${table} as $$
+#if($joinsCount > 0)
+declare
+    #foreach($key in $joins.keySet())
+    $key record;
+    #end##foreach-join
+#end
+begin
+    raise notice '${function3}', ${rowname};
+    #foreach($key in $joins.keySet())
+    #set($join = $joins.get($key))
+--  record $key
+    #set($statement = $join.getSqlSelectStatement($refcols, $TRUE, $TRUE, $FALSE))
+    $statement.replace("$EOL", "$EOL    ");
+
+    #end##foreach-join
+#end##writeCreateBeforeInsertDefaultFunctionHeading
+
+#macro(writeCreateBeforeInsertDefaultFunctionDefaultBlock)
+#if($StringUtils.containsIgnoreCase($defaultValue, 'current_user'))
+    #set($x = '--  ')
+#else
+    #set($x = '    ')
+#end
+#if("$!property.defaultCondition" == 'UNCONDITIONALLY' || "$!property.defaultCondition" == 'UNCONDITIONALLY_ON_INSERT')
+....${x}$rowname.$colname := $defaultValue;
+#elseif("$!property.defaultCondition" == 'IF_NULL' || "$!property.defaultCondition" == 'IF_NULL_ON_INSERT')
+....${x}if ($rowname.$colname is null) then
+....${x}    $rowname.$colname := $defaultValue;
+....${x}end if;
+#end
+
+#end##writeCreateBeforeInsertDefaultFunctionDefaultBlock
+
+#macro(writeCreateBeforeInsertDefaultFunctionFooting)
+    return $rowname;
+end;
+$$ language plpgsql;
+#writeDelimiter('??')
+
+#end##writeCreateBeforeInsertDefaultFunctionFooting
+
+#macro(writeCreateBeforeUpdateDefaultFunctionHeading)
+#set($foo = "${sql_name_separator}default_value")
+#set($function1 = "${entname}${foo}(${table}, ${table})")
+#set($function2 = "${entname}${foo}($newname ${table}, $oldname ${table})")
+#set($function3 = "${entname}${foo}(%, %)")
+drop function if exists $function1 cascade;
+#writeDelimiter('??')
+create or replace function $function2 returns ${table} as $$
+#if($joinsCount > 0)
+declare
+    #foreach($key in $joins.keySet())
+    $key record;
+    #end##foreach-join
+#end
+begin
+    raise notice '${function3}', ${newname}, ${oldname};
+    #foreach($key in $joins.keySet())
+    #set($join = $joins.get($key))
+--  record $key
+    #set($statement = $join.getSqlSelectStatement($refcols, $TRUE, $TRUE, $FALSE))
+    $statement.replace("$EOL", "$EOL    ");
+
+    #end##foreach-join
+#end##writeCreateBeforeUpdateDefaultFunctionHeading
+
+#macro(writeCreateBeforeUpdateDefaultFunctionDefaultBlock)
+#if($StringUtils.containsIgnoreCase($defaultValue, 'current_user'))
+    #set($x = '--  ')
+#else
+    #set($x = '    ')
+#end
+#if("$!property.defaultCondition" == 'UNCONDITIONALLY' || "$!property.defaultCondition" == 'UNCONDITIONALLY_ON_UPDATE')
+....${x}$newname.$colname := $defaultValue;
+#elseif("$!property.defaultCondition" == 'IF_NULL' || "$!property.defaultCondition" == 'IF_NULL_ON_UPDATE')
+....${x}if ($newname.$colname is null) then
+....${x}    $newname.$colname := $defaultValue;
+....${x}end if;
+#end
+
+#end##writeCreateBeforeUpdateDefaultFunctionDefaultBlock
+
+#macro(writeCreateBeforeUpdateDefaultFunctionFooting)
+    return $newname;
+end;
+$$ language plpgsql;
+#writeDelimiter('??')
+
+#end##writeCreateBeforeUpdateDefaultFunctionFooting

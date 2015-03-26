@@ -1,0 +1,5 @@
+#set($targetGlassFishVersion = "$!project.environmentVariables.get('glassfish.version')")
+#if($targetGlassFishVersion == '')
+    #set($targetGlassFishVersion = '4.0')
+#end
+#break

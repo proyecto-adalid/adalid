@@ -1,0 +1,100 @@
+#parsePostgreSQLMacros()
+#setPostgreSQLVariables()
+#writePostgreSQLLicense()
+#writePostgreSQLAuthor('Jorge Campins')
+select setval('public.pagina_sq___', 1000000000);
+
+#set($pages = $project.displaysList)
+#foreach($page in $pages)
+    #if($page.master)
+    #elseif("$!page.displayMode" == 'UNSPECIFIED' || "$!page.displayFormat" == 'UNSPECIFIED')
+    #elseif("$!page.displayMode" == 'READING')
+        #if("$!page.displayFormat" == 'TABLE')
+            #writeP5()
+        #elseif("$!page.displayFormat" == 'DETAIL')
+##          #writeP6()
+        #elseif("$!page.displayFormat" == 'TREE')
+            #writeP7()
+        #end
+    #elseif("$!page.displayMode" == 'WRITING')
+        #if("$!page.displayFormat" == 'TABLE')
+            #writeP1()
+        #elseif("$!page.displayFormat" == 'DETAIL')
+##          #writeP2()
+        #elseif("$!page.displayFormat" == 'TREE')
+            #writeP3()
+        #end
+    #elseif("$!page.displayMode" == 'PROCESSING')
+        #if("$!page.displayFormat" == 'CONSOLE')
+            #writeP4()
+        #end
+    #end
+#end##foreach-page
+#*
+update public.pagina set descripcion_pagina = nombre_pagina where descripcion_pagina is null;
+*#
+update public.pagina set url_pagina = '/faces/'||codigo_pagina||'.jsp' where url_pagina is null;
+#break
+
+#macro(writeP1)
+    #set($webPageType = '1')
+    #set($webPageSort = 'registro de ')
+    #set($webPageSort = ${Bundle.getString('BundleWebui.registro')})
+    #writeInsertRow()
+#end##
+
+#macro(writeP2)
+    #set($webPageType = '2')
+    #set($webPageSort = 'registro detallado de ')
+    #set($webPageSort = ${Bundle.getString('BundleWebui.registro.detallado')})
+    #writeInsertRow()
+#end##
+
+#macro(writeP3)
+    #set($webPageType = '3')
+    #set($webPageSort = 'registro jerárquico de ')
+    #set($webPageSort = ${Bundle.getString('BundleWebui.registro.jerarquico')})
+    #writeInsertRow()
+#end##
+
+#macro(writeP4)
+    #set($webPageType = '4')
+    #set($webPageSort = 'procesamiento de ')
+    #set($webPageSort = ${Bundle.getString('BundleWebui.procesamiento')})
+    #writeInsertRow()
+#end##
+
+#macro(writeP5)
+    #set($webPageType = '5')
+    #set($webPageSort = 'consulta de ')
+    #set($webPageSort = ${Bundle.getString('BundleWebui.consulta')})
+    #writeInsertRow()
+#end##
+
+#macro(writeP6)
+    #set($webPageType = '6')
+    #set($webPageSort = 'consulta detallada de ')
+    #set($webPageSort = ${Bundle.getString('BundleWebui.consulta.detallada')})
+    #writeInsertRow()
+#end##
+
+#macro(writeP7)
+    #set($webPageType = '7')
+    #set($webPageSort = 'consulta jerárquica de ')
+    #set($webPageSort = ${Bundle.getString('BundleWebui.consulta.jerarquica')})
+    #writeInsertRow()
+#end##
+
+#macro(writeInsertRow)
+#set($webPageName = "$!{webPageNamePrefix}${page.name}")
+#set($webPagePath = "/faces/crop/${page.module.wrapper.dottedAlias.replace('.', '/')}/$!{webPageNamePrefix}${page.name}.jsp")
+#set($webPageNumber = $project.getPageNumber($webPageName))
+#set($webProjectCodeSuffix = $page.module.wrapper.hyphenatedAlias)
+#set($name = $StringUtils.capitalize("$webPageSort$page.entity.wrapper.validDefaultCollectionLabel"))
+#set($name = $StringUtils.capitalize($StrUtils.getStringParametrizado("$webPageSort", "$page.entity.wrapper.validDefaultCollectionLabel")))
+insert into public.pagina (id_pagina, codigo_pagina, url_pagina, nombre_pagina, id_aplicacion, numero_tipo_pagina)
+#*
+values (nextval('public.pagina_sq___'), '$webPageName', '$webPagePath', '$name', 10101, $webPageType);
+*###
+values ($webPageNumber, '$webPageName', '$webPagePath', '$name', 10101, $webPageType);
+#end##writeInsertRow

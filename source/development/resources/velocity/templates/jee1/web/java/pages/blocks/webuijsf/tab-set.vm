@@ -1,0 +1,17 @@
+#set($capitalizedComponentName = $StringUtils.capitalize($componentName))
+#set($defaultTabSequenceNumber = $page.entity.defaultTabSequenceNumber)
+#if($defaultTabSequenceNumber == 0)
+$tab    private TabSet ${componentName} = new Parpado();
+#else
+$tab    private TabSet ${componentName} = new Parpado("tab$defaultTabSequenceNumber");
+#end
+
+$tab    public TabSet get${capitalizedComponentName}() {
+$tab        return ${componentName};
+$tab    }
+
+$tab    public void set${capitalizedComponentName}(TabSet set) {
+$tab        ${componentName} = set;
+$tab    }
+
+#break

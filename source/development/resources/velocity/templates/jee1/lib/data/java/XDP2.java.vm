@@ -1,0 +1,164 @@
+#parseJavaMacros()
+#setJavaVariables()
+#writeJavaLicense()
+#writeJavaPackage()
+#parse('templates/jee1/macros/macros-1.vm')
+#parse('templates/jee1/lib/data/java/XDP0.java.vm')
+#parse('templates/jee1/lib/data/java/xdp2/macros.vm')
+#parse('templates/jee1/lib/data/java/xdp2/RecursoConsultable.java.vm')
+#parse('templates/jee1/lib/data/java/xdp2/RecursoConReferencias.java.vm')
+#setVariablesRecurso($entity)
+#writeRecursoConsultableImport()
+#set($writtenExpressionNames = $VelocityAid.getNewTreeSet())
+#set($BaseClassName = "${entity.wrapper.javaClassName}CachedRowSetDataProvider")
+#set($pack1 = $package.replace('xdp2', 'xdp1'))
+#set($added = $imports.add("${pack1}.${BaseClassName}"))
+#set($added = $imports.add('com.sun.data.provider.RowKey'))
+#set($added = $imports.add('java.sql.SQLException'))
+#set($added = $imports.add('java.util.ArrayList'))
+#set($added = $imports.add('java.util.List'))
+#set($added = $imports.add('java.util.Map'))
+#set($added = $imports.add('java.util.Set'))
+#set($added = $imports.add('javax.sql.rowset.CachedRowSet'))
+#set($added = $imports.add('org.apache.commons.lang.StringUtils'))
+#set($added = $imports.add("${project.rootPackageName}.lib.base.bundle.BundleDominios"))
+#set($added = $imports.add("${project.rootPackageName}.lib.base.bundle.BundleParametros"))
+#set($added = $imports.add("${project.rootPackageName}.lib.base.constant.CBM"))
+#set($added = $imports.add("${project.rootPackageName}.lib.base.entity.enumeration.OperadorComEnumeration"))
+#set($added = $imports.add("${project.rootPackageName}.lib.base.entity.enumeration.TipoRastroFunEnumeration"))
+#set($added = $imports.add("${project.rootPackageName}.lib.base.util.ObjUtils"))
+#set($added = $imports.add("${project.rootPackageName}.lib.base.util.StrUtils"))
+#set($added = $imports.add("${project.rootPackageName}.lib.base.util.TimeUtils"))
+#set($added = $imports.add("${project.rootPackageName}.lib.core.control.RastroFuncion"))
+#set($added = $imports.add("${project.rootPackageName}.lib.core.control.SeudoTareaUsuario"))
+#set($added = $imports.add("${project.rootPackageName}.lib.core.app.ExcepcionAplicacion"))
+#set($added = $imports.add("${project.rootPackageName}.lib.core.app.ConsultaBusqueda"))
+#set($added = $imports.add("${project.rootPackageName}.lib.core.app.FiltroBusqueda"))
+#set($added = $imports.add("${project.rootPackageName}.lib.core.app.TLC"))
+#set($added = $imports.add("${project.rootPackageName}.lib.core.db.util.DB"))
+#set($added = $imports.add("${project.rootPackageName}.lib.core.util.ClassX"))
+#set($added = $imports.add("${project.rootPackageName}.lib.core.util.TypeValuePair"))
+#set($added = $imports.add("${project.rootPackageName}.lib.data.app.ConsultaBusquedaBuilder"))
+#writeJavaImports($imports)
+#set($ENTITY_NAME = $entity.wrapper.javaConstantName)
+#set($FUNCION_SELECT = "FUNCION_SELECT_${ENTITY_NAME}")
+#set($FUNCION_INSERT = "FUNCION_INSERT_${ENTITY_NAME}")
+#set($FUNCION_UPDATE = "FUNCION_UPDATE_${ENTITY_NAME}")
+#set($FUNCION_DELETE = "FUNCION_DELETE_${ENTITY_NAME}")
+#writeJavaAuthor('Jorge Campins')
+public class ${javaClassSimpleName} extends $BaseClassName#writeJavaImplements()
+
+    public static ${javaClassSimpleName} newInstance() {
+        Class<?> clase = ${javaClassSimpleName}.class;
+        String subclase = ClassX.get().subclassName(clase, "data_provider");
+        Object instance = ClassX.get().newInstance(clase, subclase);
+        return (${javaClassSimpleName}) instance;
+    }
+
+    public static ${javaClassSimpleName} newInstance(CachedRowSet cachedRowSet) {
+        Class<?> clase = ${javaClassSimpleName}.class;
+        TypeValuePair parametro = new TypeValuePair(CachedRowSet.class, cachedRowSet);
+        String subclase = ClassX.get().subclassName(clase, "data_provider");
+        Object instance = ClassX.get().newInstance(clase, subclase, parametro);
+        return (${javaClassSimpleName}) instance;
+    }
+
+    public ${javaClassSimpleName}() {
+        super();
+    }
+
+    public ${javaClassSimpleName}(CachedRowSet cachedRowSet) {
+        super(cachedRowSet);
+        if (cachedRowSet != null) {
+            initCachedRowSet();
+        }
+    }
+
+    @Override
+    public void setCachedRowSet(CachedRowSet cachedRowSet) {
+        super.setCachedRowSet(cachedRowSet);
+        if (cachedRowSet != null) {
+            initCachedRowSet();
+        }
+    }
+
+    private void initCachedRowSet() {
+        try {
+            if (!isInicializado()) {
+                setInicializado(true);
+                setDominioSelect(ID_DOMINIO_RECURSO);
+                setComandoCachedRowSet(getComandoSelectNothing());
+                setTablaCachedRowSet(getTablaDestino());
+                setMapaTiposJava();
+                setColumnasInsertables();
+                setColumnasModificables();
+            }
+        } catch (Exception ex) {
+            TLC.getBitacora().error(ex);
+        }
+    }
+
+    @Override
+    public void setComandoEmptyCachedRowSet() throws ExcepcionAplicacion {
+        setComandoEmptyCachedRowSet(getComandoSelectNothing());
+    }
+
+#if($esRecursoConsultable)
+    #writeRecursoConsultableImplementation()
+#end
+    public static final long $FUNCION_SELECT = ${project.getOperationNumber($selectOperationKey, $entity)}L;
+
+    public static final long $FUNCION_INSERT = ${project.getOperationNumber($insertOperationKey, $entity)}L;
+
+    public static final long $FUNCION_UPDATE = ${project.getOperationNumber($updateOperationKey, $entity)}L;
+
+    public static final long $FUNCION_DELETE = ${project.getOperationNumber($deleteOperationKey, $entity)}L;
+
+#foreach($operation in $entity.businessOperationsList)
+    #setOperationVariables()
+    #if($operationName != '')
+        #writeOperationNumber()
+    #end
+#end##foreach-property
+#foreach($operation in $entity.businessOperationsList)
+    #setOperationVariables()
+    #if($operationName != '')
+        #writeOperationString()
+    #end
+#end##foreach-operation
+#foreach($property in $dataProviderColumns)
+    #writePropertyParameterNumber()
+#end##foreach-property
+#if($esRecursoConReferencias)
+    #writeRecursoConReferenciasConstants()
+#end
+#parse('templates/jee1/lib/data/java/xdp2/KeyPropertyReferences.java.vm')
+#parse('templates/jee1/lib/data/java/xdp2/select.java.vm')
+#parse('templates/jee1/lib/data/java/xdp2/insert.java.vm')
+#parse('templates/jee1/lib/data/java/xdp2/update.java.vm')
+#parse('templates/jee1/lib/data/java/xdp2/delete.java.vm')
+#parse('templates/jee1/lib/data/java/xdp2/shared.java.vm')
+#parse('templates/jee1/lib/data/java/xdp2/operations.java.vm')
+#parse('templates/jee1/lib/data/java/xdp2/states.java.vm')
+#parse('templates/jee1/lib/data/java/xdp2/filters.java.vm')
+}
+#break
+
+#macro(writeOperationNumber)
+    public static final long FUNCION_${OPERATION_TYPE}_${OPERATION_NAME} = ${project.getOperationNumber($operation)}L;
+
+#end##writeOperationNumber
+
+#macro(writeOperationString)
+    #set($jlcn = $javaProgrammer.getJavaLowerConstantName($operation.name))
+    public static final String ETIQUETA_FUNCION_${OPERATION_TYPE}_${OPERATION_NAME} = "${codex}.${jlcn}";
+
+##  public static final String ${TIPO_OPERACION}_FUNCION_${OPERATION_NAME} = "${codex}.${operation_name}";
+    public static final String ${TIPO_OPERACION}_FUNCION_${OPERATION_NAME} = "${codex}.${jlcn}";
+
+#end##writeOperationString
+
+#macro(writePropertyParameterNumber)
+    private static final long PARAMETRO_${property.wrapper.javaConstantName} = ${project.getParameterNumber($property)}L;
+
+#end##writePropertyParameterNumber

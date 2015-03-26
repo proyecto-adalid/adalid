@@ -1,0 +1,123 @@
+    // <editor-fold defaultstate="collapsed" desc="botones de accion de la plantilla #4">
+    public void listaFuncionAccion1_validate(FacesContext context, UIComponent component, Object value) {
+        long f = LongUtils.valueOf(ObjUtils.toLong(value));
+        long g = LongUtils.valueOf(gestor.getValorListaFuncionAccion1());
+        if (f != 0 && f != g) {
+            listaFuncionAccion1_validate(f);
+        }
+    }
+
+    private void listaFuncionAccion1_validate(long f) {
+        boolean esFuncionAutorizada = TLC.getControlador().esFuncionAutorizada(f);
+        if (esFuncionAutorizada) {
+            if (f < 0) {
+            #foreach($operation in $operations)
+                #setOperationVariables()
+                #if($operationNumberConstant != '' && $operationStringConstant != '')
+........            } else if (f == ${operationNumberConstant}) {
+........                ${operationName}_validate();
+                #end
+            #end##foreach-operation
+            }
+        } else {
+            String etiqueta = gestor.getEtiquetaOpcionSeleccionada(listaFuncionAccion1);
+            TLC.getBitacora().error(CBM.FUNCION_NO_AUTORIZADA, etiqueta);
+        }
+    }
+
+    public String botonAplicar1_action() {
+        long f = LongUtils.valueOf(gestor.getValorListaFuncionAccion1());
+        if (f == 0) {
+            return null;
+        }
+        boolean esFuncionAutorizada = TLC.getControlador().esFuncionAutorizada(f);
+        if (esFuncionAutorizada) {
+            boolean esEntidadAutorizada = TLC.getControlador().esEntidadAutorizada($entityVariableName, f);
+            if (esEntidadAutorizada) {
+                #foreach($operation in $operations)
+                    #setOperationVariables()
+                    #if($operationNumberConstant != '' && $operationStringConstant != '')
+....                if (f == ${operationNumberConstant}) {
+                        #if($operationChecklist.isEmpty() && $operationStatelist.isEmpty())
+                        #else
+........                    ${operationName}Allowed();
+                        #end
+....                    return null;
+....                }
+                    #end
+                #end##foreach-operation
+            }
+        } else {
+            String etiqueta = gestor.getEtiquetaOpcionSeleccionada(listaFuncionAccion1);
+            TLC.getBitacora().error(CBM.FUNCION_NO_AUTORIZADA, etiqueta);
+        }
+        return null;
+    }
+
+    public String botonProcesar1_action() {
+        long f = LongUtils.valueOf(gestor.getValorListaFuncionAccion1());
+        if (f == 0) {
+            return null;
+        }
+        boolean esFuncionAutorizada = TLC.getControlador().esFuncionAutorizada(f);
+        if (esFuncionAutorizada) {
+            boolean esEntidadAutorizada = TLC.getControlador().esEntidadAutorizada($entityVariableName, f);
+            if (esEntidadAutorizada) {
+                try {
+                #foreach($operation in $operations)
+                    #setOperationVariables()
+                    #if($operationNumberConstant != '' && $operationStringConstant != '')
+                    if (f == ${operationNumberConstant}) {
+                        #if($operationChecklist.isEmpty() && $operationStatelist.isEmpty())
+....                        return ${operationName}();
+                        #else
+....                        if (${operationName}Allowed()) {
+....                            return ${operationName}();
+....                        }
+                        #end
+                    }
+                    #end
+                #end##foreach-operation
+                } catch (Exception ex) {
+                    gestor.handle(ex);
+                }
+            }
+        } else {
+            String etiqueta = gestor.getEtiquetaOpcionSeleccionada(listaFuncionAccion1);
+            TLC.getBitacora().error(CBM.FUNCION_NO_AUTORIZADA, etiqueta);
+        }
+        return null;
+    }
+    // </editor-fold>
+
+#break
+
+            boolean esPropietarioRecurso = TLC.getControlador().esPropietarioRecurso($entityVariableName, f);
+            if (esPropietarioRecurso) {
+                boolean esSegmentoAutorizado = TLC.getControlador().esSegmentoAutorizado($entityVariableName, f);
+                if (esSegmentoAutorizado) {
+                    try {
+                    #foreach($operation in $operations)
+                        #setOperationVariables()
+                        #if($operationNumberConstant != '' && $operationStringConstant != '')
+                        if (f == ${operationNumberConstant}) {
+                            #if($operationChecklist.isEmpty() && $operationStatelist.isEmpty())
+....                            return ${operationName}();
+                            #else
+....                            if (${operationName}Allowed()) {
+....                                return ${operationName}();
+....                            }
+                            #end
+                        }
+                        #end
+                    #end##foreach-operation
+                    } catch (Exception ex) {
+                        gestor.handle(ex);
+                    }
+                } else {
+                    TLC.getBitacora().error(CBM.SEGMENTO_NO_AUTORIZADO);
+                }
+            } else {
+                TLC.getBitacora().error(CBM.USUARIO_NO_PROPIETARIO);
+            }
+

@@ -1,0 +1,37 @@
+$tab<!-- console body opening -->
+      #parse("$templatePath/blocks/console/grid.vm")
+$tab<!-- console body closing -->
+#break
+
+#macro(writeListaFuncionAccion1)
+$tab    <h:panelGrid id="panelGrid${panelGridSequence.next()}"
+$tab        styleClass="pdq-grid-etiqueta-1">
+$tab        <webuijsf:label id="etiquetaListaFuncionAccion1"
+$tab            binding="#{${pageBeanName}.etiquetaListaFuncionAccion1}"
+$tab            for="listaFuncionAccion1"
+$tab            text="#{${pageBeanName}.gestor.i18n.textoEtiquetaListaFuncionAccion}"/>
+$tab    </h:panelGrid>
+$tab    <h:panelGrid id="panelGrid${panelGridSequence.next()}"
+$tab        columns="4"
+$tab        styleClass="pdq-grid-elemento-1">
+$tab        <webuijsf:dropDown id="listaFuncionAccion1"
+$tab            binding="#{${pageBeanName}.listaFuncionAccion1}"
+$tab            converter="#{${pageBeanName}.converterListaFuncionAccion1}"
+$tab            items="#{${pageBeanName}.opcionesListaFuncionAccion}"
+$tab            onChange="webui.suntheme4_2.common.timeoutSubmitForm(this.form, 'listaFuncionAccion1');"
+$tab            required="true"
+$tab            selected="#{${pageBeanName}.gestor.valorListaFuncionAccion1}"
+$tab            toolTip="#{${pageBeanName}.gestor.i18n.toolTipListaFuncionAccion}"
+$tab            validatorExpression="#{${pageBeanName}.listaFuncionAccion1_validate}"/>
+$tab        <webuijsf:staticText id="listaFuncionAccion1Texto1"
+$tab            binding="#{${pageBeanName}.listaFuncionAccion1Texto1}"/>
+$tab        <webuijsf:message id="messageListaFuncionAccion1"
+$tab            for="listaFuncionAccion1"/>
+$tab        <webuijsf:helpInline id="helpInlineListaFuncionAccion1"
+$tab            binding="#{${pageBeanName}.helpInlineListaFuncionAccion1}"
+$tab            rendered="#{SessionBean1.contextoSesion.helpInlineRendered}"
+$tab            styleClass="pdq-helpInline-page"
+$tab            text="#{${pageBeanName}.inlineHelpListaFuncionAccion}"
+$tab            type="field"/>
+$tab    </h:panelGrid>
+#end##writeListaFuncionAccion1

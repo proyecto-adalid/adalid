@@ -1,0 +1,7 @@
+    public Object getOptions${Campo1}() {
+        #set($enum = 'EnumOpcionBinaria')
+        ${enum}[] values = ${enum}.values();
+        return JSF.getListaOpciones(values, true, false);
+    }
+
+#break

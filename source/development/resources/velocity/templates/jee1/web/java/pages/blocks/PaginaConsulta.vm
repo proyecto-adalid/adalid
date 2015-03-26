@@ -1,0 +1,42 @@
+    // <editor-fold defaultstate="collapsed" desc="implementacion estandar de la interfaz PaginaConsulta">
+    @Override
+    public boolean isConsultaPendiente() {
+        return gestor.isConsultaPendiente();
+    }
+
+    @Override
+    public void setConsultaPendiente(boolean consultaPendiente) {
+        gestor.setConsultaPendiente(consultaPendiente);
+    }
+
+    private String ETIQUETA_CLASE_DETALLE = BundleWebui.getString("${pageBeanName}_ETIQUETA_CLASE_DETALLE");
+
+    @Override
+    public String getEtiquetaClaseDetalle() {
+        return ETIQUETA_CLASE_DETALLE;
+    }
+
+    @Override
+    public RecursoCachedRowSetDataProvider getRecursoDataProvider() {
+        return ${entityDataProvider};
+    }
+
+    @Override
+    public long getFuncionConsultarRecurso() {
+##  #if($page.entity.selectEnabled)
+        return ${entityDataProviderClass}.FUNCION_SELECT_${page.entity.wrapper.javaConstantName};
+##  #else
+##  //      return ${entityDataProviderClass}.FUNCION_SELECT_${page.entity.wrapper.javaConstantName};
+##          return -1L;
+##  #end
+    }
+
+    @Override
+    public void posconsultar() {
+    }
+
+    @Override
+    public void posrefrescar() {
+    }
+    // </editor-fold>
+

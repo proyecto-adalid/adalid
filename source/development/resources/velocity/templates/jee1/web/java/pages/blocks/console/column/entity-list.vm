@@ -1,0 +1,11 @@
+#set($componentName = "label${fieldFirstName}")
+#parse("$templatePath/blocks/webuijsf/label.vm")
+#set($componentName = "campo${fieldFirstName}")
+#parse("$templatePath/blocks/webuijsf/drop-down.vm")
+#set($componentName = "helpInline${fieldFirstName}")
+#parse("$templatePath/blocks/webuijsf/help-inline.vm")
+#set($componentName = "converter${fieldFirstName}")
+#set($componentClassName = "${parameter.primaryKeyProperty.dataType.simpleName}Converter")
+#parse("$templatePath/blocks/webuijsf/component.vm")
+#parse("$templatePath/blocks/console/column/shared.vm")
+#break

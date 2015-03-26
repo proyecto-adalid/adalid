@@ -1,0 +1,175 @@
+#break
+
+#macro(setVariablesRecurso $entity)
+    #set($javaLong = 'java.lang.Long')
+    #set($javaInteger = 'java.lang.Integer')
+    #set($javaString = 'java.lang.String')
+    #set($javaBoolean = 'java.lang.Boolean')
+    #set($entityNumber = $project.getEntityNumber($entity))
+    #set($dataProviderColumns = $entity.dataProviderColumnsList)
+    #set($query = $entity.queryTable)
+    #set($codex = "$entity.wrapper.sqlName")
+    #set($codex = "$entity.wrapper.sqlSchemaQualifiedShortName")
+    #set($tabla = "$entity.wrapper.sqlTableName")
+    #set($tabla = "$entity.wrapper.sqlSchemaQualifiedShortTableName")
+    #set($vista = "consulta_${entity.wrapper.sqlName}")
+    #set($vista = "${entity.wrapper.sqlSchemaQualifier}consulta_${entity.wrapper.sqlSchemaUnqualifiedShortName}")
+    #set($seudo = "seudo_${entity.wrapper.sqlName}")
+    #set($seudo = "${entity.wrapper.sqlSchemaQualifier}seudo_${entity.wrapper.sqlSchemaUnqualifiedShortName}")
+    #setVariablesRecursoIdentificable()
+    #setVariablesRecursoVersionable()
+    #setVariablesRecursoEnumerable()
+    #setVariablesRecursoCodificable()
+    #setVariablesRecursoNombrable()
+    #setVariablesRecursoDescriptible()
+    #setVariablesRecursoDesactivable()
+    #setVariablesRecursoLocalizable()
+    #setVariablesRecursoJerarquizable()
+    #setVariablesRecursoPersonalizable()
+    #setVariablesRecursoSegmentable()
+    #setVariablesRecursoConsultable()
+    #setVariablesRecursoConReferencias()
+    #setVariablesRecursoDiscriminado()
+#end##setVariablesRecurso
+
+#macro(setVariablesRecursoIdentificable)
+    #set($esRecursoIdentificable = $FALSE)
+    #set($dataTypeName = "$!entity.primaryKeyProperty.dataType.name")
+    #if($dataTypeName == $javaLong)
+        #if($dataProviderColumns.contains($entity.primaryKeyProperty))
+            #set($esRecursoIdentificable = $TRUE)
+        #end
+    #end
+#end##setVariablesRecursoIdentificable
+
+#macro(setVariablesRecursoVersionable)
+    #set($esRecursoVersionable = $FALSE)
+    #set($dataTypeName = "$!entity.versionProperty.dataType.name")
+    #if($esRecursoIdentificable)
+        #if($dataTypeName == $javaLong)
+            #if($dataProviderColumns.contains($entity.versionProperty))
+                #set($esRecursoVersionable = $TRUE)
+            #end
+        #end
+    #end
+#end##setVariablesRecursoVersionable
+
+#macro(setVariablesRecursoEnumerable)
+    #set($esRecursoEnumerable = $FALSE)
+    #set($dataTypeName = "$!entity.primaryKeyProperty.dataType.name")
+    #if($dataTypeName == $javaInteger)
+        #if($dataProviderColumns.contains($entity.primaryKeyProperty))
+            #set($esRecursoEnumerable = $TRUE)
+        #end
+    #end
+#end##setVariablesRecursoEnumerable
+
+#macro(setVariablesRecursoCodificable)
+    #set($esRecursoCodificable = $FALSE)
+    #set($dataTypeName = "$!entity.characterKeyProperty.dataType.name")
+    #if($dataTypeName == $javaString)
+        #if($dataProviderColumns.contains($entity.characterKeyProperty))
+            #set($esRecursoCodificable = $TRUE)
+        #end
+    #end
+#end##setVariablesRecursoCodificable
+
+#macro(setVariablesRecursoNombrable)
+    #set($esRecursoNombrable = $FALSE)
+    #set($dataTypeName = "$!entity.nameProperty.dataType.name")
+    #if($dataTypeName == $javaString)
+        #if($dataProviderColumns.contains($entity.nameProperty))
+            #set($esRecursoNombrable = $TRUE)
+        #end
+    #end
+#end##setVariablesRecursoNombrable
+
+#macro(setVariablesRecursoDescriptible)
+    #set($esRecursoDescriptible = $FALSE)
+    #set($dataTypeName = "$!entity.descriptionProperty.dataType.name")
+    #if($dataTypeName == $javaString)
+        #if($dataProviderColumns.contains($entity.descriptionProperty))
+            #set($esRecursoDescriptible = $TRUE)
+        #end
+    #end
+#end##setVariablesRecursoDescriptible
+
+#macro(setVariablesRecursoDesactivable)
+    #set($esRecursoDesactivable = $FALSE)
+    #set($dataTypeName = "$!entity.inactiveIndicatorProperty.dataType.name")
+    #if($dataTypeName == $javaBoolean)
+##      #if($dataProviderColumns.contains($entity.inactiveIndicatorProperty))
+            #set($esRecursoDesactivable = $TRUE)
+##      #end
+    #end
+#end##setVariablesRecursoDesactivable
+
+#macro(setVariablesRecursoLocalizable)
+    #set($esRecursoLocalizable = $FALSE)
+    #set($dataTypeName = "$!entity.urlProperty.dataType.name")
+    #if($dataTypeName == $javaString)
+        #if($dataProviderColumns.contains($entity.urlProperty))
+            #set($esRecursoLocalizable = $TRUE)
+        #end
+    #end
+#end##setVariablesRecursoLocalizable
+
+#macro(setVariablesRecursoJerarquizable)
+    #set($esRecursoJerarquizable = $FALSE)
+    #set($dataTypeName = "$!entity.parentProperty.primaryKeyProperty.dataType.name")
+    #if($esRecursoIdentificable)
+        #if($dataTypeName == $javaLong)
+            #if($dataProviderColumns.contains($entity.parentProperty))
+                #set($esRecursoJerarquizable = $TRUE)
+            #end
+        #end
+    #end
+#end##setVariablesRecursoJerarquizable
+
+#macro(setVariablesRecursoPersonalizable)
+    #set($esRecursoPersonalizable = $FALSE)
+    #set($dataTypeName = "$!entity.ownerProperty.primaryKeyProperty.dataType.name")
+    #if($dataTypeName == $javaLong)
+##      #if($dataProviderColumns.contains($entity.ownerProperty))
+            #set($esRecursoPersonalizable = $TRUE)
+##      #end
+    #end
+#end##setVariablesRecursoPersonalizable
+
+#macro(setVariablesRecursoSegmentable)
+    #set($esRecursoSegmentable = $FALSE)
+    #set($dataTypeName = "$!entity.segmentProperty.primaryKeyProperty.dataType.name")
+    #if($dataTypeName == $javaLong || $dataTypeName == $javaInteger)
+##      #if($dataProviderColumns.contains($entity.segmentProperty))
+            #set($esRecursoSegmentable = $TRUE)
+##      #end
+    #end
+#end##setVariablesRecursoSegmentable
+
+#macro(setVariablesRecursoConsultable)
+    #set($esRecursoConsultable = $VelocityAid.coalesce($entity.selectEnabled, $FALSE))
+    #set($esRecursoConsultable = $TRUE)
+#end##setVariablesRecursoConsultable
+
+#macro(setVariablesRecursoConReferencias)
+    #set($esRecursoConReferencias = $FALSE)
+#end##setVariablesRecursoConReferencias
+#*
+    #foreach($property in $dataProviderColumns)
+        #if($property.isPersistentEntity() && !$property.isPersistentEnumerationEntity())
+            #set($esRecursoConReferencias = $TRUE)
+        #end
+    #end##foreach-property
+*#
+
+#macro(setVariablesRecursoDiscriminado)
+    #set($esRecursoDiscriminado = $FALSE)
+    #set($strategy = "$!entity.inheritanceMappingStrategy")
+    #if($strategy == 'SINGLE_TABLE' || $strategy == 'JOINED')
+        #if($entity.discriminatorProperty)
+            #if($entity.discriminatorValue)
+                #set($esRecursoDiscriminado = $TRUE)
+            #end
+        #end
+    #end
+#end##setVariablesRecursoDiscriminado

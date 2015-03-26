@@ -1,0 +1,49 @@
+$tab<h:panelGrid id="panelGrid${panelGridSequence.next()}"
+    #if($tabString == '')
+$tab    rendered="#{${pageBeanName}.asistente.grid${fieldClassName}Rendered}"
+    #else
+$tab    rendered="#{${pageBeanName}.asistente.grid${fieldClassName}RenderedInsideTabs}"
+    #end
+$tab    styleClass="pdq-grid-etiqueta-1">
+$tab    <webuijsf:label id="label${fieldFirstName}${tabString}"
+$tab        binding="#{${pageBeanName}.label${fieldFirstName}${tabString}}"
+$tab        for="${campo1}${tabString}"
+##          text="$field.property.wrapper.xmlValidDefaultShortLabel"/>
+$tab        text="BundleParametros.${page.entity.wrapper.sqlSchemaQualifiedShortName}.${field.property.wrapper.sqlName}"/>
+$tab</h:panelGrid>
+$tab<h:panelGrid id="panelGrid${panelGridSequence.next()}"
+$tab    columns="7"
+    #if($tabString == '')
+$tab    rendered="#{${pageBeanName}.asistente.grid${fieldClassName}Rendered}"
+    #else
+$tab    rendered="#{${pageBeanName}.asistente.grid${fieldClassName}RenderedInsideTabs}"
+    #end
+$tab    styleClass="pdq-grid-elemento-1">
+$tab    <webuijsf:dropDown id="${campo1}${tabString}"
+$tab        binding="#{${pageBeanName}.${campo1}${tabString}}"
+$tab        converter="#{${pageBeanName}.converter${fieldFirstName}}"
+$tab        disabled="$fieldReadOnly"
+$tab        items="#{${pageBeanName}.asistente.options${Campo1}}"
+        #if($tabString == '' && $field.property.isSubmitField())
+$tab        onChange="webui.suntheme4_2.common.timeoutSubmitForm(this.form, '${campo1}${tabString}');"
+        #end
+$tab        required="$fieldRequired"
+$tab        selected="#{${sourceVar}.${fieldVariableName}}"
+##          toolTip="$field.property.wrapper.xmlValidDefaultTooltip"
+$tab        toolTip="BundleParametros.${page.entity.wrapper.sqlSchemaQualifiedShortName}.${field.property.wrapper.sqlName}"
+$tab        validatorExpression="#{${pageBeanName}.${campo1}_validate}"/>
+$tab    <webuijsf:staticText id="${campo1}${tabString}Texto1"
+$tab        binding="#{${pageBeanName}.${campo1}${tabString}Texto1}"/>
+        #if($field.property.isDiscriminatorProperty())
+            #parse("$templatePath/blocks/detail/column/discriminator.vm")
+        #end
+$tab    <webuijsf:message id="message${fieldFirstName}${tabString}"
+$tab        for="${campo1}${tabString}"/>
+$tab    <webuijsf:helpInline id="helpInline${fieldFirstName}${tabString}"
+$tab        binding="#{${pageBeanName}.helpInline${fieldFirstName}${tabString}}"
+$tab        rendered="#{SessionBean1.contextoSesion.helpInlineRendered}"
+$tab        styleClass="pdq-helpInline-field"
+##          text="$field.property.wrapper.xmlValidDefaultShortDescription"
+$tab        text="BundleParametros.${page.entity.wrapper.sqlSchemaQualifiedShortName}.${field.property.wrapper.sqlName}"
+$tab        type="field"/>
+$tab</h:panelGrid>

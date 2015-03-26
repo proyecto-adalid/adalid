@@ -1,0 +1,359 @@
+#parseJavaMacros()
+#setJavaVariables()
+#writeJavaLicense()
+#writeJavaPackage()
+#parse('templates/jee1/lib/data/java/XDP0.java.vm')
+#parse("$templatePath/interfaces/RecursoIdentificable.java.vm")
+#parse("$templatePath/interfaces/RecursoVersionable.java.vm")
+#parse("$templatePath/interfaces/RecursoEnumerable.java.vm")
+#parse("$templatePath/interfaces/RecursoCodificable.java.vm")
+#parse("$templatePath/interfaces/RecursoNombrable.java.vm")
+#parse("$templatePath/interfaces/RecursoDescriptible.java.vm")
+#parse("$templatePath/interfaces/RecursoDesactivable.java.vm")
+#parse("$templatePath/interfaces/RecursoLocalizable.java.vm")
+#parse("$templatePath/interfaces/RecursoJerarquizable.java.vm")
+#parse("$templatePath/interfaces/RecursoPersonalizable.java.vm")
+#parse("$templatePath/interfaces/RecursoSegmentable.java.vm")
+#setVariablesRecurso($entity)
+#setLocalVariables()
+#addImports()
+#writeJavaImports($imports)
+#writeJavaAuthor('Jorge Campins')
+@Entity
+@Table(name = "$tabla")
+#if($entity.isAbstractClass())
+    #set($abstract = ' abstract')
+#else
+    #set($abstract = '')
+#end
+#set($strategy = "$!entity.inheritanceMappingStrategy")
+#if($strategy != '' && $strategy != 'UNSPECIFIED')
+@Inheritance(strategy = InheritanceType.$strategy)
+#end
+#if($strategy == 'SINGLE_TABLE' || $strategy == 'JOINED')
+    #set($discriminatorColName = "$!entity.discriminatorProperty.wrapper.sqlName")
+    #if($discriminatorColName != '')
+        #set($discriminatorColType = "$!entity.discriminatorType")
+        #set($discriminatorColLength = "$!entity.discriminatorProperty.maxLength")
+        #if($discriminatorColType == '')
+............@DiscriminatorColumn(name = "$discriminatorColName")
+        #elseif($discriminatorColType == 'STRING' && $discriminatorColLength != '')
+............@DiscriminatorColumn(name = "$discriminatorColName", discriminatorType = DiscriminatorType.STRING, length = $discriminatorColLength)
+        #else
+............@DiscriminatorColumn(name = "$discriminatorColName", discriminatorType = DiscriminatorType.$discriminatorColType)
+        #end
+        #set($discriminatorValue = "$!entity.discriminatorValue")
+        #if($entity.isAbstractClass() || $discriminatorValue == '')
+            #set($abstract = ' abstract')
+        #else
+............@DiscriminatorValue("$discriminatorValue")
+        #end
+    #end
+#end
+#set($base = "$!{entity.baseRoot.wrapper.javaClassName}")
+#if($base != '')
+    #set($extends = " extends $base")
+#else
+    #set($extends = '')
+#end
+public${abstract} class ${javaClassSimpleName}$extends#writeJavaImplements()
+
+    private static final long serialVersionUID = 1L;
+
+    public ${javaClassSimpleName}() {
+    }
+
+#foreach($property in $col1)
+    #if($property.wrapper.javaVariableName == $entity.primaryKeyProperty.wrapper.javaVariableName)
+        #writeIdAnnotation()
+    #end
+    #if($property.isNullable())
+        #writeBasicAnnotation('true')
+    #else
+        #writeBasicAnnotation('false')
+    #end
+    #writeColumnAnnotation("$property.wrapper.sqlName")
+    #writeTemporalAnnotation("${property.wrapper.javaPrimitiveType}")
+    #writeField("${property.wrapper.javaPrimitiveType}" "${property.wrapper.javaVariableName}")
+#end##foreach-property
+#foreach($property in $col2)
+    #if($property.oneToOne)
+        #writeOneToOne1Annotation("$property.wrapper.sqlName" "$property.primaryKeyProperty.wrapper.sqlName")
+    #elseif($property.manyToOne)
+        #writeManyToOneAnnotation("$property.wrapper.sqlName" "$property.primaryKeyProperty.wrapper.sqlName")
+    #else
+        #writeManyToOneAnnotation("$property.wrapper.sqlName" "$property.primaryKeyProperty.wrapper.sqlName")
+    #end
+    #writeField("${property.wrapper.javaTypeSimpleName}" "${property.wrapper.javaVariableName}")
+#end##foreach-property
+#set($cascade = '{CascadeType.PERSIST, CascadeType.REFRESH}')
+#foreach($property in $col3)
+    #set($referencingEntity = $property.declaringEntity)
+    #set($referencingEntityType = $referencingEntity.dataType.simpleName)
+    #set($referencingEntityName = $StringUtils.uncapitalize($referencingEntityType))
+    #set($variableName = "${referencingEntityName}${referencingFieldNameConnective}${property.wrapper.javaClassName}")
+    #if($property.oneToOne)
+        #writeOneToOne2Annotation("${cascade}" "${property.wrapper.javaVariableName}")
+        #writeField("${referencingEntityType}" "${variableName}${oneToOneFieldNameSuffix}")
+    #elseif($property.manyToOne)
+        #writeOneToManyAnnotation("${cascade}" "${property.wrapper.javaVariableName}")
+        #writeField("${oneToManyFieldClassName}<${referencingEntityType}>" "${variableName}${oneToManyFieldNameSuffix}")
+    #end
+#end##foreach-property
+#foreach($property in $col1)
+    #writeFieldAccessors("${property.wrapper.javaPrimitiveType}" "${property.wrapper.javaVariableName}")
+#end##foreach-property
+#foreach($property in $col2)
+    #writeFieldAccessors("${property.wrapper.javaTypeSimpleName}" "${property.wrapper.javaVariableName}")
+#end##foreach-property
+#foreach($property in $col3)
+    #set($referencingEntity = $property.declaringEntity)
+    #set($referencingEntityType = $referencingEntity.dataType.simpleName)
+    #set($referencingEntityName = $StringUtils.uncapitalize($referencingEntityType))
+    #set($variableName = "${referencingEntityName}${referencingFieldNameConnective}${property.wrapper.javaClassName}")
+    #if($property.oneToOne)
+        #writeFieldAccessors("${referencingEntityType}" "${variableName}${oneToOneFieldNameSuffix}")
+    #elseif($property.manyToOne)
+        #writeFieldAccessors("${oneToManyFieldClassName}<${referencingEntityType}>" "${variableName}${oneToManyFieldNameSuffix}")
+    #end
+#end##foreach-property
+#writeRecursoIdentificableImplementation()
+#writeRecursoVersionableImplementation()
+#writeRecursoEnumerableImplementation()
+#writeRecursoCodificableImplementation()
+#writeRecursoNombrableImplementation()
+#writeRecursoDescriptibleImplementation()
+#writeRecursoDesactivableImplementation()
+#writeRecursoLocalizableImplementation()
+#writeRecursoJerarquizableImplementation()
+#writeRecursoPersonalizableImplementation()
+#writeRecursoSegmentableImplementation()
+#writeAccesibleImplementation()
+#writeEpilogue()
+}
+#break
+
+#macro(setLocalVariables)
+#set($entityClass = "$!{entity.wrapper.javaClassName}")
+#set($implementsAccesible = $TRUE)
+#set($implementsComparable = $TRUE)
+#set($implementsSerializable = $TRUE)
+#if($StringUtils.isBlank($oneToOneFieldNameSuffix))
+    #set($oneToOneFieldNameSuffix = '')
+#end
+#if($StringUtils.isBlank($oneToManyFieldClassName))
+    #set($oneToManyFieldClassName = 'java.util.Collection')
+#end
+#if($StringUtils.isBlank($oneToManyFieldNameSuffix))
+    #set($oneToManyFieldNameSuffix = 'Collection')
+#end
+#if($StringUtils.isBlank($referencingFieldNameConnective))
+    #set($referencingFieldNameConnective = 'By')
+#end
+#setLocalEntityVariables($entity)
+#end##setLocalVariables
+
+#macro(setLocalEntityVariables $entity)
+#if($entity.primaryKeyProperty.wrapper.javaVariableName != '')
+    #set($implementsComparable = $TRUE)
+#end
+#set($col1 = $entity.entityClassColumnsList1)
+#set($col2 = $entity.entityClassColumnsList2)
+#set($col3 = $entity.entityClassColumnsList3)
+#set($col3 = $ColUtils.filter($col3, $isBidirectionalEntityReference))
+#end##setLocalEntityVariables
+
+#macro(addImports)
+#set($added = $imports.add('org.apache.commons.lang.StringUtils'))
+#set($added = $imports.add("${project.rootPackageName}.lib.base.entity.constant.${javaClassSimpleName}Constants"))
+#set($added = $imports.add("${project.rootPackageName}.lib.base.util.NumUtils"))
+#set($added = $imports.add("${baseEntityPackage}.${entityClass}Base"))
+#set($added = $interfaces.add("${entityClass}Base"))
+#if($implementsAccesible)
+    #set($added = $imports.add("${project.rootPackageName}.lib.base.interfaces.Accesible"))
+    #set($added = $interfaces.add('Accesible'))
+#end
+#if($implementsComparable)
+##  #set($added = $imports.add('java.lang.Comparable'))
+    #set($added = $interfaces.add('Comparable'))
+#end
+#if($implementsSerializable)
+    #set($added = $imports.add('java.io.Serializable'))
+    #set($added = $interfaces.add('Serializable'))
+#end
+#set($added = $imports.add('javax.persistence.*'))
+#writeRecursoIdentificableImport()
+#writeRecursoVersionableImport()
+#writeRecursoEnumerableImport()
+#writeRecursoCodificableImport()
+#writeRecursoNombrableImport()
+#writeRecursoDescriptibleImport()
+#writeRecursoDesactivableImport()
+#writeRecursoLocalizableImport()
+#writeRecursoJerarquizableImport()
+#writeRecursoPersonalizableImport()
+#writeRecursoSegmentableImport()
+#end##addImports
+
+#macro(writeIdAnnotation)
+    @Id
+#end##writeIdAnnotation
+
+#macro(writeBasicAnnotation $optional)
+#if($optional == 'false')
+    @Basic(optional = $optional)
+#end
+#end##writeBasicAnnotation
+
+#macro(writeColumnAnnotation $name)
+    #set($annotationElements = "name = ""$name""")
+    #set($annotationElements = "$annotationElements, nullable = $property.isNullable()")
+    #set($annotationElements = "$annotationElements, insertable = $property.isInsertable()")
+    #set($annotationElements = "$annotationElements, updatable = $property.isUpdateable()")
+    #set($annotationElements = "$annotationElements, unique = $property.isUnique()")
+    #if($property.isBigDecimalData())
+        #if($property.precision)
+            #set($annotationElements = "$annotationElements, precision = $property.precision")
+        #end
+        #if($property.scale)
+            #set($annotationElements = "$annotationElements, scale = $property.scale")
+        #end
+    #end
+    #if($property.isStringData())
+        #if($property.maxLength)
+            #set($annotationElements = "$annotationElements, length = $property.maxLength")
+        #end
+    #end
+    @Column($annotationElements)
+#end##writeColumnAnnotation
+
+#macro(writeTemporalAnnotation $type)
+#if($type == 'java.sql.Date')
+    @Temporal(TemporalType.DATE)
+#elseif($type == 'java.sql.Time')
+    @Temporal(TemporalType.TIME)
+#elseif($type == 'java.sql.Timestamp')
+    @Temporal(TemporalType.TIMESTAMP)
+#end
+#end##writeTemporalAnnotation
+
+#macro(writeField $type $name)
+    #setPersistentJavaType($type)
+    $persistentJavaType $name;
+
+#end##writeField
+
+#macro(writeOneToOne1Annotation $name $referencedColumnName)
+    @JoinColumn(name = "$name", referencedColumnName = "$referencedColumnName")
+    @OneToOne(fetch = FetchType.LAZY)
+#end##writeOneToOne1Annotation
+
+#macro(writeOneToOne2Annotation $cascade $mappedBy)
+#if($StringUtils.isBlank("$cascade"))
+    @OneToOne(mappedBy = "$mappedBy")
+#else
+    @OneToOne(cascade = ${cascade}, mappedBy = "$mappedBy")
+#end
+#end##writeOneToOne2Annotation
+
+#macro(writeManyToOneAnnotation $name $referencedColumnName)
+    @JoinColumn(name = "$name", referencedColumnName = "$referencedColumnName")
+    @ManyToOne(fetch = FetchType.LAZY)
+#end##writeManyToOneAnnotation
+
+#macro(writeOneToManyAnnotation $cascade $mappedBy)
+#if($StringUtils.isBlank("$cascade"))
+    @OneToMany(mappedBy = "$mappedBy")
+#else
+    @OneToMany(cascade = ${cascade}, mappedBy = "$mappedBy")
+#end
+#end##writeOneToManyAnnotation
+
+#macro(writeFieldAccessors $type $name)
+    #setPersistentJavaType($type)
+    #set($Name = $StringUtils.capitalize($name))
+    @Override
+    public ${persistentJavaType} get${Name}() {
+        return ${name};
+    }
+
+//  @Override
+    public void set${Name}(${persistentJavaType} ${name}) {
+        this.${name} = ${name};
+    }
+
+#end##writeFieldAccessors
+
+#macro(writeAccesibleImplementation)
+    #setPersistentJavaType($type)
+    @Override
+    public Object getValue(String field) {
+        if (StringUtils.isBlank(field)) {
+            return null;
+#foreach($property in $col1)
+        } else if (StringUtils.equals(field, "${property.wrapper.sqlName}")) {
+            return ${property.wrapper.javaVariableName};
+#end##foreach-property
+#foreach($property in $col2)
+        } else if (StringUtils.equals(field, "${property.wrapper.sqlName}")) {
+            return ${property.wrapper.javaVariableName};
+#end##foreach-property
+        } else {
+            return null;
+        }
+    }
+
+    @Override
+    public void setValue(String field, Object value) {
+        if (StringUtils.isBlank(field)) {
+#foreach($property in $col1)
+        } else if (StringUtils.equals(field, "${property.wrapper.sqlName}")) {
+            ${property.wrapper.javaVariableName} = (${property.wrapper.javaPrimitiveType}) value;
+#end##foreach-property
+#foreach($property in $col2)
+        } else if (StringUtils.equals(field, "${property.wrapper.sqlName}")) {
+            ${property.wrapper.javaVariableName} = (${property.wrapper.javaTypeSimpleName}) value;
+#end##foreach-property
+        }
+    }
+
+#end##writeAccesibleImplementation
+
+#macro(writeEpilogue)
+#set($pkey = $entity.primaryKeyProperty.wrapper.javaVariableName)
+#if($pkey != '')
+    @Override
+    public int compareTo(Object object) {
+        // Warning - this method won't work properly if ${pkey} fields are not set
+        if (object instanceof ${entityClass}) {
+            ${entityClass} that = (${entityClass}) object;
+            return ${pkey} == null ? that.${pkey} == null ? 0 : -1 : ${pkey}.compareTo(that.${pkey});
+        }
+        throw new ClassCastException(object == null ? "null" : object.getClass().getName());
+    }
+
+    @Override
+    public int hashCode() {
+        // Warning - this method won't work properly if ${pkey} fields are not set
+        int hash = 0;
+        hash += ${pkey} == null ? 0 : ${pkey}.hashCode();
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object object) {
+        // Warning - this method won't work properly if ${pkey} fields are not set
+        if (object instanceof ${entityClass}) {
+            ${entityClass} that = (${entityClass}) object;
+            return ((${pkey} == null && that.${pkey} == null) || (${pkey} != null && ${pkey}.equals(that.${pkey})));
+        }
+        return false;
+    }
+
+    @Override
+    public String toString() {
+        return getClass().getSimpleName() + "#" + ${pkey};
+    }
+
+#end
+#end##writeEpilogue

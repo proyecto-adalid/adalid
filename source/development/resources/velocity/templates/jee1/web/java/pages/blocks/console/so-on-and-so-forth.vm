@@ -1,0 +1,143 @@
+    // <editor-fold defaultstate="collapsed" desc="estados de $entityClassName">
+    char bookmark$bookmarkSequence.next();
+
+#foreach($stateKey in $entityStatesMap.keySet())
+    #set($state = $entityStatesMap.get($stateKey))
+    /**
+     * $stateKey $!{state.wrapper.javaDefaultDescription}.
+     */
+    private boolean ${state.wrapper.javaVariableName}() {
+        #set($stateEntity = $page.entity)
+        #set($stateExpression = $state)
+        #writeStateExpression()
+    }
+
+#end
+    char bookmark$bookmarkSequence.next();
+    // </editor-fold>
+
+#foreach($operation in $operations)
+    #setOperationVariables()
+    #if($operationNumberConstant != '' && $operationStringConstant != '')
+    // <editor-fold defaultstate="collapsed" desc="métodos de $operationVariableName">
+    char bookmark$bookmarkSequence.next();
+
+        #parse("$templatePath/blocks/console/operation-methods.vm")
+        #foreach($parameter in $parameters)
+            #setParameterVariables()
+            #parse("$templatePath/blocks/console/operation-parameter-methods.vm")
+        #end##foreach-parameter
+    char bookmark$bookmarkSequence.next();
+    // </editor-fold>
+
+    #end
+#end##foreach-operation
+#if($isProcessOperationInEntity.evaluate($page.entity))
+    private AbstractMessage requestReply(AbstractMessage message) throws Exception {
+        ObjectMessage solicitud = messenger.postRequest(message);
+        ObjectMessage respuesta = messenger.receiveReply(solicitud);
+        AbstractMessage mensaje = respuesta == null
+            ? (AbstractMessage) solicitud.getObject()
+            : (AbstractMessage) respuesta.getObject();
+        /**/
+        TLC.getBitacora().add(mensaje);
+        return mensaje;
+    }
+
+#end
+#if($isUtilityOperationInEntity)
+    private AbstractMessage receiveReply(ObjectMessage solicitud) throws Exception {
+        if (solicitud == null) {
+            return null;
+        }
+        ObjectMessage respuesta = dispatcher.receiveReply(solicitud);
+        AbstractMessage mensaje = respuesta == null
+            ? (AbstractMessage) solicitud.getObject()
+            : (AbstractMessage) respuesta.getObject();
+        /**/
+        TLC.getBitacora().add(mensaje);
+        return mensaje;
+    }
+
+#end
+    private String alias1(String bundleKey1, String bundleKey2, String defaultStr) {
+        String alias = TLC.getInterpreteSql().getAliasExpresionSelect(bundleKey1, bundleKey2);
+        if (StringUtils.isBlank(alias)) {
+            alias = TLC.getInterpreteSql().getIdentificadorDelimitadoLowerCase(defaultStr);
+        }
+        return alias;
+    }
+
+    private String alias2(String agregacion, String bundleKey1, String bundleKey2, String defaultStr) {
+        String alias = TLC.getInterpreteSql().getAliasAgregacionSelect(agregacion, bundleKey1, bundleKey2);
+        if (StringUtils.isBlank(alias)) {
+            alias = TLC.getInterpreteSql().getIdentificadorDelimitadoLowerCase(defaultStr);
+        }
+        return alias;
+    }
+
+#break
+
+#macro(writeStateExpression)
+    #set($queryTable = $stateEntity.queryTable)
+    #set($parameterizedExpression = $stateExpression.wrapper.javaParameterizedExpression)
+    #set($parametersMap = $parameterizedExpression.parametersMap)
+    #set($namedValuesMap = $parameterizedExpression.namedValuesMap)
+    #writeNamedValues()
+    #foreach($parameterKey in $parametersMap.keySet())
+        #writeAssignObjValue()
+    #end
+    #set($maxLineLength = 0)
+    #set($newLineString = '<EOL>')
+    #set($string2split = "$!parameterizedExpression.expression")
+    #set($string2split = "return $string2split;")
+    #set($string2split = $string2split.replace("&&", "${newLineString}${TAB}&&"))
+    #set($string2split = $string2split.replace("||", "${newLineString}${TAB}||"))
+    #set($string2split = $string2split.replace("), ", "),${newLineString}${TAB}"))
+    #set($string2lines = $VelocityAid.split($string2split, $maxLineLength, $newLineString, $FALSE, $TAB))
+    #foreach($line in $string2lines)
+        ${line}
+    #end
+#end##writeStateExpression
+
+#macro(writeNamedValues)
+    #foreach($name in $namedValuesMap.keySet())
+//          Object $name = null;
+    #end
+#end##writeNamedValues
+
+#macro(writeAssignObjValue)
+    #set($parameterPath = '')
+    #set($lastArtifact = $FALSE)
+    #set($parameter = $parametersMap.get($parameterKey))
+    #set($parameterPathList = $parameter.parameterPathList)
+    #if($parameter.isTemporalPrimitive())
+        #set($parameterJavaType = 'java.util.Date')
+    #else
+        #set($parameterJavaType = $parameter.wrapper.javaPrimitiveType)
+    #end
+    #foreach($artifact in $parameterPathList)
+        #setArtifactVariables($artifact)
+        #if($parameterPath == '')
+            #if($artifact.isEntity())
+                #set($parameterPath = "$entityVariableName")
+........        $parameterJavaType $parameterKey = ${parameterPath} == null ? null
+            #else
+........        $parameterJavaType $parameterKey = ${artifactValueExpression};
+            #end
+        #else
+            #set($parameterPath = "${parameterPath}.get${artifact.wrapper.javaCapitalizedName}()")
+            #if($artifact.isEntity())
+....            : ${parameterPath} == null ? null
+            #end
+        #end
+        #set($lastArtifact = $artifact)
+    #end
+    #if($parameterPath != '')
+        #if($lastArtifact.isEntity())
+            : ${parameterPath}.get${lastArtifact.primaryKeyProperty.wrapper.javaCapitalizedName}();
+        #else
+            : ${parameterPath};
+        #end
+    #end
+#end##writeAssignObjValue

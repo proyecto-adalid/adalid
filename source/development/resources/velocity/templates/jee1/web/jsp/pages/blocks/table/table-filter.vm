@@ -1,0 +1,90 @@
+#set($filter = "${pageBeanName}.filtro")
+$tab<h:panelGrid id="panelGrid${panelGridSequence.next()}" columns="3"
+$tab    rendered="#{${pageBeanName}.funcionViewFilterHabilitada}">
+$tab    <h:panelGrid id="panelGrid${panelGridSequence.next()}" styleClass="pdq-grid-filtro-1">
+$tab        <h:panelGrid id="panelGrid${panelGridSequence.next()}" columns="3">
+                #increaseIndentationBy(3)
+                #parse("$templatePath/blocks/table/table-filter-field.vm")
+                #decreaseIndentationBy(3)
+$tab            <h:panelGrid id="gridPanelFiltro1" columns="2">
+$tab                <webuijsf:image id="imagenListaFiltro1" url="#{${filter}.urlImagenListaFiltro1}"/>
+$tab                <webuijsf:label id="etiquetaListaFiltro1" text="#{${pageBeanName}.gestor.i18n.textoEtiquetaListaFiltro}"/>
+$tab            </h:panelGrid>
+$tab            <h:panelGrid id="gridPanelFiltro2" columns="3">
+$tab                <webuijsf:dropDown id="listaFiltro1"
+$tab                    binding="#{${filter}.listaFiltro1}"
+$tab                    converter="#{${filter}.longConverter1}"
+$tab                    disabled="#{${filter}.listaFiltroInhabilitada}"
+$tab                    items="#{${filter}.itemsListaFiltro1}"
+$tab                    onChange="webui.suntheme4_2.common.timeoutSubmitForm(this.form, 'listaFiltro1');"
+$tab                    selected="#{${pageBeanName}.${entityDataProvider}.filtroFuncionSelect}"
+$tab                    toolTip="#{${pageBeanName}.gestor.i18n.toolTipListaFiltro}"/>
+$tab                <webuijsf:button id="botonBuscarFiltro1"
+$tab                    disabled="#{${filter}.botonFiltroInhabilitado}"
+$tab                    imageURL="/resources/search.gif"
+$tab                    onClick="#{${filter}.scriptBotonBuscarFiltro1}"
+$tab                    rendered="#{${filter}.botonFiltroHabilitado}"
+$tab                    text="#{${pageBeanName}.gestor.i18n.textoBotonBuscarFiltro1}"
+$tab                    toolTip="#{${pageBeanName}.gestor.i18n.toolTipBotonBuscarFiltro1}"/>
+$tab                <webuijsf:button id="botonBuscarFiltro2"
+$tab                    disabled="#{${filter}.botonFiltroInhabilitado}"
+$tab                    imageURL="/resources/detail.gif"
+$tab                    onClick="#{${filter}.scriptBotonBuscarFiltro2}"
+$tab                    rendered="#{${filter}.botonFiltroHabilitado}"
+$tab                    text="#{${pageBeanName}.gestor.i18n.textoBotonBuscarFiltro2}"
+$tab                    toolTip="#{${pageBeanName}.gestor.i18n.toolTipBotonBuscarFiltro2}"/>
+$tab            </h:panelGrid>
+$tab            <h:panelGrid id="gridPanelFiltro3">
+$tab                <webuijsf:button id="botonBorrarFiltro1"
+$tab                    actionExpression="#{${filter}.botonBorrarFiltro1_action}"
+$tab                    disabled="#{${filter}.listaFiltroInhabilitada}"
+$tab                    imageURL="/resources/minus.gif"
+$tab                    text="#{${pageBeanName}.gestor.i18n.textoBotonBorrarCriterio}"
+$tab                    toolTip="#{${pageBeanName}.gestor.i18n.toolTipBotonBorrarCriterio}"/>
+$tab            </h:panelGrid>
+$tab        </h:panelGrid>
+$tab    </h:panelGrid>
+$tab    <h:panelGrid id="panelGrid${panelGridSequence.next()}" style="float:left">
+$tab        <webuijsf:button id="botonAplicarFiltro1"
+$tab            actionExpression="#{${filter}.botonAplicarFiltro1_action}"
+$tab            binding="#{${filter}.botonAplicarFiltro1}"
+$tab            rendered="#{${filter}.funcionApplyFilterHabilitada}"
+$tab            style="margin-left: 12px"
+$tab            styleClass="pdq-button-1"
+$tab            text="#{${pageBeanName}.gestor.i18n.textoBotonAplicarFiltro}"
+$tab            toolTip="#{${pageBeanName}.gestor.i18n.toolTipBotonAplicarFiltro}"/>
+$tab        <webuijsf:button id="botonQuitarFiltro1"
+$tab            actionExpression="#{${filter}.botonQuitarFiltro1_action}"
+$tab            rendered="#{${filter}.funcionRemoveFilterHabilitada}"
+$tab            style="margin-left: 12px"
+$tab            styleClass="pdq-button-1"
+$tab            text="#{${pageBeanName}.gestor.i18n.textoBotonQuitarFiltro}"
+$tab            toolTip="#{${pageBeanName}.gestor.i18n.toolTipBotonQuitarFiltro}"/>
+$tab        <webuijsf:button id="botonRestaurarFiltro1"
+$tab            actionExpression="#{${filter}.botonRestaurarFiltro1_action}"
+$tab            rendered="#{${filter}.funcionRestoreFilterHabilitada}"
+$tab            style="margin-left: 12px"
+$tab            styleClass="pdq-button-1"
+$tab            text="#{${pageBeanName}.gestor.i18n.textoBotonRestaurarFiltro}"
+$tab            toolTip="#{${pageBeanName}.gestor.i18n.toolTipBotonRestaurarFiltro}"/>
+$tab        <webuijsf:button id="botonOcultarFiltro1"
+$tab            actionExpression="#{${filter}.botonOcultarFiltro1_action}"
+$tab            rendered="#{${filter}.bitFuncionHideFilterHabilitada.on}"
+$tab            style="margin-left: 12px"
+$tab            styleClass="pdq-button-1"
+$tab            text="#{${pageBeanName}.gestor.i18n.textoBotonOcultarFiltro}"
+$tab            toolTip="#{${pageBeanName}.gestor.i18n.toolTipBotonOcultarFiltro}"/>
+$tab    </h:panelGrid>
+$tab    <webuijsf:hiddenField id="campoAplicarFiltro1" binding="#{${filter}.campoAplicarFiltro1}"/>
+$tab</h:panelGrid>
+#break
+
+$tab<h:panelGrid id="panelGrid${panelGridSequence.next()}" columns="1"
+$tab    rendered="#{${pageBeanName}.funcionShowFilterHabilitada}">
+$tab    <webuijsf:button id="botonMostrarFiltro1"
+$tab        actionExpression="#{${filter}.botonMostrarFiltro1_action}"
+$tab        styleClass="pdq-button-1"
+$tab        text="#{${pageBeanName}.gestor.i18n.textoBotonMostrarFiltro}"
+$tab        toolTip="#{${pageBeanName}.gestor.i18n.toolTipBotonMostrarFiltro}"/>
+$tab</h:panelGrid>
+#break

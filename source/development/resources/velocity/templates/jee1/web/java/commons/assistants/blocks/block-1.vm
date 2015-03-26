@@ -1,0 +1,57 @@
+    // <editor-fold defaultstate="collapsed" desc="metodos para obtener los EJB de la página">
+    char bookmark$bookmarkSequence.next();
+
+#if($isExportOperationInEntity.evaluate($entity))
+    protected ExporterBrokerLocal getExporter() {
+        return (ExporterBrokerLocal) bean.getExporter();
+    }
+
+#end
+#if($isReportOperationInEntity.evaluate($entity))
+    protected ReporterBrokerLocal getReporter() {
+        return (ReporterBrokerLocal) bean.getReporter();
+    }
+
+#end
+#if($isProcedureOperationInEntity.evaluate($entity))
+    protected SqlAgentBrokerLocal getSqlAgent() {
+        return (SqlAgentBrokerLocal) bean.getSqlAgent();
+    }
+
+#end
+#if($entityHasSimpleProcessOperations)
+    protected ${entityBusinessProcessLocal} get${entityBusinessProcess}() {
+        return (${entityBusinessProcessLocal}) bean.get${entityBusinessProcess}();
+    }
+
+    protected BusinessProcessMessengerLocal getMessenger() {
+        return (BusinessProcessMessengerLocal) bean.getMessenger();
+    }
+
+#end
+#set($facades = $VelocityAid.getNewLinkedHashSet())
+#set($added = $facades.add($entity.root))
+#foreach($property in $entity.dataProviderColumnsList)
+    #if(!$property.isHiddenField())
+        #if($property.isEntity())
+            #set($added = $facades.add($property.root))
+        #end
+    #end
+#end##foreach-property
+#foreach($facade in $facades)
+    #set($facadeClassName = "${facade.wrapper.javaClassName}FacadeBase")
+    #set($facadeVariableName = "${facade.wrapper.javaVariableName}Facade")
+    private ${facadeClassName} ${facadeVariableName};
+
+    protected ${facadeClassName} get${facade.wrapper.javaClassName}Facade() {
+        if (${facadeVariableName} == null) {
+            ${facadeVariableName} = (${facadeClassName}) EJBL.lookup(${facadeClassName}.class);
+        }
+        return ${facadeVariableName};
+    }
+
+#end##foreach-facade
+    char bookmark$bookmarkSequence.next();
+    // </editor-fold>
+
+#break

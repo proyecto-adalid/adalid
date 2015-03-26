@@ -1,0 +1,75 @@
+#parseJavaMacros()
+#parse("$templatePath/macros/macros-1.vm")
+#parse("$templatePath/macros/macros-2.vm")
+#setJavaVariables()
+#setLocalVariables()
+#writeJavaLicense()
+#writeJavaPackage()
+#addImports()
+#writeJavaImports($imports)
+#addInterfaces()
+#writeJavaAuthor('Jorge Campins')
+public class ${javaClassSimpleName} extends AbstractPageBean1#writeJavaImplements()
+
+    public ${javaClassSimpleName}() {
+        super();
+    }
+
+    #parse("$templatePath/blocks/PaginaAbstracta.vm")
+    #parse("$templatePath/blocks/PaginaBasica.vm")
+    #parse("$templatePath/blocks/PaginaConsulta.vm")
+    #if($page.master)
+        #parse("$templatePath/blocks/PaginaConsultaConMaestro.vm")
+    #end
+    #parse("$templatePath/blocks/tree/PaginaConsultaConArbol.vm")
+    #parse("$templatePath/blocks/PaginaActualizacion.vm")
+    #parse("$templatePath/blocks/tree/PaginaActualizacion.vm")
+    #parse("$templatePath/blocks/data-providers.vm")
+    #parse("$templatePath/blocks/tree/jsf-components-0.vm")
+    #parse("$templatePath/blocks/crud-buttons.vm")
+    #parse("$templatePath/blocks/navigation-hyperlinks.vm")
+    #parse("$templatePath/blocks/tree/jsf-components-1.vm")
+    #parse("$templatePath/blocks/tree/jsf-components-2.vm")
+    #parse("$templatePath/blocks/jsf-context-beans.vm")
+    #parse("$templatePath/blocks/jsf-events.vm")
+    #parse("$templatePath/blocks/tree/so-on-and-so-forth.vm")
+}
+#break
+
+#macro(setLocalVariables)
+    #set($pageBeanName = "$!{webPageNamePrefix}${page.name}")
+    #set($pagePagePath = "crop/${module.wrapper.dottedAlias.replace('.', '/')}/$!{pageBeanName}")
+    #set($bookmarkSequence = $Sequence.startWith(1))
+    #set($crudButtonsSequence = $Sequence.startWith(1))
+    #set($sourceVar = "${pageBeanName}.recursoDataProvider")
+    #set($PaginaActualizacion = '')
+    #set($encabezadoMaestro = '')
+    #set($fragmentoFiltro = '')
+    #set($divString = '')
+    #set($tabString = '')
+    #set($viewWithMasterHeading = $FALSE)
+    #set($masterHeadingViewWidth = 0)
+    #setDataProviderVariables()
+#end##setLocalVariables
+
+#macro(addImports)
+    #set($added = $imports.add("${project.rootPackageName}.lib.core.enumeration.EnumColumnaEtiqueta"))
+    #set($added = $imports.add("${project.rootPackageName}.lib.core.enumeration.EnumOpcionZumNodo"))
+    #set($added = $imports.add("com.sun.data.provider.RowKey"))
+    #set($added = $imports.add("${project.rootPackageName}.lib.base.util.ObjUtils"))
+    #set($added = $imports.add("${project.rootPackageName}.lib.base.util.TimeUtils"))
+    #set($added = $imports.add("${project.rootPackageName}.lib.core.app.TLC"))
+    #addDataProviderImports()
+    #addPageBeanImports()
+#end##addImports
+
+#macro(addInterfaces)
+    #set($added = $interfaces.add("PaginaAbstracta"))
+    #set($added = $interfaces.add("PaginaBasica"))
+    #set($added = $interfaces.add("PaginaConsulta"))
+    #set($added = $interfaces.add("PaginaConsultaConArbol"))
+    #if($page.master)
+        #set($added = $interfaces.add("PaginaConsultaConMaestro"))
+    #end
+    #set($added = $interfaces.add("PaginaActualizacion"))
+#end##addInterfaces

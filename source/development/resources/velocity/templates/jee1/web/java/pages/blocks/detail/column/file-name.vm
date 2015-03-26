@@ -1,0 +1,4 @@
+#parse("$templatePath/blocks/detail/column/character.vm")
+#set($componentName = "campo${fieldFirstName}${tabString}Boton3")
+#parse("$templatePath/blocks/webuijsf/button-2.vm")
+#break

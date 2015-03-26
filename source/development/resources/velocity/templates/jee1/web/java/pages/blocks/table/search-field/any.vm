@@ -1,0 +1,32 @@
+#set($variableName = 'value')
+#set($capitalizedComponentName = "$StringUtils.capitalize($componentName)")
+#set($capitalizedComponentAttr = "${capitalizedComponentName}$StringUtils.capitalize($componentValueAttr)")
+#if(${componentClassSimpleName} == 'Object')
+    #set($returnValueExpression = 'cb.getValor()')
+#else
+    #set($returnValueExpression = "ObjUtils.to${componentClassSimpleName}(cb.getValor())")
+#end
+        public ${componentClassName} get${capitalizedComponentAttr}() {
+            CampoBusqueda cb = ${entityDataProvider}.getCampoBusqueda("$componentName");
+            return cb == null ? null : $returnValueExpression;
+        }
+
+        public void set${capitalizedComponentAttr}(${componentClassName} $variableName) {
+#if(${componentClassName} == 'String')
+            ${entityDataProvider}.setCampoBusqueda("$componentName", "$fieldSqlName", StringUtils.trimToNull($variableName));
+#else
+            ${entityDataProvider}.setCampoBusqueda("$componentName", "$fieldSqlName", $variableName);
+#end
+        }
+
+        public String get${capitalizedComponentName}ImageUrl() {
+            CampoBusqueda cb = ${entityDataProvider}.getCampoBusqueda("$componentName");
+            return cb == null ? URL_OK_DIMMED : cb.getImageUrl();
+        }
+
+        public String ${componentName}BotonBorrar1_action() {
+            set${capitalizedComponentAttr}(null);
+            return null;
+        }
+
+#break

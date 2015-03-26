@@ -1,0 +1,158 @@
+    public void consultar${entity.wrapper.javaClassName}() throws ExcepcionAplicacion {
+        consultar${entity.wrapper.javaClassName}(new FiltroBusqueda());
+    }
+
+    public void consultar${entity.wrapper.javaClassName}(Long filtro) throws ExcepcionAplicacion {
+        if (filtro == null) {
+            consultar${entity.wrapper.javaClassName}(new FiltroBusqueda());
+        } else {
+            consultar${entity.wrapper.javaClassName}(new FiltroBusqueda(filtro));
+        }
+    }
+
+    public void consultar${entity.wrapper.javaClassName}(FiltroBusqueda filtro) throws ExcepcionAplicacion {
+        ConsultaBusqueda consulta = ConsultaBusquedaBuilder.getConsultaBusqueda(getConsultaBusqueda());
+        String comando = consulta == null ? getComandoSelect() : consulta.getSelect();
+#if($esRecursoPersonalizable)
+        String columnaPropietarioRecurso = consulta == null ? COLUMNA_PROPIETARIO_RECURSO : COLUMNA_CALIFICADA_PROPIETARIO_RECURSO;
+#end
+#if($esRecursoSegmentable)
+        String columnaSegmentoRecurso = consulta == null ? COLUMNA_SEGMENTO_RECURSO : COLUMNA_CALIFICADA_SEGMENTO_RECURSO;
+#end
+        String clausula = "WHERE";
+        String criterios;
+        Map<String, String> map = consulta == null ? null : getColumnAliasNameMap();
+        try {
+            setFuncionSelect(${FUNCION_SELECT});
+#if($esRecursoPersonalizable || $esRecursoSegmentable)
+            if (filtro == null) {
+                filtro = new FiltroBusqueda();
+            }
+#end
+#if($esRecursoPersonalizable)
+            Long propietario = TLC.getControlador().getPropietarioAutorizado(${FUNCION_SELECT});
+            if (propietario != null) {
+                filtro.addCriterio(columnaPropietarioRecurso, OperadorComEnumeration.ES_NULO_O_ES_IGUAL, propietario);
+            }
+#end
+#if($esRecursoSegmentable)
+            String segmentos = TLC.getControlador().getSegmentosAutorizados(${FUNCION_SELECT});
+            if (segmentos != null) {
+                filtro.addCriterio(columnaSegmentoRecurso, OperadorComEnumeration.ES_NULO_O_ESTA_ENTRE, segmentos);
+            }
+#end
+            criterios = getCriteriosBusqueda();
+            if (criterios != null && !criterios.equals("")) {
+                comando += clausula + " (" + criterios + ") ";
+                clausula = "AND";
+            }
+#if($esRecursoPersonalizable || $esRecursoSegmentable)
+            criterios = filtro.toString(map);
+#else
+            criterios = filtro == null ? null : filtro.toString(map);
+#end
+            if (criterios != null && !criterios.equals("")) {
+                comando += clausula + " (" + criterios + ") ";
+            }
+            clausula = "ORDER BY";
+            criterios = getCriteriosOrden();
+            if (criterios != null && !criterios.equals("")) {
+                comando += clausula + " " + criterios + " ";
+#set($disordered = $TRUE)
+#if($entity.orderByKey)
+    #if($entity.orderByKey.isValidKeyFor($entity))
+        #set($colname1 = '')
+        #set($colname2 = '')
+        #set($orderby1 = '')
+        #set($orderby2 = '')
+        #foreach($keyField in $entity.orderByKey.keyFieldsList)
+            #set($orderByProperty = $keyField.property)
+            #set($colname1 = "$!{query.getSqlAlias($orderByProperty)}")
+            #set($colname2 = "$!{query.getSqlQualifiedName($orderByProperty)}")
+            #if($colname1 == '' || $colname2 == '')
+                #break
+            #end
+            #set($orderby1 = "$orderby1, $colname1 $!keyField.sqlSortOption")
+            #set($orderby2 = "$orderby2, $colname2 $!keyField.sqlSortOption")
+        #end##foreach
+        #if($colname1 != '' && $colname2 != '')
+            #set($disordered = $FALSE)
+            #set($orderby1 = "$StringUtils.removeStart($orderby1, ',').trim()")
+            #set($orderby2 = "$StringUtils.removeStart($orderby2, ',').trim()")
+            } else {
+                if (consulta == null) {
+                    comando += clausula + " $orderby1 ";
+                } else {
+                    comando += clausula + " $orderby2 ";
+                }
+        #end
+    #end
+#end
+#if($disordered)
+    #if($entity.orderByProperties)
+        #set($colname1 = '')
+        #set($colname2 = '')
+        #set($orderby1 = '')
+        #set($orderby2 = '')
+        #foreach($orderByProperty in $entity.orderByProperties)
+            #set($colname1 = "$!{query.getSqlAlias($orderByProperty)}")
+            #set($colname2 = "$!{query.getSqlQualifiedName($orderByProperty)}")
+            #if($colname1 == '' || $colname2 == '')
+                #break
+            #end
+            #set($orderby1 = "$orderby1, $colname1")
+            #set($orderby2 = "$orderby2, $colname2")
+        #end##foreach
+        #if($colname1 != '' && $colname2 != '')
+            #set($disordered = $FALSE)
+            #set($orderby1 = "$StringUtils.removeStart($orderby1, ',').trim()")
+            #set($orderby2 = "$StringUtils.removeStart($orderby2, ',').trim()")
+            } else {
+                if (consulta == null) {
+                    comando += clausula + " $orderby1 ";
+                } else {
+                    comando += clausula + " $orderby2 ";
+                }
+        #end
+    #end
+#end
+#if($disordered)
+    #if($entity.orderByProperty)
+        #set($colname1 = "$!{query.getSqlAlias($entity.orderByProperty)}")
+        #set($colname2 = "$!{query.getSqlQualifiedName($entity.orderByProperty)}")
+        #if($colname1 != '' && $colname2 != '')
+            #set($disordered = $FALSE)
+            } else {
+                if (consulta == null) {
+                    comando += clausula + " $colname1 $!{entity.selectSortOption} ";
+                } else {
+                    comando += clausula + " $colname2 $!{entity.selectSortOption} ";
+                }
+        #end
+    #end
+#end
+#if($disordered)
+    #if($entity.primaryKeyProperty)
+        #set($colname1 = "$!{query.getSqlAlias($entity.primaryKeyProperty)}")
+        #set($colname2 = "$!{query.getSqlQualifiedName($entity.primaryKeyProperty)}")
+        #if($colname1 != '' && $colname2 != '')
+            #set($disordered = $FALSE)
+            } else {
+                if (consulta == null) {
+                    comando += clausula + " $colname1 $!{entity.selectSortOption} ";
+                } else {
+                    comando += clausula + " $colname2 $!{entity.selectSortOption} ";
+                }
+        #end
+    #end
+#end
+            }
+        } catch (ExcepcionAplicacion ex) {
+            comando = getComandoSelectNothing();
+            throw ex;
+        } finally {
+            setComandoCachedRowSet(comando, true);
+        }
+    }
+
+#break

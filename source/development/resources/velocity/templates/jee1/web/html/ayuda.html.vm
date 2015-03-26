@@ -1,0 +1,75 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+    <head>
+        <title>${project.wrapper.htmlValidDefaultLabel}</title>
+    </head>
+    <body bgcolor="#fafafa" style="font-family: Arial,Helvetica,sans-serif; font-size: 70%">
+        <script type="text/javascript">
+        //
+        //  alert(location.href);
+        //
+            var jsp = getParametro(unescape(location.search), '?', 'jsp=', '&');
+            var htm = getParametro(unescape(location.search), '?', 'htm=', '&');
+        //  alert(jsp);
+        //  alert(htm);
+            if (jsp == '' || htm == '') {
+                alert('no existe un archivo de ayuda que corresponda a esta pagina')
+            } else {
+                go(htm, jsp);
+            }
+            //
+            function getParametro(str, kw0, kw1, kw2) {
+                // Obtiene la posicion donde comenzar a buscar
+                var ix0 = kw0 == '' ?  0  : str.indexOf(kw0);
+                if (ix0 == -1) return '';
+                ix0 += kw0.length;
+                // Obtiene la posicion donde comienza el valor
+                var ix1 = kw1 == '' ? ix0 : str.indexOf(kw1, ix0);
+                if (ix1 == -1) return '';
+                ix1 += kw1.length;
+                // Obtiene la posicion donde termina el valor
+                var ix2 = kw2 == '' ? ix1 : str.indexOf(kw2, ix1);
+                if (ix2 == -1) ix2 = str.length;
+                // Obtiene el valor
+                var valor = str.substring(ix1, ix2);
+                // Retorna el valor
+                return valor;
+            }
+            //
+            function go(htm, jsp) {
+            //  var url = location.protocol + '//' + location.host + '/${project.rootFolderName}-war/ayuda.html' + location.search;
+            //  alert(htm + '#' + jsp);
+                var pdq = location.pathname.replace(/ayuda\.html/gi, 'resources' + '/' + htm + '.' + 'htm');
+                var url = location.protocol + '//' + location.host + pdq;
+                if (jsp != '') {
+                    url += "#" + jsp
+                }
+            //  alert(url);
+                location.replace(url);
+            }
+            //
+            function goback() {
+            //  alert(window.opener ? '[' + window.opener.name + '>' + window.name + ']' : '[' + window.name + ']');
+                if (history.length>1) {
+                    history.back();
+                    return false;
+                } else if (window.opener) {
+                    window.close();
+                    return false;
+                }
+            }
+        </script>
+        <b style="color: #90b7d0; font-size: 100%">
+            ${project.wrapper.htmlValidDefaultLabel}
+        </b>
+        <br><br>
+        <img alt="warning" src="resources/warning_medium.gif"/>
+        <a>
+            P&aacute;gina en construcci&oacute;n
+        </a>
+        <br><br>
+        <a href='#' onclick="goback()">
+            Haga clic aqu&iacute; para regresar
+        </a>
+    </body>
+</html>

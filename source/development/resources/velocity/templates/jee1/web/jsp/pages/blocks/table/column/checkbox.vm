@@ -1,0 +1,10 @@
+$tab<webuijsf:tableColumn id="tableColumn0"
+$tab    align="center"
+$tab    onClick="setTimeout(function(){document.getElementById('form1:table1').initAllRows()}, 0);" 
+$tab    selectId="checkbox1">
+$tab    <webuijsf:checkbox id="checkbox1"
+$tab        binding="#{${pageBeanName}.checkbox1}" 
+$tab        onClick="#{${pageBeanName}.gestor.scriptElegir}" 
+$tab        selected="#{${pageBeanName}.gestor.filaElegida}" 
+$tab        toolTip="#{${pageBeanName}.gestor.i18n.toolTipCheckboxSeleccionMultiple}"/>
+$tab</webuijsf:tableColumn>

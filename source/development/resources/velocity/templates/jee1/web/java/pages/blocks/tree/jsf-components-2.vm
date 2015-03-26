@@ -1,0 +1,6 @@
+    // <editor-fold defaultstate="collapsed" desc="inicialización de componentes JSF">
+    private void iniciar() throws Exception {
+#initDataProviders()
+    }
+    // </editor-fold>
+

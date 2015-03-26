@@ -1,0 +1,61 @@
+#break
+
+#macro(setOperationVariables)
+    #set($operationQualifier = "X$foreach.count")
+    #set($operationQualifier = "$!operation.wrapper.javaClassName")
+    #set($operationConstantName = "$!operation.wrapper.javaConstantName")
+    #set($operationType = "$!operation.operationType")
+    #if($operationType == '')
+        #set($tipoOperacion = '')
+    #elseif($operationType == 'PROCEDURE')
+        #set($tipoOperacion = 'PROCEDIMIENTO')
+    #elseif($operationType == 'PROCESS')
+        #set($tipoOperacion = 'PROCESO')
+    #else
+        #set($tipoOperacion = '')
+    #end
+    #set($operationEntity = $operation.declaringEntity)
+    #set($operationEntityConstants = "${operationEntity.wrapper.javaClassName}Constants")
+    #if($tipoOperacion == '')
+        #set($operationNumberConstant = '')
+        #set($operationStringConstant = '')
+    #else
+        #set($operationNumberConstant = "${operationEntityConstants}.FUNCION_${operationType}_${operationConstantName}")
+        #set($operationStringConstant = "${operationEntityConstants}.${tipoOperacion}_FUNCION_${operationConstantName}")
+    #end
+    #set($parameters = $operation.parametersList)
+#end##setOperationVariables
+
+#macro(setParameterVariables)
+    #set($fieldClassName = "${parameter.wrapper.javaClassName}")
+    #set($fieldVariableName = "${parameter.wrapper.javaVariableName}")
+    #set($fieldFirstName = "${operationQualifier}${fieldClassName}1")
+    #set($fieldMiddleName = "${operationQualifier}${fieldClassName}2")
+    #set($fieldLastName = "${operationQualifier}${fieldClassName}3")
+    #set($fieldSearchType = "$!parameter.searchType")
+    #set($fieldSqlName = "${parameter.wrapper.sqlName}")
+    #if($parameter.businessKeyProperty)
+        #set($fieldForeignCode = $parameter.businessKeyProperty)
+        #set($fieldForeignCodeSqlName = "${fieldForeignCode.wrapper.sqlName}")
+        #set($fieldForeignCodeVariableName = "${fieldForeignCode.wrapper.javaVariableName}")
+    #else
+        #set($fieldForeignCode = $FALSE)
+        #set($fieldForeignCodeSqlName = '')
+        #set($fieldForeignCodeVariableName = '')
+    #end
+    #if($parameter.nameProperty)
+        #set($fieldForeignName = $parameter.nameProperty)
+        #set($fieldForeignNameSqlName = "${fieldForeignName.wrapper.sqlName}")
+        #set($fieldForeignNameVariableName = "${fieldForeignName.wrapper.javaVariableName}")
+    #else
+        #set($fieldForeignName = $FALSE)
+        #set($fieldForeignNameSqlName = '')
+        #set($fieldForeignNameVariableName = '')
+    #end
+    #set($Campo1 = "Campo$fieldFirstName")
+    #set($campo1 = "campo$fieldFirstName")
+##  #set($fieldRequired = "$parameter.isRequiredParameter()")
+    #set($fieldRequired = "#{${pageBeanName}.${campo1}Required}")
+    #set($fieldBundleParametrosKey = "BundleParametros.${operationEntity.wrapper.sqlName}.${operation.wrapper.sqlName}.${parameter.wrapper.sqlName}")
+    #set($fieldBundleParametrosKey = "BundleParametros.${operationEntity.wrapper.sqlSchemaQualifiedShortName}.${operation.wrapper.sqlName}.${parameter.wrapper.sqlName}")
+#end##setParameterVariables

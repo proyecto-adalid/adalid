@@ -1,0 +1,78 @@
+#parsePostgreSQLMacros()
+#setPostgreSQLVariables()
+#writePostgreSQLLicense()
+#writePostgreSQLAuthor('Jorge Campins')
+#setLocalVariables()
+#writeCopies()
+#break
+
+#macro(setLocalVariables)
+    #set($notice1 = 'it is not a migrateable table')
+    #set($notice2 = 'it is an updatable enumeration table; its data must be updated')
+    #set($notice3 = 'it is a special table; its data must be migrated with a special insert statement')
+    #set($notice4 = 'it cannot be copied; its data must be migrated with an insert statement')
+    #parse("$templatePath/shared/special-tables.vm")
+#end##setLocalVariables
+
+#macro(writeCopies)
+drop function if exists midway.copy_${sourceSchema}_tables_to_text_files();
+create function midway.copy_${sourceSchema}_tables_to_text_files() returns integer as $$
+declare
+    contador1 integer := 0;
+    contador2 integer := 0;
+    contador3 integer := 0;
+    contador4 integer := 0;
+    contador5 integer := 0;
+    contador6 integer := 0;
+begin
+    raise notice 'copying $sourceSchema tables to text files';
+
+    #foreach($tableWrapper in $merger.sharedTables)
+        #set($tabname = $tableWrapper.table.name)
+        #set($pkpname = $tableWrapper.table.primaryKey.name)
+        #if($tableWrapper.isMigrateable())
+            #if(!$specialTableNames.contains($tabname))
+                #if($tableWrapper.isCopyable())
+................    contador5 := contador5 + 1;
+                    #writeCopy()
+                #else
+................    contador4 := contador4 + 1;
+                    #writeSkip($notice4)
+                #end
+            #else
+............    contador3 := contador3 + 1;
+                #writeSkip($notice3)
+            #end
+        #elseif($tableWrapper.table.isUpdatableEnumeration() && !$merger.tablesLoadMap.containsKey($tabname))
+........    contador2 := contador2 + 1;
+            #writeSkip($notice2)
+        #else
+........    contador1 := contador1 + 1;
+            #writeSkip($notice1)
+        #end
+    #end
+    contador6 := contador1 + contador2 + contador3 + contador4 + contador5;
+    raise notice '% tables were common to both schemas', contador6;
+    raise notice '% tables were copied to text files', contador5;
+    raise notice '% tables were not copied; its data must be migrated with an insert statement', contador4;
+    raise notice '% tables were special tables; its data must be migrated with a special insert statement', contador3;
+    raise notice '% tables were updatable enumeration tables; its data must be updated', contador2;
+    raise notice '% tables were non-migrateable tables', contador1;
+    return 0;
+end;
+$$ language plpgsql;
+
+select midway.copy_${sourceSchema}_tables_to_text_files();
+#end##writeCopies
+
+#macro(writeSkip $foo)
+    raise notice 'skipping ${sourceQualifier}${tabname}; $foo';
+
+#end##writeSkip
+
+#macro(writeCopy)
+    raise notice 'copying ${sourceQualifier}${tabname}';
+    copy (select * from ${sourceQualifier}${tabname} order by ${pkpname})
+    to '${merger.oldDataFolder}${tabname}.txt';
+
+#end##writeCopy

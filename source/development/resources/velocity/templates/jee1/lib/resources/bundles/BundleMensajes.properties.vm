@@ -1,0 +1,234 @@
+#parsePropertiesMacros()
+#setPropertiesVariables()
+#parseSQLMacros()
+#setSQLVariables()
+#writePropertiesLicense()
+#writePropertiesAuthor('Jorge Campins')
+locale.language.tag=$project.locale.toLanguageTag()
+
+#parse("$templatePath/base/BundleMensajes.properties.vm")
+#*
+#set($ckstring1 = 'el registro {1} no cumple con la restricción ${checkName}')
+#set($ckstring2 = 'los argumentos de la operación no cumplen con la restricción ${checkName}')
+#set($fkstring1 = 'existen instancias de la clase "${entityLabel}" que hacen referencia a este registro')
+#set($fkstring2 = 'no existe una instancia de la clase "${foreignKeyRefTabLabel}" identificada con el valor de ${label}')
+#set($pkstring1 = 'ya existe otra instancia de la clase "${entityLabel}" con la misma identificaci\u00F3n')
+#set($ukstring1 = 'ya existe otra instancia de la clase "${entityLabel}" con igual ${uniqueKeyLabel}')
+#set($ukstring2 = 'ya existe otra instancia de la clase "${entityLabel}" con igual combinación de ${uniqueKeyLabel}')
+#set($xxsuffix1 = '; no es posible {0} el registro {1}')
+*###
+#set($ckstring1 = ${Bundle.getString('BundleMensajes.ck.string.1')})
+#set($ckstring2 = ${Bundle.getString('BundleMensajes.ck.string.2')})
+#set($fkstring1 = ${Bundle.getString('BundleMensajes.fk.string.1')})
+#set($fkstring2 = ${Bundle.getString('BundleMensajes.fk.string.2')})
+#set($pkstring1 = ${Bundle.getString('BundleMensajes.pk.string.1')})
+#set($ukstring1 = ${Bundle.getString('BundleMensajes.uk.string.1')})
+#set($ukstring2 = ${Bundle.getString('BundleMensajes.uk.string.2')})
+#set($xxsuffix1 = ${Bundle.getString('BundleMensajes.xx.suffix.1')})
+#*
+#set($ckstring1 = ${bundleProgrammer.getValueString($ckstring1)})
+#set($ckstring2 = ${bundleProgrammer.getValueString($ckstring2)})
+#set($fkstring1 = ${bundleProgrammer.getValueString($fkstring1)})
+#set($fkstring2 = ${bundleProgrammer.getValueString($fkstring2)})
+#set($pkstring1 = ${bundleProgrammer.getValueString($pkstring1)})
+#set($ukstring1 = ${bundleProgrammer.getValueString($ukstring1)})
+#set($ukstring2 = ${bundleProgrammer.getValueString($ukstring2)})
+#set($xxsuffix1 = ${bundleProgrammer.getValueString($xxsuffix1)})
+*###
+#set($entities = $ColUtils.filter($project.entitiesList, $isPersistentEntity))
+#set($entities = $ColUtils.sort($entities, $byEntityName))
+#foreach($entity in $entities)
+    #writeBundleMensajesEntity()
+    #writeBundleMensajesPrimaryKey()
+    #writeBundleMensajesForeignKeys()
+    #writeBundleMensajesUniqueKeys()
+    #writeBundleMensajesChecks1()
+    #writeBundleMensajesChecks2()
+#end##foreach-entity
+#break
+
+#macro(writeBundleMensajesEntity)
+    #resetSQLVariables()
+    #set($entityName = $entity.wrapper.sqlName)
+    #set($entityName = $entity.wrapper.sqlSchemaUnqualifiedShortName)
+    #set($entityLabel = "$!entity.wrapper.bundleValidDefaultLabel")
+    #set($entityKey = $VelocityAid.coalesce($entity.primaryKeyProperty, $FALSE))
+    #if($entityKey)
+        #set($entityKeyName = $entityKey.wrapper.sqlName)
+        #set($entityKeyLabel = "$!entityKey.wrapper.bundleValidDefaultLabel")
+        #set($entityKeyShortLabel = "$!entityKey.wrapper.bundleValidDefaultShortLabel")
+    #else
+        #set($entityKeyName = '')
+        #set($entityKeyLabel = '')
+        #set($entityKeyShortLabel = '')
+    #end
+#
+#   $entityName
+#
+#end##writeBundleMensajesEntity
+
+#macro(writeBundleMensajesPrimaryKey)
+    #resetSQLVariables()
+    #if($entityKey)
+        #writeMensajesPrimaryKey()
+    #end
+#end##writeBundleMensajesPrimaryKey
+
+#macro(writeBundleMensajesForeignKeys)
+    #resetSQLVariables()
+    #if($entity.isJoinedTable() && $entityKey)
+        #set($foreignKeyName = $entityKeyName)
+        #set($foreignKeyLabel = $entityKeyLabel)
+        #set($foreignKeyShortLabel = $entityKeyShortLabel)
+        #set($foreignKeyRefTabLabel = "$!entity.baseTableRoot.wrapper.bundleValidDefaultLabel")
+        #writeMensajesForeignKey()
+    #end
+    #set($properties = $entity.columnsList)
+    #foreach($property in $properties)
+        #if($property.foreignKey)
+            #set($foreignKeyName = $property.wrapper.sqlName)
+            #set($foreignKeyLabel = "$!property.wrapper.bundleValidDefaultLabel")
+            #set($foreignKeyShortLabel = "$!property.wrapper.bundleValidDefaultShortLabel")
+            #if($property.isTable())
+                #set($foreignKeyRefTabLabel = "$!property.root.wrapper.bundleValidDefaultLabel")
+            #else
+                #set($foreignKeyRefTabLabel = "$!property.baseTableRoot.wrapper.bundleValidDefaultLabel")
+            #end
+            #writeMensajesForeignKey()
+        #end
+    #end##foreach-property
+#end##writeBundleMensajesForeignKeys
+
+#macro(writeBundleMensajesUniqueKeys)
+    #resetSQLVariables()
+    #set($properties = $entity.columnsList)
+    #foreach($property in $properties)
+        #if($property.isUnique() && $property.wrapper.sqlName != $entityKeyName)
+            #set($uniqueKeyName = $property.wrapper.sqlName)
+            #set($uniqueKeyLabel = "$property.wrapper.bundleValidDefaultLabel")
+            #writeMensajesUniqueKey()
+        #end
+    #end##foreach-property
+    #set($keys = $entity.keysList)
+    #foreach($key in $keys)
+        #if($key.isUnique() && $key.isValidKeyFor($entity))
+            #set($uniqueKeyName = $key.wrapper.sqlName)
+            #set($uniqueKeyLabel = '')
+            #set($fields = $key.keyFieldsList)
+            #set($fieldsSize = $fields.size())
+            #if($fieldsSize != 0)
+                #if($key.isSingleProperty())
+                    #set($property = $key.theProperty)
+                    #if($property.isUnique() || $property.isPrimaryKeyProperty())
+                        #set($uniqueKeyLabel = "$property.wrapper.bundleValidDefaultLabel")
+                    #end
+                #end
+                #if($uniqueKeyLabel == '')
+                    #foreach($field in $fields)
+                        #set($uniqueKeyLabel = "$uniqueKeyLabel, $field.property.wrapper.bundleValidDefaultLabel")
+                    #end##foreach-field
+                    #if($uniqueKeyLabel != '')
+                        #set($uniqueKeyLabel = $StringUtils.removeStart($uniqueKeyLabel, ',').trim())
+                        #writeMensajesUniqueKey()
+                    #end
+                #end
+            #end
+        #end
+    #end##foreach-key
+#end##writeBundleMensajesUniqueKeys
+
+#macro(writeBundleMensajesChecks1)
+    #resetSQLVariables()
+    #set($expressions = $entity.checksList)
+    #foreach($expression in $expressions)
+        #writeMensajesCheck1()
+    #end##foreach-expression
+    #foreach($expression in $expressions)
+        #set($constraint = "${entityName}.${expression.wrapper.sqlName}")
+        #set($checkName  = "$!expression.name")
+        #set($checkStr1  = "$!expression.wrapper.bundleDefaultErrorMessageChoice")
+        #set($checkStr2  = "$!expression.wrapper.bundleDefaultDescription")
+        #set($checkStr3  = $StrUtils.getStringParametrizado("$ckstring1", "$checkName", "{1}"))
+        #set($checkText  = $StrUtils.coalesce($checkStr1, $checkStr2, $checkStr3))
+        #writeMensajesCheck2()
+    #end##foreach-expression
+    #set($checks = $expressions)
+    #set($expressions = $entity.expressionsList)
+    #foreach($expression in $expressions)
+        #if($checks.contains($expression))
+        #else
+            #set($constraint = "${entityName}.${expression.wrapper.sqlName}")
+            #set($checkName  = "$!expression.name")
+            #set($checkText  = "$!expression.wrapper.bundleDefaultErrorMessageChoice")
+            #if($checkText != '')
+                #writeMensajesCheck2()
+            #end
+        #end
+    #end##foreach-expression
+#end##writeBundleMensajesChecks1
+
+#macro(writeBundleMensajesChecks2)
+    #resetSQLVariables()
+    #foreach($operation in $entity.businessOperationsList)
+        #set($expressions = $operation.checksList)
+        #foreach($expression in $expressions)
+            #set($constraint = "${entityName}.${operation.wrapper.sqlName}.${expression.wrapper.sqlName}")
+            #set($checkName  = "$!expression.name")
+            #set($checkStr1  = "$!expression.wrapper.bundleDefaultErrorMessageChoice")
+            #set($checkStr2  = "$!expression.wrapper.bundleDefaultDescription")
+            #set($checkStr3  = $StrUtils.getStringParametrizado("$ckstring2", "$checkName", "{1}"))
+            #set($checkText  = $StrUtils.coalesce($checkStr1, $checkStr2, $checkStr3))
+            #writeMensajesCheck2()
+        #end##foreach-expression
+    #end##foreach-operation
+#end##writeBundleMensajesChecks2
+
+#macro(writeMensajesPrimaryKey)
+#setGlobalPrimaryKeyName($entity)
+#removeGlobalConstraintNameSuffix()
+#set($constraint = $globalConstraintName)
+#set($messageKey = "${entityName}.${entityKeyName}.pk")
+${constraint}=<${messageKey}>
+${messageKey}=${StrUtils.getStringParametrizado("$pkstring1", "$entityLabel")}${xxsuffix1}
+#end##writeMensajesPrimaryKey
+
+#macro(writeMensajesForeignKey)
+#setGlobalForeignKeyName($entity)
+#removeGlobalConstraintNameSuffix()
+#set($constraint = $globalConstraintName)
+#set($messageKey = "${entityName}.${foreignKeyName}.fk")
+#if($foreignKeyLabel == $foreignKeyShortLabel || $foreignKeyLabel == $foreignKeyRefTabLabel)
+    #set($label = "$foreignKeyShortLabel")
+#else
+    #set($label = "$foreignKeyShortLabel ($foreignKeyLabel)")
+#end
+${constraint}.1=<${messageKey}.1>
+${constraint}.2=<${messageKey}.2>
+${messageKey}.1=${StrUtils.getStringParametrizado("$fkstring1", "$entityLabel")}${xxsuffix1}
+${messageKey}.2=${StrUtils.getStringParametrizado("$fkstring2", "$foreignKeyRefTabLabel", "$label")}${xxsuffix1}
+#end##writeMensajesForeignKey
+
+#macro(writeMensajesUniqueKey)
+#setGlobalUniqueKeyName($entity)
+#removeGlobalConstraintNameSuffix()
+#set($constraint = $globalConstraintName)
+#set($messageKey = "${entityName}.${uniqueKeyName}.uk")
+${constraint}=<${messageKey}>
+#if($uniqueKeyLabel.indexOf(',') < 0)
+....${messageKey}=${StrUtils.getStringParametrizado("$ukstring1", "$entityLabel", "$uniqueKeyLabel")}
+#else
+....${messageKey}=${StrUtils.getStringParametrizado("$ukstring2", "$entityLabel", "$uniqueKeyLabel")}
+#end
+#end##writeMensajesUniqueKey
+
+#macro(writeMensajesCheck1)
+#setGlobalCheckName($entity)
+#removeGlobalConstraintNameSuffix()
+#set($constraint = $globalConstraintName)
+#set($messageKey = "<${entityName}.${expression.wrapper.sqlName}>")
+${constraint}=${messageKey}
+#end##writeMensajesCheck1
+
+#macro(writeMensajesCheck2)
+${constraint}=${checkText}
+#end##writeMensajesCheck2

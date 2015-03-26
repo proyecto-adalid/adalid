@@ -1,0 +1,107 @@
+    // <editor-fold defaultstate="collapsed" desc="definición de otros componentes JSF">
+    private TableColumn tableColumn1 = new ColumnaTabla();
+
+    public TableColumn getTableColumn1() {
+        return tableColumn1;
+    }
+
+    public void setTableColumn1(TableColumn tc) {
+        tableColumn1 = tc;
+    }
+
+    private Button botonEscogerFila1 = new Boton();
+
+    public Button getBotonEscogerFila1() {
+        return botonEscogerFila1;
+    }
+
+    public void setBotonEscogerFila1(Button b) {
+        botonEscogerFila1 = b;
+    }
+
+    private Button botonDetallarFila1 = new Boton();
+
+    public Button getBotonDetallarFila1() {
+        return botonDetallarFila1;
+    }
+
+    public void setBotonDetallarFila1(Button b) {
+        botonDetallarFila1 = b;
+    }
+
+    private Button botonProcesarFila1 = new Boton();
+
+    public Button getBotonProcesarFila1() {
+        return botonProcesarFila1;
+    }
+
+    public void setBotonProcesarFila1(Button b) {
+        botonProcesarFila1 = b;
+    }
+
+    private Button botonRetornarFila1 = new Boton();
+
+    public Button getBotonRetornarFila1() {
+        return botonRetornarFila1;
+    }
+
+    public void setBotonRetornarFila1(Button b) {
+        botonRetornarFila1 = b;
+    }
+
+## ---------------------------------------------------------------------------------------------------------------------------------------------------
+    private TableColumn tableColumn2 = new ColumnaTabla();
+
+    public TableColumn getTableColumn2() {
+        return tableColumn2;
+    }
+
+    public void setTableColumn2(TableColumn tc) {
+        tableColumn2 = tc;
+    }
+
+    private ImageHyperlink hipervinculoAccionFila1 = new Hipervinculo();
+
+    public ImageHyperlink getHipervinculoAccionFila1() {
+        return hipervinculoAccionFila1;
+    }
+
+    public void setHipervinculoAccionFila1(ImageHyperlink ih) {
+        hipervinculoAccionFila1 = ih;
+    }
+
+## ---------------------------------------------------------------------------------------------------------------------------------------------------
+    private TableColumn tableColumn3 = new ColumnaTabla();
+
+    public TableColumn getTableColumn3() {
+        return tableColumn3;
+    }
+
+    public void setTableColumn3(TableColumn tc) {
+        tableColumn3 = tc;
+    }
+
+    private ImageHyperlink hipervinculoDetallarFila1 = new Hipervinculo();
+
+    public ImageHyperlink getHipervinculoDetallarFila1() {
+        return hipervinculoDetallarFila1;
+    }
+
+    public void setHipervinculoDetallarFila1(ImageHyperlink ih) {
+        hipervinculoDetallarFila1 = ih;
+    }
+
+## ---------------------------------------------------------------------------------------------------------------------------------------------------
+    private Button botonRepaginar1 = new Boton();
+
+    public Button getBotonRepaginar1() {
+        return botonRepaginar1;
+    }
+
+    public void setBotonRepaginar1(Button b) {
+        botonRepaginar1 = b;
+    }
+## ---------------------------------------------------------------------------------------------------------------------------------------------------
+    // </editor-fold>
+
+#break

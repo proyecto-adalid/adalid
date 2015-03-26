@@ -1,0 +1,11 @@
+#parsePostgreSQLMacros()
+#setPostgreSQLVariables()
+#writePostgreSQLLicense()
+#writePostgreSQLAuthor('Jorge Campins')
+#set($schemas = $project.schemasSet)
+#foreach($schema in $schemas)
+#if($schema != 'public')
+create schema $schema;
+#end
+#end##foreach-schema
+#break

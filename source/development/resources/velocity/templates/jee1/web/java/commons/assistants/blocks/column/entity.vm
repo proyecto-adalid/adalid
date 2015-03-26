@@ -1,0 +1,311 @@
+#set($referenceClassName = "${property.root.wrapper.javaClassName}")
+#set($referencePrimaryKeyClassName = "$!{property.root.primaryKeyProperty.wrapper.javaCapitalizedName}")
+#set($referenceCharacterKeyClassName = "$!{property.root.characterKeyProperty.wrapper.javaCapitalizedName}")
+#set($referenceNamePropertyClassName = "$!{property.root.nameProperty.wrapper.javaCapitalizedName}")
+#set($referenceSelectFunctionConstantName = "FUNCION_SELECT_${property.root.wrapper.javaConstantName}")
+#set($referenceReadingTablePage  = $FALSE)
+#set($referenceWritingTablePage  = $FALSE)
+#set($referenceReadingDetailPage = $FALSE)
+#set($referenceWritingDetailPage = $FALSE)
+#set($referenceClassSelectFunction = "${referenceClassName}Constants.FUNCION_SELECT_RECURSO")
+#set($validateSearchQueryFilter = $FALSE)
+#set($resetFiltroConsultaBusqueda = $FALSE)
+#if($property.searchQueryFilter)
+##  #set($validateSearchQueryFilter = $TRUE)
+    #if($property.filterInactiveIndicatorProperty && $property.root.inactiveIndicatorProperty)
+        #set($resetFiltroConsultaBusqueda = $TRUE)
+    #elseif($property.filterOwnerProperty && $property.root.ownerProperty)
+        #set($resetFiltroConsultaBusqueda = $TRUE)
+    #elseif($property.filterSegmentProperty && $property.root.segmentProperty)
+        #set($resetFiltroConsultaBusqueda = $TRUE)
+    #end
+#end
+    // <editor-fold defaultstate="collapsed" desc="${fieldClassName}">
+    /**
+     * ${campo1}.validatorExpression
+     */
+    public void ${campo1}_validate(FacesContext context, UIComponent component, Object value) {
+//      Object object = ObjUtils.toString(bean.get${Campo1}());
+        RowKey rowKey = bean.getGestor().getCurrentRowKey();
+        if (rowKey != null) {
+            ${fieldVariableName}Map.remove(rowKey);
+            bean.get${EntityDataProvider}().set${fieldClassName}(rowKey, null);
+        }
+        ${referenceClassName}Base ${fieldVariableName} = null;
+        boolean notAvailable = bean.get${EntityDataProvider}().isNotRowAvailable(rowKey);
+        if (notAvailable) {
+            return;
+        }
+        String string = STP.getString(value);
+        if (StringUtils.isBlank(string)) {
+            return;
+        }
+        try {
+#if($referenceCharacterKeyClassName != '')
+            Object o = STP.getObjetoCodigoRecurso(string);
+#else
+            Object o = STP.getObjetoCodigoRecurso(string, true); /* cast String as Long */
+#end
+#if($validateSearchQueryFilter)
+            String columna;
+            String query = null;
+            resetConsultaBusqueda${fieldClassName}();
+    #if($resetFiltroConsultaBusqueda)
+            resetFiltroConsultaBusqueda${fieldClassName}();
+            FiltroBusqueda filtro = consultaBusqueda${fieldClassName}.getFiltro();
+    #else
+            FiltroBusqueda filtro = new FiltroBusqueda();
+            consultaBusqueda${fieldClassName}.setFiltro(filtro);
+    #end
+#end
+            if (o instanceof Long) {
+#if($validateSearchQueryFilter)
+                columna = "$sqlProgrammer.getSqlQualifiedName($property.root.primaryKeyProperty, $parameterRootQueryTable)";
+                filtro.addCriterio(columna, OperadorComEnumeration.ES_IGUAL, o);
+                query = consultaBusqueda${fieldClassName}.getQuerySql();
+#end
+                ${fieldVariableName} = get${referenceClassName}Facade().find(o, true);
+#if($referenceCharacterKeyClassName != '')
+            } else if (o instanceof String) {
+    #if($validateSearchQueryFilter)
+                columna = "$sqlProgrammer.getSqlQualifiedName($property.root.characterKeyProperty, $parameterRootQueryTable)";
+                filtro.addCriterio(columna, OperadorComEnumeration.ES_IGUAL, o);
+                query = consultaBusqueda${fieldClassName}.getQuerySql();
+    #end
+                ${fieldVariableName} = get${referenceClassName}Facade().findByCodigo(string, true);
+#else
+//          } else if (o instanceof String) {
+//              ${fieldVariableName} = get${referenceClassName}Facade().findByCodigo(string, true);
+#end
+            }
+            if (${fieldVariableName} == null) {
+                String arg0 = BundleParametros.getLabel("${parameterSearchQueryKey}");
+                throw new ExcepcionAplicacion(Bitacora.getTextoMensaje(CBM.RECURSO_NO_EXISTE, arg0 + " " + value));
+            }
+#if($validateSearchQueryFilter)
+            String select1 = query == null ? null : TLC.getInterpreteSql().getComandoSelect1(query);
+            if (select1 != null) {
+                ResultSet resultSet = TLC.getAgenteSql().executeQuery(select1, 1);
+                if (resultSet == null || !resultSet.next()) {
+                    String arg0 = BundleParametros.getLabel("${parameterSearchQueryKey}");
+                    #set($filterExpressionDefaultErrorMessage = "$!property.searchQueryFilter.wrapper.bundleDefaultErrorMessageChoice")
+                    #if($filterExpressionDefaultErrorMessage == '')
+....                    throw new ExcepcionAplicacion(Bitacora.getTextoMensaje(CBM.RECURSO_NO_REFERENCIABLE, arg0, value, ""));
+                    #else
+....                    String arg2 = StrUtils.enclose(BundleParametros.getFilterError("${parameterSearchQueryKey}"));
+....                    throw new ExcepcionAplicacion(Bitacora.getTextoMensaje(CBM.RECURSO_NO_REFERENCIABLE, arg0, value, arg2));
+                    #end
+                }
+            }
+#else
+    #if($property.filterInactiveIndicatorProperty && $property.root.inactiveIndicatorProperty)
+            if (BitUtils.valueOf(${fieldVariableName}.getEsRecursoInactivo())) {
+                String arg0 = BundleParametros.getLabel("${parameterSearchQueryKey}");
+                throw new ExcepcionAplicacion(Bitacora.getTextoMensaje(CBM.RECURSO_INACTIVO, arg0 + " " + value));
+            }
+    #end
+    #if($property.filterOwnerProperty && $property.root.ownerProperty)
+            if (TLC.getControlador().esPropietarioRecurso(${fieldVariableName}, $referenceClassSelectFunction)) {
+            } else {
+                String arg0 = BundleParametros.getLabel("${parameterSearchQueryKey}");
+                throw new ExcepcionAplicacion(Bitacora.getTextoMensaje(CBM.RECURSO_NO_AUTORIZADO, arg0 + " " + value));
+            }
+    #end
+    #if($property.filterSegmentProperty && $property.root.segmentProperty)
+        #if($property.filterOwnerProperty && $property.root.ownerProperty && $property.root.ownerProperty == $property.root.segmentProperty)
+        #else
+            if (TLC.getControlador().esSegmentoAutorizado(${fieldVariableName}, $referenceClassSelectFunction)) {
+            } else {
+                String arg0 = BundleParametros.getLabel("${parameterSearchQueryKey}");
+                throw new ExcepcionAplicacion(Bitacora.getTextoMensaje(CBM.RECURSO_NO_AUTORIZADO, arg0 + " " + value));
+            }
+        #end
+    #end
+#end
+            ${fieldVariableName}Map.put(rowKey, ${fieldVariableName});
+            bean.get${EntityDataProvider}().set${fieldClassName}(rowKey, ${fieldVariableName}.get${referencePrimaryKeyClassName}());
+        } catch (Exception ex) {
+            if (ex instanceof ValidatorException) {
+                throw (ValidatorException) ex;
+            } else {
+                FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_ERROR, ThrowableUtils.getString(ex), null);
+                throw new ValidatorException(message);
+            }
+        }
+    }
+
+    /**
+     * ${campo1}.text
+     */
+    public String getText${Campo1}() {
+        RowKey rowKey = bean.getGestor().getCurrentRowKey();
+        boolean rowAvailable = bean.get${EntityDataProvider}().isRowAvailable(rowKey);
+        Object id = rowAvailable ? bean.get${EntityDataProvider}().get${fieldClassName}(rowKey) : null;
+#if($referenceCharacterKeyClassName != '')
+        if (bean.getGestor().isFilaProcesada()) {
+            ${referenceClassName}Base ${fieldVariableName} = ${fieldVariableName}Map.get(rowKey);
+            if (${fieldVariableName} == null) {
+                ${fieldVariableName} = id == null ? null : get${referenceClassName}Facade().find(id, true);
+                if (${fieldVariableName} == null) {
+                    return null;
+                }
+                ${fieldVariableName}Map.put(rowKey, ${fieldVariableName});
+            }
+            return ${fieldVariableName}.get${referenceCharacterKeyClassName}();
+        }
+#end
+        return id == null ? null : Global.PREFIJO_STRING_ID_RECURSO + STP.getString(id);
+    }
+
+    /**
+     * ${campo1}.text
+     */
+    public void setText${Campo1}(String value) {
+        RowKey rowKey = bean.getGestor().getCurrentRowKey();
+        if (bean.getGestor().isFilaProcesada() && StringUtils.isBlank(value)) {
+            ${fieldVariableName}Map.remove(rowKey);
+            bean.get${EntityDataProvider}().set${fieldClassName}(rowKey, null);
+        }
+    }
+
+    /**
+     * ${campo1}.toolTip
+     */
+    public String getToolTip${Campo1}() {
+        RowKey rowKey = bean.getGestor().getCurrentRowKey();
+        boolean rowAvailable = bean.get${EntityDataProvider}().isRowAvailable(rowKey);
+        Object id = rowAvailable ? bean.get${EntityDataProvider}().get${fieldClassName}(rowKey) : null;
+#if($referenceNamePropertyClassName != '')
+        if (bean.getGestor().isFilaProcesada()) {
+            ${referenceClassName}Base ${fieldVariableName} = ${fieldVariableName}Map.get(rowKey);
+            if (${fieldVariableName} == null) {
+                ${fieldVariableName} = id == null ? null : get${referenceClassName}Facade().find(id, true);
+                if (${fieldVariableName} == null) {
+                    return null;
+                }
+                ${fieldVariableName}Map.put(rowKey, ${fieldVariableName});
+            }
+            return STP.trimToStringRecursoSinNombre(${fieldVariableName}.get${referenceNamePropertyClassName}());
+        }
+#end
+        return id == null ? null : Global.PREFIJO_STRING_ID_RECURSO + STP.getString(id);
+    }
+
+    /**
+     * ${campo1}Boton1.onClick
+     */
+    public String getScript${Campo1}Boton1() {
+        if (bean.getGestor().isFilaNoProcesada()) {
+            return null;
+        }
+        String pagina = bean.getClass().getSimpleName();
+        String referencia = "${property.name}";
+        String urx = BaseBundle.getReferenceSearchPage(pagina, referencia);
+        long dominio = ${referenceClassName}Constants.ID_DOMINIO_RECURSO;
+        long funcion = ${referenceClassName}Constants.${referenceSelectFunctionConstantName};
+        String campo = bean.get${Campo1}().getClientId(bean.getFacesContext());
+        String boton = bean.getBotonAplicar1().getClientId(bean.getFacesContext());
+        #if($property.searchQueryFilter)
+            #set($consultaBusqueda = ", consultaBusqueda${fieldClassName}")
+....        resetConsultaBusqueda${fieldClassName}();
+            #if($resetFiltroConsultaBusqueda)
+........        resetFiltroConsultaBusqueda${fieldClassName}();
+            #end
+        #else
+            #set($consultaBusqueda = '')
+        #end
+        if (StringUtils.isNotBlank(urx)) {
+            return bean.getGestor().getScriptAbrirVentanaBuscarCodigo(urx, dominio, funcion, campo, boton$consultaBusqueda);
+        } else {
+            return bean.getGestor().getScriptAbrirVentanaBuscarCodigo(dominio, funcion, campo, boton$consultaBusqueda);
+        }
+    }
+
+    /**
+     * ${campo1}Boton1.rendered
+     */
+    public boolean is${Campo1}Boton1Rendered() {
+        return bean.getGestor().isFilaProcesada();
+    }
+
+    #writeHiperlink('1')
+
+    /**
+     * ${campo1}Boton2.onClick
+     */
+    public String getScript${Campo1}Boton2() {
+        String pagina = bean.getClass().getSimpleName();
+        String referencia = "${property.name}";
+        String urx = BaseBundle.getReferenceDetailPage(pagina, referencia);
+        if (StringUtils.isNotBlank(urx)) {
+            RowKey rowKey = bean.getGestor().getCurrentRowKey();
+            boolean rowAvailable = bean.get${EntityDataProvider}().isRowAvailable(rowKey);
+            return bean.getGestor().getScriptAbrirVentanaVerDetalle(urx,
+                rowAvailable ? bean.get${EntityDataProvider}().get${fieldClassName}(rowKey) : null);
+        } else {
+            return null;
+        }
+    }
+
+    /**
+     * ${campo1}Boton2.rendered
+     */
+    public boolean is${Campo1}Boton2Rendered() {
+#if($referenceNamePropertyClassName != '')
+        RowKey rowKey = bean.getGestor().getCurrentRowKey();
+        boolean rowAvailable = bean.get${EntityDataProvider}().isRowAvailable(rowKey);
+        return rowAvailable && bean.get${EntityDataProvider}().get${fieldClassName}(rowKey) != null;
+#else
+        return false;
+#end
+    }
+
+    #writeHiperlink('2')
+
+    /**
+     * ${campo1}Boton3.onClick
+     */
+    public String getScript${Campo1}Boton3() {
+        return getScript${Campo1}Boton2();
+    }
+
+    /**
+     * ${campo1}Boton3.rendered
+     */
+    public boolean is${Campo1}Boton3Rendered() {
+#if($referenceNamePropertyClassName != '')
+        return false;
+#else
+        RowKey rowKey = bean.getGestor().getCurrentRowKey();
+        boolean rowAvailable = bean.get${EntityDataProvider}().isRowAvailable(rowKey);
+        return rowAvailable && bean.get${EntityDataProvider}().get${fieldClassName}(rowKey) != null;
+#end
+    }
+
+    #writeHiperlink('3')
+
+    /**
+     * tableColumn${fieldLastName}.rendered
+     */
+    public boolean isTableColumn${fieldLastName}Rendered() {
+        return bean.getGestor().isFuncionCheckChangesHabilitada() || is${Campo1}Boton3Rendered();
+    }
+    // </editor-fold>
+
+#break
+
+#macro(writeHiperlink $foo)
+    /**
+     * ${campo1}Hiper${foo}.onClick
+     */
+    public String getScript${Campo1}Hiper${foo}() {
+        return getScript${Campo1}Boton${foo}();
+    }
+
+    /**
+     * ${campo1}Hiper${foo}.rendered
+     */
+    public boolean is${Campo1}Hiper${foo}Rendered() {
+        return is${Campo1}Boton${foo}Rendered();
+    }
+#end##writeHiperlink

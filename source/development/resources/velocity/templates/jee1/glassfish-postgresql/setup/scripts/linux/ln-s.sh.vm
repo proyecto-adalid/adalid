@@ -1,0 +1,16 @@
+#setGlobalVariables()
+#parse('templates/jee1/macros/macros-3.vm')
+#setTargetEnvironmentVariables()
+${pound}!/bin/bash
+clear
+cd /opt
+pwd
+ls -l
+rm -i Java
+rm -i glassfish-${targetGlassFishVersion}
+rm -i PostgreSQL
+ls -l
+ln -s /cygdrive/c/"Program Files"/Java Java
+ln -s /cygdrive/c/"Program Files"/glassfish-${targetGlassFishVersion} glassfish-${targetGlassFishVersion}
+ln -s /cygdrive/c/"Program Files"/PostgreSQL PostgreSQL
+ls -l

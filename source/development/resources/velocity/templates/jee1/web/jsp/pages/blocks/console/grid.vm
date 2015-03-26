@@ -1,0 +1,8 @@
+$tab<h:panelGrid id="panelGrid${panelGridSequence.next()}" columns="2">
+        #writeListaFuncionAccion1()
+$tab    <!-- operations opening -->
+        #increaseIndentationBy(1)
+        #parse("$templatePath/blocks/console/grid-field.vm")
+        #decreaseIndentationBy(1)
+$tab    <!-- operations closing -->
+$tab</h:panelGrid>

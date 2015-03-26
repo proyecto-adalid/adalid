@@ -1,0 +1,156 @@
+#parsePostgreSQLMacros()
+#setPostgreSQLVariables()
+#writePostgreSQLLicense()
+#writePostgreSQLAuthor('Jorge Campins')
+#set($view = "consulta_${entity.wrapper.sqlName}")
+#set($view = "${entity.wrapper.sqlSchemaQualifier}consulta_${entity.wrapper.sqlSchemaUnqualifiedShortName}")
+#set($query = $entity.queryTable)
+#set($statement = $query.getSqlSelectStatement())
+#set($discriminatorTable  = '')
+#set($discriminatorColumn = '')
+#set($discriminatorValues = '')
+#set($strategy = "$!entity.inheritanceMappingStrategy")
+#if($strategy == 'SINGLE_TABLE' || $strategy == 'JOINED')
+    #if($entity.discriminatorProperty)
+        #set($discriminatorTable  = "$!entity.discriminatorProperty.declaringFieldPersistentEntityRoot.wrapper.sqlName")
+        #set($discriminatorTable  = "$!entity.discriminatorProperty.declaringFieldPersistentEntityRoot.wrapper.sqlSchemaUnqualifiedShortName")
+        #set($discriminatorColumn = "$!entity.discriminatorProperty.wrapper.sqlName")
+        #set($discriminatorValue  = "$!entity.wrapper.sqlDiscriminatorValue")
+        #set($discriminatorValues = $entity.wrapper.sqlDiscriminatorValues)
+    #end
+#end
+#writeCreateViewStatement('true')
+#if($entity.isNotTable())
+    #set($lowerEntity = $entity.root)
+    #set($upperEntity = $VelocityAid.coalesce($entity.baseTableRoot, $FALSE))
+#elseif($entity.isJoinedTable())
+    #set($lowerEntity = $entity.root)
+    #set($upperEntity = $entity.root)
+#else
+    #set($lowerEntity = $FALSE)
+    #set($upperEntity = $FALSE)
+#end
+#if($lowerEntity && $upperEntity)
+    #set($view = "seudo_${entity.wrapper.sqlName}")
+    #set($view = "${entity.wrapper.sqlSchemaQualifier}seudo_${entity.wrapper.sqlSchemaUnqualifiedShortName}")
+    #set($virtualEntityType = $VelocityAid.valueOf($VirtualEntityType, 'LINE'))
+    #set($query = $entity.getQueryTable($virtualEntityType))
+    #set($statement = $query.getSqlSelectStatement())
+    #writeCreateViewStatement('false')
+    #writeCreateViewTrigger()
+#end
+#set($options = $VelocityAid.values($SelectOption))
+#foreach($entityView in $entity.viewsList)
+    #set($view = "consulta_${entity.wrapper.sqlName}")
+    #set($view = "${entity.wrapper.sqlSchemaQualifier}consulta_${entity.wrapper.sqlSchemaUnqualifiedShortName}")
+    #foreach($option in $options)
+        #set($selectStatement = "$!entityView.getSelectStatement($view, $option)")
+        #if($selectStatement != '')
+            #if($selectStatement.startsWith('SELECT DISTINCT'))
+                #set($selectStatement = $selectStatement.replaceAll('^SELECT DISTINCT ', "SELECT DISTINCT${EOL}${TAB}"))
+            #else
+                #set($selectStatement = $selectStatement.replaceAll('^SELECT ', "SELECT${EOL}${TAB}"))
+            #end
+            #set($selectStatement = $selectStatement.replace(', ', ",${EOL}${TAB}"))
+            #set($selectStatement = $selectStatement.replace(' FROM ', "${EOL}FROM${EOL}${TAB}"))
+            #set($selectStatement = $selectStatement.replace(' GROUP BY ', "${EOL}GROUP BY${EOL}${TAB}"))
+            #set($selectStatement = $selectStatement.replace(' ORDER BY ', "${EOL}ORDER BY${EOL}${TAB}"))
+            #set($selectStatement = $selectStatement.toLowerCase())
+            #set($subview = "${option.nameTag}_${entity.wrapper.sqlName}_${entityView.wrapper.sqlName}")
+............drop view if exists $subview cascade;
+............create view $subview as
+............$selectStatement
+............;
+        #end
+    #end
+#end
+#break
+
+#macro(writeCreateViewStatement $foo)
+drop view if exists $view cascade;
+create view $view as
+$statement.replace("$EOL", "$EOL    ")
+#set($pdqName = $entity.wrapper.sqlName)
+#set($pdqName = $entity.wrapper.sqlSchemaUnqualifiedShortName)
+#set($keyword = 'where')
+#set($discriminatorSentence = '')
+#if($discriminatorTable != '' && $discriminatorTable != $pdqName && $discriminatorColumn != '' && !$discriminatorValues.isEmpty())
+    #set($discriminatorOrClause = '')
+    #set($discriminatorFullName = "${discriminatorTable}.${discriminatorColumn}")
+    #set($discriminatorWithNull = $discriminatorValues.remove('null'))
+    #if($discriminatorWithNull)
+        #set($discriminatorSentence = "$discriminatorFullName is null")
+        #set($discriminatorOrClause = ' or ')
+    #end
+    #if($discriminatorValues.size() > 0)
+        #set($discriminatorSentence = "$discriminatorSentence$discriminatorOrClause$discriminatorFullName")
+        #set($discriminatorValueStr = "$StringUtils.join($discriminatorValues, ', ')")
+        #if($discriminatorValues.size() > 1)
+            #set($discriminatorSentence = "$discriminatorSentence in ($discriminatorValueStr)")
+        #else
+            #set($discriminatorSentence = "$discriminatorSentence = $discriminatorValueStr")
+        #end
+    #end
+#end
+#if("$!discriminatorSentence" != '')
+    $keyword ($discriminatorSentence)
+    #set($keyword = 'and')
+#end
+#if($foo == 'true' && $entity.selectFilter)
+    #set($sqlQualifier = $VelocityAid.valueOf($SqlQualifierType, 'ALIAS'))
+    #set($sqlExpression = $entity.selectFilter.wrapper.getSqlParameterizedExpression($query, $sqlQualifier))
+    #set($sqlParametersMap = $sqlExpression.parametersMap)
+    #set($selectFilterSentence = "$!sqlExpression.expression")
+    #if("$!selectFilterSentence" != '')
+        #if($sqlParametersMap.size() > 0)
+....    /*
+        #end
+....    $keyword ($selectFilterSentence)
+        #if($sqlParametersMap.size() > 0)
+....    */
+        #end
+    #end
+#end
+;
+#end##writeCreateViewStatement
+
+#macro(writeCreateViewTrigger)
+#set($lowerStack = $VelocityAid.getNewStack())
+#set($upperStack = $VelocityAid.getNewStack())
+#set($raiseNotices = $TRUE)
+#set($raiseNotices = $FALSE)
+#parse("$templatePath/macros/macros-1.vm")
+drop function if exists ${view}_instead() cascade;
+create or replace function ${view}_instead() returns trigger as $$
+begin
+    raise notice '% ${view}', TG_OP;
+    if TG_OP = 'INSERT' then
+        #set($template = "$templatePath/instead-of-insert.vm")
+        #increaseIndentationBy(2)
+        #parse($template)
+        #decreaseIndentationBy(2)
+        return new;
+    end if;
+    if TG_OP = 'UPDATE' then
+        #set($template = "$templatePath/instead-of-update.vm")
+        #increaseIndentationBy(2)
+        #parse($template)
+        #decreaseIndentationBy(2)
+        return new;
+    end if;
+    if TG_OP = 'DELETE' then
+        #set($template = "$templatePath/instead-of-delete.vm")
+        #increaseIndentationBy(2)
+        #parse($template)
+        #decreaseIndentationBy(2)
+        return old;
+    end if;
+    return null;
+end;
+$$ language plpgsql;
+
+#set($trigger = "seudo_${entity.wrapper.sqlSchemaUnqualifiedShortName}")
+drop trigger if exists ${trigger}_instead on ${view} cascade;
+create trigger ${trigger}_instead instead of insert or update or delete on ${view}
+for each row execute procedure ${view}_instead();
+#end##writeCreateViewTrigger

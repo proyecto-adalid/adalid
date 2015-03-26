@@ -1,0 +1,149 @@
+#parsePostgreSQLMacros()
+#setPostgreSQLVariables()
+#writePostgreSQLLicense()
+#writePostgreSQLAuthor('Jorge Campins')
+#set($entities = $ColUtils.filter($project.entitiesList, $isEntitySqlCodeGenEnabled, $isPersistentEntity))
+#set($entities = $ColUtils.sort($entities, $byEntityName))
+#foreach($entity in $entities)
+    #resetSQLVariables()
+    #set($table = $entity.wrapper.sqlName)
+    #set($table = $entity.wrapper.sqlSchemaUnqualifiedShortName)
+    #set($rows = $entity.insertableRowsList)
+    #set($rowcount = $rows.size())
+    #if($entity.isDataGenEnabled())
+        #set($hierarchyRoot = $entity.hierarchyRoot)
+        #if($hierarchyRoot == $entity.root && $hierarchyRoot.extensionsList.isEmpty())
+            #writeSomeReference1()
+        #elseif($entity.root.extensionsList.isEmpty())
+            #writeSomeReference2()
+        #else
+            #writeSomeReference3()
+        #end
+    #elseif($rowcount > 0)
+        #writeSomeRow()
+    #end
+#end##foreach-entity
+#break
+
+#macro(writeSomeRow)
+#writeSomeFunctionHeading()
+    d1 double precision;
+    d2 double precision;
+    d3 double precision;
+    d4 double precision;
+    d5 double precision;
+begin
+    d1 := case when(_nullable > 0 and _nullable < 100) then(_nullable) else(0) end;
+    d2 := 1 - d1 / 100;
+    #set($rowcount = 0)
+    #foreach($row in $rows)
+        #set($rowcount = $rowcount + $row.dataGenWeight)
+    #end
+    d3 := $rowcount;
+    d4 := d3 / d2;
+    d5 := d4 * random();
+    return case
+    #set($sum = 0)
+    #foreach($row in $rows)
+        #set($sum = $sum + $row.dataGenWeight)
+        #set($pct = 100.0 * $row.dataGenWeight / $rowcount)
+        when(d5 <= $sum) then($row.instanceKeyValue) -- $pct%
+    #end##foreach-row
+        else(null) end;
+#writeSomeFunctionFooting()
+#end##writeSomeRow
+
+#macro(writeSomeReference1)
+#writeSomeFunctionHeading()
+    base integer := 1000000;
+begin
+    return util.some_entity_number(_nullable, base + $entity.seriesStart, base + $entity.seriesStop);
+#writeSomeFunctionFooting()
+#end##writeSomeReference1
+
+#macro(writeSomeReference2)
+#writeSomeFunctionHeading()
+#computeBase($entity)
+    base integer := $base;
+begin
+    return util.some_entity_number(_nullable, base + $entity.seriesStart, base + $entity.seriesStop);
+#writeSomeFunctionFooting()
+#end##writeSomeReference2
+
+#macro(writeSomeReference3)
+#writeSomeFunctionHeading()
+#computeRowcount($entity)
+    d1 double precision;
+    d2 double precision;
+    d3 double precision;
+    d4 double precision;
+    d5 double precision;
+begin
+    d1 := case when(_nullable > 0 and _nullable < 100) then(_nullable) else(0) end;
+    d2 := 1 - d1 / 100;
+    d3 := $rowcount;
+    d4 := d3 / d2;
+    d5 := d4 * random();
+    return case
+    #set($upperBound = $0)
+    #writeSomeFunctionWhenCase($entity)
+    #foreach($extension in $entity.root.extensionsList)
+        #writeSomeFunctionWhenCase($extension)
+    #end
+        else(null) end;
+#writeSomeFunctionFooting()
+#end##writeSomeReference3
+
+#macro(writeSomeFunctionHeading)
+drop function if exists util.some_${table}(integer);
+create or replace function util.some_${table}(_nullable integer)
+returns $entity.wrapper.sqlType as $$
+declare
+#end##writeSomeFunctionHeading
+
+#macro(writeSomeFunctionFooting)
+end;
+$$ language 'plpgsql' volatile;
+/*
+select id, count(*) from (select util.some_${table}(10) as id from generate_series(1,10000)) x
+group by id
+order by id;
+*/
+#end##writeSomeFunctionFooting
+
+#macro(writeSomeFunctionWhenCase $e)
+    #computeBase($e)
+    #if($base != 0)
+        #set($upperBound = $upperBound + $e.seriesStop - $e.seriesStart + 1)
+        when(d5 <= $upperBound) then(util.some_entity_number(0, $base + $e.seriesStart, $base + $e.seriesStop))
+    #end
+#end##writeSomeFunctionWhenCase
+
+#macro(computeBase $ntt)
+    #if($ntt.isAbstractClass())
+        #set($mega = 0)
+        #set($base = 0)
+    #else
+        #set($mega = 1)
+        #foreach($foo in $hierarchyRoot.extensionsList)
+            #if($ntt == $foo)
+                #set($mega = $mega + $foreach.count)
+                #break
+            #end
+        #end
+        #set($base = $mega * 1000000)
+    #end
+#end##computeBase
+
+#macro(computeRowcount $ntt)
+    #if($ntt.isAbstractClass())
+        #set($rowcount = 0)
+    #else
+        #set($rowcount = $ntt.seriesStop - $ntt.seriesStart + 1)
+    #end
+    #foreach($foo in $ntt.root.extensionsList)
+        #if(!$foo.isAbstractClass())
+            #set($rowcount = $rowcount + $foo.seriesStop - $foo.seriesStart + 1)
+        #end
+    #end
+#end##computeRowcount

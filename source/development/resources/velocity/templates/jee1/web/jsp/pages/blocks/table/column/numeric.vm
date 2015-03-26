@@ -1,0 +1,46 @@
+#if($field.property.isByteData())
+    #set($fieldMaxLength = 4)##-256
+#elseif($field.property.isShortData())
+    #set($fieldMaxLength = 7)##-32,768
+#elseif($field.property.isIntegerData())
+    #set($fieldMaxLength = 14)##-2.147.483.648
+#elseif($field.property.isLongData())
+    #set($fieldMaxLength = 26)##-9.223.372.036.854.775.808
+#else
+    #set($fieldMaxLength = 0)
+#end
+$tab<webuijsf:tableColumn id="tableColumn${fieldFirstName}"
+$tab    binding="#{${pageBeanName}.tableColumn${fieldFirstName}}"
+    #if(!$field.property.headertextlessField)
+##      headerText="$field.property.wrapper.xmlValidDefaultShortLabel"
+$tab    headerText="BundleParametros.${page.entity.wrapper.sqlSchemaQualifiedShortName}.${field.property.wrapper.sqlName}"
+    #end
+##      rendered="true"
+$tab    rendered="#{${pageBeanName}.asistente.column${fieldClassName}Rendered}"
+$tab    sort="$fieldSqlName">
+$tab    <webuijsf:label id="label${fieldFirstName}"
+$tab        binding="#{${pageBeanName}.label${fieldFirstName}}"
+$tab        for="${campo1}"/>
+$tab    <webuijsf:textField id="${campo1}"
+$tab        binding="#{${pageBeanName}.$campo1}"
+$tab        columns="20"
+$tab        converter="#{${pageBeanName}.converter${fieldFirstName}}"
+        #if($fieldMaxLength > 0)
+$tab        maxLength="$fieldMaxLength"
+        #end
+$tab        readOnly="$fieldReadOnly"
+$tab        rendered="$fieldRendered"
+$tab        required="$fieldRequired"
+$tab        text="#{${sourceVar}.value['$fieldSqlName']}"
+##          toolTip="$field.property.wrapper.xmlValidDefaultTooltip"
+$tab        toolTip="BundleParametros.${page.entity.wrapper.sqlSchemaQualifiedShortName}.${field.property.wrapper.sqlName}"
+$tab        validatorExpression="#{${pageBeanName}.${campo1}_validate}"/>
+$tab    <webuijsf:staticText id="${campo1}Texto1"
+$tab        binding="#{${pageBeanName}.${campo1}Texto1}"
+$tab        converter="#{${pageBeanName}.converter${fieldFirstName}}"/>
+        #if($field.property.isDiscriminatorProperty())
+            #parse("$templatePath/blocks/table/column/discriminator.vm")
+        #end
+$tab    <webuijsf:message id="message${fieldFirstName}"
+$tab        for="${campo1}"/>
+$tab</webuijsf:tableColumn>

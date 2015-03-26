@@ -1,0 +1,103 @@
+#parseJavaMacros()
+#setJavaVariables()
+#setLocalVariables()
+#writeJavaLicense()
+#writeJavaPackage()
+#addImports()
+#writeJavaImports($imports)
+#writeJavaAuthor('Jorge Campins')
+public interface ${javaClassSimpleName}#writeJavaExtends()#writeJavaImplements()
+
+#if($isExportOperationInEntity.evaluate($entity))
+    Object getExporter();
+
+#end
+#if($isReportOperationInEntity.evaluate($entity))
+    Object getReporter();
+
+#end
+#if($isProcedureOperationInEntity.evaluate($entity))
+    Object getSqlAgent();
+
+#end
+#if($isProcessOperationInEntity.evaluate($entity))
+    #set($EntityBusinessProcess = "${entity.wrapper.javaClassName}BusinessProcess")
+    Object get${EntityBusinessProcess}();
+
+    Object getMessenger();
+
+#end
+#if($entity)
+    #writeComponentGetterSignature($entityDataProvider $entityDataProviderClass)
+#end
+#foreach($property in $entity.dataProviderColumnsList)
+    #if(!$property.isHiddenField())
+        #set($campo1 = "campo${property.wrapper.javaClassName}1")
+        #set($fieldSearchType = "$!property.searchType")
+        #if($property.isEntity())
+            #if($fieldSearchType == 'LIST')
+                #writeComponentGetterSignature($campo1 'DropDown')
+            #elseif($fieldSearchType == 'DISPLAY')
+                #writeComponentGetterSignature($campo1 'TextField')
+            #else
+                #writeComponentGetterSignature($campo1 'TextField')
+            #end
+        #elseif($property.isBinaryPrimitive())
+        #elseif($property.isBooleanPrimitive())
+            #if($property.booleanDisplayType != 'CHECKBOX' || $property.isNullable())
+                #writeComponentGetterSignature($campo1 'DropDown')
+            #else
+                #writeComponentGetterSignature($campo1 'Checkbox')
+            #end
+        #elseif($property.isCharacterPrimitive())
+            #if($property.isStringData() && $property.isPassword())
+                #writeComponentGetterSignature($campo1 'PasswordField')
+            #else
+                #writeComponentGetterSignature($campo1 'TextField')
+            #end
+        #elseif($property.isNumericPrimitive())
+            #writeComponentGetterSignature($campo1 'TextField')
+        #elseif($property.isTemporalPrimitive())
+            #writeComponentGetterSignature($campo1 'TextField')
+        #end
+    #end
+#end
+    Button getBotonAplicar1();
+
+}
+#break
+
+#macro(setLocalVariables)
+    #set($bookmarkSequence = $Sequence.startWith(1))
+    #set($PaginaActualizacion = "PaginaActualizacion${entity.wrapper.javaClassName}")
+    #setMainDataProviderVariables()
+#end##setLocalVariables
+
+#macro(addImports)
+    #addPaginaActualizacionImports()
+#end##addImports
+
+#macro(writeComponentGetterSignature $variable $clazz)
+    ${clazz} get${StringUtils.capitalize($variable)}();
+
+#end##writeComponentGetterSignature
+
+#macro(setMainDataProviderVariables)
+    #if($entity)
+        #set($xdpno = "${entity.wrapper.dataProviderSuffix}")
+        #set($entityDataProviderPackage = "${project.rootPackageName}.lib.data.provider.xdp${xdpno}")
+        #set($entityDataProviderClass = "${entity.wrapper.javaClassName}CachedRowSetDataProvider${xdpno}")
+        #set($entityDataProvider = "${entity.wrapper.javaVariableName}DataProvider")
+        #set($EntityDataProvider = "${entity.wrapper.javaClassName}DataProvider")
+    #end
+#end##setMainDataProviderVariables
+
+#macro(addPaginaActualizacionImports)
+    #set($added = $imports.add("${project.rootPackageName}.lib.core.web.app.PaginaActualizacion"))
+    #set($added = $parents.add("PaginaActualizacion"))
+    #set($added = $imports.add("com.sun.webui.jsf.component.*"))
+    #if($entity)
+        #set($clazz = "${entityDataProviderPackage}.${entityDataProviderClass}")
+        #set($added = $imports.add($clazz))
+    #end
+#end##addPaginaActualizacionImports

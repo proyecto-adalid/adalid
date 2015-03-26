@@ -1,0 +1,49 @@
+#break
+
+#macro(writeRecursoDescriptibleImport)
+#if($esRecursoDescriptible)
+    #set($added = $imports.add("${project.rootPackageName}.lib.core.db.xdp.RecursoDescriptibleDataProvider"))
+    #set($added = $interfaces.add('RecursoDescriptibleDataProvider'))
+#end
+#end##writeRecursoDescriptibleImport
+
+#macro(writeRecursoDescriptibleImplementation)
+#if($esRecursoDescriptible)
+    #set($property = $entity.descriptionProperty)
+##  public static final String COLUMNA_DESCRIPCION_RECURSO = "${property.wrapper.sqlName}";
+    public static final String COLUMNA_DESCRIPCION_RECURSO = "${query.getSqlAlias($property)}";
+
+    public static final String ETIQUETA_DESCRIPCION_RECURSO = BundleWebui.getString("xdp.etiqueta_descripcion_recurso");
+
+    @Override
+    public String getColumnaDescripcionRecurso() {
+        return COLUMNA_DESCRIPCION_RECURSO;
+    }
+
+    @Override
+    public String getEtiquetaDescripcionRecurso() {
+        return ETIQUETA_DESCRIPCION_RECURSO;
+    }
+
+    @Override
+    public ${property.wrapper.javaPrimitiveType} getDescripcionRecurso() {
+        return get${property.wrapper.javaClassName}();
+    }
+
+    @Override
+    public ${property.wrapper.javaPrimitiveType} getDescripcionRecurso(RowKey rowKey) {
+        return get${property.wrapper.javaClassName}(rowKey);
+    }
+
+    @Override
+    public void setDescripcionRecurso(${property.wrapper.javaPrimitiveType} descripcionRecurso) {
+        set${property.wrapper.javaClassName}(descripcionRecurso);
+    }
+
+    @Override
+    public void setDescripcionRecurso(RowKey rowKey, ${property.wrapper.javaPrimitiveType} descripcionRecurso) {
+        set${property.wrapper.javaClassName}(rowKey, descripcionRecurso);
+    }
+
+#end
+#end##writeRecursoDescriptibleImplementation

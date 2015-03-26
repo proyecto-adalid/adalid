@@ -1,0 +1,51 @@
+#writeOperationJavadocType1()
+    protected boolean _${operationName}(RowKey rowKey) throws Exception {
+        bean.getGestor().setReadOnlyProcessing(false);
+        #set($message = "${entity.wrapper.javaClassName}${operation.wrapper.javaClassName}Message")
+        ${message} message = new ${message}();
+        #if($operation.instanceParameter)
+            #if($esRecursoIdentificable)
+........        message.setIdRecurso(bean.get$EntityDataProvider().getIdentificacionRecurso(rowKey));
+            #elseif($esRecursoEnumerable)
+........        message.setIdRecurso(bean.get$EntityDataProvider().getNumeroRecurso(rowKey));
+            #end
+            #if($esRecursoVersionable)
+........        message.setVersionRecurso(bean.get$EntityDataProvider().getVersionRecurso(rowKey));
+            #end
+            #if($esRecursoCodificable)
+........        message.setCodigoRecurso(bean.get$EntityDataProvider().getCodigoRecurso(rowKey));
+            #end
+            #if($esRecursoNombrable)
+........        message.setNombreRecurso(bean.get$EntityDataProvider().getNombreRecurso(rowKey));
+            #end
+            #if($esRecursoPersonalizable)
+........        message.setIdPropietarioRecurso(bean.get$EntityDataProvider().getPropietarioRecurso(rowKey));
+            #end
+            #if($esRecursoSegmentable)
+........        message.setIdSegmentoRecurso(bean.get$EntityDataProvider().getSegmentoRecurso(rowKey));
+            #end
+        #end
+    #foreach($parameter in $operation.parametersList)
+        #if($parameter.isInstanceReferenceField())
+            #set($value = "bean.get$EntityDataProvider().get${entityPrimaryKeyClassName}(rowKey)")
+        #else
+            #set($value = $VelocityAid.coalesce($parameter.wrapper.javaInitialValue, $parameter.wrapper.javaDefaultValue, 'null'))
+            #set($value = $VelocityAid.coalesce($parameter.wrapper.javaInitialValue, 'null'))
+        #end
+        #if($parameter.isInstanceReferenceField() || $value != 'null')
+            #set($x = '  ')
+        #else
+            #set($x = '//')
+        #end
+$x      message.setArgumento${parameter.wrapper.javaClassName}($value);
+    #end##foreach-parameter
+        TLC.getControlador().ponerProcesoPendiente(message);
+    #if($operation.asynchronous)
+        requestReply(message);
+    #else
+        get${entityBusinessProcess}().${operationName}(message);
+    #end
+        return true;
+    }
+
+#break

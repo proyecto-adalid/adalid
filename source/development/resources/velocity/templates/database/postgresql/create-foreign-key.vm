@@ -1,0 +1,52 @@
+#parsePostgreSQLMacros()
+#setPostgreSQLVariables()
+#writePostgreSQLLicense()
+#writePostgreSQLAuthor('Jorge Campins')
+#set($entities = $ColUtils.filter($project.entitiesList, $isEntitySqlCodeGenEnabled, $isPersistentEntityTable))
+#set($entities = $ColUtils.sort($entities, $byEntityName))
+#foreach($entity in $entities)
+    #writeTemplate('remark-entity')
+    #writeCreateForeignKeys()
+#end##foreach-entity
+#break
+
+#macro(writeCreateForeignKeys)
+    #resetSQLVariables()
+    #set($table = $entity.wrapper.sqlTableName)
+    #set($table = $entity.wrapper.sqlSchemaQualifiedShortTableName)
+    #if($entity.isJoinedTable())
+        #set($fk = "$!entity.primaryKeyProperty.wrapper.sqlName")
+        #set($ft = "$!entity.baseTableRoot.wrapper.sqlTableName")
+        #set($ft = "$!entity.baseTableRoot.wrapper.sqlSchemaQualifiedShortTableName")
+        #set($pk = "$!entity.baseTableRoot.primaryKeyProperty.wrapper.sqlName")
+        #set($dr = 'cascade')
+        #set($ur = 'cascade')
+        #writeCreateForeignKeyStatement()
+    #end
+    #set($properties = $entity.columnsList)
+    #foreach($property in $properties)
+        #if($property.foreignKey)
+            #set($fk = "$!property.wrapper.sqlName")
+            #if($property.isTable())
+                #set($ft = "$!property.root.wrapper.sqlTableName")
+                #set($ft = "$!property.root.wrapper.sqlSchemaQualifiedShortTableName")
+                #set($pk = "$!property.root.primaryKeyProperty.wrapper.sqlName")
+            #else
+                #set($ft = "$!property.baseTableRoot.wrapper.sqlTableName")
+                #set($ft = "$!property.baseTableRoot.wrapper.sqlSchemaQualifiedShortTableName")
+                #set($pk = "$!property.baseTableRoot.primaryKeyProperty.wrapper.sqlName")
+            #end
+            #set($dr = "$!property.wrapper.sqlOnDeleteAction")
+            #set($ur = "$!property.wrapper.sqlOnUpdateAction")
+            #writeCreateForeignKeyStatement()
+        #end
+    #end##foreach-property
+#end##writeCreateForeignKeys
+
+#macro(writeCreateForeignKeyStatement)
+#if($fk != '' && $ft != '' && $pk != '')
+    #setGlobalForeignKeyName($entity)
+    #set($constraint = $globalConstraintName)
+....alter table $table add constraint $constraint foreign key ($fk) references $ft ($pk)#if($dr != '') on delete $dr#end#if($ur != '') on update $ur#end;
+#end
+#end##writeCreateForeignKeyStatement

@@ -1,0 +1,30 @@
+#parse("$templatePath/blocks/set-field-variables.vm")
+$tab<webuijsf:table id="table1"
+$tab    binding="#{${pageBeanName}.table1}"
+$tab    clearSortButton="true"
+$tab    deselectMultipleButton="true"
+$tab    paginateButton="false"
+$tab    paginationControls="true"
+$tab    rendered="#{${pageBeanName}.gestor.filaDisponible}"
+$tab    selectMultipleButton="true"
+$tab    sortPanelToggleButton="true"
+$tab    width="$page.entity.tableViewWidth">
+$tab    <webuijsf:tableRowGroup id="tableRowGroup1"
+$tab        binding="#{${pageBeanName}.tableRowGroup1}"
+$tab        rows="$page.entity.tableViewRows"
+$tab        selected="#{${pageBeanName}.gestor.filaEscogida}"
+$tab        sourceData="#{${pageBeanName}.${entityDataProvider}}"
+$tab        sourceVar="currentRow">
+            #increaseIndentationBy(2)
+            #parse("$templatePath/blocks/table/column/checkbox.vm")
+            #parse("$templatePath/blocks/table/column/action-buttons.vm")
+            #parse("$templatePath/blocks/table/column/row-button.vm")
+            #parse("$templatePath/blocks/table/column/row-number.vm")
+            #decreaseIndentationBy(2)
+$tab        <!-- data provider columns opening -->
+            #increaseIndentationBy(2)
+            #parse("$templatePath/blocks/table/root-field.vm")
+            #decreaseIndentationBy(2)
+$tab        <!-- data provider columns closing -->
+$tab    </webuijsf:tableRowGroup>
+$tab</webuijsf:table>

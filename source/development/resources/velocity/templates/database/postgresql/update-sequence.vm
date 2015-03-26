@@ -1,0 +1,31 @@
+#parsePostgreSQLMacros()
+#setPostgreSQLVariables()
+#writePostgreSQLLicense()
+#writePostgreSQLAuthor('Jorge Campins')
+#set($entities = $ColUtils.filter($project.entitiesList, $isEntitySqlCodeGenEnabled, $isPersistentEntityTable))
+#set($entities = $ColUtils.sort($entities, $byEntityName))
+#foreach($entity in $entities)
+    #writeTemplate('remark-entity')
+    #writeUpdateSequence()
+#end##foreach-entity
+#break
+
+#macro(writeUpdateSequence)
+    #resetSQLVariables()
+    #set($table = $entity.wrapper.sqlTableName)
+    #set($table = $entity.wrapper.sqlSchemaQualifiedShortTableName)
+    #set($keyname = $entity.primaryKeyProperty.wrapper.sqlName)
+    #set($keytype = $entity.primaryKeyProperty.wrapper.sqlType)
+    #setGlobalSequenceName($entity)
+    #set($sequence = $globalConstraintName)
+    #if($keytype == 'integer')
+        #set($maxvalue = '2147483647')
+    #else
+        #set($maxvalue = '9223372036854775807')
+    #end
+    #writeUpdateSequenceStatement()
+#end##writeUpdateSequence
+
+#macro(writeUpdateSequenceStatement)
+select setval('$sequence', max($keyname)) from $table where $keyname > 0;
+#end##writeUpdateSequenceStatement

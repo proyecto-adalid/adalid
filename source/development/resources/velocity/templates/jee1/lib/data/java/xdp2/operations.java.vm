@@ -1,0 +1,68 @@
+    public boolean esFilaValidaParaProcesar(RowKey rowKey, long funcion) {
+        if (funcion < 0) {
+            return false;
+#foreach($operation in $entity.businessOperationsList)
+    #setOperationVariables()
+    #if($operationName != '')
+        #if($operation.initialStatesList.isEmpty())
+        #else
+        } else if (funcion == FUNCION_${OPERATION_TYPE}_${OPERATION_NAME}) {
+            return esFilaValidaPara${operation.wrapper.javaCapitalizedName}(rowKey);
+        #end
+    #end
+#end##foreach-operation
+        }
+        return esFilaAutorizada(rowKey, funcion);
+    }
+
+#foreach($operation in $entity.businessOperationsList)
+    #setOperationVariables()
+    #if($operationName != '')
+        #if($operation.initialStatesList.isEmpty())
+        #else
+........    public boolean esFilaValidaPara${operation.wrapper.javaCapitalizedName}(RowKey rowKey) {
+........        List<String> args = new ArrayList<>();
+........        boolean es = esFilaAutorizada(rowKey, FUNCION_${OPERATION_TYPE}_${OPERATION_NAME});
+                #set($filterErrorMessageBundle = 'BundleDominios')
+                #set($filterErrorMessageBundleKey = "${codex}.${operation.wrapper.sqlName}")
+........        if (es) {
+                    #set($filterEntity = $FALSE)
+                    #set($filterExpression = $FALSE)
+                    #set($filterErrorMessageBundle = '')
+                    #set($filterErrorMessageBundleMethod = '')
+                    #set($filterErrorMessageBundleKey = '')
+                    #foreach($state in $operation.initialStatesList)
+                        #if($foreach.first)
+................            es = ${state.wrapper.javaVariableName}(rowKey);
+                        #else
+................            if (!es) {
+................                es = ${state.wrapper.javaVariableName}(rowKey);
+................            }
+                        #end
+                        #set($filterEntity = $entity)
+                        #set($filterExpression = $state)
+                        #set($filterErrorMessageBundle = 'BundleDominios')
+                        #set($filterErrorMessageBundleMethod = 'getStateError')
+                        #set($filterErrorMessageBundleKey = "${codex}.${state.wrapper.sqlName}")
+                        #set($filterExpressionDefaultErrorMessage = "$!state.wrapper.bundleDefaultErrorMessageChoice")
+                        #if($filterExpressionDefaultErrorMessage != '')
+................            if (!es) {
+................//              args.add("$filterExpressionDefaultErrorMessage");
+................                args.add(${filterErrorMessageBundle}.${filterErrorMessageBundleMethod}("${filterErrorMessageBundleKey}"));
+................            }
+                        #end
+                    #end
+................            if (!es) {
+................                String arg0 = BundleDominios.getShortLabel(CODIGO_DOMINIO_RECURSO);
+................                String arg1 = getEtiquetaRecurso(rowKey);
+................                String arg2 = StrUtils.enclose(StringUtils.join(args, "; "));
+................                TLC.getBitacora().error(CBM.RECURSO_NO_PROCESABLE, arg0, arg1, arg2);
+................            }
+........        }
+........        return es;
+........    }
+
+        #end
+    #end
+#end
+#break

@@ -1,0 +1,27 @@
+#parsePostgreSQLMacros()
+#setPostgreSQLVariables()
+#writePostgreSQLLicense()
+#writePostgreSQLAuthor('Jorge Campins')
+#set($entities = $ColUtils.filter($project.entitiesList, $isEntitySqlCodeGenEnabled, $isPersistentEntityWithTable))
+#set($entities = $ColUtils.sort($entities, $byEntityName))
+#foreach($entity in $entities)
+    #writeTemplate('remark-entity')
+    #writeDropConvertFunctions()
+#end##foreach-entity
+#break
+
+#macro(writeDropConvertFunctions)
+    #resetSQLVariables()
+    #set($entname = $entity.wrapper.sqlName)
+    #set($entname = $entity.wrapper.sqlSchemaQualifiedShortName)
+    #set($table = $entity.wrapper.sqlTableName)
+    #set($table = $entity.wrapper.sqlSchemaQualifiedShortTableName)
+    #set($keytype = $entity.primaryKeyProperty.wrapper.sqlType)
+    #set($foo = "${sql_name_separator}convert")
+##  #writeDropConvertFunction("${entname}${foo}(${keytype})")
+##  #writeDropConvertFunction("${entname}${foo}(${table})")
+#end##writeDropConvertFunctions
+
+#macro(writeDropConvertFunction $function)
+drop function if exists $function cascade;
+#end##writeDropConvertFunction

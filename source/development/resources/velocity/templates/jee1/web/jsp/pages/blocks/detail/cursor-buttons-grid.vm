@@ -1,0 +1,48 @@
+#set($foo = $cursorButtonsSequence.next())
+$tab<!-- cursor buttons opening -->
+$tab<h:panelGrid id="panelGrid${panelGridSequence.next()}" styleClass="pdq-grid-detalle-botones">
+$tab    <h:panelGrid id="panelGrid${panelGridSequence.next()}" columns="5">
+$tab        <webuijsf:button id="botonIrAlPrimero$foo"
+$tab            actionExpression="#{${pageBeanName}.botonIrAlPrimero${foo}_action}"
+$tab            binding="#{${pageBeanName}.botonIrAlPrimero$foo}"
+$tab            disabled="#{${pageBeanName}.gestor.loteSinFilas}"
+$tab            imageURL="#{${pageBeanName}.gestor.urlImagenIrAlPrimero}"
+$tab            onClick="#{${pageBeanName}.gestor.scriptIrAlPrimero}"
+$tab            text="#{${pageBeanName}.gestor.i18n.textoBotonIrAlPrimero}"
+$tab            toolTip="#{${pageBeanName}.gestor.i18n.toolTipBotonIrAlPrimero}"/>
+$tab        <webuijsf:button id="botonIrAlAnterior$foo"
+$tab            actionExpression="#{${pageBeanName}.botonIrAlAnterior${foo}_action}"
+$tab            binding="#{${pageBeanName}.botonIrAlAnterior$foo}"
+$tab            disabled="#{${pageBeanName}.gestor.loteSinFilas}"
+$tab            imageURL="#{${pageBeanName}.gestor.urlImagenIrAlAnterior}"
+$tab            onClick="#{${pageBeanName}.gestor.scriptIrAlAnterior}"
+$tab            text="#{${pageBeanName}.gestor.i18n.textoBotonIrAlAnterior}"
+$tab            toolTip="#{${pageBeanName}.gestor.i18n.toolTipBotonIrAlAnterior}"/>
+$tab        <webuijsf:button id="botonIrAlSiguiente$foo"
+$tab            actionExpression="#{${pageBeanName}.botonIrAlSiguiente${foo}_action}"
+$tab            binding="#{${pageBeanName}.botonIrAlSiguiente$foo}"
+$tab            disabled="#{${pageBeanName}.gestor.loteSinFilas}"
+$tab            imageURL="#{${pageBeanName}.gestor.urlImagenIrAlSiguiente}"
+$tab            onClick="#{${pageBeanName}.gestor.scriptIrAlSiguiente}"
+$tab            text="#{${pageBeanName}.gestor.i18n.textoBotonIrAlSiguiente}"
+$tab            toolTip="#{${pageBeanName}.gestor.i18n.toolTipBotonIrAlSiguiente}"/>
+$tab        <webuijsf:button id="botonIrAlUltimo$foo"
+$tab            actionExpression="#{${pageBeanName}.botonIrAlUltimo${foo}_action}"
+$tab            binding="#{${pageBeanName}.botonIrAlUltimo$foo}"
+$tab            disabled="#{${pageBeanName}.gestor.loteSinFilas}"
+$tab            imageURL="#{${pageBeanName}.gestor.urlImagenIrAlUltimo}"
+$tab            onClick="#{${pageBeanName}.gestor.scriptIrAlUltimo}"
+$tab            text="#{${pageBeanName}.gestor.i18n.textoBotonIrAlUltimo}"
+$tab            toolTip="#{${pageBeanName}.gestor.i18n.toolTipBotonIrAlUltimo}"/>
+$tab        <webuijsf:button id="botonProcesarFila$foo"
+$tab            actionExpression="#{${pageBeanName}.botonProcesarFila${foo}_action}"
+$tab            binding="#{${pageBeanName}.botonProcesarFila$foo}"
+$tab            disabled="#{${pageBeanName}.gestor.funcionPickItemInhabilitada}"
+$tab            imageURL="#{${pageBeanName}.gestor.urlImagenProcesar}"
+$tab            onClick="#{${pageBeanName}.scriptAbrirVentanaProcesarFila$foo}"
+$tab            rendered="#{${pageBeanName}.comandoDisponible}"
+$tab            text="#{${pageBeanName}.gestor.i18n.textoBotonProcesarFila}"
+$tab            toolTip="#{${pageBeanName}.gestor.i18n.toolTipBotonProcesarFila}"/>
+$tab    </h:panelGrid>
+$tab</h:panelGrid>
+$tab<!-- cursor buttons closing -->

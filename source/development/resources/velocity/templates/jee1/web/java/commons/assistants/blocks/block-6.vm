@@ -1,0 +1,92 @@
+    // <editor-fold defaultstate="collapsed" desc="metodos para validar las restricciones de la fila">
+#if(!$entity.checksList.isEmpty())
+    private RowChecker rowChecker;
+
+    private void setRowChecker() {
+        if (rowChecker == null) {
+            rowChecker = new RowChecker() {
+
+                @Override
+                public boolean isValidRow(RowKey rowKey) {
+                    return evaluate(rowKey);
+                }
+
+            };
+        }
+        bean.get${EntityDataProvider}().setRowChecker(rowChecker);
+    }
+
+    private boolean evaluate(RowKey rowKey) {
+        if (bean.get${EntityDataProvider}().isNotRowAvailable(rowKey)) {
+            return false;
+        }
+        boolean check;
+        boolean valid = true;
+        nullify(rowKey);
+    #foreach($check in $entity.checksList)
+        check = ${check.wrapper.javaVariableName}(rowKey);
+        valid &= check;
+    #end
+        return valid;
+    }
+
+    private void nullify(RowKey rowKey) {
+    #foreach($property in $entity.dataProviderColumnsList)
+        #if(!$property.isHiddenField() && $property.nullifyingFilter)
+            #setFieldVariables()
+....        if (isField${fieldClassName}NullifyingFiltered()) {
+....            bean.get${EntityDataProvider}().set${fieldClassName}(rowKey, null);
+....        }
+        #end
+    #end##foreach-property
+    }
+
+    #foreach($check in $entity.checksList)
+        #writeExpression()
+    #end
+#end
+    char bookmark$bookmarkSequence.next();
+    // </editor-fold>
+
+#break
+
+#macro(writeExpression)
+    private boolean ${check.wrapper.javaVariableName}(RowKey rowKey) {
+        Object obj;
+        #set($errorMessageBundleKey = "<${entity.wrapper.sqlName}.${check.wrapper.sqlName}>")
+        #set($errorMessageBundleKey = "<${entity.wrapper.sqlSchemaQualifiedShortName}.${check.wrapper.sqlName}>")
+        #set($parameterizedExpression = $check.wrapper.javaParameterizedExpression)
+        #set($parametersMap = $parameterizedExpression.parametersMap)
+        #setIndentation(1)
+        #clearEntityBeanParametersList()
+        #foreach($parameterKey in $parametersMap.keySet())
+            #writeGetEntityBean()
+        #end
+        #foreach($parameterKey in $parametersMap.keySet())
+....//      key = "$parameterKey";
+            #writeAssignObjValue()
+....        $artifactJavaType $parameterKey = $artifactObjUtilsMethod(obj);
+        #end
+        #set($maxLineLength = 0)
+        #set($newLineString = '<EOL>')
+        #set($string2split = "$!parameterizedExpression.expression")
+        #set($string2split = "boolean check = $string2split;")
+        #set($string2split = $string2split.replace(":", "${newLineString}${TAB}:"))
+        #set($string2split = $string2split.replace("&&", "${newLineString}${TAB}&&"))
+        #set($string2split = $string2split.replace("||", "${newLineString}${TAB}||"))
+        #set($string2split = $string2split.replace("), ", "),${newLineString}${TAB}"))
+        #set($string2lines = $VelocityAid.split($string2split, $maxLineLength, $newLineString, $FALSE, $TAB))
+        #foreach($line in $string2lines)
+....        ${line}
+        #end
+        if (!check) {
+            #set($expressionDefaultErrorMessage = "$!check.wrapper.bundleDefaultErrorMessageChoice")
+            #if($expressionDefaultErrorMessage != '')
+....//          TLC.getBitacora().error("$expressionDefaultErrorMessage");
+            #end
+            TLC.getBitacora().error("${errorMessageBundleKey}");
+        }
+        return check;
+    }
+
+#end##writeExpression

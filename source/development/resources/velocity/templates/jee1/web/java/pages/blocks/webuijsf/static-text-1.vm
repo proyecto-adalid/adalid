@@ -1,0 +1,12 @@
+#set($capitalizedComponentName = $StringUtils.capitalize($componentName))
+$tab    private StaticText ${componentName} = new TextoEstaticoAlternativo();
+
+$tab    public StaticText get${capitalizedComponentName}() {
+$tab        return ${componentName};
+$tab    }
+
+$tab    public void set${capitalizedComponentName}(StaticText staticText) {
+$tab        ${componentName} = staticText;
+$tab    }
+
+#break

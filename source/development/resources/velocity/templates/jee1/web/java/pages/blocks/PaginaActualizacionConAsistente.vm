@@ -1,0 +1,10 @@
+    // <editor-fold defaultstate="collapsed" desc="implementacion estandar de la interfaz PaginaActualizacionConAsistente">
+    #set($clazz = "Asistente$PaginaActualizacion")
+    private ${clazz} asistente = ${clazz}.newInstance(this);
+
+    public ${clazz} getAsistente() {
+        return asistente;
+    }
+    // </editor-fold>
+
+#break

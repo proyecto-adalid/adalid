@@ -1,0 +1,150 @@
+#parsePostgreSQLMacros()
+#setPostgreSQLVariables()
+#writePostgreSQLLicense()
+#writePostgreSQLAuthor('Jorge Campins')
+#set($entities = $ColUtils.filter($project.entitiesList, $isPersistentEntity))
+#set($entities = $ColUtils.sort($entities, $byEntityName))
+#foreach($entity in $entities)
+    #foreach($parameter in $entity.propertiesList)
+        #set($codigo = "${entity.wrapper.sqlName}.${parameter.wrapper.sqlName}")
+        #set($codigo = "${entity.wrapper.sqlSchemaQualifiedShortName}.${parameter.wrapper.sqlName}")
+        #writeInsertRow()
+    #end##foreach-operation
+    #set($operations = $entity.businessOperationsList)
+    #set($operations = $ColUtils.sort($operations, $byOperationName))
+    #foreach($operation in $operations)
+        #foreach($parameter in $operation.parametersList)
+            #set($codigo = "${entity.wrapper.sqlName}.${operation.wrapper.sqlName}.${parameter.wrapper.sqlName}")
+            #set($codigo = "${entity.wrapper.sqlSchemaQualifiedShortName}.${operation.wrapper.sqlName}.${parameter.wrapper.sqlName}")
+            #writeInsertRow()
+        #end##foreach-operation
+    #end##foreach-operation
+#end##foreach-entity
+#break
+
+#macro(writeInsertRow)
+insert
+into public.parametro
+    (
+    id_parametro,
+    codigo_parametro,
+    nombre_parametro,
+    detalle_parametro,
+    descripcion_parametro,
+    numero_tipo_dato_par,
+    clase_java,
+    anulable,
+    longitud,
+    precision,
+    escala,
+    pixeles
+    )
+values
+    (
+##
+##  id_parametro
+##
+    $project.getParameterNumber($parameter),
+##
+##  codigo_parametro
+##
+    '$codigo',
+##
+##  nombre_parametro
+##
+    '$parameter.wrapper.validDefaultLabel',
+##
+##  detalle_parametro
+##
+#if( $parameter.defaultTooltip )
+    '$parameter.defaultTooltip',
+#else
+    null,
+#end
+##
+##  descripcion_parametro
+##
+#if( $parameter.defaultDescription )
+    '$parameter.defaultDescription',
+#else
+    null,
+#end
+##
+##  numero_tipo_dato_par
+##
+#if($parameter.isBinaryPrimitive())
+    7, -- $!parameter.wrapper.sqlType
+#elseif($parameter.isBooleanPrimitive())
+    6, -- $!parameter.wrapper.sqlType
+#elseif($parameter.isBigIntegerData() || $parameter.isLongData() || "$!parameter.wrapper.sqlType" == 'bigint')
+    5, -- $!parameter.wrapper.sqlType
+#elseif($parameter.isIntegerData() || "$!parameter.wrapper.sqlType" == 'integer')
+    4, -- $!parameter.wrapper.sqlType
+#elseif($parameter.isTemporalPrimitive())
+    3, -- $!parameter.wrapper.sqlType
+#elseif($parameter.isNumericPrimitive())
+    2, -- $!parameter.wrapper.sqlType
+#elseif($parameter.isCharacterPrimitive())
+    1, -- $!parameter.wrapper.sqlType
+#else
+    0, -- $!parameter.wrapper.sqlType
+#end
+##
+##  clase_java
+##
+#if($parameter.isBigDecimalData())
+    1, -- BigDecimal
+#elseif($parameter.isBigIntegerData())
+    2, -- BigInteger
+#elseif($parameter.isBinaryData())
+    3, -- Binary
+#elseif($parameter.isBooleanData())
+    4, -- Boolean
+#elseif($parameter.isByteData())
+    5, -- Byte
+#elseif($parameter.isCharacterData())
+    6, -- Character
+#elseif($parameter.isDateData())
+    7, -- Date
+#elseif($parameter.isDoubleData())
+    8, -- Double
+#elseif($parameter.isFloatData())
+    9, -- Float
+#elseif($parameter.isIntegerData())
+    10, -- Integer
+#elseif($parameter.isLongData())
+    11, -- Long
+#elseif($parameter.isShortData())
+    12, -- Short
+#elseif($parameter.isStringData())
+    13, -- String
+#elseif($parameter.isTimeData())
+    14, -- Time
+#elseif($parameter.isTimestampData())
+    15, -- Timestamp
+#else
+    16, -- Object
+#end
+##
+##  anulable
+##
+    $parameter.isNullable(),
+##
+##  longitud
+##
+    $VelocityAid.coalesce($parameter.maxLength, 'null'),
+##
+##  precision
+##
+    $VelocityAid.coalesce($parameter.precision, 'null'),
+##
+##  escala
+##
+    $VelocityAid.coalesce($parameter.scale, 'null'),
+##
+##  pixeles
+##
+    $parameter.pixels
+    );
+
+#end##writeInsertRow

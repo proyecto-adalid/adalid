@@ -1,0 +1,104 @@
+#parsePostgreSQLMacros()
+#setPostgreSQLVariables()
+#writePostgreSQLLicense()
+#writePostgreSQLAuthor('Jorge Campins')
+#writeDelimiterDirective('??')
+#set($entities = $ColUtils.filter($project.entitiesList, $isEntitySqlCodeGenEnabled, $isPersistentEntityWithTable))
+#set($entities = $ColUtils.sort($entities, $byEntityName))
+#foreach($entity in $entities)
+    #writeTemplate('remark-entity')
+    #writeCreateInitialFunctions()
+#end##foreach-entity
+#writeDelimiterDirective(';')
+#break
+
+#macro(writeCreateInitialFunctions)
+    #resetSQLVariables()
+    #set($entname = $entity.wrapper.sqlName)
+    #set($entname = $entity.wrapper.sqlSchemaQualifiedShortName)
+    #set($table = $entity.wrapper.sqlTableName)
+    #set($table = $entity.wrapper.sqlSchemaQualifiedShortTableName)
+    #set($query = $entity.queryTable)
+    #set($refcols = $entity.initialValueColumnsList)
+    #set($joins = $entity.initialValueJoinsMap)
+    #set($joinsCount = $joins.size())
+    #set($keyname = $entity.primaryKeyProperty.wrapper.sqlName)
+    #set($keytype = $entity.primaryKeyProperty.wrapper.sqlType)
+    #set($varname = $entity.primaryKeyProperty.wrapper.sqlVariableName)
+    #set($rowname = $query.sqlJoinQualifier)
+    #writeCreateInitialFunctionHeading()
+    #set($properties = $entity.columnsList)
+    #foreach($property in $properties)
+        #set($colname = $property.wrapper.sqlName)
+        #set($initialValue = $VelocityAid.coalesce($property.wrapper.getSqlInitialValue($query), $FALSE))
+        #if($initialValue)
+            #writeCreateInitialFunctionInitialBlock()
+        #end
+    #end##foreach-property
+    #writeCreateInitialFunctionFooting()
+#end##writeCreateInitialFunctions
+
+#macro(writeCreateInitialFunctionHeading)
+#set($foo = "${sql_name_separator}initial_value")
+#set($function1 = "${entname}${foo}(${keytype})")
+#set($function2 = "${entname}${foo}(${varname} ${keytype})")
+#set($function3 = "${entname}${foo}(%)")
+#*
+drop function if exists $function1 cascade;
+#writeDelimiter('??')
+create or replace function $function2 returns ${table} as $$
+declare
+    row1$ ${table};
+    row2$ ${table};
+begin
+    raise notice '${function3}', ${varname};
+    select * into row1$ from ${table} where ${keyname} = ${varname};
+    select * into row2$ from ${entname}${foo}(row1$);
+    return row2$;
+end;
+$$ language plpgsql;
+#writeDelimiter('??')
+
+*#
+#set($function1 = "${entname}${foo}(${table})")
+#set($function2 = "${entname}${foo}($rowname ${table})")
+#set($function3 = "${entname}${foo}(%)")
+drop function if exists $function1 cascade;
+#writeDelimiter('??')
+create or replace function $function2 returns ${table} as $$
+#if($joinsCount > 0)
+declare
+    #foreach($key in $joins.keySet())
+    $key record;
+    #end##foreach-join
+#end
+begin
+    raise notice '${function3}', ${rowname};
+    #foreach($key in $joins.keySet())
+    #set($join = $joins.get($key))
+--  record $key
+    #set($statement = $join.getSqlSelectStatement($refcols, $TRUE, $TRUE, $FALSE))
+    $statement.replace("$EOL", "$EOL    ");
+
+    #end##foreach-join
+#end##writeCreateInitialFunctionHeading
+
+#macro(writeCreateInitialFunctionInitialBlock)
+#if($StringUtils.containsIgnoreCase($initialValue, 'current_user'))
+    #set($x = '--  ')
+#else
+    #set($x = '    ')
+#end
+${x}if ($rowname.$colname is null) then
+${x}    $rowname.$colname := $initialValue;
+${x}end if;
+
+#end##writeCreateInitialFunctionInitialBlock
+
+#macro(writeCreateInitialFunctionFooting)
+    return $rowname;
+end;
+$$ language plpgsql;
+#writeDelimiter('??')
+
+#end##writeCreateInitialFunctionFooting

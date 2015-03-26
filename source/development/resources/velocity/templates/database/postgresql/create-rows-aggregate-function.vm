@@ -1,0 +1,66 @@
+#parsePostgreSQLMacros()
+#setPostgreSQLVariables()
+#writePostgreSQLLicense()
+#writePostgreSQLAuthor('Jorge Campins')
+#writeDelimiterDirective('??')
+#set($entities = $ColUtils.filter($project.entitiesList, $isEntitySqlCodeGenEnabled, $isPersistentEntityWithTable))
+#set($entities = $ColUtils.sort($entities, $byEntityName))
+#foreach($entity in $entities)
+    #writeTemplate('remark-entity')
+    #writeCreateRowsAggregateFunctions()
+#end##foreach-entity
+#writeDelimiterDirective(';')
+#break
+
+#macro(writeCreateRowsAggregateFunctions)
+    #resetSQLVariables()
+    #set($query = $entity.queryTable)
+    #set($varname = $sqlProgrammer.getSqlVariableName('value'))
+    #set($expressions = $entity.expressionsList)
+    #foreach($expression in $expressions)
+        #if($expression.isRowsAggregateExpression())
+            #set($expname = $expression.wrapper.sqlName)
+            #set($expname = $expression.wrapper.sqlExpressionSelectFunctionName)
+            #set($expname = $expression.wrapper.sqlSchemaQualifiedShortExpressionSelectFunctionName)
+            #set($exptype = $expression.wrapper.sqlType)
+            #set($exppath = $expression.pathString)
+            #set($statement = $VelocityAid.coalesce($expression.wrapper.getSqlSelectStatement($query)))
+            #if($statement)
+                #writeCreateRowsAggregateFunction()
+            #end
+        #end
+    #end##foreach-expression
+#end##writeCreateRowsAggregateFunctions
+
+#macro(writeCreateRowsAggregateFunction)
+--  $exppath
+#if($expression.dimension)
+    #set($argname  = "${expression.dimension.wrapper.sqlVariableName}")
+    #set($argtype  = "${expression.dimension.wrapper.sqlType}")
+    #set($argument = "${argname} ${argtype}")
+#else
+    #set($argname  = '')
+    #set($argtype  = '')
+    #set($argument = '')
+#end
+#set($function1 = "${expname}($argtype)")
+#set($function2 = "${expname}($argument)")
+#set($function3 = "${expname}(%)")
+drop function if exists $function1 cascade;
+#writeDelimiter('??')
+create or replace function $function2 returns $exptype as $$
+declare
+    $varname $exptype;
+begin
+#if($argname == '')
+    raise notice '${function1}';
+#else
+    raise notice '${function3}', ${argname};
+#end
+    $statement.replace("$EOL", "$EOL    ");
+    return $varname;
+end;
+$$ language plpgsql;
+#writeDelimiter('??')
+
+#end##writeCreateRowsAggregateFunction

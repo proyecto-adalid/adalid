@@ -1,0 +1,78 @@
+#if($entityStatesMap.isEmpty())
+    #break
+#end
+    // <editor-fold defaultstate="collapsed" desc="estados de $entityClassName">
+#foreach($stateKey in $entityStatesMap.keySet())
+    #set($state = $entityStatesMap.get($stateKey))
+    /**
+     * $stateKey $!{state.wrapper.javaDefaultDescription}.
+     */
+    private boolean ${state.wrapper.javaVariableName}(${entityClass} ${entityVar}) {
+        #set($stateEntity = $entity)
+        #set($stateExpression = $state)
+        #writeStateExpression()
+    }
+    #if($foreach.hasNext)
+
+    #end
+#end
+    // </editor-fold>
+
+#break
+
+#macro(writeStateExpression)
+    #set($queryTable = $stateEntity.queryTable)
+    #set($parameterizedExpression = $stateExpression.wrapper.javaParameterizedExpression)
+    #set($parametersMap = $parameterizedExpression.parametersMap)
+    #set($namedValuesMap = $parameterizedExpression.namedValuesMap)
+    #foreach($parameterKey in $parametersMap.keySet())
+        #writeAssignObjValue()
+    #end
+    #set($maxLineLength = 0)
+    #set($newLineString = '<EOL>')
+    #set($string2split = "$!parameterizedExpression.expression")
+    #set($string2split = "return $string2split;")
+    #set($string2split = $string2split.replace("&&", "${newLineString}${TAB}&&"))
+    #set($string2split = $string2split.replace("||", "${newLineString}${TAB}||"))
+    #set($string2split = $string2split.replace("), ", "),${newLineString}${TAB}"))
+    #set($string2lines = $VelocityAid.split($string2split, $maxLineLength, $newLineString, $FALSE, $TAB))
+    #foreach($line in $string2lines)
+        ${line}
+    #end
+#end##writeStateExpression
+
+#macro(writeAssignObjValue)
+    #set($parameterPath = '')
+    #set($lastArtifact = $FALSE)
+    #set($parameter = $parametersMap.get($parameterKey))
+    #set($parameterPathList = $parameter.parameterPathList)
+    #if($parameter.isTemporalPrimitive())
+        #set($parameterJavaType = 'java.util.Date')
+    #else
+        #set($parameterJavaType = $parameter.wrapper.javaPrimitiveType)
+    #end
+    #foreach($artifact in $parameterPathList)
+        #setArtifactVariables($artifact)
+        #if($parameterPath == '')
+            #if($artifact.isEntity())
+                #set($parameterPath = "$entityVar")
+........        $parameterJavaType $parameterKey = ${parameterPath} == null ? null
+            #else
+........        $parameterJavaType $parameterKey = ${artifactValueExpression};
+            #end
+        #else
+            #set($parameterPath = "${parameterPath}.get${artifact.wrapper.javaCapitalizedName}()")
+            #if($artifact.isEntity())
+....            : ${parameterPath} == null ? null
+            #end
+        #end
+        #set($lastArtifact = $artifact)
+    #end
+    #if($parameterPath != '')
+        #if($lastArtifact.isEntity())
+            : ${parameterPath}.get${lastArtifact.primaryKeyProperty.wrapper.javaCapitalizedName}();
+        #else
+            : ${parameterPath};
+        #end
+    #end
+#end##writeAssignObjValue

@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- You may freely edit this file. See harness/README in the NetBeans platform -->
+<!-- for some information on what you could do (e.g. targets to override). -->
+<!-- If you delete this file and reopen the project it will be recreated. -->
+<project name="adalid.code.templates" default="netbeans" basedir=".">
+    <description>Builds, tests, and runs the project adalid.code.templates.</description>
+    <import file="nbproject/build-impl.xml"/>
+    <loadresource property="adalid.project.name">
+        <propertyresource name="ant.project.name"/>
+        <filterchain>
+            <tokenfilter>
+                <filetokenizer/>
+                <replacestring from="." to="-"/>
+            </tokenfilter>
+        </filterchain>
+    </loadresource>
+    <property name="adalid.nbm.name" value="${adalid.project.name}.nbm"/>
+    <property name="adalid.lib.dir"  value="${basedir}/../../lib"/>
+    <property name="adalid.nbm.file" value="${adalid.lib.dir}/${adalid.nbm.name}"/>
+    <available file="${adalid.lib.dir}"  type="dir"  property="adalid.lib.dir.available"/>
+    <available file="${adalid.nbm.file}" type="file" property="adalid.nbm.file.available"/>
+    <!--
+    <echo level="info" message="${ant.version}"/>
+    <echo level="info" message="${ant.project.name}"/>
+    <echo level="info" message="${ant.project.default-target}"/>
+    <echo level="info" message="${basedir}"/>
+    <echo level="info" message="${adalid.lib.dir}"/>
+    <echo level="info" message="${adalid.nbm.file}"/>
+    <echo level="info" message="${harness.dir}"/>
+    -->
+    <!-- To enable execution of target -post-make-nbm add <antcall target="-post-make-nbm"/> -->
+    <!-- as the last task of target "nbm" in file ${harness.dir}/common.xml -->
+    <target name="-post-make-nbm" if="adalid.lib.dir.available">
+        <echo level="info" message="copy ${adalid.nbm.name}"/>
+        <copy file="${basedir}/build/${adalid.nbm.name}" todir="${adalid.lib.dir}" failonerror="false" overwrite="true"/>
+    </target>
+    <!-- To enable execution of target -post-clean-nbm add <antcall target="-post-clean-nbm"/> -->
+    <!-- as the last task of target "clean" in file ${harness.dir}/common.xml -->
+    <target name="-post-clean-nbm" if="adalid.nbm.file.available">
+        <delete file="${adalid.nbm.file}"/>
+    </target>
+</project>

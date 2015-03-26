@@ -1,0 +1,66 @@
+#parseJSPMacros()
+#setJSPVariables()
+#writeXMLDeclaration()
+#writeJSPLicense()
+#writeJSPAuthor('Jorge Campins')
+#setLocalVariables()
+#parse("$templatePath/blocks/root.vm")
+#break
+
+#macro(setLocalVariables)
+    #set($dollar = '$')
+    #set($pageName = "$!{webPageNamePrefix}${page.name}")
+    #set($pageBeanPath = "crop$dollar$module.wrapper.dottedAlias.replace('.', $dollar)$dollar")
+    #set($pageBeanName = "${pageBeanPath}$!{webPageNamePrefix}${page.name}")
+    #set($anchorSequence = $Sequence.startWith(1))
+    #set($crudButtonsSequence = $Sequence.startWith(1))
+    #set($cursorButtonsSequence = $Sequence.startWith(1))
+    #set($panelGridSequence = $Sequence.startWith(101))
+    #set($tabSequence = $Sequence.startWith(1))
+    #set($entityDataProvider = "${page.entity.wrapper.javaVariableName}DataProvider")
+    #set($sourceData = "${pageBeanName}.${entityDataProvider}")
+    #set($sourceVar = "$sourceData")
+    #if($page.master)
+        #set($masterDataProvider = "${page.master.wrapper.javaVariableName}DataProvider")
+        #set($masterData = "${pageBeanName}.${masterDataProvider}")
+        #set($masterVar = "$masterData")
+    #end
+    #set($divString = '')
+    #set($tabString = '')
+    #if($page.entity.isDetailViewWithMasterHeading())
+        #if($page.rootMasterHeadingFields.isEmpty())
+            #set($viewWithMasterHeading = $FALSE)
+            #set($masterHeadingViewWidth = 0)
+        #else
+            #set($viewWithMasterHeading = $TRUE)
+            #set($masterHeadingViewWidth = $page.entity.detailViewWidth)
+        #end
+    #else
+        #set($viewWithMasterHeading = $FALSE)
+        #set($masterHeadingViewWidth = 0)
+    #end
+    #set($entityFieldColumnsLimit = 50)
+    #setVirtualForms()
+#end##setLocalVariables
+
+#macro(setVirtualForms)
+    #set($virtualInput = "listaFuncionEdicion1 listaFuncionAccion1 #writeVirtualFormFieldList()")
+    #set($virtualForm1 = "virtualForm1 | $virtualInput | ")
+    #set($virtualForm2 = "virtualForm2 | | ")
+    #set($virtualInput = "listaFuncionEdicion1 listaFuncionAccion1")
+    #set($virtualSubmt = "listaFuncionEdicion1 listaFuncionAccion1 botonEditar1 botonDeshacer1 botonEliminar1")
+    #set($virtualForm3 = "virtualForm3 | $virtualInput | $virtualSubmt ")
+    #set($virtualSubmt = "botonAgregar1 botonDescartar1 botonRefrescar1 botonReconsultar1 botonRetornar1")
+    #set($virtualForm4 = "virtualForm4 | | $virtualSubmt ")
+    #set($virtualFormsConfig = "$virtualForm1, $virtualForm2, $virtualForm3, $virtualForm4")
+#end##setVirtualForms
+
+#macro(writeVirtualFormFieldList)
+    #set($foo = '')
+    #foreach($field in $page.rootFields)
+        #if($field.property.isDetailField())
+            #set($foo = "$foo campo${field.property.wrapper.javaClassName}1")
+        #end
+    #end
+    #if($foo != '')$foo.trim()#end
+#end##writeVirtualFormFieldList

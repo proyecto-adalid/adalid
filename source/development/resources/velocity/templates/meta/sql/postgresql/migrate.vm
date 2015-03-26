@@ -1,0 +1,175 @@
+#parsePostgreSQLMacros()
+#setPostgreSQLVariables()
+#writePostgreSQLLicense()
+#writePostgreSQLAuthor('Jorge Campins')
+#setLocalVariables()
+#writeMigrate()
+#break
+
+#macro(setLocalVariables)
+    #set($notice1 = 'it is not a migrateable table')
+    #set($notice2 = 'it is a special table; its data must be migrated with a special insert statement')
+    #set($notice3 = 'it cannot be copied; its data must be migrated with an insert statement')
+    #set($watch = ' -- WATCH OUT! ')
+    #set($currentKeyTableNames = $merger.currentKeyTableNames)
+    #parse("$templatePath/shared/special-tables.vm")
+#end##setLocalVariables
+
+#macro(writeMigrate)
+drop function if exists midway.migrate_${sourceSchema}_data_to_${targetSchema}();
+create function midway.migrate_${sourceSchema}_data_to_${targetSchema}() returns integer as $$
+declare
+    contador1 integer := 0;
+    contador2 integer := 0;
+    contador3 integer := 0;
+    contador4 integer := 0;
+    contador5 integer := 0;
+    contador6 integer := 0;
+begin
+    raise notice 'migrating $sourceSchema data to $targetSchema';
+    perform ${targetQualifier}create_defaults();
+    perform ${targetQualifier}drop_indexes();
+    perform ${targetQualifier}drop_foreign_keys();
+    perform ${targetQualifier}drop_unique_keys();
+    perform ${targetQualifier}drop_primary_keys();
+
+    #foreach($tableWrapper in $merger.sharedTables)
+        #set($tabname = $tableWrapper.table.name)
+        #set($pkpname = $tableWrapper.table.primaryKey.name)
+        #set($bkpname = $tableWrapper.table.businessKey.name)
+        #if($tableWrapper.isMigrateable())
+            #if(!$specialTableNames.contains($tabname))
+                #if($tableWrapper.isCopyable())
+................    contador5 := contador5 + 1;
+                    #writeCopyFrom()
+                #else
+................    contador4 := contador4 + 1;
+                    #writeInserSelect()
+                #end
+            #else
+............    contador3 := contador3 + 1;
+                #writeInserSelect()
+            #end
+        #elseif($tableWrapper.table.isUpdatableEnumeration() && !$merger.tablesLoadMap.containsKey($tabname))
+........    contador2 := contador2 + 1;
+            #writeUpdate()
+        #else
+........    contador1 := contador1 + 1;
+            #writeSkip($notice1)
+        #end
+    #end
+    perform ${targetQualifier}drop_defaults();
+    perform ${targetQualifier}create_primary_keys();
+    perform ${targetQualifier}create_unique_keys();
+    perform ${targetQualifier}create_foreign_keys();
+    perform ${targetQualifier}create_indexes();
+
+    contador6 := contador1 + contador2 + contador3 + contador4 + contador5;
+    raise notice '% tables were common to both schemas', contador6;
+    raise notice '% tables were copied from text files', contador5;
+    raise notice '% tables were migrated with an insert statement', contador4;
+    raise notice '% tables were migrated with a special insert statement', contador3;
+    raise notice '% tables were updated', contador2;
+    raise notice '% tables were non-migrateable tables', contador1;
+    return 0;
+end;
+$$ language plpgsql;
+
+select midway.migrate_${sourceSchema}_data_to_${targetSchema}();
+#end##writeMigrate
+
+#macro(writeSkip $foo)
+    raise notice 'skipping ${sourceQualifier}${tabname}; $foo';
+
+#end##writeSkip
+
+#macro(writeCopyFrom)
+    raise notice 'copy ${targetQualifier}${tabname}';
+    alter table ${targetQualifier}${tabname} disable trigger user;
+    copy ${targetQualifier}${tabname}
+    from '${merger.oldDataFolder}${tabname}.txt';
+    alter table ${targetQualifier}${tabname} enable trigger user;
+
+#end##writeCopyFrom
+
+#macro(writeInserSelect)
+    raise notice 'insert into ${targetQualifier}${tabname}';
+    alter table ${targetQualifier}${tabname} disable trigger user;
+    #set($pairs = $tableWrapper.orderedPairs)
+    insert into ${targetQualifier}${tabname} (
+    #foreach($pair in $pairs)
+        $pair.newColumn.name#if(!$foreach.last),#end$EMPTY
+    #end
+    )
+    select
+    #foreach($pair in $pairs)
+        #set($colname = "${tabname}.${pair.oldColumn.name}")
+        #setOldColumnExpression()
+        #set($note1 = "ERROR-1: NEW not nullable $pair.newColumn.sqlType with no default value; a non-null value is required here")
+        #set($note2 = "ERROR-2: NOW not nullable $pair.newColumn.sqlType with no default value; a non-null value is required here")
+        #set($note3 = "ERROR-3: PREVIOUSLY $pair.oldColumn.sqlType; proper conversion is required here")
+        #set($note4 = "WARNING: PREVIOUSLY $pair.oldColumn.sqlType; proper conversion might be required here")
+        #if($foreach.last)
+            #set($comma = $EMPTY)
+        #else
+            #set($comma = ',')
+        #end
+        #if($pair.added())
+....        NULL as $pair.newColumn.name$comma$watch$note1
+        #elseif($pair.equals())
+....        $oldColumnExpression$comma
+        #elseif($pair.equates())
+....        $oldColumnExpression$comma
+        #elseif($pair.casts())
+....        case when ($colname is null)
+....             then (NULL)$watch$note2
+....             else ($oldColumnExpression)
+....             end$comma
+        #elseif("$pair.newColumn.type" != "$pair.oldColumn.type" && "$pair.newColumn.type" != 'string')
+....        cast($oldColumnExpression as $pair.newColumn.sqlType)$comma$watch$note3
+        #else
+....        cast($oldColumnExpression as $pair.newColumn.sqlType)$comma$watch$note4
+        #end
+    #end
+    from ${sourceQualifier}${tabname}
+    #if($joinClauses.containsKey(${tabname}))
+        #set($joint = $joinClauses.get(${tabname}))
+        #set($joint = $StringUtils.replace($joint, ' on ',  "${EOL}${TAB}on "))
+        #set($joint = $StringUtils.replace($joint, ' and ', "${EOL}${TAB}and "))
+....    $joint
+    #end
+    #if($whereClauses.containsKey(${tabname}))
+        #set($where = $whereClauses.get(${tabname}))
+        #set($where = $StringUtils.replace($where, ' and ', "${EOL}${TAB}and "))
+....    where $where
+    #end
+    order by ${tabname}.${pkpname};
+    alter table ${targetQualifier}${tabname} enable trigger user;
+
+#end##writeInserSelect
+
+#macro(setOldColumnExpression)
+    #set($foreignTableName = "$!pair.newColumn.foreignTableName")
+    #if($currentKeyTableNames.contains($foreignTableName))
+        #set($oldColumnExpression = "${currentKeyOf}${foreignTableName}($colname)")
+    #else
+        #set($oldColumnExpression = $colname)
+    #end
+#end##setOldColumnExpression
+
+#macro(writeUpdate)
+    raise notice 'update ${targetQualifier}${tabname}';
+    update ${targetQualifier}${tabname} new
+    set##
+    #set($foo = ' ')
+    #set($pairs = $tableWrapper.orderedPairs)
+    #foreach($pair in $pairs)
+        #if($pair.newColumn.isOrdinary())
+............${foo}${pair.newColumn.name} = old.${pair.oldColumn.name}#if($foreach.last)${EOL}#end##
+            #set($foo = ",${EOL}        ")
+        #end
+    #end
+    from ${sourceQualifier}${tabname} old
+    where new.$bkpname = old.$bkpname;
+
+#end##writeUpdate

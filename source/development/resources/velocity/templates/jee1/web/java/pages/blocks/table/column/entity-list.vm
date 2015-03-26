@@ -1,0 +1,23 @@
+#set($componentName = "tableColumn${fieldFirstName}")
+#parse("$templatePath/blocks/webuijsf/table-column.vm")
+#set($componentName = "label${fieldFirstName}")
+#parse("$templatePath/blocks/webuijsf/label.vm")
+#set($componentName = "campo${fieldFirstName}")
+#parse("$templatePath/blocks/webuijsf/drop-down.vm")
+#set($componentName = "campo${fieldFirstName}Texto1")
+#parse("$templatePath/blocks/webuijsf/static-text-1.vm")
+#set($componentName = "converter${fieldFirstName}")
+#set($componentClassName = "${field.property.primaryKeyProperty.dataType.simpleName}Converter")
+#parse("$templatePath/blocks/webuijsf/component.vm")
+#writeValidatorExpression()
+#break
+
+#macro(writeValidatorExpression)
+    /**
+     * ${campo1}.validatorExpression
+     */
+    public void ${campo1}_validate(FacesContext context, UIComponent component, Object value) {
+        asistente.${campo1}_validate(context, component, value);
+    }
+
+#end##writeValidatorExpression

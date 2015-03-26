@@ -1,0 +1,43 @@
+#if($operationsList && $operationsList.size()>0)
+##${tab}  for each one of the $operationsList.size() operations in $operationsList
+#foreach($operation in $operationsList)
+#if($operation)
+#set($capitalOperationName = $StringUtils.capitalize($operation.name))
+${tab}public class $capitalOperationName extends $operation.baseOperationName {
+#increaseIndentation()
+#set($parametersList = $VelocityAid.coalesce($operation.parametersList, $FALSE))
+##
+##parameters
+##
+#if($operation.instanceScope)
+
+${tab}@InstanceReference
+${tab}@Allocation(maxDepth = 1, maxRound = 0)
+${tab}protected $entity.name id$entity.name;
+
+#end
+#if($parametersList && $parametersList.size()>0)
+#writeTemplate($foreachParameter)
+#end
+#if($operation.customizedParameters)
+
+${tab}@Override
+${tab}protected void settleParameters() {
+#increaseIndentation()
+${tab}super.settleParameters();
+##
+##  tags for each parameter
+##
+#writeTemplate($foreachParameterTag)
+#decreaseIndentation()
+##
+${tab}}
+#end
+#decreaseIndentation()
+${tab}}
+
+#end
+#end
+#else
+    #break
+#end

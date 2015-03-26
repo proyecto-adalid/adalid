@@ -1,0 +1,12 @@
+$tab<!-- console footing opening -->
+$tab<h:panelGrid id="panelGrid${panelGridSequence.next()}" styleClass="pdq-grid-detalle-pie">
+$tab    <h:panelGrid id="panelGrid${panelGridSequence.next()}" columns="2">
+$tab        <h:panelGrid id="panelGrid${panelGridSequence.next()}" styleClass="pdq-grid-detalle-botones"/>
+$tab        <h:panelGrid id="panelGrid${panelGridSequence.next()}" styleClass="pdq-grid-detalle-mensajes">
+$tab            <h:panelGrid id="panelGrid${panelGridSequence.next()}" styleClass="pdq-grid-detalle-mensajes-2">
+$tab                <webuijsf:staticText id="textoMensaje1" style="font-weight: bold"/>
+$tab            </h:panelGrid>
+$tab        </h:panelGrid>
+$tab    </h:panelGrid>
+$tab</h:panelGrid>
+$tab<!-- console footing closing -->

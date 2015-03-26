@@ -1,0 +1,103 @@
+#parsePostgreSQLMacros()
+#setPostgreSQLVariables()
+#writePostgreSQLLicense()
+#writePostgreSQLAuthor('Jorge Campins')
+#parse('templates/jee1/lib/data/java/XDP0.java.vm')
+#set($entities = $ColUtils.filter($project.entitiesList, $isPersistentEntity))
+#set($entities = $ColUtils.sort($entities, $byEntityName))
+#foreach($entity in $entities)
+    #setVariablesRecurso($entity)
+    #set($query = $entity.queryTable)
+    #set($entityNumber = $project.getEntityNumber($entity))
+    #if($esRecursoIdentificable)
+        #set($property = $entity.primaryKeyProperty)
+        #writeInsertRow($property '1'  'id')
+    #end
+    #if($esRecursoVersionable)
+        #set($property = $entity.versionProperty)
+        #writeInsertRow($property '2'  'version')
+    #end
+    #if($esRecursoCodificable)
+        #set($property = $entity.characterKeyProperty)
+        #writeInsertRow($property '3'  'codigo')
+    #end
+    #if($esRecursoNombrable)
+        #set($property = $entity.nameProperty)
+        #writeInsertRow($property '4'  'nombre')
+    #end
+    #if($esRecursoPersonalizable)
+        #set($property = $entity.ownerProperty)
+        #writeInsertRow($property '5'  'propietario')
+    #end
+    #if($esRecursoSegmentable)
+        #set($property = $entity.segmentProperty)
+        #writeInsertRow($property '6'  'segmento')
+    #end
+    #if($esRecursoJerarquizable)
+        #set($property = $entity.parentProperty)
+        #writeInsertRow($property '7'  'superior')
+    #end
+    #if($esRecursoDesactivable)
+        #set($property = $entity.inactiveIndicatorProperty)
+        #writeInsertRow($property '8'  'inactivo')
+    #end
+    #if($esRecursoEnumerable)
+        #set($property = $entity.numericKeyProperty)
+        #writeInsertRow($property '9'  'numero')
+    #end
+    #if($entity.businessKeyProperty)
+        #set($property = $entity.businessKeyProperty)
+        #writeInsertRow($property '10' 'clave')
+    #end
+#end##foreach-entity
+#break
+
+#macro(writeInsertRow $parameter $paramtype $paramtypename)
+insert
+into public.dominio_parametro
+(
+    id_dominio_parametro,
+    codigo_dominio_parametro,
+    id_dominio,
+    id_parametro,
+    numero_tipo_parametro_dom,
+    columna,
+    alias,
+    etiqueta_parametro
+)
+values (
+##
+##  id_dominio_parametro
+##
+    nextval('public.dominio_parametro_sq___'),
+##
+##  codigo_dominio_parametro
+##
+    '${codex}.$StringUtils.leftPad("$paramtype", 2, '0')',
+##
+##  id_dominio
+##
+    $entityNumber, -- $entity.wrapper.sqlName
+##
+##  id_parametro
+##
+    $project.getParameterNumber($parameter), -- $parameter.wrapper.sqlName
+##
+##  numero_tipo_parametro_dom
+##
+    $paramtype, -- $paramtypename
+##
+##  columna
+##
+    '${query.getSqlQualifiedName($property)}',
+##
+##  alias
+##
+    '${query.getSqlAlias($property)}',
+##
+##  etiqueta_parametro
+##
+    null
+);
+
+#end##writeInsertRow

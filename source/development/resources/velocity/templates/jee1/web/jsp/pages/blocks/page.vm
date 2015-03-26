@@ -1,0 +1,22 @@
+$tab<webuijsf:page id="page1">
+$tab    <webuijsf:html id="html1">
+$tab        <webuijsf:head id="head1" title="#{ApplicationBean1.nombreAplicacion}">
+$tab            <webuijsf:link id="link1" url="/resources/stylesheet.css"/>
+$tab            <webuijsf:script id="script1" url="/resources/javascript1.js"/>
+$tab        </webuijsf:head>
+$tab        <webuijsf:body id="body1"
+$tab            focus="#{${pageBeanName}.gestor.focus}"
+$tab            onClick="#{ApplicationBean1.contextoAplicacion.onClickJavaScript}"
+$tab            onDblClick="#{ApplicationBean1.contextoAplicacion.onDblClickJavaScript}"
+$tab            onKeyPress="#{ApplicationBean1.contextoAplicacion.onKeyPressJavaScript}"
+$tab            onLoad="#{ApplicationBean1.contextoAplicacion.onLoadJavaScript}"
+$tab            onUnload="#{ApplicationBean1.contextoAplicacion.onUnloadJavaScript}"
+$tab            preserveFocus="#{${pageBeanName}.gestor.preserveFocus}"
+$tab            preserveScroll="#{${pageBeanName}.gestor.preserveScroll}"
+$tab            styleClass="pdq-body-1">
+                #increaseIndentationBy(3)
+                #parse("$templatePath/blocks/form.vm")
+                #decreaseIndentationBy(3)
+$tab        </webuijsf:body>
+$tab    </webuijsf:html>
+$tab</webuijsf:page>

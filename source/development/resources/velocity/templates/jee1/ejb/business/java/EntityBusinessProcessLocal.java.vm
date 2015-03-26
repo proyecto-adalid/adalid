@@ -1,0 +1,37 @@
+#parseJavaMacros()
+#setJavaVariables()
+#writeJavaLicense()
+#writeJavaPackage()
+#set($operations = $ColUtils.filter($entity.businessOperationsList, $isProcessOperation))
+#set($operations = $ColUtils.sort($operations, $byOperationName))
+#foreach($operation in $operations)
+    #set($message = "${entity.wrapper.javaClassName}${operation.wrapper.javaClassName}Message")
+    #set($added = $imports.add("${messagePackage}.${message}"))
+    #if($operation.checksList.isEmpty() && $operation.initialStatesList.isEmpty())
+    #elseif("$!operation.operationKind" == 'INSTANCE')
+        #set($added = $imports.add("${entityPackage}.${entity.wrapper.javaClassName}"))
+    #end
+#end##foreach-operation
+#set($added = $imports.add('javax.ejb.Local'))
+#writeJavaImports($imports)
+#writeJavaAuthor('Jorge Campins')
+@Local
+public interface ${javaClassSimpleName}#writeJavaImplements()
+
+#foreach($operation in $operations)
+    #set($message = "${entity.wrapper.javaClassName}${operation.wrapper.javaClassName}Message")
+    #set($process = "${operation.wrapper.javaVariableName}")
+    #writeOperationJavadocType1()
+    $message ${process}($message message);
+
+    #if($operation.checksList.isEmpty() && $operation.initialStatesList.isEmpty())
+    #elseif("$!operation.operationKind" == 'INSTANCE')
+....    boolean ${process}Allowed($message message, ${entity.wrapper.javaClassName} instance);
+
+    #else
+....    boolean ${process}Allowed($message message);
+
+    #end
+#end##foreach-operation
+}
+#break

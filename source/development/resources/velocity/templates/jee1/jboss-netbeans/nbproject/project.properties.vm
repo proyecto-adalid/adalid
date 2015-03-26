@@ -1,0 +1,45 @@
+#setGlobalVariables()
+#parse('templates/jee1/macros/macros-3.vm')
+#setTargetEnvironmentVariables()
+build.classes.excludes=**/*.java,**/*.form,**/.nbattrs
+build.dir=build
+build.generated.dir=${dollar}{build.dir}/generated
+client.module.uri=${project.alias}-war
+client.urlPart=
+debug.classpath=${dollar}{javac.classpath}::${dollar}{jar.content.additional}:${dollar}{run.classpath}
+display.browser=true
+dist.dir=dist
+dist.jar=${dollar}{dist.dir}/${dollar}{jar.name}
+#*
+endorsed.classpath=${backslash}
+    ${dollar}{libs.javaee-endorsed-api-6.0.classpath}
+*###
+j2ee.compile.on.save=false
+j2ee.deploy.on.save=false
+j2ee.platform=1.6
+j2ee.server.type=JBoss4
+jar.compress=false
+jar.content.additional=${backslash}
+    ${dollar}{reference.${project.alias}-lib.jar}:${backslash}
+    ${dollar}{reference.${project.alias}-resources.jar}:${backslash}
+    ${dollar}{reference.${project.alias}-ejb.dist-ear}:${backslash}
+    ${dollar}{reference.${project.alias}-war.dist-ear}
+jar.name=${project.alias}.ear
+javac.debug=true
+javac.deprecation=false
+javac.source=$targetShortJavaVersion
+javac.target=$targetShortJavaVersion
+meta.inf=src/conf
+no.dependencies=false
+platform.active=default_platform
+project.${project.alias}-ejb=${project.alias}-ejb
+project.${project.alias}-lib=${project.alias}-lib
+project.${project.alias}-resources=${project.alias}-resources
+project.${project.alias}-war=${project.alias}-war
+reference.${project.alias}-ejb.dist-ear=${dollar}{project.${project.alias}-ejb}/dist/${project.alias}-ejb.jar
+reference.${project.alias}-lib.jar=${dollar}{project.${project.alias}-lib}/dist/${project.alias}-lib.jar
+reference.${project.alias}-war.dist-ear=${dollar}{project.${project.alias}-war}/dist/${project.alias}-war.war
+reference.${project.alias}-resources.jar=${dollar}{project.${project.alias}-resources}/dist/${project.alias}-resources.jar
+resource.dir=setup
+run.classpath=
+source.root=.

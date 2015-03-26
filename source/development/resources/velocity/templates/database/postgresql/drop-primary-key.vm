@@ -1,0 +1,25 @@
+#parsePostgreSQLMacros()
+#setPostgreSQLVariables()
+#writePostgreSQLLicense()
+#writePostgreSQLAuthor('Jorge Campins')
+#set($entities = $ColUtils.filter($project.entitiesList, $isEntitySqlCodeGenEnabled, $isPersistentEntityTable))
+#set($entities = $ColUtils.sort($entities, $byEntityName))
+#foreach($entity in $entities)
+    #writeTemplate('remark-entity')
+    #writeDropPrimaryKey()
+#end##foreach-entity
+#break
+
+#macro(writeDropPrimaryKey)
+    #resetSQLVariables()
+    #set($table = $entity.wrapper.sqlTableName)
+    #set($table = $entity.wrapper.sqlSchemaQualifiedShortTableName)
+    #set($pk = $entity.primaryKeyProperty.wrapper.sqlName)
+    #setGlobalPrimaryKeyName($entity)
+    #set($constraint = $globalConstraintName)
+    #writeDropPrimaryKeyStatement()
+#end##writeDropPrimaryKey
+
+#macro(writeDropPrimaryKeyStatement)
+alter table if exists $table drop constraint if exists $constraint;
+#end##writeDropPrimaryKeyStatement

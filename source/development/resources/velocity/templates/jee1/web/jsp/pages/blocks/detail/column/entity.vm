@@ -1,0 +1,107 @@
+#set($fieldColumns = 20)
+#set($fieldMaxLength = 0)
+#if($field.foreignCodeField)
+    #set($fieldMaxLength = $VelocityAid.coalesce($field.foreignCodeField.property.maxLength, 0))
+    #if($fieldMaxLength == 0 || $fieldMaxLength > 200)
+        #set($fieldColumns = $entityFieldColumnsLimit)
+    #elseif($fieldMaxLength <= 10)
+        #set($fieldColumns = 10)
+    #elseif($fieldMaxLength <= 20)
+        #set($fieldColumns = 20)
+    #elseif($fieldMaxLength <= 50)
+        #set($fieldColumns = $entityFieldColumnsLimit)
+    #else
+        #set($fieldColumns = $entityFieldColumnsLimit)
+    #end
+#end
+$tab<h:panelGrid id="panelGrid${panelGridSequence.next()}"
+    #if($tabString == '')
+$tab    rendered="#{${pageBeanName}.asistente.grid${fieldClassName}Rendered}"
+    #else
+$tab    rendered="#{${pageBeanName}.asistente.grid${fieldClassName}RenderedInsideTabs}"
+    #end
+$tab    styleClass="pdq-grid-etiqueta-1">
+$tab    <webuijsf:label id="label${fieldFirstName}${tabString}"
+$tab        binding="#{${pageBeanName}.label${fieldFirstName}${tabString}}"
+$tab        for="${campo1}${tabString}"
+##          text="$field.property.wrapper.xmlValidDefaultShortLabel"/>
+$tab        text="BundleParametros.${page.entity.wrapper.sqlSchemaQualifiedShortName}.${field.property.wrapper.sqlName}"/>
+$tab</h:panelGrid>
+$tab<h:panelGrid id="panelGrid${panelGridSequence.next()}"
+$tab    columns="7"
+    #if($tabString == '')
+$tab    rendered="#{${pageBeanName}.asistente.grid${fieldClassName}Rendered}"
+    #else
+$tab    rendered="#{${pageBeanName}.asistente.grid${fieldClassName}RenderedInsideTabs}"
+    #end
+$tab    styleClass="pdq-grid-elemento-1">
+$tab    <webuijsf:textField id="${campo1}${tabString}"
+$tab        binding="#{${pageBeanName}.${campo1}${tabString}}"
+$tab        columns="$fieldColumns"
+        #if($fieldMaxLength > 0)
+$tab        maxLength="$fieldMaxLength"
+        #end
+$tab        readOnly="$fieldReadOnly"
+$tab        required="$fieldRequired"
+$tab        text="#{${pageBeanName}.asistente.text${Campo1}}"
+##          toolTip="#{${pageBeanName}.asistente.toolTip${Campo1}}"
+$tab        toolTip="BundleParametros.${page.entity.wrapper.sqlSchemaQualifiedShortName}.${field.property.wrapper.sqlName}"
+$tab        validatorExpression="#{${pageBeanName}.${campo1}_validate}"/>
+$tab    <webuijsf:staticText id="${campo1}${tabString}Texto1"
+$tab        binding="#{${pageBeanName}.${campo1}${tabString}Texto1}"#if($fieldForeignCodeSqlName == '')/>${EOL}#else${EOL}#end
+        #if($fieldForeignCodeSqlName != '')
+$tab        text="#{${sourceVar}.value['$fieldForeignCodeSqlName']}"/>
+        #end
+    #if($fieldSearchType == 'DISPLAY')
+$tab    <webuijsf:button id="${campo1}${tabString}Boton1"
+$tab        binding="#{${pageBeanName}.${campo1}${tabString}Boton1}"
+$tab        onClick="#{${pageBeanName}.asistente.script${Campo1}Boton1}"/>
+        #if($fieldForeignNameSqlName == '')
+$tab    <webuijsf:button id="${campo1}${tabString}Boton3"
+$tab        binding="#{${pageBeanName}.${campo1}${tabString}Boton3}"
+$tab        onClick="#{${pageBeanName}.asistente.script${Campo1}Boton3}"
+$tab        rendered="#{${pageBeanName}.asistente.${campo1}Boton3Rendered}"/>
+        #end
+    #end
+$tab    <webuijsf:message id="message${fieldFirstName}${tabString}"
+$tab        for="${campo1}${tabString}"/>
+$tab    <webuijsf:helpInline id="helpInline${fieldFirstName}${tabString}"
+$tab        binding="#{${pageBeanName}.helpInline${fieldFirstName}${tabString}}"
+$tab        rendered="#{SessionBean1.contextoSesion.helpInlineRendered}"
+$tab        styleClass="pdq-helpInline-field"
+##          text="$field.property.wrapper.xmlValidDefaultShortDescription"
+$tab        text="BundleParametros.${page.entity.wrapper.sqlSchemaQualifiedShortName}.${field.property.wrapper.sqlName}"
+$tab        type="field"/>
+$tab</h:panelGrid>
+    #if($fieldForeignNameSqlName != '')
+$tab<h:panelGrid id="panelGrid${panelGridSequence.next()}"
+    #if($tabString == '')
+$tab    rendered="#{${pageBeanName}.asistente.grid${fieldClassName}Rendered}"
+    #else
+$tab    rendered="#{${pageBeanName}.asistente.grid${fieldClassName}RenderedInsideTabs}"
+    #end
+$tab    styleClass="pdq-grid-etiqueta-1">
+$tab    <webuijsf:label id="label${fieldMiddleName}${tabString}"
+$tab        binding="#{${pageBeanName}.label${fieldMiddleName}${tabString}}"
+##          for="${campo1}${tabString}"
+##          text="$field.foreignNameField.property.wrapper.xmlValidDefaultShortLabel"/>
+$tab        text="BundleParametros.${page.entity.wrapper.sqlSchemaQualifiedShortName}.${field.property.wrapper.sqlName}.${field.foreignNameField.property.wrapper.sqlName}"/>
+$tab</h:panelGrid>
+$tab<h:panelGrid id="panelGrid${panelGridSequence.next()}"
+$tab    columns="7"
+    #if($tabString == '')
+$tab    rendered="#{${pageBeanName}.asistente.grid${fieldClassName}Rendered}"
+    #else
+$tab    rendered="#{${pageBeanName}.asistente.grid${fieldClassName}RenderedInsideTabs}"
+    #end
+$tab    styleClass="pdq-grid-elemento-1">
+$tab    <webuijsf:staticText id="${campo1}${tabString}Texto2"
+$tab        binding="#{${pageBeanName}.${campo1}${tabString}Texto2}"
+$tab        toolTip="#{${pageBeanName}.asistente.toolTip${Campo1}}"
+$tab        text="#{${sourceVar}.value['$fieldForeignNameSqlName']}"/>
+$tab    <webuijsf:button id="${campo1}${tabString}Boton2"
+$tab        binding="#{${pageBeanName}.${campo1}${tabString}Boton2}"
+$tab        onClick="#{${pageBeanName}.asistente.script${Campo1}Boton2}"
+$tab        rendered="#{${pageBeanName}.asistente.${campo1}Boton2Rendered}"/>
+$tab</h:panelGrid>
+        #end

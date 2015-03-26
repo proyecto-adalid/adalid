@@ -1,0 +1,58 @@
+    @Override
+    public String getRequestPathInfo() {
+        return "/${pagePagePath}.jsp";
+    }
+
+#break
+    // <editor-fold defaultstate="collapsed" desc="implementacion estandar de la interfaz PaginaAbstracta">
+    @Override
+    public FacesContext getFacesContext() {
+        return super.getFacesContext();
+    }
+
+    @Override
+    public Object getBean(String name) {
+        return super.getBean(name);
+    }
+
+    @Override
+    public boolean isPostBack() {
+        return super.isPostBack();
+    }
+
+    @Override
+    public void erase() {
+        super.erase();
+    }
+
+    @Override
+    public void info(String summary) {
+        super.info(summary);
+    }
+
+    @Override
+    public void warn(String summary) {
+        super.warn(summary);
+    }
+
+    @Override
+    public void error(String summary) {
+        super.error(summary);
+    }
+
+    @Override
+    public void fatal(String summary) {
+        super.fatal(summary);
+    }
+
+    @Override
+    public void log(String message) {
+        super.log(message);
+    }
+
+    @Override
+    public void log(String message, Throwable throwable) {
+        super.log(message, throwable);
+    }
+    // </editor-fold>
+

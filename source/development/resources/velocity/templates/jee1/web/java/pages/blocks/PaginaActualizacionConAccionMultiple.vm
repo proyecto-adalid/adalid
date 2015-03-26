@@ -1,0 +1,29 @@
+    // <editor-fold defaultstate="collapsed" desc="implementacion estandar de la interfaz PaginaActualizacionConAccionMultiple">
+    #set($foo = '1')
+    private DropDown listaFuncionAccion${foo} = new ListaDesplegable();
+
+    @Override
+    public DropDown getListaFuncionAccion${foo}() {
+        return listaFuncionAccion${foo};
+    }
+
+    public void setListaFuncionAccion${foo}(DropDown dropDown) {
+        listaFuncionAccion${foo} = dropDown;
+    }
+
+    private LongConverter converterListaFuncionAccion${foo} = new LongConverter();
+
+    public LongConverter getConverterListaFuncionAccion${foo}() {
+        return converterListaFuncionAccion${foo};
+    }
+
+    public void setConverterListaFuncionAccion${foo}(LongConverter longConverter) {
+        converterListaFuncionAccion${foo} = longConverter;
+    }
+
+    @Override
+    public Option[] getOpcionesListaFuncionAccion() {
+        return asistente.getOpcionesListaFuncionAccion();
+    }
+    // </editor-fold>
+

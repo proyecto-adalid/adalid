@@ -1,0 +1,73 @@
+#parsePostgreSQLMacros()
+#setPostgreSQLVariables()
+#writePostgreSQLLicense()
+#writePostgreSQLAuthor('Jorge Campins')
+#writeDelimiterDirective('??')
+#set($entities = $ColUtils.filter($project.entitiesList, $isEntitySqlCodeGenEnabled, $isPersistentEnumerationEntity))
+#set($entities = $ColUtils.sort($entities, $byEntityName))
+#foreach($entity in $entities)
+    #writeTemplate('remark-entity')
+    #writeCreateEnumFunctions()
+#end##foreach-entity
+#writeDelimiterDirective(';')
+#break
+
+#macro(writeCreateEnumFunctions)
+    #resetSQLVariables()
+    #set($entname = $entity.wrapper.sqlName)
+    #set($entname = $entity.wrapper.sqlSchemaQualifiedShortName)
+    #set($keytype = $entity.primaryKeyProperty.wrapper.sqlType)
+    #writeCreateEnumFunctionHeading()
+    #set($comma = ',')
+    #set($rows = $entity.insertableRowsList)
+    #foreach($row in $rows)
+        #if($foreach.last)
+            #if($foreach.first)
+                #set($comma = ",${EOL}out _filler$ $keytype")
+            #else
+                #set($comma = '')
+            #end
+        #end
+        #set($kname = $row.wrapper.sqlName.toUpperCase())
+        #writeCreateEnumFunctionEnumConstant1()
+    #end##foreach-row
+    #writeCreateEnumFunctionBody()
+    #foreach($row in $rows)
+        #set($kname = $row.wrapper.sqlName.toUpperCase())
+        #set($value = $row.instanceKeyValue)
+        #writeCreateEnumFunctionEnumConstant2()
+    #end##foreach-row
+    #writeCreateEnumFunctionFooting()
+#end##writeCreateEnumFunctions
+
+#macro(writeCreateEnumFunctionHeading)
+#set($foo = "${sql_name_separator}enum")
+#set($function1 = "${entname}${foo}()")
+#set($function2 = "${entname}${foo}")
+#set($function3 = "${entname}${foo}()")
+drop function if exists $function1 cascade;
+#writeDelimiter('??')
+create or replace function $function2
+(
+#end##writeCreateEnumFunctionHeading
+
+#macro(writeCreateEnumFunctionEnumConstant1)
+out $kname $keytype$comma
+#end##writeCreateEnumFunctionEnumConstant1
+
+#macro(writeCreateEnumFunctionBody)
+)
+returns record as $$
+begin
+#end##writeCreateEnumFunctionBody
+
+#macro(writeCreateEnumFunctionEnumConstant2)
+    $kname := $value;
+#end##writeCreateEnumFunctionEnumConstant2
+
+#macro(writeCreateEnumFunctionFooting)
+end;
+$$ language plpgsql immutable;
+#writeDelimiter('??')
+
+#end##writeCreateEnumFunctionFooting

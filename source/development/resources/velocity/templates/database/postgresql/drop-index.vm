@@ -1,0 +1,63 @@
+#parsePostgreSQLMacros()
+#setPostgreSQLVariables()
+#writePostgreSQLLicense()
+#writePostgreSQLAuthor('Jorge Campins')
+#set($entities = $ColUtils.filter($project.entitiesList, $isEntitySqlCodeGenEnabled, $isPersistentEntityTable))
+#set($entities = $ColUtils.sort($entities, $byEntityName))
+#foreach($entity in $entities)
+    #writeTemplate('remark-entity')
+    #writeDropIndexes()
+#end##foreach-entity
+#break
+
+#macro(writeDropIndexes)
+    #resetSQLVariables()
+    #set($table = $entity.wrapper.sqlTableName)
+    #set($table = $entity.wrapper.sqlSchemaQualifiedShortTableName)
+## -----------------------------------------------------------------------------------------------------------
+    #set($properties = $entity.columnsList)
+    #foreach($property in $properties)
+        #if($property.isUnique() || $property.isPrimaryKeyProperty())
+        #elseif($property.isVersionProperty() || $property.isNameProperty() || $property.isForeignKey())
+            #set($ix = $property.wrapper.sqlName)
+            #writeDropIndexStatement()
+        #end
+    #end##foreach-property
+## -----------------------------------------------------------------------------------------------------------
+    #set($keys = $entity.keysList)
+    #foreach($key in $keys)
+        #if(!$key.isUnique() && $key.isValidKeyFor($entity))
+            #set($ix = '')
+            #set($fields = $key.keyFieldsList)
+            #set($fieldsSize = $fields.size())
+            #if($fieldsSize != 0)
+                #if($key.isSingleProperty())
+                    #set($property = $key.theProperty)
+                    #if($property.isUnique() || $property.isPrimaryKeyProperty() || $property.isVersionProperty() || $property.isNameProperty() || $property.isForeignKey())
+                        #set($ix = 'x')
+                    #end
+                #end
+                #if($ix == '')
+                    #foreach($field in $fields)
+                        #if($field.sqlSortOption)
+                            #set($ix = "$ix, $field.wrapper.sqlName $field.sqlSortOption")
+                        #else
+                            #set($ix = "$ix, $field.wrapper.sqlName")
+                        #end
+                    #end##foreach-field
+                    #if($ix != '')
+                        #set($ix = $StringUtils.removeStart($ix, ',').trim())
+                        #writeDropIndexStatement()
+                    #end
+                #end
+            #end
+        #end
+    #end##foreach-key
+## -----------------------------------------------------------------------------------------------------------
+#end##writeDropIndexes
+
+#macro(writeDropIndexStatement)
+#setGlobalIndexName($entity)
+#set($constraint = $globalConstraintName)
+drop index if exists $constraint;
+#end##writeDropIndexStatement

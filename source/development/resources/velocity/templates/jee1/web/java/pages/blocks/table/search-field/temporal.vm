@@ -1,0 +1,20 @@
+#if($field.property.isDateData())
+    #set($componentTemplateName = 'calendar')
+    #set($componentValueAttr = 'selectedDate')
+#else
+    #set($componentTemplateName = 'text-field')
+    #set($componentValueAttr = 'text')
+#end
+#set($componentName = "label${fieldFirstName}${divString}")
+#parse("$templatePath/blocks/webuijsf/label.vm")
+#set($componentName = "campo${fieldFirstName}${divString}")
+#parse("$templatePath/blocks/webuijsf/${componentTemplateName}.vm")
+#set($componentName = "campo${fieldFirstName}${divString}Texto1")
+#parse("$templatePath/blocks/webuijsf/static-text-1.vm")
+##------------------------------------------------------------------------------
+#set($componentName = "campo${fieldFirstName}${divString}")
+#set($componentValueAttr = $componentValueAttr)
+#set($componentClassName = 'java.util.Date')
+#set($componentClassSimpleName = "${field.property.dataType.simpleName}")
+#parse("$templatePath/blocks/table/search-field/any.vm")
+#break

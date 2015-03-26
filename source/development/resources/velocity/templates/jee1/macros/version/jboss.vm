@@ -1,0 +1,5 @@
+#set($targetJBossVersion = "$!project.environmentVariables.get('jboss.version')")
+#if($targetJBossVersion == '')
+    #set($targetJBossVersion = '7.1.1.Final')
+#end
+#break

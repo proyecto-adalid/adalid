@@ -1,0 +1,72 @@
+#parseJavaMacros()
+#setJavaVariables()
+#writeJavaLicense()
+#writeJavaPackage()
+#setLocalVariables()
+#writeJavaImports($imports)
+#writeJavaAuthor('Jorge Campins')
+#set($base = "$!{entity.baseRoot.wrapper.javaClassName}")
+#if($base != '')
+    #set($extends = " extends ${base}Base")
+#else
+    #set($extends = '')
+#end
+public interface ${javaClassSimpleName}$extends#writeJavaImplements()
+
+#foreach($property in $col1)
+    #writeFieldAccessors("${property.wrapper.javaPrimitiveType}" "${property.wrapper.javaVariableName}")
+#end##foreach-property
+#foreach($property in $col2)
+    #writeFieldAccessors("${property.wrapper.javaTypeSimpleName}Base" "${property.wrapper.javaVariableName}")
+#end##foreach-property
+#foreach($property in $col3)
+    #set($referencingEntity = $property.declaringEntity)
+    #set($referencingEntityType = $referencingEntity.dataType.simpleName)
+    #set($referencingEntityName = $StringUtils.uncapitalize($referencingEntityType))
+    #set($variableName = "${referencingEntityName}${referencingFieldNameConnective}${property.wrapper.javaClassName}")
+    #if($property.oneToOne)
+        #writeFieldAccessors("${referencingEntityType}Base" "${variableName}${oneToOneFieldNameSuffix}")
+    #elseif($property.manyToOne)
+        #writeFieldAccessors("${oneToManyFieldClassName}<? extends ${referencingEntityType}Base>" "${variableName}${oneToManyFieldNameSuffix}")
+    #end
+#end##foreach-property
+}
+#break
+
+#macro(setLocalVariables)
+#set($implementsAccesible = $FALSE)
+#set($implementsComparable = $TRUE)
+#set($implementsSerializable = $TRUE)
+#if($StringUtils.isBlank($oneToOneFieldNameSuffix))
+    #set($oneToOneFieldNameSuffix = '')
+#end
+#if($StringUtils.isBlank($oneToManyFieldClassName))
+    #set($oneToManyFieldClassName = 'java.util.Collection')
+#end
+#if($StringUtils.isBlank($oneToManyFieldNameSuffix))
+    #set($oneToManyFieldNameSuffix = 'Collection')
+#end
+#if($StringUtils.isBlank($referencingFieldNameConnective))
+    #set($referencingFieldNameConnective = 'By')
+#end
+#setLocalEntityVariables($entity)
+#end##setLocalVariables
+
+#macro(setLocalEntityVariables $entity)
+    #if($entity.primaryKeyProperty.wrapper.javaVariableName != '')
+        #set($implementsComparable = $TRUE)
+    #end
+    #set($col1 = $entity.entityClassColumnsList1)
+    #set($col2 = $entity.entityClassColumnsList2)
+    #set($col3 = $entity.entityClassColumnsList3)
+    #set($col3 = $ColUtils.filter($col3, $isBidirectionalEntityReference))
+#end##setLocalEntityVariables
+
+#macro(writeFieldAccessors $type $name)
+    #setPersistentJavaType($type)
+    #set($Name = $StringUtils.capitalize($name))
+    ${persistentJavaType} get${Name}();
+//
+//  void set${Name}(${persistentJavaType} ${name});
+
+#end##writeFieldAccessors

@@ -1,0 +1,127 @@
+    // <editor-fold defaultstate="collapsed" desc="implementacion estandar de la interfaz PaginaConsultaConTabla">
+    private Table table1 = new Table();
+
+    @Override
+    public Table getTable1() {
+        return table1;
+    }
+
+    public void setTable1(Table t) {
+        table1 = t;
+    }
+
+    private TableRowGroup tableRowGroup1 = new GrupoFilasTabla();
+
+    @Override
+    public TableRowGroup getTableRowGroup1() {
+        return tableRowGroup1;
+    }
+
+    @Override
+    public void setTableRowGroup1(TableRowGroup trg) {
+        tableRowGroup1 = trg;
+    }
+
+    private Checkbox checkbox1 = new Checkbox();
+
+    @Override
+    public Checkbox getCheckbox1() {
+        return checkbox1;
+    }
+
+    public void setCheckbox1(Checkbox c) {
+        checkbox1 = c;
+    }
+
+    private Label etiquetaTextoFilasPorPagina1 = new Etiqueta();
+
+    public Label getEtiquetaTextoFilasPorPagina1() {
+        return etiquetaTextoFilasPorPagina1;
+    }
+
+    public void setEtiquetaTextoFilasPorPagina1(Label l) {
+        etiquetaTextoFilasPorPagina1 = l;
+    }
+
+    private TextField textoFilasPorPagina1 = new CampoTexto();
+
+    @Override
+    public TextField getTextoFilasPorPagina1() {
+        return textoFilasPorPagina1;
+    }
+
+    public void setTextoFilasPorPagina1(TextField tf) {
+        textoFilasPorPagina1 = tf;
+    }
+
+    private IntegerConverter textoFilasPorPagina1Converter1 = new IntegerConverter();
+
+    public IntegerConverter getTextoFilasPorPagina1Converter1() {
+        return textoFilasPorPagina1Converter1;
+    }
+
+    public void setTextoFilasPorPagina1Converter1(IntegerConverter ic) {
+        textoFilasPorPagina1Converter1 = ic;
+    }
+
+    private LongRangeValidator textoFilasPorPagina1Validator1 = new LongRangeValidator();
+
+    public LongRangeValidator getTextoFilasPorPagina1Validator1() {
+        return textoFilasPorPagina1Validator1;
+    }
+
+    public void setTextoFilasPorPagina1Validator1(LongRangeValidator lrv) {
+        textoFilasPorPagina1Validator1 = lrv;
+    }
+
+    @Override
+    public String getVinculoPaginaConsultaConArbol() {
+#set($sibling = $FALSE)
+#set($sibling = $module.getTreeSiblingOf($page))
+#if($sibling)
+//      relate $sibling.name @ $module.name ($module.wrapper.hyphenatedAlias) @ $module.master.name ($module.master.wrapper.hyphenatedAlias)
+        return "$Bundle.getString('DisplayFormat.TREE.outcome')";
+#else
+    #set($sibling = $project.getTreeSiblingOf($page))
+    #if($sibling)
+//      relate $sibling.name @ $project.name ($project.wrapper.hyphenatedAlias)
+        return "$Bundle.getString('DisplayFormat.TREE.outcome')";
+    #else
+        return null;
+    #end
+#end
+    }
+
+    @Override
+    public String getVinculoPaginaConsultaDetalle() {
+#set($sibling = $FALSE)
+#set($sibling = $module.getDetailSiblingOf($page))
+#if($sibling)
+//      relate $sibling.name @ $module.name ($module.wrapper.hyphenatedAlias) @ $module.master.name ($module.master.wrapper.hyphenatedAlias)
+        return "$Bundle.getString('DisplayFormat.DETAIL.outcome')";
+#else
+    #set($sibling = $project.getDetailSiblingOf($page))
+    #if($sibling)
+//      relate $sibling.name @ $project.name ($project.wrapper.hyphenatedAlias)
+        return "$Bundle.getString('DisplayFormat.DETAIL.outcome')";
+    #else
+        #set($cousin = $FALSE)
+        #set($cousin = $module.getDetailCousinOf($page))
+        #if($cousin)
+....//      cousin $cousin.name @ $module.name ($module.wrapper.hyphenatedAlias) @ $module.master.name ($module.master.wrapper.hyphenatedAlias)
+....        return "$Bundle.getString('DisplayFormat.DETAIL.outcome')";
+        #else
+            #set($cousin = $project.getDetailCousinOf($page))
+            #if($cousin)
+........//      cousin $cousin.name @ $project.name ($project.wrapper.hyphenatedAlias)
+........        return "$Bundle.getString('DisplayFormat.DETAIL.outcome')";
+            #else
+                return null;
+            #end
+        #end
+    #end
+#end
+    }
+    // </editor-fold>
+
+#break

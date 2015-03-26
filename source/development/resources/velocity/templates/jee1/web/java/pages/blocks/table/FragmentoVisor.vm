@@ -1,0 +1,330 @@
+    public boolean isFuncionViewViewerHabilitada() {
+        return ${entityDataProvider}.isFuncionViewViewerHabilitada();
+    }
+
+    public boolean isFuncionShowViewerHabilitada() {
+        return ${entityDataProvider}.isFuncionShowViewerHabilitada();
+    }
+
+    private FragmentoVisor ${fragmentoVisor};
+
+    public FragmentoVisor getVisor() {
+        if (${fragmentoVisor} == null) {
+            ${fragmentoVisor} = new FragmentoVisor();
+            ${fragmentoVisor}.init();
+        }
+        return ${fragmentoVisor};
+    }
+
+    public class FragmentoVisor {
+
+        // <editor-fold defaultstate="collapsed" desc="Managed Component Definition">
+        private VistaFuncionCachedRowSetDataProvider2 vistaDataProvider;
+
+        private void initVistaDataProvider() {
+            if (vistaDataProvider == null) {
+                vistaDataProvider = new VistaFuncionCachedRowSetDataProvider2();
+##              vistaDataProvider.setCachedRowSet((javax.sql.rowset.CachedRowSet) getValue("#{SessionBean1.vistaRowSet}"));
+                vistaDataProvider.setCachedRowSet(getCachedRowSetValue("#{SessionBean1.vistaRowSet}"));
+            }
+        }
+
+        private HiddenField campoAplicarVisor1 = new HiddenField();
+
+        public HiddenField getCampoAplicarVisor1() {
+            return campoAplicarVisor1;
+        }
+
+        public void setCampoAplicarVisor1(HiddenField hf) {
+            campoAplicarVisor1 = hf;
+        }
+
+        private DropDown listaVista1 = new ${project.rootPackageName}.lib.core.jsf.component.ListaDesplegable();
+
+        public DropDown getListaVista1() {
+            return listaVista1;
+        }
+
+        public void setListaVista1(DropDown dd) {
+            this.listaVista1 = dd;
+        }
+
+        private DropDown listaFormatoGuardar1 = new ${project.rootPackageName}.lib.core.jsf.component.ListaDesplegable();
+
+        public DropDown getListaFormatoGuardar1() {
+            return listaFormatoGuardar1;
+        }
+
+        public void setListaFormatoGuardar1(DropDown dd) {
+            this.listaFormatoGuardar1 = dd;
+        }
+
+        private IntegerConverter listaFormatoGuardar1Converter = new IntegerConverter();
+
+        public IntegerConverter getListaFormatoGuardar1Converter() {
+            return listaFormatoGuardar1Converter;
+        }
+
+        public void setListaFormatoGuardar1Converter(IntegerConverter ic) {
+            this.listaFormatoGuardar1Converter = ic;
+        }
+
+        private Integer formatoGuardar;
+
+        public Integer getFormatoGuardar() {
+            return formatoGuardar;
+        }
+
+        public void setFormatoGuardar(Integer formatoGuardar) {
+            this.formatoGuardar = formatoGuardar;
+        }
+
+        static final int GUARDAR_INFORME = 1;
+
+        static final int GUARDAR_ARCHIVO = 2;
+
+        public ArrayList getOpcionesListaFormatoGuardar() {
+            ListOptions list = new ListOptions(false, false);
+            list.add(Integer.valueOf(GUARDAR_INFORME),
+                gestor.getI18n().getTextoBotonEjecutarInforme(),
+                gestor.getI18n().getToolTipBotonEjecutarInforme());
+            list.add(Integer.valueOf(GUARDAR_ARCHIVO),
+                gestor.getI18n().getTextoBotonExportarArchivo(),
+                gestor.getI18n().getToolTipBotonExportarArchivo());
+            return JSF.getListaOpciones(list);
+        }
+
+        private DropDown listaFormatoInforme1 = new ${project.rootPackageName}.lib.core.jsf.component.ListaDesplegable();
+
+        public DropDown getListaFormatoInforme1() {
+            return listaFormatoInforme1;
+        }
+
+        public void setListaFormatoInforme1(DropDown dd) {
+            this.listaFormatoInforme1 = dd;
+        }
+
+        private IntegerConverter listaFormatoInforme1Converter = new IntegerConverter();
+
+        public IntegerConverter getListaFormatoInforme1Converter() {
+            return listaFormatoInforme1Converter;
+        }
+
+        public void setListaFormatoInforme1Converter(IntegerConverter ic) {
+            this.listaFormatoInforme1Converter = ic;
+        }
+
+        private Integer formatoInforme;
+
+        public Integer getFormatoInforme() {
+            return formatoInforme;
+        }
+
+        public void setFormatoInforme(Integer formatoInforme) {
+            this.formatoInforme = formatoInforme;
+        }
+
+        public ArrayList getOpcionesListaFormatoInforme() {
+#*
+            ListOptions list = new ListOptions(false, false);
+            list.add(
+                EnumTipoInforme.DETALLE.getOptionValue(),
+                EnumTipoInforme.DETALLE.getOptionLabel(),
+                EnumTipoInforme.DETALLE.getOptionDescription());
+            list.add(
+                EnumTipoInforme.RESUMEN.getOptionValue(),
+                EnumTipoInforme.RESUMEN.getOptionLabel(),
+                EnumTipoInforme.RESUMEN.getOptionDescription());
+            list.add(
+                EnumTipoInforme.GRAFICO.getOptionValue(),
+                EnumTipoInforme.GRAFICO.getOptionLabel(),
+                EnumTipoInforme.GRAFICO.getOptionDescription());
+            return JSF.getListaOpciones(list);
+*###
+            return JSF.getListaOpciones(EnumTipoInforme.values(), false, false);
+        }
+
+        private Button botonAplicarVisor1 = new Button();
+
+        public Button getBotonAplicarVisor1() {
+            return botonAplicarVisor1;
+        }
+
+        public void setBotonAplicarVisor1(Button b) {
+            botonAplicarVisor1 = b;
+        }
+
+        private Button botonGuardarResultadoConsulta1 = new Button();
+
+        public Button getBotonGuardarResultadoConsulta1() {
+            return botonGuardarResultadoConsulta1;
+        }
+
+        public void setBotonGuardarResultadoConsulta1(Button b) {
+            botonGuardarResultadoConsulta1 = b;
+        }
+
+        private LongConverter longConverter1 = new LongConverter();
+
+        public LongConverter getLongConverter1() {
+            return longConverter1;
+        }
+
+        public void setLongConverter1(LongConverter lc) {
+            longConverter1 = lc;
+        }
+
+        public Object getItemsListaVista1() {
+            Object items = null;
+            long valor = ${entityDataProvider}.getFuncionSelect();
+            if (valor > 0) {
+                initVistaDataProvider();
+                FiltroBusqueda filtro = new FiltroBusqueda();
+                String clave = VistaFuncionCachedRowSetDataProvider2.COLUMNA_FUNCION;
+                try {
+                    filtro.addCriterio(clave, valor);
+                    vistaDataProvider.consultarVistaFuncion(filtro);
+                    items = vistaDataProvider.getListaOpciones(true, EnumColumnaEtiqueta.COLUMNA_NOMBRE);
+                } catch (ExcepcionAplicacion ex) {
+                    items = null;
+                }
+            }
+            return items;
+        }
+
+        public String getScriptBotonBuscarVista1() {
+            String ocr = VistaFuncionCachedRowSetDataProvider2.COLUMNA_ID;
+            String car = campoAplicarVisor1.getClientId(getFacesContext());
+            String bar = botonAplicarVisor1.getClientId(getFacesContext());
+            long funcion = ${entityDataProvider}.getFuncionSelect();
+            return getScriptAbrirVentanaVistas(URX.VISTA_FUNCION, ocr, car, bar, funcion);
+        }
+
+        public String getScriptBotonBuscarVista2() {
+            String car = campoAplicarVisor1.getClientId(getFacesContext());
+            String bar = botonAplicarVisor1.getClientId(getFacesContext());
+            long funcion = ${entityDataProvider}.getFuncionSelect();
+            Long vista = ${entityDataProvider}.getVistaFuncionSelect();
+            if (vista == null) {
+                String ocr = VistaFuncionCachedRowSetDataProvider2.COLUMNA_ID;
+                return getScriptAbrirVentanaVistas(URX.VISTA_FUNCION, ocr, car, bar, funcion);
+            } else {
+                String ocr = VistaFuncionColCachedRowSetDataProvider2.COLUMNA_VISTA;
+                return getScriptAbrirVentanaVistas(URX.VISTA_FUNCION_COL, ocr, car, bar, vista);
+            }
+        }
+
+        private String getScriptAbrirVentanaVistas(String url, String ocr, String car, String bar, long rm) {
+            ListaParametros rpl = new ListaParametros();
+            rpl.addParametro(CPP.ID_OPCION_CAMPO_RETORNO, ocr);
+            rpl.addParametro(CPP.ID_CAMPO_ACCION_RETORNO, car);
+            rpl.addParametro(CPP.ID_BOTON_ACCION_RETORNO, bar);
+            rpl.addParametro(CPP.ID_DOMINIO_RETORNO, VistaFuncionCachedRowSetDataProvider2.ID_DOMINIO_RECURSO);
+            rpl.addParametro(CPP.ID_RECURSO_MAESTRO, String.valueOf(rm));
+            return JSF.getOpenWindowJavaScript(url, rpl.toString());
+        }
+
+        public String botonAplicarVisor1_action() {
+            try {
+                if (campoAplicarVisor1.getText() != null) {
+                    String vista = (String) campoAplicarVisor1.getText();
+                    campoAplicarVisor1.setText(null);
+                    if (StringUtils.isNotBlank(vista) && vista.startsWith(Global.PREFIJO_STRING_ID_RECURSO)) {
+                        Long valor = Long.valueOf(vista.substring(1));
+                        ${entityDataProvider}.setVistaFuncionSelect(valor);
+                    }
+                }
+            } catch (Exception ex) {
+                gestor.handle(ex);
+            } finally {
+                return null;
+            }
+        }
+
+        public String botonGuardarResultadoConsulta1_action() {
+            Long vista = ${entityDataProvider}.getVistaFuncionSelect();
+            if (vista == null) {
+                String dominio = VistaFuncionColCachedRowSetDataProvider2.CODIGO_DOMINIO_RECURSO;
+                String columna = VistaFuncionColCachedRowSetDataProvider2.COLUMNA_VISTA;
+                error(Bitacora.getTextoMensaje(CBM.CHECK_CHANGES_EXCEPTION_8, "<" + dominio + "." + columna + ">"));
+                return null;
+            }
+            switch (formatoGuardar) {
+                case GUARDAR_INFORME:
+                    return accionEjecutarInforme();
+                case GUARDAR_ARCHIVO:
+                    return accionExportarArchivo();
+                default:
+                    return null;
+            }
+        }
+
+        private String accionEjecutarInforme() {
+            ObjectMessage solicitud;
+            Long vista = ${entityDataProvider}.getVistaFuncionSelect();
+            if (vista == null) {
+                String informe = getRecursoDataProvider().getCodigoDominioRecurso();
+                long funcion = getRecursoDataProvider().getFuncionSelect();
+                String select = getRecursoDataProvider().getComandoSelectRestringido();
+                solicitud = reporter.executeReport(informe, funcion, select, true);
+            } else {
+                EnumTipoInforme tipo = EnumTipoInforme.valueOf(formatoInforme);
+                String select = getRecursoDataProvider().getComandoSelectRestringido();
+                solicitud = reporter.executeReport(vista, tipo, select);
+            }
+            receiveReply(solicitud);
+            return null;
+        }
+
+        private String accionExportarArchivo() {
+            ObjectMessage solicitud;
+            Long vista = ${entityDataProvider}.getVistaFuncionSelect();
+            if (vista == null) {
+                String informe = getRecursoDataProvider().getCodigoDominioRecurso();
+                long funcion = getRecursoDataProvider().getFuncionSelect();
+                String select = getRecursoDataProvider().getComandoSelectRestringido();
+                solicitud = exporter.executeExport(informe, funcion, select, true);
+            } else {
+                EnumTipoInforme tipo = EnumTipoInforme.valueOf(formatoInforme);
+                String select = getRecursoDataProvider().getComandoSelectAnsi();
+                solicitud = exporter.executeExport(vista, tipo, select);
+            }
+            receiveReply(solicitud);
+            return null;
+        }
+
+        private void receiveReply(ObjectMessage solicitud) {
+            if (solicitud != null) {
+                try {
+                    ObjectMessage respuesta = dispatcher.receiveReply(solicitud);
+                    AbstractMessage mensaje = respuesta == null ? (AbstractMessage) solicitud.getObject() : (AbstractMessage) respuesta.getObject();
+                    TLC.getBitacora().add(mensaje);
+                } catch (JMSException ex) {
+                    TLC.getBitacora().error(ex);
+                }
+            }
+        }
+
+        public String botonOcultarVisor1_action() {
+            ${entityDataProvider}.setVisorEscondido(true);
+            return null;
+        }
+
+        public String botonMostrarVisor1_action() {
+            ${entityDataProvider}.setVisorEscondido(false);
+            return null;
+        }
+        // </editor-fold>
+
+        private void init() {
+        }
+
+        private void destroy() {
+            if (vistaDataProvider != null) {
+                vistaDataProvider.close();
+            }
+        }
+
+    }
+
+#break

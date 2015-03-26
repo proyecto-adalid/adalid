@@ -1,0 +1,54 @@
+#set($foo = $cursorButtonsSequence.next())
+    // <editor-fold defaultstate="collapsed" desc="botones para manejar el cursor">
+    private Button botonIrAlPrimero${foo} = new Boton();
+
+    public Button getBotonIrAlPrimero${foo}() {
+        return botonIrAlPrimero${foo};
+    }
+
+    public void setBotonIrAlPrimero${foo}(Button button) {
+        botonIrAlPrimero${foo} = button;
+    }
+
+    private Button botonIrAlAnterior${foo} = new Boton();
+
+    public Button getBotonIrAlAnterior${foo}() {
+        return botonIrAlAnterior${foo};
+    }
+
+    public void setBotonIrAlAnterior${foo}(Button button) {
+        botonIrAlAnterior${foo} = button;
+    }
+
+    private Button botonIrAlSiguiente${foo} = new Boton();
+
+    public Button getBotonIrAlSiguiente${foo}() {
+        return botonIrAlSiguiente${foo};
+    }
+
+    public void setBotonIrAlSiguiente${foo}(Button button) {
+        botonIrAlSiguiente${foo} = button;
+    }
+
+    private Button botonIrAlUltimo${foo} = new Boton();
+
+    public Button getBotonIrAlUltimo${foo}() {
+        return botonIrAlUltimo${foo};
+    }
+
+    public void setBotonIrAlUltimo${foo}(Button button) {
+        botonIrAlUltimo${foo} = button;
+    }
+
+    private Button botonProcesarFila${foo} = new Boton();
+
+    public Button getBotonProcesarFila${foo}() {
+        return botonProcesarFila${foo};
+    }
+
+    public void setBotonProcesarFila${foo}(Button b) {
+        botonProcesarFila${foo} = b;
+    }
+    // </editor-fold>
+
+#break

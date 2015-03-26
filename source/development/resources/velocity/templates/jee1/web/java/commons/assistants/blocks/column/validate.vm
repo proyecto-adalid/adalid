@@ -1,0 +1,5 @@
+    // <editor-fold defaultstate="collapsed" desc="${fieldClassName}">
+    #parse("$templatePath/blocks/column/validator-expression.vm")
+    // </editor-fold>
+
+#break

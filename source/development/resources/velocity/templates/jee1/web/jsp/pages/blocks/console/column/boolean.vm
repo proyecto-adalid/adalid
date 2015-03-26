@@ -1,0 +1,45 @@
+$tab<h:panelGrid id="panelGrid${panelGridSequence.next()}"
+$tab    rendered="#{${pageBeanName}.grid${operation.wrapper.javaClassName}Rendered}"
+$tab    styleClass="pdq-grid-etiqueta-1">
+$tab    <webuijsf:label id="label${fieldFirstName}"
+$tab        binding="#{${pageBeanName}.label${fieldFirstName}}"
+$tab        for="${campo1}"
+##          text="$parameter.wrapper.xmlValidDefaultShortLabel"/>
+$tab        text="${fieldBundleParametrosKey}"/>
+$tab</h:panelGrid>
+$tab<h:panelGrid id="panelGrid${panelGridSequence.next()}"
+$tab    columns="7"
+$tab    rendered="#{${pageBeanName}.grid${operation.wrapper.javaClassName}Rendered}"
+$tab    styleClass="pdq-grid-elemento-1">
+    #if($parameter.booleanDisplayType == 'CHECKBOX' && $parameter.isRequiredParameter())
+$tab    <webuijsf:checkbox id="${campo1}"
+$tab        binding="#{${pageBeanName}.${campo1}}"
+        #if($parameter.isSubmitField())
+$tab        onChange="webui.suntheme4_2.common.timeoutSubmitForm(this.form, '${campo1}');"
+        #end
+##          toolTip="$parameter.wrapper.xmlValidDefaultTooltip"/>
+$tab        toolTip="${fieldBundleParametrosKey}"
+$tab        validatorExpression="#{${pageBeanName}.${campo1}_validate}"/>
+    #else
+$tab    <webuijsf:dropDown id="${campo1}"
+$tab        binding="#{${pageBeanName}.${campo1}}"
+$tab        converter="#{${pageBeanName}.converter${fieldFirstName}}"
+$tab        items="#{${pageBeanName}.options${Campo1}}"
+        #if($parameter.isSubmitField())
+$tab        onChange="webui.suntheme4_2.common.timeoutSubmitForm(this.form, '${campo1}');"
+        #end
+$tab        required="$fieldRequired"
+##          toolTip="$parameter.wrapper.xmlValidDefaultTooltip"/>
+$tab        toolTip="${fieldBundleParametrosKey}"
+$tab        validatorExpression="#{${pageBeanName}.${campo1}_validate}"/>
+    #end
+$tab    <webuijsf:message id="message${fieldFirstName}"
+$tab        for="${campo1}"/>
+$tab    <webuijsf:helpInline id="helpInline${fieldFirstName}"
+$tab        binding="#{${pageBeanName}.helpInline${fieldFirstName}}"
+$tab        rendered="#{SessionBean1.contextoSesion.helpInlineRendered}"
+$tab        styleClass="pdq-helpInline-field"
+##          text="$parameter.wrapper.xmlValidDefaultShortDescription"
+$tab        text="${fieldBundleParametrosKey}"
+$tab        type="field"/>
+$tab</h:panelGrid>

@@ -1,0 +1,19 @@
+#set($foo = $processingButtonsSequence.next())
+$tab<!-- processing buttons opening -->
+$tab<h:panelGrid id="panelGrid${panelGridSequence.next()}" columns="2">
+$tab    <webuijsf:button id="botonAplicar$foo"
+$tab        actionExpression="#{${pageBeanName}.botonAplicar${foo}_action}"
+$tab        binding="#{${pageBeanName}.botonAplicar$foo}"
+##          onClick="#{${pageBeanName}.gestor.scriptAplicar}"
+$tab        styleClass="pdq-button-1"
+$tab        text="#{${pageBeanName}.gestor.i18n.textoBotonAplicar}"
+$tab        toolTip="#{${pageBeanName}.gestor.i18n.toolTipBotonAplicar}"/>
+$tab    <webuijsf:button id="botonProcesar$foo"
+$tab        actionExpression="#{${pageBeanName}.botonProcesar${foo}_action}"
+$tab        binding="#{${pageBeanName}.botonProcesar$foo}"
+##          onClick="#{${pageBeanName}.gestor.scriptProcesar}"
+$tab        styleClass="pdq-button-1"
+$tab        text="#{${pageBeanName}.gestor.i18n.textoBotonProcesar}"
+$tab        toolTip="#{${pageBeanName}.gestor.i18n.toolTipBotonProcesar}"/>
+$tab</h:panelGrid>
+$tab<!-- processing buttons closing -->

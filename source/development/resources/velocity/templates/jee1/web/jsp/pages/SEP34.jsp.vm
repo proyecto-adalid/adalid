@@ -1,0 +1,54 @@
+#parseJSPMacros()
+#setJSPVariables()
+#writeXMLDeclaration()
+#writeJSPLicense()
+#writeJSPAuthor('Jorge Campins')
+#parse("$templatePath/blocks/console/set-variables.vm")
+#setLocalVariables()
+#parse("$templatePath/blocks/root.vm")
+#break
+
+#macro(setLocalVariables)
+    #set($dollar = '$')
+    #set($pageName = "$!{webPageNamePrefix}${page.name}")
+    #set($pageBeanPath = "crop$dollar$module.wrapper.dottedAlias.replace('.', $dollar)$dollar")
+    #set($pageBeanName = "${pageBeanPath}$!{webPageNamePrefix}${page.name}")
+    #set($anchorSequence = $Sequence.startWith(1))
+    #set($cursorButtonsSequence = $Sequence.startWith(1))
+    #set($processingButtonsSequence = $Sequence.startWith(1))
+    #set($panelGridSequence = $Sequence.startWith(101))
+    #set($operationSequence = $Sequence.startWith(1))
+    #set($operations = $ColUtils.filter($page.entity.businessOperationsList, $isAccesibleOperation))
+##  #set($operations = $ColUtils.sort($operations, $byOperationName))
+    #set($sourceData = '')
+    #set($sourceVar = '')
+    #set($divString = '')
+    #set($tabString = '')
+    #set($viewWithMasterHeading = $FALSE)
+    #set($masterHeadingViewWidth = 0)
+    #set($entityFieldColumnsLimit = 50)
+    #setVirtualForms()
+#end##setLocalVariables
+
+#macro(setVirtualForms)
+    #set($virtualInput = "listaFuncionAccion1 #writeVirtualFormFieldList()")
+    #set($virtualForm1 = "virtualForm1 | $virtualInput | ")
+    #set($virtualSubmt = "botonFavoritos2")
+    #set($virtualForm2 = "virtualForm2 | | $virtualSubmt ")
+    #set($virtualInput = "listaFuncionAccion1")
+    #set($virtualSubmt = "listaFuncionAccion1")
+    #set($virtualForm3 = "virtualForm3 | $virtualInput | $virtualSubmt ")
+    #set($virtualForm4 = "virtualForm4 | | ")
+    #set($virtualFormsConfig = "$virtualForm1, $virtualForm2, $virtualForm3, $virtualForm4")
+#end##setVirtualForms
+
+#macro(writeVirtualFormFieldList)
+    #set($foo = '')
+    #foreach($operation in $operations)
+        #setOperationVariables()
+        #foreach($parameter in $parameters)
+            #set($foo = "$foo campo${operationQualifier}${parameter.wrapper.javaClassName}1")
+        #end##foreach-parameter
+    #end##foreach-operation
+    #if($foo != '')$foo.trim()#end
+#end##writeVirtualFormFieldList
