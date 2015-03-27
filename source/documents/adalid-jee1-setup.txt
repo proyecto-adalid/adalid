@@ -1,3 +1,3 @@
-El proyecto adalid-jee1 esta disponible en Google Code https://code.google.com/p/adalid-jee1
-La guia de instalacion para linux se encuentra en http://adalid-jee1.googlecode.com/svn/wiki/documents/instalacion-linux.pdf
-La guia de instalacion para windows se encuentra en http://adalid-jee1.googlecode.com/svn/wiki/documents/instalacion-windows.pdf
+El proyecto adalid-jee1 esta disponible en GitHub https://github.com/proyecto-adalid/adalid-jee1
+La guia de instalacion para linux se encuentra en https://github.com/proyecto-adalid/adalid-jee1/blob/master/documentos/instalacion-linux.pdf
+La guia de instalacion para windows se encuentra en https://github.com/proyecto-adalid/adalid-jee1/blob/master/documentos/instalacion-windows.pdf
