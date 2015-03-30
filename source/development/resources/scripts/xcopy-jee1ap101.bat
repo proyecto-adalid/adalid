@@ -19,7 +19,7 @@ call:check-exist velocity directory "%velocity%"
 if defined does_not_exist goto:eof
 
 :set-rmdir-options-loop
-set siono=N
+set siono=Y
 set /p siono="Do not ask if ok to remove directory trees, Are you sure (Y/N)? [%siono%] "
 if /i "%siono%" == "Y" set rmdir_options=/s /q
 if /i "%siono%" == "Y" echo. & goto:confirm-rmdir-quiet-option-loop
@@ -28,7 +28,7 @@ if /i "%siono%" == "N" echo. & goto:all-set
 goto:set-rmdir-options-loop
 
 :confirm-rmdir-quiet-option-loop
-set siono=N
+set siono=Y
 set /p siono="Are you nuts (Y/N)? [%siono%] "
 if /i "%siono%" == "Y" echo. & goto:all-set
 if /i "%siono%" == "N" echo. & goto:set-rmdir-options-loop
