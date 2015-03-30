@@ -1,0 +1,28 @@
+#setGlobalVariables()
+#parse('templates/jee1/macros/macros-3.vm')
+#setTargetEnvironmentVariables()
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="${project.alias}-ejb" default="perform-weaving-task" basedir=".">
+
+    <target name="define-weaving-task">
+        <echo level="warning" message="define-weaving-task: task definition for EclipseLink static weaving"/>
+        <taskdef name="weave" classname="org.eclipse.persistence.tools.weaving.jpa.StaticWeaveAntTask"/>
+    </target>
+
+    <target name="perform-weaving-task" depends="define-weaving-task">
+        <dirname file="build/classes/META-INF" property="eclipselink.static.weaving.dir"/>
+        <echo level="warning" message="perform-weaving-task: perform EclipseLink static weaving of ${eclipselink.static.weaving.dir}"/>
+        <weave
+            source="${eclipselink.static.weaving.dir}"
+            target="${eclipselink.static.weaving.dir}"
+            loglevel="INFO">
+            <classpath>
+                <pathelement path="${absolute}${backslash}jboss-as-${targetJBossVersion}${backslash}modules${backslash}org${backslash}eclipse${backslash}persistence${backslash}main${backslash}eclipselink-2.4.0.jar"/>
+                <pathelement path="${absolute}${backslash}jboss-as-${targetJBossVersion}${backslash}modules${backslash}javax${backslash}persistence${backslash}api${backslash}main${backslash}hibernate-jpa-2.0-api-1.0.1.Final.jar"/>
+                <pathelement path="${absolute}${backslash}jboss-as-${targetJBossVersion}${backslash}modules${backslash}javax${backslash}jms${backslash}api${backslash}main${backslash}jboss-jms-api_1.1_spec-1.0.0.Final.jar"/>
+                <pathelement path="..${backslash}${project.alias}-lib${backslash}build"/>
+            </classpath>
+        </weave>
+    </target>
+
+</project>

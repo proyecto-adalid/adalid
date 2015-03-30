@@ -42,6 +42,7 @@ javac.classpath=${backslash}
     ${dollar}{reference.${project.alias}-ejb.dist}:${backslash}
     ${dollar}{reference.${project.alias}-lib.jar}:${backslash}
     ${dollar}{libs.adalid-compile-lib-1.classpath}:${backslash}
+    ${dollar}{libs.jboss-eclipselink.classpath}:${backslash}
     ${dollar}{libs.jsf12-support.classpath}:${backslash}
     ${dollar}{libs.woodstock-components.classpath}
 ${pound} Space-separated list of extra javac options
