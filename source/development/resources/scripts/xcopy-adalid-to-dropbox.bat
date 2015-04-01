@@ -6,6 +6,8 @@ set log="%~f0.log"
 echo %~f0>%log%
 set xf=/xf
 set xf=%xf% Thumbs.db
+set xf=%xf% build-impl.xml
+set xf=%xf% genfiles.properties
 set xf=%xf% *.laccb
 set xf=%xf% *.lnk
 set xf=%xf% *.log
@@ -13,6 +15,7 @@ set xf=%xf% ~$*.*
 set xd=/xd
 set xd=%xd% build
 set xd=%xd% dist
+set xd=%xd% private
 
 :documents
 set folder1=%adalid_dir%\source\documents
