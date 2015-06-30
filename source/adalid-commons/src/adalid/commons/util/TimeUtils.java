@@ -6,11 +6,13 @@
  */
 package adalid.commons.util;
 
+import adalid.commons.bundles.Bundle;
 import java.sql.Date;
 import java.sql.Time;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import org.apache.commons.lang.StringUtils;
 
 /**
  * @author Jorge Campins
@@ -143,11 +145,31 @@ public class TimeUtils {
 
     public static final String DEFAULT_TIMESTAMP_FORMAT = "dd/MM/yyyy hh:mm:ss aa";
 
-    public static final SimpleDateFormat DEFAULT_DATE_FORMATTER = new SimpleDateFormat(DEFAULT_DATE_FORMAT);
+    public static final SimpleDateFormat DEFAULT_DATE_FORMATTER = new SimpleDateFormat(getDateFormat());
 
-    public static final SimpleDateFormat DEFAULT_TIME_FORMATTER = new SimpleDateFormat(DEFAULT_TIME_FORMAT);
+    public static final SimpleDateFormat DEFAULT_TIME_FORMATTER = new SimpleDateFormat(getTimeFormat());
 
-    public static final SimpleDateFormat DEFAULT_TIMESTAMP_FORMATTER = new SimpleDateFormat(DEFAULT_TIMESTAMP_FORMAT);
+    public static final SimpleDateFormat DEFAULT_TIMESTAMP_FORMATTER = new SimpleDateFormat(getTimestampFormat());
+
+    private static final String BUNDLE_KEY_PREFIX = TimeUtils.class.getName() + ".";
+
+    public static String getDateFormat() {
+        String string = Bundle.getTrimmedToNullString(BUNDLE_KEY_PREFIX + "date.pattern");
+        String format = StringUtils.defaultIfBlank(string, DEFAULT_DATE_FORMAT);
+        return format;
+    }
+
+    public static String getTimeFormat() {
+        String string = Bundle.getTrimmedToNullString(BUNDLE_KEY_PREFIX + "time.pattern");
+        String format = StringUtils.defaultIfBlank(string, DEFAULT_TIME_FORMAT);
+        return format;
+    }
+
+    public static String getTimestampFormat() {
+        String string = Bundle.getTrimmedToNullString(BUNDLE_KEY_PREFIX + "both.pattern");
+        String format = StringUtils.defaultIfBlank(string, DEFAULT_TIMESTAMP_FORMAT);
+        return format;
+    }
 
     public static String defaultDateString() {
         return defaultDateString(currentDate());

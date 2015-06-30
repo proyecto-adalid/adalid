@@ -17,13 +17,9 @@ public enum ${javaClassSimpleName} implements ListOption {
     #if($foreach.last)
         #set($comma = ';')
     #end
-##  #set($kname = $row.wrapper.sqlName.toUpperCase())
     #set($kname = $row.wrapper.javaConstantName)
     #set($value = $row.instanceKeyValue)
-##  #set($label = "${entity.wrapper.sqlName}.${row.wrapper.sqlName}")
-##  #set($label = "${entity.wrapper.sqlSchemaQualifiedShortName}.${row.wrapper.sqlName}")
-##  #set($label = "${entity.wrapper.bundleKey}.${row.wrapper.bundleKey}")
-    #set($label = "${entity.wrapper.sqlSchemaQualifiedShortBundleKey}.${row.wrapper.bundleKey}")
+    #set($label = "${entity.wrapper.sqlName}.${row.wrapper.sqlName}")
     #writeEnumConstant()
 #end##foreach-row
 

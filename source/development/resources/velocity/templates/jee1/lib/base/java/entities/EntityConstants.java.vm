@@ -17,9 +17,9 @@ public class ${javaClassSimpleName}#writeJavaImplements()
 
     public static final long ID_DOMINIO_RECURSO = ${entityNumber}L;
 
-    public static final String CODIGO_DOMINIO_RECURSO = "${codex}";
+    public static final String CODIGO_DOMINIO_RECURSO = "${entity.wrapper.sqlName}";
 
-    public static final String CODIGO_ENTIDAD_RECURSO = "${entity.wrapper.sqlSchemaQualifiedShortBundleKey}";
+    public static final String CODIGO_ENTIDAD_RECURSO = "${entity.wrapper.underscoredName}";
 
 #foreach($property in $dataProviderColumns)
     public static final String COLUMNA_${property.wrapper.javaConstantName} = "${query.getSqlAlias($property)}";
@@ -118,24 +118,17 @@ public class ${javaClassSimpleName}#writeJavaImplements()
     #set($NAME = $operation.wrapper.javaConstantName)
     #set($TYPE = "$!operation.operationType")
     #set($TIPO = '')
-    #set($name = '')
     #if($TYPE == 'CRUD')
     #elseif($TYPE == 'EXPORT')
         #set($TIPO = 'ARCHIVO')
-        #set($name = $VelocityAid.coalesce($operation.exportName,    $operation.name))
     #elseif($TYPE == 'REPORT')
         #set($TIPO = 'INFORME')
-        #set($name = $VelocityAid.coalesce($operation.reportName,    $operation.name))
     #elseif($TYPE == 'PROCEDURE')
         #set($TIPO = 'PROCEDIMIENTO')
-        #set($name = $VelocityAid.coalesce($operation.procedureName, $operation.name))
     #elseif($TYPE == 'PROCESS')
         #set($TIPO = 'PROCESO')
-        #set($name = $VelocityAid.coalesce($operation.processName,   $operation.name))
     #end
     #if($TIPO != '')
-        #set($jlcn = $javaProgrammer.getJavaLowerConstantName($operation.name))
-        #set($name = $javaProgrammer.getJavaLowerConstantName($name))
         #writeOperationString()
     #end
 #end##foreach-operation
@@ -151,10 +144,9 @@ public class ${javaClassSimpleName}#writeJavaImplements()
 #end##writeOperationNumber
 
 #macro(writeOperationString)
-    public static final String ETIQUETA_FUNCION_${TYPE}_${NAME} = "${codex}.${jlcn}";
+    public static final String ETIQUETA_FUNCION_${TYPE}_${NAME} = "${entity.wrapper.sqlName}.${operation.wrapper.sqlName}";
 
-##  public static final String ${TIPO}_FUNCION_${NAME} = "${codex}.${name}";
-    public static final String ${TIPO}_FUNCION_${NAME} = "${codex}.${jlcn}";
+    public static final String ${TIPO}_FUNCION_${NAME} = "${entity.wrapper.sqlName}.${operation.wrapper.sqlName}";
 
 #end##writeOperationString
 
@@ -163,7 +155,7 @@ public class ${javaClassSimpleName}#writeJavaImplements()
     #foreach($property in $dataProviderColumns)
         #if($property.isPersistentEntity() && !$property.isPersistentEnumerationEntity())
             #set($root = $property.root)
-            #set($str0 = "$!root.wrapper.sqlSchemaQualifiedShortName")
+            #set($str0 = "$!root.wrapper.sqlName")
             #set($str1 = "$!root.primaryKeyProperty.wrapper.sqlName")
             #set($str2 = "$!root.ownerProperty.wrapper.sqlName")
             #set($str3 = "$!root.segmentProperty.wrapper.sqlName")

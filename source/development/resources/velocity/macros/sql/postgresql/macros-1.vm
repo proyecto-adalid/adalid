@@ -1,7 +1,6 @@
 #break
 
 #macro(setPostgreSQLVariables)
-    #setGlobalVariables()
     #setSQLVariables()
 #end##setPostgreSQLVariables
 

@@ -5,6 +5,7 @@
 #writeXMLAuthor('Jorge Campins')
 #setGlobalVariables()
 #setLocalVariables()
+#parse("$templatePath/macros/macros-${sqlProgrammer.DBMS.toLowerCase()}.vm")
 #writeReport()
 #break
 
@@ -13,7 +14,7 @@
     #set($vista = "$!{operation.viewName}")
     #if($vista == '')
         #set($vista = "consulta_${report.entity.wrapper.sqlName}")
-        #set($vista = "${report.entity.wrapper.sqlSchemaQualifier}consulta_${report.entity.wrapper.sqlSchemaUnqualifiedShortName}")
+        #set($vista = "$report.entity.wrapper.getPrefixedSqlName('consulta_')")
     #end
     #set($opcion = $VelocityAid.valueOf($SelectOption, 'CHART'))
     #set($queryString = "$!report.view.getSelectStatement($vista, $opcion)")
@@ -56,7 +57,7 @@
     #set($pagenumber2 = '')
     ## -----------------------------------------------------------------------------
     #set($locale = '$P{REPORT_LOCALE}')
-    #set($bundleKey = """${report.entity.wrapper.sqlSchemaQualifiedShortName}.${operation.view.wrapper.sqlName}""")
+    #set($bundleKey = """${report.entity.wrapper.sqlName}.${operation.view.wrapper.sqlName}""")
     #if($bigPageHead == 'true')
         #set($pageHeaderHeight = 64)
         #set($textcdataH2 = '')
@@ -89,6 +90,10 @@
     #set($added = $controlFooterLineHeightArray.add(18))
     ## -----------------------------------------------------------------------------
     #set($textcdataF1 = '$P{END_USER_NAME}')
+    ## -----------------------------------------------------------------------------
+    #set($dateOnlyPattern = '$P{DATE_ONLY_PATTERN}')
+    #set($timeOnlyPattern = '$P{TIME_ONLY_PATTERN}')
+    #set($dateTimePattern = '$P{TIMESTAMP_PATTERN}')
     ## -----------------------------------------------------------------------------
     #set($BOF = '$F{')
     #set($EOF = '}')
@@ -231,38 +236,55 @@
             <defaultValueExpression><![CDATA[""]]></defaultValueExpression>
         </parameter>
     #foreach($parameter in $operation.parametersList)
-        <parameter name="$parameter.wrapper.sqlName" class="$parameter.wrapper.javaPrimitiveTypeName" isForPrompting="false"/>
+        #if($parameter.isBooleanPrimitive())
+            #set($class = $booleanClassName)
+        #elseif($parameter.isDateData())
+            #set($class = $dateClassName)
+        #elseif($parameter.isTimeData())
+            #set($class = $timeClassName)
+        #elseif($parameter.isTimestampData())
+            #set($class = $timestampClassName)
+        #else
+            #set($class = $parameter.wrapper.javaPrimitiveTypeName)
+        #end
+        <parameter name="$parameter.wrapper.sqlName" class="$class" isForPrompting="false"/>
     #end##foreach-parameter
 #end##writeSubDatasetParametersX
 
 #macro(writeSubDatasetParameter)
-        <parameter name="group_field__$group.field.name" class="$group.field.javaClassName" isForPrompting="false"/>
+    #if($group.field.property.isBooleanPrimitive())
+        #set($class = $booleanClassName)
+    #elseif($group.field.property.isDateData())
+        #set($class = $dateClassName)
+    #elseif($group.field.property.isTimeData())
+        #set($class = $timeClassName)
+    #elseif($group.field.property.isTimestampData())
+        #set($class = $timestampClassName)
+    #else
+        #set($class = $group.field.javaClassName)
+    #end
+##      <parameter name="group_field__$group.field.name" class="$class" isForPrompting="false"/>
+        <parameter name="group_field__$group.field.compositeIndex" class="$class" isForPrompting="false"/>
 #end##writeSubDatasetParameter
 
 #macro(buildSubDatasetQueryString)
 ##  #set($subDatasetQueryString = "SELECT${EOL} $report.lastControlGroup.field.name")
     #set($field = $report.lastControlGroup.field)
     #setReportFieldVariables()
+    #set($subDatasetOrderByExpression = '1')
     #if($dataClassName == 'BooleanData')
-#*
+        #set($subDatasetOrderByExpression = '1 DESC')
         #set($name = 'CASE')
-        #set($name = "${name} WHEN($field.name IS TRUE)")
-        #set($name = "${name} THEN(${BOP}SI${EOP})")
-        #set($name = "${name} WHEN($field.name IS FALSE)")
-        #set($name = "${name} THEN(${BOP}NO${EOP})")
-        #set($name = "${name} ELSE(${BOP}NULO${EOP})")
-        #set($name = "${name} END AS ${field.name}")
-*###
-        #set($name = 'CASE')
-        #set($name = "${name} WHEN($field.name IS TRUE)")
-        #set($name = "${name} THEN(${BOP}SI${EOP})")
-        #set($name = "${name} ELSE(${BOP}NO${EOP})")
+        #set($name = "${name} WHEN($field.name $isTruePredicate)")
+        #set($name = "${name} THEN($isTrueString)")
+        #set($name = "${name} ELSE($isFalseString)")
         #set($name = "${name} END AS ${field.name}")
         #set($plotLabelRotation='0.0')
     #else
         #set($name = $field.name)
         #set($plotLabelRotation='45.0')
     #end
+    #set($subDatasetGroupByExpression = $StringUtils.substringBefore($name, ' AS '))
     #set($subDatasetQueryString = "SELECT${EOL} ${name}")
     #foreach($group in $report.groups)
         #if($group.isDetail())
@@ -300,21 +322,27 @@
     #foreach($group in $report.groups)
         #if($group.isDetail() || $group.isLastControl())
         #else
-            #set($subDatasetQueryString = "$subDatasetQueryString${EOL}${whereAndKeyword}${group.field.name} = ${BOP}group_field__${group.field.name}${EOP}")
+##          #set($subDatasetQueryString = "$subDatasetQueryString${EOL}${whereAndKeyword}${group.field.name} = ${BOP}group_field__${group.field.name}${EOP}")
+            #set($subDatasetQueryString = "$subDatasetQueryString${EOL}${whereAndKeyword}${group.field.name} = ${BOP}group_field__${group.field.compositeIndex}${EOP}")
             #set($whereAndKeyword = ' AND ')
         #end
     #end##foreach-group
     #set($BOPX = '$P!{')
     #set($subDatasetQueryString = "$subDatasetQueryString${EOL} ${BOPX}CHART_DATASET_WHERE_CLAUSE${EOP}")
 ##  #set($subDatasetQueryString = "$subDatasetQueryString${EOL} GROUP BY $report.lastControlGroup.field.name")
-    #set($subDatasetQueryString = "$subDatasetQueryString${EOL} GROUP BY 1")
+    #if($positionalGroupBy)
+        #set($subDatasetQueryString = "$subDatasetQueryString${EOL} GROUP BY 1")
+    #else
+        #set($subDatasetQueryString = "$subDatasetQueryString${EOL} GROUP BY $subDatasetGroupByExpression")
+    #end
 ##  #set($subDatasetQueryString = "$subDatasetQueryString${EOL} ORDER BY $report.lastControlGroup.field.name")
-    #set($subDatasetQueryString = "$subDatasetQueryString${EOL} ORDER BY 1")
+    #set($subDatasetQueryString = "$subDatasetQueryString${EOL} ORDER BY $subDatasetOrderByExpression")
 #end##buildSubDatasetQueryString
 
 #macro(setSubDatasetAggregationFieldName $aggregation)
     #set($calculation = $report.getAggregateFunctionName($aggregation))
     #set($name = "${calculation}(${field.name}) AS ${aggregation.toLowerCase()}__${field.name}")
+    #set($name = "${calculation}(${field.name}) AS ${aggregation.toLowerCase()}__${field.compositeIndex}")
 #end##setSubDatasetAggregationFieldName
 
 #macro(writeSubDatasetQueryString)
@@ -358,6 +386,7 @@
 
 #macro(writeSubDatasetVariable $aggregation $calculation)
     #set($name = "${aggregation.toLowerCase()}__${field.name}")
+    #set($name = "${aggregation.toLowerCase()}__${field.compositeIndex}")
     #if("$calculation" == 'Count')
         #set($class = 'java.lang.Long')
     #else
@@ -401,6 +430,15 @@
     <parameter name="END_USER_NAME" class="java.lang.String" isForPrompting="false">
         <defaultValueExpression><![CDATA[""]]></defaultValueExpression>
     </parameter>
+    <parameter name="DATE_ONLY_PATTERN" class="java.lang.String" isForPrompting="false">
+        <defaultValueExpression><![CDATA["yyyy/MM/dd"]]></defaultValueExpression>
+    </parameter>
+    <parameter name="TIME_ONLY_PATTERN" class="java.lang.String" isForPrompting="false">
+        <defaultValueExpression><![CDATA["HH:mm:ss"]]></defaultValueExpression>
+    </parameter>
+    <parameter name="TIMESTAMP_PATTERN" class="java.lang.String" isForPrompting="false">
+        <defaultValueExpression><![CDATA["yyyy/MM/dd HH:mm:ss"]]></defaultValueExpression>
+    </parameter>
     <parameter name="SQL_SELECT_STATEMENT" class="java.lang.String" isForPrompting="false">
         <defaultValueExpression><![CDATA[""]]></defaultValueExpression>
     </parameter>
@@ -414,7 +452,18 @@
         <defaultValueExpression><![CDATA[""]]></defaultValueExpression>
     </parameter>
     #foreach($parameter in $operation.parametersList)
-....    <parameter name="$parameter.wrapper.sqlName" class="$parameter.wrapper.javaPrimitiveTypeName" isForPrompting="false"/>
+        #if($parameter.isBooleanPrimitive())
+            #set($class = $booleanClassName)
+        #elseif($parameter.isDateData())
+            #set($class = $dateClassName)
+        #elseif($parameter.isTimeData())
+            #set($class = $timeClassName)
+        #elseif($parameter.isTimestampData())
+            #set($class = $timestampClassName)
+        #else
+            #set($class = $parameter.wrapper.javaPrimitiveTypeName)
+        #end
+....    <parameter name="$parameter.wrapper.sqlName" class="$class" isForPrompting="false"/>
     #end##foreach-parameter
 #end##writeParameters
 
@@ -434,7 +483,18 @@
 #end##writeFields
 
 #macro(writeField)
-    <field name="$field.name" class="$field.javaClassName"/>
+    #if($field.property.isBooleanPrimitive())
+        #set($class = $booleanClassName)
+    #elseif($field.property.isDateData())
+        #set($class = $dateClassName)
+    #elseif($field.property.isTimeData())
+        #set($class = $timeClassName)
+    #elseif($field.property.isTimestampData())
+        #set($class = $timestampClassName)
+    #else
+        #set($class = $field.javaClassName)
+    #end
+    <field name="$field.name" class="$class"/>
 #end##writeField
 
 #macro(writeGroups)
@@ -731,7 +791,9 @@
         <textFieldExpression><![CDATA[$textcdata]]></textFieldExpression>
     </textField>
     <textField
+    #if($!patternExpression == '' && $!pattern != '')
         pattern="$pattern"
+    #end
         isBlankWhenNull="true"
         isStretchWithOverflow="false"
         evaluationTime="Now"
@@ -750,6 +812,9 @@
         #writeTextElement('Left' '')
         #decreaseIndentationBy(6)
         <textFieldExpression class="$javaClassName"><![CDATA[$fieldExpression]]></textFieldExpression>
+    #if($!patternExpression != '')
+        <patternExpression><![CDATA[$patternExpression]]></patternExpression>
+    #end
     </textField>
 #end##writeControlHeaderFields
 
@@ -857,7 +922,10 @@
 #end##writeChartDatasetParameter1
 
 #macro(writeChartDatasetParameter2)
+#***
                             <datasetParameter name="group_field__$group.field.name">
+*###
+                            <datasetParameter name="group_field__$group.field.compositeIndex">
                                 <datasetParameterExpression><![CDATA[${BOF}${group.field.name}${EOF}]]></datasetParameterExpression>
                             </datasetParameter>
 #end##writeChartDatasetParameter2
@@ -892,6 +960,7 @@
 #macro(writeChartDatasetVariable $aggregation)
     #setSeriesExpressionTextData()
     #set($name = "${aggregation.toLowerCase()}__${field.name}")
+    #set($name = "${aggregation.toLowerCase()}__${field.compositeIndex}")
                     <categorySeries>
                         <seriesExpression><![CDATA[$textcdata]]></seriesExpression>
                         <categoryExpression><![CDATA[${BOF}${report.lastControlGroup.field.name}${EOF}]]></categoryExpression>
@@ -914,7 +983,9 @@
                     isBlankWhenNull="true"
                     isStretchWithOverflow="true"
                     evaluationTime="Report"
-                    pattern="dd/MM/yyyy"
+    #if($!dateTimePattern == '')
+                    pattern="dd/MM/yyyy hh:mm aa"
+    #end
                     hyperlinkType="None"
                     hyperlinkTarget="Self">
                     <reportElement
@@ -930,6 +1001,9 @@
                     #writeTextElement('Left' '')
                     #decreaseIndentationBy(5)
                     <textFieldExpression class="java.util.Date"><![CDATA[new Date()]]></textFieldExpression>
+    #if($!dateTimePattern != '')
+                    <patternExpression><![CDATA[$dateTimePattern]]></patternExpression>
+    #end
                 </textField>
                 <textField
                     isBlankWhenNull="true"
@@ -1066,10 +1140,24 @@ $tab</textElement>
 #macro(setReportFieldVariables)
     #set($dataClassName = "$!field.dataClassName")
     #set($javaClassName = "$!field.javaClassName")
+    #if($dataClassName == 'BooleanData')
+        #set($javaClassName = $booleanClassName)
+    #elseif($dataClassName == 'DateData')
+        #set($javaClassName = $dateClassName)
+    #elseif($dataClassName == 'TimeData')
+        #set($javaClassName = $timeClassName)
+    #elseif($dataClassName == 'TimestampData')
+        #set($javaClassName = $timestampClassName)
+    #end
     #set($fieldExpression = "$BOF$field.name$EOF")
     #set($groupVariableExpression = "$BOV$!{aggregation.name().toLowerCase()}__${field.name}__${group.name}$EOV")
+    #set($groupVariableExpression = "$BOV$!{aggregation.name().toLowerCase()}__${field.compositeIndex}__${group.index}$EOV")
     #set($summaryVariableExpression = "$BOV$!{aggregation.name().toLowerCase()}__${field.name}$EOV")
+    #set($summaryVariableExpression = "$BOV$!{aggregation.name().toLowerCase()}__${field.compositeIndex}$EOV")
     #set($w = $field.pixels)
+    #set($pattern = '')
+    #set($patternExpression = '')
+    #set($textAlignment='Left')
     #if($w < 0)
         #set($w = 0)
     #end
@@ -1084,48 +1172,57 @@ $tab</textElement>
         #else
             #set($pattern = '#,##0;-#,##0')
         #end
+        #set($patternExpression = '')
         #set($textAlignment='Right')
     #elseif("$dataClassName" == 'BigIntegerData' || "$dataClassName" == 'LongData')
         #set($pattern = '#,##0;-#,##0')
+        #set($patternExpression = '')
         #set($textAlignment='Right')
     #elseif("$dataClassName" == 'BooleanData')
         #set($javaClassName = 'java.lang.String')
-        #set($fieldExpression = "EnumBit.valueOf($BOF$field.name$EOF).getLabel()")
         #set($fieldExpression = "JRBundleWebui.getBooleanLabel($locale, $BOF$field.name$EOF)")
         #set($pattern = '')
+        #set($patternExpression = '')
         #set($textAlignment='Center')
     #elseif("$dataClassName" == 'ByteData' || "$dataClassName" == 'ShortData' || "$dataClassName" == 'IntegerData')
         #set($pattern = '#,##0;-#,##0')
+        #set($patternExpression = '')
         #set($textAlignment='Right')
     #elseif("$dataClassName" == 'CharacterData' || "$dataClassName" == 'StringData')
         #set($pattern = '')
+        #set($patternExpression = '')
         #set($textAlignment='Left')
     #elseif("$dataClassName" == 'DateData')
         #set($pattern = 'dd/MM/yyyy')
+        #set($patternExpression = $dateOnlyPattern)
         #set($textAlignment='Center')
     #elseif("$dataClassName" == 'TimeData')
         #set($pattern = 'hh:mm aa')
+        #set($patternExpression = $timeOnlyPattern)
         #set($textAlignment='Center')
     #elseif("$dataClassName" == 'TimestampData')
         #set($pattern = 'dd/MM/yyyy hh:mm aa')
+        #set($patternExpression = $dateTimePattern)
         #set($textAlignment='Center')
     #elseif("$dataClassName" == 'DoubleData' || "$dataClassName" == 'FloatData')
         #set($pattern = '0.0##############E0;-0.0##############E0')
+        #set($patternExpression = '')
         #set($textAlignment='Right')
     #else
         #set($w = 0)
         #set($pattern = '')
+        #set($patternExpression = '')
         #set($textAlignment='Left')
     #end
 #end##setReportFieldVariables
 
 #macro(setFieldLabelTextData)
-    #set($bundleKey = "${report.view.entity.wrapper.sqlSchemaQualifiedShortName}")
+    #set($bundleKey = "${report.view.entity.wrapper.sqlName}")
     #set($bundleKey = "${bundleKey}.${report.view.wrapper.sqlName}")
     #set($bundleKey = "${bundleKey}.$StrUtils.getLowerHumplessCase(${field.property.partialName})")
     #set($bundleKey = """${bundleKey}""")
     #set($coalesce1 = "JRBundleParametros.getTrimmedToNullLabel($locale, $bundleKey)")
-    #set($bundleKey = "${field.property.declaringEntityRoot.wrapper.sqlSchemaQualifiedShortName}")
+    #set($bundleKey = "${field.property.declaringEntityRoot.wrapper.sqlName}")
     #set($bundleKey = "${bundleKey}.${field.property.wrapper.sqlName}")
     #set($bundleKey = """${bundleKey}""")
     #set($coalesce2 = "JRBundleParametros.getTrimmedToNullLabel($locale, $bundleKey)")
@@ -1150,12 +1247,12 @@ $tab</textElement>
 #end##setSeriesExpressionTextData
 
 #macro(setFieldShortLabelTextData)
-    #set($bundleKey = "${report.view.entity.wrapper.sqlSchemaQualifiedShortName}")
+    #set($bundleKey = "${report.view.entity.wrapper.sqlName}")
     #set($bundleKey = "${bundleKey}.${report.view.wrapper.sqlName}")
     #set($bundleKey = "${bundleKey}.$StrUtils.getLowerHumplessCase(${field.property.partialName})")
     #set($bundleKey = """${bundleKey}""")
     #set($coalesce1 = "JRBundleParametros.getTrimmedToNullShortLabel($locale, $bundleKey)")
-    #set($bundleKey = "${field.property.declaringEntityRoot.wrapper.sqlSchemaQualifiedShortName}")
+    #set($bundleKey = "${field.property.declaringEntityRoot.wrapper.sqlName}")
     #set($bundleKey = "${bundleKey}.${field.property.wrapper.sqlName}")
     #set($bundleKey = """${bundleKey}""")
     #set($coalesce2 = "JRBundleParametros.getTrimmedToNullShortLabel($locale, $bundleKey)")

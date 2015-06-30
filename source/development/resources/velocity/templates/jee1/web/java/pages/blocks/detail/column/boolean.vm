@@ -1,6 +1,6 @@
 #set($componentName = "label${fieldFirstName}${tabString}")
 #parse("$templatePath/blocks/webuijsf/label.vm")
-#if($field.property.booleanDisplayType != 'CHECKBOX' || $field.property.isNullable())
+#if($field.property.booleanDisplayType != 'CHECKBOX' || $field.property.isNullable() || $checkBoxesAreNotAllowed)
     #set($componentName = "campo${fieldFirstName}${tabString}")
     #parse("$templatePath/blocks/webuijsf/drop-down.vm")
     #set($componentName = "campo${fieldFirstName}${tabString}Texto1")

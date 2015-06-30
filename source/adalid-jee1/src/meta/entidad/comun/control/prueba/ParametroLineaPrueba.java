@@ -6,10 +6,31 @@
  */
 package meta.entidad.comun.control.prueba;
 
-import adalid.core.annotations.*;
-import adalid.core.enums.*;
-import adalid.core.interfaces.*;
-import adalid.core.properties.*;
+import adalid.core.annotations.ColumnField;
+import adalid.core.annotations.EntityClass;
+import adalid.core.annotations.EntityConsoleView;
+import adalid.core.annotations.EntityDataGen;
+import adalid.core.annotations.EntityDeleteOperation;
+import adalid.core.annotations.EntityDetailView;
+import adalid.core.annotations.EntityInsertOperation;
+import adalid.core.annotations.EntitySelectOperation;
+import adalid.core.annotations.EntityTableView;
+import adalid.core.annotations.EntityTreeView;
+import adalid.core.annotations.EntityUpdateOperation;
+import adalid.core.annotations.ForeignKey;
+import adalid.core.annotations.ManyToOne;
+import adalid.core.annotations.PropertyField;
+import adalid.core.annotations.StringField;
+import adalid.core.enums.Kleenean;
+import adalid.core.enums.MasterDetailView;
+import adalid.core.enums.Navigability;
+import adalid.core.enums.OnDeleteAction;
+import adalid.core.enums.OnUpdateAction;
+import adalid.core.enums.ResourceGender;
+import adalid.core.enums.ResourceType;
+import adalid.core.interfaces.Artifact;
+import adalid.core.properties.BooleanProperty;
+import adalid.core.properties.StringProperty;
 import java.lang.reflect.Field;
 import meta.entidad.base.PersistentEntityBase;
 import meta.entidad.comun.configuracion.basica.TipoDatoPar;
@@ -47,8 +68,8 @@ public class ParametroLineaPrueba extends PersistentEntityBase {
         setSchema(ProyectoBase.getEsquemaEntidadesComunes());
         setDefaultLabel("parámetro de ejecución de línea de prueba");
         setDefaultShortLabel("parámetro");
-        setDefaultCollectionLabel("parámetros de ejecuciones de líneas de prueba");
-        setDefaultCollectionShortLabel("parámetros");
+        setDefaultCollectionLabel("Parámetros de Ejecuciones de Líneas de Prueba");
+        setDefaultCollectionShortLabel("Parámetros");
     }
 
     @ColumnField(nullable = Kleenean.FALSE)

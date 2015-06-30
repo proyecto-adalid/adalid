@@ -19,7 +19,6 @@ import org.apache.commons.collections.Predicate;
 public class IsModuloRegistroDisplay extends IsWritingDisplay {
 
     public IsModuloRegistroDisplay() {
-        _entityPredicate = new IsModuloRegistroEntity();
     }
 
     public IsModuloRegistroDisplay(Predicate entityPredicate) {

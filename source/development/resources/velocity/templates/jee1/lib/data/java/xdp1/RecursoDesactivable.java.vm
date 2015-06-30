@@ -32,7 +32,7 @@
     #if($dataProviderColumns.contains($property))
         return get${property.wrapper.javaClassName}();
     #else
-        return (${property.wrapper.javaPrimitiveType}) super.getValue(COLUMNA_ES_RECURSO_INACTIVO);
+        return (${property.wrapper.javaPrimitiveType}) getValue(COLUMNA_ES_RECURSO_INACTIVO);
     #end
     }
 
@@ -41,7 +41,7 @@
     #if($dataProviderColumns.contains($property))
         return get${property.wrapper.javaClassName}(rowKey);
     #else
-        return (${property.wrapper.javaPrimitiveType}) super.getValue(COLUMNA_ES_RECURSO_INACTIVO, rowKey);
+        return (${property.wrapper.javaPrimitiveType}) getValue(COLUMNA_ES_RECURSO_INACTIVO, rowKey);
     #end
     }
 

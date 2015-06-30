@@ -66,6 +66,7 @@ import adalid.core.annotations.UrlProperty;
 import adalid.core.annotations.VersionProperty;
 import adalid.core.enums.BusinessKeyType;
 import adalid.core.enums.DisplayMode;
+import adalid.core.enums.HierarchyNodeType;
 import adalid.core.enums.KeyProperty;
 import adalid.core.enums.ListStyle;
 import adalid.core.enums.MasterDetailView;
@@ -459,6 +460,11 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
      *
      */
     private String _propertiesSuffix;
+
+    /**
+     *
+     */
+    private String _helpFileName;
 
     /**
      *
@@ -1605,6 +1611,23 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
     @Override
     public String getPropertiesSuffix() {
         return _propertiesSuffix;
+    }
+
+    /**
+     * @return the help file name
+     */
+    @Override
+    public String getHelpFileName() {
+        return _helpFileName;
+    }
+
+    /**
+     * sets the help file name.
+     *
+     * @param helpFileName
+     */
+    protected void setHelpFileName(String helpFileName) {
+        _helpFileName = helpFileName;
     }
 
     /**
@@ -2861,7 +2884,7 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
     }
 
     private void setDeclaredIndicators() {
-        Project.EntityReference reference = _project.getEntityReference(getDataType());
+        ProjectEntityReference reference = _project.getEntityReference(getDataType());
         _explicitlyDeclared = reference.isExplicit();
         _implicitlyDeclared = reference.isImplicit();
     }
@@ -2941,10 +2964,12 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
             settleInstances();
 //          settleNamedValues();
             settleExpressions();
+            verifyNames(Entity.class, Expression.class);
             settleFilters();
             settleTransitions();
             settleOperations();
             settleTriggers();
+//          verifyNames(Entity.class);
         } else {
             if (declaringArtifact instanceof Operation) {
 //              settleProperties();
@@ -3057,13 +3082,29 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
 //      if (isParameter() || isParameterProperty()) {
 //          return;
 //      }
-        String message = "failed to link foreign owner property property of " + getFullName();
+        String message = "failed to link foreign owner property of " + getFullName();
         if (foreignOwnerProperty == null) {
             message += "; supplied foreign property is null";
             logger.error(message);
             TLC.getProject().getParser().increaseErrorCount();
         } else {
-            _ownerProperty = foreignOwnerProperty;
+            Class<?> foreignOwnerPropertyClass = foreignOwnerProperty.getClass();
+            Class<? extends Entity> userEntityClass = TLC.getProject().getUserEntityClass();
+            if (userEntityClass != null && userEntityClass.isAssignableFrom(foreignOwnerPropertyClass)) {
+                Field field = foreignOwnerProperty.getDeclaringField();
+                boolean aye = field.isAnnotationPresent(OwnerProperty.class);
+                if (aye) {
+                    _ownerProperty = foreignOwnerProperty;
+                } else {
+                    message += "; " + field.getDeclaringClass().getSimpleName() + "." + field.getName() + " is not an owner property";
+                    logger.error(message);
+                    TLC.getProject().getParser().increaseErrorCount();
+                }
+            } else {
+                message += "; " + userEntityClass + " is not assignable from " + foreignOwnerPropertyClass;
+                logger.error(message);
+                TLC.getProject().getParser().increaseErrorCount();
+            }
         }
     }
 
@@ -3071,13 +3112,21 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
 //      if (isParameter() || isParameterProperty()) {
 //          return;
 //      }
-        String message = "failed to link foreign segment property property of " + getFullName();
+        String message = "failed to link foreign segment property of " + getFullName();
         if (foreignSegmentProperty == null) {
             message += "; supplied foreign property is null";
             logger.error(message);
             TLC.getProject().getParser().increaseErrorCount();
         } else {
-            _segmentProperty = foreignSegmentProperty;
+            Field field = foreignSegmentProperty.getDeclaringField();
+            boolean aye = field.isAnnotationPresent(SegmentProperty.class);
+            if (aye) {
+                _segmentProperty = foreignSegmentProperty;
+            } else {
+                message += "; " + field.getDeclaringClass().getSimpleName() + "." + field.getName() + " is not a segment property";
+                logger.error(message);
+                TLC.getProject().getParser().increaseErrorCount();
+            }
         }
     }
 
@@ -3623,29 +3672,33 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
     }
 
     private void checkTriggers() {
+        String tag;
         String message;
         State state;
         ProcessOperation operation;
         List<State> initialStatesList;
         List<Trigger> triggers = getTriggersList();
         for (Trigger trigger : triggers) {
-            message = "invalid trigger " + trigger.getName() + " at entity " + getName();
+            tag = " trigger " + trigger.getName() + " at entity " + getName();
             state = trigger.getState();
             operation = trigger.getOperation();
             if (state == null) {
+                message = "invalid" + tag;
                 message += "; trigger state is null";
                 logger.warn(message);
                 TLC.getProject().getParser().increaseWarningCount();
             } else if (operation == null) {
+                message = "invalid" + tag;
                 message += "; trigger operation is null";
                 logger.warn(message);
                 TLC.getProject().getParser().increaseWarningCount();
             } else {
                 initialStatesList = operation.getInitialStatesList();
                 if (initialStatesList == null || !initialStatesList.contains(state)) {
-                    message += "; state " + state.getName() + " is not a valid initial state of operation " + operation.getFullName();
-                    logger.error(message);
-                    TLC.getProject().getParser().increaseErrorCount();
+                    message = "suspicious" + tag;
+                    message += "; " + state.getName() + " is not an initial state of " + operation.getName();
+                    logger.warn(message);
+                    TLC.getProject().getParser().increaseWarningCount();
                 }
             }
         }
@@ -3788,6 +3841,7 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
         _resourceGender = ResourceGender.UNSPECIFIED;
         _propertiesPrefix = "";
         _propertiesSuffix = "";
+        _helpFileName = "";
         _startWith = 1;
         _seriesStart = 1;
         _seriesStop = 100;
@@ -4289,6 +4343,7 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
                 _resourceGender = annotation.resourceGender();
 //              _propertiesPrefix = annotation.propertiesPrefix();
 //              _propertiesSuffix = annotation.propertiesSuffix();
+                _helpFileName = annotation.helpFile();
                 _startWith = Math.max(0, annotation.startWith());
                 _annotatedWithEntityClass = true;
             }
@@ -4577,6 +4632,16 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
     @Override
     public Entity getHierarchyRoot() {
         return _baseClass == null ? getRoot() : getBaseClassMainInstance().getHierarchyRoot();
+    }
+
+    /**
+     * @return the class hierarchy node type; null if the entity is not part of a hierarchy
+     */
+    @Override
+    public HierarchyNodeType getHierarchyNodeType() {
+        return _baseClass == null
+            ? _subclasses.isEmpty() ? null : HierarchyNodeType.ROOT
+            : _subclasses.isEmpty() ? HierarchyNodeType.LEAF : HierarchyNodeType.BRANCH;
     }
 
     /**

@@ -6,25 +6,26 @@
  */
 package meta.proyecto.base;
 
-import adalid.core.predicates.IsEntityNameNotExcluded;
-import meta.predicado.base.IsModuloConsultaDisplay;
+import meta.enumeracion.base.TipoModuloBase;
+import meta.predicado.base.IsModuloConsultaResidualDisplay;
 
 /**
  * @author Jorge Campins
  */
 public class ModuloConsulta extends ModuloBase {
 
-    static final String[] EXCLUDED_ENTITY_NAMES = ModuloConsultaTarea.INCLUDED_ENTITY_NAMES;
-
     public ModuloConsulta() {
         super();
         setAlias("Consulta");
         setDefaultLabel("Consulta de Recursos");
         setDefaultDescription("Consulta de Recursos");
-        IsEntityNameNotExcluded entityPredicate = new IsEntityNameNotExcluded();
-        entityPredicate.setExcludedNames(EXCLUDED_ENTITY_NAMES);
-        IsModuloConsultaDisplay pagePredicate = new IsModuloConsultaDisplay(entityPredicate);
+        IsModuloConsultaResidualDisplay pagePredicate = new IsModuloConsultaResidualDisplay(this);
         setPagePredicate(pagePredicate);
+    }
+
+    @Override
+    public final TipoModuloBase getTipo() {
+        return TipoModuloBase.CONSULTA;
     }
 
 }

@@ -7,6 +7,7 @@ locale.language.tag=$project.locale.toLanguageTag()
 #parse("$templatePath/base/BundleWebui.properties.vm")
 
 ${project.wrapper.hyphenatedAlias}=${project.wrapper.javaValidDefaultLabel}
+${project.rootFolderName}-war=${project.wrapper.javaValidDefaultLabel}
 ##
 ## á=\u00E1 é=\u00E9 í=\u00ED ó=\u00F3 ú=\u00FA ü=\u00FC Ñ=\u00D1 ñ=\u00F1
 ##
@@ -114,6 +115,11 @@ ${project.rootPackageName}.web.pages.nombre_aplicacion=${project.wrapper.javaVal
 ${project.rootPackageName}.web.recurso.pages.nombre_aplicacion=${Bundle.getString('BundleWebui.busqueda.recursos')}
 ${project.rootPackageName}.web.recurso_filtro.pages.nombre_aplicacion=${Bundle.getString('BundleWebui.busqueda.recursos')}
 #end##writeSSCC1I18N
+
+#macro(writeWarModule)
+#set($webProjectName = "${project.rootFolderName}-war-${module.wrapper.hyphenatedAlias}")
+${webProjectName}=$module.wrapper.bundleValidDefaultShortDescription
+#end##writeWarModule
 
 #macro(writeWebModule1)
 #set($webProjectName = "${project.rootFolderName}-war-${module.wrapper.hyphenatedAlias}")

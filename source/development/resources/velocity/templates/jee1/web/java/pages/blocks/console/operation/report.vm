@@ -24,7 +24,7 @@
 #set($vista = "$!{operation.viewName}")
 #if($vista == '')
     #set($vista = "consulta_${page.entity.wrapper.sqlName}")
-    #set($vista = "${page.entity.wrapper.sqlSchemaQualifier}consulta_${page.entity.wrapper.sqlSchemaUnqualifiedShortName}")
+    #set($vista = "$page.entity.wrapper.getPrefixedSqlName('consulta_')")
 #end
 #if($reportQueryType == 'DYNAMIC')
     #if($operation.view)
@@ -55,7 +55,7 @@
         ObjectMessage solicitud;
         if (criteria.length() > 0) {
         #if($operation.view)
-            select = Utils.addWhereClause(select, criteria.substring(5));
+            select = Utils.addAndToWhereClause(select, criteria.substring(5));
         #else
             select += " where (" + criteria.substring(5) + ")";
         #end
@@ -211,6 +211,7 @@
         #set($selectStatement = "$!entityView.getSelectStatement($vista, $opcion)")
         #if($selectStatement != '')
             #set($selectStatement = $selectStatement.replace(' FROM ',     " ""${EOL}${TAB}${TAB}${TAB}+ ""FROM "))
+            #set($selectStatement = $selectStatement.replace(' WHERE ',     " ""${EOL}${TAB}${TAB}${TAB}+ ""WHERE "))
             #set($selectStatement = $selectStatement.replace(' GROUP BY ', " ""${EOL}${TAB}${TAB}${TAB}+ ""GROUP BY "))
             #set($selectStatement = $selectStatement.replace(' ORDER BY ', " ""${EOL}${TAB}${TAB}${TAB}+ ""ORDER BY "))
             #set($selectStatement = $selectStatement.toLowerCase())

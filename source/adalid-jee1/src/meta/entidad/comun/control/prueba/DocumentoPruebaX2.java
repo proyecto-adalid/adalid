@@ -6,9 +6,18 @@
  */
 package meta.entidad.comun.control.prueba;
 
-import adalid.core.annotations.*;
-import adalid.core.enums.*;
-import adalid.core.interfaces.*;
+import adalid.core.annotations.Allocation;
+import adalid.core.annotations.ColumnField;
+import adalid.core.annotations.DiscriminatorValue;
+import adalid.core.annotations.ForeignKey;
+import adalid.core.annotations.ManyToOne;
+import adalid.core.annotations.PropertyField;
+import adalid.core.enums.Kleenean;
+import adalid.core.enums.MasterDetailView;
+import adalid.core.enums.Navigability;
+import adalid.core.enums.OnDeleteAction;
+import adalid.core.enums.OnUpdateAction;
+import adalid.core.interfaces.Artifact;
 import java.lang.reflect.Field;
 import meta.proyecto.base.ProyectoBase;
 
@@ -35,8 +44,8 @@ public class DocumentoPruebaX2 extends DocumentoPrueba {
         setSchema(ProyectoBase.getEsquemaEntidadesComunes());
         setDefaultLabel("documento de escenario de caso de prueba");
         setDefaultShortLabel("documento");
-        setDefaultCollectionLabel("documentos de escenarios de casos de prueba");
-        setDefaultCollectionShortLabel("documentos");
+        setDefaultCollectionLabel("Documentos de Escenarios de Casos de Prueba");
+        setDefaultCollectionShortLabel("Documentos");
     }
 
     @Allocation(maxDepth = 3, maxRound = 0)

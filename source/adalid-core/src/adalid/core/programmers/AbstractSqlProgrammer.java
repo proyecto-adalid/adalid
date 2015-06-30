@@ -9,6 +9,8 @@ package adalid.core.programmers;
 import adalid.commons.util.StrUtils;
 import adalid.commons.util.TimeUtils;
 import adalid.core.Instance;
+import adalid.core.Operation;
+import adalid.core.Primitive;
 import adalid.core.data.types.CharacterData;
 import adalid.core.enums.ComparisonOp;
 import adalid.core.enums.DataAggregateOp;
@@ -52,7 +54,6 @@ import java.math.BigInteger;
 import java.sql.Date;
 import java.sql.Time;
 import java.sql.Timestamp;
-import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -92,18 +93,18 @@ public abstract class AbstractSqlProgrammer extends AbstractProgrammer implement
     protected String getIsTrue() {
         return "is true";
     }
-
-    protected String getIsNotTrue() {
-        return "is not true";
-    }
+//
+//  protected String getIsNotTrue() {
+//      return "is not true";
+//  }
 
     protected String getIsFalse() {
         return "is false";
     }
-
-    protected String getIsNotFalse() {
-        return "is not false";
-    }
+//
+//  protected String getIsNotFalse() {
+//      return "is not false";
+//  }
 
     protected String getEQ() {
         return "=";
@@ -189,21 +190,13 @@ public abstract class AbstractSqlProgrammer extends AbstractProgrammer implement
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="referential integrity options">
-    protected String getRestricted() {
-        return "no action";
-    }
+    protected abstract String getRestricted();
 
-    protected String getCascade() {
-        return "cascade";
-    }
+    protected abstract String getCascade();
 
-    protected String getNullify() {
-        return "no action";
-    }
+    protected abstract String getNullify();
 
-    protected String getNoAction() {
-        return "no action";
-    }
+    protected abstract String getNoAction();
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="join operators">
@@ -335,10 +328,6 @@ public abstract class AbstractSqlProgrammer extends AbstractProgrammer implement
 
     protected String getCurrentTimestamp() {
         return "current_timestamp";
-    }
-
-    protected String getNow() {
-        return "now()";
     }
 
     protected String getNull() {
@@ -1483,6 +1472,7 @@ public abstract class AbstractSqlProgrammer extends AbstractProgrammer implement
         if (operator == null || x == null) {
             return null;
         }
+        boolean primitive = x instanceof Primitive;
         String arg1 = getSqlExpression(x, queryObject, qualifier, px, true);
         String arg2 = getSqlExpression(y, queryObject, qualifier, px, true);
         String pattern;
@@ -1500,16 +1490,22 @@ public abstract class AbstractSqlProgrammer extends AbstractProgrammer implement
                 pattern = ARG0 + SPC$ + getIsNotNull();
                 break;
             case IS_TRUE:
-                pattern = ARG0 + SPC$ + getIsTrue();
+//              pattern = ARG0 + SPC$ + getIsTrue();
+                pattern = primitive ? primitiveIsTruePattern() : expressionIsTruePattern();
                 break;
             case IS_FALSE:
-                pattern = ARG0 + SPC$ + getIsFalse();
+//              pattern = ARG0 + SPC$ + getIsFalse();
+                pattern = primitive ? primitiveIsFalsePattern() : expressionIsFalsePattern();
                 break;
             case IS_NULL_OR_TRUE:
-                pattern = ARG0 + SPC$ + getIsNotFalse();
+//              pattern = getIsNullOr(ARG0) + SPC$ + getIsTrue();
+                pattern = primitive ? primitiveIsTruePattern() : expressionIsTruePattern();
+                pattern = ARG0 + SPC$ + getIsNullOr() + SPC$ + pattern;
                 break;
             case IS_NULL_OR_FALSE:
-                pattern = ARG0 + SPC$ + getIsNotTrue();
+//              pattern = getIsNullOr(ARG0) + SPC$ + getIsFalse();
+                pattern = primitive ? primitiveIsFalsePattern() : expressionIsFalsePattern();
+                pattern = ARG0 + SPC$ + getIsNullOr() + SPC$ + pattern;
                 break;
             case EQ:
                 pattern = ARG0 + SPC$ + getEQ() + SPC$ + ARG1;
@@ -1599,7 +1595,23 @@ public abstract class AbstractSqlProgrammer extends AbstractProgrammer implement
                 pattern = call(operator, y == null ? 1 : 2);
                 break;
         }
-        return MessageFormat.format(pattern, arg1, arg2);
+        return format(pattern, arg1, arg2);
+    }
+
+    protected String primitiveIsTruePattern() {
+        return ARG0 + SPC$ + getIsTrue();
+    }
+
+    protected String primitiveIsFalsePattern() {
+        return ARG0 + SPC$ + getIsFalse();
+    }
+
+    protected String expressionIsTruePattern() {
+        return ARG0 + SPC$ + getIsTrue();
+    }
+
+    protected String expressionIsFalsePattern() {
+        return ARG0 + SPC$ + getIsFalse();
     }
 
     /**
@@ -1620,7 +1632,7 @@ public abstract class AbstractSqlProgrammer extends AbstractProgrammer implement
         String arg1 = getSqlExpression(x, queryObject, qualifier, px, true);
         String arg2 = getSqlExpression(y, queryObject, qualifier, px, true);
         String pattern = y == null ? getCaseWhenThenPattern() : getCaseWhenThenElsePattern();
-        return MessageFormat.format(pattern, arg0, arg1, arg2);
+        return format(pattern, arg0, arg1, arg2);
     }
 
     /**
@@ -1811,11 +1823,107 @@ public abstract class AbstractSqlProgrammer extends AbstractProgrammer implement
     }
 
     /**
+     * @param operation
+     * @return the sql operation function name
+     */
+    @Override
+    public String getSqlOperationFunctionName(Operation operation) {
+        int maxIdentifierLength = getMaxIdentifierLength();
+        return getSqlOperationFunctionName(operation, maxIdentifierLength);
+    }
+
+    /**
+     * @param operation
+     * @param maxIdentifierLength
+     * @return the sql operation function name
+     */
+    @Override
+    public String getSqlOperationFunctionName(Operation operation, int maxIdentifierLength) {
+        if (operation == null) {
+            return null;
+        }
+        Entity e = operation.getDeclaringEntity();
+//      return e == null ? getSqlName(operation) : getSqlName(e.getRoot()) + OPERATION_DOLLAR_INFIX + getSqlName(operation);
+        String r = e == null ? "" : getSqlName(e.getRoot(), 0) + EXPRESSION_DOLLAR_INFIX;
+        String x = getSqlName(operation, 0);
+        return StrUtils.getIdentificadorSql(r + x, maxIdentifierLength);
+    }
+
+    /**
+     * @param operation
+     * @return the sql operation schema qualified function name
+     */
+    @Override
+    public String getSqlSchemaQualifiedOperationFunctionName(Operation operation) {
+        if (operation == null) {
+            return null;
+        }
+        String name = getSqlOperationFunctionName(operation);
+        PersistentEntity pent = operation.getDeclaringPersistentEntity();
+        return pent == null ? name : StrUtils.getQualifiedName(name, getSqlSchemaName(pent));
+    }
+
+    /**
+     * @param operation
+     * @param maxIdentifierLength
+     * @return the sql operation schema qualified function name
+     */
+    @Override
+    public String getSqlSchemaQualifiedOperationFunctionName(Operation operation, int maxIdentifierLength) {
+        if (operation == null) {
+            return null;
+        }
+        String name = getSqlOperationFunctionName(operation, maxIdentifierLength);
+        PersistentEntity pent = operation.getDeclaringPersistentEntity();
+        return pent == null ? name : StrUtils.getQualifiedName(name, getSqlSchemaName(pent));
+    }
+
+    /**
+     * @param operation
+     * @return the sql operation schema qualified function name
+     */
+    @Override
+    public String getSqlSchemaQualifiedShortOperationFunctionName(Operation operation) {
+        if (operation == null) {
+            return null;
+        }
+        String name = getSqlOperationFunctionName(operation);
+        PersistentEntity pent = operation.getDeclaringPersistentEntity();
+        return pent == null ? name : StrUtils.getQualifiedShortName(name, getSqlSchemaName(pent));
+    }
+
+    /**
+     * @param operation
+     * @param maxIdentifierLength
+     * @return the sql operation schema qualified function name
+     */
+    @Override
+    public String getSqlSchemaQualifiedShortOperationFunctionName(Operation operation, int maxIdentifierLength) {
+        if (operation == null) {
+            return null;
+        }
+        String name = getSqlOperationFunctionName(operation, maxIdentifierLength);
+        PersistentEntity pent = operation.getDeclaringPersistentEntity();
+        return pent == null ? name : StrUtils.getQualifiedShortName(name, getSqlSchemaName(pent));
+    }
+
+    /**
      * @param expression
      * @return the sql expression function name
      */
     @Override
     public String getSqlExpressionFunctionName(Expression expression) {
+        int maxIdentifierLength = getMaxIdentifierLength();
+        return getSqlExpressionFunctionName(expression, maxIdentifierLength);
+    }
+
+    /**
+     * @param expression
+     * @param maxIdentifierLength
+     * @return the sql expression function name
+     */
+    @Override
+    public String getSqlExpressionFunctionName(Expression expression, int maxIdentifierLength) {
         if (expression == null) {
             return null;
         }
@@ -1823,7 +1931,6 @@ public abstract class AbstractSqlProgrammer extends AbstractProgrammer implement
 //      return e == null ? getSqlName(expression) : getSqlName(e.getRoot()) + EXPRESSION_DOLLAR_INFIX + getSqlName(expression);
         String r = e == null ? "" : getSqlName(e.getRoot(), 0) + EXPRESSION_DOLLAR_INFIX;
         String x = getSqlName(expression, 0);
-        int maxIdentifierLength = getMaxIdentifierLength();
         return StrUtils.getIdentificadorSql(r + x, maxIdentifierLength);
     }
 
@@ -1837,6 +1944,21 @@ public abstract class AbstractSqlProgrammer extends AbstractProgrammer implement
             return null;
         }
         String name = getSqlExpressionFunctionName(expression);
+        PersistentEntity pent = expression.getDeclaringPersistentEntity();
+        return pent == null ? name : StrUtils.getQualifiedName(name, getSqlSchemaName(pent));
+    }
+
+    /**
+     * @param expression
+     * @param maxIdentifierLength
+     * @return the sql expression schema qualified function name
+     */
+    @Override
+    public String getSqlSchemaQualifiedExpressionFunctionName(Expression expression, int maxIdentifierLength) {
+        if (expression == null) {
+            return null;
+        }
+        String name = getSqlExpressionFunctionName(expression, maxIdentifierLength);
         PersistentEntity pent = expression.getDeclaringPersistentEntity();
         return pent == null ? name : StrUtils.getQualifiedName(name, getSqlSchemaName(pent));
     }
@@ -1857,10 +1979,36 @@ public abstract class AbstractSqlProgrammer extends AbstractProgrammer implement
 
     /**
      * @param expression
+     * @param maxIdentifierLength
+     * @return the sql expression schema qualified function name
+     */
+    @Override
+    public String getSqlSchemaQualifiedShortExpressionFunctionName(Expression expression, int maxIdentifierLength) {
+        if (expression == null) {
+            return null;
+        }
+        String name = getSqlExpressionFunctionName(expression, maxIdentifierLength);
+        PersistentEntity pent = expression.getDeclaringPersistentEntity();
+        return pent == null ? name : StrUtils.getQualifiedShortName(name, getSqlSchemaName(pent));
+    }
+
+    /**
+     * @param expression
      * @return the sql expression select function name
      */
     @Override
     public String getSqlExpressionSelectFunctionName(Expression expression) {
+        int maxIdentifierLength = getMaxIdentifierLength();
+        return getSqlExpressionSelectFunctionName(expression, maxIdentifierLength);
+    }
+
+    /**
+     * @param expression
+     * @param maxIdentifierLength
+     * @return the sql expression select function name
+     */
+    @Override
+    public String getSqlExpressionSelectFunctionName(Expression expression, int maxIdentifierLength) {
         if (expression == null) {
             return null;
         }
@@ -1868,7 +2016,6 @@ public abstract class AbstractSqlProgrammer extends AbstractProgrammer implement
 //      return e == null ? getSqlName(expression) : getSqlName(e.getRoot()) + EXPRESSION_SELECT_INFIX + getSqlName(expression);
         String r = e == null ? "" : getSqlName(e.getRoot(), 0) + EXPRESSION_SELECT_INFIX;
         String x = getSqlName(expression, 0);
-        int maxIdentifierLength = getMaxIdentifierLength();
         return StrUtils.getIdentificadorSql(r + x, maxIdentifierLength);
     }
 
@@ -1888,6 +2035,21 @@ public abstract class AbstractSqlProgrammer extends AbstractProgrammer implement
 
     /**
      * @param expression
+     * @param maxIdentifierLength
+     * @return the sql expression schema qualified function name
+     */
+    @Override
+    public String getSqlSchemaQualifiedExpressionSelectFunctionName(Expression expression, int maxIdentifierLength) {
+        if (expression == null) {
+            return null;
+        }
+        String name = getSqlExpressionSelectFunctionName(expression, maxIdentifierLength);
+        PersistentEntity pent = expression instanceof RowsAggregateX ? expression.getDeclaringPersistentEntity() : null;
+        return pent == null ? name : StrUtils.getQualifiedName(name, getSqlSchemaName(pent));
+    }
+
+    /**
+     * @param expression
      * @return the sql expression schema qualified function name
      */
     @Override
@@ -1896,6 +2058,21 @@ public abstract class AbstractSqlProgrammer extends AbstractProgrammer implement
             return null;
         }
         String name = getSqlExpressionSelectFunctionName(expression);
+        PersistentEntity pent = expression instanceof RowsAggregateX ? expression.getDeclaringPersistentEntity() : null;
+        return pent == null ? name : StrUtils.getQualifiedShortName(name, getSqlSchemaName(pent));
+    }
+
+    /**
+     * @param expression
+     * @param maxIdentifierLength
+     * @return the sql expression schema qualified function name
+     */
+    @Override
+    public String getSqlSchemaQualifiedShortExpressionSelectFunctionName(Expression expression, int maxIdentifierLength) {
+        if (expression == null) {
+            return null;
+        }
+        String name = getSqlExpressionSelectFunctionName(expression, maxIdentifierLength);
         PersistentEntity pent = expression instanceof RowsAggregateX ? expression.getDeclaringPersistentEntity() : null;
         return pent == null ? name : StrUtils.getQualifiedShortName(name, getSqlSchemaName(pent));
     }
@@ -2153,7 +2330,8 @@ public abstract class AbstractSqlProgrammer extends AbstractProgrammer implement
     private String getSelectFrom(QueryTable queryTable, List<Property> referencedColumns, boolean indent) {
         String string = getFrom() + SPC$ + queryTable.getName();
         if (!queryTable.getName().equals(queryTable.getAlias())) {
-            string += SPC$ + getAs() + SPC$ + queryTable.getAlias();
+//          string += SPC$ + getAs() + SPC$ + queryTable.getAlias();
+            string += SPC$ + queryTable.getAlias();
         }
         string += getSelectJoins(queryTable, referencedColumns, indent);
         return string;
@@ -2378,7 +2556,8 @@ public abstract class AbstractSqlProgrammer extends AbstractProgrammer implement
         String tab = indent ? StringUtils.repeat(TAB$, lt.getDepth()) : EMPTY;
         string += EOL$ + tab + joinop + (b ? LRB$ : SPC$) + rt.getName();
         if (!rt.getName().equals(rt.getAlias())) {
-            string += SPC$ + getAs() + SPC$ + rt.getAlias();
+//          string += SPC$ + getAs() + SPC$ + rt.getAlias();
+            string += SPC$ + rt.getAlias();
         }
         string += b ? nested + RRB$ + EOL$ + tab : SPC$;
         string += getOn() + SPC$ + rt.getAlias() + DOT$ + getPropertySqlName(queryJoin.getRightColumn());

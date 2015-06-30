@@ -7,10 +7,13 @@
 package meta.proyecto.base;
 
 import adalid.core.Page;
+import adalid.core.Project;
 import adalid.core.interfaces.Entity;
 import adalid.core.jee.AbstractJavaWebModule;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import meta.enumeracion.base.TipoModuloBase;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Predicate;
 
@@ -18,10 +21,6 @@ import org.apache.commons.collections.Predicate;
  * @author Jorge Campins
  */
 public abstract class ModuloBase extends AbstractJavaWebModule {
-
-    public ModuloBase() {
-        super();
-    }
 
     /**
      * propiedad enabled de la clase FragmentoVisor
@@ -200,6 +199,35 @@ public abstract class ModuloBase extends AbstractJavaWebModule {
      */
     public void setPagePredicate(Predicate predicate) {
         _pagePredicate = predicate;
+    }
+
+    public abstract TipoModuloBase getTipo();
+
+    public List<? extends ModuloBase> getSiblings() {
+        List<ModuloBase> siblings = new ArrayList<>();
+        TipoModuloBase tipo = getTipo();
+        if (tipo == null) {
+            return siblings;
+        }
+//      Project project = TLC.getProject();
+        Project project = getMaster();
+        if (project == null) {
+            return siblings;
+        }
+        ModuloBase modulo;
+        List<Project> modules = project.getModulesList();
+        for (Project module : modules) {
+            if (module instanceof ModuloBase) {
+                modulo = (ModuloBase) module;
+                if (module == this) {
+                    continue;
+                }
+                if (tipo.equals(modulo.getTipo())) {
+                    siblings.add(modulo);
+                }
+            }
+        }
+        return siblings;
     }
 
 }

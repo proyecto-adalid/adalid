@@ -7,7 +7,6 @@
 #foreach($entity in $entities)
     #foreach($parameter in $entity.propertiesList)
         #set($codigo = "${entity.wrapper.sqlName}.${parameter.wrapper.sqlName}")
-        #set($codigo = "${entity.wrapper.sqlSchemaQualifiedShortName}.${parameter.wrapper.sqlName}")
         #writeInsertRow()
     #end##foreach-operation
     #set($operations = $entity.businessOperationsList)
@@ -15,16 +14,16 @@
     #foreach($operation in $operations)
         #foreach($parameter in $operation.parametersList)
             #set($codigo = "${entity.wrapper.sqlName}.${operation.wrapper.sqlName}.${parameter.wrapper.sqlName}")
-            #set($codigo = "${entity.wrapper.sqlSchemaQualifiedShortName}.${operation.wrapper.sqlName}.${parameter.wrapper.sqlName}")
             #writeInsertRow()
         #end##foreach-operation
     #end##foreach-operation
 #end##foreach-entity
+select count(*) from parametro;
 #break
 
 #macro(writeInsertRow)
 insert
-into public.parametro
+into parametro
     (
     id_parametro,
     codigo_parametro,

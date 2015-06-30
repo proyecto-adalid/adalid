@@ -1,0 +1,35 @@
+#parsePostgreSQLMacros()
+#setPostgreSQLVariables()
+#writePostgreSQLLicense()
+#writePostgreSQLAuthor('Jorge Campins')
+#set($usuario = "$!project.userEntity.wrapper.sqlName")
+#if($usuario != '')
+    #writeInsertRow(101 'UsuariosSupervisados')
+    #writeInsertRow(102 'UsuariosSupervisadosDirectamente')
+#end
+select setval('conjunto_segmento_sq___', 10000);
+select count(*) from conjunto_segmento;
+#break
+
+#macro(writeInsertRow $id $codigo)
+insert
+    into conjunto_segmento
+        (
+        id_conjunto_segmento,
+        codigo_conjunto_segmento, 
+        nombre_conjunto_segmento,
+        id_clase_recurso,
+        nombre_clase_fabricador,
+        es_conjunto_especial
+        )
+    select
+        ${id} as id_conjunto_segmento, 
+        '${codigo}' as codigo_conjunto_segmento, 
+        '${codigo}' as nombre_conjunto_segmento,
+        id_clase_recurso,
+        '${project.rootPackageName}.lib.core.control.FabricadorConjunto${codigo}' as nombre_clase_fabricador,
+        true as es_conjunto_especial
+    from clase_recurso
+    where codigo_clase_recurso = '$usuario'
+;
+#end##writeInsertRow

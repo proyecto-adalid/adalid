@@ -7,6 +7,7 @@
 package adalid.core.interfaces;
 
 import adalid.commons.interfaces.Programmer;
+import adalid.core.Operation;
 import adalid.core.enums.QueryJoinOp;
 import adalid.core.enums.SortOption;
 import adalid.core.enums.SqlQualifierType;
@@ -24,6 +25,8 @@ import java.util.Map;
 public interface SqlProgrammer extends Programmer {
 
     int getMaxIdentifierLength();
+
+    String getDBMS();
 
     String getSqlishName(Artifact artifact);
 
@@ -117,17 +120,41 @@ public interface SqlProgrammer extends Programmer {
 
     ParameterizedExpression getSqlParameterizedExpression(Object object, Map<String, QueryTable> queryTablesMap, SqlQualifierType qualifier);
 
+    String getSqlOperationFunctionName(Operation operation);
+
+    String getSqlOperationFunctionName(Operation operation, int maxIdentifierLength);
+
+    String getSqlSchemaQualifiedOperationFunctionName(Operation operation);
+
+    String getSqlSchemaQualifiedOperationFunctionName(Operation operation, int maxIdentifierLength);
+
+    String getSqlSchemaQualifiedShortOperationFunctionName(Operation operation);
+
+    String getSqlSchemaQualifiedShortOperationFunctionName(Operation operation, int maxIdentifierLength);
+
     String getSqlExpressionFunctionName(Expression expression);
+
+    String getSqlExpressionFunctionName(Expression expression, int maxIdentifierLength);
 
     String getSqlSchemaQualifiedExpressionFunctionName(Expression expression);
 
+    String getSqlSchemaQualifiedExpressionFunctionName(Expression expression, int maxIdentifierLength);
+
     String getSqlSchemaQualifiedShortExpressionFunctionName(Expression expression);
+
+    String getSqlSchemaQualifiedShortExpressionFunctionName(Expression expression, int maxIdentifierLength);
 
     String getSqlExpressionSelectFunctionName(Expression expression);
 
+    String getSqlExpressionSelectFunctionName(Expression expression, int maxIdentifierLength);
+
     String getSqlSchemaQualifiedExpressionSelectFunctionName(Expression expression);
 
+    String getSqlSchemaQualifiedExpressionSelectFunctionName(Expression expression, int maxIdentifierLength);
+
     String getSqlSchemaQualifiedShortExpressionSelectFunctionName(Expression expression);
+
+    String getSqlSchemaQualifiedShortExpressionSelectFunctionName(Expression expression, int maxIdentifierLength);
 
     String getSqlOnDeleteAction(PersistentEntityReference entity);
 

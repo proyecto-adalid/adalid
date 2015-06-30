@@ -29,7 +29,7 @@ public class Constants {
 
     public static final int DEFAULT_NAME_PROPERTY_MAX_LENGTH = 100;
 
-    public static final int MAX_DECIMAL_PRECISION = 1000;
+    public static final int MAX_DECIMAL_PRECISION = 60; // Decillion (Novemdecillion @ USA & Canada)
 
     public static final int MAX_BYTE_DIVISOR = 100;
 

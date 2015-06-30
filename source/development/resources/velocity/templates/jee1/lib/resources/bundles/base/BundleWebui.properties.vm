@@ -1,6 +1,6 @@
-DateTimeConverter.date.pattern=dd/MM/yyyy
-DateTimeConverter.time.pattern=hh:mm aa
-DateTimeConverter.both.pattern=dd/MM/yyyy hh:mm:ss aa
+DateTimeConverter.date.pattern=$bundleProgrammer.getValueString($TimeUtils.getDateFormat())
+DateTimeConverter.time.pattern=$bundleProgrammer.getValueString($TimeUtils.getTimeFormat())
+DateTimeConverter.both.pattern=$bundleProgrammer.getValueString($TimeUtils.getTimestampFormat())
 
 ${pound} <login.jsp>
 login.jsp.title=Inicio de Sesi${backslash}u00f3n
@@ -38,10 +38,18 @@ ${pound} AuditorBean
 rastro.no.existe=rastro {0} no existe
 rastro.no.previo=rastro {0} no se puede colocar en condicion {1}
 ${pound} NotifierBean
-notificacion.destinatario.asunto=Notificaci${backslash}u00f3n de tareas pendientes
-notificacion.destinatario.mensaje=Usted tiene una o mas tareas pendientes; por favor consulte su Lista de Tareas.
-notificacion.supervisor.asunto=Notificaci${backslash}u00f3n de tareas pendientes de sus supervisados
-notificacion.supervisor.mensaje=Uno o mas de sus supervisados tiene una o mas tareas pendientes; por favor consulte la Lista de Tareas.
+notificacion.destinatario.asunto=Notificaci${backslash}u00f3n de nuevas tareas
+notificacion.destinatario.mensaje=Usted tiene una o mas nuevas tareas; por favor consulte su Lista de Tareas.
+notificacion.supervisor.asunto=Notificaci${backslash}u00f3n de nuevas tareas para sus supervisados
+notificacion.supervisor.mensaje=Uno o mas de sus supervisados tiene una o mas nuevas tareas; por favor consulte la Lista de Tareas.
+advertencia.asignacion.pendiente.asunto=Advertencia de tareas no asumidas
+advertencia.asignacion.pendiente.mensaje=Una o mas tareas no ha sido asumida por sus supervisados; por favor consulte la Lista de Tareas.
+advertencia.finalizacion.pendiente.asunto=Advertencia de tareas no finalizadas
+advertencia.finalizacion.pendiente.mensaje=Una o mas tareas no ha sido finalizada por sus supervisados; por favor consulte la Lista de Tareas.
+escalamiento.asignacion.pendiente.asunto=Escalamiento de tareas no asignadas
+escalamiento.asignacion.pendiente.mensaje=Una o mas tareas no ha sido asignada por sus supervisados; por favor consulte la Lista de Tareas.
+escalamiento.finalizacion.pendiente.asunto=Escalamiento de tareas no finalizadas
+escalamiento.finalizacion.pendiente.mensaje=Una o mas tareas no ha sido finalizada por sus supervisados; por favor consulte la Lista de Tareas.
 ${pound} StateTransitionChecker
 cambio_condicion_invalido=cambio inv${backslash}u00e1lido de condici${backslash}u00f3n de {0}: no se permite cambiar de "{1}" a "{2}"
 cambio_condicion_repetido=cambio inv${backslash}u00e1lido de condici${backslash}u00f3n de {0}: ya se encuentra en condici${backslash}u00f3n "{1}"
@@ -87,7 +95,7 @@ bit.presente=Presente
 bit.ausente=Ausente
 bit.verdadero=Verdadero
 bit.falso=Falso
-bit.nulo=Valor nulo
+bit.nulo=?
 ${pound} EnumFormatoGuardar
 EnumFormatoGuardar.ARCHIVO=Archivo
 EnumFormatoGuardar.INFORME=Informe
@@ -100,7 +108,6 @@ seleccione_una_opcion=(elija una opci${backslash}u00f3n)
 ${pound} </${project.alias}.lib.base.Bundle>
 
 ${pound} <${project.alias}.lib.core.Bundle>
-${pound} STP
 string.valor.nulo=?
 ${pound} GestorBusquedaReferencia
 string.recurso.sin.nombre=
@@ -189,6 +196,8 @@ botonComandoGuardar.text=Guardar
 botonComandoGuardar.toolTip=Guardar la consulta en el formato seleccionado
 botonComandoVer.text=Ver
 botonComandoVer.toolTip=Visualizar la consulta en el formato seleccionado
+botonComprobarFiltro.text=Comprobar
+botonComprobarFiltro.toolTip=Comprobar los criterios de b${backslash}u00fasqueda a la consulta
 botonConfirmar.text=Confirmar
 botonConfirmar.toolTip=Confirmar
 botonDescartar.text=Descartar

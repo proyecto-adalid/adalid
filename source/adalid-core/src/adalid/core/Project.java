@@ -32,7 +32,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
-import java.util.TreeMap;
 import java.util.TreeSet;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Level;
@@ -237,25 +236,27 @@ public abstract class Project extends AbstractArtifact implements Comparable<Pro
 
     private Writer _writer;
 
-    private Map<String, String> _environmentVariables = new LinkedHashMap<>();
+    private final Map<String, String> _environmentVariables = new LinkedHashMap<>();
 
-    private Map<String, EntityReference> _entityReferences = new LinkedHashMap<>();
+    private final Map<String, ProjectEntityReference> _entityReferences = new LinkedHashMap<>();
 
-    private Map<String, ProjectReference> _projectReferences = new LinkedHashMap<>();
+    private final Map<String, ProjectReference> _projectReferences = new LinkedHashMap<>();
 
-    private Map<String, Display> _displays = new LinkedHashMap<>();
+    private final Map<String, Display> _displays = new LinkedHashMap<>();
 
     private Class<? extends Entity> _userEntityClass;
 
-    private Set<String> _singularPlatforms = new LinkedHashSet<>();
+    private final Set<String> _singularPlatforms = new LinkedHashSet<>();
 
-    private Set<String> _processingGroups = new TreeSet<>();
+    private final Set<String> _processingGroups = new TreeSet<>();
 
     private boolean _annotatedWithProjectModule;
 
     private boolean _menuModule;
 
     private boolean _roleModule;
+
+    private String _helpFileName;
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="instance fields' public getters and setters">
@@ -293,12 +294,31 @@ public abstract class Project extends AbstractArtifact implements Comparable<Pro
     }
 
     /**
+     * @param classSimpleName
+     * @return true if the project references an entity of a class with the specified simple name
+     */
+    public boolean referencesEntity(String classSimpleName) {
+        return _entityReferences.containsKey(classSimpleName);
+    }
+
+    /**
+     * @param type
+     * @return true if the project references an entity of the class specified by type
+     */
+    public boolean referencesEntity(Class<?> type) {
+        Entity entity = getEntity(type);
+        return entity != null;
+    }
+
+    /**
      * @param type
      * @return the root entity of the specified class
      */
     public Entity getEntity(Class<?> type) {
-        Class<?> clazz = XS1.getNamedClass(type);
-        return getEntitiesMap().get(clazz.getSimpleName());
+//      Class<?> clazz = XS1.getNamedClass(type);
+//      return getEntitiesMap().get(clazz.getSimpleName());
+        ProjectEntityReference reference = getEntityReference(type);
+        return reference == null ? null : reference.getEntity();
     }
 
     /**
@@ -306,7 +326,7 @@ public abstract class Project extends AbstractArtifact implements Comparable<Pro
      */
     public List<Entity> getEntitiesList() {
         List<Entity> list = new ArrayList<>();
-        for (EntityReference reference : _entityReferences.values()) {
+        for (ProjectEntityReference reference : _entityReferences.values()) {
             if (reference.getEntity() != null) {
                 list.add(reference.getEntity());
             }
@@ -319,7 +339,7 @@ public abstract class Project extends AbstractArtifact implements Comparable<Pro
      */
     public Map<String, Entity> getEntitiesMap() {
         Map<String, Entity> entities = new LinkedHashMap<>();
-        for (EntityReference reference : _entityReferences.values()) {
+        for (ProjectEntityReference reference : _entityReferences.values()) {
             if (reference.getEntity() != null) {
                 entities.put(reference.getEntityClass().getSimpleName(), reference.getEntity());
             }
@@ -328,12 +348,31 @@ public abstract class Project extends AbstractArtifact implements Comparable<Pro
     }
 
     /**
+     * @param className
+     * @return true if the project references a module of a class with the specified name
+     */
+    public boolean referencesModule(String className) {
+        ProjectReference reference = _projectReferences.get(className);
+        Project project = reference == null ? null : reference.getProject();
+        return project != null && project.getMaster() != null;
+    }
+
+    /**
+     * @param type
+     * @return true if the project references a module of the class specified by type
+     */
+    public boolean referencesModule(Class<?> type) {
+        Project module = getModule(type);
+        return module != null;
+    }
+
+    /**
      * @param type
      * @return the root module of the specified class
      */
     public Project getModule(Class<?> type) {
-        Project module = getProject(type);
-        return module != null && module.getMaster() != null ? module : null;
+        Project project = getProject(type);
+        return project == null || project.getMaster() == null ? null : project;
     }
 
     /**
@@ -365,12 +404,31 @@ public abstract class Project extends AbstractArtifact implements Comparable<Pro
     }
 
     /**
+     * @param className
+     * @return true if the project references a project of a class with the specified name
+     */
+    public boolean referencesProject(String className) {
+        return _projectReferences.containsKey(className);
+    }
+
+    /**
+     * @param type
+     * @return true if the project references a project of the class specified by type
+     */
+    public boolean referencesProject(Class<?> type) {
+        Project project = getProject(type);
+        return project != null;
+    }
+
+    /**
      * @param type
      * @return the root project of the specified class
      */
     public Project getProject(Class<?> type) {
-        Class<?> clazz = XS1.getNamedClass(type);
-        return getProjectsMap().get(clazz.getName());
+//      Class<?> clazz = XS1.getNamedClass(type);
+//      return getProjectsMap().get(clazz.getName());
+        ProjectReference reference = getProjectReference(type);
+        return reference == null ? null : reference.getProject();
     }
 
     /**
@@ -502,6 +560,22 @@ public abstract class Project extends AbstractArtifact implements Comparable<Pro
     public boolean isRoleModule() {
         return _roleModule;
     }
+
+    /**
+     * @return the help file name
+     */
+    public String getHelpFileName() {
+        return _helpFileName;
+    }
+
+    /**
+     * sets the help file name.
+     *
+     * @param helpFileName
+     */
+    public void setHelpFileName(String helpFileName) {
+        _helpFileName = helpFileName;
+    }
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="instance fields' package getters and setters">
@@ -522,7 +596,7 @@ public abstract class Project extends AbstractArtifact implements Comparable<Pro
     /**
      * @return the entity reference of the specified class
      */
-    EntityReference getEntityReference(Class<?> type) {
+    ProjectEntityReference getEntityReference(Class<?> type) {
         Class<?> clazz = XS1.getNamedClass(type);
         return _entityReferences.get(clazz.getSimpleName());
     }
@@ -534,7 +608,7 @@ public abstract class Project extends AbstractArtifact implements Comparable<Pro
         Class<?> clazz = XS1.getNamedClass(type);
         String key = clazz.getSimpleName();
         if (_entityReferences.containsKey(key)) {
-            EntityReference reference = _entityReferences.get(key);
+            ProjectEntityReference reference = _entityReferences.get(key);
             return reference == null ? null : reference.getEntityClass();
         }
         return type;
@@ -545,14 +619,22 @@ public abstract class Project extends AbstractArtifact implements Comparable<Pro
     /**
      * @return the entity references map
      */
-    private Map<String, EntityReference> getEntityReferences() {
+    public Map<String, ProjectEntityReference> getEntityReferences() {
         return _entityReferences;
+    }
+
+    /**
+     * @return the project reference of the specified class
+     */
+    ProjectReference getProjectReference(Class<?> type) {
+        Class<?> clazz = XS1.getNamedClass(type);
+        return _projectReferences.get(clazz.getName());
     }
 
     /**
      * @return the project references map
      */
-    private Map<String, ProjectReference> getProjectReferences() {
+    public Map<String, ProjectReference> getProjectReferences() {
         return _projectReferences;
     }
 
@@ -568,6 +650,13 @@ public abstract class Project extends AbstractArtifact implements Comparable<Pro
      */
     public void setUserEntityClass(Class<? extends Entity> clazz) {
         _userEntityClass = clazz;
+    }
+
+    /**
+     * @return the user entity class
+     */
+    public Entity getUserEntity() {
+        return getEntity(_userEntityClass);
     }
 
     /**
@@ -589,7 +678,6 @@ public abstract class Project extends AbstractArtifact implements Comparable<Pro
         Class<?> namedClass = getNamedClass();
         String className = namedClass.getSimpleName();
         setDeclared(className);
-        settle();
     }
 
     private void settle() {
@@ -606,6 +694,7 @@ public abstract class Project extends AbstractArtifact implements Comparable<Pro
         _annotatedWithProjectModule = false;
         _menuModule = false;
         _roleModule = false;
+        _helpFileName = "";
     }
 
     @Override
@@ -646,6 +735,7 @@ public abstract class Project extends AbstractArtifact implements Comparable<Pro
                 _annotatedWithProjectModule = true;
                 _menuModule = annotation.menu().toBoolean(_menuModule);
                 _roleModule = annotation.role().toBoolean(_roleModule);
+                _helpFileName = StringUtils.defaultIfBlank(annotation.helpFile(), _helpFileName);
             }
         }
     }
@@ -656,6 +746,7 @@ public abstract class Project extends AbstractArtifact implements Comparable<Pro
             ProjectModule annotation = field.getAnnotation(ProjectModule.class);
             _menuModule = annotation.menu().toBoolean(_menuModule);
             _roleModule = annotation.role().toBoolean(_roleModule);
+            _helpFileName = StringUtils.defaultIfBlank(annotation.helpFile(), _helpFileName);
         }
     }
     // </editor-fold>
@@ -703,13 +794,6 @@ public abstract class Project extends AbstractArtifact implements Comparable<Pro
         return true;
     }
 
-//  public boolean generate() {
-//      logger.info(signature("generate", getClass().getName()));
-//      TLC.setProject(Project.this);
-//      configureWriter();
-//      return getWriter().write();
-//  }
-//
     public boolean generate(String platform) {
         logger.info(signature("generate", "platform=" + platform));
         String alias = getAlias();
@@ -728,7 +812,9 @@ public abstract class Project extends AbstractArtifact implements Comparable<Pro
         }
         TLC.setProject(Project.this);
         configureWriter();
-        return getWriter().write(platform);
+        Writer writer = getWriter();
+        writer.setOptionalResourceNames(getEntitiesMap().keySet());
+        return writer.write(platform);
     }
 
     private void configureWriter() {
@@ -984,6 +1070,35 @@ public abstract class Project extends AbstractArtifact implements Comparable<Pro
     }
     // </editor-fold>
 
+    // <editor-fold defaultstate="collapsed" desc="locally declared entity classes getters">
+    public Set<Class<?>> getLocallyDeclaredEntityClasses() {
+        Set<Class<?>> classes = new LinkedHashSet<>();
+        Class<?> namedClass = XS2.getNamedClass(this);
+        for (Field field : XS2.getFields(namedClass)) {
+            Class<?> type = field.getType();
+            if (Entity.class.isAssignableFrom(type)) {
+                classes.add(type);
+            }
+        }
+        return classes;
+    }
+
+    public Set<String> getLocallyDeclaredEntityClassSimpleNames() {
+        Set<Class<?>> classes = getLocallyDeclaredEntityClasses();
+        Set<String> names = new LinkedHashSet<>();
+        for (Class<?> clazz : classes) {
+            names.add(clazz.getSimpleName());
+        }
+        return names;
+    }
+
+    public String[] getLocallyDeclaredEntityClassSimpleNamesArray() {
+        Set<String> names = getLocallyDeclaredEntityClassSimpleNames();
+        String[] array = new String[names.size()];
+        return names.toArray(array);
+    }
+    // </editor-fold>
+
     private void log(Level level, String method, Object... parameters) {
         if (foul(logger, level)) {
             return;
@@ -1023,7 +1138,8 @@ public abstract class Project extends AbstractArtifact implements Comparable<Pro
         String str4 = str1 == null || str1.equals(str2) ? str2 : str2 + "[" + str1 + "]";
         String str5 = str3 == null || str3.equals(str1) ? str4 : str4 + "[" + str3 + "]";
         String str6 = str5.replace("][", ", ");
-        return str6 + "@" + Integer.toHexString(hashCode());
+//      return str6 + "@" + Integer.toHexString(hashCode());
+        return str6;
     }
 
     @Override
@@ -1045,7 +1161,7 @@ public abstract class Project extends AbstractArtifact implements Comparable<Pro
         String string = super.mapsToString(n, key, verbose, fields, maps);
         if (maps || verbose) {
             for (String clave : _entityReferences.keySet()) {
-                EntityReference valor = _entityReferences.get(clave);
+                ProjectEntityReference valor = _entityReferences.get(clave);
                 if (valor.getEntity() != null) {
                     string += valor.getEntity().toString(n + 1, clave, false, fields, false);
                 }
@@ -1101,6 +1217,10 @@ public abstract class Project extends AbstractArtifact implements Comparable<Pro
                 if (errors == 0) {
                     initialiseProjectReferences();
                 }
+                if (errors == 0) {
+                    settleProjectReferences();
+                }
+                setMasterFields();
                 printSummary();
                 if (_verbose) {
                     printProjectReferencesDetail(_detailLevel);
@@ -1147,7 +1267,7 @@ public abstract class Project extends AbstractArtifact implements Comparable<Pro
             } else if (Entity.class.isAssignableFrom(clazz)) {
                 String key = clazz.getSimpleName();
                 if (_entityReferences.containsKey(key)) {
-                    EntityReference reference = _entityReferences.get(key);
+                    ProjectEntityReference reference = _entityReferences.get(key);
                     Class<?> entityClass = reference.getEntityClass();
                     if (clazz.equals(entityClass)) {
                         reference.putDeclaringType(declaringType);
@@ -1212,11 +1332,11 @@ public abstract class Project extends AbstractArtifact implements Comparable<Pro
         }
 
         private void putEntityReference(Class<?> type, Class<?> declaringType) {
-            EntityReference previousReference = null;
+            ProjectEntityReference previousReference = null;
             putEntityReference(type, declaringType, previousReference);
         }
 
-        private void putEntityReference(Class<?> type, Class<?> declaringType, EntityReference previousReference) {
+        private void putEntityReference(Class<?> type, Class<?> declaringType, ProjectEntityReference previousReference) {
             String key = type.getSimpleName();
             Class<?> concreteSuperclass = XS1.getConcreteSuperclass(type);
             if (concreteSuperclass != null) {
@@ -1224,7 +1344,7 @@ public abstract class Project extends AbstractArtifact implements Comparable<Pro
             }
             boolean explicit = previousReference != null && previousReference.isExplicit();
             boolean implicit = previousReference != null && previousReference.isImplicit();
-            EntityReference reference = new EntityReference(type);
+            ProjectEntityReference reference = new ProjectEntityReference(type, Project.this);
             reference.putDeclaringType(declaringType);
             reference.setExplicit(explicit);
             reference.setExplicit(declaringType);
@@ -1248,7 +1368,7 @@ public abstract class Project extends AbstractArtifact implements Comparable<Pro
 
         private void putProjectReference(Class<?> type, Class<?> declaringType, Artifact declaringArtifact, Field declaringField) {
             String key = type.getName();
-            ProjectReference reference = new ProjectReference(type);
+            ProjectReference reference = new ProjectReference(type, Project.this);
             reference.putDeclaringType(declaringType);
             reference.setDeclaringArtifact(declaringArtifact);
             reference.setDeclaringField(declaringField);
@@ -1259,18 +1379,45 @@ public abstract class Project extends AbstractArtifact implements Comparable<Pro
         }
         // </editor-fold>
 
+        private void setMasterFields() {
+            log(_trackingLevel, "setMasterFields");
+            Class<?> type = Project.this.getClass();
+            Class<?> fieldType;
+//          String fieldName;
+            Project project;
+            Class<?> projectClass;
+            for (ProjectReference reference : _projectReferences.values()) {
+                project = reference.getProject();
+                projectClass = reference.getProjectClass();
+                for (Field field : XS1.getFields(type, Project.class)) {
+                    fieldType = field.getType();
+                    if (projectClass.equals(fieldType)) {
+//                      fieldName = field.getName();
+                        field.setAccessible(true);
+                        try {
+                            if (field.get(Project.this) == null) {
+                                field.set(Project.this, project);
+                            }
+                        } catch (IllegalArgumentException | IllegalAccessException ex) {
+                            fatal(ex);
+                        }
+                    }
+                }
+            }
+        }
+
         // <editor-fold defaultstate="collapsed" desc="initialise, settle and finalise entity references">
         private void initialiseEntityReferences() {
             log(_trackingLevel, "initialiseEntityReferences");
             Entity entity;
-            for (EntityReference reference : _entityReferences.values()) {
+            for (ProjectEntityReference reference : _entityReferences.values()) {
                 if (reference.getEntity() == null) {
 //                  Entity entity = (Entity) reference.getEntityClass().newInstance();
                     entity = getEntityInstance(reference.getEntityClass());
                     reference.setEntity(entity);
                 }
             }
-            for (EntityReference reference : _entityReferences.values()) {
+            for (ProjectEntityReference reference : _entityReferences.values()) {
                 entity = reference.getEntity();
                 if (entity != null) {
                     entity.initialise();
@@ -1281,7 +1428,7 @@ public abstract class Project extends AbstractArtifact implements Comparable<Pro
         private void settleEntityReferences() {
             log(_trackingLevel, "settleEntityReferences");
             Entity entity;
-            for (EntityReference reference : _entityReferences.values()) {
+            for (ProjectEntityReference reference : _entityReferences.values()) {
                 entity = reference.getEntity();
                 if (entity != null) {
                     entity.settle();
@@ -1292,7 +1439,7 @@ public abstract class Project extends AbstractArtifact implements Comparable<Pro
         private void finaliseEntityReferences() {
             log(_trackingLevel, "finaliseEntityReferences");
             Entity entity;
-            for (EntityReference reference : _entityReferences.values()) {
+            for (ProjectEntityReference reference : _entityReferences.values()) {
                 entity = reference.getEntity();
                 if (entity != null) {
                     entity.finalise();
@@ -1305,7 +1452,7 @@ public abstract class Project extends AbstractArtifact implements Comparable<Pro
             Entity entity;
             List<Entity> extensionsList;
             boolean concreteless;
-            for (EntityReference reference : _entityReferences.values()) {
+            for (ProjectEntityReference reference : _entityReferences.values()) {
                 entity = reference.getEntity();
                 if (entity != null) {
                     if (entity.isAbstractClass()) {
@@ -1355,10 +1502,10 @@ public abstract class Project extends AbstractArtifact implements Comparable<Pro
                 }
             }
             String key;
-            EntityReference entityReference;
+            ProjectEntityReference entityReference;
             ProjectReference projectReference;
             Map<String, Class<?>> declaredTypes;
-            Map<String, EntityReference> entityReferences;
+            Map<String, ProjectEntityReference> entityReferences;
             Map<String, ProjectReference> projectReferences;
             for (ProjectReference reference : _projectReferences.values()) {
                 project = reference.getProject();
@@ -1384,6 +1531,17 @@ public abstract class Project extends AbstractArtifact implements Comparable<Pro
                     project.getParser().printProjectSummary(_detailLevel);
                     project.getParser().printProjectReferencesSummary(_detailLevel);
                     project.getParser().printEntityReferencesSummary(_detailLevel);
+                }
+            }
+        }
+
+        private void settleProjectReferences() {
+            log(_trackingLevel, "settleProjectReferences");
+            Project project;
+            for (ProjectReference reference : _projectReferences.values()) {
+                project = reference.getProject();
+                if (project != null) {
+                    project.settle();
                 }
             }
         }
@@ -1419,7 +1577,7 @@ public abstract class Project extends AbstractArtifact implements Comparable<Pro
             if (foul(logger, _detailLevel)) {
                 return;
             }
-            for (EntityReference reference : _entityReferences.values()) {
+            for (ProjectEntityReference reference : _entityReferences.values()) {
                 explicit = reference.isExplicit();
                 implicit = reference.isImplicit();
                 references = reference.getDeclaredTypes();
@@ -1450,7 +1608,7 @@ public abstract class Project extends AbstractArtifact implements Comparable<Pro
             }
             boolean initialised;
             String string;
-            for (EntityReference reference : _entityReferences.values()) {
+            for (ProjectEntityReference reference : _entityReferences.values()) {
                 initialised = reference.getEntity() != null;
                 if (initialised) {
                     string = reference.getEntity().toString(0, null, _verbose, true, true);
@@ -1706,244 +1864,6 @@ public abstract class Project extends AbstractArtifact implements Comparable<Pro
             String message = throwable.equals(cause) ? throwable.getClass().getSimpleName() : throwable.getMessage();
             logger.fatal(message, cause);
             errors++;
-        }
-
-    } // Parser
-    // </editor-fold>
-
-    // <editor-fold defaultstate="collapsed" desc="EntityReference">
-    class EntityReference {
-
-        private Entity _entity;
-
-        private Class<?> _entityClass;
-
-        private boolean _explicit;
-
-        private boolean _implicit;
-
-        private Map<String, Class<?>> _declaredTypes = new TreeMap<>();
-
-        private Map<String, Class<?>> _declaringTypes = new TreeMap<>();
-
-        /**
-         * @return the entity
-         */
-        private Entity getEntity() {
-            return _entity;
-        }
-
-        /**
-         * @param entity the entity to set
-         */
-        private void setEntity(Entity entity) {
-            _entity = entity;
-        }
-
-        /**
-         * @return the entity class
-         */
-        private Class<?> getEntityClass() {
-            return _entityClass;
-        }
-
-        private EntityReference() {
-        }
-
-        private EntityReference(Entity entity) {
-            assert entity != null;
-            _entity = entity;
-            _entityClass = entity.getClass();
-        }
-
-        private EntityReference(Class<?> entityClass) {
-            assert entityClass != null;
-            _entity = null;
-            _entityClass = entityClass;
-        }
-
-        private void putDeclaredType(Class<?> declaredType) {
-//          if (declaredType == null) {
-//          } else {
-            _declaredTypes.put(declaredType.getName(), declaredType);
-//          }
-        }
-
-        private Map<String, Class<?>> getDeclaredTypes() {
-            return _declaredTypes;
-        }
-
-        private void putDeclaringType(Class<?> declaringType) {
-            if (declaringType == null) {
-            } else {
-                _declaringTypes.put(declaringType.getName(), declaringType);
-                if (Entity.class.isAssignableFrom(declaringType)) {
-                    String key = declaringType.getSimpleName();
-                    if (_entityReferences.containsKey(key)) {
-                        EntityReference reference = _entityReferences.get(key);
-                        reference.putDeclaredType(_entityClass);
-                    }
-                } else if (Project.class.isAssignableFrom(declaringType)) {
-                    String key = declaringType.getName();
-                    ProjectReference reference = _projectReferences.get(key);
-                    reference.putDeclaredType(_entityClass);
-                }
-            }
-        }
-
-        private Map<String, Class<?>> getDeclaringTypes() {
-            return _declaringTypes;
-        }
-
-        /**
-         * @return the explicit reference indicator
-         */
-        boolean isExplicit() {
-            return _explicit;
-        }
-
-        /**
-         * @param explicit the explicit reference indicator to set
-         */
-        private void setExplicit(boolean explicit) {
-            _explicit = explicit;
-        }
-
-        /**
-         * @param explicit the explicit reference indicator to set
-         */
-        private void setExplicit(Class<?> declaringType) {
-            _explicit |= Project.class.isAssignableFrom(declaringType);
-        }
-
-        /**
-         * @return the implicit reference indicator
-         */
-        boolean isImplicit() {
-            return _implicit;
-        }
-
-        /**
-         * @param implicit the implicit reference indicator to set
-         */
-        private void setImplicit(boolean implicit) {
-            _implicit = implicit;
-        }
-
-        /**
-         * @param implicit the implicit reference indicator to set
-         */
-        private void setImplicit(Class<?> declaringType) {
-            _implicit |= Entity.class.isAssignableFrom(declaringType);
-        }
-
-    }
-    // </editor-fold>
-
-    // <editor-fold defaultstate="collapsed" desc="ProjectReference">
-    private class ProjectReference {
-
-        private Project _project;
-
-        private Class<?> _projectClass;
-
-        private Artifact _declaringArtifact;
-
-        private Field _declaringField;
-
-        private final Map<String, Class<?>> _declaredTypes = new TreeMap<>();
-
-        private final Map<String, Class<?>> _declaringTypes = new TreeMap<>();
-
-        /**
-         * @return the project
-         */
-        private Project getProject() {
-            return _project;
-        }
-
-        /**
-         * @param project the project to set
-         */
-        private void setProject(Project project) {
-            _project = project;
-        }
-
-        /**
-         * @return the project class
-         */
-        private Class<?> getProjectClass() {
-            return _projectClass;
-        }
-
-        private ProjectReference() {
-        }
-
-        private ProjectReference(Project project) {
-            assert project != null;
-            _project = project;
-            _projectClass = project.getClass();
-        }
-
-        private ProjectReference(Class<?> projectClass) {
-            assert projectClass != null;
-            _project = null;
-            _projectClass = projectClass;
-        }
-
-        private void putDeclaredType(Class<?> declaredType) {
-//          if (declaredType == null) {
-//          } else {
-            _declaredTypes.put(declaredType.getName(), declaredType);
-//          }
-        }
-
-        private Map<String, Class<?>> getDeclaredTypes() {
-            return _declaredTypes;
-        }
-
-        private void putDeclaringType(Class<?> declaringType) {
-            if (declaringType == null) {
-            } else {
-                _declaringTypes.put(declaringType.getName(), declaringType);
-                if (Project.class.isAssignableFrom(declaringType)) {
-                    String key = declaringType.getName();
-                    ProjectReference reference = _projectReferences.get(key);
-                    reference.putDeclaredType(_projectClass);
-                }
-            }
-        }
-
-        private Map<String, Class<?>> getDeclaringTypes() {
-            return _declaringTypes;
-        }
-
-        /**
-         * @return the declaring artifact
-         */
-        private Artifact getDeclaringArtifact() {
-            return _declaringArtifact;
-        }
-
-        /**
-         * @param declaringArtifact the declaring artifact to set
-         */
-        private void setDeclaringArtifact(Artifact declaringArtifact) {
-            _declaringArtifact = declaringArtifact;
-        }
-
-        /**
-         * @return the declaring field
-         */
-        private Field getDeclaringField() {
-            return _declaringField;
-        }
-
-        /**
-         * @param declaringField the declaring field to set
-         */
-        private void setDeclaringField(Field declaringField) {
-            _declaringField = declaringField;
         }
 
     }

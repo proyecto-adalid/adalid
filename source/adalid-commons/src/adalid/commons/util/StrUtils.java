@@ -138,6 +138,44 @@ public class StrUtils {
         return digit + String.format("%02d", len % 100) + String.format("%02d", sum % 100);
     }
 
+    public static String getLongNumericCode(String string) {
+        if (StringUtils.isBlank(string)) {
+            return null;
+        }
+        String clean = string.trim();
+        String first = firstDigit(clean);
+        String split = StringUtils.join(StringUtils.splitByCharacterTypeCamelCase(clean), " ");
+        String[] chunks = StringUtils.split(split, "!@#$%^&*()-_=+[]{}\\|;:'\",.<>/? ");
+        for (int i = 0; i < chunks.length; i++) {
+            chunks[i] = Damm.digit(getNumericString(chunks[i])) + "";
+        }
+        String nine;
+        String join = StringUtils.join(chunks);
+        int n = join.length();
+        if (n < 10) {
+            nine = StringUtils.rightPad(join, 9, "0");
+        } else {
+            int m = n / 2;
+            nine = join.substring(0, 3) + join.substring(m - 1, m + 2) + join.substring(n - 3);
+        }
+        String numst = getNumericString(clean);
+        String tenth = Damm.digit(numst) + "";
+        char[] chars = clean.toCharArray();
+        int len = chars.length;
+        int sum = 0;
+        for (char c : chars) {
+            sum += c;
+        }
+        chunks = new String[]{first, nine, tenth, String.format("%03d", len % 1000), String.format("%05d", sum % 100000)};
+        return StringUtils.join(chunks);
+    }
+
+    private static String firstDigit(String string) {
+        char c = Character.toUpperCase(string.charAt(0));
+        int i = c < 'A' ? 0 : c < 'D' ? 1 : c < 'G' ? 2 : c < 'J' ? 3 : c < 'M' ? 4 : c < 'P' ? 5 : c < 'T' ? 6 : c < 'W' ? 7 : c > 'Z' ? 0 : 8;
+        return i + "";
+    }
+
     public static String getNumericString(String string) {
         if (StringUtils.isBlank(string)) {
             return null;
@@ -382,7 +420,11 @@ public class StrUtils {
                     } else {
                         size = chunkLength;
                     }
-                    shorterChunks[i] = chunk.substring(0, Math.min(size, chunkLength));
+                    if (chunk.contains("_")) {
+                        shorterChunks[i] = getElementoIdentificadorSql(chunk, Math.min(size, chunkLength));
+                    } else {
+                        shorterChunks[i] = chunk.substring(0, Math.min(size, chunkLength));
+                    }
                 }
                 shorterString = trimmedPrefix + StringUtils.join(shorterChunks, separator) + numericCode + trimmedSuffix;
             } else if (available1 > 0) {
@@ -395,14 +437,86 @@ public class StrUtils {
         return shorterString;
     }
 
-    private static final Set<String> identifiers = new LinkedHashSet<>();
+    private static String getElementoIdentificadorSql(String string, int maxLength) {
+        if (StringUtils.isBlank(string)) {
+            return string;
+        }
+        char separator = '_';
+        String trimmedString = StringUtils.trimToEmpty(string);
+        String shorterString = trimmedString;
+        String endlessString = shorterString;
+        if (maxLength > 0 && shorterString.length() > maxLength) {
+            String[] chunks = StringUtils.split(trimmedString, separator);
+            String[] shorterChunks = new String[chunks.length];
+            int chunkCount = chunks.length;
+            int separators = chunkCount - 1;
+            int available1 = maxLength;
+            int available2 = available1 - separators;
+            int averageChunkLength = chunkCount > 1 ? available2 / chunkCount : available1;
+            if (available1 > 0 && available2 > 0 && averageChunkLength > 0) {
+                int overAverageChunkCount = 0;
+                int lastOverAverageChunkIndex = 0;
+                int used = 0;
+                int chunkLength;
+                String chunk;
+                for (int i = 0; i < chunks.length; i++) {
+                    chunk = chunks[i];
+                    chunkLength = chunk.length();
+                    if (chunkLength > averageChunkLength) {
+                        overAverageChunkCount++;
+                        lastOverAverageChunkIndex = i;
+                        used += averageChunkLength;
+                    } else {
+                        used += chunkLength;
+                    }
+                }
+                int free = available2 - used;
+                int over = overAverageChunkCount == 0 ? 0 : Long.valueOf(Math.round((double) free / overAverageChunkCount)).intValue();
+                int plus, size;
+                for (int i = 0; i < chunks.length; i++) {
+                    chunk = chunks[i];
+                    chunkLength = chunk.length();
+                    if (chunkLength > averageChunkLength) {
+                        plus = averageChunkLength + over > chunkLength ? chunkLength - averageChunkLength : over;
+                        if (i == lastOverAverageChunkIndex) {
+                            size = averageChunkLength + free;
+                            free = 0;
+                        } else if (free < plus) {
+                            size = averageChunkLength;
+                        } else {
+                            size = averageChunkLength + plus;
+                            free -= plus;
+                        }
+                    } else {
+                        size = chunkLength;
+                    }
+                    shorterChunks[i] = chunk.substring(0, Math.min(size, chunkLength));
+                }
+                shorterString = StringUtils.join(shorterChunks, separator);
+            } else if (available1 > 0) {
+                shorterString = trimmedString.substring(0, available1);
+            } else {
+                shorterString = trimmedString.substring(0, maxLength);
+            }
+        }
+        logIdentificadorSql(endlessString, shorterString);
+        return shorterString;
+    }
+
+    private static final Set<String> setIdentificadorSql = new LinkedHashSet<>();
 
     private static void logIdentificadorSql(String endless, String shorter) {
-        if (identifiers.contains(endless) || endless.equals(shorter)) {
+        if (endless.equals(shorter)) {
             return;
         }
-        identifiers.add(endless);
-        logger.trace(shorter + " < " + endless);
+        String shorterLength = String.format("%03d", shorter.length());
+        String endlessLength = String.format("%03d", endless.length());
+        String string = "[" + shorterLength + " < " + endlessLength + "] " + shorter + " < " + endless;
+        if (setIdentificadorSql.contains(string)) {
+        } else {
+            setIdentificadorSql.add(string);
+            logger.trace(string);
+        }
     }
 
     public static String getIdentificadorSql(String string) {
@@ -720,16 +834,16 @@ public class StrUtils {
     }
 
     public static String getStringHtml(String string) {
-        return StringEscapeUtils.escapeHtml(string);
+        return StringUtils.isBlank(string) ? null : StringEscapeUtils.escapeHtml(string);
     }
 
     public static String getStringJava(String string) {
-        String s = StringEscapeUtils.escapeJava(string);
+        String s = StringUtils.isBlank(string) ? null : StringEscapeUtils.escapeJava(string);
         return s == null ? null : s.replace("\\/", "/");
     }
 
     public static String getStringXml(String string) {
-        return StringEscapeUtils.escapeXml(string);
+        return StringUtils.isBlank(string) ? null : StringEscapeUtils.escapeXml(string);
     }
 
     public static String getToken(String string) {
@@ -1196,20 +1310,11 @@ public class StrUtils {
         if (string == null || remove == null) {
             return string;
         }
-        if (separator == null) {
-            separator = " ";
-        }
         String separatorChars = ", ";
         String[] tokens = StringUtils.split(remove, separatorChars);
         for (String token : tokens) {
-            remove = StrUtils.getWordyString(token);
-            if (affixType == 'p') {
-                string = StringUtils.removeStart(string, remove + separator);
-            } else if (affixType == 's') {
-                string = StringUtils.removeEnd(string, separator + remove);
-            } else {
-                string = StringUtils.remove(string, separator + remove + separator);
-            }
+            remove = getWordyString(token);
+            string = removeWholeWord(string, remove, affixType, separator);
         }
         return string;
     }
@@ -1239,7 +1344,7 @@ public class StrUtils {
         return string == null || remove == null ? string
             : affixType == 'p' ? StringUtils.removeStart(string, remove + separator)
                 : affixType == 's' ? StringUtils.removeEnd(string, separator + remove)
-                    : StringUtils.remove(string, separator + remove + separator);
+                    : StringUtils.replace(string, separator + remove + separator, separator);
     }
 
 }

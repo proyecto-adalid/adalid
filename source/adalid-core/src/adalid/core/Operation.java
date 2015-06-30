@@ -18,8 +18,16 @@ import adalid.core.expressions.BooleanDataAggregateX;
 import adalid.core.expressions.BooleanOrderedPairX;
 import adalid.core.expressions.BooleanScalarX;
 import adalid.core.expressions.XB;
-import adalid.core.interfaces.*;
+import adalid.core.interfaces.Artifact;
+import adalid.core.interfaces.BooleanExpression;
+import adalid.core.interfaces.Check;
+import adalid.core.interfaces.Entity;
+import adalid.core.interfaces.Expression;
+import adalid.core.interfaces.Parameter;
+import adalid.core.interfaces.Property;
+import adalid.core.interfaces.State;
 import adalid.core.operations.BasicDatabaseOperation;
+import adalid.core.wrappers.OperationWrapper;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
@@ -142,6 +150,13 @@ public abstract class Operation extends AbstractArtifact implements Comparable<O
      */
     public boolean isAnnotatedWithOperationClass() {
         return _annotatedWithOperationClass;
+    }
+
+    /**
+     * @return the proper name
+     */
+    public String getProperName() {
+        return getName();
     }
 
     /**
@@ -402,7 +417,9 @@ public abstract class Operation extends AbstractArtifact implements Comparable<O
         settleAttributes();
         settleParameters();
         settleExpressions();
+        verifyNames(Operation.class, Expression.class);
         settleFilters();
+//      verifyNames(Operation.class);
     }
 
     // <editor-fold defaultstate="collapsed" desc="settle">
@@ -692,6 +709,14 @@ public abstract class Operation extends AbstractArtifact implements Comparable<O
         return 0;
     }
     // </editor-fold>
+
+    /**
+     * @return the default wrapper class
+     */
+    @Override
+    public Class<? extends OperationWrapper> getDefaultWrapperClass() {
+        return OperationWrapper.class;
+    }
 
     // <editor-fold defaultstate="collapsed" desc="toString">
     @Override

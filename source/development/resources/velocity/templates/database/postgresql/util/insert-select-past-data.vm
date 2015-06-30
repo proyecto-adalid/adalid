@@ -48,7 +48,8 @@
 *###
     #set($tabla = 'conjunto_segmento')
     #set($added = $specialTableNames.add($tabla))
-    #set($where = "${currentKeyOf}clase_recurso(${tabla}.id_clase_recurso) is not null")
+    #set($where = "${tabla}.id_conjunto_segmento>10000")
+    #set($where = "$where and ${currentKeyOf}clase_recurso(${tabla}.id_clase_recurso) is not null")
     #set($added = $whereClauses.put($tabla, $where))
 ##
     #set($tabla = 'elemento_segmento')
@@ -113,7 +114,7 @@
     #set($joint = "inner join ${sourceQualifier}filtro_funcion")
     #set($joint = "$joint on filtro_funcion.id_filtro_funcion = ${tabla}.id_filtro_funcion")
     #set($added = $joinClauses.put($tabla, $joint))
-    #set($where = "${tabla}.id_rol>10000")
+##  #set($where = "${tabla}.id_rol>10000")
     #set($where = "${currentKeyOf}rol(${tabla}.id_rol) is not null")
     #set($where = "$where and ${currentKeyOf}funcion(filtro_funcion.id_funcion) is not null")
     #set($added = $whereClauses.put($tabla, $where))
@@ -136,14 +137,14 @@
 ##
     #set($tabla = 'rol_pagina')
     #set($added = $specialTableNames.add($tabla))
-    #set($where = "${tabla}.id_rol>10000")
+##  #set($where = "${tabla}.id_rol>10000")
     #set($where = "${currentKeyOf}rol(${tabla}.id_rol) is not null")
     #set($where = "$where and ${currentKeyOf}pagina(${tabla}.id_pagina) is not null")
     #set($added = $whereClauses.put($tabla, $where))
 ##
     #set($tabla = 'rol_usuario')
     #set($added = $specialTableNames.add($tabla))
-    #set($where = "${tabla}.id_rol>10000 and ${tabla}.id_usuario>10000")
+##  #set($where = "${tabla}.id_rol>10000 and ${tabla}.id_usuario>10000")
     #set($where = "${currentKeyOf}rol(${tabla}.id_rol) is not null")
     #set($where = "$where and ${tabla}.id_usuario>10000")
     #set($added = $whereClauses.put($tabla, $where))
@@ -407,6 +408,7 @@ $$ language plpgsql;
 #end##setEntityVariables
 
 #macro(overwriteCreateCurrentKeyFunctions)
+#***
 create or replace function ${currentKeyOf}rol(bigint) returns bigint as $$
 declare
     _oldkey$ alias for $1;
@@ -420,5 +422,5 @@ begin
     return _newkey$;
 end;
 $$ language plpgsql;
-
+*###
 #end##overwriteCreateCurrentKeyFunctions

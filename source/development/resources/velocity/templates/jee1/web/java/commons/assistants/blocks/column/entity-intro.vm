@@ -24,7 +24,6 @@
     protected Map<RowKey, ${referenceClassName}Base> ${fieldVariableName}Map = new LinkedHashMap<>();
 
 #set($parameterSearchQueryKey = "${entity.wrapper.sqlName}.${property.wrapper.sqlName}")
-#set($parameterSearchQueryKey = "${entity.wrapper.sqlSchemaQualifiedShortName}.${property.wrapper.sqlName}")
 #set($parametersMapSize = 0)
 #if($property.searchQueryFilter)
     #set($parameterQueryTable = $property.queryTable)

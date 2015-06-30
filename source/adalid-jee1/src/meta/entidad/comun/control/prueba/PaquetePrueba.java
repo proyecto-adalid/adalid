@@ -6,10 +6,28 @@
  */
 package meta.entidad.comun.control.prueba;
 
-import adalid.core.annotations.*;
-import adalid.core.enums.*;
-import adalid.core.interfaces.*;
-import adalid.core.properties.*;
+import adalid.core.annotations.BusinessKey;
+import adalid.core.annotations.DescriptionProperty;
+import adalid.core.annotations.EntityClass;
+import adalid.core.annotations.EntityConsoleView;
+import adalid.core.annotations.EntityDataGen;
+import adalid.core.annotations.EntityDeleteOperation;
+import adalid.core.annotations.EntityDetailView;
+import adalid.core.annotations.EntityInsertOperation;
+import adalid.core.annotations.EntityReferenceSearch;
+import adalid.core.annotations.EntitySelectOperation;
+import adalid.core.annotations.EntityTableView;
+import adalid.core.annotations.EntityTreeView;
+import adalid.core.annotations.EntityUpdateOperation;
+import adalid.core.annotations.NameProperty;
+import adalid.core.annotations.PropertyField;
+import adalid.core.annotations.StringField;
+import adalid.core.enums.Kleenean;
+import adalid.core.enums.ResourceGender;
+import adalid.core.enums.ResourceType;
+import adalid.core.enums.SearchType;
+import adalid.core.interfaces.Artifact;
+import adalid.core.properties.StringProperty;
 import java.lang.reflect.Field;
 import meta.entidad.base.PersistentEntityBase;
 import meta.proyecto.base.ProyectoBase;
@@ -47,8 +65,8 @@ public class PaquetePrueba extends PersistentEntityBase {
         setSchema(ProyectoBase.getEsquemaEntidadesComunes());
         setDefaultLabel("paquete de prueba");
         setDefaultShortLabel("paquete");
-        setDefaultCollectionLabel("paquetes de prueba");
-        setDefaultCollectionShortLabel("paquetes");
+        setDefaultCollectionLabel("Paquetes de Prueba");
+        setDefaultCollectionShortLabel("Paquetes");
     }
 
     @BusinessKey

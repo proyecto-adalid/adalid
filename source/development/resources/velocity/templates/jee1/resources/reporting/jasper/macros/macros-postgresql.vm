@@ -1,0 +1,11 @@
+#set($booleanClassName  = "java.lang.Boolean")
+#set($dateClassName     = "java.sql.Date")
+#set($timeClassName     = "java.sql.Time")
+#set($timestampClassName= "java.sql.Timestamp")
+#set($isTruePredicate   = "IS TRUE")
+#set($isFalsePredicate  = "IS FALSE")
+#set($isTrueString      = "${BOP}SI${EOP}")
+#set($isFalseString     = "${BOP}NO${EOP}")
+#set($isNullValueString = "${BOP}NULO${EOP}")
+#set($positionalGroupBy = $TRUE)
+#break

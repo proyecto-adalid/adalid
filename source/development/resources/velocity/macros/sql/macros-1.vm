@@ -1,6 +1,7 @@
 #break
 
 #macro(setSQLVariables)
+    #setGlobalVariables()
     #set($globalConstraintCount = 0)
     #set($globalPrimaryKeyAffix = '_pk')
     #set($globalForeignKeyAffix = '_fk')
@@ -10,7 +11,7 @@
     #set($globalSequenceAffix = '_sq')
     #set($globalConstraintSerial = '')
     #set($globalConstraintSuffix = '___')
-    #set($sqlMaxIdentifierLength = 65535)
+    #set($globalSQLMaxIdentifierLength = $sqlProgrammer.maxIdentifierLength)
 #end
 
 #macro(resetSQLVariables)
@@ -42,20 +43,11 @@
 #end
 
 #macro(setGlobalConstraintName $entity $globalConstraintAffix)
-#***
-    #set($globalConstraintName = "${entity.wrapper.sqlSchemaUnqualifiedShortName}${globalConstraintAffix}")
-    #set($globalConstraintName = "${globalConstraintName}${globalConstraintSuffix}")
-*###
     #set($globalConstraintName = $entity.wrapper.getSuffixedSqlName("${globalConstraintAffix}${globalConstraintSuffix}"))
 #end
 
 #macro(setGlobalConstraintFullName $entity $globalConstraintAffix)
     #setGlobalConstraintSerial()
-#***
-    #set($globalConstraintName = "${entity.wrapper.sqlSchemaUnqualifiedShortName}${globalConstraintAffix}")
-    #set($globalConstraintName = "${globalConstraintName}${globalConstraintSerial}")
-    #set($globalConstraintName = "${globalConstraintName}${globalConstraintSuffix}")
-*###
     #set($globalConstraintName = $entity.wrapper.getSuffixedSqlName("${globalConstraintAffix}${globalConstraintSerial}${globalConstraintSuffix}"))
 #end
 

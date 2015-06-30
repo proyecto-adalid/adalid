@@ -6,30 +6,43 @@
  */
 package adalid.commons.util;
 
+import org.apache.commons.lang.StringUtils;
+
 /**
  * @author Jorge Campins
  */
 public class ThrowableUtils {
 
     public static String getString(Throwable throwable) {
-        return throwable == null ? Throwable.class.getName()
-            : throwable.getCause() != null ? getString(throwable.getCause())
-            : isNotBlank(throwable.getLocalizedMessage()) ? getString(throwable.getLocalizedMessage())
-            : isNotBlank(throwable.getMessage()) ? getString(throwable.getMessage())
-            : isNotBlank(throwable.toString()) ? getString(throwable.toString())
-            : Throwable.class.getSimpleName();
+        if (throwable == null) {
+            return Throwable.class.getName();
+        }
+        String string;
+        Throwable cause = throwable.getCause();
+        if (cause != null) {
+            return getString(cause);
+        }
+        string = throwable.getLocalizedMessage();
+        if (StringUtils.isNotBlank(string)) {
+            return getString(string);
+        }
+        string = throwable.getMessage();
+        if (StringUtils.isNotBlank(string)) {
+            return getString(string);
+        }
+        string = throwable.toString();
+        if (StringUtils.isNotBlank(string)) {
+            return getString(string);
+        }
+        return Throwable.class.getSimpleName();
     }
 
     public static Throwable getCause(Throwable throwable) {
-        return throwable == null ? null : throwable.getCause() == null ? throwable : getCause(throwable.getCause());
-    }
-
-    private static boolean isBlank(String string) {
-        return string == null || string.trim().equals("");
-    }
-
-    private static boolean isNotBlank(String string) {
-        return !isBlank(string);
+        if (throwable == null) {
+            return null;
+        }
+        Throwable cause = throwable.getCause();
+        return cause == null ? throwable : getCause(cause);
     }
 
     private static String getString(String string) {

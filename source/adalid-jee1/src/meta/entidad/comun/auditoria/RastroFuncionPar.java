@@ -6,11 +6,37 @@
  */
 package meta.entidad.comun.auditoria;
 
-import adalid.core.*;
-import adalid.core.annotations.*;
-import adalid.core.enums.*;
-import adalid.core.interfaces.*;
-import adalid.core.properties.*;
+import adalid.core.AbstractPersistentEntity;
+import adalid.core.annotations.Allocation;
+import adalid.core.annotations.ColumnField;
+import adalid.core.annotations.EntityClass;
+import adalid.core.annotations.EntityConsoleView;
+import adalid.core.annotations.EntityDeleteOperation;
+import adalid.core.annotations.EntityDetailView;
+import adalid.core.annotations.EntityInsertOperation;
+import adalid.core.annotations.EntitySelectOperation;
+import adalid.core.annotations.EntityTableView;
+import adalid.core.annotations.EntityTreeView;
+import adalid.core.annotations.EntityTriggers;
+import adalid.core.annotations.EntityUpdateOperation;
+import adalid.core.annotations.ForeignKey;
+import adalid.core.annotations.ManyToOne;
+import adalid.core.annotations.PrimaryKey;
+import adalid.core.annotations.PropertyField;
+import adalid.core.annotations.UrlProperty;
+import adalid.core.enums.Kleenean;
+import adalid.core.enums.MasterDetailView;
+import adalid.core.enums.Navigability;
+import adalid.core.enums.OnDeleteAction;
+import adalid.core.enums.OnUpdateAction;
+import adalid.core.enums.ResourceGender;
+import adalid.core.enums.ResourceType;
+import adalid.core.enums.UrlDisplayType;
+import adalid.core.enums.UrlType;
+import adalid.core.interfaces.Artifact;
+import adalid.core.properties.BooleanProperty;
+import adalid.core.properties.LongProperty;
+import adalid.core.properties.StringProperty;
 import java.lang.reflect.Field;
 import meta.entidad.comun.configuracion.basica.Parametro;
 import meta.proyecto.base.ProyectoBase;
@@ -59,7 +85,14 @@ public class RastroFuncionPar extends AbstractPersistentEntity {
     public Parametro idParametro;
 
     @PropertyField(table = Kleenean.TRUE, report = Kleenean.TRUE)
+    public StringProperty valorAnterior;
+
+    @PropertyField(table = Kleenean.TRUE, report = Kleenean.TRUE)
     public StringProperty valorParametro;
+
+    @ColumnField(nullable = Kleenean.FALSE)
+    @PropertyField(table = Kleenean.TRUE, report = Kleenean.TRUE)
+    public BooleanProperty diferenteValor;
 
     @PropertyField(hidden = Kleenean.TRUE)
     public LongProperty idClaseRecursoValor;
@@ -74,8 +107,8 @@ public class RastroFuncionPar extends AbstractPersistentEntity {
         setSchema(ProyectoBase.getEsquemaEntidadesComunes());
         setDefaultLabel("parámetro de rastro de función");
         setDefaultShortLabel("parámetro");
-        setDefaultCollectionLabel("parámetros de rastro de función");
-        setDefaultCollectionShortLabel("parámetros");
+        setDefaultCollectionLabel("Parámetros de Rastro de Función");
+        setDefaultCollectionShortLabel("Parámetros");
     }
 
     @Override
@@ -83,6 +116,10 @@ public class RastroFuncionPar extends AbstractPersistentEntity {
         super.settleProperties();
         valorParametro.setDefaultLabel("valor");
         paginaRecurso.setDefaultLabel("detalle");
+        diferenteValor.setInitialValue(false);
+        diferenteValor.setDefaultValue(false);
+        diferenteValor.setDefaultLabel("diferente");
+        diferenteValor.setDefaultTooltip("el valor es diferente al anterior");
     }
 
     @Override

@@ -3,7 +3,7 @@
 #writePostgreSQLLicense()
 #writePostgreSQLAuthor('Jorge Campins')
 #set($view = "consulta_${entity.wrapper.sqlName}")
-#set($view = "${entity.wrapper.sqlSchemaQualifier}consulta_${entity.wrapper.sqlSchemaUnqualifiedShortName}")
+#set($view = "$entity.wrapper.getPrefixedSqlName('consulta_')")
 #set($query = $entity.queryTable)
 #set($statement = $query.getSqlSelectStatement())
 #set($discriminatorTable  = '')
@@ -12,8 +12,7 @@
 #set($strategy = "$!entity.inheritanceMappingStrategy")
 #if($strategy == 'SINGLE_TABLE' || $strategy == 'JOINED')
     #if($entity.discriminatorProperty)
-        #set($discriminatorTable  = "$!entity.discriminatorProperty.declaringFieldPersistentEntityRoot.wrapper.sqlName")
-        #set($discriminatorTable  = "$!entity.discriminatorProperty.declaringFieldPersistentEntityRoot.wrapper.sqlSchemaUnqualifiedShortName")
+        #set($discriminatorTable  = "$!entity.discriminatorProperty.declaringFieldPersistentEntityRoot.wrapper.sqlTableName")
         #set($discriminatorColumn = "$!entity.discriminatorProperty.wrapper.sqlName")
         #set($discriminatorValue  = "$!entity.wrapper.sqlDiscriminatorValue")
         #set($discriminatorValues = $entity.wrapper.sqlDiscriminatorValues)
@@ -32,17 +31,18 @@
 #end
 #if($lowerEntity && $upperEntity)
     #set($view = "seudo_${entity.wrapper.sqlName}")
-    #set($view = "${entity.wrapper.sqlSchemaQualifier}seudo_${entity.wrapper.sqlSchemaUnqualifiedShortName}")
+    #set($view = "$entity.wrapper.getPrefixedSqlName('seudo_')")
     #set($virtualEntityType = $VelocityAid.valueOf($VirtualEntityType, 'LINE'))
     #set($query = $entity.getQueryTable($virtualEntityType))
     #set($statement = $query.getSqlSelectStatement())
     #writeCreateViewStatement('false')
     #writeCreateViewTrigger()
 #end
+#***
 #set($options = $VelocityAid.values($SelectOption))
 #foreach($entityView in $entity.viewsList)
     #set($view = "consulta_${entity.wrapper.sqlName}")
-    #set($view = "${entity.wrapper.sqlSchemaQualifier}consulta_${entity.wrapper.sqlSchemaUnqualifiedShortName}")
+    #set($view = "$entity.wrapper.getPrefixedSqlName('consulta_')")
     #foreach($option in $options)
         #set($selectStatement = "$!entityView.getSelectStatement($view, $option)")
         #if($selectStatement != '')
@@ -64,6 +64,7 @@
         #end
     #end
 #end
+*###
 #break
 
 #macro(writeCreateViewStatement $foo)
@@ -71,7 +72,6 @@ drop view if exists $view cascade;
 create view $view as
 $statement.replace("$EOL", "$EOL    ")
 #set($pdqName = $entity.wrapper.sqlName)
-#set($pdqName = $entity.wrapper.sqlSchemaUnqualifiedShortName)
 #set($keyword = 'where')
 #set($discriminatorSentence = '')
 #if($discriminatorTable != '' && $discriminatorTable != $pdqName && $discriminatorColumn != '' && !$discriminatorValues.isEmpty())
@@ -120,8 +120,9 @@ $statement.replace("$EOL", "$EOL    ")
 #set($raiseNotices = $TRUE)
 #set($raiseNotices = $FALSE)
 #parse("$templatePath/macros/macros-1.vm")
-drop function if exists ${view}_instead() cascade;
-create or replace function ${view}_instead() returns trigger as $$
+#set($function = $entity.wrapper.getAffixedSqlName('seudo_', '_instead'))
+drop function if exists ${function}() cascade;
+create or replace function ${function}() returns trigger as $$
 begin
     raise notice '% ${view}', TG_OP;
     if TG_OP = 'INSERT' then
@@ -149,8 +150,8 @@ begin
 end;
 $$ language plpgsql;
 
-#set($trigger = "seudo_${entity.wrapper.sqlSchemaUnqualifiedShortName}")
-drop trigger if exists ${trigger}_instead on ${view} cascade;
-create trigger ${trigger}_instead instead of insert or update or delete on ${view}
-for each row execute procedure ${view}_instead();
+#set($trigger = $entity.wrapper.getAffixedSqlName('seudo_', '_instead'))
+drop trigger if exists ${trigger} on ${view} cascade;
+create trigger ${trigger} instead of insert or update or delete on ${view}
+for each row execute procedure ${function}();
 #end##writeCreateViewTrigger

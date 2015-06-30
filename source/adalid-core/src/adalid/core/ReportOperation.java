@@ -58,6 +58,14 @@ public abstract class ReportOperation extends Operation {
     }
 
     /**
+     * @return the proper name
+     */
+    @Override
+    public String getProperName() {
+        return _reportName;
+    }
+
+    /**
      * @return the report name
      */
     public String getReportName() {

@@ -71,7 +71,8 @@
             long dominio = ${referenceClassName}Constants.ID_DOMINIO_RECURSO;
             long funcion = ${referenceClassName}Constants.${referenceSelectFunctionConstantName};
             String campo = ${componentName}.getClientId(getFacesContext());
-            String boton = botonAplicarFiltro1.getClientId(getFacesContext());
+//          String boton = botonAplicarFiltro1.getClientId(getFacesContext());
+            String boton = botonComprobarFiltro1.getClientId(getFacesContext());
             #writeScriptBoton1SwitchX()
         }
 

@@ -51,6 +51,16 @@
             this.listaFiltro1 = dd;
         }
 
+        private Button botonComprobarFiltro1 = new Button();
+
+        public Button getBotonComprobarFiltro1() {
+            return botonComprobarFiltro1;
+        }
+
+        public void setBotonComprobarFiltro1(Button b) {
+            botonComprobarFiltro1 = b;
+        }
+
         private Button botonAplicarFiltro1 = new Button();
 
         public Button getBotonAplicarFiltro1() {
@@ -221,6 +231,10 @@
             rpl.addParametro(CPP.ID_DOMINIO_RETORNO, FiltroFuncionCachedRowSetDataProvider2.ID_DOMINIO_RECURSO);
             rpl.addParametro(CPP.ID_RECURSO_MAESTRO, String.valueOf(rm));
             return JSF.getOpenWindowJavaScript(url, rpl.toString());
+        }
+
+        public String botonComprobarFiltro1_action() {
+            return null;
         }
 
         public String botonAplicarFiltro1_action() {

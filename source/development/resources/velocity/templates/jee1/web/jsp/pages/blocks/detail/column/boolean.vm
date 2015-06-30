@@ -9,7 +9,7 @@ $tab    <webuijsf:label id="label${fieldFirstName}${tabString}"
 $tab        binding="#{${pageBeanName}.label${fieldFirstName}${tabString}}"
 $tab        for="${campo1}${tabString}"
 ##          text="$field.property.wrapper.xmlValidDefaultShortLabel"/>
-$tab        text="BundleParametros.${page.entity.wrapper.sqlSchemaQualifiedShortName}.${field.property.wrapper.sqlName}"/>
+$tab        text="BundleParametros.${page.entity.wrapper.sqlName}.${field.property.wrapper.sqlName}"/>
 $tab</h:panelGrid>
 $tab<h:panelGrid id="panelGrid${panelGridSequence.next()}"
 $tab    columns="7"
@@ -19,7 +19,7 @@ $tab    rendered="#{${pageBeanName}.asistente.grid${fieldClassName}Rendered}"
 $tab    rendered="#{${pageBeanName}.asistente.grid${fieldClassName}RenderedInsideTabs}"
     #end
 $tab    styleClass="pdq-grid-elemento-1">
-    #if($field.property.booleanDisplayType != 'CHECKBOX' || $field.property.isNullable())
+    #if($field.property.booleanDisplayType != 'CHECKBOX' || $field.property.isNullable() || $checkBoxesAreNotAllowed)
 $tab    <webuijsf:dropDown id="${campo1}${tabString}"
 $tab        binding="#{${pageBeanName}.${campo1}${tabString}}"
 $tab        converter="#{${pageBeanName}.converter${fieldFirstName}}"
@@ -31,7 +31,7 @@ $tab        onChange="webui.suntheme4_2.common.timeoutSubmitForm(this.form, '${c
 $tab        required="$fieldRequired"
 $tab        selected="#{${sourceVar}.${fieldVariableName}}"
 ##          toolTip="$field.property.wrapper.xmlValidDefaultTooltip"/>
-$tab        toolTip="BundleParametros.${page.entity.wrapper.sqlSchemaQualifiedShortName}.${field.property.wrapper.sqlName}"
+$tab        toolTip="BundleParametros.${page.entity.wrapper.sqlName}.${field.property.wrapper.sqlName}"
 $tab        validatorExpression="#{${pageBeanName}.${campo1}_validate}"/>
 $tab    <webuijsf:staticText id="${campo1}${tabString}Texto1"
 $tab        binding="#{${pageBeanName}.${campo1}${tabString}Texto1}"/>
@@ -44,7 +44,7 @@ $tab        onChange="webui.suntheme4_2.common.timeoutSubmitForm(this.form, '${c
 $tab        readOnly="$fieldReadOnly"
 $tab        selected="#{${sourceVar}.${fieldVariableName}}"
 ##          toolTip="$field.property.wrapper.xmlValidDefaultTooltip"/>
-$tab        toolTip="BundleParametros.${page.entity.wrapper.sqlSchemaQualifiedShortName}.${field.property.wrapper.sqlName}"
+$tab        toolTip="BundleParametros.${page.entity.wrapper.sqlName}.${field.property.wrapper.sqlName}"
 $tab        validatorExpression="#{${pageBeanName}.${campo1}_validate}"/>
     #end
 $tab    <webuijsf:message id="message${fieldFirstName}${tabString}"
@@ -54,6 +54,6 @@ $tab        binding="#{${pageBeanName}.helpInline${fieldFirstName}${tabString}}"
 $tab        rendered="#{SessionBean1.contextoSesion.helpInlineRendered}"
 $tab        styleClass="pdq-helpInline-field"
 ##          text="$field.property.wrapper.xmlValidDefaultShortDescription"
-$tab        text="BundleParametros.${page.entity.wrapper.sqlSchemaQualifiedShortName}.${field.property.wrapper.sqlName}"
+$tab        text="BundleParametros.${page.entity.wrapper.sqlName}.${field.property.wrapper.sqlName}"
 $tab        type="field"/>
 $tab</h:panelGrid>

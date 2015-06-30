@@ -1,0 +1,60 @@
+#parsePostgreSQLMacros()
+#setPostgreSQLVariables()
+#writePostgreSQLLicense()
+#writePostgreSQLAuthor('Jorge Campins')
+#createMetaTable()
+#addMetaReferences()
+#break
+
+#macro(createMetaTable)
+#set($table = 'project$entity$references')
+#set($sequence = $Sequence.startWith(1))
+#set($primaryKey = 'project$entity$references$pk')
+drop table if exists $table cascade;
+create table $table
+    (
+    id integer not null,
+    entity_name character varying(100),
+    entity_class_name character varying(300),
+    module_name character varying(100),
+    module_class_name character varying(300),
+    constraint $primaryKey primary key (id)
+    )
+;
+#end##createMetaTable
+
+#macro(addMetaReferences)
+    #set($keys = $project.getEntityReferences().keySet())
+    #set($sortedKeys = $VelocityAid.getNewTreeSet())
+    #set($added = $sortedKeys.addAll($keys))
+    #foreach($key in $sortedKeys)
+        #set($reference = $project.getEntityReferences().get($key))
+        #addMetaReference()
+    #end##foreach-key
+#end##addMetaReferences
+
+#macro(addMetaReference)
+    #set($entityName = $reference.entityClass.simpleName)
+    #set($entityClassName = $reference.entityClass.name)
+    #foreach($declaringType in $reference.declaringTypes)
+        #if($project.getProject($declaringType))
+            #set($moduleName = $declaringType.simpleName)
+            #set($moduleClassName = $declaringType.name)
+            #writeInsertMetaData()
+        #end
+    #end##foreach-declaringType
+#end##addMetaReference
+
+#macro(writeInsertMetaData)
+insert into $table values (
+    $sequence.next(),
+    '$entityName',
+    '$entityClassName',
+    '$moduleName',
+    '$moduleClassName'
+);
+#end##writeInsertMetaData
+
+#macro(checkMetaReferences)
+select * from $table order by 1;
+#end##checkMetaReferences

@@ -7,7 +7,20 @@
 package meta.proyecto.comun;
 
 import adalid.core.Project;
-import meta.entidad.comun.control.acceso.*;
+import meta.entidad.comun.control.acceso.ConjuntoSegmento;
+import meta.entidad.comun.control.acceso.ElementoSegmento;
+import meta.entidad.comun.control.acceso.Rol;
+import meta.entidad.comun.control.acceso.RolFiltroFuncion;
+import meta.entidad.comun.control.acceso.RolFuncion;
+import meta.entidad.comun.control.acceso.RolFuncionPar;
+import meta.entidad.comun.control.acceso.RolPagina;
+import meta.entidad.comun.control.acceso.RolUsuario;
+import meta.entidad.comun.control.acceso.Segmento;
+import meta.entidad.comun.control.acceso.TipoRol;
+import meta.entidad.comun.control.acceso.Usuario;
+import meta.paquete.comun.PaqueteConsultaControlAcceso;
+import meta.paquete.comun.PaqueteProcesamientoControlAcceso;
+import meta.paquete.comun.PaqueteRegistroControlAcceso;
 
 /**
  * @author Jorge Campins
@@ -25,8 +38,6 @@ public class ControlAcceso extends Project {
 
     ElementoSegmento ElementoSegmento;
 
-    Segmento Segmento;
-
     Rol Rol;
 
     RolFuncion RolFuncion;
@@ -39,8 +50,16 @@ public class ControlAcceso extends Project {
 
     RolUsuario RolUsuario;
 
+    Segmento Segmento;
+
+    TipoRol TipoRol;
+
     Usuario Usuario;
-//
-//  TipoRol TipoRol;
+
+    PaqueteConsultaControlAcceso consulta;
+
+    PaqueteProcesamientoControlAcceso procesamiento;
+
+    PaqueteRegistroControlAcceso registro;
 
 }

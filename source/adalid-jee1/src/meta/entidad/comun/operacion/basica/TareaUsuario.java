@@ -6,11 +6,53 @@
  */
 package meta.entidad.comun.operacion.basica;
 
-import adalid.core.*;
-import adalid.core.annotations.*;
-import adalid.core.enums.*;
-import adalid.core.interfaces.*;
-import adalid.core.properties.*;
+import adalid.core.AbstractPersistentEntity;
+import adalid.core.Key;
+import adalid.core.ProcessOperation;
+import adalid.core.Tab;
+import adalid.core.Transition;
+import adalid.core.annotations.Allocation;
+import adalid.core.annotations.ColumnField;
+import adalid.core.annotations.EntityClass;
+import adalid.core.annotations.EntityConsoleView;
+import adalid.core.annotations.EntityDeleteOperation;
+import adalid.core.annotations.EntityDetailView;
+import adalid.core.annotations.EntityInsertOperation;
+import adalid.core.annotations.EntitySelectOperation;
+import adalid.core.annotations.EntityTableView;
+import adalid.core.annotations.EntityTreeView;
+import adalid.core.annotations.EntityUpdateOperation;
+import adalid.core.annotations.EntityWarnings;
+import adalid.core.annotations.ForeignKey;
+import adalid.core.annotations.InstanceReference;
+import adalid.core.annotations.ManyToOne;
+import adalid.core.annotations.OperationClass;
+import adalid.core.annotations.OwnerProperty;
+import adalid.core.annotations.PrimaryKey;
+import adalid.core.annotations.ProcessOperationClass;
+import adalid.core.annotations.PropertyField;
+import adalid.core.annotations.SegmentProperty;
+import adalid.core.annotations.StringField;
+import adalid.core.annotations.VersionProperty;
+import adalid.core.enums.Kleenean;
+import adalid.core.enums.MasterDetailView;
+import adalid.core.enums.Navigability;
+import adalid.core.enums.OnDeleteAction;
+import adalid.core.enums.OnUpdateAction;
+import adalid.core.enums.OperationAccess;
+import adalid.core.enums.ResourceGender;
+import adalid.core.enums.ResourceType;
+import adalid.core.enums.SortOption;
+import adalid.core.enums.SpecialCharacterValue;
+import adalid.core.enums.SpecialTemporalValue;
+import adalid.core.interfaces.Artifact;
+import adalid.core.interfaces.Segment;
+import adalid.core.interfaces.State;
+import adalid.core.properties.BooleanProperty;
+import adalid.core.properties.IntegerProperty;
+import adalid.core.properties.LongProperty;
+import adalid.core.properties.StringProperty;
+import adalid.core.properties.TimestampProperty;
 import java.lang.reflect.Field;
 import meta.entidad.comun.configuracion.basica.Funcion;
 import meta.entidad.comun.control.acceso.Usuario;
@@ -196,16 +238,16 @@ public class TareaUsuario extends AbstractPersistentEntity {
     public LongProperty version;
 
     @ColumnField(nullable = Kleenean.FALSE)
-    @PropertyField(table = Kleenean.TRUE, report = Kleenean.TRUE, search = Kleenean.FALSE)
+    @PropertyField(table = Kleenean.TRUE, report = Kleenean.TRUE, search = Kleenean.TRUE)
     public LongProperty tarea;
 
     @OwnerProperty
     @SegmentProperty
-    @Allocation(maxDepth = 1, maxRound = 0)
+    @Allocation(maxDepth = 2, maxRound = 1)
     @ColumnField(nullable = Kleenean.FALSE)
     @ForeignKey(onDelete = OnDeleteAction.NONE, onUpdate = OnUpdateAction.NONE)
     @ManyToOne(navigability = Navigability.UNIDIRECTIONAL, view = MasterDetailView.NONE)
-    @PropertyField(table = Kleenean.FALSE, report = Kleenean.TRUE, search = Kleenean.TRUE)
+    @PropertyField(table = Kleenean.TRUE, report = Kleenean.TRUE, search = Kleenean.TRUE)
     public Usuario destinatario;
 
     @Allocation(maxDepth = 1, maxRound = 0)
@@ -252,6 +294,13 @@ public class TareaUsuario extends AbstractPersistentEntity {
     public Usuario finalizador;
 
     @Allocation(maxDepth = 1, maxRound = 0)
+    @ColumnField(nullable = Kleenean.TRUE)
+    @ForeignKey(onDelete = OnDeleteAction.NONE, onUpdate = OnUpdateAction.NONE)
+    @ManyToOne(navigability = Navigability.UNIDIRECTIONAL, view = MasterDetailView.NONE)
+    @PropertyField(hidden = Kleenean.TRUE)
+    public Usuario supervisorSuperior;
+
+    @Allocation(maxDepth = 1, maxRound = 0)
     @ColumnField(nullable = Kleenean.FALSE)
     @ForeignKey(onDelete = OnDeleteAction.NONE, onUpdate = OnUpdateAction.NONE)
     @ManyToOne(navigability = Navigability.UNIDIRECTIONAL, view = MasterDetailView.NONE)
@@ -273,19 +322,137 @@ public class TareaUsuario extends AbstractPersistentEntity {
 
     @ColumnField(nullable = Kleenean.TRUE)
     @PropertyField(hidden = Kleenean.TRUE)
-    public TimestampProperty fechaHoraCorreo;
-
-    @ColumnField(nullable = Kleenean.TRUE)
-    @PropertyField(hidden = Kleenean.TRUE)
-    public TimestampProperty fechaHoraCorreoSupervisor;
-
-    @ColumnField(nullable = Kleenean.TRUE)
-    @PropertyField(hidden = Kleenean.TRUE)
     public TimestampProperty fechaHoraLimite;
 
     @ColumnField(nullable = Kleenean.TRUE)
     @PropertyField(hidden = Kleenean.TRUE)
     public IntegerProperty prioridad;
+
+    /**
+     * notificar a destinatarios de nuevas tareas
+     */
+    @ColumnField(nullable = Kleenean.FALSE)
+    @PropertyField(hidden = Kleenean.TRUE)
+    public BooleanProperty notificarDestinatario;
+
+    /**
+     * fecha y hora de la próxima notificación a destinatarios
+     */
+    @ColumnField(nullable = Kleenean.TRUE)
+    @PropertyField(hidden = Kleenean.TRUE)
+    public TimestampProperty proximaNotaDestinatario;
+
+    /**
+     * fecha y hora de la última notificación a destinatarios
+     */
+    @ColumnField(nullable = Kleenean.TRUE)
+    @PropertyField(hidden = Kleenean.TRUE)
+    public TimestampProperty ultimaNotaDestinatario;
+
+    /**
+     * notificar a supervisores de nuevas tareas para sus supervisados
+     */
+    @ColumnField(nullable = Kleenean.FALSE)
+    @PropertyField(hidden = Kleenean.TRUE)
+    public BooleanProperty notificarSupervisor;
+
+    /**
+     * fecha y hora de la próxima notificación a supervisores
+     */
+    @ColumnField(nullable = Kleenean.TRUE)
+    @PropertyField(hidden = Kleenean.TRUE)
+    public TimestampProperty proximaNotaSupervisor;
+
+    /**
+     * fecha y hora de la última notificación a supervisores
+     */
+    @ColumnField(nullable = Kleenean.TRUE)
+    @PropertyField(hidden = Kleenean.TRUE)
+    public TimestampProperty ultimaNotaSupervisor;
+
+    /**
+     * advertir a supervisores de tareas no asumidas por sus supervisados
+     */
+    @ColumnField(nullable = Kleenean.FALSE)
+    @PropertyField(hidden = Kleenean.TRUE)
+    public BooleanProperty advertirAsignar;
+
+    /**
+     * fecha y hora de la próxima advertencia de tarea no asignada
+     */
+    @ColumnField(nullable = Kleenean.TRUE)
+    @PropertyField(hidden = Kleenean.TRUE)
+    public TimestampProperty proximoAdvertirAsignar;
+
+    /**
+     * fecha y hora de la última advertencia de tarea no asignada
+     */
+    @ColumnField(nullable = Kleenean.TRUE)
+    @PropertyField(hidden = Kleenean.TRUE)
+    public TimestampProperty ultimoAdvertirAsignar;
+
+    /**
+     * advertir a supervisores de tareas no finalizadas por sus supervisados
+     */
+    @ColumnField(nullable = Kleenean.FALSE)
+    @PropertyField(hidden = Kleenean.TRUE)
+    public BooleanProperty advertirFinalizar;
+
+    /**
+     * fecha y hora de la próxima advertencia de tarea no finalizada
+     */
+    @ColumnField(nullable = Kleenean.TRUE)
+    @PropertyField(hidden = Kleenean.TRUE)
+    public TimestampProperty proximoAdvertirFinalizar;
+
+    /**
+     * fecha y hora de la última advertencia de tarea no finalizada
+     */
+    @ColumnField(nullable = Kleenean.TRUE)
+    @PropertyField(hidden = Kleenean.TRUE)
+    public TimestampProperty ultimoAdvertirFinalizar;
+
+    /**
+     * escalar a superiores de tareas no asignadas por sus supervisados
+     */
+    @ColumnField(nullable = Kleenean.FALSE)
+    @PropertyField(hidden = Kleenean.TRUE)
+    public BooleanProperty escalarAsignar;
+
+    /**
+     * fecha y hora del próximo escalamiento de tarea no asignada
+     */
+    @ColumnField(nullable = Kleenean.TRUE)
+    @PropertyField(hidden = Kleenean.TRUE)
+    public TimestampProperty proximoEscalarAsignar;
+
+    /**
+     * fecha y hora del último escalamiento de tarea no asignada
+     */
+    @ColumnField(nullable = Kleenean.TRUE)
+    @PropertyField(hidden = Kleenean.TRUE)
+    public TimestampProperty ultimoEscalarAsignar;
+
+    /**
+     * escalar a superiores de tareas no finalizadas por sus supervisados
+     */
+    @ColumnField(nullable = Kleenean.FALSE)
+    @PropertyField(hidden = Kleenean.TRUE)
+    public BooleanProperty escalarFinalizar;
+
+    /**
+     * fecha y hora del próximo escalamiento de tarea no finalizada
+     */
+    @ColumnField(nullable = Kleenean.TRUE)
+    @PropertyField(hidden = Kleenean.TRUE)
+    public TimestampProperty proximoEscalarFinalizar;
+
+    /**
+     * fecha y hora del último escalamiento de tarea no finalizada
+     */
+    @ColumnField(nullable = Kleenean.TRUE)
+    @PropertyField(hidden = Kleenean.TRUE)
+    public TimestampProperty ultimoEscalarFinalizar;
 
     @PropertyField(hidden = Kleenean.TRUE)
     @StringField(maxLength = 100)
@@ -322,7 +489,7 @@ public class TareaUsuario extends AbstractPersistentEntity {
         super.settleAttributes();
         setSchema(ProyectoBase.getEsquemaEntidadesComunes());
         setDefaultLabel("tarea");
-        setDefaultCollectionLabel("notificaciones de tareas");
+        setDefaultCollectionLabel("Notificaciones de Tareas Pendientes");
     }
 
     @Override
@@ -348,12 +515,12 @@ public class TareaUsuario extends AbstractPersistentEntity {
         responsable.setDefaultShortDescription("responsable de la ejecución de la tarea");
         supervisor.setDefaultLabel("usuario supervisor");
         supervisor.setDefaultShortLabel("supervisor");
-        supervisor.setDefaultTooltip("código de usuario de la persona que asignó la responsabilidad de ejecutar la tarea");
-        supervisor.setDefaultShortDescription("persona que asignó la responsabilidad de ejecutar la tarea");
+        supervisor.setDefaultTooltip("código de usuario de la persona que asigna la responsabilidad de ejecutar la tarea");
+        supervisor.setDefaultShortDescription("persona que asigna la responsabilidad de ejecutar la tarea");
         finalizador.setDefaultLabel("usuario finalizador");
         finalizador.setDefaultShortLabel("finalizador");
-        finalizador.setDefaultTooltip("código de usuario de la persona que finalizó (ejecutó o canceló) la tarea");
-        finalizador.setDefaultShortDescription("persona que finalizó (ejecutó o canceló) la tarea");
+        finalizador.setDefaultTooltip("código de usuario de la persona que finaliza (ejecuta o cancela) la tarea");
+        finalizador.setDefaultShortDescription("persona que finaliza (ejecuta o cancela) la tarea");
         condicion.setDefaultLabel("condición");
         condicion.setDefaultShortLabel("condición");
         fechaHoraCondicion.setDefaultLabel("fecha/hora condición");
@@ -372,13 +539,29 @@ public class TareaUsuario extends AbstractPersistentEntity {
         fechaHoraCondicion.setDefaultValue(SpecialTemporalValue.CURRENT_TIMESTAMP);
         fechaHoraRegistro.setInitialValue(SpecialTemporalValue.CURRENT_TIMESTAMP);
         fechaHoraRegistro.setDefaultValue(SpecialTemporalValue.CURRENT_TIMESTAMP);
+        notificarDestinatario.setInitialValue(true);
+        notificarDestinatario.setDefaultValue(true);
+        proximaNotaDestinatario.setInitialValue(SpecialTemporalValue.CURRENT_TIMESTAMP);
+        proximaNotaDestinatario.setDefaultValue(SpecialTemporalValue.CURRENT_TIMESTAMP);
+        notificarSupervisor.setInitialValue(true);
+        notificarSupervisor.setDefaultValue(true);
+        proximaNotaSupervisor.setInitialValue(SpecialTemporalValue.CURRENT_TIMESTAMP);
+        proximaNotaSupervisor.setDefaultValue(SpecialTemporalValue.CURRENT_TIMESTAMP);
+        advertirAsignar.setInitialValue(false);
+        advertirAsignar.setDefaultValue(false);
+        advertirFinalizar.setInitialValue(false);
+        advertirFinalizar.setDefaultValue(false);
+        escalarAsignar.setInitialValue(false);
+        escalarAsignar.setDefaultValue(false);
+        escalarFinalizar.setInitialValue(false);
+        escalarFinalizar.setDefaultValue(false);
     }
 
     @Override
     protected void settleKeys() {
         super.settleKeys();
         key1.newKeyField(tarea);
-        key2.newKeyField(condicion, fechaHoraLimite, prioridad, tarea);
+        key2.newKeyField(condicion, fechaHoraLimite, prioridad, tarea, destinatario);
         setOrderBy(key2);
     }
 
@@ -420,6 +603,12 @@ public class TareaUsuario extends AbstractPersistentEntity {
         /**/
         finalizada = ejecutada.or(cancelada);
         finalizada.setDefaultErrorMessage("la tarea no está ejecutada ni cancelada");
+    }
+
+    @Override
+    protected void settleFilters() {
+        super.settleFilters();
+        setSelectFilter(disponible.or(asignada.and(destinatario.isEqualTo(responsable))));
     }
 
     @Override

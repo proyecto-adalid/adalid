@@ -54,7 +54,7 @@
 #macro(writeSetInitialValue $value)
     #if($value != '' && $value != 'null')
         set${property.wrapper.javaClassName}(rowKey, $value);
-    #elseif($property.isBooleanPrimitive() && $property.booleanDisplayType == 'CHECKBOX')
+    #elseif($property.isBooleanPrimitive() && $property.booleanDisplayType == 'CHECKBOX' && $checkBoxesAreAllowed)
         set${property.wrapper.javaClassName}(rowKey, Boolean.FALSE);
     #end
 #end##writeSetInitialValue

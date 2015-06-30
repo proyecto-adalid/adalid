@@ -69,8 +69,8 @@ public class ${javaClassSimpleName}#writeJavaImplements()
 
 #macro(addImports)
     #set($added = $interfaces.add("${entityClass}BusinessProcessLocal"))
-    #set($added = $imports.add("${entityPackage}.Tarea"))
-    #set($added = $imports.add("${facadePackage}.TareaFacadeLocal"))
+    #set($added = $imports.add("${entityPackage}.TareaVirtual"))
+    #set($added = $imports.add("${facadePackage}.TareaVirtualFacadeLocal"))
     #set($added = $imports.add("${entityPackage}.${entityClass}"))
     #set($added = $imports.add("${facadePackage}.${entityClass}FacadeLocal"))
     #set($added = $imports.add("${processLogicPackage}.${entityClass}BusinessProcessLogicLocal"))
@@ -96,7 +96,6 @@ public class ${javaClassSimpleName}#writeJavaImplements()
     #set($added = $imports.add("${project.rootPackageName}.lib.core.control.Auditor"))
 ##  #set($added = $imports.add("${project.rootPackageName}.lib.core.control.RastroFuncion"))
     #set($added = $imports.add("${project.rootPackageName}.lib.core.util.EA"))
-    #set($added = $imports.add("${project.rootPackageName}.lib.core.util.STP"))
     #set($added = $imports.add("${project.rootPackageName}.ejb.core.control.AuditorLocal"))
     #set($added = $imports.add("${project.rootPackageName}.ejb.core.BeanLocator"))
     #set($added = $imports.add('java.util.ArrayList'))
@@ -124,7 +123,7 @@ public class ${javaClassSimpleName}#writeJavaImplements()
     private AuditorLocal auditor;
 
     @EJB
-    private TareaFacadeLocal tareaFacade;
+    private TareaVirtualFacadeLocal tareaVirtualFacade;
     // </editor-fold>
 
     private ${entityClass}BusinessProcessLogicLocal getLogician() {
@@ -206,7 +205,7 @@ public class ${javaClassSimpleName}#writeJavaImplements()
 #foreach($parameter in $parameters)
     #if($parameter.isAuditable())
         #set($fee = "${message}.PARAMETRO_$!{parameter.wrapper.javaConstantName}")
-        #set($foo = "STP.getString(message.getArgumento$!{parameter.wrapper.javaClassName}())")
+        #set($foo = "StrUtils.getString(message.getArgumento$!{parameter.wrapper.javaClassName}())")
                 rastro.addParametro(${fee},
                     ${foo});
     #end
@@ -237,7 +236,6 @@ public class ${javaClassSimpleName}#writeJavaImplements()
             #if($foreach.first)
 ....            List<Long> funciones = new ArrayList<>();
             #end
-            #set($expname = $state.wrapper.sqlSchemaQualifiedShortExpressionFunctionName)
             #set($initialStateBusinessOperationsList = $state.initialStateBusinessOperationsList)
             #if(!$initialStateBusinessOperationsList.isEmpty())
 ....            if (${state.wrapper.javaVariableName}(${entityVar})) {
@@ -253,7 +251,7 @@ public class ${javaClassSimpleName}#writeJavaImplements()
                         #set($instanceOperation = $FALSE)
                     #end
                     #if($trigger.state == $state)
-........//              trigger: $trigger.name ($trigger.state.name, $trigger.operation.name)
+##......//              trigger: $trigger.name ($trigger.state.name, $trigger.operation.name)
 ........                grabarTarea(${funcion}#if($instanceOperation), ${entityVar}#end);
                     #end
                 #end##foreach-trigger
@@ -349,7 +347,7 @@ public class ${javaClassSimpleName}#writeJavaImplements()
         if (funcion == null) {
             return;
         }
-        Tarea tarea = new Tarea();
+        TareaVirtual tarea = new TareaVirtual();
         tarea.setId(LongUtils.getNewId());
         tarea.setIdFuncion(funcion);
         if (${entityVar} != null) {
@@ -360,14 +358,14 @@ public class ${javaClassSimpleName}#writeJavaImplements()
             tarea.setIdPropietario($propietario);
             tarea.setIdSegmento($segmento);
         }
-        tareaFacade.persist(tarea);
+        tareaVirtualFacade.persist(tarea);
     }
 
     private void grabarTarea(${entityClass} ${entityVar}, List<Long> funciones) {
         if (${entityVar} == null) {
             return;
         }
-        Tarea tarea = new Tarea();
+        TareaVirtual tarea = new TareaVirtual();
         tarea.setId(LongUtils.getNewId());
         tarea.setIdFuncion(null);
         tarea.setIdClaseRecursoValor($entityNumber);
@@ -381,7 +379,7 @@ public class ${javaClassSimpleName}#writeJavaImplements()
         } else {
             tarea.setListaFunciones(StringUtils.join(funciones, ","));
         }
-        tareaFacade.persist(tarea);
+        tareaVirtualFacade.persist(tarea);
     }
 
 #end##writeGrabarTarea

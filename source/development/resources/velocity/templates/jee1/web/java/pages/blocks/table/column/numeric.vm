@@ -16,7 +16,7 @@
 #break
 
 #macro(setNumericConverterClassName)
-    #if($field.property.isBigDecimalData() || $field.property.isDoubleData() || $field.property.isFloatData())
+    #if($field.property.isNumericPrimitive())
         #set($componentClassName = 'NumberConverter')
     #elseif($field.property.isEntity())
         #set($componentClassName = "${field.property.primaryKeyProperty.dataType.simpleName}Converter")
@@ -26,10 +26,12 @@
 #end##setNumericConverterClassName
 
 #macro(setNumericValidatorClassName)
-    #if($field.property.isBigDecimalData() || $field.property.isDoubleData() || $field.property.isFloatData())
-        #set($componentClassName = 'DoubleRangeValidator')
-    #else
+    #if($field.property.isNumericPrimitive())
+        #set($componentClassName = 'BigDecimalValidator')
+    #elseif($field.property.isEntity())
         #set($componentClassName = 'LongRangeValidator')
+    #else
+        #set($componentClassName = "${field.property.dataType.simpleName}Validator")
     #end
 #end##setNumericValidatorClassName
 

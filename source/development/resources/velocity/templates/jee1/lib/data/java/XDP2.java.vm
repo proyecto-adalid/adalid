@@ -13,7 +13,9 @@
 #set($BaseClassName = "${entity.wrapper.javaClassName}CachedRowSetDataProvider")
 #set($pack1 = $package.replace('xdp2', 'xdp1'))
 #set($added = $imports.add("${pack1}.${BaseClassName}"))
+#set($added = $imports.add("com.sun.data.provider.DataProviderException"))
 #set($added = $imports.add('com.sun.data.provider.RowKey'))
+#set($added = $imports.add("java.sql.ResultSet"))
 #set($added = $imports.add('java.sql.SQLException'))
 #set($added = $imports.add('java.util.ArrayList'))
 #set($added = $imports.add('java.util.List'))
@@ -132,7 +134,6 @@ public class ${javaClassSimpleName} extends $BaseClassName#writeJavaImplements()
 #if($esRecursoConReferencias)
     #writeRecursoConReferenciasConstants()
 #end
-#parse('templates/jee1/lib/data/java/xdp2/KeyPropertyReferences.java.vm')
 #parse('templates/jee1/lib/data/java/xdp2/select.java.vm')
 #parse('templates/jee1/lib/data/java/xdp2/insert.java.vm')
 #parse('templates/jee1/lib/data/java/xdp2/update.java.vm')
@@ -150,11 +151,9 @@ public class ${javaClassSimpleName} extends $BaseClassName#writeJavaImplements()
 #end##writeOperationNumber
 
 #macro(writeOperationString)
-    #set($jlcn = $javaProgrammer.getJavaLowerConstantName($operation.name))
-    public static final String ETIQUETA_FUNCION_${OPERATION_TYPE}_${OPERATION_NAME} = "${codex}.${jlcn}";
+    public static final String ETIQUETA_FUNCION_${OPERATION_TYPE}_${OPERATION_NAME} = "${entity.wrapper.sqlName}.${operation.wrapper.sqlName}";
 
-##  public static final String ${TIPO_OPERACION}_FUNCION_${OPERATION_NAME} = "${codex}.${operation_name}";
-    public static final String ${TIPO_OPERACION}_FUNCION_${OPERATION_NAME} = "${codex}.${jlcn}";
+    public static final String ${TIPO_OPERACION}_FUNCION_${OPERATION_NAME} = "${entity.wrapper.sqlName}.${operation.wrapper.sqlName}";
 
 #end##writeOperationString
 

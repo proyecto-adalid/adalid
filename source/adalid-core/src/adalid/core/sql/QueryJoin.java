@@ -26,7 +26,7 @@ public class QueryJoin {
 
     private Property _rightColumn;
 
-    private SqlProgrammer _sqlProgrammer;
+    private final SqlProgrammer _sqlProgrammer;
 
     QueryJoin(SqlProgrammer sqlProgrammer) {
         _sqlProgrammer = sqlProgrammer;
@@ -110,6 +110,7 @@ public class QueryJoin {
     }
 
     /**
+     * @param referencedColumns
      * @return the SQL statement
      */
     public String getSqlSelectStatement(List<Property> referencedColumns) {
@@ -117,6 +118,8 @@ public class QueryJoin {
     }
 
     /**
+     * @param referencedColumns
+     * @param into
      * @return the SQL statement
      */
     public String getSqlSelectStatement(List<Property> referencedColumns, boolean into) {
@@ -124,6 +127,9 @@ public class QueryJoin {
     }
 
     /**
+     * @param referencedColumns
+     * @param into
+     * @param where
      * @return the SQL statement
      */
     public String getSqlSelectStatement(List<Property> referencedColumns, boolean into, boolean where) {
@@ -131,6 +137,10 @@ public class QueryJoin {
     }
 
     /**
+     * @param referencedColumns
+     * @param into
+     * @param where
+     * @param indent
      * @return the SQL statement
      */
     public String getSqlSelectStatement(List<Property> referencedColumns, boolean into, boolean where, boolean indent) {

@@ -1,7 +1,7 @@
 #set($componentName = "label${fieldFirstName}")
 #parse("$templatePath/blocks/webuijsf/label.vm")
 #set($componentName = "campo${fieldFirstName}")
-#if($parameter.booleanDisplayType == 'CHECKBOX' && $parameter.isRequiredParameter())
+#if($parameter.booleanDisplayType == 'CHECKBOX' && $parameter.isRequiredParameter() && $checkBoxesAreAllowed)
     #parse("$templatePath/blocks/webuijsf/check-box.vm")
 #else
     #parse("$templatePath/blocks/webuijsf/drop-down.vm")

@@ -132,7 +132,7 @@ class XS1 {
         keyPropertyValidTypes.put(KeyProperty.UNIQUE_KEY,
             new Class<?>[]{BooleanPrimitive.class, CharacterPrimitive.class, NumericPrimitive.class, TemporalPrimitive.class, EntityReference.class});
         keyPropertyValidTypes.put(KeyProperty.BUSINESS_KEY,
-            new Class<?>[]{StringProperty.class, IntegerProperty.class});
+            new Class<?>[]{StringProperty.class});
         keyPropertyValidTypes.put(KeyProperty.DISCRIMINATOR,
             new Class<?>[]{CharacterProperty.class, StringProperty.class, IntegerProperty.class, PersistentEnumerationEntityReference.class});
     }
@@ -480,14 +480,13 @@ class XS1 {
     }
 
     private static void checkAbstractClassReference(Field declaringField, Class<?> type) {
-        String errmsg = "Abstract Class Reference" + "; field " + declaringField + "; " + type + " is annotated with AbstractClass";
         if (type.isAnnotationPresent(AbstractClass.class)) {
+            String message = "Abstract Class Reference: " + declaringField + "; " + type.getSimpleName() + " is annotated with AbstractClass";
             if (type.isAnnotationPresent(InheritanceMapping.class)) {
                 InheritanceMapping annotation = type.getAnnotation(InheritanceMapping.class);
+                message += " and its inheritance mapping strategy is " + annotation.strategy();
                 if (InheritanceMappingStrategy.TABLE_PER_CLASS.equals(annotation.strategy())) {
-//                  TODO: check if this should be an error or a just a warning
-//                  TLC.getProject().getParser().error(errmsg);
-                    TLC.getProject().getParser().warn(errmsg);
+                    TLC.getProject().getParser().error(message);
                 }
             }
         }
@@ -730,6 +729,12 @@ class XS1 {
         String name = field.getName();
         Class<?> type = field.getDeclaringClass();
         String string = previous + " has the same annotation";
+        logFieldAnnotationErrorMessage(name, type, annotation, string);
+    }
+
+    static void logFieldAnnotationErrorMessage(Field field, Class<?> annotation, String string) {
+        String name = field.getName();
+        Class<?> type = field.getDeclaringClass();
         logFieldAnnotationErrorMessage(name, type, annotation, string);
     }
 

@@ -52,6 +52,7 @@ public final class HexUtils {
      * Convert a String of hexadecimal digits into the corresponding byte array by encoding each two hexadecimal digits as a byte.
      *
      * @param digits Hexadecimal digits representation
+     * @return
      * @exception IllegalArgumentException if an invalid hexadecimal digit is found, or the input string contains an odd number of hexadecimal digits
      */
     public static byte[] convert(String digits) {
@@ -90,6 +91,7 @@ public final class HexUtils {
      * Convert a byte array into a printable format containing a String of hexadecimal digit characters (two per byte).
      *
      * @param bytes Byte array representation
+     * @return
      */
     public static String convert(byte bytes[]) {
         StringBuilder sb = new StringBuilder(bytes.length * 2);
@@ -104,6 +106,7 @@ public final class HexUtils {
      * Convert 4 hex digits to an int, and return the number of converted bytes.
      *
      * @param hex Byte array containing exactly four hexadecimal digits
+     * @return
      * @exception IllegalArgumentException if an invalid hexadecimal digit is included
      */
     public static int convert2Int(byte[] hex) {

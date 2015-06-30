@@ -5,7 +5,7 @@
     #foreach($property in $dataProviderColumns)
         #if($property.isPersistentEntity() && !$property.isPersistentEnumerationEntity())
             #set($root = $property.root)
-            #set($str0 = "$!root.wrapper.sqlSchemaQualifiedShortName")
+            #set($str0 = "$!root.wrapper.sqlName")
             #set($str1 = "$!root.primaryKeyProperty.wrapper.sqlName")
             #set($str2 = "$!root.ownerProperty.wrapper.sqlName")
             #set($str3 = "$!root.segmentProperty.wrapper.sqlName")

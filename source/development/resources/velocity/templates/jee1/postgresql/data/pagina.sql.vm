@@ -2,9 +2,8 @@
 #setPostgreSQLVariables()
 #writePostgreSQLLicense()
 #writePostgreSQLAuthor('Jorge Campins')
-select setval('public.pagina_sq___', 1000000000);
-
 #set($pages = $project.displaysList)
+#set($pages = $ColUtils.sort($pages, $byDisplayName))
 #foreach($page in $pages)
     #if($page.master)
     #elseif("$!page.displayMode" == 'UNSPECIFIED' || "$!page.displayFormat" == 'UNSPECIFIED')
@@ -31,9 +30,11 @@ select setval('public.pagina_sq___', 1000000000);
     #end
 #end##foreach-page
 #*
-update public.pagina set descripcion_pagina = nombre_pagina where descripcion_pagina is null;
+select setval('pagina_sq___', 1000000000);
+update pagina set descripcion_pagina = nombre_pagina where descripcion_pagina is null;
 *#
-update public.pagina set url_pagina = '/faces/'||codigo_pagina||'.jsp' where url_pagina is null;
+update pagina set url_pagina = '/faces/'||codigo_pagina||'.jsp' where url_pagina is null;
+select count(*) from pagina;
 #break
 
 #macro(writeP1)
@@ -92,9 +93,6 @@ update public.pagina set url_pagina = '/faces/'||codigo_pagina||'.jsp' where url
 #set($webProjectCodeSuffix = $page.module.wrapper.hyphenatedAlias)
 #set($name = $StringUtils.capitalize("$webPageSort$page.entity.wrapper.validDefaultCollectionLabel"))
 #set($name = $StringUtils.capitalize($StrUtils.getStringParametrizado("$webPageSort", "$page.entity.wrapper.validDefaultCollectionLabel")))
-insert into public.pagina (id_pagina, codigo_pagina, url_pagina, nombre_pagina, id_aplicacion, numero_tipo_pagina)
-#*
-values (nextval('public.pagina_sq___'), '$webPageName', '$webPagePath', '$name', 10101, $webPageType);
-*###
+insert into pagina (id_pagina, codigo_pagina, url_pagina, nombre_pagina, id_aplicacion, numero_tipo_pagina)
 values ($webPageNumber, '$webPageName', '$webPagePath', '$name', 10101, $webPageType);
 #end##writeInsertRow

@@ -7,11 +7,42 @@
 package meta.entidad.comun.control.prueba;
 
 import adalid.core.ProcessOperation;
-import adalid.core.annotations.*;
-import adalid.core.enums.*;
-import adalid.core.interfaces.*;
+import adalid.core.annotations.AbstractClass;
+import adalid.core.annotations.Allocation;
+import adalid.core.annotations.DescriptionProperty;
+import adalid.core.annotations.DiscriminatorColumn;
+import adalid.core.annotations.EntityClass;
+import adalid.core.annotations.EntityConsoleView;
+import adalid.core.annotations.EntityDataGen;
+import adalid.core.annotations.EntityDeleteOperation;
+import adalid.core.annotations.EntityDetailView;
+import adalid.core.annotations.EntityInsertOperation;
+import adalid.core.annotations.EntitySelectOperation;
+import adalid.core.annotations.EntityTableView;
+import adalid.core.annotations.EntityTreeView;
+import adalid.core.annotations.EntityUpdateOperation;
+import adalid.core.annotations.EntityWarnings;
+import adalid.core.annotations.FileReference;
+import adalid.core.annotations.ForeignKey;
+import adalid.core.annotations.InheritanceMapping;
+import adalid.core.annotations.InstanceReference;
+import adalid.core.annotations.ManyToOne;
+import adalid.core.annotations.ParameterField;
+import adalid.core.annotations.ProcessOperationClass;
+import adalid.core.annotations.PropertyField;
+import adalid.core.enums.InheritanceMappingStrategy;
+import adalid.core.enums.Kleenean;
+import adalid.core.enums.MasterDetailView;
+import adalid.core.enums.Navigability;
+import adalid.core.enums.OnDeleteAction;
+import adalid.core.enums.OnUpdateAction;
+import adalid.core.enums.ResourceGender;
+import adalid.core.enums.ResourceType;
+import adalid.core.enums.SpecialTemporalValue;
+import adalid.core.interfaces.Artifact;
 import adalid.core.parameters.StringParameter;
-import adalid.core.properties.*;
+import adalid.core.properties.StringProperty;
+import adalid.core.properties.TimestampProperty;
 import java.lang.reflect.Field;
 import meta.entidad.base.PersistentEntityBase;
 import meta.entidad.comun.auditoria.ArchivoAdjunto;
@@ -52,8 +83,8 @@ public class DocumentoPrueba extends PersistentEntityBase {
         setSchema(ProyectoBase.getEsquemaEntidadesComunes());
         setDefaultLabel("documento de prueba");
         setDefaultShortLabel("documento");
-        setDefaultCollectionLabel("documentos de prueba");
-        setDefaultCollectionShortLabel("documentos");
+        setDefaultCollectionLabel("Documentos de Prueba");
+        setDefaultCollectionShortLabel("Documentos");
     }
 
     @DiscriminatorColumn

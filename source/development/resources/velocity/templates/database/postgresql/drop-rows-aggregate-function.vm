@@ -21,7 +21,6 @@
                 #set($argtype  = '')
             #end
             #set($expname = $expression.wrapper.sqlExpressionSelectFunctionName)
-            #set($expname = $expression.wrapper.sqlSchemaQualifiedShortExpressionSelectFunctionName)
             #writeDropRowsAggregateFunction("${expname}($argtype)")
         #end
     #end##foreach-expression

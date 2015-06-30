@@ -78,25 +78,26 @@
     #end##foreach-page
 #end##foreach-module
 #*
-update public.opcion_menu set descripcion_opcion_menu = nombre_opcion_menu where descripcion_opcion_menu is null;
+update opcion_menu set descripcion_opcion_menu = nombre_opcion_menu where descripcion_opcion_menu is null;
 *#
-update public.opcion_menu set clave_opcion_menu = id_opcion_menu||'0' where clave_opcion_menu is null;
+update opcion_menu set clave_opcion_menu = id_opcion_menu||'0' where clave_opcion_menu is null;
 
-update public.opcion_menu set es_opcion_menu_inactiva = true where url_opcion_menu is null and id_opcion_menu not in (
-select id_opcion_menu_superior from public.opcion_menu where id_opcion_menu_superior is not null and es_opcion_menu_inactiva = false);
+update opcion_menu set es_opcion_menu_inactiva = true where url_opcion_menu is null and id_opcion_menu not in (
+select id_opcion_menu_superior from opcion_menu where id_opcion_menu_superior is not null and es_opcion_menu_inactiva = false);
 
-update public.opcion_menu set es_opcion_menu_inactiva = true where url_opcion_menu is null and id_opcion_menu not in (
-select id_opcion_menu_superior from public.opcion_menu where id_opcion_menu_superior is not null and es_opcion_menu_inactiva = false);
+update opcion_menu set es_opcion_menu_inactiva = true where url_opcion_menu is null and id_opcion_menu not in (
+select id_opcion_menu_superior from opcion_menu where id_opcion_menu_superior is not null and es_opcion_menu_inactiva = false);
 
-update public.opcion_menu set es_opcion_menu_inactiva = true where url_opcion_menu is null and id_opcion_menu not in (
-select id_opcion_menu_superior from public.opcion_menu where id_opcion_menu_superior is not null and es_opcion_menu_inactiva = false);
+update opcion_menu set es_opcion_menu_inactiva = true where url_opcion_menu is null and id_opcion_menu not in (
+select id_opcion_menu_superior from opcion_menu where id_opcion_menu_superior is not null and es_opcion_menu_inactiva = false);
 
-update public.opcion_menu set es_opcion_menu_inactiva = true where url_opcion_menu is null and id_opcion_menu not in (
-select id_opcion_menu_superior from public.opcion_menu where id_opcion_menu_superior is not null and es_opcion_menu_inactiva = false);
+update opcion_menu set es_opcion_menu_inactiva = true where url_opcion_menu is null and id_opcion_menu not in (
+select id_opcion_menu_superior from opcion_menu where id_opcion_menu_superior is not null and es_opcion_menu_inactiva = false);
 
 select id_opcion_menu, codigo_opcion_menu, nombre_opcion_menu, url_opcion_menu, id_opcion_menu_superior
-from public.opcion_menu where es_opcion_menu_inactiva = true order by id_opcion_menu;
+from opcion_menu where es_opcion_menu_inactiva = true order by id_opcion_menu;
 
+select count(*) from opcion_menu;
 #break
 
 #macro(setLocalVariables)
@@ -112,7 +113,7 @@ from public.opcion_menu where es_opcion_menu_inactiva = true order by id_opcion_
 
 #macro(writeRoot $id $name)
 #set($code = "${projectCode}")
-insert into public.opcion_menu (id_opcion_menu, codigo_opcion_menu, nombre_opcion_menu, es_especial)
+insert into opcion_menu (id_opcion_menu, codigo_opcion_menu, nombre_opcion_menu, es_especial)
 values ($id, '$code', '$name', true);
 #end##writeRoot
 
@@ -136,7 +137,7 @@ values ($id, '$code', '$name', true);
 #else
     #set($code = "${projectCode}.${moduleCode}.${plus}")
 #end
-insert into public.opcion_menu (id_opcion_menu, codigo_opcion_menu, nombre_opcion_menu, id_opcion_menu_superior)
+insert into opcion_menu (id_opcion_menu, codigo_opcion_menu, nombre_opcion_menu, id_opcion_menu_superior)
 values ($id, '$code', '$name', $branch);
 #end##writeBranch
 
@@ -166,6 +167,6 @@ values ($id, '$code', '$name', $branch);
 #set($plus = $id - $moduleRoot)
 #set($code = "${projectCode}.${moduleCode}.${plus}")
 #set($code = "${projectCode}.${moduleCode}.${webPageName.replaceAll('\.jsp$', '').replace('/', '.').replace('-', '_')}")
-insert into public.opcion_menu (id_opcion_menu, codigo_opcion_menu, nombre_opcion_menu, id_opcion_menu_superior, url_opcion_menu)
+insert into opcion_menu (id_opcion_menu, codigo_opcion_menu, nombre_opcion_menu, id_opcion_menu_superior, url_opcion_menu)
 values ($id, '$code', '$name', $branch, '$url');
 #end##writeLeaf

@@ -4,7 +4,7 @@
         }
         #setTipoRastroFuncion($entity.insertOperation)
         RastroFuncion rastro = getRastroFuncion(rowKey, ${FUNCION_INSERT});
-        #addParametros()
+        #addParametros(0)
 ##      TLC.getControlador().grabarRastroFuncion(rastro);
         getRastrosFuncion().put(rowKey.getRowId(), rastro);
         #writeSeudoTareaUsuarioAfterInsertOrUpdate($entity.insertOperation $FALSE)
@@ -26,7 +26,16 @@
         #end##foreach-property
         #setTipoRastroFuncion($entity.updateOperation)
         RastroFuncion rastro = getRastroFuncion(rowKey, ${FUNCION_UPDATE});
-        #addParametros()
+        try {
+            ResultSet originalRow = getCachedRowSet().getOriginalRow();
+            if (originalRow != null && originalRow.absolute(1)) {
+                #addParametrosUpdate(2)
+            } else {
+                #addParametros(2)
+            }
+        } catch (SQLException ex) {
+            throw new DataProviderException(ex);
+        }
 ##      TLC.getControlador().grabarRastroFuncion(rastro);
         getRastrosFuncion().put(rowKey.getRowId(), rastro);
         #writeSeudoTareaUsuarioAfterInsertOrUpdate($entity.updateOperation $TRUE)
@@ -86,7 +95,7 @@
     #flagOperationHasTransitionToStateAndTriggers($basicDatabaseOperation)
     #if($operationHasTransitionToStateAndTriggers)
 $x      SeudoTareaUsuario seudo = getSeudoTareaUsuario(rowKey, DB.$basicDatabaseOperation.wrapper.javaConstantName);
-$x      listaTareasUsuario.add(seudo);
+$x      listaTareasUsuario.put(rowKey.getRowId(), seudo);
     #end
 #end##writeSeudoTareaUsuarioAfterInsertOrUpdate
 

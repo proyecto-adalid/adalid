@@ -9,12 +9,20 @@ package adalid.core;
 import adalid.commons.TLB;
 import adalid.commons.interfaces.Wrappable;
 import adalid.commons.interfaces.Wrapper;
+import adalid.commons.util.ThrowableUtils;
 import adalid.core.expressions.VariantX;
-import adalid.core.interfaces.*;
+import adalid.core.interfaces.Artifact;
+import adalid.core.interfaces.DataArtifact;
+import adalid.core.interfaces.Entity;
+import adalid.core.interfaces.Expression;
+import adalid.core.interfaces.Parameter;
+import adalid.core.interfaces.PersistentEntity;
+import adalid.core.interfaces.Property;
 import adalid.core.wrappers.ArtifactWrapper;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Modifier;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -778,6 +786,54 @@ public abstract class AbstractArtifact implements Artifact, Wrappable {
         }
     }
 
+//  protected void verifyNames(Class<?> top) {
+//      verifyNames(top, Artifact.class);
+//  }
+//
+    protected void verifyNames(Class<?> top, Class<?> clazz) {
+        String message;
+        String fieldName, artifactName;
+        Object object;
+        AbstractArtifact artifact;
+        Class<?> fieldType;
+        Class<?> dac = getClass();
+        for (Field field : XS1.getFields(dac, top)) {
+            field.setAccessible(true);
+            fieldName = field.getName();
+            fieldType = field.getType();
+            if (isAssignableFrom(clazz, fieldType) && isNotRestricted(field)) {
+                try {
+                    object = field.get(this);
+                    if (object instanceof AbstractArtifact) {
+                        artifact = (AbstractArtifact) object;
+                        artifactName = artifact.getName();
+                        if (artifactName == null) {
+                            artifact.setName(fieldName);
+                        }
+                    }
+                } catch (IllegalArgumentException | IllegalAccessException ex) {
+                    message = "failed to get field \"" + field + "\" at " + this;
+                    logger.error(message, ThrowableUtils.getCause(ex));
+                    TLC.getProject().getParser().increaseErrorCount();
+                }
+            }
+        }
+    }
+
+    private boolean isAssignableFrom(Class<?> clazz, Class<?> type) {
+        if (Expression.class.isAssignableFrom(type)) {
+            if (Parameter.class.isAssignableFrom(type) || Property.class.isAssignableFrom(type)) {
+                return false;
+            }
+        }
+        return clazz.isAssignableFrom(type);
+    }
+
+    private boolean isNotRestricted(Field field) {
+        int modifiers = field.getModifiers();
+        return !(Modifier.isPrivate(modifiers) || Modifier.isStatic(modifiers) || Modifier.isFinal(modifiers));
+    }
+
     /**
      * the wrapper
      */
@@ -835,7 +891,8 @@ public abstract class AbstractArtifact implements Artifact, Wrappable {
         String str1 = _name;
         String str2 = getNamedClass().getSimpleName();
         String str3 = str1 == null || str1.equals(str2) ? "" : "[" + str1 + "]";
-        return str2 + str3 + "@" + Integer.toHexString(hashCode());
+//      return str2 + str3 + "@" + Integer.toHexString(hashCode());
+        return str2 + str3;
     }
 
     @Override

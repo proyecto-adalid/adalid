@@ -6,10 +6,21 @@
  */
 package meta.entidad.comun.control.prueba;
 
-import adalid.core.*;
-import adalid.core.annotations.*;
-import adalid.core.enums.*;
-import adalid.core.interfaces.*;
+import adalid.core.Instance;
+import adalid.core.annotations.EntityClass;
+import adalid.core.annotations.EntityConsoleView;
+import adalid.core.annotations.EntityDeleteOperation;
+import adalid.core.annotations.EntityDetailView;
+import adalid.core.annotations.EntityInsertOperation;
+import adalid.core.annotations.EntitySelectOperation;
+import adalid.core.annotations.EntityTableView;
+import adalid.core.annotations.EntityTreeView;
+import adalid.core.annotations.EntityUpdateOperation;
+import adalid.core.enums.Kleenean;
+import adalid.core.enums.OperationAccess;
+import adalid.core.enums.ResourceGender;
+import adalid.core.enums.ResourceType;
+import adalid.core.interfaces.Artifact;
 import java.lang.reflect.Field;
 import meta.entidad.base.PersistentEnumerationEntityBase;
 import meta.proyecto.base.ProyectoBase;
@@ -45,8 +56,8 @@ public class TipoDocumentoPrueba extends PersistentEnumerationEntityBase {
         setSchema(ProyectoBase.getEsquemaEntidadesComunes());
         setDefaultLabel("tipo de documento de prueba");
         setDefaultShortLabel("tipo de documento");
-        setDefaultCollectionLabel("tipos de documentos de prueba");
-        setDefaultCollectionShortLabel("tipos de documentos");
+        setDefaultCollectionLabel("Tipos de Documentos de Prueba");
+        setDefaultCollectionShortLabel("Tipos de Documentos");
     }
 
     static final String TIPO_CASO = "1";

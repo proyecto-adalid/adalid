@@ -27,7 +27,6 @@
     #set($entityNumber = $project.getEntityNumber($entity))
     #set($entityTriggers = $entity.triggersList)
     #set($table = $entity.wrapper.sqlTableName)
-    #set($table = $entity.wrapper.sqlSchemaQualifiedShortTableName)
     #set($primaryKey = $entity.primaryKeyProperty.wrapper.sqlName)
     #set($enabled  = '   ')
     #set($disabled = '-- ')
@@ -57,8 +56,7 @@
     #set($discriminated = $FALSE)
     #set($strategy = "$!entity.inheritanceMappingStrategy")
     #if($entity.discriminatorProperty && $strategy == 'SINGLE_TABLE')
-        #set($discriminatorTabName = $entity.discriminatorProperty.declaringFieldPersistentEntityRoot.wrapper.sqlName)
-        #set($discriminatorTabName = $entity.discriminatorProperty.declaringFieldPersistentEntityRoot.wrapper.sqlSchemaQualifiedShortTableName)
+        #set($discriminatorTabName = $entity.discriminatorProperty.declaringFieldPersistentEntityRoot.wrapper.sqlTableName)
         #set($discriminatorKeyName = $entity.discriminatorProperty.declaringFieldPersistentEntityRoot.primaryKeyProperty.wrapper.sqlName)
         #set($discriminatorColName = $entity.discriminatorProperty.wrapper.sqlName)
         #set($discriminated = $TRUE)
@@ -66,10 +64,11 @@
 #end##writeCreateTriggerFunctionSettings
 
 #macro(writeCreateTriggerFunction)
-#set($function = "${table}${sql_name_separator}${trigger.adverb}_${trigger.verb}_${trigger.level}()")
-drop function if exists $function cascade;
+#set($function = "${table}${sql_name_separator}${trigger.adverb}_${trigger.verb}_${trigger.level}")
+#set($function = $entity.wrapper.getSuffixedSqlName("${sql_name_separator}${trigger.adverb}_${trigger.verb}_${trigger.level}"))
+drop function if exists $function() cascade;
 #writeDelimiter('??')
-create or replace function $function returns trigger as $$
+create or replace function $function() returns trigger as $$
 #if($discriminated && ${trigger.adverb} == 'before' && ${trigger.verb} != 'delete')
 declare
     $discriminatorColName$ ${discriminatorTabName}.${discriminatorColName}%TYPE;
@@ -86,7 +85,7 @@ begin
 #else
 begin
 #end
-    raise notice '${function}';
+    raise notice '${function}()';
 #if(${trigger.level} == 'row')
     #if(${trigger.adverb} == 'before')
         #if(${trigger.verb} == 'delete')
@@ -160,7 +159,6 @@ $tab    if ($discriminatorValueCheck) then
 
 #macro(writeCreateTriggerFunctionBlockBody $params $valtype $thing)
 #set($thingName = $thing.wrapper.sqlName)
-#set($thingName = $thing.wrapper.sqlSchemaQualifiedShortName)
 $tab$bv new = ${thingName}${sql_name_separator}before_value($params);
 $tab    new = ${thingName}${sql_name_separator}${valtype}_value($params);
 $tab$av new = ${thingName}${sql_name_separator}after_value($params);
@@ -210,6 +208,7 @@ $tab    end if;
 
 #macro(writeTriggerUserDefinedFunctionTemplate $udf_type)
 #set($function = "${table}${sql_name_separator}${udf_type}")
+#set($function = $entity.wrapper.getSuffixedSqlName("${sql_name_separator}${udf_type}"))
 --
 --  user defined function template for $function($udf_create_rpl)
 --
@@ -219,7 +218,16 @@ create or replace function $function($udf_create_rpl)
 returns $udf_return_type as $$
 begin
     raise notice '${table}${sql_name_separator}${udf_type}($udf_raise_pat)', $udf_raise_rpl;
+#if($udf_raise_rpl == "$new, $old")
+    #if($udf_return_type == 'boolean')
+....    return $function($new);
+    #else
+....    $new := $function($new);
+....    return $udf_return_value;
+    #end
+#else
     return $udf_return_value;
+#end
 end;
 $$ language plpgsql;
 #writeDelimiter('??')

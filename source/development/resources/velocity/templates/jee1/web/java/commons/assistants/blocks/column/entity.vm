@@ -36,15 +36,15 @@
         if (notAvailable) {
             return;
         }
-        String string = STP.getString(value);
+        String string = StrUtils.getString(value);
         if (StringUtils.isBlank(string)) {
             return;
         }
         try {
 #if($referenceCharacterKeyClassName != '')
-            Object o = STP.getObjetoCodigoRecurso(string);
+            Object o = StrUtils.getObjetoCodigoRecurso(string);
 #else
-            Object o = STP.getObjetoCodigoRecurso(string, true); /* cast String as Long */
+            Object o = StrUtils.getObjetoCodigoRecurso(string, true); // coerce String as Long
 #end
 #if($validateSearchQueryFilter)
             String columna;
@@ -154,7 +154,7 @@
             return ${fieldVariableName}.get${referenceCharacterKeyClassName}();
         }
 #end
-        return id == null ? null : Global.PREFIJO_STRING_ID_RECURSO + STP.getString(id);
+        return id == null ? null : Global.PREFIJO_STRING_ID_RECURSO + StrUtils.getString(id);
     }
 
     /**
@@ -185,10 +185,10 @@
                 }
                 ${fieldVariableName}Map.put(rowKey, ${fieldVariableName});
             }
-            return STP.trimToStringRecursoSinNombre(${fieldVariableName}.get${referenceNamePropertyClassName}());
+            return StrUtils.trimToStringRecursoSinNombre(${fieldVariableName}.get${referenceNamePropertyClassName}());
         }
 #end
-        return id == null ? null : Global.PREFIJO_STRING_ID_RECURSO + STP.getString(id);
+        return id == null ? null : Global.PREFIJO_STRING_ID_RECURSO + StrUtils.getString(id);
     }
 
     /**

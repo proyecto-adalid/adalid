@@ -16,7 +16,6 @@
     #end
 #end
 #set($parameterSearchQueryKey = "${page.entity.wrapper.sqlName}.${operation.wrapper.sqlName}.${parameter.wrapper.sqlName}")
-#set($parameterSearchQueryKey = "${page.entity.wrapper.sqlSchemaQualifiedShortName}.${operation.wrapper.sqlName}.${parameter.wrapper.sqlName}")
 #set($sqlParametersMapSize = 0)
 #if($parameter.searchQueryFilter)
     #set($parameterQueryTable = $parameter.queryTable)
@@ -85,15 +84,15 @@
     #set($facadeVariableNamePrefix = $parameterVariableName)
 #end
         ${parameterVariableName}${Campo1} = null;
-        String string = STP.getString(value);
+        String string = StrUtils.getString(value);
         if (StringUtils.isBlank(string)) {
             return;
         }
         try {
 #if($referenceCharacterKeyClassName != '')
-            Object o = STP.getObjetoCodigoRecurso(string);
+            Object o = StrUtils.getObjetoCodigoRecurso(string);
 #else
-            Object o = STP.getObjetoCodigoRecurso(string, true); /* cast String as Long */
+            Object o = StrUtils.getObjetoCodigoRecurso(string, true); /* coerce String as Long */
 #end
 #if($validateSearchQueryFilter)
             String columna;
@@ -189,10 +188,10 @@
             return null;
         }
 #if($referenceNamePropertyClassName != '')
-        return STP.trimToStringRecursoSinNombre(${parameterVariableName}${Campo1}.getNombreRecurso());
+        return StrUtils.trimToStringRecursoSinNombre(${parameterVariableName}${Campo1}.getNombreRecurso());
 #else
-//      return STP.trimToStringRecursoSinNombre(${parameterVariableName}${Campo1}.getNombreRecurso());
-        return STP.trimToStringRecursoSinNombre(null);
+//      return StrUtils.trimToStringRecursoSinNombre(${parameterVariableName}${Campo1}.getNombreRecurso());
+        return StrUtils.trimToStringRecursoSinNombre(null);
 #end
     }
 

@@ -10,15 +10,15 @@
 #foreach($entity in $entities)
     #writeInsertRow()
 #end##foreach-entity
-update public.clase_recurso set es_clase_recurso_segmento=true where id_clase_recurso in (
-select distinct id_clase_recurso_segmento from public.clase_recurso where id_clase_recurso_segmento is not null);
+update clase_recurso set es_clase_recurso_segmento=true where id_clase_recurso in (
+select distinct id_clase_recurso_segmento from clase_recurso where id_clase_recurso_segmento is not null);
+select count(*) from clase_recurso;
 #break
 
 #macro(writeInsertRow)
 #set($codex = "$entity.wrapper.sqlName")
-#set($codex = "$entity.wrapper.sqlSchemaQualifiedShortName")
 insert
-into public.clase_recurso
+into clase_recurso
     (
     id_clase_recurso,
     codigo_clase_recurso,
@@ -216,7 +216,6 @@ values
 ##
 ##  pagina_detalle
 ##
-#set($codex = $entity.wrapper.sqlSchemaQualifiedShortName)
 #if($pages12.containsKey($codex))
     '$pages12.get($codex)',
 #else
@@ -225,7 +224,6 @@ values
 ##
 ##  pagina_funcion
 ##
-#set($codex = $entity.wrapper.sqlSchemaQualifiedShortName)
 #if($pages34.containsKey($codex))
     '$pages34.get($codex)'
 #else
@@ -245,13 +243,13 @@ values
         #foreach($page in $pages)
             #if($page.master)
             #elseif($page.entity && "$!page.displayMode" == 'READING' && "$!page.displayFormat" == 'TABLE')
-                #set($added = $pages11.put($page.entity.wrapper.sqlSchemaQualifiedShortName, $page.name))
+                #set($added = $pages11.put($page.entity.wrapper.sqlName, $page.name))
             #end
         #end
         #foreach($page in $pages)
             #if($page.master)
             #elseif($page.entity && "$!page.displayMode" == 'WRITING' && "$!page.displayFormat" == 'TABLE')
-                #set($added = $pages11.put($page.entity.wrapper.sqlSchemaQualifiedShortName, $page.name))
+                #set($added = $pages11.put($page.entity.wrapper.sqlName, $page.name))
             #end
         #end
     #end
@@ -267,13 +265,13 @@ values
         #foreach($page in $pages)
             #if($page.master)
             #elseif($page.entity && "$!page.displayMode" == 'READING' && "$!page.displayFormat" == 'DETAIL')
-                #set($added = $pages12.put($page.entity.wrapper.sqlSchemaQualifiedShortName, $page.name))
+                #set($added = $pages12.put($page.entity.wrapper.sqlName, $page.name))
             #end
         #end
         #foreach($page in $pages)
             #if($page.master)
             #elseif($page.entity && "$!page.displayMode" == 'WRITING' && "$!page.displayFormat" == 'DETAIL')
-                #set($added = $pages12.put($page.entity.wrapper.sqlSchemaQualifiedShortName, $page.name))
+                #set($added = $pages12.put($page.entity.wrapper.sqlName, $page.name))
             #end
         #end
     #end
@@ -289,7 +287,7 @@ values
         #foreach($page in $pages)
             #if($page.master)
             #elseif($page.entity && "$!page.displayMode" == 'PROCESSING' && "$!page.displayFormat" == 'CONSOLE')
-                #set($added = $pages34.put($page.entity.wrapper.sqlSchemaQualifiedShortName, $page.name))
+                #set($added = $pages34.put($page.entity.wrapper.sqlName, $page.name))
             #end
         #end
     #end

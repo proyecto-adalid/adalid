@@ -8,7 +8,6 @@
 #foreach($entity in $entities)
     #set($entityNumber = $project.getEntityNumber($entity))
     #set($opCodePrefix = "$entity.wrapper.sqlName")
-    #set($opCodePrefix = "$entity.wrapper.sqlSchemaQualifiedShortName")
     #set($operations = $entity.operationsList)
     #set($operations = $ColUtils.sort($operations, $byOperationName))
     #foreach($operation in $operations)
@@ -21,10 +20,12 @@
         #end
     #end##foreach-operation
 #end##foreach-entity
+select count(*) from funcion;
 #break
 
 #macro(setOperationVariables)
     #set($enabled = $FALSE)
+    #set($controlable = $FALSE)
     #set($operationCode = "${opCodePrefix}.${operation.wrapper.sqlName}")
     #set($operationName = "${operation.wrapper.validDefaultShortDescription}")
     #set($operationTypeString = "$!operation.operationType")
@@ -34,16 +35,16 @@
         #setCrudOperationVariables()
     #elseif("$!operation.operationType" == 'EXPORT')
         #set($operationTypeNumber = '23')
-        #set($enabled = $TRUE)
+        #setUserDefinedOperationVariables()
     #elseif("$!operation.operationType" == 'REPORT')
         #set($operationTypeNumber = '22')
-        #set($enabled = $TRUE)
+        #setUserDefinedOperationVariables()
     #elseif("$!operation.operationType" == 'PROCEDURE')
         #set($operationTypeNumber = '13')
-        #set($enabled = $TRUE)
+        #setUserDefinedOperationVariables()
     #elseif("$!operation.operationType" == 'PROCESS')
         #set($operationTypeNumber = '41')
-        #set($enabled = $TRUE)
+        #setUserDefinedOperationVariables()
     #else
         #set($operationTypeNumber = '??')
     #end
@@ -58,25 +59,30 @@
     #elseif("$!operation.basicDatabaseOperationType" == 'SELECT')
         #set($operationTypeNumber = '21')
         #set($enabled = $TRUE)
+        #set($controlable = $TRUE)
     #elseif("$!operation.basicDatabaseOperationType" == 'INSERT')
         #set($operationTypeNumber = '31')
-##      #if($entity.selectEnabled)
-            #set($enabled = $entity.insertEnabled)
-##      #end
+        #set($enabled = $entity.insertEnabled)
+        #set($controlable = $TRUE)
     #elseif("$!operation.basicDatabaseOperationType" == 'UPDATE')
         #set($operationTypeNumber = '32')
-##      #if($entity.selectEnabled)
-            #set($enabled = $entity.updateEnabled)
-##      #end
+        #set($enabled = $entity.updateEnabled)
+        #set($controlable = $TRUE)
     #elseif("$!operation.basicDatabaseOperationType" == 'DELETE')
         #set($operationTypeNumber = '33')
-##      #if($entity.selectEnabled)
-            #set($enabled = $entity.deleteEnabled)
-##      #end
+        #set($enabled = $entity.deleteEnabled)
+        #set($controlable = $TRUE)
     #else
         #set($operationTypeNumber = '??')
     #end
 #end##setCrudOperationVariables
+
+#macro(setUserDefinedOperationVariables)
+    #set($enabled = $TRUE)
+    #if($operation.instanceParameter)
+        #set($controlable = $TRUE)
+    #end
+#end##setUserDefinedOperationVariables
 
 #macro(setOperationLoggingNumber)
     #if("$!operation.operationLogging" == '')
@@ -108,7 +114,7 @@
 
 #macro(writeOperationRow)
 insert
-into public.funcion
+into funcion
     (
     id_funcion,
     codigo_funcion,
@@ -124,6 +130,7 @@ into public.funcion
     es_protegida,
     es_personalizable,
     es_segmentable,
+    es_supervisable,
     es_heredada,
     id_grupo_proceso
     )
@@ -196,7 +203,7 @@ values
 ##
 ##  es_personalizable
 ##
-#if($entity.ownerProperty)
+#if($controlable && $entity.ownerProperty)
     true, -- personalizable ($entity.ownerProperty.wrapper.sqlName)
 #else
     false, -- personalizable
@@ -204,10 +211,18 @@ values
 ##
 ##  es_segmentable
 ##
-#if($entity.segmentProperty)
+#if($controlable && $entity.segmentProperty)
     true, -- segmentable ($entity.segmentProperty.wrapper.sqlName)
 #else
     false, -- segmentable
+#end
+##
+##  es_supervisable
+##
+#if($controlable && $entity.segmentProperty && $entity.ownerProperty && $entity.segmentProperty == $entity.ownerProperty)
+    true, -- supervisable
+#else
+    false, -- supervisable
 #end
 ##
 ##  es_heredada

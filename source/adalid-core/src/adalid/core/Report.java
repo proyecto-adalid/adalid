@@ -72,10 +72,6 @@ public class Report extends AbstractArtifact implements Comparable<Report> {
 
     private void init(PersistentEntity entity) {
         _entity = entity;
-//      ReportGroup.addReportGroup(this, 1);
-//      ReportGroup.addReportGroup(this, 2);
-//      ReportGroup.addReportGroup(this, 3);
-//      ReportGroup.addReportGroup(this, 4);
         _detailGroup = ReportGroup.addReportGroup(this);
         List<ReportField> fields = _detailGroup.getFields();
         if (fields != null && fields.size() > 0) {

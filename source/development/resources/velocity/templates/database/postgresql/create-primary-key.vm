@@ -13,7 +13,6 @@
 #macro(writeCreatePrimaryKey)
     #resetSQLVariables()
     #set($table = $entity.wrapper.sqlTableName)
-    #set($table = $entity.wrapper.sqlSchemaQualifiedShortTableName)
     #set($pk = $entity.primaryKeyProperty.wrapper.sqlName)
     #setGlobalPrimaryKeyName($entity)
     #set($constraint = $globalConstraintName)

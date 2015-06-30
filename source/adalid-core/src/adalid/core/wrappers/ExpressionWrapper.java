@@ -73,6 +73,7 @@ public class ExpressionWrapper extends ArtifactWrapper {
     }
 
     /**
+     * @param separator
      * @return the default error message join
      */
     public String getDefaultErrorMessageJoin(String separator) {
@@ -96,6 +97,7 @@ public class ExpressionWrapper extends ArtifactWrapper {
     }
 
     /**
+     * @param separator
      * @return the default error message choice
      */
     public String getDefaultErrorMessageChoice(String separator) {
@@ -141,6 +143,7 @@ public class ExpressionWrapper extends ArtifactWrapper {
     }
 
     /**
+     * @param expression
      * @return the expressions list
      */
     public List<Expression> getExpressionsList(Expression expression) {
@@ -176,6 +179,7 @@ public class ExpressionWrapper extends ArtifactWrapper {
     }
 
     /**
+     * @param separator
      * @return the bundle default error message join
      */
     public String getBundleDefaultErrorMessageJoin(String separator) {
@@ -190,6 +194,7 @@ public class ExpressionWrapper extends ArtifactWrapper {
     }
 
     /**
+     * @param separator
      * @return the bundle default error message choice
      */
     public String getBundleDefaultErrorMessageChoice(String separator) {
@@ -221,11 +226,28 @@ public class ExpressionWrapper extends ArtifactWrapper {
     }
 
     /**
+     * @return the SQL parameter type
+     */
+    public String getSqlParameterType() {
+        SqlProgrammer sqlProgrammer = ChiefProgrammer.getSqlProgrammer();
+        return sqlProgrammer == null ? null : sqlProgrammer.getSqlParameterType(_expression);
+    }
+
+    /**
      * @return the SQL expression function name
      */
     public String getSqlExpressionFunctionName() {
         SqlProgrammer sqlProgrammer = ChiefProgrammer.getSqlProgrammer();
         return sqlProgrammer == null ? null : sqlProgrammer.getSqlExpressionFunctionName(_expression);
+    }
+
+    /**
+     * @param maxIdentifierLength
+     * @return the SQL expression function name
+     */
+    public String getSqlExpressionFunctionName(int maxIdentifierLength) {
+        SqlProgrammer sqlProgrammer = ChiefProgrammer.getSqlProgrammer();
+        return sqlProgrammer == null ? null : sqlProgrammer.getSqlExpressionFunctionName(_expression, maxIdentifierLength);
     }
 
     /**
@@ -237,11 +259,29 @@ public class ExpressionWrapper extends ArtifactWrapper {
     }
 
     /**
+     * @param maxIdentifierLength
+     * @return the SQL schema quailified expression function name
+     */
+    public String getSqlSchemaQualifiedExpressionFunctionName(int maxIdentifierLength) {
+        SqlProgrammer sqlProgrammer = ChiefProgrammer.getSqlProgrammer();
+        return sqlProgrammer == null ? null : sqlProgrammer.getSqlSchemaQualifiedExpressionFunctionName(_expression, maxIdentifierLength);
+    }
+
+    /**
      * @return the SQL schema quailified short expression function name
      */
     public String getSqlSchemaQualifiedShortExpressionFunctionName() {
         SqlProgrammer sqlProgrammer = ChiefProgrammer.getSqlProgrammer();
         return sqlProgrammer == null ? null : sqlProgrammer.getSqlSchemaQualifiedShortExpressionFunctionName(_expression);
+    }
+
+    /**
+     * @param maxIdentifierLength
+     * @return the SQL schema quailified short expression function name
+     */
+    public String getSqlSchemaQualifiedShortExpressionFunctionName(int maxIdentifierLength) {
+        SqlProgrammer sqlProgrammer = ChiefProgrammer.getSqlProgrammer();
+        return sqlProgrammer == null ? null : sqlProgrammer.getSqlSchemaQualifiedShortExpressionFunctionName(_expression, maxIdentifierLength);
     }
 
     /**
@@ -254,12 +294,32 @@ public class ExpressionWrapper extends ArtifactWrapper {
     }
 
     /**
+     * @param maxIdentifierLength
+     * @return the SQL expression select function name.
+     * @see adalid.core.expressions.AbstractRowsAggregateX AbstractRowsAggregateX
+     */
+    public String getSqlExpressionSelectFunctionName(int maxIdentifierLength) {
+        SqlProgrammer sqlProgrammer = ChiefProgrammer.getSqlProgrammer();
+        return sqlProgrammer == null ? null : sqlProgrammer.getSqlExpressionSelectFunctionName(_expression, maxIdentifierLength);
+    }
+
+    /**
      * @return the SQL schema qualified expression select function name.
      * @see adalid.core.expressions.AbstractRowsAggregateX AbstractRowsAggregateX
      */
     public String getSqlSchemaQualifiedExpressionSelectFunctionName() {
         SqlProgrammer sqlProgrammer = ChiefProgrammer.getSqlProgrammer();
         return sqlProgrammer == null ? null : sqlProgrammer.getSqlSchemaQualifiedExpressionSelectFunctionName(_expression);
+    }
+
+    /**
+     * @param maxIdentifierLength
+     * @return the SQL schema qualified expression select function name.
+     * @see adalid.core.expressions.AbstractRowsAggregateX AbstractRowsAggregateX
+     */
+    public String getSqlSchemaQualifiedExpressionSelectFunctionName(int maxIdentifierLength) {
+        SqlProgrammer sqlProgrammer = ChiefProgrammer.getSqlProgrammer();
+        return sqlProgrammer == null ? null : sqlProgrammer.getSqlSchemaQualifiedExpressionSelectFunctionName(_expression, maxIdentifierLength);
     }
 
     /**
@@ -272,6 +332,16 @@ public class ExpressionWrapper extends ArtifactWrapper {
     }
 
     /**
+     * @param maxIdentifierLength
+     * @return the SQL schema qualified short expression select function name.
+     * @see adalid.core.expressions.AbstractRowsAggregateX AbstractRowsAggregateX
+     */
+    public String getSqlSchemaQualifiedShortExpressionSelectFunctionName(int maxIdentifierLength) {
+        SqlProgrammer sqlProgrammer = ChiefProgrammer.getSqlProgrammer();
+        return sqlProgrammer == null ? null : sqlProgrammer.getSqlSchemaQualifiedShortExpressionSelectFunctionName(_expression, maxIdentifierLength);
+    }
+
+    /**
      * @return the SQL expression
      */
     @Override
@@ -281,6 +351,7 @@ public class ExpressionWrapper extends ArtifactWrapper {
     }
 
     /**
+     * @param queryTable
      * @return the SQL expression
      */
     public String getSqlExpression(QueryTable queryTable) {
@@ -289,6 +360,8 @@ public class ExpressionWrapper extends ArtifactWrapper {
     }
 
     /**
+     * @param queryTable
+     * @param qualifier
      * @return the SQL expression
      */
     public String getSqlExpression(QueryTable queryTable, SqlQualifierType qualifier) {
@@ -297,6 +370,7 @@ public class ExpressionWrapper extends ArtifactWrapper {
     }
 
     /**
+     * @param queryTablesMap
      * @return the SQL expression
      */
     public String getSqlExpression(Map<String, QueryTable> queryTablesMap) {
@@ -305,6 +379,8 @@ public class ExpressionWrapper extends ArtifactWrapper {
     }
 
     /**
+     * @param queryTablesMap
+     * @param qualifier
      * @return the SQL expression
      */
     public String getSqlExpression(Map<String, QueryTable> queryTablesMap, SqlQualifierType qualifier) {
@@ -322,6 +398,7 @@ public class ExpressionWrapper extends ArtifactWrapper {
     }
 
     /**
+     * @param queryTable
      * @return the SQL parameterized expression
      */
     public ParameterizedExpression getSqlParameterizedExpression(QueryTable queryTable) {
@@ -330,6 +407,8 @@ public class ExpressionWrapper extends ArtifactWrapper {
     }
 
     /**
+     * @param queryTable
+     * @param qualifier
      * @return the SQL parameterized expression
      */
     public ParameterizedExpression getSqlParameterizedExpression(QueryTable queryTable, SqlQualifierType qualifier) {
@@ -338,6 +417,7 @@ public class ExpressionWrapper extends ArtifactWrapper {
     }
 
     /**
+     * @param queryTablesMap
      * @return the SQL parameterized expression
      */
     public ParameterizedExpression getSqlParameterizedExpression(Map<String, QueryTable> queryTablesMap) {
@@ -346,6 +426,8 @@ public class ExpressionWrapper extends ArtifactWrapper {
     }
 
     /**
+     * @param queryTablesMap
+     * @param qualifier
      * @return the SQL parameterized expression
      */
     public ParameterizedExpression getSqlParameterizedExpression(Map<String, QueryTable> queryTablesMap, SqlQualifierType qualifier) {
@@ -362,6 +444,7 @@ public class ExpressionWrapper extends ArtifactWrapper {
     }
 
     /**
+     * @param queryTable
      * @return the SQL select statement
      */
     public String getSqlSelectStatement(QueryTable queryTable) {

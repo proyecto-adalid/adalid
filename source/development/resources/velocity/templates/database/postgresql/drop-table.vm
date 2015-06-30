@@ -13,7 +13,6 @@
 #macro(writeDropTable)
     #resetSQLVariables()
     #set($table = $entity.wrapper.sqlTableName)
-    #set($table = $entity.wrapper.sqlSchemaQualifiedShortTableName)
     #writeDropTableStatement()
 #end##writeDropTable
 

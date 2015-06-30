@@ -61,7 +61,6 @@
                 #set($stateErrorMessageBundle = 'BundleDominios')
                 #set($stateErrorMessageBundleMethod = 'getStateError')
                 #set($stateErrorMessageBundleKey = "${entity.wrapper.sqlName}.${state.wrapper.sqlName}")
-                #set($stateErrorMessageBundleKey = "${entity.wrapper.sqlSchemaQualifiedShortName}.${state.wrapper.sqlName}")
             #end
         #end
         #writeStateExpressionErrorMessage()
@@ -102,7 +101,6 @@
     private boolean ${operationName}_${check.wrapper.javaVariableName}(${message} message, $parList) {
 #end
         #set($errorMessageBundleKey = "<${entity.wrapper.sqlName}.${operation.wrapper.sqlName}.${check.wrapper.sqlName}>")
-        #set($errorMessageBundleKey = "<${entity.wrapper.sqlSchemaQualifiedShortName}.${operation.wrapper.sqlName}.${check.wrapper.sqlName}>")
         #set($parameterizedExpression = $check.wrapper.javaParameterizedExpression)
         #set($expressionParametersMap = $parameterizedExpression.parametersMap)
         #set($namedValuesMap = $parameterizedExpression.namedValuesMap)
@@ -134,7 +132,6 @@
 
 #macro(writeStateExpressionErrorMessage)
     #set($parameterSearchQueryKey = "${entity.wrapper.sqlName}.${operation.wrapper.sqlName}.${operation.instanceParameter.wrapper.sqlName}")
-    #set($parameterSearchQueryKey = "${entity.wrapper.sqlSchemaQualifiedShortName}.${operation.wrapper.sqlName}.${operation.instanceParameter.wrapper.sqlName}")
         if (!allow) {
             String arg0 = BundleParametros.getLabel("${parameterSearchQueryKey}");
 //          String arg1 = ObjUtils.toString($entityVariableName);

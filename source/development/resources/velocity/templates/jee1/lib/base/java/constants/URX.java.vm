@@ -11,9 +11,11 @@ public class ${javaClassSimpleName} { // URI/URL de las páginas de la aplicación
     public static final String WAR = "${project.rootFolderName}-war";
 
 #set($pages = $project.displaysList)
+#set($pages = $ColUtils.sort($pages, $byDisplayName))
 #set($pdq = '')
 #foreach($page in $pages)
-    #if($page.master)
+    #setSpecialMasterDetailPage()
+    #if($page.master && !$specialMasterDetailPageFlag)
     #elseif("$!page.displayMode" == 'UNSPECIFIED' || "$!page.displayFormat" == 'UNSPECIFIED')
     #else
         #writeURX()
@@ -39,7 +41,7 @@ public class ${javaClassSimpleName} { // URI/URL de las páginas de la aplicación
     #set($fee = "${page.entity.wrapper.javaConstantName}")
     #set($faa = "${page.module.wrapper.hyphenatedAlias}")
     #set($foo = "crop/${page.module.wrapper.dottedAlias.replace('.', '/')}/$!{webPageNamePrefix}${page.name}.jsp")
-    public static final String ${fee}_${page.displayMode}_${page.displayFormat} = "/${project.rootFolderName}-war/faces/${foo}";
+    public static final String ${fee}${specialInfix}_${page.displayMode}_${page.displayFormat} = "/${project.rootFolderName}-war/faces/${foo}";
 #end##
 
 #macro(writeURXOOBB)
@@ -57,25 +59,25 @@ public class ${javaClassSimpleName} { // URI/URL de las páginas de la aplicación
 
     public static final String CAMBIO_PASSWORD = "/${project.rootFolderName}-war/faces/copy/Password.jsp";
 
-    public static final String FILTRO_FUNCION = "/${project.rootFolderName}-war/faces/crop/filtro/FiltroFuncion21${por}IdFuncion.jsp";
+    public static final String FILTRO_FUNCION = FILTRO_FUNCION_SPECIAL_WRITING_TABLE;
 
-    public static final String FILTRO_FUNCION_DETALLE = "/${project.rootFolderName}-war/faces/crop/filtro/FiltroFuncion22${por}IdFuncion.jsp";
+    public static final String FILTRO_FUNCION_DETALLE = FILTRO_FUNCION_SPECIAL_WRITING_DETAIL;
 
-    public static final String FILTRO_FUNCION_PAR = "/${project.rootFolderName}-war/faces/crop/filtro/FiltroFuncionPar21${por}IdFiltroFuncion.jsp";
+    public static final String FILTRO_FUNCION_PAR = FILTRO_FUNCION_PAR_SPECIAL_WRITING_TABLE;
 
-    public static final String FILTRO_FUNCION_PAR_DETALLE = "/${project.rootFolderName}-war/faces/crop/filtro/FiltroFuncionPar22${por}IdFiltroFuncion.jsp";
+    public static final String FILTRO_FUNCION_PAR_DETALLE = FILTRO_FUNCION_PAR_SPECIAL_WRITING_DETAIL;
 
     public static final String FILTRO_FUNCION_PAR_RECURSO = "/${project.rootFolderName}-war/faces/copy/recurso_filtro/RecursoFiltro1.jsp";
 
     public static final String FILTRO_FUNCION_PAR_RECURSO_ARBOL = "/${project.rootFolderName}-war/faces/copy/recurso_filtro/RecursoFiltro3.jsp";
 
-    public static final String VISTA_FUNCION = "/${project.rootFolderName}-war/faces/crop/vista/VistaFuncion21${por}Funcion.jsp";
+    public static final String VISTA_FUNCION = VISTA_FUNCION_SPECIAL_WRITING_TABLE;
 
-    public static final String VISTA_FUNCION_DETALLE = "/${project.rootFolderName}-war/faces/crop/vista/VistaFuncion22${por}Funcion.jsp";
+    public static final String VISTA_FUNCION_DETALLE = VISTA_FUNCION_SPECIAL_WRITING_DETAIL;
 
-    public static final String VISTA_FUNCION_COL = "/${project.rootFolderName}-war/faces/crop/vista/VistaFuncionCol21${por}Vista.jsp";
+    public static final String VISTA_FUNCION_COL = VISTA_FUNCION_COL_SPECIAL_WRITING_TABLE;
 
-    public static final String VISTA_FUNCION_COL_DETALLE = "/${project.rootFolderName}-war/faces/crop/vista/VistaFuncionCol22${por}Vista.jsp";
+    public static final String VISTA_FUNCION_COL_DETALLE = VISTA_FUNCION_COL_SPECIAL_WRITING_DETAIL;
 
     public static final String LISTA_RECURSOS = "/${project.rootFolderName}-war/faces/copy/recurso/Recurso1.jsp";
 
@@ -100,25 +102,29 @@ public class ${javaClassSimpleName} { // URI/URL de las páginas de la aplicación
         twn.put(INICIO, "${project.rootFolderName}-war");
         twn.put(FAVORITOS, "${project.rootFolderName}-war");
         twn.put(CAMBIO_PASSWORD, "${project.rootFolderName}-war");
-        twn.put(FILTRO_FUNCION, "${project.rootFolderName}-war-filtro");
-        twn.put(FILTRO_FUNCION_DETALLE, "${project.rootFolderName}-war-filtro");
-        twn.put(FILTRO_FUNCION_PAR, "${project.rootFolderName}-war-filtro");
-        twn.put(FILTRO_FUNCION_PAR_DETALLE, "${project.rootFolderName}-war-filtro");
+#***
+        twn.put(FILTRO_FUNCION, "${project.rootFolderName}-war-registro-filtro");
+        twn.put(FILTRO_FUNCION_DETALLE, "${project.rootFolderName}-war-registro-filtro");
+        twn.put(FILTRO_FUNCION_PAR, "${project.rootFolderName}-war-registro-filtro");
+        twn.put(FILTRO_FUNCION_PAR_DETALLE, "${project.rootFolderName}-war-registro-filtro");
+*###
         twn.put(FILTRO_FUNCION_PAR_RECURSO, "${project.rootFolderName}-war-recurso-filtro");
         twn.put(FILTRO_FUNCION_PAR_RECURSO_ARBOL, "${project.rootFolderName}-war-recurso-filtro");
         twn.put(LISTA_RECURSOS, "${project.rootFolderName}-war-recurso");
         twn.put(ARBOL_RECURSOS, "${project.rootFolderName}-war-recurso");
+#***
         twn.put(RASTRO_FUNCION, "${project.rootFolderName}-war-consulta");
         twn.put(RASTRO_INFORME, "${project.rootFolderName}-war-consulta");
         twn.put(RASTRO_PROCESO, "${project.rootFolderName}-war-consulta");
-        #set($pages = $project.displaysList)
+*###
 #foreach($page in $pages)
-    #if($page.master)
+    #setSpecialMasterDetailPage()
+    #if($page.master && !$specialMasterDetailPageFlag)
     #elseif("$!page.displayMode" == 'UNSPECIFIED' || "$!page.displayFormat" == 'UNSPECIFIED')
     #else
         #set($fee = $page.entity.wrapper.javaConstantName)
         #set($faa = $page.module.wrapper.hyphenatedAlias)
-        twn.put(${fee}_${page.displayMode}_${page.displayFormat}, "${project.rootFolderName}-war-${faa}");
+        twn.put(${fee}${specialInfix}_${page.displayMode}_${page.displayFormat}, "${project.rootFolderName}-war-${faa}");
     #end
 #end##foreach-page
     }
@@ -136,7 +142,6 @@ public class ${javaClassSimpleName} { // URI/URL de las páginas de la aplicación
     private static final Map<String, Long[]> sfn = new LinkedHashMap<>();
 
     static {
-        #set($pages = $project.displaysList)
 #foreach($page in $pages)
     #if($page.master)
     #elseif("$!page.displayMode" == 'UNSPECIFIED' || "$!page.displayFormat" == 'UNSPECIFIED')
@@ -164,3 +169,28 @@ public class ${javaClassSimpleName} { // URI/URL de las páginas de la aplicación
     }
 
 #end##writeURXSFN
+
+#macro(setSpecialMasterDetailPage)
+    #if($page.master)
+        #if($page.displayMode != 'WRITING')
+            #set($specialMasterDetailPageFlag = $FALSE)
+        #elseif($page.entity.name == 'FiltroFuncion')
+            #set($specialMasterDetailPageFlag = $TRUE)
+        #elseif($page.entity.name == 'FiltroFuncionPar')
+            #set($specialMasterDetailPageFlag = $TRUE)
+        #elseif($page.entity.name == 'VistaFuncion')
+            #set($specialMasterDetailPageFlag = $TRUE)
+        #elseif($page.entity.name == 'VistaFuncionCol')
+            #set($specialMasterDetailPageFlag = $TRUE)
+        #else
+            #set($specialMasterDetailPageFlag = $FALSE)
+        #end
+    #else
+        #set($specialMasterDetailPageFlag = $FALSE)
+    #end
+    #if($specialMasterDetailPageFlag)
+        #set($specialInfix = '_SPECIAL')
+    #else
+        #set($specialInfix = '')
+    #end
+#end##setSpecialMasterDetailPage

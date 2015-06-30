@@ -62,6 +62,8 @@ public abstract class Display extends AbstractArtifact implements Comparable<Dis
     private List<Display> _siblings;
 
     private List<Display> _children;
+//
+//  private List<Display> _ancestors;
 
     List<? extends DisplayField> _rootFields;
 
@@ -73,6 +75,23 @@ public abstract class Display extends AbstractArtifact implements Comparable<Dis
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="field getters and setters">
+    /**
+     * @return the help file name
+     */
+    public String getHelpFileName() {
+        String helpFileName = null;
+        if (_entity != null) {
+            helpFileName = _entity.getHelpFileName();
+        }
+        if (StringUtils.isBlank(helpFileName) && _module != null) {
+            helpFileName = _module.getHelpFileName();
+        }
+        if (StringUtils.isBlank(helpFileName)) {
+            helpFileName = TLC.getProject().getHelpFileName();
+        }
+        return helpFileName;
+    }
+
     /**
      * @return the module
      */
@@ -279,6 +298,25 @@ public abstract class Display extends AbstractArtifact implements Comparable<Dis
         }
         return master.equals(_entity) || master.getClass().isAssignableFrom(_entity.getClass());
     }
+//
+//  /**
+//   * @return the ancestors list
+//   */
+//  public List<Display> getAncestors() {
+//      if (_ancestors == null) {
+//          _ancestors = new ArrayList<>();
+//          if (_module != null && _entity != null && _reference != null && _master != null
+//              && _displayMode != null && _displayMode != DisplayMode.PROCESSING && _displayMode != DisplayMode.UNSPECIFIED) {
+//              List<? extends Display> displays = _module.getDisplaysList();
+//              for (Display display : displays) {
+//                  if (_displayMode == display.getDisplayMode() && _master.equals(display.getEntity())) {
+//                      _ancestors.add(display);
+//                  }
+//              }
+//          }
+//      }
+//      return _ancestors;
+//  }
 
     /**
      * @return the fields list
@@ -290,7 +328,7 @@ public abstract class Display extends AbstractArtifact implements Comparable<Dis
      */
     public abstract List<? extends DisplayField> getMasterHeadingFields();
 
-    private ByPropertySequenceNumber byPropertySequenceNumber = new ByPropertySequenceNumber();
+    private final ByPropertySequenceNumber byPropertySequenceNumber = new ByPropertySequenceNumber();
 
     class ByPropertySequenceNumber implements Comparator<DisplayField> {
 

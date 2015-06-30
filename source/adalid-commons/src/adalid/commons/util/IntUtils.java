@@ -20,11 +20,11 @@ public class IntUtils {
     }
 
     public static int valueOf(Integer i) {
-        return i == null ? 0 : i.intValue();
+        return i == null ? 0 : i;
     }
 
     public static int valueOf(Integer i, int j) {
-        return i == null ? j : i.intValue();
+        return i == null ? j : i;
     }
 
     public static int valueOf(Long l) {
@@ -42,7 +42,7 @@ public class IntUtils {
             version = 0;
         }
         long thread = Thread.currentThread().getId();
-        return version + 100000 * (int) (thread % 10000L); /* 9 digitos: 4t + 5v */
+        return version + 100000 * (int) (thread % 10000L); // 9 digitos: 4t + 5v
     }
 
 }

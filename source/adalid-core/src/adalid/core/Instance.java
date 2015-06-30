@@ -42,9 +42,9 @@ public class Instance extends AbstractArtifact {
 
     private int _index;
 
-    private List<InstanceField> _instanceFieldsList = new ArrayList<>();
+    private final List<InstanceField> _instanceFieldsList = new ArrayList<>();
 
-    private Map<String, InstanceField> _instanceFields = new LinkedHashMap<>();
+    private final Map<String, InstanceField> _instanceFields = new LinkedHashMap<>();
 
     private InstanceField[] _instanceField;
 

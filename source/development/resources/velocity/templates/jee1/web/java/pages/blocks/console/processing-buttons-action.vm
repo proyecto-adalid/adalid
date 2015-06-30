@@ -32,7 +32,7 @@
         }
         boolean esFuncionAutorizada = TLC.getControlador().esFuncionAutorizada(f);
         if (esFuncionAutorizada) {
-            boolean esEntidadAutorizada = TLC.getControlador().esEntidadAutorizada($entityVariableName, f);
+            boolean esEntidadAutorizada = $entityVariableName == null || TLC.getControlador().esEntidadAutorizada($entityVariableName, f);
             if (esEntidadAutorizada) {
                 #foreach($operation in $operations)
                     #setOperationVariables()
@@ -61,7 +61,7 @@
         }
         boolean esFuncionAutorizada = TLC.getControlador().esFuncionAutorizada(f);
         if (esFuncionAutorizada) {
-            boolean esEntidadAutorizada = TLC.getControlador().esEntidadAutorizada($entityVariableName, f);
+            boolean esEntidadAutorizada = $entityVariableName == null || TLC.getControlador().esEntidadAutorizada($entityVariableName, f);
             if (esEntidadAutorizada) {
                 try {
                 #foreach($operation in $operations)

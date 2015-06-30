@@ -87,13 +87,13 @@ locale.language.tag=$project.locale.toLanguageTag()
 
 #macro(writeRoot $id $name)
 #set($code = "${projectCode}")
-${code}.name=$bundleProgrammer.getValueString(${name})
+${code}.name=$!bundleProgrammer.getValueString(${name})
 ${code}.description=
 #end##writeRoot
 
 ${code}.id=${id}
-${code}.name=$bundleProgrammer.getValueString(${name})
-${code}.description=$bundleProgrammer.getValueString(${description})
+${code}.name=$!bundleProgrammer.getValueString(${name})
+${code}.description=$!bundleProgrammer.getValueString(${description})
 ${code}.especial=true
 
 #macro(writeModuleTree)
@@ -116,13 +116,13 @@ ${code}.especial=true
 #else
     #set($code = "${projectCode}.${moduleCode}.${plus}")
 #end
-${code}.name=$bundleProgrammer.getValueString(${name})
-${code}.description=$bundleProgrammer.getValueString(${description})
+${code}.name=$!bundleProgrammer.getValueString(${name})
+${code}.description=$!bundleProgrammer.getValueString(${description})
 #end##writeBranch
 
 ${code}.id=${id}
-${code}.name=$bundleProgrammer.getValueString(${name})
-${code}.description=$bundleProgrammer.getValueString(${description})
+${code}.name=$!bundleProgrammer.getValueString(${name})
+${code}.description=$!bundleProgrammer.getValueString(${description})
 ${code}.especial=false
 ${code}.branch=${branch}
 
@@ -141,13 +141,13 @@ ${code}.branch=${branch}
 #set($plus = $id - $moduleRoot)
 #set($code = "${projectCode}.${moduleCode}.${plus}")
 #set($code = "${projectCode}.${moduleCode}.${webPageName.replaceAll('\.jsp$', '').replace('/', '.').replace('-', '_')}")
-${code}.name=$bundleProgrammer.getValueString(${name})
-${code}.description=$bundleProgrammer.getValueString(${description})
+${code}.name=$!bundleProgrammer.getValueString(${name})
+${code}.description=$!bundleProgrammer.getValueString(${description})
 #end##writeLeaf
 
 ${code}.id=${id}
-${code}.name=$bundleProgrammer.getValueString(${name})
-${code}.description=$bundleProgrammer.getValueString(${description})
+${code}.name=$!bundleProgrammer.getValueString(${name})
+${code}.description=$!bundleProgrammer.getValueString(${description})
 ${code}.especial=false
 ${code}.branch=${branch}
 ${code}.url=${url}

@@ -20,6 +20,7 @@ import adalid.core.interfaces.EntityExpression;
 import adalid.core.interfaces.NumericExpression;
 import adalid.core.interfaces.TemporalExpression;
 import java.lang.reflect.Field;
+import java.util.Collection;
 
 /**
  * @author Jorge Campins
@@ -28,6 +29,22 @@ public class XS2 {
 
     public static boolean checkAccess() {
         return XS1.checkAccess();
+    }
+
+    public static Class<?> getNamedClass(Object object) {
+        return XS1.getNamedClass(object);
+    }
+
+    public static Class<?> getNamedClass(Class<?> clazz) {
+        return XS1.getNamedClass(clazz);
+    }
+
+    public static Collection<Field> getFields(Class<?> clazz) throws SecurityException {
+        return XS1.getFields(clazz, clazz);
+    }
+
+    public static Collection<Field> getFields(Class<?> clazz, Class<?> top) throws SecurityException {
+        return XS1.getFields(clazz, top);
     }
 
     public static void setDataClass(AbstractDataArtifact artifact, Class<?> clazz) {

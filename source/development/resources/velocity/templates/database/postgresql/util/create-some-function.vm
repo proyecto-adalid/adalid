@@ -7,7 +7,6 @@
 #foreach($entity in $entities)
     #resetSQLVariables()
     #set($table = $entity.wrapper.sqlName)
-    #set($table = $entity.wrapper.sqlSchemaUnqualifiedShortName)
     #set($rows = $entity.insertableRowsList)
     #set($rowcount = $rows.size())
     #if($entity.isDataGenEnabled())
@@ -95,8 +94,9 @@ begin
 #end##writeSomeReference3
 
 #macro(writeSomeFunctionHeading)
-drop function if exists util.some_${table}(integer);
-create or replace function util.some_${table}(_nullable integer)
+#set($function = "$entity.wrapper.getPrefixedSqlName('some_')")
+drop function if exists util.${function}(integer);
+create or replace function util.${function}(_nullable integer)
 returns $entity.wrapper.sqlType as $$
 declare
 #end##writeSomeFunctionHeading
@@ -105,7 +105,7 @@ declare
 end;
 $$ language 'plpgsql' volatile;
 /*
-select id, count(*) from (select util.some_${table}(10) as id from generate_series(1,10000)) x
+select id, count(*) from (select util.${function}(10) as id from generate_series(1,10000)) x
 group by id
 order by id;
 */

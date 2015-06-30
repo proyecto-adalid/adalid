@@ -52,12 +52,57 @@ import java.sql.Blob;
 import java.sql.Date;
 import java.sql.Time;
 import java.sql.Timestamp;
-import java.text.MessageFormat;
 
 /**
  * @author Jorge Campins
  */
 public class PostgreSqlProgrammer extends AbstractSqlProgrammer {
+
+    @Override
+    public String getDBMS() {
+        return "PostgreSQL";
+    }
+
+    // <editor-fold defaultstate="collapsed" desc="referential integrity options">
+    @Override
+    protected String getRestricted() {
+        return "no action";
+    }
+
+    @Override
+    protected String getCascade() {
+        return "cascade";
+    }
+
+    @Override
+    protected String getNullify() {
+        return "no action";
+    }
+
+    @Override
+    protected String getNoAction() {
+        return "no action";
+    }
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="keywords">
+    @Override
+    protected String getCurrentDate() {
+        return "current_date";
+    }
+
+    @Override
+    protected String getCurrentTime() {
+//      return "current_time";
+        return "localtime";
+    }
+
+    @Override
+    protected String getCurrentTimestamp() {
+//      return "current_timestamp";
+        return "localtimestamp";
+    }
+    // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="limits">
     @Override
@@ -168,7 +213,7 @@ public class PostgreSqlProgrammer extends AbstractSqlProgrammer {
         } else if (artifact instanceof StringData) {
             StringData data = (StringData) artifact;
             int l = (Integer) IntUtils.valueOf(data.getMaxLength());
-            return l < 1 || l > 250 ? TEXT : MessageFormat.format(VARCHAR, l);
+            return l < 1 || l > 250 ? TEXT : format(VARCHAR, l);
         } else if (artifact instanceof ByteData) {
             return BYTE;
         } else if (artifact instanceof ShortData) {
@@ -187,17 +232,17 @@ public class PostgreSqlProgrammer extends AbstractSqlProgrammer {
             BigDecimalData data = (BigDecimalData) artifact;
             int p = IntUtils.valueOf(data.getPrecision(), 16);
             int s = IntUtils.valueOf(data.getScale(), 0);
-            return MessageFormat.format(DECIMAL, p, s);
+            return format(DECIMAL, p, s);
         } else if (artifact instanceof DateData) {
             return DATE;
         } else if (artifact instanceof TimeData) {
             TimeData data = (TimeData) artifact;
             int p = IntUtils.valueOf(data.getPrecision(), 3);
-            return MessageFormat.format(TIME, p);
+            return format(TIME, p);
         } else if (artifact instanceof TimestampData) {
             TimestampData data = (TimestampData) artifact;
             int p = IntUtils.valueOf(data.getPrecision(), 3);
-            return MessageFormat.format(TIMESTAMP, p);
+            return format(TIMESTAMP, p);
         } else if (artifact instanceof Expression) {
             return getExpressionType((Expression) artifact);
         } else if (artifact instanceof Entity) {
@@ -238,9 +283,9 @@ public class PostgreSqlProgrammer extends AbstractSqlProgrammer {
         } else if (Date.class.isAssignableFrom(clazz)) {
             return DATE;
         } else if (Time.class.isAssignableFrom(clazz)) {
-            return MessageFormat.format(TIME, 3);
+            return format(TIME, 3);
         } else if (Timestamp.class.isAssignableFrom(clazz)) {
-            return MessageFormat.format(TIMESTAMP, 3);
+            return format(TIMESTAMP, 3);
 //      } else if (Instance.class.isAssignableFrom(clazz)) {
 //          return RECORD;
         } else if (expression instanceof BooleanExpression) {
@@ -250,7 +295,7 @@ public class PostgreSqlProgrammer extends AbstractSqlProgrammer {
         } else if (expression instanceof NumericExpression) {
             return NUMERIC;
         } else if (expression instanceof TemporalExpression) {
-            return MessageFormat.format(TIMESTAMP, 3);
+            return format(TIMESTAMP, 3);
         } else {
             return TEXT;
         }
@@ -266,22 +311,18 @@ public class PostgreSqlProgrammer extends AbstractSqlProgrammer {
      */
     @Override
     public String getSqlOnDeleteAction(PersistentEntityReference entity) {
-        String none = getNoAction();
-        String cascade = getCascade();
         if (entity == null) {
-            return none;
+            return null;
         }
         OnDeleteAction onDeleteAction = entity.getOnDeleteAction();
         if (onDeleteAction == null) {
-            return none;
+            return getNoAction();
         }
         switch (onDeleteAction) {
             case CASCADE:
-                return cascade;
-            case NULLIFY:
-            case NONE:
+                return getCascade();
             default:
-                return none;
+                return getNoAction();
         }
     }
 
@@ -291,22 +332,18 @@ public class PostgreSqlProgrammer extends AbstractSqlProgrammer {
      */
     @Override
     public String getSqlOnUpdateAction(PersistentEntityReference entity) {
-        String none = getNoAction();
-        String cascade = getCascade();
         if (entity == null) {
-            return none;
+            return null;
         }
         OnUpdateAction onUpdateAction = entity.getOnUpdateAction();
         if (onUpdateAction == null) {
-            return none;
+            return getNoAction();
         }
         switch (onUpdateAction) {
             case CASCADE:
-                return cascade;
-            case NULLIFY:
-            case NONE:
+                return getCascade();
             default:
-                return none;
+                return getNoAction();
         }
     }
 
@@ -314,11 +351,11 @@ public class PostgreSqlProgrammer extends AbstractSqlProgrammer {
     protected String getSpecialBooleanValue(SpecialBooleanValue value) {
         switch (value) {
             case NULL:
-                return "null";
+                return getNull();
             case TRUE:
-                return "true";
+                return getTrue();
             case FALSE:
-                return "false";
+                return getFalse();
             default:
                 return null;
         }
@@ -328,7 +365,7 @@ public class PostgreSqlProgrammer extends AbstractSqlProgrammer {
     protected String getSpecialCharacterValue(SpecialCharacterValue value) {
         switch (value) {
             case NULL:
-                return "null";
+                return getNull();
             case EMPTY:
                 return SQM$ + SQM$;
             case CURRENT_USER_CODE:
@@ -342,7 +379,7 @@ public class PostgreSqlProgrammer extends AbstractSqlProgrammer {
     protected String getSpecialEntityValue(SpecialEntityValue value) {
         switch (value) {
             case NULL:
-                return "null";
+                return getNull();
             case CURRENT_USER:
                 return "current_user_id()";
             default:
@@ -354,7 +391,7 @@ public class PostgreSqlProgrammer extends AbstractSqlProgrammer {
     protected String getSpecialNumericValue(SpecialNumericValue value) {
         switch (value) {
             case NULL:
-                return "null";
+                return getNull();
             case CURRENT_USER_ID:
                 return "current_user_id()";
             default:
@@ -370,15 +407,13 @@ public class PostgreSqlProgrammer extends AbstractSqlProgrammer {
     protected String getSpecialTemporalValue(SpecialTemporalValue value) {
         switch (value) {
             case NULL:
-                return "null";
+                return getNull();
             case CURRENT_DATE:
-                return "current_date";
+                return getCurrentDate();
             case CURRENT_TIME:
-//              return "current_time";
-                return "localtime";
+                return getCurrentTime();
             case CURRENT_TIMESTAMP:
-//              return "current_timestamp";
-                return "localtimestamp";
+                return getCurrentTimestamp();
             default:
                 return value.name();
         }
@@ -497,7 +532,7 @@ public class PostgreSqlProgrammer extends AbstractSqlProgrammer {
                 pattern = call(operator, 2);
                 break;
         }
-        return MessageFormat.format(pattern, arg1, arg2);
+        return format(pattern, arg1, arg2);
     }
 
     /**
@@ -602,7 +637,7 @@ public class PostgreSqlProgrammer extends AbstractSqlProgrammer {
                 pattern = call(operator, 1);
                 break;
         }
-        return MessageFormat.format(pattern, arg1, arg2);
+        return format(pattern, arg1, arg2);
     }
 
     /**

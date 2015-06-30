@@ -26,7 +26,7 @@ $x      parameters.put("${parameter.wrapper.sqlName}", $value);
     #end##foreach-parameter
 #end
 #set($vista = "consulta_${entity.wrapper.sqlName}")
-#set($vista = "${entity.wrapper.sqlSchemaQualifier}consulta_${entity.wrapper.sqlSchemaUnqualifiedShortName}")
+#set($vista = "$entity.wrapper.getPrefixedSqlName('consulta_')")
 #if($reportQueryType == 'DYNAMIC')
         String select = "select * from ${vista}";
         String criteria = "";

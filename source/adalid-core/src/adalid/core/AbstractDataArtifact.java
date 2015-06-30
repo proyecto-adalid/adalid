@@ -1787,7 +1787,7 @@ public abstract class AbstractDataArtifact extends AbstractArtifact implements D
         Class<?> declaringClass = field.getDeclaringClass();
         Class<? extends Annotation> annotationClass = ParentProperty.class;
         Class<?>[] validTypes = new Class<?>[]{declaringClass};
-        boolean log = depth() == 0;
+        boolean log = depth() == 1;
         boolean aye = field.isAnnotationPresent(annotationClass)
             && XS1.checkKeyPropertyFieldAnnotation(log, field, KeyProperty.PARENT, validTypes);
         /**/
@@ -1803,23 +1803,30 @@ public abstract class AbstractDataArtifact extends AbstractArtifact implements D
 
     private void annotateOwnerProperty(Field field) {
         Class<? extends Annotation> annotationClass = OwnerProperty.class;
-        boolean log = depth() == 0;
+        boolean log = depth() == 1;
         boolean aye = field.isAnnotationPresent(annotationClass)
             && XS1.checkKeyPropertyFieldAnnotation(log, field, KeyProperty.OWNER);
         /**/
         if (aye) {
-            Field previous = getDeclaringArtifact().put(annotationClass, field);
-            if (previous == null) {
-                _annotatedWithOwnerProperty = true;
+            Class<?> fieldType = field.getType();
+            Class<? extends Entity> userEntityClass = TLC.getProject().getUserEntityClass();
+            if (userEntityClass != null && userEntityClass.isAssignableFrom(fieldType)) {
+                Field previous = getDeclaringArtifact().put(annotationClass, field);
+                if (previous == null) {
+                    _annotatedWithOwnerProperty = true;
+                } else if (log) {
+                    XS1.logDuplicateAnnotation(field, annotationClass, previous);
+                }
             } else if (log) {
-                XS1.logDuplicateAnnotation(field, annotationClass, previous);
+                String message = userEntityClass + " is not assignable from " + fieldType;
+                XS1.logFieldAnnotationErrorMessage(field, annotationClass, message);
             }
         }
     }
 
     private void annotateSegmentProperty(Field field) {
         Class<? extends Annotation> annotationClass = SegmentProperty.class;
-        boolean log = depth() == 0;
+        boolean log = depth() == 1;
         boolean aye = field.isAnnotationPresent(annotationClass)
             && XS1.checkKeyPropertyFieldAnnotation(log, field, KeyProperty.SEGMENT);
         /**/
@@ -1835,7 +1842,7 @@ public abstract class AbstractDataArtifact extends AbstractArtifact implements D
 
     private void annotateUniqueKey(Field field) {
         Class<? extends Annotation> annotationClass = UniqueKey.class;
-        boolean log = depth() == 0;
+        boolean log = this instanceof Entity ? depth() == 1 : depth() == 0;
         _annotatedWithUniqueKey = field.isAnnotationPresent(annotationClass)
             && XS1.checkKeyPropertyFieldAnnotation(log, field, KeyProperty.UNIQUE_KEY);
     }
@@ -1858,7 +1865,7 @@ public abstract class AbstractDataArtifact extends AbstractArtifact implements D
 
     private void annotateDiscriminatorColumn(Field field) {
         Class<? extends Annotation> annotationClass = DiscriminatorColumn.class;
-        boolean log = depth() == 0;
+        boolean log = this instanceof Entity ? depth() == 1 : depth() == 0;
         boolean aye = field.isAnnotationPresent(annotationClass)
             && XS1.checkKeyPropertyFieldAnnotation(log, field, KeyProperty.DISCRIMINATOR);
         /**/
@@ -1932,7 +1939,7 @@ public abstract class AbstractDataArtifact extends AbstractArtifact implements D
     private void annotateBaseField(Field field) {
         Class<? extends Annotation> annotationClass = BaseField.class;
         Class<?>[] validTypes = new Class<?>[]{Property.class};
-        boolean log = depth() == 0;
+        boolean log = this instanceof Entity ? depth() == 1 : depth() == 0;
         _annotatedWithBaseField = field.isAnnotationPresent(annotationClass)
             && XS1.checkFieldAnnotation(log, field, annotationClass, validTypes);
     }
@@ -1940,7 +1947,7 @@ public abstract class AbstractDataArtifact extends AbstractArtifact implements D
     private void annotateColumnField(Field field) {
         Class<? extends Annotation> annotationClass = ColumnField.class;
         Class<?>[] validTypes = new Class<?>[]{Property.class};
-        boolean log = depth() == 0;
+        boolean log = this instanceof Entity ? depth() == 1 : depth() == 0;
         _annotatedWithColumnField = field.isAnnotationPresent(annotationClass)
             && XS1.checkFieldAnnotation(log, field, annotationClass, validTypes);
         /**/
@@ -1968,7 +1975,15 @@ public abstract class AbstractDataArtifact extends AbstractArtifact implements D
             BigDecimalData data = (BigDecimalData) this;
             if (precision >= 1 && precision <= Constants.MAX_DECIMAL_PRECISION) {
                 data.setPrecision(precision);
-                data.setScale(scale >= 0 ? scale <= precision ? scale : precision : 0);
+                if (scale <= precision) {
+                    data.setScale(scale > 0 ? scale : 0);
+                } else if (log) {
+                    logger.error(getDeclaringArtifactClassName() + "." + field.getName() + " has an invalid decimal scale");
+                    TLC.getProject().getParser().increaseErrorCount();
+                }
+            } else if (log) {
+                logger.error(getDeclaringArtifactClassName() + "." + field.getName() + " has an invalid decimal precision");
+                TLC.getProject().getParser().increaseErrorCount();
             }
         }
     }

@@ -27,9 +27,11 @@ public class ${javaClassSimpleName} extends AbstractSessionBean#writeJavaImpleme
 
 #macro(setLocalVariables)
     #set($managedBeanName = "${javaProgrammer.getJavaClassName($module.alias)}${javaClassSimpleName}")
+#***
     #set($moduleEntitiesMap = $VelocityAid.getNewLinkedHashMap())
 ##  #set($moduleReferencedEntitiesMap = $VelocityAid.getNewLinkedHashMap())
     #set($displaysList = $ColUtils.noneFilter($module.displaysList, $isConsoleViewDisplay, $isProcessingDisplay))
+    #set($displaysList = $ColUtils.sort($displaysList, $byDisplayName))
     #foreach($page in $displaysList)
         #if($page.entity)
             #set($added = $moduleEntitiesMap.put($page.entity.wrapper.javaClassName, $page.entity))
@@ -43,6 +45,8 @@ public class ${javaClassSimpleName} extends AbstractSessionBean#writeJavaImpleme
 ##          #end
 ##      #end
     #end
+*###
+    #set($moduleEntitiesMap = $module.getDisplayableEntitiesMap())
     #set($added = $imports.add("${project.rootPackageName}.lib.base.app.constant.EAB"))
     #set($added = $imports.add("${project.rootPackageName}.lib.core.db.xdp.RecursoCachedRowSet"))
     #set($added = $imports.add("${project.rootPackageName}.lib.core.db.xdp.RecursoCachedRowSetDataProvider"))
@@ -84,9 +88,8 @@ public class ${javaClassSimpleName} extends AbstractSessionBean#writeJavaImpleme
 #set($fee = "$entity.wrapper.javaClassName")
 #set($faa = "$entity.wrapper.javaVariableName")
 #set($tabla = "$entity.wrapper.sqlTableName")
-#set($tabla = "$entity.wrapper.sqlSchemaQualifiedShortTableName")
 #set($vista = "consulta_${entity.wrapper.sqlName}")
-#set($vista = "${entity.wrapper.sqlSchemaQualifier}consulta_${entity.wrapper.sqlSchemaUnqualifiedShortName}")
+#set($vista = "$entity.wrapper.getPrefixedSqlName('consulta_')")
     private CachedRowSetXImpl ${faa}${foo};
 
     public CachedRowSetXImpl get${fee}${foo}() {

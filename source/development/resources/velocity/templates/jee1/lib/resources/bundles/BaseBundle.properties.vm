@@ -1,3 +1,5 @@
+#parseSQLMacros()
+#setSQLVariables()
 #parsePropertiesMacros()
 #setPropertiesVariables()
 #writePropertiesLicense()
@@ -14,34 +16,28 @@
     #set($entities = $ColUtils.filter($project.entitiesList, $isPersistentEntity))
     #set($entities = $ColUtils.sort($entities, $byEntityName))
     #foreach($entity in $entities)
-        #set($entity_name = $entity.wrapper.sqlSchemaQualifiedShortName)
-        #set($entity_view = "${entity.wrapper.sqlSchemaQualifier}consulta_${entity.wrapper.sqlSchemaUnqualifiedShortName}")
+        #set($entity_name = $entity.wrapper.sqlName)
+        #set($entity_view = $entity.wrapper.getPrefixedSqlName('consulta_'))
         #writeBundleDominiosEntity()
         #set($atleast1 = $FALSE)
         #foreach($operation in $entity.operationsList)
-            #set($operation_jlcn = $javaProgrammer.getJavaLowerConstantName($operation.name))
+            #set($operation_name = $operation.wrapper.sqlName)
+            #set($operation_noun = "${entity.wrapper.underscoredName}${sql_name_separator}${operation.wrapper.underscoredProperName}")
+            #set($operation_term = $StrUtils.getIdentificadorSql($operation_noun, $globalSQLMaxIdentifierLength))
             #if("$!operation.operationType" == 'EXPORT')
                 #set($atleast1 = $TRUE)
-                #set($operation_name = $VelocityAid.coalesce($operation.exportName, $operation.name))
-                #set($operation_name = $javaProgrammer.getJavaLowerConstantName($operation_name))
                 #writeBundleArchivosOperation()
             #end
             #if("$!operation.operationType" == 'REPORT')
                 #set($atleast1 = $TRUE)
-                #set($operation_name = $VelocityAid.coalesce($operation.reportName, $operation.name))
-                #set($operation_name = $javaProgrammer.getJavaLowerConstantName($operation_name))
                 #writeBundleInformesOperation()
             #end
             #if("$!operation.operationType" == 'PROCEDURE')
                 #set($atleast1 = $TRUE)
-                #set($operation_name = $VelocityAid.coalesce($operation.procedureName, $operation.name))
-                #set($operation_name = $javaProgrammer.getJavaLowerConstantName($operation_name))
                 #writeBundleProcedimientosOperation()
             #end
             #if("$!operation.operationType" == 'PROCESS')
                 #set($atleast1 = $TRUE)
-                #set($operation_name = $VelocityAid.coalesce($operation.processName, $operation.name))
-                #set($operation_name = $javaProgrammer.getJavaLowerConstantName($operation_name))
                 #writeBundleProcesosOperation()
             #end
         #end##foreach-operation
@@ -62,12 +58,7 @@ default.opcion_orden_funcion_select=$Constants.getDefaultSelectSortOption()
 #end##writeBundleDominiosDefaults
 
 #macro(writeBundleDominiosFavoritos)
-#set($esquema = "$!{project.esquemaEntidadesComunes}")
-#if($esquema == '')
-    #set($entity_name = 'favoritos')
-#else
-    #set($entity_name = "${esquema}.favoritos")
-#end
+#set($entity_name = 'favoritos')
 ${entity_name}.limite_filas_funcion_export=0
 ${entity_name}.opcion_orden_funcion_export=ASC
 ${entity_name}.limite_filas_funcion_report=0
@@ -84,20 +75,7 @@ ${entity_name}.limite_filas_funcion_report=${entity.reportRowsLimit}
 ${entity_name}.opcion_orden_funcion_report=${entity.reportSortOption}
 ${entity_name}.limite_filas_funcion_select=${entity.selectRowsLimit}
 ${entity_name}.opcion_orden_funcion_select=${entity.selectSortOption}
-#*
-#if($entity.inactiveIndicatorReferenceProperty)
-${entity_name}.columna_indicador_inactivo=$!{entity.inactiveIndicatorReferenceProperty.wrapper.sqlName}
-${entity_name}.funcion_indicador_inactivo=$!{entity.inactiveIndicatorReferenceProperty.root.wrapper.sqlSchemaQualifiedShortName}${sql_name_separator}select_indicador_inactivo
-#end
-#if($entity.ownerReferenceProperty)
-${entity_name}.columna_propietario=$!{entity.ownerReferenceProperty.wrapper.sqlName}
-${entity_name}.funcion_propietario=$!{entity.ownerReferenceProperty.root.wrapper.sqlSchemaQualifiedShortName}${sql_name_separator}select_propietario
-#end
-#if($entity.segmentReferenceProperty)
-${entity_name}.columna_segmento=$!{entity.segmentReferenceProperty.wrapper.sqlName}
-${entity_name}.funcion_segmento=$!{entity.segmentReferenceProperty.root.wrapper.sqlSchemaQualifiedShortName}${sql_name_separator}select_segmento
-#end
-*#
+
 #writeRestrictedSelectColumnsMap()
 #end##writeBundleDominiosEntity
 
@@ -123,48 +101,64 @@ ${entity_name}.${column_name}.property_select=$project.getOperationNumber($selec
 #end##writeRestrictedSelectColumnsMapElement
 
 #macro(writeBundleArchivosOperation)
-${entity_name}.${operation_jlcn}.name=${entity_name}${sql_name_separator}${operation_name}
-#if("$!{operation.viewName}" == '')
-....${entity_name}.${operation_jlcn}.nombre_vista_funcion_export=${entity_view}
-#else
-....${entity_name}.${operation_jlcn}.nombre_vista_funcion_export=${operation.viewName}
-#end
-${entity_name}.${operation_jlcn}.limite_filas_funcion_export=${operation.rowsLimit}
+${entity_name}.${operation_name}.name=${entity_name}.${operation_name}
 #if($operation.view)
-....${entity_name}.${operation_jlcn}.detalle.limite_filas_funcion_export=${operation.detailRowsLimit}
-....${entity_name}.${operation_jlcn}.resumen.limite_filas_funcion_export=${operation.summaryRowsLimit}
-....${entity_name}.${operation_jlcn}.grafico.limite_filas_funcion_export=${operation.chartRowsLimit}
+....${entity_name}.${operation_name}.detalle.name=${entity_name}.${operation_name}.detalle
+....${entity_name}.${operation_name}.resumen.name=${entity_name}.${operation_name}.resumen
+....${entity_name}.${operation_name}.grafico.name=${entity_name}.${operation_name}.grafico
 #end
-${entity_name}.${operation_jlcn}.opcion_orden_funcion_export=${operation.sortOption}
+#if("$!{operation.viewName}" == '')
+....${entity_name}.${operation_name}.nombre_vista_funcion_export=${entity_view}
+#else
+....${entity_name}.${operation_name}.nombre_vista_funcion_export=${operation.viewName}
+#end
+${entity_name}.${operation_name}.limite_filas_funcion_export=${operation.rowsLimit}
+#if($operation.view)
+....${entity_name}.${operation_name}.detalle.limite_filas_funcion_export=${operation.detailRowsLimit}
+....${entity_name}.${operation_name}.resumen.limite_filas_funcion_export=${operation.summaryRowsLimit}
+....${entity_name}.${operation_name}.grafico.limite_filas_funcion_export=${operation.chartRowsLimit}
+#end
+${entity_name}.${operation_name}.opcion_orden_funcion_export=${operation.sortOption}
 #end##writeBundleArchivosOperation
 
 #macro(writeBundleInformesOperation)
-${entity_name}.${operation_jlcn}.name=${entity_name}${sql_name_separator}${operation_name}
-#if("$!{operation.viewName}" == '')
-....${entity_name}.${operation_jlcn}.nombre_vista_funcion_report=${entity_view}
-#else
-....${entity_name}.${operation_jlcn}.nombre_vista_funcion_report=${operation.viewName}
-#end
-${entity_name}.${operation_jlcn}.limite_filas_funcion_report=${operation.rowsLimit}
+${entity_name}.${operation_name}.name=${entity_name}.${operation_name}
 #if($operation.view)
-....${entity_name}.${operation_jlcn}.detalle.limite_filas_funcion_report=${operation.detailRowsLimit}
-....${entity_name}.${operation_jlcn}.resumen.limite_filas_funcion_report=${operation.summaryRowsLimit}
-....${entity_name}.${operation_jlcn}.grafico.limite_filas_funcion_report=${operation.chartRowsLimit}
+....${entity_name}.${operation_name}.detalle.name=${entity_name}.${operation_name}.detalle
+....${entity_name}.${operation_name}.resumen.name=${entity_name}.${operation_name}.resumen
+....${entity_name}.${operation_name}.grafico.name=${entity_name}.${operation_name}.grafico
 #end
-${entity_name}.${operation_jlcn}.opcion_orden_funcion_report=${operation.sortOption}
+#if("$!{operation.viewName}" == '')
+....${entity_name}.${operation_name}.nombre_vista_funcion_report=${entity_view}
+#else
+....${entity_name}.${operation_name}.nombre_vista_funcion_report=${operation.viewName}
+#end
+${entity_name}.${operation_name}.limite_filas_funcion_report=${operation.rowsLimit}
+#if($operation.view)
+....${entity_name}.${operation_name}.detalle.limite_filas_funcion_report=${operation.detailRowsLimit}
+....${entity_name}.${operation_name}.resumen.limite_filas_funcion_report=${operation.summaryRowsLimit}
+....${entity_name}.${operation_name}.grafico.limite_filas_funcion_report=${operation.chartRowsLimit}
+#end
+${entity_name}.${operation_name}.opcion_orden_funcion_report=${operation.sortOption}
 #end##writeBundleInformesOperation
 
 #macro(writeBundleProcedimientosOperation)
-${entity_name}.${operation_jlcn}.name=${entity_name}${sql_name_separator}${operation_name}
-${entity_name}.${operation_jlcn}.type=$!operation.procedureType
-${entity_name}.${operation_jlcn}.data_type=$!operation.procedureDataType
+${entity_name}.${operation_name}.name=$operation_term
+#if($operation_noun != $operation_term)
+....${entity_name}.${operation_name}.noun=$operation_noun
+#end
+${entity_name}.${operation_name}.type=$!operation.procedureType
+${entity_name}.${operation_name}.data_type=$!operation.procedureDataType
 
 #end##writeBundleProcedimientosOperation
 
 #macro(writeBundleProcesosOperation)
-${entity_name}.${operation_jlcn}.name=${entity_name}${sql_name_separator}${operation_name}
-${entity_name}.${operation_jlcn}.type=SIMPLE
-${entity_name}.${operation_jlcn}.data_type=INTEGER
+${entity_name}.${operation_name}.name=$operation_term
+#if($operation_noun != $operation_term)
+....${entity_name}.${operation_name}.noun=$operation_noun
+#end
+${entity_name}.${operation_name}.type=SIMPLE
+${entity_name}.${operation_name}.data_type=INTEGER
 
 #end##writeBundleProcesosOperation
 
@@ -262,6 +256,7 @@ ${webProjectPackageName}.pages.fragmento_cabeza_boton_cambiar_password_enabled=$
 #end##writeWebModule1
 
 #macro(writePages)
+    #writeCopiedPages()
     #set($modules = $ColUtils.filter($project.modulesList, $isWebModule))
     #set($modules = $ColUtils.sort($modules, $byProjectDeclaringFieldName))
     #foreach($module in $modules)
@@ -295,6 +290,33 @@ ${webProjectPackageName}.pages.fragmento_cabeza_boton_cambiar_password_enabled=$
         #end
     #end
 #end##writePages
+
+#macro(writeCopiedPages)
+--
+--  /${project.rootFolderName}-war/faces/copy
+--
+Favoritos=/${project.rootFolderName}-war/faces/copy/Favoritos.jsp
+Favoritos.help.file.name=$!{project.helpFileName}
+Favoritos.help.file.bookmark=Favoritos
+Menu=/${project.rootFolderName}-war/faces/copy/Menu.jsp
+Menu.help.file.name=$!{project.helpFileName}
+Menu.help.file.bookmark=Menu
+Password=/${project.rootFolderName}-war/faces/copy/Password.jsp
+Password.help.file.name=$!{project.helpFileName}
+Password.help.file.bookmark=Password
+Recurso1=/${project.rootFolderName}-war/faces/copy/recurso/Recurso1.jsp
+Recurso1.help.file.name=$!{project.helpFileName}
+Recurso1.help.file.bookmark=Recurso1
+Recurso3=/${project.rootFolderName}-war/faces/copy/recurso/Recurso3.jsp
+Recurso3.help.file.name=$!{project.helpFileName}
+Recurso3.help.file.bookmark=Recurso3
+RecursoFiltro1=/${project.rootFolderName}-war/faces/copy/recurso_filtro/RecursoFiltro1.jsp
+RecursoFiltro1.help.file.name=$!{project.helpFileName}
+RecursoFiltro1.help.file.bookmark=RecursoFiltro1
+RecursoFiltro3=/${project.rootFolderName}-war/faces/copy/recurso_filtro/RecursoFiltro3.jsp
+RecursoFiltro3.help.file.name=$!{project.helpFileName}
+RecursoFiltro3.help.file.bookmark=RecursoFiltro3
+#end##writeCopiedPages
 
 #macro(writeScriptBoton1SwitchX)
     #if($fieldSearchDisplayMode == 'WRITING')
@@ -395,6 +417,7 @@ ${webProjectPackageName}.pages.fragmento_cabeza_boton_cambiar_password_enabled=$
 #macro(write1)
 #set($key = "${page.name}")
 #writeURX($page)
+#writeHelpFileProperties($page)
 #end##write1
 
 #macro(write2 $fee $foo)
@@ -406,6 +429,11 @@ ${webProjectPackageName}.pages.fragmento_cabeza_boton_cambiar_password_enabled=$
 #set($urx = "/${project.rootFolderName}-war/faces/crop/${foo.module.wrapper.dottedAlias.replace('.', '/')}/$!{webPageNamePrefix}${foo.name}.jsp")
 $key=$urx
 #end##writeURX
+
+#macro(writeHelpFileProperties $foo)
+${foo.name}.help.file.name=$!{foo.helpFileName}
+${foo.name}.help.file.bookmark=$!{foo.name}
+#end##writeHelpFileProperties
 
 #macro(writeDiscriminatorPropertyReferences)
 #foreach($extension in $page.entity.extensionsList)

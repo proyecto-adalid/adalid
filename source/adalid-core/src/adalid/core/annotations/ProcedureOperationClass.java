@@ -20,8 +20,8 @@ import java.lang.annotation.Target;
 @Target(ElementType.TYPE)
 public @interface ProcedureOperationClass {
 
-    String name() default "";
-
+//  String name() default "";
+//
     ProcedureType type() default ProcedureType.SIMPLE;
 
     ProcedureDataType dataType() default ProcedureDataType.BIGINT;

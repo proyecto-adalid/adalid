@@ -102,7 +102,7 @@ public class VelocityFileResourceLoader extends org.apache.velocity.runtime.reso
                     next = i;
                     break;
                 }
-                if (ch > 32) {
+                if (ch != 32) {
                     if (ch == '#') {
                         next = i;
                     }

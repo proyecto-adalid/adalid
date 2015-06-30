@@ -39,6 +39,14 @@ public abstract class ProcessOperation extends Operation {
     }
 
     /**
+     * @return the proper name
+     */
+    @Override
+    public String getProperName() {
+        return _processName;
+    }
+
+    /**
      * @return the process name
      */
     public String getProcessName() {

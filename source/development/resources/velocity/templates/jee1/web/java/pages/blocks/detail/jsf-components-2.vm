@@ -4,6 +4,16 @@
     #setFieldVariables()
     #if($field.property.isBigDecimalData())
         #writeBigDecimalInitialization()
+    #elseif($field.property.isBigIntegerData())
+        #writeBigIntegerInitialization()
+    #elseif($field.property.isByteData())
+        #writeByteInitialization()
+    #elseif($field.property.isShortData())
+        #writeShortInitialization()
+    #elseif($field.property.isIntegerData())
+        #writeIntegerInitialization()
+    #elseif($field.property.isLongData())
+        #writeLongInitialization()
     #elseif($field.property.isDoubleData())
         #writeDoubleInitialization()
     #elseif($field.property.isFloatData())
@@ -43,6 +53,36 @@
         converter${fieldFirstName}.setMaxIntegerDigits($fieldMaxIntegerDigits);
         converter${fieldFirstName}.setMaxFractionDigits($fieldScale);
 #end##writeBigDecimalInitialization
+
+#macro(writeBigIntegerInitialization)
+        converter${fieldFirstName}.setMinIntegerDigits(1);
+        converter${fieldFirstName}.setMaxIntegerDigits(19);
+        converter${fieldFirstName}.setIntegerOnly(true);
+#end##writeBigIntegerInitialization
+
+#macro(writeByteInitialization)
+        converter${fieldFirstName}.setMinIntegerDigits(1);
+        converter${fieldFirstName}.setMaxIntegerDigits(3);
+        converter${fieldFirstName}.setIntegerOnly(true);
+#end##writeByteInitialization
+
+#macro(writeShortInitialization)
+        converter${fieldFirstName}.setMinIntegerDigits(1);
+        converter${fieldFirstName}.setMaxIntegerDigits(5);
+        converter${fieldFirstName}.setIntegerOnly(true);
+#end##writeShortInitialization
+
+#macro(writeIntegerInitialization)
+        converter${fieldFirstName}.setMinIntegerDigits(1);
+        converter${fieldFirstName}.setMaxIntegerDigits(10);
+        converter${fieldFirstName}.setIntegerOnly(true);
+#end##writeIntegerInitialization
+
+#macro(writeLongInitialization)
+        converter${fieldFirstName}.setMinIntegerDigits(1);
+        converter${fieldFirstName}.setMaxIntegerDigits(19);
+        converter${fieldFirstName}.setIntegerOnly(true);
+#end##writeLongInitialization
 
 #macro(writeDoubleInitialization)
     #set($pattern = '0.0###############E0')
@@ -99,10 +139,10 @@
         #set($minValue = $FALSE)
         #set($minValue = $javaProgrammer.getJavaValue($field.property.minValue))
         #if($minValue)
-            #if($field.property.isBigDecimalData() || $field.property.isDoubleData() || $field.property.isFloatData())
-........        validator${fieldFirstName}.setMinimum(ObjUtils.toDouble($minValue));
+            #if($minValue.startsWith('BigDecimal.valueOf') || $minValue.startsWith('new java.math.BigDecimal'))
+........        validator${fieldFirstName}.setMinimum($minValue);
             #else
-........        validator${fieldFirstName}.setMinimum(ObjUtils.toLong($minValue));
+........        validator${fieldFirstName}.setMinimum(ObjUtils.toBigDecimal($minValue));
             #end
         #end
     #end
@@ -110,10 +150,10 @@
         #set($maxValue = $FALSE)
         #set($maxValue = $javaProgrammer.getJavaValue($field.property.maxValue))
         #if($maxValue)
-            #if($field.property.isBigDecimalData() || $field.property.isDoubleData() || $field.property.isFloatData())
-........        validator${fieldFirstName}.setMaximum(ObjUtils.toDouble($maxValue));
+            #if($maxValue.startsWith('BigDecimal.valueOf') || $maxValue.startsWith('new java.math.BigDecimal'))
+........        validator${fieldFirstName}.setMaximum($maxValue);
             #else
-........        validator${fieldFirstName}.setMaximum(ObjUtils.toLong($maxValue));
+........        validator${fieldFirstName}.setMaximum(ObjUtils.toBigDecimal($maxValue));
             #end
         #end
     #end

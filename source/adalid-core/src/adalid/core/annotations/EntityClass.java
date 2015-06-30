@@ -31,6 +31,8 @@ public @interface EntityClass {
 //
 //  String propertiesSuffix() default "";
 //
+    String helpFile() default "";
+
     int startWith() default 1;
 
 }

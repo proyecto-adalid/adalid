@@ -6,8 +6,8 @@
  */
 package meta.proyecto.base;
 
-import meta.predicado.base.IsModuloProcesamientoDisplay;
-import org.apache.commons.collections.Predicate;
+import meta.enumeracion.base.TipoModuloBase;
+import meta.predicado.base.IsModuloProcesamientoResidualDisplay;
 
 /**
  * @author Jorge Campins
@@ -19,8 +19,13 @@ public class ModuloProcesamiento extends ModuloBase {
         setAlias("Procesamiento");
         setDefaultLabel("Procesamiento de Recursos");
         setDefaultDescription("Procesamiento de Recursos");
-        Predicate pagePredicate = new IsModuloProcesamientoDisplay();
+        IsModuloProcesamientoResidualDisplay pagePredicate = new IsModuloProcesamientoResidualDisplay(this);
         setPagePredicate(pagePredicate);
+    }
+
+    @Override
+    public final TipoModuloBase getTipo() {
+        return TipoModuloBase.PROCESAMIENTO;
     }
 
 }

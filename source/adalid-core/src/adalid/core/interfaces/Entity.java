@@ -17,6 +17,7 @@ import adalid.core.View;
 import adalid.core.annotations.AllocationOverride;
 import adalid.core.enums.BusinessKeyType;
 import adalid.core.enums.DisplayMode;
+import adalid.core.enums.HierarchyNodeType;
 import adalid.core.enums.ListStyle;
 import adalid.core.enums.OperationAccess;
 import adalid.core.enums.OperationLogging;
@@ -464,6 +465,11 @@ public interface Entity extends Comparable<Entity>, DataArtifact {
     String getPropertiesSuffix();
 
     /**
+     * @return the help file name
+     */
+    String getHelpFileName();
+
+    /**
      * @return the select allowed indicator
      */
     boolean isSelectEnabled();
@@ -690,6 +696,11 @@ public interface Entity extends Comparable<Entity>, DataArtifact {
      * @return the root entity instance of the top of the class hierarchy
      */
     Entity getHierarchyRoot();
+
+    /**
+     * @return the class hierarchy node type; null if the entity is not part of a hierarchy
+     */
+    HierarchyNodeType getHierarchyNodeType();
 
     /**
      * @return the direct known extensions list

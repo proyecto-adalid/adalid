@@ -1,0 +1,51 @@
+#parsePostgreSQLMacros()
+#setPostgreSQLVariables()
+#writePostgreSQLLicense()
+#writePostgreSQLAuthor('Jorge Campins')
+#createMetaTable()
+#addMetaModules()
+#break
+
+#macro(createMetaTable)
+#set($table = 'project$modules')
+#set($primaryKey = 'project$modules$pk')
+drop table if exists $table cascade;
+create table $table
+    (
+    module_name character varying(100),
+    module_class_name character varying(300),
+    constraint $primaryKey primary key (module_name)
+    )
+;
+#end##createMetaTable
+
+#macro(addMetaModules)
+    #set($modules = $project.modulesList)
+    #set($modules = $ColUtils.sort($modules, $byProjectName))
+    #foreach($module in $modules)
+        #addMetaModule()
+    #end##foreach-module
+#end##addMetaModules
+
+#macro(addMetaModule)
+insert into $table values ('$module.name', '$module.class.name');
+#end##addMetaModule
+
+#macro(checkMetaModules)
+    #set($modules = $project.modulesList)
+    #set($modules = $ColUtils.sort($modules, $byModuleName))
+    #foreach($module in $modules)
+        #checkMetaModule()
+    #end##foreach-module
+....select * from $table order by 1;
+#end##checkMetaModules
+
+#macro(checkMetaModule)
+do $$
+begin
+    if exists (select 1 from $table where module_name = '$module.name') then
+        raise notice '$module.name does exist!';
+    end if;
+end
+$$;
+#end##checkMetaModule

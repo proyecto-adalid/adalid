@@ -15,7 +15,7 @@ $tab    <webuijsf:tab id="tab$tabNumber"
 $tab        binding="#{${pageBeanName}.tab$tabNumber}"
 $tab        rendered="#{${pageBeanName}.asistente.tab${entityTab.wrapper.javaCapitalizedName}Rendered}"
 ##          text="$entityTab.wrapper.xmlValidDefaultShortLabel">
-$tab        text="BundleDominios.${page.entity.wrapper.sqlSchemaQualifiedShortName}.${entityTab.wrapper.sqlName}">
+$tab        text="BundleDominios.${page.entity.wrapper.sqlName}.${entityTab.wrapper.sqlName}">
 $tab        <h:panelGrid id="panelGrid${panelGridSequence.next()}" columns="2">
                 #increaseIndentationBy(3)
                 #foreach($tabField in $entityTab.tabFieldsList)

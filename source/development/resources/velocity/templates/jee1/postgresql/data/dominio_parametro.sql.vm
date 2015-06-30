@@ -50,11 +50,12 @@
         #writeInsertRow($property '10' 'clave')
     #end
 #end##foreach-entity
+select count(*) from dominio_parametro;
 #break
 
 #macro(writeInsertRow $parameter $paramtype $paramtypename)
 insert
-into public.dominio_parametro
+into dominio_parametro
 (
     id_dominio_parametro,
     codigo_dominio_parametro,
@@ -69,7 +70,7 @@ values (
 ##
 ##  id_dominio_parametro
 ##
-    nextval('public.dominio_parametro_sq___'),
+    nextval('dominio_parametro_sq___'),
 ##
 ##  codigo_dominio_parametro
 ##

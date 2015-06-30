@@ -2,7 +2,7 @@ $tab<h:panelGrid id="panelGrid${panelGridSequence.next()}">
 $tab    <webuijsf:label id="label${fieldFirstName}${divString}"
 $tab        binding="#{${master}.label${fieldFirstName}${divString}}"
 $tab        for="${campo1}${divString}"
-$tab        text="BundleParametros.${page.master.wrapper.sqlSchemaQualifiedShortName}.${field.property.wrapper.sqlName}"/>
+$tab        text="BundleParametros.${page.master.wrapper.sqlName}.${field.property.wrapper.sqlName}"/>
 $tab</h:panelGrid>
 $tab<h:panelGrid id="panelGrid${panelGridSequence.next()}"
 $tab    columns="2"
@@ -16,6 +16,6 @@ $tab    <webuijsf:helpInline id="helpInline${fieldFirstName}${divString}"
 $tab        binding="#{${master}.helpInline${fieldFirstName}${divString}}"
 $tab        rendered="#{SessionBean1.contextoSesion.helpInlineRendered}"
 $tab        styleClass="pdq-helpInline-field"
-$tab        text="BundleParametros.${page.master.wrapper.sqlSchemaQualifiedShortName}.${field.property.wrapper.sqlName}"
+$tab        text="BundleParametros.${page.master.wrapper.sqlName}.${field.property.wrapper.sqlName}"
 $tab        type="field"/>
 $tab</h:panelGrid>

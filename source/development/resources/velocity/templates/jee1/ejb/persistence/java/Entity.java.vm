@@ -3,6 +3,7 @@
 #writeJavaLicense()
 #writeJavaPackage()
 #parse('templates/jee1/lib/data/java/XDP0.java.vm')
+#parse("$templatePath/macros/entity-class.vm")
 #parse("$templatePath/interfaces/RecursoIdentificable.java.vm")
 #parse("$templatePath/interfaces/RecursoVersionable.java.vm")
 #parse("$templatePath/interfaces/RecursoEnumerable.java.vm")
@@ -166,7 +167,10 @@ public${abstract} class ${javaClassSimpleName}$extends#writeJavaImplements()
 #macro(addImports)
 #set($added = $imports.add('org.apache.commons.lang.StringUtils'))
 #set($added = $imports.add("${project.rootPackageName}.lib.base.entity.constant.${javaClassSimpleName}Constants"))
+#set($added = $imports.add("${project.rootPackageName}.lib.base.util.BitUtils"))
+#set($added = $imports.add("${project.rootPackageName}.lib.base.util.IntUtils"))
 #set($added = $imports.add("${project.rootPackageName}.lib.base.util.NumUtils"))
+#set($added = $imports.add("${project.rootPackageName}.lib.base.util.TimeUtils"))
 #set($added = $imports.add("${baseEntityPackage}.${entityClass}Base"))
 #set($added = $interfaces.add("${entityClass}Base"))
 #if($implementsAccesible)
@@ -237,12 +241,6 @@ public${abstract} class ${javaClassSimpleName}$extends#writeJavaImplements()
 #end
 #end##writeTemporalAnnotation
 
-#macro(writeField $type $name)
-    #setPersistentJavaType($type)
-    $persistentJavaType $name;
-
-#end##writeField
-
 #macro(writeOneToOne1Annotation $name $referencedColumnName)
     @JoinColumn(name = "$name", referencedColumnName = "$referencedColumnName")
     @OneToOne(fetch = FetchType.LAZY)
@@ -268,56 +266,6 @@ public${abstract} class ${javaClassSimpleName}$extends#writeJavaImplements()
     @OneToMany(cascade = ${cascade}, mappedBy = "$mappedBy")
 #end
 #end##writeOneToManyAnnotation
-
-#macro(writeFieldAccessors $type $name)
-    #setPersistentJavaType($type)
-    #set($Name = $StringUtils.capitalize($name))
-    @Override
-    public ${persistentJavaType} get${Name}() {
-        return ${name};
-    }
-
-//  @Override
-    public void set${Name}(${persistentJavaType} ${name}) {
-        this.${name} = ${name};
-    }
-
-#end##writeFieldAccessors
-
-#macro(writeAccesibleImplementation)
-    #setPersistentJavaType($type)
-    @Override
-    public Object getValue(String field) {
-        if (StringUtils.isBlank(field)) {
-            return null;
-#foreach($property in $col1)
-        } else if (StringUtils.equals(field, "${property.wrapper.sqlName}")) {
-            return ${property.wrapper.javaVariableName};
-#end##foreach-property
-#foreach($property in $col2)
-        } else if (StringUtils.equals(field, "${property.wrapper.sqlName}")) {
-            return ${property.wrapper.javaVariableName};
-#end##foreach-property
-        } else {
-            return null;
-        }
-    }
-
-    @Override
-    public void setValue(String field, Object value) {
-        if (StringUtils.isBlank(field)) {
-#foreach($property in $col1)
-        } else if (StringUtils.equals(field, "${property.wrapper.sqlName}")) {
-            ${property.wrapper.javaVariableName} = (${property.wrapper.javaPrimitiveType}) value;
-#end##foreach-property
-#foreach($property in $col2)
-        } else if (StringUtils.equals(field, "${property.wrapper.sqlName}")) {
-            ${property.wrapper.javaVariableName} = (${property.wrapper.javaTypeSimpleName}) value;
-#end##foreach-property
-        }
-    }
-
-#end##writeAccesibleImplementation
 
 #macro(writeEpilogue)
 #set($pkey = $entity.primaryKeyProperty.wrapper.javaVariableName)

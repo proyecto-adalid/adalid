@@ -4,16 +4,16 @@
 #writeXMLLicense()
 #writeXMLAuthor('Jorge Campins')
 #parse("$templatePath/macros/macros-1.vm")
+#parse("$templatePath/macros/macros-${sqlProgrammer.DBMS.toLowerCase()}.vm")
 #setLocalVariables()
 #writeJasperReport()
 #break
 
 #macro(setLocalVariables)
 #set($vista       = "consulta_${entity.wrapper.sqlName}")
-#set($vista       = "${entity.wrapper.sqlSchemaQualifier}consulta_${entity.wrapper.sqlSchemaUnqualifiedShortName}")
+#set($vista       = "$entity.wrapper.getPrefixedSqlName('consulta_')")
 #set($report      = $entity.entityListReport)
 #set($reportName  = $entity.wrapper.sqlName)
-#set($reportName  = $entity.wrapper.sqlSchemaUnqualifiedShortName)
 #set($reportTitle = $entity.wrapper.validDefaultCollectionLabel)
 #set($queryString = "SELECT * FROM $vista")
 #setOrderBy()
@@ -87,7 +87,7 @@
 #set($pagenumber2 = '')
 ## -----------------------------------------------------------------------------
 #set($locale = '$P{REPORT_LOCALE}')
-#set($bundleKey = """${entity.wrapper.sqlSchemaQualifiedShortName}""")
+#set($bundleKey = """${entity.wrapper.sqlName}""")
 #if($bigPageHead == 'true')
     #set($pageHeaderHeight = '64')
     #set($textcdataH2 = '')
@@ -102,6 +102,10 @@
 ## -----------------------------------------------------------------------------
 #set($textcdataF1 = $StrUtils.getStringAscii($reportTitle))
 #set($textcdataF1 = '$P{END_USER_NAME}')
+## -----------------------------------------------------------------------------
+#set($dateOnlyPattern = '$P{DATE_ONLY_PATTERN}')
+#set($timeOnlyPattern = '$P{TIME_ONLY_PATTERN}')
+#set($dateTimePattern = '$P{TIMESTAMP_PATTERN}')
 ## -----------------------------------------------------------------------------
 ####($backcolorD1 = '#EEEEEE')##detail
 ####($backcolorG1 = '#AAAAAA')##group1
@@ -212,6 +216,15 @@
     <parameter name="END_USER_NAME" class="java.lang.String" isForPrompting="false">
         <defaultValueExpression><![CDATA[""]]></defaultValueExpression>
     </parameter>
+    <parameter name="DATE_ONLY_PATTERN" class="java.lang.String" isForPrompting="false">
+        <defaultValueExpression><![CDATA["yyyy/MM/dd"]]></defaultValueExpression>
+    </parameter>
+    <parameter name="TIME_ONLY_PATTERN" class="java.lang.String" isForPrompting="false">
+        <defaultValueExpression><![CDATA["HH:mm:ss"]]></defaultValueExpression>
+    </parameter>
+    <parameter name="TIMESTAMP_PATTERN" class="java.lang.String" isForPrompting="false">
+        <defaultValueExpression><![CDATA["yyyy/MM/dd HH:mm:ss"]]></defaultValueExpression>
+    </parameter>
     <parameter name="es_informe_resumido" class="java.lang.Integer" isForPrompting="false">
         <defaultValueExpression><![CDATA[0]]></defaultValueExpression>
     </parameter>
@@ -226,11 +239,20 @@
 
 #foreach($group in $report.groups)
     #foreach($field in $group.fields)
-    #set($javaClassName = "$field.property.dataType.name")
-    #if($javaClassName.startsWith('java.sql.'))
-        #set($javaClassName = 'java.util.Date')
-    #end
-    <field name="$field.name" class="$javaClassName"/>
+        #if($field.property.isBooleanPrimitive())
+            #set($class = $booleanClassName)
+        #elseif($field.property.isDateData())
+            #set($class = $dateClassName)
+        #elseif($field.property.isTimeData())
+            #set($class = $timeClassName)
+        #elseif($field.property.isTimestampData())
+            #set($class = $timestampClassName)
+        #elseif($field.property.isTemporalPrimitive())
+            #set($class = 'java.util.Date')
+        #else
+            #set($class = $field.property.dataType.name)
+        #end
+....    <field name="$field.name" class="$class"/>
     #end##foreach-field
 #end##foreach-group
 
@@ -306,7 +328,7 @@
             #end
             #set($y = $x + $w)
             #if($w > 0 && $y <= $columnWidth0101)
-                #set($bundleKey = "${entity.wrapper.sqlSchemaQualifiedShortName}")
+                #set($bundleKey = "${entity.wrapper.sqlName}")
                 #if($field.parentProperty)
                     #set($bundleKey = "${bundleKey}.${field.parentProperty.wrapper.sqlName}")
                 #end
@@ -602,22 +624,35 @@
 #set($z = $report.interFieldGapWidth)
 #set($group = $report.detailGroup)
 #foreach($field in $group.fields)
-    #set($javaClassName = "$field.property.dataType.name")
-    #if($javaClassName.startsWith('java.sql.'))
+    #if($field.property.isBooleanPrimitive())
+        #set($javaClassName = $booleanClassName)
+    #elseif($field.property.isDateData())
+        #set($javaClassName = $dateClassName)
+    #elseif($field.property.isTimeData())
+        #set($javaClassName = $timeClassName)
+    #elseif($field.property.isTimestampData())
+        #set($javaClassName = $timestampClassName)
+    #elseif($field.property.isTemporalPrimitive())
         #set($javaClassName = 'java.util.Date')
+    #else
+        #set($javaClassName = $field.property.dataType.name)
     #end
     #set($expression = "$BOF$field.name$EOF")
     #set($w = $field.pixels)
+    #set($pattern = '')
+    #set($patternExpression = '')
+    #set($textAlignment='Left')
     #if($w <= 0)
         #set($w = 0)
     #elseif($field.property.isBooleanPrimitive())
         #set($javaClassName = 'java.lang.String')
-        #set($expression = "EnumBit.valueOf($BOF$field.name$EOF).getLabel()")
         #set($expression = "JRBundleWebui.getBooleanLabel($locale, $BOF$field.name$EOF)")
         #set($pattern = '')
+        #set($patternExpression = '')
         #set($textAlignment='Center')
     #elseif($field.property.isCharacterPrimitive())
         #set($pattern = '')
+        #set($patternExpression = '')
         #set($textAlignment='Left')
     #elseif($field.property.isBigDecimalData())
         #set($fieldPrecision = $VelocityAid.coalesce($field.property.precision, 16))
@@ -630,26 +665,40 @@
         #else
             #set($pattern = '#,##0;-#,##0')
         #end
+        #set($patternExpression = '')
+        #set($textAlignment='Right')
+    #elseif($field.property.isDoubleData() || $field.property.isFloatData())
+        #set($pattern = '0.0##############E0;-0.0##############E0')
+        #set($patternExpression = '')
         #set($textAlignment='Right')
     #elseif($field.property.isNumericPrimitive())
         #set($pattern = '#,##0;-#,##0')
+        #set($patternExpression = '')
         #set($textAlignment='Right')
     #elseif($field.property.isDateData())
         #set($pattern = 'dd/MM/yyyy')
+        #set($patternExpression = $dateOnlyPattern)
         #set($textAlignment='Center')
     #elseif($field.property.isTimeData())
         #set($pattern = 'hh:mm aa')
+        #set($patternExpression = $timeOnlyPattern)
         #set($textAlignment='Center')
     #elseif($field.property.isTimestampData())
         #set($pattern = 'dd/MM/yyyy hh:mm aa')
+        #set($patternExpression = $dateTimePattern)
         #set($textAlignment='Center')
     #else
         #set($w = 0)
+        #set($pattern = '')
+        #set($patternExpression = '')
+        #set($textAlignment='Left')
     #end
     #set($y = $x + $w)
     #if($w > 0 && $y <= $columnWidth0101)
                 <textField
+        #if($!patternExpression == '' && $!pattern != '')
                     pattern="$pattern"
+        #end
                     isBlankWhenNull="true"
                     isStretchWithOverflow="true"
                     evaluationTime="Now"
@@ -668,6 +717,9 @@
                     #writeTextElement($fontname '' '' '' '' '' $textAlignment '')
                     #decreaseIndentationBy(5)
                     <textFieldExpression class="$javaClassName"><![CDATA[$expression]]></textFieldExpression>
+        #if($!patternExpression != '')
+                    <patternExpression><![CDATA[$patternExpression]]></patternExpression>
+        #end
                 </textField>
         #set($x = $y + $z)
     #end
@@ -690,7 +742,9 @@
                     isBlankWhenNull="true"
                     isStretchWithOverflow="true"
                     evaluationTime="Report"
-                    pattern="dd/MM/yyyy"
+#if($!dateTimePattern == '')
+                    pattern="dd/MM/yyyy hh:mm aa"
+#end
                     hyperlinkType="None"
                     hyperlinkTarget="Self">
                     <reportElement
@@ -706,6 +760,9 @@
                     #writeTextElement($fontname $fontsizePF1 '' '' '' '' 'Left' '')
                     #decreaseIndentationBy(5)
                     <textFieldExpression class="java.util.Date"><![CDATA[new Date()]]></textFieldExpression>
+#if($!dateTimePattern != '')
+                    <patternExpression><![CDATA[$dateTimePattern]]></patternExpression>
+#end
                 </textField>
                 <textField
                     isBlankWhenNull="true"

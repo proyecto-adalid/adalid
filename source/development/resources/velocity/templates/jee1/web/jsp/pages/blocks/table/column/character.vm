@@ -20,7 +20,7 @@
 $tab<webuijsf:tableColumn id="tableColumn${fieldFirstName}"
 $tab    binding="#{${pageBeanName}.tableColumn${fieldFirstName}}"
     #if(!$field.property.headertextlessField)
-$tab    headerText="BundleParametros.${page.entity.wrapper.sqlSchemaQualifiedShortName}.${field.property.wrapper.sqlName}"
+$tab    headerText="BundleParametros.${page.entity.wrapper.sqlName}.${field.property.wrapper.sqlName}"
     #end
 ##      rendered="true"
 $tab    rendered="#{${pageBeanName}.asistente.column${fieldClassName}Rendered}"
@@ -39,7 +39,7 @@ $tab        readOnly="$fieldReadOnly"
 $tab        rendered="$fieldRendered"
 $tab        required="$fieldRequired"
 $tab        password="#{${sourceVar}.value['$fieldSqlName']}"
-$tab        toolTip="BundleParametros.${page.entity.wrapper.sqlSchemaQualifiedShortName}.${field.property.wrapper.sqlName}"
+$tab        toolTip="BundleParametros.${page.entity.wrapper.sqlName}.${field.property.wrapper.sqlName}"
 $tab        validatorExpression="#{${pageBeanName}.${campo1}_validate}"/>
     #else
 $tab    <webuijsf:textField id="${campo1}"
@@ -52,7 +52,7 @@ $tab        readOnly="$fieldReadOnly"
 $tab        rendered="$fieldRendered"
 $tab        required="$fieldRequired"
 $tab        text="#{${sourceVar}.value['$fieldSqlName']}"
-$tab        toolTip="BundleParametros.${page.entity.wrapper.sqlSchemaQualifiedShortName}.${field.property.wrapper.sqlName}"
+$tab        toolTip="BundleParametros.${page.entity.wrapper.sqlName}.${field.property.wrapper.sqlName}"
 $tab        validatorExpression="#{${pageBeanName}.${campo1}_validate}"/>
     #end
     #if($field.property.isPassword())

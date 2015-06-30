@@ -8,18 +8,22 @@ package adalid.commons.velocity;
 
 import adalid.commons.bundles.Bundle;
 import adalid.commons.properties.PropertiesHandler;
+import adalid.commons.util.FilUtils;
 import adalid.commons.util.StrUtils;
 import adalid.commons.util.ThrowableUtils;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileFilter;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.StringWriter;
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Properties;
+import java.util.Set;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
@@ -42,6 +46,8 @@ public class VelocityEngineer {
 
 //  private static final String USER_VELOCITY_RESOURCES_DIR = USER_DIR + FILE_SEPARATOR + "resources" + FILE_SEPARATOR + "velocity";
 //
+    private static final String VELOCIMACRO_LIBRARY = "velocimacro.library";
+
     private static final String VELOCITY_TEMPLATE_ENCODING = "velocity.template.encoding";
 
     private static final String VELOCITY_DOCUMENT_ENCODING = "velocity.document.encoding";
@@ -109,6 +115,10 @@ public class VelocityEngineer {
             setFileResourceLoaderPath(list);
             String value = StringUtils.join(list, ", ");
             properties.setProperty(FILE_RESOURCE_LOADER_PATH, value);
+            String libraries = velocimacroLibraries(list);
+            if (StringUtils.isNotBlank(libraries)) {
+                properties.setProperty(VELOCIMACRO_LIBRARY, libraries);
+            }
             Velocity.init(properties);
         } catch (Exception ex) {
             logger.fatal(ThrowableUtils.getString(ex), ex);
@@ -121,6 +131,28 @@ public class VelocityEngineer {
         for (String dir : fileResourceLoaderPathArray) {
             logger.trace("\t" + dir);
         }
+    }
+
+    private static String velocimacroLibraries(List<String> list) {
+        File folder;
+        File[] files;
+        FileFilter macrosFileFilter = FilUtils.nameEndsWithFilter(".vm");
+        Set<String> libraries = new LinkedHashSet<>();
+        String macros = "macros";
+        for (String path : list) {
+            folder = new File(path + FILE_SEPARATOR + macros);
+            if (FilUtils.isVisibleDirectory(folder)) {
+                files = folder.listFiles(macrosFileFilter);
+                for (File file : files) {
+                    if (FilUtils.isVisibleFile(file)) {
+                        libraries.add(macros + "/" + file.getName());
+                    }
+                }
+            }
+        }
+        String value = StringUtils.join(libraries, ", ");
+        logger.trace(VELOCIMACRO_LIBRARY + " = " + value);
+        return value;
     }
 
     /**

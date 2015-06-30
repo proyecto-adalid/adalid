@@ -8,25 +8,23 @@ locale.language.tag=$project.locale.toLanguageTag()
 #set($entities = $ColUtils.sort($entities, $byEntityName))
 #foreach($entity in $entities)
     #set($atleast1 = $FALSE)
-    #set($entity_name = $javaProgrammer.getJavaLowerConstantName($entity.name))
-    #set($entity_name = $entity.wrapper.sqlSchemaQualifiedShortName)
+    #set($entity_name = $entity.wrapper.sqlName)
     #foreach($operation in $entity.operationsList)
-        #set($operation_name = '')
+        #set($TIPO_OPERACION = '')
         #set($operation_type = "$!operation.operationType")
         #if($operation_type == 'CRUD')
         #elseif($operation_type == 'EXPORT')
-            #set($operation_name = $VelocityAid.coalesce($operation.exportName,    $operation.name))
+            #set($TIPO_OPERACION = 'ARCHIVO')
         #elseif($operation_type == 'REPORT')
-            #set($operation_name = $VelocityAid.coalesce($operation.reportName,    $operation.name))
+            #set($TIPO_OPERACION = 'INFORME')
         #elseif($operation_type == 'PROCEDURE')
-            #set($operation_name = $VelocityAid.coalesce($operation.procedureName, $operation.name))
+            #set($TIPO_OPERACION = 'PROCEDIMIENTO')
         #elseif($operation_type == 'PROCESS')
-            #set($operation_name = $VelocityAid.coalesce($operation.processName,   $operation.name))
+            #set($TIPO_OPERACION = 'PROCESO')
         #end
-        #if($operation_name != '')
+        #if($TIPO_OPERACION != '')
             #set($atleast1 = $TRUE)
-            #set($operation_jlcn = $javaProgrammer.getJavaLowerConstantName($operation.name))
-            #set($operation_name = $javaProgrammer.getJavaLowerConstantName($operation_name))
+            #set($operation_name = $operation.wrapper.sqlName)
             #writeBundleFuncionesOperation()
         #end
     #end##foreach-operation
@@ -34,12 +32,22 @@ locale.language.tag=$project.locale.toLanguageTag()
 
 #end
 #end##foreach-entity
+#set($groups = $project.processingGroups)
+#if(!$groups.isEmpty())
+    #foreach($group in $groups)
+        #writeBundleFuncionesProcessingGroup()
+    #end##foreach-group
+#end
 #break
 
 #macro(writeBundleFuncionesOperation)
-${entity_name}.${operation_jlcn}=$operation.wrapper.bundleValidDefaultShortLabel
-${entity_name}.${operation_jlcn}.label=$operation.wrapper.bundleValidDefaultLabel
-${entity_name}.${operation_jlcn}.short_label=$operation.wrapper.bundleValidDefaultShortLabel
-${entity_name}.${operation_jlcn}.tooltip=$operation.wrapper.bundleValidDefaultTooltip
-${entity_name}.${operation_jlcn}.inline_help=$operation.wrapper.bundleValidDefaultShortDescription
+${entity_name}.${operation_name}=$operation.wrapper.bundleValidDefaultShortLabel
+${entity_name}.${operation_name}.label=$operation.wrapper.bundleValidDefaultLabel
+${entity_name}.${operation_name}.short_label=$operation.wrapper.bundleValidDefaultShortLabel
+${entity_name}.${operation_name}.tooltip=$operation.wrapper.bundleValidDefaultTooltip
+${entity_name}.${operation_name}.inline_help=$operation.wrapper.bundleValidDefaultShortDescription
 #end##writeBundleFuncionesOperation
+
+#macro(writeBundleFuncionesProcessingGroup)
+${group}.label=$StrUtils.getWordyString($group)
+#end##writeBundleFuncionesProcessingGroup

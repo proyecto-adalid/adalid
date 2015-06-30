@@ -17,7 +17,6 @@ import org.apache.commons.collections.Predicate;
 public class IsModuloProcesamientoDisplay extends IsProcessingDisplay {
 
     public IsModuloProcesamientoDisplay() {
-        _entityPredicate = new IsModuloProcesamientoEntity();
     }
 
     public IsModuloProcesamientoDisplay(Predicate entityPredicate) {

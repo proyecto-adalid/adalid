@@ -53,7 +53,6 @@
     #set($added = $imports.add("${project.rootPackageName}.lib.core.control.Auditor"))
     #set($added = $imports.add("${project.rootPackageName}.lib.core.enumeration.EnumColumnaEtiqueta"))
     #set($added = $imports.add("${project.rootPackageName}.lib.core.jsf.JSF"))
-    #set($added = $imports.add("${project.rootPackageName}.lib.core.util.STP"))
     #set($added = $imports.add("${project.rootPackageName}.lib.core.util.TypeValuePair"))
     #set($added = $imports.add("${project.rootPackageName}.lib.core.web.app.EJBL"))
     #set($added = $imports.add("${project.rootPackageName}.lib.core.web.app.RowChecker"))

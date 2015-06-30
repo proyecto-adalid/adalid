@@ -7,7 +7,12 @@
 package meta.proyecto.comun;
 
 import adalid.core.Project;
-import meta.entidad.comun.auditoria.*;
+import meta.entidad.comun.auditoria.ArchivoAdjunto;
+import meta.entidad.comun.auditoria.RastroFuncion;
+import meta.entidad.comun.auditoria.RastroFuncionPar;
+import meta.entidad.comun.auditoria.RastroInforme;
+import meta.entidad.comun.auditoria.RastroProceso;
+import meta.paquete.comun.PaqueteConsultaAuditoria;
 
 /**
  * @author Jorge Campins
@@ -30,5 +35,7 @@ public class Auditoria extends Project {
     RastroInforme RastroInforme;
 
     RastroProceso RastroProceso;
+
+    PaqueteConsultaAuditoria consulta;
 
 }

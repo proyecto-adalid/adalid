@@ -59,12 +59,14 @@ public class BigDecimalData extends NumericPrimitive {
     }
 
     private void setMinMaxNumbers() {
+        BigDecimal one;
         BigDecimal max = null;
         BigDecimal min = null;
         int p = _precision == null ? 0 : _precision;
         int s = _scale == null ? 0 : _scale;
         if (p > s) {
-            max = BigDecimal.TEN.pow(p - s - 1);
+            one = BigDecimal.ONE.divide(BigDecimal.TEN.pow(s));
+            max = BigDecimal.TEN.pow(p - s).subtract(one);
             min = BigDecimal.ZERO.subtract(max);
         }
         setMinNumber(min);

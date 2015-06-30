@@ -6,9 +6,27 @@
  */
 package adalid.core;
 
-import adalid.core.annotations.*;
+import adalid.core.annotations.DiscriminatorColumn;
+import adalid.core.annotations.DiscriminatorValue;
+import adalid.core.annotations.EntityClass;
+import adalid.core.annotations.EntityConsoleView;
+import adalid.core.annotations.EntityDeleteOperation;
+import adalid.core.annotations.EntityDetailView;
+import adalid.core.annotations.EntityExportOperation;
+import adalid.core.annotations.EntityInsertOperation;
+import adalid.core.annotations.EntityReferenceSearch;
+import adalid.core.annotations.EntityReportOperation;
+import adalid.core.annotations.EntitySelectOperation;
+import adalid.core.annotations.EntityTableView;
+import adalid.core.annotations.EntityTreeView;
+import adalid.core.annotations.EntityTriggers;
+import adalid.core.annotations.EntityUpdateOperation;
+import adalid.core.annotations.ForeignKey;
+import adalid.core.annotations.InheritanceMapping;
+import adalid.core.annotations.PersistentEntityClass;
 import adalid.core.enums.DatabaseEntityType;
 import adalid.core.enums.DisplayMode;
+import adalid.core.enums.HierarchyNodeType;
 import adalid.core.enums.InheritanceMappingStrategy;
 import adalid.core.enums.KeyProperty;
 import adalid.core.enums.Kleenean;
@@ -176,11 +194,124 @@ public abstract class AbstractPersistentEntity extends AbstractDatabaseEntity im
 
     private void check() {
         if (isRootInstance()) {
-            if (getPrimaryKeyProperty() == null) {
-                String message = getName() + " does not have a primary key property";
+            checkPrimaryKeyProperty();
+            checkDiscriminatorProperty();
+            checkDiscriminatorValue();
+            checkInheritanceMappingStrategy();
+        }
+    }
+
+    private void checkPrimaryKeyProperty() {
+        if (getPrimaryKeyProperty() == null) {
+            String message = getName() + " does not have a primary key property";
+            logger.error(message);
+            TLC.getProject().getParser().increaseErrorCount();
+        }
+    }
+
+    private void checkDiscriminatorProperty() {
+        HierarchyNodeType hierarchyNodeType = getHierarchyNodeType();
+        if (hierarchyNodeType == null) {
+            if (_discriminatorProperty != null) {
+                String message = getName() + " has a discriminator property but it is not in a class hierarchy";
                 logger.error(message);
                 TLC.getProject().getParser().increaseErrorCount();
             }
+        } else if (_inheritanceMappingStrategy == null) {
+        } else if (_inheritanceMappingStrategy.equals(InheritanceMappingStrategy.UNSPECIFIED)) {
+        } else if (_discriminatorProperty == null) {
+            switch (_inheritanceMappingStrategy) {
+                case SINGLE_TABLE:
+                case JOINED:
+                    String message = getName() + " inheritance mapping strategy is " + _inheritanceMappingStrategy
+                        + " but it does not have a discriminator property";
+                    logger.error(message);
+                    TLC.getProject().getParser().increaseErrorCount();
+                    break;
+            }
+        } else if (_inheritanceMappingStrategy.equals(InheritanceMappingStrategy.TABLE_PER_CLASS)) {
+            String message = getName() + " inheritance mapping strategy is TABLE_PER_CLASS and it has a discriminator property";
+            logger.error(message);
+            TLC.getProject().getParser().increaseErrorCount();
+        }
+    }
+
+    private void checkDiscriminatorValue() {
+        HierarchyNodeType hierarchyNodeType = getHierarchyNodeType();
+        if (hierarchyNodeType == null) {
+            if (_discriminatorValue != null) {
+                String message = getName() + " has a discriminator value but it is not in a class hierarchy";
+                logger.error(message);
+                TLC.getProject().getParser().increaseErrorCount();
+            }
+        } else if (isAbstractClass()) {
+            if (_discriminatorValue != null) {
+                String message = getName() + " has a discriminator value but it is an abstract class";
+                logger.error(message);
+                TLC.getProject().getParser().increaseErrorCount();
+            }
+        } else if (_discriminatorProperty == null) {
+            if (_discriminatorValue != null) {
+                String message = getName() + " has a discriminator value but it does not have a discriminator property";
+                logger.error(message);
+                TLC.getProject().getParser().increaseErrorCount();
+            }
+        } else if (_inheritanceMappingStrategy == null) {
+        } else if (_inheritanceMappingStrategy.equals(InheritanceMappingStrategy.UNSPECIFIED)) {
+        } else if (_discriminatorValue == null) {
+//          if (_discriminatorProperty.isNullable() && hierarchyNodeType.equals(HierarchyNodeType.ROOT)) {
+//          } else {
+            switch (_inheritanceMappingStrategy) {
+                case SINGLE_TABLE:
+                case JOINED:
+                    String message = getName() + " inheritance mapping strategy is " + _inheritanceMappingStrategy
+                        + " but it does not have a discriminator value";
+                    logger.error(message);
+                    TLC.getProject().getParser().increaseErrorCount();
+                    break;
+            }
+//          }
+        } else if (_inheritanceMappingStrategy.equals(InheritanceMappingStrategy.TABLE_PER_CLASS)) {
+            String message = getName() + " inheritance mapping strategy is TABLE_PER_CLASS and it has a discriminator  value";
+            logger.error(message);
+            TLC.getProject().getParser().increaseErrorCount();
+        } else if (_discriminatorProperty.isEntity()) {
+            Entity discriminatorEntity = (Entity) _discriminatorProperty;
+            List<Instance> instances = discriminatorEntity.getInstancesList();
+            String instanceKeyValue;
+            boolean found = false;
+            for (Instance instance : instances) {
+                instanceKeyValue = "" + instance.getInstanceKeyValue();
+                if (_discriminatorValue.equals(instanceKeyValue)) {
+                    found = true;
+                    break;
+                }
+            }
+            if (!found) {
+                String message = getName() + " discriminator value \"" + _discriminatorValue
+                    + "\" does not correspond to any instance of " + discriminatorEntity.getRoot().getName();
+                logger.error(message);
+                TLC.getProject().getParser().increaseErrorCount();
+            }
+        }
+    }
+
+    private void checkInheritanceMappingStrategy() {
+        HierarchyNodeType hierarchyNodeType = getHierarchyNodeType();
+        if (hierarchyNodeType == null) {
+//          if (_inheritanceMappingStrategy != null) {
+//              String message = getName() + " has a inheritance mapping strategy but it is not in a class hierarchy";
+//              logger.error(message);
+//              TLC.getProject().getParser().increaseErrorCount();
+//          }
+        } else if (_inheritanceMappingStrategy == null) {
+            String message = getName() + " is in a class hierarchy but the inheritance mapping strategy is not properly specified";
+            logger.error(message);
+            TLC.getProject().getParser().increaseErrorCount();
+        } else if (InheritanceMappingStrategy.UNSPECIFIED.equals(_inheritanceMappingStrategy)) {
+            String message = getName() + " is in a class hierarchy but the inheritance mapping strategy is " + _inheritanceMappingStrategy;
+            logger.error(message);
+            TLC.getProject().getParser().increaseErrorCount();
         }
     }
 
@@ -475,10 +606,7 @@ public abstract class AbstractPersistentEntity extends AbstractDatabaseEntity im
         _annotatedWithDiscriminatorValue = type.isAnnotationPresent(DiscriminatorValue.class);
         if (_annotatedWithDiscriminatorValue) {
             DiscriminatorValue annotation = type.getAnnotation(DiscriminatorValue.class);
-            _discriminatorValue = annotation.value();
-            if (StringUtils.isBlank(_discriminatorValue)) {
-                _discriminatorValue = null;
-            }
+            _discriminatorValue = StringUtils.trimToNull(annotation.value());
         }
     }
 
@@ -676,6 +804,7 @@ public abstract class AbstractPersistentEntity extends AbstractDatabaseEntity im
     }
 
     /**
+     * @param properties
      * @return the properties that are columns
      */
 //  @Override
@@ -907,6 +1036,7 @@ public abstract class AbstractPersistentEntity extends AbstractDatabaseEntity im
     }
 
     /**
+     * @param maxDepth
      * @return the queryTable
      */
     public QueryTable getQueryTable(int maxDepth) {
@@ -914,6 +1044,7 @@ public abstract class AbstractPersistentEntity extends AbstractDatabaseEntity im
     }
 
     /**
+     * @param virtualEntityType
      * @return the queryTable
      */
     public QueryTable getQueryTable(VirtualEntityType virtualEntityType) {
@@ -921,6 +1052,8 @@ public abstract class AbstractPersistentEntity extends AbstractDatabaseEntity im
     }
 
     /**
+     * @param maxDepth
+     * @param virtualEntityType
      * @return the queryTable
      */
     public QueryTable getQueryTable(int maxDepth, VirtualEntityType virtualEntityType) {

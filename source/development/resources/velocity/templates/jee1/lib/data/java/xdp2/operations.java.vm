@@ -24,7 +24,7 @@
 ........        List<String> args = new ArrayList<>();
 ........        boolean es = esFilaAutorizada(rowKey, FUNCION_${OPERATION_TYPE}_${OPERATION_NAME});
                 #set($filterErrorMessageBundle = 'BundleDominios')
-                #set($filterErrorMessageBundleKey = "${codex}.${operation.wrapper.sqlName}")
+                #set($filterErrorMessageBundleKey = "${entity.wrapper.sqlName}.${operation.wrapper.sqlName}")
 ........        if (es) {
                     #set($filterEntity = $FALSE)
                     #set($filterExpression = $FALSE)
@@ -43,7 +43,7 @@
                         #set($filterExpression = $state)
                         #set($filterErrorMessageBundle = 'BundleDominios')
                         #set($filterErrorMessageBundleMethod = 'getStateError')
-                        #set($filterErrorMessageBundleKey = "${codex}.${state.wrapper.sqlName}")
+                        #set($filterErrorMessageBundleKey = "${entity.wrapper.sqlName}.${state.wrapper.sqlName}")
                         #set($filterExpressionDefaultErrorMessage = "$!state.wrapper.bundleDefaultErrorMessageChoice")
                         #if($filterExpressionDefaultErrorMessage != '')
 ................            if (!es) {

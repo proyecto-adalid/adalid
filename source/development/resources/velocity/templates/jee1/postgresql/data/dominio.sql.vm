@@ -8,15 +8,14 @@
     #set($entityNumber = $project.getEntityNumber($entity))
     #writeInsertRow()
 #end##foreach-entity
+select count(*) from dominio;
 #break
 
 #macro(writeInsertRow)
 #set($codex = "$entity.wrapper.sqlName")
-#set($codex = "$entity.wrapper.sqlSchemaQualifiedShortName")
 #set($tabla = "$entity.wrapper.sqlTableName")
-#set($tabla = "$entity.wrapper.sqlSchemaQualifiedShortTableName")
 insert
-into public.dominio
+into dominio
     (
     id_dominio,
     codigo_dominio,

@@ -6,11 +6,39 @@
  */
 package meta.entidad.comun.configuracion.basica;
 
-import adalid.core.*;
-import adalid.core.annotations.*;
-import adalid.core.enums.*;
-import adalid.core.interfaces.*;
-import adalid.core.properties.*;
+import adalid.core.AbstractPersistentEntity;
+import adalid.core.annotations.Allocation;
+import adalid.core.annotations.BusinessKey;
+import adalid.core.annotations.ColumnField;
+import adalid.core.annotations.DescriptionProperty;
+import adalid.core.annotations.EntityClass;
+import adalid.core.annotations.EntityConsoleView;
+import adalid.core.annotations.EntityDeleteOperation;
+import adalid.core.annotations.EntityDetailView;
+import adalid.core.annotations.EntityInsertOperation;
+import adalid.core.annotations.EntitySelectOperation;
+import adalid.core.annotations.EntityTableView;
+import adalid.core.annotations.EntityTreeView;
+import adalid.core.annotations.EntityUpdateOperation;
+import adalid.core.annotations.ForeignKey;
+import adalid.core.annotations.ManyToOne;
+import adalid.core.annotations.NameProperty;
+import adalid.core.annotations.PrimaryKey;
+import adalid.core.annotations.StringField;
+import adalid.core.annotations.VersionProperty;
+import adalid.core.enums.Kleenean;
+import adalid.core.enums.MasterDetailView;
+import adalid.core.enums.Navigability;
+import adalid.core.enums.OnDeleteAction;
+import adalid.core.enums.OnUpdateAction;
+import adalid.core.enums.OperationAccess;
+import adalid.core.enums.ResourceGender;
+import adalid.core.enums.ResourceType;
+import adalid.core.interfaces.Artifact;
+import adalid.core.properties.BooleanProperty;
+import adalid.core.properties.IntegerProperty;
+import adalid.core.properties.LongProperty;
+import adalid.core.properties.StringProperty;
 import java.lang.reflect.Field;
 import meta.proyecto.base.ProyectoBase;
 
@@ -158,8 +186,8 @@ public class ClaseRecurso extends AbstractPersistentEntity {
         setSchema(ProyectoBase.getEsquemaEntidadesComunes());
         setDefaultLabel("clase de recurso");
         setDefaultShortLabel("clase");
-        setDefaultCollectionLabel("clases de recurso");
-        setDefaultCollectionShortLabel("clases");
+        setDefaultCollectionLabel("Clases de Recurso");
+        setDefaultCollectionShortLabel("Clases");
     }
 
     @Override
@@ -192,11 +220,11 @@ public class ClaseRecurso extends AbstractPersistentEntity {
         idPaginaDetalle.setDefaultLabel("página de detalle");
 //      idPaginaDetalle.setDefaultShortLabel("página de detalle");
         idClaseRecursoMaestro.setDefaultLabel("clase de recurso maestro");
-        idClaseRecursoMaestro.setDefaultShortLabel("maestro");
+        idClaseRecursoMaestro.setDefaultShortLabel("clase de maestro");
         idClaseRecursoSegmento.setDefaultLabel("clase de recurso segmento");
-        idClaseRecursoSegmento.setDefaultShortLabel("segmento");
+        idClaseRecursoSegmento.setDefaultShortLabel("clase de segmento");
         idClaseRecursoBase.setDefaultLabel("clase de recurso base");
-        idClaseRecursoBase.setDefaultShortLabel("base");
+        idClaseRecursoBase.setDefaultShortLabel("clase base");
     }
 
 }

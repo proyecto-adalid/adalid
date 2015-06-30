@@ -10,6 +10,7 @@
 #macro(writeRecursoSegmentableImplementation)
 #if($esRecursoSegmentable)
     #set($property = $entity.segmentProperty)
+    #setPropertyJavaType()
 ##  public static final String COLUMNA_SEGMENTO_RECURSO = "${property.wrapper.sqlName}";
     public static final String COLUMNA_SEGMENTO_RECURSO = "${query.getSqlAlias($property)}";
 
@@ -30,34 +31,18 @@
     @Override
     public Long getSegmentoRecurso() {
     #if($dataProviderColumns.contains($property))
-    #if(${property.wrapper.javaPrimitiveType} == 'Integer')
         return NumUtils.toLong(get${property.wrapper.javaClassName}());
     #else
-        return get${property.wrapper.javaClassName}();
-    #end
-    #else
-    #if(${property.wrapper.javaPrimitiveType} == 'Integer')
-        return NumUtils.toLong(super.getValue(COLUMNA_SEGMENTO_RECURSO));
-    #else
-        return (${property.wrapper.javaPrimitiveType}) super.getValue(COLUMNA_SEGMENTO_RECURSO);
-    #end
+        return NumUtils.toLong(getValue(COLUMNA_SEGMENTO_RECURSO));
     #end
     }
 
     @Override
     public Long getSegmentoRecurso(RowKey rowKey) {
     #if($dataProviderColumns.contains($property))
-    #if(${property.wrapper.javaPrimitiveType} == 'Integer')
         return NumUtils.toLong(get${property.wrapper.javaClassName}(rowKey));
     #else
-        return get${property.wrapper.javaClassName}(rowKey);
-    #end
-    #else
-    #if(${property.wrapper.javaPrimitiveType} == 'Integer')
-        return NumUtils.toLong(super.getValue(COLUMNA_SEGMENTO_RECURSO, rowKey));
-    #else
-        return (${property.wrapper.javaPrimitiveType}) super.getValue(COLUMNA_SEGMENTO_RECURSO, rowKey);
-    #end
+        return NumUtils.toLong(getValue(COLUMNA_SEGMENTO_RECURSO, rowKey));
     #end
     }
 

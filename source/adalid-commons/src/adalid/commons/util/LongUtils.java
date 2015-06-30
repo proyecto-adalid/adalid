@@ -20,25 +20,30 @@ public class LongUtils {
     }
 
     public static long valueOf(Integer i) {
-        return i == null ? 0 : i.intValue();
+        return i == null ? 0 : i;
     }
 
     public static long valueOf(Integer i, long j) {
-        return i == null ? j : i.intValue();
+        return i == null ? j : i;
     }
 
     public static long valueOf(Long l) {
-        return l == null ? 0 : l.longValue();
+        return l == null ? 0 : l;
     }
 
     public static long valueOf(Long l, long j) {
-        return l == null ? j : l.longValue();
+        return l == null ? j : l;
+    }
+
+    public static long getNewId(String string) {
+        String number = StrUtils.getLongNumericCode(string); // 19 digitos: 1x + 10c + 3l + 5s;
+        return number == null ? getNewId() : Long.valueOf(number);
     }
 
     public static long getNewId() {
         long millis = TimeUtils.currentTimeMillis();
         long thread = Thread.currentThread().getId();
-        return 100000L * millis + 10L * (thread % 10000L); /* 18 digitos: 13m + 5t */
+        return 100000L * millis + 10L * (thread % 10000L); // 18 digitos: 13m + 5t
     }
 
 }

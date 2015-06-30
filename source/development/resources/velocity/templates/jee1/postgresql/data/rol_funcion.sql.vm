@@ -18,7 +18,9 @@
         #writeInsertUserDefinedOperationRows()
     #end##foreach-entity
 #end##foreach-module
+select count(*) from rol_funcion;
 #writeInsertRolFuncionPar()
+select count(*) from rol_funcion_par;
 #break
 
 #macro(writeInsertDefaultCrudOperationRows)
@@ -49,27 +51,29 @@
 
 #macro(writeInsertRow $operationNumbers $roleTypeNumbers)
 #if("$!roleTypeNumbers" != '' && "$!operationNumbers" != '')
-insert into public.rol_funcion (id_rol_funcion, id_rol, id_funcion, es_tarea, es_acceso_personalizado)
-    select nextval('public.rol_funcion_sq___'), id_rol, id_funcion,
-    case public.funcion.numero_tipo_funcion when 41 then true else false end,
-    case public.rol.numero_tipo_rol when 16 then false else es_personalizable end
-    from public.rol, public.tipo_rol, public.funcion
-    where public.tipo_rol.numero_tipo_rol = public.rol.numero_tipo_rol
+insert into rol_funcion (id_rol_funcion, id_rol, id_funcion, es_tarea, es_acceso_personalizado)
+    select nextval('rol_funcion_sq___'), id_rol, id_funcion,
+    case funcion.numero_tipo_funcion when 41 then true else false end,
+    case rol.numero_tipo_rol when 16 then false else es_personalizable end
+    from rol, tipo_rol, funcion
+    where tipo_rol.numero_tipo_rol = rol.numero_tipo_rol
     and codigo_rol = codigo_tipo_rol||'$module.name'
-    and public.rol.numero_tipo_rol in ($roleTypeNumbers)
-    and public.funcion.id_funcion in ($operationNumbers)
-    and public.funcion.es_publica = false
-    order by 1;
+    and rol.numero_tipo_rol in ($roleTypeNumbers)
+    and funcion.id_funcion in ($operationNumbers)
+    and funcion.es_publica = false
+    order by 1
+;
 
 #end
 #end##writeInsertRow
 
 #macro(writeInsertRolFuncionPar)
-insert into public.rol_funcion_par (id_rol_funcion_par, id_rol_funcion, id_funcion_parametro)
-    select nextval('public.rol_funcion_par_sq___'), id_rol_funcion, id_funcion_parametro
-    from public.rol_funcion, public.funcion_parametro
-    where public.rol_funcion.id_funcion = public.funcion_parametro.id_funcion
-    and public.funcion_parametro.acceso_restringido is true
-    order by 1;
+insert into rol_funcion_par (id_rol_funcion_par, id_rol_funcion, id_funcion_parametro)
+    select nextval('rol_funcion_par_sq___'), id_rol_funcion, id_funcion_parametro
+    from rol_funcion, funcion_parametro
+    where rol_funcion.id_funcion = funcion_parametro.id_funcion
+    and funcion_parametro.acceso_restringido is true
+    order by 1
+;
 
 #end##writeInsertRolFuncionPar

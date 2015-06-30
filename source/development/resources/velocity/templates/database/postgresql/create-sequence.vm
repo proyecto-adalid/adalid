@@ -13,7 +13,6 @@
 #macro(writeCreateSequence)
     #resetSQLVariables()
     #set($table = $entity.wrapper.sqlTableName)
-    #set($table = $entity.wrapper.sqlSchemaQualifiedShortTableName)
     #if($entity.primaryKeyProperty)
         #set($keyname = $entity.primaryKeyProperty.wrapper.sqlName)
         #set($keytype = $entity.primaryKeyProperty.wrapper.sqlType)

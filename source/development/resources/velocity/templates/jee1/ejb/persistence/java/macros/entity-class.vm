@@ -1,0 +1,56 @@
+#break
+
+#macro(writeField $type $name)
+    #setPersistentJavaType($type)
+    $persistentJavaType $name;
+
+#end##writeField
+
+#macro(writeFieldAccessors $type $name)
+    #setPersistentJavaType($type)
+    #set($Name = $StringUtils.capitalize($name))
+    @Override
+    public ${persistentJavaType} get${Name}() {
+        return ${name};
+    }
+
+//  @Override
+    public void set${Name}(${persistentJavaType} ${name}) {
+        this.${name} = ${name};
+    }
+
+#end##writeFieldAccessors
+
+#macro(writeAccesibleImplementation)
+    @Override
+    public Object getValue(String field) {
+        if (StringUtils.isBlank(field)) {
+            return null;
+    #foreach($property in $col1)
+        } else if (StringUtils.equals(field, "${property.wrapper.sqlName}")) {
+            return ${property.wrapper.javaVariableName};
+    #end##foreach-property
+    #foreach($property in $col2)
+        } else if (StringUtils.equals(field, "${property.wrapper.sqlName}")) {
+            return ${property.wrapper.javaVariableName};
+    #end##foreach-property
+        } else {
+            return null;
+        }
+    }
+
+    @Override
+    public void setValue(String field, Object value) {
+        if (StringUtils.isBlank(field)) {
+    #foreach($property in $col1)
+        } else if (StringUtils.equals(field, "${property.wrapper.sqlName}")) {
+            ${property.wrapper.javaVariableName} = (${property.wrapper.javaPrimitiveType}) value;
+    #end##foreach-property
+    #foreach($property in $col2)
+        } else if (StringUtils.equals(field, "${property.wrapper.sqlName}")) {
+            ${property.wrapper.javaVariableName} = (${property.wrapper.javaTypeSimpleName}) value;
+    #end##foreach-property
+        }
+    }
+
+#end##writeAccesibleImplementation

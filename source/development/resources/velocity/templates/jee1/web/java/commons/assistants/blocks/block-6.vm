@@ -54,7 +54,6 @@
     private boolean ${check.wrapper.javaVariableName}(RowKey rowKey) {
         Object obj;
         #set($errorMessageBundleKey = "<${entity.wrapper.sqlName}.${check.wrapper.sqlName}>")
-        #set($errorMessageBundleKey = "<${entity.wrapper.sqlSchemaQualifiedShortName}.${check.wrapper.sqlName}>")
         #set($parameterizedExpression = $check.wrapper.javaParameterizedExpression)
         #set($parametersMap = $parameterizedExpression.parametersMap)
         #setIndentation(1)

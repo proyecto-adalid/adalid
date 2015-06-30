@@ -41,7 +41,9 @@ import java.math.BigInteger;
 import java.sql.Date;
 import java.sql.Time;
 import java.sql.Timestamp;
-import java.text.MessageFormat;
+import java.util.Arrays;
+import java.util.Set;
+import java.util.TreeSet;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
@@ -50,9 +52,9 @@ import org.apache.log4j.Logger;
  */
 public abstract class AbstractJavaProgrammer extends AbstractProgrammer implements JavaProgrammer {
 
-    private static Logger logger = Logger.getLogger(JavaProgrammer.class);
+    protected static final Logger logger = Logger.getLogger(JavaProgrammer.class);
 
-    private static final String EMPTY = "";
+    protected static final String EMPTY = "";
 
     // <editor-fold defaultstate="collapsed" desc="string constants">
     protected static final boolean RTL = Bundle.getBoolean("java.right_to_left");
@@ -60,6 +62,63 @@ public abstract class AbstractJavaProgrammer extends AbstractProgrammer implemen
     protected static final String UTIL = "ObjUtils";
 
     protected static final String SEP$ = COM$;
+
+    protected static final String[] KEYWORDS = new String[]{
+        "abstract",
+        "assert",
+        "boolean",
+        "break",
+        "byte",
+        "case",
+        "catch",
+        "char",
+        "class",
+        "const",
+        "continue",
+        "default",
+        "do",
+        "double",
+        "else",
+        "enum",
+        "extends",
+        "final",
+        "finally",
+        "float",
+        "for",
+        "goto",
+        "if",
+        "implements",
+        "import",
+        "instanceof",
+        "int",
+        "interface",
+        "long",
+        "native",
+        "new",
+        "package",
+        "private",
+        "protected",
+        "public",
+        "return",
+        "short",
+        "static",
+        "strictfp",
+        "super",
+        "switch",
+        "synchronized",
+        "this",
+        "throw",
+        "throws",
+        "transient",
+        "try",
+        "void",
+        "volatile",
+        "while"
+    };
+
+    public static Set<String> getJavaKeywords() {
+        return new TreeSet<>(Arrays.asList(KEYWORDS));
+    }
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="name">
@@ -194,7 +253,7 @@ public abstract class AbstractJavaProgrammer extends AbstractProgrammer implemen
         return dataType == null ? null : dataType.getSimpleName();
     }
 
-    private Class<?> getDataType(Artifact artifact) {
+    protected Class<?> getDataType(Artifact artifact) {
         TypedArtifact typedArtifact = (artifact instanceof TypedArtifact) ? (TypedArtifact) artifact : null;
         return typedArtifact == null ? null : typedArtifact.getDataType();
     }
@@ -208,7 +267,7 @@ public abstract class AbstractJavaProgrammer extends AbstractProgrammer implemen
         return initialValue == null || dataType == null ? null : getJavaValue(initialValue, dataType);
     }
 
-    private Object getInitialValue(Artifact artifact) {
+    protected Object getInitialValue(Artifact artifact) {
         ValuedArtifact valuedArtifact = (artifact instanceof ValuedArtifact) ? (ValuedArtifact) artifact : null;
         return valuedArtifact == null ? null : valuedArtifact.getInitialValue();
     }
@@ -220,7 +279,7 @@ public abstract class AbstractJavaProgrammer extends AbstractProgrammer implemen
         return defaultValue == null || dataType == null ? null : getJavaValue(defaultValue, dataType);
     }
 
-    private Object getDefaultValue(Artifact artifact) {
+    protected Object getDefaultValue(Artifact artifact) {
         ValuedArtifact valuedArtifact = (artifact instanceof ValuedArtifact) ? (ValuedArtifact) artifact : null;
         return valuedArtifact == null ? null : valuedArtifact.getDefaultValue();
     }
@@ -232,7 +291,7 @@ public abstract class AbstractJavaProgrammer extends AbstractProgrammer implemen
         return currentValue == null || dataType == null ? null : getJavaValue(currentValue, dataType);
     }
 
-    private Object getCurrentValue(Artifact artifact) {
+    protected Object getCurrentValue(Artifact artifact) {
         ValuedArtifact valuedArtifact = (artifact instanceof ValuedArtifact) ? (ValuedArtifact) artifact : null;
         return valuedArtifact == null ? null : valuedArtifact.getCurrentValue();
     }
@@ -243,7 +302,7 @@ public abstract class AbstractJavaProgrammer extends AbstractProgrammer implemen
     }
 
     //protected
-    private String getJavaValue(Object object, Class<?> type) {
+    protected String getJavaValue(Object object, Class<?> type) {
         if (object == null || type == null) {
             return null;
         } else if (object instanceof Instance) { // && Entity.class.isAssignableFrom(type)
@@ -284,7 +343,7 @@ public abstract class AbstractJavaProgrammer extends AbstractProgrammer implemen
         return getJavaPrimitiveValue(object, type);
     }
 
-    private Class<?> getClassForName(String className) {
+    protected Class<?> getClassForName(String className) {
         if (StringUtils.isBlank(className)) {
             return null;
         } else {
@@ -298,7 +357,7 @@ public abstract class AbstractJavaProgrammer extends AbstractProgrammer implemen
     }
 
     //protected
-    private String getSpecialBooleanValue(SpecialBooleanValue value) {
+    protected String getSpecialBooleanValue(SpecialBooleanValue value) {
         switch (value) {
             case NULL:
                 return "null";
@@ -312,7 +371,7 @@ public abstract class AbstractJavaProgrammer extends AbstractProgrammer implemen
     }
 
     //protected
-    private String getSpecialCharacterValue(SpecialCharacterValue value) {
+    protected String getSpecialCharacterValue(SpecialCharacterValue value) {
         switch (value) {
             case NULL:
                 return "null";
@@ -326,7 +385,7 @@ public abstract class AbstractJavaProgrammer extends AbstractProgrammer implemen
     }
 
     //protected
-    private String getSpecialEntityValue(SpecialEntityValue value) {
+    protected String getSpecialEntityValue(SpecialEntityValue value) {
         switch (value) {
             case NULL:
                 return "null";
@@ -338,7 +397,7 @@ public abstract class AbstractJavaProgrammer extends AbstractProgrammer implemen
     }
 
     //protected
-    private String getSpecialNumericValue(SpecialNumericValue value) {
+    protected String getSpecialNumericValue(SpecialNumericValue value) {
         switch (value) {
             case NULL:
                 return "null";
@@ -350,7 +409,7 @@ public abstract class AbstractJavaProgrammer extends AbstractProgrammer implemen
     }
 
     //protected
-    private String getSpecialTemporalValue(SpecialTemporalValue value) {
+    protected String getSpecialTemporalValue(SpecialTemporalValue value) {
         switch (value) {
             case NULL:
                 return "null";
@@ -366,7 +425,7 @@ public abstract class AbstractJavaProgrammer extends AbstractProgrammer implemen
     }
 
     //protected
-    private String getJavaPrimitiveValue(Object object, Class<?> type) {
+    protected String getJavaPrimitiveValue(Object object, Class<?> type) {
         if (object == null || type == null) {
             return null;
         } else if (Boolean.class.isAssignableFrom(type)) {
@@ -402,7 +461,7 @@ public abstract class AbstractJavaProgrammer extends AbstractProgrammer implemen
         }
     }
 
-    private String newFromString(Object object, Class<?> type) {
+    protected String newFromString(Object object, Class<?> type) {
         String string = getString(object, type);
         if (string == null) {
             return null;
@@ -411,7 +470,7 @@ public abstract class AbstractJavaProgrammer extends AbstractProgrammer implemen
         }
     }
 
-    private String valueOfString(Object object, Class<?> type) {
+    protected String valueOfString(Object object, Class<?> type) {
         String string = getString(object, type);
         if (string == null) {
             return null;
@@ -430,10 +489,10 @@ public abstract class AbstractJavaProgrammer extends AbstractProgrammer implemen
         }
     }
 
-    private String javaLangLess(Class<?> type) {
+    protected String javaLangLess(Class<?> type) {
         return type == null ? "Object"
             : type.isArray() ? javaLangLess(type.getComponentType()) + "[]"
-            : StringUtils.removeStart(type.getName(), "java.lang.");
+                : StringUtils.removeStart(type.getName(), "java.lang.");
     }
 
     @Override
@@ -444,7 +503,7 @@ public abstract class AbstractJavaProgrammer extends AbstractProgrammer implemen
 
     // <editor-fold defaultstate="collapsed" desc="string">
     //protected
-    private String getString(Object object) {
+    protected String getString(Object object) {
         if (object == null) {
             return null;
         } else if (object instanceof String) {
@@ -461,7 +520,7 @@ public abstract class AbstractJavaProgrammer extends AbstractProgrammer implemen
     }
 
     //protected
-    private String getDelimitedString(Object object) {
+    protected String getDelimitedString(Object object) {
         if (object == null) {
             return null;
         }
@@ -480,7 +539,7 @@ public abstract class AbstractJavaProgrammer extends AbstractProgrammer implemen
     }
 
     //protected
-    private String getString(Object object, Class<?> type) {
+    protected String getString(Object object, Class<?> type) {
         if (object == null || type == null) {
             return null;
         }
@@ -531,7 +590,7 @@ public abstract class AbstractJavaProgrammer extends AbstractProgrammer implemen
     }
 
     //protected
-    private String getCharacterString(String string) {
+    protected String getCharacterString(String string) {
         if (StringUtils.isBlank(string)) {
             return SPC$;
         }
@@ -541,7 +600,7 @@ public abstract class AbstractJavaProgrammer extends AbstractProgrammer implemen
     }
 
     //protected
-    private String getDelimitedString(Object object, Class<?> type) {
+    protected String getDelimitedString(Object object, Class<?> type) {
         if (object == null || type == null) {
             return null;
         }
@@ -562,6 +621,7 @@ public abstract class AbstractJavaProgrammer extends AbstractProgrammer implemen
 
     // <editor-fold defaultstate="collapsed" desc="expression">
     /**
+     * @param object
      * @return the java expression
      */
     @Override
@@ -573,10 +633,13 @@ public abstract class AbstractJavaProgrammer extends AbstractProgrammer implemen
     }
 
     /**
+     * @param object
+     * @param px
+     * @param enclose
      * @return the java expresion
      */
     //protected
-    private String getJavaExpression(Object object, ParameterizedExpression px, boolean enclose) {
+    protected String getJavaExpression(Object object, ParameterizedExpression px, boolean enclose) {
         if (object == null) {
             return null;
         } else if (object instanceof Entity) {
@@ -614,10 +677,13 @@ public abstract class AbstractJavaProgrammer extends AbstractProgrammer implemen
     }
 
     /**
+     * @param expression
+     * @param px
+     * @param enclose
      * @return the java expresion
      */
     //protected
-    private String getJavaExpression(Expression expression, ParameterizedExpression px, boolean enclose) {
+    protected String getJavaExpression(Expression expression, ParameterizedExpression px, boolean enclose) {
         String string;
         if (expression == null) {
             return null;
@@ -645,10 +711,12 @@ public abstract class AbstractJavaProgrammer extends AbstractProgrammer implemen
     }
 
     /**
+     * @param expression
+     * @param px
      * @return the java expresion
      */
     //protected
-    private String getJavaComparisonExpression(ComparisonX expression, ParameterizedExpression px) {
+    protected String getJavaComparisonExpression(ComparisonX expression, ParameterizedExpression px) {
         ComparisonOp operator = expression.getOperator();
         Object x = expression.getX();
         Object y = expression.getY();
@@ -697,14 +765,16 @@ public abstract class AbstractJavaProgrammer extends AbstractProgrammer implemen
                 pattern = call(operator, y == null ? 1 : 2);
                 break;
         }
-        return MessageFormat.format(pattern, arg1, arg2);
+        return format(pattern, arg1, arg2);
     }
 
     /**
+     * @param expression
+     * @param px
      * @return the java expresion
      */
     //protected
-    private String getJavaConditionalExpression(ConditionalX expression, ParameterizedExpression px) {
+    protected String getJavaConditionalExpression(ConditionalX expression, ParameterizedExpression px) {
         Expression b = expression.getBooleanExpression();
         Object x = expression.getThenValue();
         Object y = expression.getElseValue();
@@ -715,14 +785,16 @@ public abstract class AbstractJavaProgrammer extends AbstractProgrammer implemen
         String arg1 = getJavaExpression(x, px, true);
         String arg2 = getJavaExpression(y, px, true);
         String pattern = y == null ? "{0} ? {1} : null" : "{0} ? {1} : {2}";
-        return MessageFormat.format(pattern, arg0, arg1, arg2);
+        return format(pattern, arg0, arg1, arg2);
     }
 
     /**
+     * @param expression
+     * @param px
      * @return the java expresion
      */
     //protected
-    private String getJavaDataAggregateExpression(DataAggregateX expression, ParameterizedExpression px) {
+    protected String getJavaDataAggregateExpression(DataAggregateX expression, ParameterizedExpression px) {
         DataAggregateOp operator = expression.getOperator();
         Object[] operands = expression.getOperands();
         if (operator == null || operands == null || operands.length < 2) {
@@ -757,10 +829,12 @@ public abstract class AbstractJavaProgrammer extends AbstractProgrammer implemen
     }
 
     /**
+     * @param expression
+     * @param px
      * @return the java expresion
      */
     //protected
-    private String getJavaRowsAggregateExpression(RowsAggregateX expression, ParameterizedExpression px) {
+    protected String getJavaRowsAggregateExpression(RowsAggregateX expression, ParameterizedExpression px) {
         String errmsg = EMPTY;
         if (expression == null) {
             return null;
@@ -784,10 +858,12 @@ public abstract class AbstractJavaProgrammer extends AbstractProgrammer implemen
     }
 
     /**
+     * @param expression
+     * @param px
      * @return the java expresion
      */
     //protected
-    private String getJavaOrderedPairExpression(OrderedPairX expression, ParameterizedExpression px) {
+    protected String getJavaOrderedPairExpression(OrderedPairX expression, ParameterizedExpression px) {
         OrderedPairOp operator = expression.getOperator();
         Object x = expression.getX();
         Object y = expression.getY();
@@ -821,14 +897,16 @@ public abstract class AbstractJavaProgrammer extends AbstractProgrammer implemen
                 pattern = call(operator, 2);
                 break;
         }
-        return MessageFormat.format(pattern, arg1, arg2);
+        return format(pattern, arg1, arg2);
     }
 
     /**
+     * @param expression
+     * @param px
      * @return the java expresion
      */
     //protected
-    private String getJavaScalarExpression(ScalarX expression, ParameterizedExpression px) {
+    protected String getJavaScalarExpression(ScalarX expression, ParameterizedExpression px) {
         ScalarOp operator = expression.getOperator();
         Object operand = expression.getOperand();
         if (operand == null) {
@@ -876,14 +954,16 @@ public abstract class AbstractJavaProgrammer extends AbstractProgrammer implemen
                 pattern = call(operator, 1);
                 break;
         }
-        return MessageFormat.format(pattern, arg1, arg2);
+        return format(pattern, arg1, arg2);
     }
 
     /**
+     * @param expression
+     * @param px
      * @return the java expresion
      */
     //protected
-    private String getJavaVariantExpression(VariantX expression, ParameterizedExpression px) {
+    protected String getJavaVariantExpression(VariantX expression, ParameterizedExpression px) {
         String errmsg = EMPTY;
         if (expression == null) {
             return null;
@@ -935,41 +1015,43 @@ public abstract class AbstractJavaProgrammer extends AbstractProgrammer implemen
     }
 
     /**
+     * @param expression
      * @return the java expression function name
      */
     //@Override
     //public
-    private String getJavaExpressionFunctionName(Expression expression) {
+    protected String getJavaExpressionFunctionName(Expression expression) {
         Entity e = expression.getDeclaringEntity();
         return e == null ? getJavaName(expression) : getJavaName(e.getRoot()) + "_" + getJavaName(expression);
     }
 
     /**
+     * @param expression
      * @return the java expression select function name
      */
     //@Override
     //public
-    private String getJavaExpressionSelectFunctionName(Expression expression) {
+    protected String getJavaExpressionSelectFunctionName(Expression expression) {
         Entity declaringEntity = expression instanceof RowsAggregateX ? expression.getDeclaringEntity() : null;
         return declaringEntity == null ? getJavaName(expression)
             : (getJavaName(declaringEntity.getRoot()) + "_select_" + getJavaName(expression));
     }
 
-    private String stringOf(Expression e) {
+    protected String stringOf(Expression e) {
         return e == null ? "?"
             : e.getName() != null ? e.getName()
-            : e.getParentExpression() != null ? stringOf(e.getParentExpression()) + "[" + e.toString() + "]"
-            : e.toString();
+                : e.getParentExpression() != null ? stringOf(e.getParentExpression()) + "[" + e.toString() + "]"
+                    : e.toString();
     }
 
-    private String stringOf(Entity e) {
+    protected String stringOf(Entity e) {
         return e == null ? "?"
             : e.getName() != null ? e.getName()
-            : e.toString();
+                : e.toString();
     }
 
     //protected
-    private String getJavaExpressionDefaultValue(Expression expression) {
+    protected String getJavaExpressionDefaultValue(Expression expression) {
         Class<?> clazz = expression == null ? null : expression.getDataType();
         if (clazz == null) {
             return "null";
@@ -1006,7 +1088,7 @@ public abstract class AbstractJavaProgrammer extends AbstractProgrammer implemen
         }
     }
 
-    private String getFullVariableName(Artifact artifact, ParameterizedExpression px) {
+    protected String getFullVariableName(Artifact artifact, ParameterizedExpression px) {
         if (artifact == null) {
             return null;
         }
@@ -1018,19 +1100,19 @@ public abstract class AbstractJavaProgrammer extends AbstractProgrammer implemen
         return name;
     }
 
-    private String getPrefixedVariableName(Artifact artifact) {
+    protected String getPrefixedVariableName(Artifact artifact) {
         Artifact declaringArtifact = artifact.getDeclaringArtifact();
         String prefix = declaringArtifact == null ? "" : getPrefixedVariableName(declaringArtifact) + UND$;
         return prefix + getJavaVariableName(artifact);
     }
 
-    private String getSuffixedVariableName(Artifact artifact) {
+    protected String getSuffixedVariableName(Artifact artifact) {
         Artifact declaringArtifact = artifact.getDeclaringArtifact();
         String suffix = declaringArtifact == null ? "" : UND$ + getSuffixedVariableName(declaringArtifact);
         return getJavaVariableName(artifact) + suffix;
     }
 
-    private String getNamedValueName(NamedValue namedValue, ParameterizedExpression px) {
+    protected String getNamedValueName(NamedValue namedValue, ParameterizedExpression px) {
         String name = namedValue.name();
         if (px != null) {
             px.getNamedValuesMap().put(name, namedValue);
@@ -1039,13 +1121,13 @@ public abstract class AbstractJavaProgrammer extends AbstractProgrammer implemen
     }
 
     //protected
-    private String call(Operator operator, int arguments) {
+    protected String call(Operator operator, int arguments) {
         String function = operator.name().toLowerCase();
         return call(function, arguments);
     }
 
     //protected
-    private String call(String function, int arguments) {
+    protected String call(String function, int arguments) {
         String[] placeHolders = null;
         if (arguments > 0) {
             placeHolders = new String[arguments];
@@ -1057,13 +1139,13 @@ public abstract class AbstractJavaProgrammer extends AbstractProgrammer implemen
     }
 
     //protected
-    private String call(Operator operator, String... arguments) {
+    protected String call(Operator operator, String... arguments) {
         String function = operator.name().toLowerCase();
         return call(function, arguments);
     }
 
     //protected
-    private String call(String function, String... arguments) {
+    protected String call(String function, String... arguments) {
         String method = function.contains(".") ? function : UTIL + DOT$ + StrUtils.getCamelCase(function, true);
         String string = arguments == null || arguments.length == 0 ? LRB$ + RRB$ : StrUtils.enclose(StringUtils.join(arguments, SEP$ + " "));
         return method + string;

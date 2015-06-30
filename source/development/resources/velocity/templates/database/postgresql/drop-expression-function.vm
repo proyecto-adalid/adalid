@@ -13,7 +13,6 @@
 #macro(writeDropExpressionFunctions)
     #resetSQLVariables()
     #set($table = $entity.wrapper.sqlTableName)
-    #set($table = $entity.wrapper.sqlSchemaQualifiedShortTableName)
     #set($keytype = $entity.primaryKeyProperty.wrapper.sqlType)
     #set($checks = $entity.checksList)
     #set($states = $entity.statesList)
@@ -21,7 +20,6 @@
     #foreach($expression in $expressions)
         #if($expression.isCrossReferencedExpression() || $states.contains($expression) || ($expression.isNotInherited() && !$checks.contains($expression)))
             #set($expname = $expression.wrapper.sqlExpressionFunctionName)
-            #set($expname = $expression.wrapper.sqlSchemaQualifiedShortExpressionFunctionName)
             #writeDropExpressionFunction("${expname}(${keytype})")
 ##          #writeDropExpressionFunction("${expname}(${table})")
         #end

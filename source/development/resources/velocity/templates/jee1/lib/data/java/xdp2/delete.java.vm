@@ -3,7 +3,7 @@
     #set($filterExpression = $entity.deleteFilter)
     #set($filterErrorMessageBundle = 'BundleDominios')
     #set($filterErrorMessageBundleMethod = 'getFilterError')
-    #set($filterErrorMessageBundleKey = "${codex}.delete")
+    #set($filterErrorMessageBundleKey = "${entity.wrapper.sqlName}.delete")
     @Override
     protected boolean esFilaEliminable(RowKey rowKey, long funcion) {
         boolean es = super.esFilaEliminable(rowKey, funcion);
@@ -24,7 +24,7 @@
             return;
         }
         RastroFuncion rastro = getRastroFuncion(rowKey, ${FUNCION_DELETE});
-        #addParametros()
+        #addParametros(0)
 ##      TLC.getControlador().grabarRastroFuncion(rastro);
         getRastrosFuncion().put(rowKey.getRowId(), rastro);
     }

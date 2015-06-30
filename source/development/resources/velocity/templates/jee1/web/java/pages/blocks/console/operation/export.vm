@@ -22,7 +22,7 @@
 #set($vista = "$!{operation.viewName}")
 #if($vista == '')
     #set($vista = "consulta_${page.entity.wrapper.sqlName}")
-    #set($vista = "${page.entity.wrapper.sqlSchemaQualifier}consulta_${page.entity.wrapper.sqlSchemaUnqualifiedShortName}")
+    #set($vista = "$page.entity.wrapper.getPrefixedSqlName('consulta_')")
 #end
 #if($exportQueryType == 'DYNAMIC')
     #if($operation.view)
@@ -51,7 +51,7 @@
         ObjectMessage solicitud;
         if (criteria.length() > 0) {
         #if($operation.view)
-            select = Utils.addWhereClause(select, criteria.substring(5));
+            select = Utils.addAndToWhereClause(select, criteria.substring(5));
         #else
             select += " where (" + criteria.substring(5) + ")";
         #end
@@ -212,16 +212,21 @@
                     #end
                     #set($viewSelectProperty = $VelocityAid.coalesce($entityViewColumnsMap.get($entityViewColumnsMapKey), $FALSE))
                     #if($viewSelectProperty)
-                        #set($bundleKey = "${entityView.entity.wrapper.sqlSchemaQualifiedShortName}")
+                        #set($bundleKey = "${entityView.entity.wrapper.sqlName}")
                         #set($bundleKey = "${bundleKey}.${entityView.wrapper.sqlName}")
                         #set($bundleKey = "${bundleKey}.$StrUtils.getLowerHumplessCase(${viewSelectProperty.partialName})")
                         #set($bundleKey = """${bundleKey}"", ")
                         #set($getAliasParameters = "$getAliasParameters$bundleKey")
-                        #set($bundleKey = "${viewSelectProperty.declaringEntityRoot.wrapper.sqlSchemaQualifiedShortName}")
+                        #set($bundleKey = "${viewSelectProperty.declaringEntityRoot.wrapper.sqlName}")
                         #set($bundleKey = "${bundleKey}.${viewSelectProperty.wrapper.sqlName}")
                         #set($bundleKey = """${bundleKey}"", ")
                         #set($getAliasParameters = "$getAliasParameters$bundleKey")
                         #set($defaultStr = """${viewSelectProperty.wrapper.wordyAlias}""")
+                        #set($defaultStr = $substringBeforeAS.toLowerCase())
+                        #set($defaultStr = $StrUtils.getIdentifier($defaultStr))
+                        #set($defaultStr = $StringUtils.removeEnd($defaultStr, '_'))
+                        #set($defaultStr = $StrUtils.getIdentificadorSql($defaultStr, $sqlProgrammer.maxIdentifierLength))
+                        #set($defaultStr = """${defaultStr}""")
                         #set($getAliasParameters = "$getAliasParameters$defaultStr")
                         #set($viewSelectExpression = "$substringBeforeAS AS "" + ${getAliasMethod}($getAliasParameters) + """)
                     #else

@@ -9,7 +9,6 @@
     #set($lowerEntity = $lowerStack.pop())
     #set($upperEntity = $upperStack.pop())
     #set($upperEntityTabName = $upperEntity.wrapper.sqlName)
-    #set($upperEntityTabName = $upperEntity.wrapper.sqlSchemaQualifiedShortName)
     #set($upperEntityKeyName = $upperEntity.primaryKeyProperty.wrapper.sqlName)
     #set($upperEntityColumns = $upperEntity.getMatchingColumnsList($lowerEntity.propertiesList))
     #raiseNotice()

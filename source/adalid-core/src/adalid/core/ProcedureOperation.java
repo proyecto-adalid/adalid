@@ -11,7 +11,6 @@ import adalid.core.enums.ProcedureDataType;
 import adalid.core.enums.ProcedureType;
 import java.lang.annotation.Annotation;
 import java.util.List;
-import org.apache.commons.lang.StringUtils;
 
 /**
  * @author Jorge Campins
@@ -20,8 +19,8 @@ public abstract class ProcedureOperation extends ProcessOperation {
 
     private boolean _annotatedWithProcedureOperationClass;
 
-    private String _procedureName;
-
+//  private String _procedureName;
+//
     private ProcedureType _procedureType;
 
     private ProcedureDataType _procedureDataType;
@@ -37,7 +36,8 @@ public abstract class ProcedureOperation extends ProcessOperation {
      * @return the procedure name
      */
     public String getProcedureName() {
-        return _procedureName;
+//      return _procedureName;
+        return getProcessName();
     }
 
     /**
@@ -59,7 +59,7 @@ public abstract class ProcedureOperation extends ProcessOperation {
     void initializeAnnotations() {
         super.initializeAnnotations();
         _annotatedWithProcedureOperationClass = false;
-        _procedureName = getName();
+//      _procedureName = getName();
         _procedureType = ProcedureType.SIMPLE;
         _procedureDataType = ProcedureDataType.BIGINT;
     }
@@ -84,10 +84,10 @@ public abstract class ProcedureOperation extends ProcessOperation {
         if (annotatedClass != null) {
             ProcedureOperationClass annotation = annotatedClass.getAnnotation(ProcedureOperationClass.class);
             if (annotation != null) {
-                String name = annotation.name();
-                if (StringUtils.isNotBlank(name)) {
-                    _procedureName = name;
-                }
+//              String name = annotation.name();
+//              if (StringUtils.isNotBlank(name)) {
+//                  _procedureName = name;
+//              }
                 _procedureType = annotation.type();
                 _procedureDataType = annotation.dataType();
                 _annotatedWithProcedureOperationClass = true;

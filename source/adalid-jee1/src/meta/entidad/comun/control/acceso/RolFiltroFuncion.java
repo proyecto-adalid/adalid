@@ -6,11 +6,33 @@
  */
 package meta.entidad.comun.control.acceso;
 
-import adalid.core.*;
-import adalid.core.annotations.*;
-import adalid.core.enums.*;
-import adalid.core.interfaces.*;
-import adalid.core.properties.*;
+import adalid.core.AbstractPersistentEntity;
+import adalid.core.Key;
+import adalid.core.annotations.Allocation;
+import adalid.core.annotations.ColumnField;
+import adalid.core.annotations.EntityClass;
+import adalid.core.annotations.EntityConsoleView;
+import adalid.core.annotations.EntityDeleteOperation;
+import adalid.core.annotations.EntityDetailView;
+import adalid.core.annotations.EntityInsertOperation;
+import adalid.core.annotations.EntitySelectOperation;
+import adalid.core.annotations.EntityTableView;
+import adalid.core.annotations.EntityTreeView;
+import adalid.core.annotations.EntityUpdateOperation;
+import adalid.core.annotations.ForeignKey;
+import adalid.core.annotations.ManyToOne;
+import adalid.core.annotations.PrimaryKey;
+import adalid.core.annotations.PropertyField;
+import adalid.core.annotations.VersionProperty;
+import adalid.core.enums.Kleenean;
+import adalid.core.enums.MasterDetailView;
+import adalid.core.enums.Navigability;
+import adalid.core.enums.OnDeleteAction;
+import adalid.core.enums.OnUpdateAction;
+import adalid.core.enums.ResourceGender;
+import adalid.core.enums.ResourceType;
+import adalid.core.interfaces.Artifact;
+import adalid.core.properties.LongProperty;
 import java.lang.reflect.Field;
 import meta.entidad.comun.operacion.basica.FiltroFuncion;
 import meta.proyecto.base.ProyectoBase;
@@ -67,11 +89,11 @@ public class RolFiltroFuncion extends AbstractPersistentEntity {
         super.settleAttributes();
         setSchema(ProyectoBase.getEsquemaEntidadesComunes());
         setDefaultLabel("asociación Rol/Filtro");
-        setDefaultCollectionLabel("asociaciones Rol/Filtro");
+        setDefaultCollectionLabel("Asociaciones Rol/Filtro");
 //      setDefaultLabel(idRol, "filtro por rol");
 //      setDefaultShortLabel(idRol, "filtro");
-        setDefaultCollectionLabel(idRol, "filtros por rol");
-        setDefaultCollectionShortLabel(idRol, "filtros");
+        setDefaultCollectionLabel(idRol, "Filtros por Rol");
+        setDefaultCollectionShortLabel(idRol, "Filtros");
     }
 
     @Override

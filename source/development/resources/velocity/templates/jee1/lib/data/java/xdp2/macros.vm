@@ -3,29 +3,22 @@
 #macro(setOperationVariables)
     #set($OPERATION_TYPE = "$!operation.operationType")
     #set($OPERATION_NAME = "$!operation.wrapper.javaConstantName")
-    #if($OPERATION_TYPE == '')
-        #set($TIPO_OPERACION = '')
-        #set($operationName = '')
+    #set($TIPO_OPERACION = '')
+    #if($OPERATION_TYPE == 'CRUD')
     #elseif($OPERATION_TYPE == 'EXPORT')
         #set($TIPO_OPERACION = 'ARCHIVO')
-        #set($operationName = "$!operation.exportName")
     #elseif($OPERATION_TYPE == 'REPORT')
         #set($TIPO_OPERACION = 'INFORME')
-        #set($operationName = "$!operation.reportName")
     #elseif($OPERATION_TYPE == 'PROCEDURE')
         #set($TIPO_OPERACION = 'PROCEDIMIENTO')
-        #set($operationName = "$!operation.procedureName")
     #elseif($OPERATION_TYPE == 'PROCESS')
         #set($TIPO_OPERACION = 'PROCESO')
-        #set($operationName = "$!operation.processName")
+    #end
+    #if($TIPO_OPERACION != '')
+        #set($operationName  = $operation.properName)
     #else
-        #set($TIPO_OPERACION = '')
-        #set($operationName = '')
+        #set($operationName  = '')
     #end
-    #if($operationName == '' && $TIPO_OPERACION != '')
-        #set($operationName = "$!operation.name")
-    #end
-    #set($operation_name = $javaProgrammer.getJavaLowerConstantName($operationName))
 #end##setOperationVariables
 
 #macro(writeFilterExpression)
@@ -96,16 +89,34 @@
     #end
 #end##writeNamedValues
 
-#macro(addParametros)
+#macro(addParametros $tabCount)
+    #setIndentation($tabCount)
     #foreach($property in $dataProviderColumns)
         #if($property.isAuditable())
             #if("$!property.propertyAccess" == 'RESTRICTED_READING')
-........        if (TLC.getControlador().esParametroAutorizado(COLUMNA_${property.wrapper.javaConstantName}, ${FUNCION_SELECT})) {
-........            rastro.addParametro(PARAMETRO_${property.wrapper.javaConstantName}, get${property.wrapper.javaClassName}(rowKey));
-........        }
+....$tab        if (TLC.getControlador().esParametroAutorizado(COLUMNA_${property.wrapper.javaConstantName}, ${FUNCION_SELECT})) {
+....$tab            rastro.addParametro(PARAMETRO_${property.wrapper.javaConstantName}, get${property.wrapper.javaClassName}(rowKey));
+....$tab        }
             #else
-........        rastro.addParametro(PARAMETRO_${property.wrapper.javaConstantName}, get${property.wrapper.javaClassName}(rowKey));
+....$tab        rastro.addParametro(PARAMETRO_${property.wrapper.javaConstantName}, get${property.wrapper.javaClassName}(rowKey));
             #end
         #end
     #end##foreach-property
+    #resetIndentation()
 #end##addParametros
+
+#macro(addParametrosUpdate $tabCount)
+    #setIndentation($tabCount)
+    #foreach($property in $dataProviderColumns)
+        #if($property.isAuditable())
+            #if("$!property.propertyAccess" == 'RESTRICTED_READING')
+....$tab        if (TLC.getControlador().esParametroAutorizado(COLUMNA_${property.wrapper.javaConstantName}, ${FUNCION_SELECT})) {
+....$tab            rastro.addParametro(PARAMETRO_${property.wrapper.javaConstantName}, get${property.wrapper.javaClassName}(rowKey), originalRow.getObject(COLUMNA_${property.wrapper.javaConstantName}));
+....$tab        }
+            #else
+....$tab        rastro.addParametro(PARAMETRO_${property.wrapper.javaConstantName}, get${property.wrapper.javaClassName}(rowKey), originalRow.getObject(COLUMNA_${property.wrapper.javaConstantName}));
+            #end
+        #end
+    #end##foreach-property
+    #resetIndentation()
+#end##addParametrosUpdate

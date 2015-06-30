@@ -23,4 +23,6 @@ public @interface ProjectModule {
 
     Kleenean role() default Kleenean.UNSPECIFIED; // FALSE
 
+    String helpFile() default "";
+
 }

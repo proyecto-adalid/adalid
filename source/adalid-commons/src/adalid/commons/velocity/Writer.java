@@ -248,6 +248,8 @@ public class Writer {
     // <editor-fold defaultstate="collapsed" desc="template properties file keys">
     private static final String TP_DISABLED = "disabled";
 
+    private static final String TP_DISABLED_MISSING = "disabled-when-missing";
+
     private static final String TP_TEMPLATE = "template";
 
     private static final String TP_TYPE = "template-type";
@@ -337,6 +339,8 @@ public class Writer {
     private int warnings = 0;
 
     private int errors = 0;
+
+    Set<String> optionalResourceNames;
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="instance fields' public getters and setters">
@@ -352,6 +356,14 @@ public class Writer {
      */
     public String getSubjectKey() {
         return subjectKey;
+    }
+
+    public Set<String> getOptionalResourceNames() {
+        return optionalResourceNames;
+    }
+
+    public void setOptionalResourceNames(Set<String> optionalResourceNames) {
+        this.optionalResourceNames = optionalResourceNames;
     }
     // </editor-fold>
 
@@ -406,6 +418,7 @@ public class Writer {
     }
 
     private void writePlatform(WriterContext basicWriterContext, File platformPropertiesFile) {
+        logger.info("propertiesFile=" + platformPropertiesFile.getPath());
         try {
             VelocityContext platformContext = basicWriterContext.getVelocityContextClone();
             String platform = StringUtils.removeEndIgnoreCase(platformPropertiesFile.getName(), PROPERTIES_SUFFIX);
@@ -470,7 +483,8 @@ public class Writer {
             File[] templateFiles;
             Properties templateProperties;
             String disabled;
-            String pattern = "template \"{0}\" ignored, check property \"{1}\" at file \"{2}\"";
+            String disabledMissing;
+            String pattern;
             String template;
             String message;
             String platformsFolderPath = platformsFolder.getPath(); // + FILE_SEPARATOR;
@@ -481,11 +495,20 @@ public class Writer {
                 for (File templatePropertiesFile : templateFiles) {
                     templateProperties = PropertiesHandler.loadProperties(templatePropertiesFile);
                     disabled = templateProperties.getProperty(TP_DISABLED, Boolean.FALSE.toString());
+                    disabledMissing = templateProperties.getProperty(TP_DISABLED_MISSING);
                     templates++;
                     if (BitUtils.valueOf(disabled)) {
                         disabledTemplates++;
                         template = StringUtils.removeEndIgnoreCase(templatePropertiesFile.getName(), PROPERTIES_SUFFIX);
+                        pattern = "template \"{0}\" ignored, check property \"{1}\" at file \"{2}\"";
                         message = MessageFormat.format(pattern, template, TP_DISABLED, templatePropertiesFile);
+                        log(_alertLevel, message);
+                        warnings++;
+                    } else if (missing(disabledMissing)) {
+                        disabledTemplates++;
+                        template = StringUtils.removeEndIgnoreCase(templatePropertiesFile.getName(), PROPERTIES_SUFFIX);
+                        pattern = "template \"{0}\" ignored because {3} is missing, check property \"{1}\" at file \"{2}\"";
+                        message = MessageFormat.format(pattern, template, TP_DISABLED_MISSING, templatePropertiesFile, disabledMissing);
                         log(_alertLevel, message);
                         warnings++;
                     } else {
@@ -498,6 +521,10 @@ public class Writer {
             error(throwable);
         }
         printSummary();
+    }
+
+    private boolean missing(String resourceName) {
+        return StringUtils.isNotBlank(resourceName) && optionalResourceNames != null && !optionalResourceNames.contains(resourceName);
     }
 
     private void writeTemplate(WriterContext platformWriterContext, File templatePropertiesFile) {

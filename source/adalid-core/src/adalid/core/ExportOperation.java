@@ -52,6 +52,14 @@ public abstract class ExportOperation extends Operation {
     }
 
     /**
+     * @return the proper name
+     */
+    @Override
+    public String getProperName() {
+        return _exportName;
+    }
+
+    /**
      * @return the export name
      */
     public String getExportName() {

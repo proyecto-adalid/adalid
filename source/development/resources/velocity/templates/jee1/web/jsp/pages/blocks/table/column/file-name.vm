@@ -37,7 +37,7 @@ $tab        rendered="$fieldRendered"
 $tab        required="$fieldRequired"
 $tab        text="#{${sourceVar}.value['$fieldSqlName']}"
 ##          toolTip="$field.property.wrapper.xmlValidDefaultTooltip"/>
-$tab        toolTip="BundleParametros.${page.entity.wrapper.sqlSchemaQualifiedShortName}.${field.property.wrapper.sqlName}"
+$tab        toolTip="BundleParametros.${page.entity.wrapper.sqlName}.${field.property.wrapper.sqlName}"
 $tab        validatorExpression="#{${pageBeanName}.${campo1}_validate}"/>
 $tab    <webuijsf:staticText id="${campo1}Texto1"
 $tab        binding="#{${pageBeanName}.${campo1}Texto1}"/>
@@ -48,7 +48,7 @@ $tab<webuijsf:tableColumn id="tableColumn${fieldLastName}"
 $tab    align="center"
 $tab    binding="#{${pageBeanName}.tableColumn${fieldFirstName}}"
     #if(!$field.property.headertextlessField)
-$tab    headerText="BundleParametros.${page.entity.wrapper.sqlSchemaQualifiedShortName}.${field.property.wrapper.sqlName}"
+$tab    headerText="BundleParametros.${page.entity.wrapper.sqlName}.${field.property.wrapper.sqlName}"
     #end
 $tab    rendered="true">
 $tab    <webuijsf:button id="${campo1}Boton3"

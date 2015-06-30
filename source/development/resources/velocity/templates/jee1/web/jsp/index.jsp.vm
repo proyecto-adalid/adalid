@@ -2,8 +2,15 @@
 #parseJSPMacros()
 #setJSPVariables()
 #writeXMLDeclaration()
+#*** Internet Explorer 11 seems to have a problem with these comments
 #writeJSPLicense()
 #writeJSPAuthor('Jorge Campins')
+*###
+#set($jspMenu = 'copy/Menu')
+#set($jspFavoritos = 'copy/Favoritos')
+#set($jspTarea = 'crop/consulta/recursos/basicos/tarea/TareaUsuario11')
+#set($twnTarea = "${project.rootFolderName}-war-consulta-recursos-basicos-tarea")
+#set($jspPassword = 'copy/Password')
 <%@ page import="${project.rootPackageName}.lib.base.bundle.BundleWebui" %>
 <%@ page import="${project.rootPackageName}.lib.base.util.TimeUtils" %>
 <%@ page import="${project.rootPackageName}.lib.core.control.UsuarioAutenticado" %>
@@ -215,8 +222,8 @@
         </script>
         <!--<form>-->
         <div>
-            <img onclick="gohome()" alt="" src="resources/masthead_left.png"  style="float: left"/>
-            <img onclick="gohome()" alt="" src="resources/masthead_right.png" style="float: right"/>
+            <img onclick="gohome()" alt="" src="/${project.rootFolderName}-war/resources/masthead_left.png"  style="float: left"/>
+            <img onclick="gohome()" alt="" src="/${project.rootFolderName}-war/resources/masthead_right.png" style="float: right"/>
         </div>
         <div style="clear: both"/>
         <div style="background-color: #e5e9ed; border: 1px solid gray">
@@ -231,7 +238,7 @@
             </div>
         </div>
         <div style="float: left">
-            <img onclick="gohome()" alt="" src="resources/mastbody.png"/>
+            <img onclick="gohome()" alt="" src="/${project.rootFolderName}-war/resources/mastbody.png"/>
         </div>
         <div style="float: left; margin-left: 36px">
             <%
@@ -274,22 +281,22 @@
               }
             --%>
             <br><br>
-            <a href='#' onclick="return go('copy/Menu')">
+            <a href='#' onclick="return go('$jspMenu')">
                 <% out.print(BundleWebui.getString("index.jsp.txt20", locale)); %>
             </a>
             <br><br>
-            <a href='#' onclick="return go('copy/Favoritos')">
+            <a href='#' onclick="return go('$jspFavoritos')">
                 <% out.print(BundleWebui.getString("index.jsp.txt30", locale)); %>
             </a>
             <br><br>
-            <a href='#' onclick="return go2('crop/tarea/TareaUsuario11', '${project.rootFolderName}-war-tarea')">
+            <a href='#' onclick="return go2('$jspTarea', '$twnTarea')">
                 <% out.print(BundleWebui.getString("index.jsp.txt40", locale)); %>
             </a>
             <br><br>
             <%
               if (dynrbac) {
             %>
-            <a href='#' onclick="return go('copy/Password')">
+            <a href='#' onclick="return go('$jspPassword')">
                 <% out.print(BundleWebui.getString("index.jsp.txt50", locale)); %>
             </a>
             <br><br>

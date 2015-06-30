@@ -13,7 +13,6 @@
 #macro(writeCreateTriggers)
     #resetSQLVariables()
     #set($table = $entity.wrapper.sqlTableName)
-    #set($table = $entity.wrapper.sqlSchemaQualifiedShortTableName)
     #writeTemplate('remark-table')
     #set($triggers = $VelocityAid.values($DatabaseTriggerType))
     #foreach($trigger in $triggers)
@@ -22,8 +21,10 @@
 #end##writeCreateTriggers
 
 #macro(writeCreateTrigger)
-#set($triname = "${entity.wrapper.sqlSchemaUnqualifiedShortTableName}${sql_name_separator}${trigger.adverb}_${trigger.verb}_${trigger.level}")
+#set($triname = "${table}${sql_name_separator}${trigger.adverb}_${trigger.verb}_${trigger.level}")
 #set($proname = "${table}${sql_name_separator}${trigger.adverb}_${trigger.verb}_${trigger.level}")
+#set($triname = $entity.wrapper.getSuffixedSqlName("${sql_name_separator}${trigger.adverb}_${trigger.verb}_${trigger.level}"))
+#set($proname = $entity.wrapper.getSuffixedSqlName("${sql_name_separator}${trigger.adverb}_${trigger.verb}_${trigger.level}"))
 drop trigger if exists ${triname} on ${table} cascade;
 create trigger ${triname} ${trigger.adverb} ${trigger.verb} on ${table}
     for each ${trigger.level} execute procedure ${proname}();

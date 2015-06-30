@@ -19,7 +19,6 @@ import org.apache.commons.collections.Predicate;
 public class IsModuloConsultaDisplay extends IsReadingDisplay {
 
     public IsModuloConsultaDisplay() {
-        _entityPredicate = new IsModuloConsultaEntity();
     }
 
     public IsModuloConsultaDisplay(Predicate entityPredicate) {

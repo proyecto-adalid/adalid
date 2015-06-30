@@ -82,7 +82,6 @@
         #set($sqlParametersMapSize = $sqlParametersMap.size())
         #if($sqlParametersMapSize == 0)
             #set($parameterSearchQueryKey = "${entity.wrapper.sqlName}.${property.wrapper.sqlName}")
-            #set($parameterSearchQueryKey = "${entity.wrapper.sqlSchemaQualifiedShortName}.${property.wrapper.sqlName}")
 ........    protected ConsultaBusqueda consultaBusqueda${fieldClassName} = ConsultaBusquedaBuilder.getConsultaBusqueda("$parameterSearchQueryKey");
 
         #end

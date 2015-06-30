@@ -7,7 +7,30 @@
 package meta.proyecto.comun;
 
 import adalid.core.Project;
-import meta.entidad.comun.control.prueba.*;
+import meta.entidad.comun.control.prueba.AmbientePrueba;
+import meta.entidad.comun.control.prueba.CasoPrueba;
+import meta.entidad.comun.control.prueba.DocumentoPrueba;
+import meta.entidad.comun.control.prueba.DocumentoPruebaX1;
+import meta.entidad.comun.control.prueba.DocumentoPruebaX2;
+import meta.entidad.comun.control.prueba.DocumentoPruebaX3;
+import meta.entidad.comun.control.prueba.DocumentoPruebaX4;
+import meta.entidad.comun.control.prueba.DocumentoPruebaX5;
+import meta.entidad.comun.control.prueba.DocumentoPruebaX6;
+import meta.entidad.comun.control.prueba.EjecucionLineaPrueba;
+import meta.entidad.comun.control.prueba.EjecucionPrueba;
+import meta.entidad.comun.control.prueba.EscenarioPrueba;
+import meta.entidad.comun.control.prueba.LineaPrueba;
+import meta.entidad.comun.control.prueba.PaquetePrueba;
+import meta.entidad.comun.control.prueba.ParametroLineaPrueba;
+import meta.entidad.comun.control.prueba.ParteAmbientePrueba;
+import meta.entidad.comun.control.prueba.PiezaAmbientePrueba;
+import meta.entidad.comun.control.prueba.ProgramaPrueba;
+import meta.entidad.comun.control.prueba.TipoDocumentoPrueba;
+import meta.entidad.comun.control.prueba.TipoPiezaPrueba;
+import meta.entidad.comun.control.prueba.TipoResultadoPrueba;
+import meta.paquete.comun.PaqueteConsultaControlPruebas;
+import meta.paquete.comun.PaqueteProcesamientoControlPruebas;
+import meta.paquete.comun.PaqueteRegistroControlPruebas;
 
 /**
  * @author Jorge Campins
@@ -23,25 +46,7 @@ public class ControlPruebas extends Project {
 
     AmbientePrueba AmbientePrueba;
 
-    PaquetePrueba PaquetePrueba;
-
     CasoPrueba CasoPrueba;
-
-    EscenarioPrueba EscenarioPrueba;
-
-    ProgramaPrueba ProgramaPrueba;
-
-    LineaPrueba LineaPrueba;
-
-    EjecucionPrueba EjecucionPrueba;
-
-    EjecucionLineaPrueba EjecucionLineaPrueba;
-
-    ParametroLineaPrueba ParametroLineaPrueba;
-
-    ParteAmbientePrueba ParteAmbientePrueba;
-
-    PiezaAmbientePrueba PiezaAmbientePrueba;
 
     DocumentoPrueba DocumentoPrueba;
 
@@ -56,11 +61,35 @@ public class ControlPruebas extends Project {
     DocumentoPruebaX5 DocumentoPruebaX5;
 
     DocumentoPruebaX6 DocumentoPruebaX6;
-//
-//  TipoDocumentoPrueba TipoDocumentoPrueba;
-//
-//  TipoPiezaPrueba TipoPiezaPrueba;
-//
-//  TipoResultadoPrueba TipoResultadoPrueba;
+
+    EjecucionLineaPrueba EjecucionLineaPrueba;
+
+    EjecucionPrueba EjecucionPrueba;
+
+    EscenarioPrueba EscenarioPrueba;
+
+    LineaPrueba LineaPrueba;
+
+    PaquetePrueba PaquetePrueba;
+
+    ParametroLineaPrueba ParametroLineaPrueba;
+
+    ParteAmbientePrueba ParteAmbientePrueba;
+
+    PiezaAmbientePrueba PiezaAmbientePrueba;
+
+    ProgramaPrueba ProgramaPrueba;
+
+    TipoDocumentoPrueba TipoDocumentoPrueba;
+
+    TipoPiezaPrueba TipoPiezaPrueba;
+
+    TipoResultadoPrueba TipoResultadoPrueba;
+
+    PaqueteConsultaControlPruebas consulta;
+
+    PaqueteProcesamientoControlPruebas procesamiento;
+
+    PaqueteRegistroControlPruebas registro;
 
 }

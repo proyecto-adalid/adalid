@@ -89,7 +89,7 @@
     #end
     #set($divString = '')
     #set($virtualInput = "$virtualInput listaFiltro1 campoAplicarFiltro1")
-    #set($virtualSubmt = "$virtualSubmt botonBorrarFiltro1 botonAplicarFiltro1")
+    #set($virtualSubmt = "$virtualSubmt botonBorrarFiltro1 botonComprobarFiltro1 botonAplicarFiltro1")
     #set($virtualForm5 = "virtualForm5 | $virtualInput.trim() | $virtualSubmt.trim() ")
     #set($virtualForm6 = "virtualForm6 | | botonBuscarFiltro1 botonBuscarFiltro2 botonQuitarFiltro1 botonRestaurarFiltro1 botonOcultarFiltro1 ")
 #end##setFilterVirtualForms

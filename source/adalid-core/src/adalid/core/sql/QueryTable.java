@@ -364,6 +364,7 @@ public class QueryTable {
     }
 
     /**
+     * @param primitive
      * @return the referenced joins map
      */
     public Map<String, QueryJoin> getReferencedJoinsMap(Primitive primitive) {
@@ -373,6 +374,7 @@ public class QueryTable {
     }
 
     /**
+     * @param property
      * @return the referenced joins map
      */
     public Map<String, QueryJoin> getReferencedJoinsMap(Property property) {
@@ -382,6 +384,7 @@ public class QueryTable {
     }
 
     /**
+     * @param referencedColumns
      * @return the referenced joins map
      */
     public Map<String, QueryJoin> getReferencedJoinsMap(List<Property> referencedColumns) {
@@ -567,6 +570,7 @@ public class QueryTable {
     }
 
     /**
+     * @param referencedColumns
      * @return the SQL statement
      */
     public String getSqlSelectStatement(List<Property> referencedColumns) {
@@ -574,6 +578,8 @@ public class QueryTable {
     }
 
     /**
+     * @param referencedColumns
+     * @param into
      * @return the SQL statement
      */
     public String getSqlSelectStatement(List<Property> referencedColumns, boolean into) {
@@ -581,6 +587,9 @@ public class QueryTable {
     }
 
     /**
+     * @param referencedColumns
+     * @param into
+     * @param indent
      * @return the SQL statement
      */
     public String getSqlSelectStatement(List<Property> referencedColumns, boolean into, boolean indent) {

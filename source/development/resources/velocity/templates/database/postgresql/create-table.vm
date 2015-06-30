@@ -13,7 +13,6 @@
 #macro(writeCreateTable)
     #resetSQLVariables()
     #set($table = $entity.wrapper.sqlTableName)
-    #set($table = $entity.wrapper.sqlSchemaQualifiedShortTableName)
     #writeCreateTableHeader()
     #set($properties = $entity.columnsList)
     #set($propertiesSize = $properties.size())

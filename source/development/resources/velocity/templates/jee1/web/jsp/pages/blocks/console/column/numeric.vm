@@ -1,13 +1,28 @@
+#set($fieldColumns = 20)
+#set($fieldMaxLength = 0)
 #if($parameter.isByteData())
-    #set($fieldMaxLength = 4)##-256
+    #set($fieldMaxLength = 4)##-128
 #elseif($parameter.isShortData())
     #set($fieldMaxLength = 7)##-32,768
 #elseif($parameter.isIntegerData())
     #set($fieldMaxLength = 14)##-2.147.483.648
 #elseif($parameter.isLongData())
     #set($fieldMaxLength = 26)##-9.223.372.036.854.775.808
-#else
-    #set($fieldMaxLength = 0)
+#elseif($parameter.isBigDecimalData())
+    #set($fieldPrecision = $VelocityAid.coalesce($parameter.precision, 16))
+    #set($fieldScale = $VelocityAid.coalesce($parameter.scale, 0))
+    #set($fieldMaxLength = 1 + 4 * ((2 + $fieldPrecision) / 3))
+    #if($fieldPrecision > 48)
+        #set($fieldColumns = 80)
+    #elseif($fieldPrecision > 36)
+        #set($fieldColumns = 65)
+    #elseif($fieldPrecision > 24)
+        #set($fieldColumns = 45)
+    #elseif($fieldPrecision > 18)
+        #set($fieldColumns = 30)
+    #end
+#elseif($parameter.isBigIntegerData())
+    #set($fieldMaxLength = 26)##-9.223.372.036.854.775.808
 #end
 $tab<h:panelGrid id="panelGrid${panelGridSequence.next()}"
 $tab    rendered="#{${pageBeanName}.grid${operation.wrapper.javaClassName}Rendered}"
@@ -24,7 +39,7 @@ $tab    rendered="#{${pageBeanName}.grid${operation.wrapper.javaClassName}Render
 $tab    styleClass="pdq-grid-elemento-1">
 $tab    <webuijsf:textField id="${campo1}"
 $tab        binding="#{${pageBeanName}.${campo1}}"
-$tab        columns="20"
+$tab        columns="$fieldColumns"
 $tab        converter="#{${pageBeanName}.converter${fieldFirstName}}"
         #if($fieldMaxLength > 0)
 $tab        maxLength="$fieldMaxLength"

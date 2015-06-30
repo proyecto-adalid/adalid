@@ -44,7 +44,7 @@ public interface ${javaClassSimpleName}#writeJavaExtends()#writeJavaImplements()
             #end
         #elseif($property.isBinaryPrimitive())
         #elseif($property.isBooleanPrimitive())
-            #if($property.booleanDisplayType != 'CHECKBOX' || $property.isNullable())
+            #if($property.booleanDisplayType != 'CHECKBOX' || $property.isNullable() || $checkBoxesAreNotAllowed)
                 #writeComponentGetterSignature($campo1 'DropDown')
             #else
                 #writeComponentGetterSignature($campo1 'Checkbox')

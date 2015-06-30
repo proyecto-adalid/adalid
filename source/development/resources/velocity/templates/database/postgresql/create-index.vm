@@ -13,7 +13,6 @@
 #macro(writeCreateIndexes)
     #resetSQLVariables()
     #set($table = $entity.wrapper.sqlTableName)
-    #set($table = $entity.wrapper.sqlSchemaQualifiedShortTableName)
 ## -----------------------------------------------------------------------------------------------------------
     #set($properties = $entity.columnsList)
     #foreach($property in $properties)

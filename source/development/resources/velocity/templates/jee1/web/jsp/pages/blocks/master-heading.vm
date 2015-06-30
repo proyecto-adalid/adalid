@@ -8,7 +8,7 @@ $tab    <h:panelGrid id="panelGrid${panelGridSequence.next()}" styleClass="pdq-g
 $tab        <h:panelGrid id="panelGrid${panelGridSequence.next()}">
 $tab            <webuijsf:label id="label${divString}"
 $tab                binding="#{${master}.label${divString}}"
-$tab                text="BundleDominios.${page.master.wrapper.sqlSchemaQualifiedShortName}"/>
+$tab                text="BundleDominios.${page.master.wrapper.sqlName}"/>
 $tab        </h:panelGrid>
 $tab    </h:panelGrid>
 $tab    <h:panelGrid id="panelGrid${panelGridSequence.next()}" columns="2">

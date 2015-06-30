@@ -6,11 +6,39 @@
  */
 package meta.entidad.comun.control.acceso;
 
-import adalid.core.*;
-import adalid.core.annotations.*;
-import adalid.core.enums.*;
-import adalid.core.interfaces.*;
-import adalid.core.properties.*;
+import adalid.core.AbstractPersistentEntity;
+import adalid.core.annotations.Allocation;
+import adalid.core.annotations.BusinessKey;
+import adalid.core.annotations.ColumnField;
+import adalid.core.annotations.DescriptionProperty;
+import adalid.core.annotations.EntityClass;
+import adalid.core.annotations.EntityConsoleView;
+import adalid.core.annotations.EntityDeleteOperation;
+import adalid.core.annotations.EntityDetailView;
+import adalid.core.annotations.EntityInsertOperation;
+import adalid.core.annotations.EntitySelectOperation;
+import adalid.core.annotations.EntityTableView;
+import adalid.core.annotations.EntityTreeView;
+import adalid.core.annotations.EntityUpdateOperation;
+import adalid.core.annotations.ForeignKey;
+import adalid.core.annotations.ManyToOne;
+import adalid.core.annotations.NameProperty;
+import adalid.core.annotations.PrimaryKey;
+import adalid.core.annotations.PropertyField;
+import adalid.core.annotations.StringField;
+import adalid.core.annotations.VersionProperty;
+import adalid.core.enums.Kleenean;
+import adalid.core.enums.MasterDetailView;
+import adalid.core.enums.Navigability;
+import adalid.core.enums.OnDeleteAction;
+import adalid.core.enums.OnUpdateAction;
+import adalid.core.enums.ResourceGender;
+import adalid.core.enums.ResourceType;
+import adalid.core.interfaces.Artifact;
+import adalid.core.interfaces.Segment;
+import adalid.core.properties.BooleanProperty;
+import adalid.core.properties.LongProperty;
+import adalid.core.properties.StringProperty;
 import java.lang.reflect.Field;
 import meta.entidad.comun.configuracion.basica.ClaseRecurso;
 import meta.proyecto.base.ProyectoBase;
@@ -63,14 +91,27 @@ public class ConjuntoSegmento extends AbstractPersistentEntity {
     @Allocation(maxDepth = 1, maxRound = 0)
     public ClaseRecurso idClaseRecurso;
 
+    @Allocation(maxDepth = 1, maxRound = 0)
+    @ForeignKey(onDelete = OnDeleteAction.CASCADE, onUpdate = OnUpdateAction.CASCADE)
+    @ManyToOne(navigability = Navigability.UNIDIRECTIONAL, view = MasterDetailView.NONE)
+    @PropertyField(hidden = Kleenean.TRUE)
+    public Usuario idUsuarioSupervisor;
+
+    @PropertyField(hidden = Kleenean.TRUE)
+    @StringField(maxLength = 200)
+    public StringProperty nombreClaseFabricador;
+
+    @PropertyField(hidden = Kleenean.TRUE)
+    public BooleanProperty esConjuntoEspecial;
+
     @Override
     protected void settleAttributes() {
         super.settleAttributes();
         setSchema(ProyectoBase.getEsquemaEntidadesComunes());
         setDefaultLabel("conjunto de segmentos");
         setDefaultShortLabel("conjunto");
-        setDefaultCollectionLabel("conjuntos de segmentos");
-        setDefaultCollectionShortLabel("conjuntos");
+        setDefaultCollectionLabel("Conjuntos de Segmentos");
+        setDefaultCollectionShortLabel("Conjuntos");
     }
 
     @Override
@@ -80,6 +121,25 @@ public class ConjuntoSegmento extends AbstractPersistentEntity {
         idClaseRecurso.getSearchQueryFilter().setDefaultErrorMessage(""
             + "la clase de recurso no es una clase utilizada para segmentar"
             + "");
+        esConjuntoEspecial.setInitialValue(false);
+        esConjuntoEspecial.setDefaultValue(idUsuarioSupervisor.isNotNull().or(nombreClaseFabricador.isNotNull()));
+    }
+
+    public Segment modificables;
+
+    @Override
+    protected void settleExpressions() {
+        super.settleExpressions();
+        modificables = not(esConjuntoEspecial);
+        modificables.setDefaultErrorMessage("el conjunto es un conjunto de configuración básica del sistema; "
+            + "no se permite modificarlo ni eliminarlo");
+    }
+
+    @Override
+    protected void settleFilters() {
+        super.settleFilters();
+        setUpdateFilter(modificables);
+        setDeleteFilter(modificables);
     }
 
 }

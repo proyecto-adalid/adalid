@@ -23,7 +23,6 @@
             #foreach($column_name in $map.keySet())
                 #set($property = $map.get($column_name))
                 #set($codigo = "${entityName}.${key}.${column_name}")
-                #set($codigo = "${entity.wrapper.sqlSchemaQualifiedShortName}.${key}.${column_name}")
                 #if($property.declaringEntity == $entity)
                     #set($nombre = $property.wrapper.validDefaultShortLabel)
                 #else
@@ -48,7 +47,6 @@
             #set($dataProviderColumns = $entity.dataProviderColumnsList)
             #foreach($property in $dataProviderColumns)
                 #set($codigo = "${entityName}.${key}.${property.wrapper.sqlName}")
-                #set($codigo = "${entity.wrapper.sqlSchemaQualifiedShortName}.${key}.${property.wrapper.sqlName}")
                 #set($nombre = "${property.wrapper.validDefaultLabel}")
                 #set($search = $FALSE)
                 #writeInsertRow($property)
@@ -56,6 +54,7 @@
         #end
     #end##foreach-key
 #end##foreach-entity
+select count(*) from funcion_parametro;
 #break
 
 #macro(setEnabledIndicator)
@@ -80,7 +79,7 @@
 
 #macro(writeInsertRow $parameter)
 insert
-into public.funcion_parametro
+into funcion_parametro
     (
     id_funcion_parametro,
     codigo_funcion_parametro,
@@ -104,7 +103,7 @@ values
 ##
 ##  id_funcion_parametro
 ##
-    nextval('public.funcion_parametro_sq___'),
+    nextval('funcion_parametro_sq___'),
 ##
 ##  codigo_funcion_parametro
 ##

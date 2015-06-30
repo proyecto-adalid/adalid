@@ -13,7 +13,6 @@
 #macro(writeDropSequence)
     #resetSQLVariables()
     #set($table = $entity.wrapper.sqlTableName)
-    #set($table = $entity.wrapper.sqlSchemaQualifiedShortTableName)
     #setGlobalSequenceName($entity)
     #set($sequence = $globalConstraintName)
     #writeDropSequenceStatement()

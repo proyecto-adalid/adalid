@@ -145,6 +145,13 @@ public class ReportGroup extends AbstractArtifact implements Comparable<ReportGr
     }
 
     /**
+     * @return the index
+     */
+    public int getIndex() {
+        return _report == null ? 0 : _report.getGroups().indexOf(this) + 1;
+    }
+
+    /**
      * @return the report
      */
     public Report getReport() {

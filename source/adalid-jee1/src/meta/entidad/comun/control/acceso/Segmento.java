@@ -6,11 +6,25 @@
  */
 package meta.entidad.comun.control.acceso;
 
-import adalid.core.*;
-import adalid.core.annotations.*;
-import adalid.core.enums.*;
-import adalid.core.interfaces.*;
-import adalid.core.properties.*;
+import adalid.core.AbstractPersistentEntity;
+import adalid.core.annotations.BusinessKey;
+import adalid.core.annotations.EntityClass;
+import adalid.core.annotations.EntityConsoleView;
+import adalid.core.annotations.EntityDeleteOperation;
+import adalid.core.annotations.EntityDetailView;
+import adalid.core.annotations.EntityInsertOperation;
+import adalid.core.annotations.EntitySelectOperation;
+import adalid.core.annotations.EntityTableView;
+import adalid.core.annotations.EntityTreeView;
+import adalid.core.annotations.EntityUpdateOperation;
+import adalid.core.annotations.NameProperty;
+import adalid.core.annotations.PrimaryKey;
+import adalid.core.enums.Kleenean;
+import adalid.core.enums.ResourceGender;
+import adalid.core.enums.ResourceType;
+import adalid.core.interfaces.Artifact;
+import adalid.core.properties.LongProperty;
+import adalid.core.properties.StringProperty;
 import java.lang.reflect.Field;
 import meta.proyecto.base.ProyectoBase;
 
@@ -54,8 +68,8 @@ public class Segmento extends AbstractPersistentEntity {
         setSchema(ProyectoBase.getEsquemaEntidadesComunes());
         setDefaultLabel("segmento");
 //      setDefaultShortLabel("segmento");
-        setDefaultCollectionLabel("segmentos");
-//      setDefaultCollectionShortLabel("segmentos");
+        setDefaultCollectionLabel("Segmentos");
+//      setDefaultCollectionShortLabel("Segmentos");
     }
 
 }

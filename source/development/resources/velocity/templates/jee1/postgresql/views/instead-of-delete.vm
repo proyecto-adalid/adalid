@@ -1,6 +1,5 @@
 #if($upperEntity)
     #set($upperEntityTabName = $upperEntity.wrapper.sqlName)
-    #set($upperEntityTabName = $upperEntity.wrapper.sqlSchemaQualifiedShortName)
     #set($upperEntityKeyName = $upperEntity.primaryKeyProperty.wrapper.sqlName)
     #raiseNotice()
 ....${tab}delete from $upperEntityTabName where ${upperEntityKeyName} = old.${upperEntityKeyName};

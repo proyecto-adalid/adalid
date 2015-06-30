@@ -24,7 +24,6 @@
                 #set($stateErrorMessageBundle = 'BundleDominios')
                 #set($stateErrorMessageBundleMethod = 'getStateError')
                 #set($stateErrorMessageBundleKey = "${page.entity.wrapper.sqlName}.${state.wrapper.sqlName}")
-                #set($stateErrorMessageBundleKey = "${page.entity.wrapper.sqlSchemaQualifiedShortName}.${state.wrapper.sqlName}")
                 #set($stateExpressionDefaultErrorMessage = "$!state.wrapper.bundleDefaultErrorMessageChoice")
                 #if($stateExpressionDefaultErrorMessage != '')
 ............        if (!allow) {
@@ -55,7 +54,6 @@
     private boolean ${operationName}_${check.wrapper.javaVariableName}() {
         Object obj;
         #set($errorMessageBundleKey = "<${page.entity.wrapper.sqlName}.${operation.wrapper.sqlName}.${check.wrapper.sqlName}>")
-        #set($errorMessageBundleKey = "<${page.entity.wrapper.sqlSchemaQualifiedShortName}.${operation.wrapper.sqlName}.${check.wrapper.sqlName}>")
         #set($parameterizedExpression = $check.wrapper.javaParameterizedExpression)
         #set($expressionParametersMap = $parameterizedExpression.parametersMap)
         #set($namedValuesMap = $parameterizedExpression.namedValuesMap)
@@ -90,7 +88,6 @@
 
 #macro(writeStateExpressionErrorMessage)
     #set($parameterSearchQueryKey = "${page.entity.wrapper.sqlName}.${operation.wrapper.sqlName}.${operation.instanceParameter.wrapper.sqlName}")
-    #set($parameterSearchQueryKey = "${page.entity.wrapper.sqlSchemaQualifiedShortName}.${operation.wrapper.sqlName}.${operation.instanceParameter.wrapper.sqlName}")
         if (!allow) {
             String arg0 = BundleParametros.getLabel("${parameterSearchQueryKey}");
             String arg1 = ObjUtils.toString($entityVariableName);
@@ -112,7 +109,6 @@
 
 #macro(writeStateExpressionErrorMessageJoin)
     #set($parameterSearchQueryKey = "${page.entity.wrapper.sqlName}.${operation.wrapper.sqlName}.${operation.instanceParameter.wrapper.sqlName}")
-    #set($parameterSearchQueryKey = "${page.entity.wrapper.sqlSchemaQualifiedShortName}.${operation.wrapper.sqlName}.${operation.instanceParameter.wrapper.sqlName}")
         if (!allow) {
             String arg0 = BundleParametros.getLabel("${parameterSearchQueryKey}");
             String arg1 = ObjUtils.toString($entityVariableName);

@@ -12,8 +12,8 @@
             var htm = getParametro(unescape(location.search), '?', 'htm=', '&');
         //  alert(jsp);
         //  alert(htm);
-            if (jsp == '' || htm == '') {
-                alert('no existe un archivo de ayuda que corresponda a esta pagina')
+            if (htm == '') {
+            //  alert('no existe un archivo de ayuda que corresponda a esta pagina')
             } else {
                 go(htm, jsp);
             }
@@ -39,7 +39,7 @@
             function go(htm, jsp) {
             //  var url = location.protocol + '//' + location.host + '/${project.rootFolderName}-war/ayuda.html' + location.search;
             //  alert(htm + '#' + jsp);
-                var pdq = location.pathname.replace(/ayuda\.html/gi, 'resources' + '/' + htm + '.' + 'htm');
+                var pdq = location.pathname.replace(/ayuda\.html/gi, 'resources' + '/' + htm);
                 var url = location.protocol + '//' + location.host + pdq;
                 if (jsp != '') {
                     url += "#" + jsp
@@ -63,7 +63,7 @@
             ${project.wrapper.htmlValidDefaultLabel}
         </b>
         <br><br>
-        <img alt="warning" src="resources/warning_medium.gif"/>
+        <img alt="warning" src="/${project.rootFolderName}-war/resources/warning_medium.gif"/>
         <a>
             P&aacute;gina en construcci&oacute;n
         </a>

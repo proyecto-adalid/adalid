@@ -1,19 +1,34 @@
+#set($fieldColumns = 20)
+#set($fieldMaxLength = 0)
 #if($field.property.isByteData())
-    #set($fieldMaxLength = 4)##-256
+    #set($fieldMaxLength = 4)##-128
 #elseif($field.property.isShortData())
     #set($fieldMaxLength = 7)##-32,768
 #elseif($field.property.isIntegerData())
     #set($fieldMaxLength = 14)##-2.147.483.648
 #elseif($field.property.isLongData())
     #set($fieldMaxLength = 26)##-9.223.372.036.854.775.808
-#else
-    #set($fieldMaxLength = 0)
+#elseif($field.property.isBigDecimalData())
+    #set($fieldPrecision = $VelocityAid.coalesce($field.property.precision, 16))
+    #set($fieldScale = $VelocityAid.coalesce($field.property.scale, 0))
+    #set($fieldMaxLength = 1 + 4 * ((2 + $fieldPrecision) / 3))
+    #if($fieldPrecision > 48)
+        #set($fieldColumns = 80)
+    #elseif($fieldPrecision > 36)
+        #set($fieldColumns = 65)
+    #elseif($fieldPrecision > 24)
+        #set($fieldColumns = 45)
+    #elseif($fieldPrecision > 18)
+        #set($fieldColumns = 30)
+    #end
+#elseif($field.property.isBigIntegerData())
+    #set($fieldMaxLength = 26)##-9.223.372.036.854.775.808
 #end
 $tab<webuijsf:tableColumn id="tableColumn${fieldFirstName}"
 $tab    binding="#{${pageBeanName}.tableColumn${fieldFirstName}}"
     #if(!$field.property.headertextlessField)
 ##      headerText="$field.property.wrapper.xmlValidDefaultShortLabel"
-$tab    headerText="BundleParametros.${page.entity.wrapper.sqlSchemaQualifiedShortName}.${field.property.wrapper.sqlName}"
+$tab    headerText="BundleParametros.${page.entity.wrapper.sqlName}.${field.property.wrapper.sqlName}"
     #end
 ##      rendered="true"
 $tab    rendered="#{${pageBeanName}.asistente.column${fieldClassName}Rendered}"
@@ -23,7 +38,7 @@ $tab        binding="#{${pageBeanName}.label${fieldFirstName}}"
 $tab        for="${campo1}"/>
 $tab    <webuijsf:textField id="${campo1}"
 $tab        binding="#{${pageBeanName}.$campo1}"
-$tab        columns="20"
+$tab        columns="$fieldColumns"
 $tab        converter="#{${pageBeanName}.converter${fieldFirstName}}"
         #if($fieldMaxLength > 0)
 $tab        maxLength="$fieldMaxLength"
@@ -33,7 +48,7 @@ $tab        rendered="$fieldRendered"
 $tab        required="$fieldRequired"
 $tab        text="#{${sourceVar}.value['$fieldSqlName']}"
 ##          toolTip="$field.property.wrapper.xmlValidDefaultTooltip"
-$tab        toolTip="BundleParametros.${page.entity.wrapper.sqlSchemaQualifiedShortName}.${field.property.wrapper.sqlName}"
+$tab        toolTip="BundleParametros.${page.entity.wrapper.sqlName}.${field.property.wrapper.sqlName}"
 $tab        validatorExpression="#{${pageBeanName}.${campo1}_validate}"/>
 $tab    <webuijsf:staticText id="${campo1}Texto1"
 $tab        binding="#{${pageBeanName}.${campo1}Texto1}"

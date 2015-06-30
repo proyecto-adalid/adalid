@@ -11,26 +11,32 @@ package adalid.core.enums;
  */
 public enum DatabaseTriggerType {
 
-    BEFORE_INSERT_ROW("before", "insert", "row", "new"),
-    BEFORE_UPDATE_ROW("before", "update", "row", "new"),
-    BEFORE_DELETE_ROW("before", "delete", "row", "old"),
-    AFTER_INSERT_ROW("after", "insert", "row", "null"),
-    AFTER_UPDATE_ROW("after", "update", "row", "null"),
-    AFTER_DELETE_ROW("after", "delete", "row", "null");
+    BEFORE_INSERT_ROW("before", "insert", "row", "new", "bir", "bix"),
+    BEFORE_UPDATE_ROW("before", "update", "row", "new", "bur", "bux"),
+    BEFORE_DELETE_ROW("before", "delete", "row", "old", "bdr", "bdx"),
+    AFTER_INSERT_ROW("after", "insert", "row", "null", "air", "aix"),
+    AFTER_UPDATE_ROW("after", "update", "row", "null", "aur", "aux"),
+    AFTER_DELETE_ROW("after", "delete", "row", "null", "adr", "adx");
 
-    private String _adverb;
+    private final String _adverb;
 
-    private String _verb;
+    private final String _verb;
 
-    private String _level;
+    private final String _level;
 
-    private String _variable;
+    private final String _variable;
 
-    DatabaseTriggerType(String adverb, String verb, String level, String variable) {
+    private final String _acronym;
+
+    private final String _anonym;
+
+    private DatabaseTriggerType(String adverb, String verb, String level, String variable, String acronym, String anonym) {
         _adverb = adverb;
         _verb = verb;
         _level = level;
         _variable = variable;
+        _acronym = acronym;
+        _anonym = anonym;
     }
 
     public String getAdverb() {
@@ -47,6 +53,14 @@ public enum DatabaseTriggerType {
 
     public String getReturnVariable() {
         return _variable;
+    }
+
+    public String getAcronym() {
+        return _acronym;
+    }
+
+    public String getAnonym() {
+        return _anonym;
     }
 
 }

@@ -1,0 +1,6 @@
+#break
+
+#macro(setJSFVariables)
+    #set($checkBoxesAreAllowed = $TRUE)
+    #set($checkBoxesAreNotAllowed = $FALSE)
+#end##setJSFVariables

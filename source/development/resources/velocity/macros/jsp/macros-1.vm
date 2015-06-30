@@ -2,6 +2,7 @@
 
 #macro(setJSPVariables)
     #setGlobalVariables()
+    #setJSFVariables()
     #set($javaClassSimpleName = $StringUtils.removeEndIgnoreCase($fileName, '.jsp'))
 #end##setJSPVariables
 

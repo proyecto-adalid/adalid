@@ -14,12 +14,10 @@ public class ${javaClassSimpleName}#writeJavaImplements()
         if (key == null || key.trim().isEmpty()) {
             return null;
         #foreach($entity in $entities)
-            #set($codex = "$entity.wrapper.sqlName")
-            #set($codex = "$entity.wrapper.sqlSchemaQualifiedShortName")
             #set($columns = $entity.dataProviderColumnsList)
             #foreach($column in $columns)
                 #if($column.isPersistentEntity() && !$column.isPersistentEnumerationEntity() && !$column.isHiddenField() && $column.searchQueryFilter)
-                    #set($searchQueryKey = "${codex}.${column.wrapper.sqlName}")
+                    #set($searchQueryKey = "${entity.wrapper.sqlName}.${column.wrapper.sqlName}")
                     #writeConsultaBusqueda1($column)
                 #end
             #end##foreach-column
@@ -27,7 +25,7 @@ public class ${javaClassSimpleName}#writeJavaImplements()
             #foreach($operation in $operations)
                 #foreach($parameter in $operation.parametersList)
                     #if($parameter.isPersistentEntity() && !$parameter.isPersistentEnumerationEntity() && $parameter.searchQueryFilter)
-                        #set($searchQueryKey = "${codex}.${operation.wrapper.sqlName}.${parameter.wrapper.sqlName}")
+                        #set($searchQueryKey = "${entity.wrapper.sqlName}.${operation.wrapper.sqlName}.${parameter.wrapper.sqlName}")
                         #writeConsultaBusqueda1($parameter)
                     #end
                 #end##foreach-parameter
@@ -56,12 +54,10 @@ public class ${javaClassSimpleName}#writeJavaImplements()
 
 #end
 #foreach($entity in $entities)
-    #set($codex = "$entity.wrapper.sqlName")
-    #set($codex = "$entity.wrapper.sqlSchemaQualifiedShortName")
     #set($columns = $entity.dataProviderColumnsList)
     #foreach($column in $columns)
         #if($column.isPersistentEntity() && !$column.isPersistentEnumerationEntity() && !$column.isHiddenField() && $column.searchQueryFilter)
-            #set($searchQueryKey = "${codex}.${column.wrapper.sqlName}")
+            #set($searchQueryKey = "${entity.wrapper.sqlName}.${column.wrapper.sqlName}")
             #writeConsultaBusqueda2($column)
         #end
     #end##foreach-column
@@ -69,7 +65,7 @@ public class ${javaClassSimpleName}#writeJavaImplements()
     #foreach($operation in $operations)
         #foreach($parameter in $operation.parametersList)
             #if($parameter.isPersistentEntity() && !$parameter.isPersistentEnumerationEntity() && $parameter.searchQueryFilter)
-                #set($searchQueryKey = "${codex}.${operation.wrapper.sqlName}.${parameter.wrapper.sqlName}")
+                #set($searchQueryKey = "${entity.wrapper.sqlName}.${operation.wrapper.sqlName}.${parameter.wrapper.sqlName}")
                 #writeConsultaBusqueda2($parameter)
             #end
         #end##foreach-parameter

@@ -16,7 +16,6 @@
 
 #macro(writeValidatorExpression)
     #set($parameterSearchQueryKey = "${page.entity.wrapper.sqlName}.${operation.wrapper.sqlName}.${parameter.wrapper.sqlName}")
-    #set($parameterSearchQueryKey = "${page.entity.wrapper.sqlSchemaQualifiedShortName}.${operation.wrapper.sqlName}.${parameter.wrapper.sqlName}")
     #set($validInputFileTypes = '')
     #foreach($mimeType in $parameter.validInputFileTypes)
         #set($validInputFileTypes = "$validInputFileTypes, ""$mimeType.name().toLowerCase()""")

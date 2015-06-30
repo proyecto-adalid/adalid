@@ -13,7 +13,6 @@
 #macro(writeInsertRows)
     #resetSQLVariables()
     #set($table = $entity.wrapper.sqlTableName)
-    #set($table = $entity.wrapper.sqlSchemaQualifiedShortTableName)
     #writeTemplate('remark-table')
     #set($rows = $entity.insertableRowsList)
     #foreach($row in $rows)

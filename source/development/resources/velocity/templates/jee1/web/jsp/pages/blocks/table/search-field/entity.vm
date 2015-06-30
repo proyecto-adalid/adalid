@@ -5,7 +5,7 @@ $tab    <webuijsf:image id="image${fieldFirstName}${divString}" url="#{${filter}
 $tab    <webuijsf:label id="label${fieldFirstName}${divString}"
 $tab        binding="#{${filter}.label${fieldFirstName}${divString}}"
 $tab        for="${campo1}${divString}"
-$tab        text="BundleParametros.${page.entity.wrapper.sqlSchemaQualifiedShortName}.${field.property.wrapper.sqlName}"/>
+$tab        text="BundleParametros.${page.entity.wrapper.sqlName}.${field.property.wrapper.sqlName}"/>
 $tab</h:panelGrid>
 $tab<h:panelGrid id="panelGrid${panelGridSequence.next()}"
 $tab    columns="7"
@@ -18,7 +18,7 @@ $tab        converter="#{${filter}.${campo1}${divString}Converter}"
 $tab        readOnly="$fieldReadOnly"
 $tab        required="$fieldRequired"
 $tab        text="#{${filter}.${campo1}${divString}Text}"
-$tab        toolTip="BundleParametros.${page.entity.wrapper.sqlSchemaQualifiedShortName}.${field.property.wrapper.sqlName}"/>
+$tab        toolTip="BundleParametros.${page.entity.wrapper.sqlName}.${field.property.wrapper.sqlName}"/>
     #if($fieldSearchType == 'DISPLAY')
 $tab    <webuijsf:button id="${campo1}${divString}Boton1"
 $tab        binding="#{${filter}.${campo1}${divString}Boton1}"
@@ -47,7 +47,7 @@ $tab<h:panelGrid id="panelGrid${panelGridSequence.next()}"
 $tab    rendered="#{${pageBeanName}.asistente.column${fieldClassName}Rendered}">
 $tab    <webuijsf:label id="label${fieldMiddleName}${divString}"
 $tab        binding="#{${filter}.label${fieldMiddleName}${divString}}"
-$tab        text="BundleParametros.${page.entity.wrapper.sqlSchemaQualifiedShortName}.${field.property.wrapper.sqlName}.${field.foreignNameField.property.wrapper.sqlName}"/>
+$tab        text="BundleParametros.${page.entity.wrapper.sqlName}.${field.property.wrapper.sqlName}.${field.foreignNameField.property.wrapper.sqlName}"/>
 $tab</h:panelGrid>
 $tab<h:panelGrid id="panelGrid${panelGridSequence.next()}"
 $tab    columns="7"

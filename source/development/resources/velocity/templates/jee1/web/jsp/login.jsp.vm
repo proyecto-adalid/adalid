@@ -2,8 +2,10 @@
 #parseJSPMacros()
 #setJSPVariables()
 #writeXMLDeclaration()
+#*** Internet Explorer 11 seems to have a problem with these comments
 #writeJSPLicense()
 #writeJSPAuthor('Jorge Campins')
+*###
 <%@ page import="${project.rootPackageName}.lib.base.bundle.BundleWebui" %>
 <%@ page import="java.util.Locale" %>
 <%
@@ -69,8 +71,8 @@
         </script>
         <form method="POST" action="j_security_check" onsubmit="culminate()">
             <div>
-                <img alt="" src="resources/masthead_left.png" style="float: left"/>
-                <img alt="" src="resources/masthead_right.png" style="float: right"/>
+                <img alt="" src="/${project.rootFolderName}-war/resources/masthead_left.png" style="float: left"/>
+                <img alt="" src="/${project.rootFolderName}-war/resources/masthead_right.png" style="float: right"/>
             </div>
             <div style="clear: both"/>
             <div style="background-color: #e5e9ed; border: 1px solid gray">
@@ -85,7 +87,7 @@
                 </div>
             </div>
             <div style="float: left">
-                <img onclick="gohome()" alt="" src="resources/mastbody.png"/>
+                <img onclick="gohome()" alt="" src="/${project.rootFolderName}-war/resources/mastbody.png"/>
             </div>
             <%
               if (dbcok && dirok) {
@@ -123,6 +125,7 @@
                     </div>
                 </div>
             </div>
+#***
             <%
               if (dirok) {
             %>
@@ -188,6 +191,7 @@
             <%
               }
             %>
+*###
         </form>
     </body>
 </html>

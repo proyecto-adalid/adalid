@@ -22,7 +22,6 @@ import adalid.core.interfaces.Property;
 import adalid.core.interfaces.SqlProgrammer;
 import adalid.core.programmers.ChiefProgrammer;
 import adalid.core.programmers.ParameterizedExpression;
-import java.text.MessageFormat;
 import org.apache.commons.lang.StringUtils;
 
 /**
@@ -243,24 +242,54 @@ public class ArtifactWrapper implements Wrapper {
     }
 
     private String labelOf(Entity entity, KeyProperty keyProperty) {
+//      return entity.depth() == 0 && KeyProperty.PRIMARY_KEY.equals(keyProperty) ? labelOf(entity)
+//          : entity.depth() == 1 && KeyProperty.BUSINESS_KEY.equals(keyProperty) ? labelOf(entity)
+//              : shortWordyLabel(entity, false); // keyLabelOf(entity, keyProperty);
         return entity.depth() == 0 && KeyProperty.PRIMARY_KEY.equals(keyProperty) ? labelOf(entity)
-            : entity.depth() == 1 && KeyProperty.BUSINESS_KEY.equals(keyProperty) ? labelOf(entity)
-                : keyLabelOf(entity, keyProperty);
+            : shortWordyLabel(entity, false); // keyLabelOf(entity, keyProperty);
     }
 
     private String shortLabelOf(Entity entity, KeyProperty keyProperty, boolean b) {
-        return entity.depth() == 0 ? keyProperty.getLabel()
-            : b && entity.depth() == 1 && KeyProperty.BUSINESS_KEY.equals(keyProperty) ? labelOf(entity)
-                : keyLabelOf(entity, keyProperty);
+        if (entity.depth() == 0) {
+            if (KeyProperty.PRIMARY_KEY.equals(keyProperty)) {
+                return shortLabelOf(entity);
+            }
+            return shortWordyName(entity); // keyProperty.getLabel()
+        }
+        if (b) {
+            if (entity.depth() == 1) {
+                if (KeyProperty.BUSINESS_KEY.equals(keyProperty)) {
+//                  return labelOf(entity);
+                    return shortWordyLabel(entity, true);
+                }
+                if (KeyProperty.NAME.equals(keyProperty)) {
+                    return shortWordyLabel(entity, true);
+                }
+            }
+//          return keyLabelOf(entity, keyProperty);
+        }
+        return shortWordyName(entity.getRoot());
     }
 
-    private String keyLabelOf(Entity entity, KeyProperty keyProperty) {
-        String pattern = keyProperty.getLabelPattern();
-        String label = shortLabelOf(entity);
+//  private String keyLabelOf(Entity entity, KeyProperty keyProperty) {
+//      String pattern = keyProperty.getLabelPattern();
+//      String label = shortLabelOf(entity);
+//      String connector = entity.getResourceGender() == null ? "" : entity.getResourceGender().getConnector();
+//      String string = MessageFormat.format(pattern, label, connector);
+//      string = StringUtils.trim(StringUtils.replace(string, "  ", " "));
+//      return string;
+//  }
+//
+    private String shortWordyLabel(Entity entity, boolean shortest) {
+        String name = shortWordyName(entity.getRoot());
         String connector = entity.getResourceGender() == null ? "" : entity.getResourceGender().getConnector();
-        String string = MessageFormat.format(pattern, label, connector);
-        string = StringUtils.trim(StringUtils.replace(string, "  ", " "));
+        String label = shortest ? shortLabelOf(entity) : labelOf(entity);
+        String string = StringUtils.trim(StringUtils.replace(name + " " + connector + " " + label, "  ", " "));
         return string;
+    }
+
+    private String shortWordyName(Entity entity) {
+        return StrUtils.removeWholeWord(getWordyName(), StrUtils.getWordyString(entity.getName()));
     }
 
     public String getBundleWordyName() {
@@ -336,11 +365,8 @@ public class ArtifactWrapper implements Wrapper {
     }
 
     protected String getBundleValueString(String string) {
-        if (StringUtils.isNotBlank(string)) {
-            BundleProgrammer bundleProgrammer = ChiefProgrammer.getBundleProgrammer();
-            return bundleProgrammer == null ? StrUtils.getStringJava(string) : bundleProgrammer.getValueString(string);
-        }
-        return null;
+        BundleProgrammer bundleProgrammer = ChiefProgrammer.getBundleProgrammer();
+        return bundleProgrammer == null ? StrUtils.getStringJava(string) : bundleProgrammer.getValueString(string);
     }
 
     /**
@@ -453,11 +479,8 @@ public class ArtifactWrapper implements Wrapper {
     }
 
     protected String getJavaString(String string) {
-        if (StringUtils.isNotBlank(string)) {
-            JavaProgrammer javaProgrammer = ChiefProgrammer.getJavaProgrammer();
-            return javaProgrammer == null ? StrUtils.getStringJava(string) : javaProgrammer.getJavaString(string);
-        }
-        return null;
+        JavaProgrammer javaProgrammer = ChiefProgrammer.getJavaProgrammer();
+        return javaProgrammer == null ? StrUtils.getStringJava(string) : javaProgrammer.getJavaString(string);
     }
 
     public String getHtmlWordyName() {
@@ -525,10 +548,7 @@ public class ArtifactWrapper implements Wrapper {
     }
 
     protected String getHtmlString(String string) {
-        if (StringUtils.isNotBlank(string)) {
-            return StrUtils.getStringHtml(string);
-        }
-        return null;
+        return StrUtils.getStringHtml(string);
     }
 
     public String getXmlWordyName() {
@@ -596,10 +616,7 @@ public class ArtifactWrapper implements Wrapper {
     }
 
     protected String getXmlString(String string) {
-        if (StringUtils.isNotBlank(string)) {
-            return StrUtils.getStringXml(string);
-        }
-        return null;
+        return StrUtils.getStringXml(string);
     }
 
     /**

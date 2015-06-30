@@ -13,7 +13,6 @@
 #macro(writeUpdateSequence)
     #resetSQLVariables()
     #set($table = $entity.wrapper.sqlTableName)
-    #set($table = $entity.wrapper.sqlSchemaQualifiedShortTableName)
     #set($keyname = $entity.primaryKeyProperty.wrapper.sqlName)
     #set($keytype = $entity.primaryKeyProperty.wrapper.sqlType)
     #setGlobalSequenceName($entity)

@@ -7,7 +7,17 @@
 package meta.proyecto.comun;
 
 import adalid.core.Project;
-import meta.entidad.comun.operacion.basica.*;
+import meta.entidad.comun.operacion.basica.CondicionTarea;
+import meta.entidad.comun.operacion.basica.FiltroFuncion;
+import meta.entidad.comun.operacion.basica.FiltroFuncionPar;
+import meta.entidad.comun.operacion.basica.OperadorCom;
+import meta.entidad.comun.operacion.basica.PaginaUsuario;
+import meta.entidad.comun.operacion.basica.RecursoValor;
+import meta.entidad.comun.operacion.basica.TareaUsuario;
+import meta.entidad.comun.operacion.basica.TareaVirtual;
+import meta.entidad.comun.operacion.basica.TipoAgregacion;
+import meta.entidad.comun.operacion.basica.VistaFuncion;
+import meta.entidad.comun.operacion.basica.VistaFuncionCol;
 
 /**
  * @author Jorge Campins
@@ -21,26 +31,26 @@ public class OperacionBasica extends Project {
         setDefaultDescription("Operación Básica");
     }
 
+    CondicionTarea CondicionTarea;
+
     FiltroFuncion FiltroFuncion;
 
     FiltroFuncionPar FiltroFuncionPar;
+
+    OperadorCom OperadorCom;
 
     PaginaUsuario Favoritos;
 
     RecursoValor RecursoValor;
 
-    Tarea Tarea;
-
     TareaUsuario TareaUsuario;
+
+    TareaVirtual TareaVirtual;
+
+    TipoAgregacion TipoAgregacion;
 
     VistaFuncion VistaFuncion;
 
     VistaFuncionCol VistaFuncionPar;
-//
-//  CondicionTarea CondicionTarea;
-//
-//  OperadorCom OperadorCom;
-//
-//  TipoAgregacion TipoAgregacion;
 
 }

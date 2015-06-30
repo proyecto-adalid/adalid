@@ -3,7 +3,6 @@
 #writePostgreSQLLicense()
 #writePostgreSQLAuthor('Jorge Campins')
 #set($view = "informe_${entity.wrapper.sqlName}")
-#set($view = "${entity.wrapper.sqlSchemaQualifier}informe_${entity.wrapper.sqlSchemaUnqualifiedShortName}")
 #set($query = $entity.queryTable)
 #set($statement = $query.getSqlSelectStatement())
 #set($discriminatorTable  = '')
@@ -12,8 +11,7 @@
 #set($strategy = "$!entity.inheritanceMappingStrategy")
 #if($strategy == 'SINGLE_TABLE' || $strategy == 'JOINED')
     #if($entity.discriminatorProperty)
-        #set($discriminatorTable  = "$!entity.discriminatorProperty.declaringFieldPersistentEntityRoot.wrapper.sqlName")
-        #set($discriminatorTable  = "$!entity.discriminatorProperty.declaringFieldPersistentEntityRoot.wrapper.sqlSchemaUnqualifiedShortName")
+        #set($discriminatorTable  = "$!entity.discriminatorProperty.declaringFieldPersistentEntityRoot.wrapper.sqlTableName")
         #set($discriminatorColumn = "$!entity.discriminatorProperty.wrapper.sqlName")
         #set($discriminatorValues = $entity.wrapper.sqlDiscriminatorValues)
     #end
@@ -26,7 +24,6 @@ drop view if exists $view cascade;
 create view $view as
 $statement.replace("$EOL", "$EOL    ")
 #set($pdqName = $entity.wrapper.sqlName)
-#set($pdqName = $entity.wrapper.sqlSchemaUnqualifiedShortName)
 #if($discriminatorTable != '' && $discriminatorTable != $pdqName && $discriminatorColumn != '' && !$discriminatorValues.isEmpty())
     #set($discriminatorSentence = "where")
     #set($discriminatorOrClause = "")

@@ -37,7 +37,9 @@ public class Trigger extends AbstractArtifact {
     public Trigger(State state, ProcessOperation operation) {
         _state = state;
         _operation = operation;
-        setName(state + "_" + operation);
+        if (state != null && operation != null) {
+            setName(operation.getName() + "_" + state.getName());
+        }
     }
 
     public void settle(State state, ProcessOperation operation) {

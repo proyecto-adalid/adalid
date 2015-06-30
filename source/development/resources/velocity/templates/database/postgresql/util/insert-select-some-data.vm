@@ -8,9 +8,7 @@
     #if($entity.isDataGenEnabled() && !$entity.isAbstractClass())
         #resetSQLVariables()
         #set($nttname = $entity.wrapper.sqlName)
-        #set($nttname = $entity.wrapper.sqlSchemaUnqualifiedShortName)
         #set($tabname = $entity.wrapper.sqlTableName)
-        #set($tabname = $entity.wrapper.sqlSchemaQualifiedShortTableName)
         #set($keyname = $entity.primaryKeyProperty.wrapper.sqlName)
         #set($keytype = $entity.wrapper.sqlType)
         #set($hierarchyRoot = $entity.hierarchyRoot)
@@ -26,7 +24,7 @@
         #end
         #if($lowerEntity && $upperEntity)
             #set($tabname = "seudo_${entity.wrapper.sqlName}")
-            #set($tabname = "${entity.wrapper.sqlSchemaQualifier}seudo_${nttname}")
+            #set($tabname = "$entity.wrapper.getPrefixedSqlName('seudo_')")
             #writeInsertSelect2()
         #else
             #writeInsertSelect1()
@@ -271,8 +269,7 @@ create sequence ${seqname} minvalue $minvalue maxvalue $maxvalue increment $incr
 #end##some_temporal
 
 #macro(some_entity_number)
-    #set($expression = "util.some_${property.root.wrapper.sqlName}($nullable)")
-    #set($expression = "util.some_${property.root.wrapper.sqlSchemaUnqualifiedShortName}($nullable)")
+    #set($expression = "util.$property.root.wrapper.getPrefixedSqlName('some_')($nullable)")
 #end##some_entity_number
 
 #macro(p5p)

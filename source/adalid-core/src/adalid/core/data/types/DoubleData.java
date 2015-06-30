@@ -14,13 +14,14 @@ import adalid.core.primitives.NumericPrimitive;
  */
 public class DoubleData extends NumericPrimitive {
 
-    public static final Double ZERO = 0.0;
+    public static final Double ZERO = 0.0D;
 
     {
         XS2.setDataClass(this, DoubleData.class);
         XS2.setDataType(this, Double.class);
-        setMinNumber(Double.MIN_VALUE);
-        setMaxNumber(Double.MAX_VALUE);
+////    setMinNumber(Double.MIN_VALUE);
+//      setMinNumber(ZERO - Double.MAX_VALUE);
+//      setMaxNumber(Double.MAX_VALUE);
     }
 
 }

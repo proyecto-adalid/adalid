@@ -25,6 +25,7 @@ declare
     contador4 integer := 0;
     contador5 integer := 0;
     contador6 integer := 0;
+    rows integer;
 begin
     raise notice 'migrating $sourceSchema data to $targetSchema';
     perform ${targetQualifier}create_defaults();
@@ -144,6 +145,8 @@ select midway.migrate_${sourceSchema}_data_to_${targetSchema}();
 ....    where $where
     #end
     order by ${tabname}.${pkpname};
+    get diagnostics rows = row_count;
+    raise notice 'insert into ${targetQualifier}${tabname} % rows', rows;
     alter table ${targetQualifier}${tabname} enable trigger user;
 
 #end##writeInserSelect

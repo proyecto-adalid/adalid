@@ -15,8 +15,8 @@
     }
 
     protected void procesar(RowKey rowKey) throws Exception {
-        long f = bean.get$EntityDataProvider().getFuncionBusinessProcess();
-        boolean b = bean.get$EntityDataProvider().esFilaValidaParaProcesar(rowKey, f);
+        Long f = bean.get$EntityDataProvider().getFuncionBusinessProcess();
+        boolean b = f != null && bean.get$EntityDataProvider().esFilaValidaParaProcesar(rowKey, f);
         if (!b) {
 #foreach($operation in $operations)
     #setOperationVariables()

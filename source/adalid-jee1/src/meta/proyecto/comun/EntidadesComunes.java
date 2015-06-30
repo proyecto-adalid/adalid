@@ -7,11 +7,79 @@
 package meta.proyecto.comun;
 
 import adalid.core.Project;
-import meta.entidad.comun.auditoria.*;
-import meta.entidad.comun.configuracion.basica.*;
-import meta.entidad.comun.control.acceso.*;
-import meta.entidad.comun.control.prueba.*;
-import meta.entidad.comun.operacion.basica.*;
+import meta.entidad.comun.auditoria.ArchivoAdjunto;
+import meta.entidad.comun.auditoria.RastroFuncion;
+import meta.entidad.comun.auditoria.RastroFuncionPar;
+import meta.entidad.comun.auditoria.RastroInforme;
+import meta.entidad.comun.auditoria.RastroProceso;
+import meta.entidad.comun.configuracion.basica.Aplicacion;
+import meta.entidad.comun.configuracion.basica.ClaseJava;
+import meta.entidad.comun.configuracion.basica.ClaseRecurso;
+import meta.entidad.comun.configuracion.basica.CondicionEjeFun;
+import meta.entidad.comun.configuracion.basica.Dominio;
+import meta.entidad.comun.configuracion.basica.DominioParametro;
+import meta.entidad.comun.configuracion.basica.Funcion;
+import meta.entidad.comun.configuracion.basica.FuncionParametro;
+import meta.entidad.comun.configuracion.basica.GrupoProceso;
+import meta.entidad.comun.configuracion.basica.NivelOpcionMenu;
+import meta.entidad.comun.configuracion.basica.OpcionMenu;
+import meta.entidad.comun.configuracion.basica.Pagina;
+import meta.entidad.comun.configuracion.basica.Parametro;
+import meta.entidad.comun.configuracion.basica.TipoClaseRecurso;
+import meta.entidad.comun.configuracion.basica.TipoComparacion;
+import meta.entidad.comun.configuracion.basica.TipoDatoPar;
+import meta.entidad.comun.configuracion.basica.TipoDominio;
+import meta.entidad.comun.configuracion.basica.TipoFuncion;
+import meta.entidad.comun.configuracion.basica.TipoNodo;
+import meta.entidad.comun.configuracion.basica.TipoPagina;
+import meta.entidad.comun.configuracion.basica.TipoParametro;
+import meta.entidad.comun.configuracion.basica.TipoParametroDom;
+import meta.entidad.comun.configuracion.basica.TipoRastroFun;
+import meta.entidad.comun.configuracion.basica.TipoRecurso;
+import meta.entidad.comun.configuracion.basica.TipoValor;
+import meta.entidad.comun.control.acceso.ConjuntoSegmento;
+import meta.entidad.comun.control.acceso.ElementoSegmento;
+import meta.entidad.comun.control.acceso.Rol;
+import meta.entidad.comun.control.acceso.RolFiltroFuncion;
+import meta.entidad.comun.control.acceso.RolFuncion;
+import meta.entidad.comun.control.acceso.RolFuncionPar;
+import meta.entidad.comun.control.acceso.RolPagina;
+import meta.entidad.comun.control.acceso.RolUsuario;
+import meta.entidad.comun.control.acceso.Segmento;
+import meta.entidad.comun.control.acceso.TipoRol;
+import meta.entidad.comun.control.acceso.Usuario;
+import meta.entidad.comun.control.prueba.AmbientePrueba;
+import meta.entidad.comun.control.prueba.CasoPrueba;
+import meta.entidad.comun.control.prueba.DocumentoPrueba;
+import meta.entidad.comun.control.prueba.DocumentoPruebaX1;
+import meta.entidad.comun.control.prueba.DocumentoPruebaX2;
+import meta.entidad.comun.control.prueba.DocumentoPruebaX3;
+import meta.entidad.comun.control.prueba.DocumentoPruebaX4;
+import meta.entidad.comun.control.prueba.DocumentoPruebaX5;
+import meta.entidad.comun.control.prueba.DocumentoPruebaX6;
+import meta.entidad.comun.control.prueba.EjecucionLineaPrueba;
+import meta.entidad.comun.control.prueba.EjecucionPrueba;
+import meta.entidad.comun.control.prueba.EscenarioPrueba;
+import meta.entidad.comun.control.prueba.LineaPrueba;
+import meta.entidad.comun.control.prueba.PaquetePrueba;
+import meta.entidad.comun.control.prueba.ParametroLineaPrueba;
+import meta.entidad.comun.control.prueba.ParteAmbientePrueba;
+import meta.entidad.comun.control.prueba.PiezaAmbientePrueba;
+import meta.entidad.comun.control.prueba.ProgramaPrueba;
+import meta.entidad.comun.control.prueba.TipoDocumentoPrueba;
+import meta.entidad.comun.control.prueba.TipoPiezaPrueba;
+import meta.entidad.comun.control.prueba.TipoResultadoPrueba;
+import meta.entidad.comun.operacion.basica.CondicionTarea;
+import meta.entidad.comun.operacion.basica.FiltroFuncion;
+import meta.entidad.comun.operacion.basica.FiltroFuncionPar;
+import meta.entidad.comun.operacion.basica.OperadorCom;
+import meta.entidad.comun.operacion.basica.PaginaUsuario;
+import meta.entidad.comun.operacion.basica.RecursoValor;
+import meta.entidad.comun.operacion.basica.TareaUsuario;
+import meta.entidad.comun.operacion.basica.TareaVirtual;
+import meta.entidad.comun.operacion.basica.TipoAgregacion;
+import meta.entidad.comun.operacion.basica.VistaFuncion;
+import meta.entidad.comun.operacion.basica.VistaFuncionCol;
 
 /**
  * @author Jorge Campins
@@ -127,9 +195,11 @@ public class EntidadesComunes extends Project {
 
     Segmento Segmento;
 
-    Tarea Tarea;
-
     TareaUsuario TareaUsuario;
+
+    TareaVirtual TareaVirtual;
+
+    TipoAgregacion TipoAgregacion;
 
     TipoClaseRecurso TipoClaseRecurso;
 
@@ -164,8 +234,6 @@ public class EntidadesComunes extends Project {
     TipoValor TipoValor;
 
     Usuario Usuario;
-
-    TipoAgregacion TipoAgregacion;
 
     VistaFuncion VistaFuncion;
 

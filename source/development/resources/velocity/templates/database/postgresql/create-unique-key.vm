@@ -13,7 +13,6 @@
 #macro(writeCreateUniqueKeys)
     #resetSQLVariables()
     #set($table = $entity.wrapper.sqlTableName)
-    #set($table = $entity.wrapper.sqlSchemaQualifiedShortTableName)
 ## -----------------------------------------------------------------------------------------------------------
     #set($properties = $entity.columnsList)
     #foreach($property in $properties)
@@ -39,7 +38,7 @@
                 #end
                 #if($uk == '')
                     #foreach($field in $fields)
-                        #set($uk = "$uk, $field.wrapper.sqlName")## $field.sortOption is not supported by postgresql
+                        #set($uk = "$uk, $field.wrapper.sqlName")## $field.sortOption is not supported by PostgreSQL
                     #end##foreach-field
                     #if($uk != '')
                         #set($uk = $StringUtils.removeStart($uk, ',').trim())

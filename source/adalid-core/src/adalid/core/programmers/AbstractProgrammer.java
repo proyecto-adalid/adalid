@@ -240,4 +240,22 @@ public abstract class AbstractProgrammer implements Programmer {
     protected static final String ARG9 = "{9}";
     // </editor-fold>
 
+    public static String format(String pattern, Object... arguments) {
+        if (StringUtils.isBlank(pattern)) {
+            return pattern;
+        }
+        String str = pattern;
+        if (arguments != null && arguments.length > 0) {
+            int i = 0;
+            String key, val;
+            for (Object argument : arguments) {
+                key = "{" + i++ + "}";
+                val = argument == null ? "" : argument.toString();
+                str = StringUtils.replace(str, key, val);
+            }
+        }
+        str = str.replaceAll("\\{[\\d]*\\}", "");
+        return str;
+    }
+
 }

@@ -10,6 +10,7 @@
 #macro(writeRecursoPersonalizableImplementation)
 #if($esRecursoPersonalizable)
     #set($property = $entity.ownerProperty)
+    #setPropertyJavaType()
 ##  public static final String COLUMNA_PROPIETARIO_RECURSO = "${property.wrapper.sqlName}";
     public static final String COLUMNA_PROPIETARIO_RECURSO = "${query.getSqlAlias($property)}";
 
@@ -31,8 +32,10 @@
     public ${property.wrapper.javaPrimitiveType} getPropietarioRecurso() {
     #if($dataProviderColumns.contains($property))
         return get${property.wrapper.javaClassName}();
+    #elseif($property.isEntity() || $property.isNumericPrimitive())
+        return NumUtils.to${javaTypeSimpleName}(getValue(COLUMNA_PROPIETARIO_RECURSO));
     #else
-        return (${property.wrapper.javaPrimitiveType}) super.getValue(COLUMNA_PROPIETARIO_RECURSO);
+        return (${property.wrapper.javaPrimitiveType}) getValue(COLUMNA_PROPIETARIO_RECURSO);
     #end
     }
 
@@ -40,8 +43,10 @@
     public ${property.wrapper.javaPrimitiveType} getPropietarioRecurso(RowKey rowKey) {
     #if($dataProviderColumns.contains($property))
         return get${property.wrapper.javaClassName}(rowKey);
+    #elseif($property.isEntity() || $property.isNumericPrimitive())
+        return NumUtils.to${javaTypeSimpleName}(getValue(COLUMNA_PROPIETARIO_RECURSO, rowKey));
     #else
-        return (${property.wrapper.javaPrimitiveType}) super.getValue(COLUMNA_PROPIETARIO_RECURSO, rowKey);
+        return (${property.wrapper.javaPrimitiveType}) getValue(COLUMNA_PROPIETARIO_RECURSO, rowKey);
     #end
     }
 

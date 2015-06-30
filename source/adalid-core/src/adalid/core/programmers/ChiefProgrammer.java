@@ -11,7 +11,6 @@ import adalid.commons.interfaces.Programmer;
 import adalid.core.interfaces.BundleProgrammer;
 import adalid.core.interfaces.JavaProgrammer;
 import adalid.core.interfaces.SqlProgrammer;
-import java.text.MessageFormat;
 
 /**
  * @author Jorge Campins
@@ -48,7 +47,7 @@ public class ChiefProgrammer extends AbstractProgrammer {
     private static String message(Class<?> clazz) {
         String hint = EOL$ + "hint: " + "check properties at platform''s properties file";
         String pattern1 = "programmers map contains no mapping for {0}" + hint;
-        String message = MessageFormat.format(pattern1, clazz);
+        String message = format(pattern1, clazz);
         return message;
     }
 

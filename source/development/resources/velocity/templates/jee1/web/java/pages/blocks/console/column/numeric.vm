@@ -15,7 +15,7 @@
 #break
 
 #macro(setNumericConverterClassName)
-    #if($parameter.isBigDecimalData() || $parameter.isDoubleData() || $parameter.isFloatData())
+    #if($parameter.isNumericPrimitive())
         #set($componentClassName = 'NumberConverter')
     #elseif($parameter.isEntity())
         #set($componentClassName = "${parameter.primaryKeyProperty.dataType.simpleName}Converter")
@@ -25,10 +25,12 @@
 #end##setNumericConverterClassName
 
 #macro(setNumericValidatorClassName)
-    #if($parameter.isBigDecimalData() || $parameter.isDoubleData() || $parameter.isFloatData())
-        #set($componentClassName = 'DoubleRangeValidator')
-    #else
+    #if($parameter.isNumericPrimitive())
+        #set($componentClassName = 'BigDecimalValidator')
+    #elseif($parameter.isEntity())
         #set($componentClassName = 'LongRangeValidator')
+    #else
+        #set($componentClassName = "${parameter.dataType.simpleName}Validator")
     #end
 #end##setNumericValidatorClassName
 

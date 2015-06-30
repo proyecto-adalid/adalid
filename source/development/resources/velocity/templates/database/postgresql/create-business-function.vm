@@ -3,6 +3,7 @@
 #writePostgreSQLLicense()
 #writePostgreSQLAuthor('Jorge Campins')
 #writeDelimiterDirective('??')
+#setLocalVariables()
 #set($entities = $ColUtils.filter($project.entitiesList, $isEntitySqlCodeGenEnabled, $isProcessOperationInEntity, $isPersistentEntity))
 #set($entities = $ColUtils.sort($entities, $byEntityName))
 #foreach($entity in $entities)
@@ -14,13 +15,17 @@
 #writeDelimiterDirective(';')
 #break
 
+#macro(setLocalVariables)
+    #set($tarea_usuario_insert         = 'tarea_usuario$insert')
+    #set($tarea_usuario_private_update = 'tarea_usuario$private$update')
+    #set($tarea_usuario_cancelar_batch = 'tarea_usuario$cancelar$batch')
+#end##setLocalVariables
+
 #macro(writeCreateBusinessFunctions)
     #set($entityNumber = $project.getEntityNumber($entity))
     #set($query = $entity.queryTable)
     #set($entname = $entity.wrapper.sqlName)
-    #set($entname = $entity.wrapper.sqlSchemaQualifiedShortName)
     #set($tabname = $entity.wrapper.sqlTableName)
-    #set($tabname = $entity.wrapper.sqlSchemaQualifiedShortTableName)
     #if($entity.isNotTable())
         #set($lowerEntity = $entity.root)
         #set($upperEntity = $VelocityAid.coalesce($entity.baseTableRoot, $FALSE))
@@ -32,7 +37,8 @@
         #set($upperEntity = $FALSE)
     #end
     #if($lowerEntity && $upperEntity)
-        #set($tabview = "${entity.wrapper.sqlSchemaQualifier}seudo_${entity.wrapper.sqlSchemaUnqualifiedShortName}")
+        #set($tabview = "seudo_${entity.wrapper.sqlName}")
+        #set($tabview = "$entity.wrapper.getPrefixedSqlName('seudo_')")
     #else
         #set($tabview = $tabname)
     #end
@@ -92,14 +98,14 @@
     #set($operations = $ColUtils.filter($entity.operationsList, $isBasicDatabaseOperation))
     #set($operations = $ColUtils.sort($operations, $byOperationName))
     #foreach($operation in $operations)
+        #set($noun = "${entity.wrapper.underscoredName}${sql_name_separator}${operation.wrapper.underscoredProperName}")
         #set($basicDatabaseOperationType = "$!operation.basicDatabaseOperationType")
         #if($basicDatabaseOperationType == 'INSERT' || $basicDatabaseOperationType == 'UPDATE')
             #set($instanceParameterName = "$!entity.primaryKeyProperty.wrapper.sqlVariableName")
             #set($instanceParameterType = "$!entity.primaryKeyProperty.wrapper.sqlParameterType")
             #flagOperationHasTransitionToStateAndTriggers()
             #if($operationHasTransitionToStateAndTriggers)
-                #set($name       = $javaProgrammer.getJavaLowerConstantName($operation.name))
-                #set($function4  = "${entname}${sql_name_separator}${name}$jobSuffix")
+                #set($function4  = "$StrUtils.getIdentificadorSql($EMPTY, $noun, $jobSuffix, $globalSQLMaxIdentifierLength)")
                 #set($drop4rpl   = "$instanceParameterType")
                 #set($create4rpl = "$instanceParameterName $instanceParameterType")
                 #set($raise4pat  = '%')
@@ -111,8 +117,7 @@
             #set($instanceParameterName = "$!entity.primaryKeyProperty.wrapper.sqlVariableName")
             #set($instanceParameterType = "$!entity.primaryKeyProperty.wrapper.sqlParameterType")
             #if(!$triggers.isEmpty())
-                #set($name       = $javaProgrammer.getJavaLowerConstantName($operation.name))
-                #set($function4  = "${entname}${sql_name_separator}${name}$jobSuffix")
+                #set($function4  = "$StrUtils.getIdentificadorSql($EMPTY, $noun, $jobSuffix, $globalSQLMaxIdentifierLength)")
                 #set($drop4rpl   = "$instanceParameterType")
                 #set($create4rpl = "$instanceParameterName $instanceParameterType")
                 #set($raise4pat  = '%')
@@ -124,6 +129,7 @@
     #set($operations = $ColUtils.filter($entity.businessOperationsList, $isProcessOperation))
     #set($operations = $ColUtils.sort($operations, $byOperationName))
     #foreach($operation in $operations)
+        #set($noun = "${entity.wrapper.underscoredName}${sql_name_separator}${operation.wrapper.underscoredProperName}")
         #set($parameterNames = '')
         #set($parameterTypes = '')
         #set($parameterPairs = '')
@@ -169,18 +175,16 @@
         #if($setters != '')
             #set($setters = $StringUtils.removeStart($setters, ', '))
         #end
-        #set($name = $VelocityAid.coalesce($operation.processName, $operation.name))
-        #set($name = $javaProgrammer.getJavaLowerConstantName($name))
         #if("$!operation.overloading" == 'FALSE')
             #set($bizSuffix = '$biz')
         #else
             #set($bizSuffix = '')
         #end
-        #set($function1  = "${entname}${sql_name_separator}${name}")
-        #set($function2  = "${entname}${sql_name_separator}${name}$bizSuffix")
-        #set($function3  = "${entname}${sql_name_separator}${name}$logSuffix")
-        #set($function4  = "${entname}${sql_name_separator}${name}$jobSuffix")
-        #set($function5  = "${entname}${sql_name_separator}${name}$valSuffix")
+        #set($function1  = "$StrUtils.getIdentificadorSql($noun, $globalSQLMaxIdentifierLength)")
+        #set($function2  = "$StrUtils.getIdentificadorSql($EMPTY, $noun, $bizSuffix, $globalSQLMaxIdentifierLength)")
+        #set($function3  = "$StrUtils.getIdentificadorSql($EMPTY, $noun, $logSuffix, $globalSQLMaxIdentifierLength)")
+        #set($function4  = "$StrUtils.getIdentificadorSql($EMPTY, $noun, $jobSuffix, $globalSQLMaxIdentifierLength)")
+        #set($function5  = "$StrUtils.getIdentificadorSql($EMPTY, $noun, $valSuffix, $globalSQLMaxIdentifierLength)")
         #set($drop1rpl   = "$rastroParameterType$parameterTypes")
         #set($create1rpl = "$rastroParameterName $rastroParameterType$parameterPairs")
         #set($raise1pat  = "%$parameterPlaceHolders")
@@ -247,6 +251,8 @@ begin
     perform ${function2}($!{raise2rpl});
     if ($rastroParameterName is not null and $rastroParameterName > 0) then
         perform ${function3}($!{raise3rpl});
+    else
+        perform $tarea_usuario_private_update(${operationNumber}#if($instanceParameterName != ''), $instanceParameterName#else, null#end);
     end if;
 #if($operationHasTransitionToStateAndTriggers)
     if ($instanceParameterName is not null and $instanceParameterName > 0) then
@@ -350,7 +356,7 @@ begin
     end if;
     #foreach($state in $finalStates)
 ........--  state: $state.name
-        #set($expname = $state.wrapper.sqlSchemaQualifiedShortExpressionFunctionName)
+        #set($expname = $state.wrapper.sqlExpressionFunctionName)
         #set($initialStateBusinessOperationsList = $state.initialStateBusinessOperationsList)
         #if(!$initialStateBusinessOperationsList.isEmpty())
 ........    if ($expname($instanceParameterName)) then
@@ -366,14 +372,13 @@ begin
                     #set($instanceOperation = $FALSE)
                 #end
                 #if($trigger.state == $state)
-............    --  trigger: $trigger.name ($trigger.state.name, $trigger.operation.name)
-............        perform tarea_usuario$insert(${funcion}#if($instanceOperation), $id, $codigo, $nombre, $propietario, $segmento#end);
+............        perform $tarea_usuario_insert(${funcion}#if($instanceOperation), $id, $codigo, $nombre, $propietario, $segmento#end);
                 #end
             #end##foreach-trigger
 ........    end if;
         #end
     #end##foreach-state
-    perform tarea_usuario$cancelar$batch($entityNumber, $id, $csvVariableName);
+    perform $tarea_usuario_cancelar_batch($entityNumber, $id, $csvVariableName);
     return 0;
 end;
 $$ language plpgsql;
@@ -388,7 +393,7 @@ declare
     $csvVariableName character varying;
 begin
     raise notice '${function4}(${raise4pat})', ${raise4rpl};
-    perform tarea_usuario$cancelar$batch($entityNumber, $instanceParameterName, $csvVariableName);
+    perform $tarea_usuario_cancelar_batch($entityNumber, $instanceParameterName, $csvVariableName);
     return 0;
 end;
 $$ language plpgsql;
@@ -426,7 +431,6 @@ begin
     #foreach($state in $initialStates)
         #set($expname = $state.wrapper.sqlName)
         #set($expname = $state.wrapper.sqlExpressionFunctionName)
-        #set($expname = $state.wrapper.sqlSchemaQualifiedShortExpressionFunctionName)
 ....--
 ....--  state: $state.name
 ....--
@@ -470,7 +474,6 @@ begin
     #set($checkStr2 = "$!check.wrapper.defaultDescription")
     #set($checkStr3 = "$!checkPrefix $checkName")
     #set($checkText = "$!StrUtils.coalesce($checkStr1, $checkStr2, $checkStr3)")
-##  #set($checkText = "$!check.name: $checkText")
     #set($checkText = "$!StrUtils.getStringAscii($checkText)")
 --
 --  check: $check.name
@@ -588,13 +591,13 @@ begin
         #foreach($page in $pages)
             #if($page.master)
             #elseif($page.entity && "$!page.displayMode" == 'READING' && "$!page.displayFormat" == 'DETAIL')
-                #set($added = $treeMap.put($page.entity.wrapper.sqlSchemaQualifiedShortName, $page.name))
+                #set($added = $treeMap.put($page.entity.wrapper.sqlName, $page.name))
             #end
         #end
         #foreach($page in $pages)
             #if($page.master)
             #elseif($page.entity && "$!page.displayMode" == 'WRITING' && "$!page.displayFormat" == 'DETAIL')
-                #set($added = $treeMap.put($page.entity.wrapper.sqlSchemaQualifiedShortName, $page.name))
+                #set($added = $treeMap.put($page.entity.wrapper.sqlName, $page.name))
             #end
         #end
     #end
@@ -622,7 +625,7 @@ begin
         #foreach($page in $pages)
             #if($page.master)
             #elseif($page.entity && "$!page.displayMode" == 'PROCESSING' && "$!page.displayFormat" == 'CONSOLE')
-                #set($added = $treeMap.put($page.entity.wrapper.sqlSchemaQualifiedShortName, $page.name))
+                #set($added = $treeMap.put($page.entity.wrapper.sqlName, $page.name))
             #end
         #end
     #end

@@ -5,7 +5,7 @@
     #set($operationQualifier = "$!operation.wrapper.javaClassName")
     #set($operationConstantName = "$!operation.wrapper.javaConstantName")
     #set($operationType = "$!operation.operationType")
-    #if($operationType == '')
+    #if($operationType == 'CRUD')
         #set($tipoOperacion = '')
     #elseif($operationType == 'PROCEDURE')
         #set($tipoOperacion = 'PROCEDIMIENTO')
@@ -57,5 +57,4 @@
 ##  #set($fieldRequired = "$parameter.isRequiredParameter()")
     #set($fieldRequired = "#{${pageBeanName}.${campo1}Required}")
     #set($fieldBundleParametrosKey = "BundleParametros.${operationEntity.wrapper.sqlName}.${operation.wrapper.sqlName}.${parameter.wrapper.sqlName}")
-    #set($fieldBundleParametrosKey = "BundleParametros.${operationEntity.wrapper.sqlSchemaQualifiedShortName}.${operation.wrapper.sqlName}.${parameter.wrapper.sqlName}")
 #end##setParameterVariables

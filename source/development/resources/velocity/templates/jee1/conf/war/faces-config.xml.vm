@@ -163,12 +163,14 @@
 #*
     <!-- ${webPackageName}.fragments -->
     #set($pages = $ColUtils.filter($module.displaysList, $isTableViewDisplay))
+    #set($pages = $ColUtils.sort($pages, $byDisplayName))
     #foreach($page in $pages)
         #writePageFilterManagedBean()
     #end##foreach-page
 *#
     <!-- ${webPackageName}.pages -->
     #set($pages = $module.displaysList)
+    #set($pages = $ColUtils.sort($pages, $byDisplayName))
     #foreach($page in $pages)
         #writePageManagedBean()
         #if("$page.displayFormat" == 'DETAIL')

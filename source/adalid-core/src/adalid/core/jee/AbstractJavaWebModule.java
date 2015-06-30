@@ -11,13 +11,16 @@ import adalid.commons.util.ColUtils;
 import adalid.core.DisplaySet;
 import adalid.core.Page;
 import adalid.core.comparators.ByEntityName;
+import adalid.core.comparators.ByPageName;
 import adalid.core.enums.DisplayFormat;
 import adalid.core.enums.DisplayMode;
 import adalid.core.enums.MasterDetailView;
 import adalid.core.interfaces.Entity;
 import adalid.core.interfaces.EntityReference;
 import adalid.core.interfaces.Property;
+import adalid.core.predicates.IsConsoleViewDisplay;
 import adalid.core.predicates.IsPersistentEntityWithTable;
+import adalid.core.predicates.IsProcessingDisplay;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
@@ -48,13 +51,16 @@ public abstract class AbstractJavaWebModule extends AbstractJavaModule implement
         if (compiled) {
             buildPagesMap();
             buildPageSetsMap();
+            buildDisplayableEntitiesMap();
         }
         return compiled;
     }
 
-    private Map<String, Page> _pages = new LinkedHashMap<>();
+    private final Map<String, Page> _pages = new LinkedHashMap<>();
 
-    private Map<String, DisplaySet> _pageSets = new LinkedHashMap<>();
+    private final Map<String, DisplaySet> _pageSets = new LinkedHashMap<>();
+
+    private final Map<String, Entity> _displayableEntities = new LinkedHashMap<>();
 
     /**
      * @return the displays list
@@ -102,6 +108,21 @@ public abstract class AbstractJavaWebModule extends AbstractJavaModule implement
         return _pageSets;
     }
 
+    /**
+     * @return the entities list
+     */
+    @Override
+    public List<Entity> getDisplayableEntitiesList() {
+        return new ArrayList<>(getDisplayableEntitiesMap().values());
+    }
+
+    /**
+     * @return the entities map
+     */
+    public Map<String, Entity> getDisplayableEntitiesMap() {
+        return _displayableEntities;
+    }
+
     @SuppressWarnings("unchecked")
     private void buildPagesMap() {
         _pages.clear();
@@ -110,7 +131,7 @@ public abstract class AbstractJavaWebModule extends AbstractJavaModule implement
         List<Entity> entities = getEntitiesList();
         Collection<Entity> validEntities = ColUtils.filter(entities, isPersistentEntityWithTable);
         ColUtils.sort(validEntities, byEntityName);
-        for (Entity entity : entities) {
+        for (Entity entity : validEntities) {
             put(entity);
         }
     }
@@ -149,6 +170,27 @@ public abstract class AbstractJavaWebModule extends AbstractJavaModule implement
                         page.setDisplaySet(set);
                     }
                 }
+            }
+        }
+    }
+
+    private void buildDisplayableEntitiesMap() {
+        List<Page> list = getPagesList();
+        Predicate isConsoleViewDisplay = new IsConsoleViewDisplay();
+        Predicate isProcessingDisplay = new IsProcessingDisplay();
+        Comparator<Page> byPageName = new ByPageName();
+        Collection<Page> pages = ColUtils.noneFilter(list, isConsoleViewDisplay, isProcessingDisplay);
+        Collection<Page> sortedPages = ColUtils.sort(pages, byPageName);
+        Entity entity, master;
+        _displayableEntities.clear();
+        for (Page page : sortedPages) {
+            entity = page.getEntity();
+            if (entity != null) {
+                _displayableEntities.put(entity.getName(), entity);
+            }
+            master = page.getMaster();
+            if (master != null) {
+                _displayableEntities.put(master.getName(), master);
             }
         }
     }

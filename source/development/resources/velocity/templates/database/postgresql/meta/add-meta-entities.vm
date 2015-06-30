@@ -1,0 +1,51 @@
+#parsePostgreSQLMacros()
+#setPostgreSQLVariables()
+#writePostgreSQLLicense()
+#writePostgreSQLAuthor('Jorge Campins')
+#createMetaTable()
+#addMetaEntities()
+#break
+
+#macro(createMetaTable)
+#set($table = 'project$entities')
+#set($primaryKey = 'project$entities$pk')
+drop table if exists $table cascade;
+create table $table
+    (
+    entity_name character varying(100) not null,
+    entity_class_name character varying(300) not null,
+    constraint $primaryKey primary key (entity_name)
+    )
+;
+#end##createMetaTable
+
+#macro(addMetaEntities)
+    #set($entities = $project.entitiesList)
+    #set($entities = $ColUtils.sort($entities, $byEntityName))
+    #foreach($entity in $entities)
+        #addMetaEntity()
+    #end##foreach-entity
+#end##addMetaEntities
+
+#macro(addMetaEntity)
+insert into $table values ('$entity.name', '$entity.class.name');
+#end##addMetaEntity
+
+#macro(checkMetaEntities)
+    #set($entities = $project.entitiesList)
+    #set($entities = $ColUtils.sort($entities, $byEntityName))
+    #foreach($entity in $entities)
+        #checkMetaEntity()
+    #end##foreach-entity
+....select * from $table order by 1;
+#end##checkMetaEntities
+
+#macro(checkMetaEntity)
+do $$
+begin
+    if exists (select 1 from $table where entity_name = '$entity.name') then
+        raise notice '$entity.name does exist!';
+    end if;
+end
+$$;
+#end##checkMetaEntity

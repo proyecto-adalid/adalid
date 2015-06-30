@@ -15,9 +15,7 @@
 #macro(writeCreateCheckFunctions)
     #resetSQLVariables()
     #set($entname = $entity.wrapper.sqlName)
-    #set($entname = $entity.wrapper.sqlSchemaQualifiedShortName)
     #set($table = $entity.wrapper.sqlTableName)
-    #set($table = $entity.wrapper.sqlSchemaQualifiedShortTableName)
     #set($query = $entity.queryTable)
     #set($refcols = $entity.checksColumnsList)
     #set($joins = $entity.checksJoinsMap)
@@ -43,9 +41,11 @@
 #end##writeCreateCheckFunctions
 
 #macro(writeCreateCheckFunctionHeading)
-#set($function1 = "${entname}${sql_name_separator}check(${keytype})")
-#set($function2 = "${entname}${sql_name_separator}check(${varname} ${keytype})")
-#set($function3 = "${entname}${sql_name_separator}check(%)")
+#set($function0 = $entity.wrapper.getSuffixedSqlName("${sql_name_separator}check"))
+#***
+#set($function1 = "${function0}(${keytype})")
+#set($function2 = "${function0}(${varname} ${keytype})")
+#set($function3 = "${function0}(%)")
 drop function if exists $function1 cascade;
 #writeDelimiter('??')
 create or replace function $function2 returns boolean as $$
@@ -54,14 +54,14 @@ declare
 begin
     raise notice '${function3}', ${varname};
     select * into $rowname from ${table} where ${keyname} = ${varname};
-    return ${entname}${sql_name_separator}check($rowname);
+    return ${function0}($rowname);
 end;
 $$ language plpgsql;
 #writeDelimiter('??')
-
-#set($function1 = "${entname}${sql_name_separator}check(${table})")
-#set($function2 = "${entname}${sql_name_separator}check($rowname ${table})")
-#set($function3 = "${entname}${sql_name_separator}check(%)")
+*###
+#set($function1 = "${function0}(${table})")
+#set($function2 = "${function0}($rowname ${table})")
+#set($function3 = "${function0}(%)")
 drop function if exists $function1 cascade;
 #writeDelimiter('??')
 create or replace function $function2 returns boolean as $$

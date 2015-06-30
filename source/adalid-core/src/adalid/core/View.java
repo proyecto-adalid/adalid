@@ -267,6 +267,7 @@ public class View extends AbstractArtifact {
         ArrayList<String> detalle = new ArrayList<>();
         ArrayList<String> resumen = new ArrayList<>();
         ArrayList<String> grafico = new ArrayList<>();
+        ArrayList<String> filters = new ArrayList<>();
         ArrayList<String> groupBy = new ArrayList<>();
         ArrayList<String> orderBy = new ArrayList<>();
         for (ViewField field : _viewFields) {
@@ -287,8 +288,11 @@ public class View extends AbstractArtifact {
                     }
                     break;
                 case CHART:
-                    if (field.isControlField() && group != _lastControlField) {
-                        addOrderBy(orderBy, alias, order);
+                    if (field.isControlField()) {
+                        filters.add(alias + " IS NOT NULL");
+                        if (group != _lastControlField) {
+                            addOrderBy(orderBy, alias, order);
+                        }
                     }
                     break;
             }
@@ -296,16 +300,16 @@ public class View extends AbstractArtifact {
         boolean distinct = false;
         switch (option) {
             case DETAIL:
-                return select(distinct, detalle, from, null, orderBy);
+                return select(distinct, detalle, from, null, null, orderBy);
             case SUMMARY:
-                return select(distinct, resumen, from, groupBy, orderBy);
+                return select(distinct, resumen, from, null, groupBy, orderBy);
             case CHART:
                 distinct = true;
                 if (grafico.isEmpty()) {
                     grafico.add("1");
-                    return select(distinct, grafico, from, null, grafico);
+                    return select(distinct, grafico, from, filters, null, grafico);
                 } else {
-                    return select(distinct, grafico, from, null, orderBy);
+                    return select(distinct, grafico, from, filters, null, orderBy);
                 }
             default:
                 return null;
@@ -456,8 +460,8 @@ public class View extends AbstractArtifact {
         return value + " AS " + prefijo + "__" + alias;
     }
 
-    private ViewSelect select(boolean distinct, List<String> columns, String from, List<String> groupBy, List<String> orderBy) {
-        return new ViewSelect(distinct, columns, from, groupBy, orderBy);
+    private ViewSelect select(boolean distinct, List<String> columns, String from, List<String> filters, List<String> groupBy, List<String> orderBy) {
+        return new ViewSelect(distinct, columns, from, filters, groupBy, orderBy);
     }
 
     // <editor-fold defaultstate="collapsed" desc="toString">

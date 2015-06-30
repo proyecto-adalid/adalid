@@ -6,11 +6,45 @@
  */
 package meta.entidad.comun.auditoria;
 
-import adalid.core.*;
-import adalid.core.annotations.*;
-import adalid.core.enums.*;
-import adalid.core.interfaces.*;
-import adalid.core.properties.*;
+import adalid.core.AbstractPersistentEntity;
+import adalid.core.ProcessOperation;
+import adalid.core.annotations.Allocation;
+import adalid.core.annotations.ColumnField;
+import adalid.core.annotations.EntityClass;
+import adalid.core.annotations.EntityConsoleView;
+import adalid.core.annotations.EntityDeleteOperation;
+import adalid.core.annotations.EntityDetailView;
+import adalid.core.annotations.EntityInsertOperation;
+import adalid.core.annotations.EntitySelectOperation;
+import adalid.core.annotations.EntityTableView;
+import adalid.core.annotations.EntityTreeView;
+import adalid.core.annotations.EntityUpdateOperation;
+import adalid.core.annotations.EntityWarnings;
+import adalid.core.annotations.FileReference;
+import adalid.core.annotations.ForeignKey;
+import adalid.core.annotations.InstanceReference;
+import adalid.core.annotations.ManyToOne;
+import adalid.core.annotations.OwnerProperty;
+import adalid.core.annotations.PrimaryKey;
+import adalid.core.annotations.ProcessOperationClass;
+import adalid.core.annotations.PropertyField;
+import adalid.core.annotations.SegmentProperty;
+import adalid.core.annotations.StringField;
+import adalid.core.enums.Kleenean;
+import adalid.core.enums.MasterDetailView;
+import adalid.core.enums.Navigability;
+import adalid.core.enums.OnDeleteAction;
+import adalid.core.enums.OnUpdateAction;
+import adalid.core.enums.ResourceGender;
+import adalid.core.enums.ResourceType;
+import adalid.core.enums.SortOption;
+import adalid.core.enums.SpecialEntityValue;
+import adalid.core.enums.SpecialTemporalValue;
+import adalid.core.interfaces.Artifact;
+import adalid.core.properties.BinaryProperty;
+import adalid.core.properties.LongProperty;
+import adalid.core.properties.StringProperty;
+import adalid.core.properties.TimestampProperty;
 import java.lang.reflect.Field;
 import meta.entidad.comun.control.acceso.Usuario;
 import meta.proyecto.base.ProyectoBase;
@@ -46,7 +80,7 @@ public class ArchivoAdjunto extends AbstractPersistentEntity {
         super.settleAttributes();
         setSchema(ProyectoBase.getEsquemaEntidadesComunes());
         setDefaultLabel("archivo adjunto");
-        setDefaultCollectionLabel("archivos adjuntos");
+        setDefaultCollectionLabel("Archivos Adjuntos");
     }
 
     @PrimaryKey
@@ -106,6 +140,7 @@ public class ArchivoAdjunto extends AbstractPersistentEntity {
 
     protected EliminarArchivoServidorWeb eliminarArchivoServidorWeb;
 
+    @ProcessOperationClass(overloading = Kleenean.FALSE)
     public class EliminarArchivoServidorWeb extends ProcessOperation {
 
         @Override
@@ -123,6 +158,7 @@ public class ArchivoAdjunto extends AbstractPersistentEntity {
 
     protected RestaurarArchivoServidorWeb restaurarArchivoServidorWeb;
 
+    @ProcessOperationClass(overloading = Kleenean.FALSE)
     public class RestaurarArchivoServidorWeb extends ProcessOperation {
 
         @Override
@@ -140,6 +176,7 @@ public class ArchivoAdjunto extends AbstractPersistentEntity {
 
     protected EliminarTotalmente eliminarTotalmente;
 
+    @ProcessOperationClass(overloading = Kleenean.FALSE)
     public class EliminarTotalmente extends ProcessOperation {
 
         @Override

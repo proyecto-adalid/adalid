@@ -9,7 +9,11 @@ package adalid.core;
 import adalid.commons.util.StrUtils;
 import adalid.core.data.types.StringData;
 import adalid.core.enums.ViewFieldAggregation;
-import adalid.core.interfaces.*;
+import adalid.core.interfaces.DataArtifact;
+import adalid.core.interfaces.Entity;
+import adalid.core.interfaces.JavaProgrammer;
+import adalid.core.interfaces.PersistentEntity;
+import adalid.core.interfaces.Property;
 import adalid.core.programmers.ChiefProgrammer;
 import adalid.core.sql.QueryTable;
 import org.apache.commons.lang.StringUtils;
@@ -93,6 +97,28 @@ public class ReportField extends AbstractArtifact implements Comparable<ReportFi
         }
     }
 
+    /**
+     * @return the index
+     */
+    public int getIndex() {
+        return _group == null ? 0 : _group.getFields().indexOf(this) + 1;
+    }
+
+    /**
+     * @return the composite index
+     */
+    public int getCompositeIndex() {
+        int groupIndex = _group.getIndex();
+        if (groupIndex < 0) {
+            return -1;
+        }
+        int fieldIndex = getIndex();
+        if (fieldIndex < 0) {
+            return -1;
+        }
+        return 1000 * groupIndex + fieldIndex;
+    }
+
     public String getLabel() {
         String etiqueta = _property == null ? getName() : _property.getDefaultShortLabel();
         return etiqueta == null ? null : StrUtils.getStringJava(etiqueta);
@@ -102,8 +128,7 @@ public class ReportField extends AbstractArtifact implements Comparable<ReportFi
      * @return the sequence
      */
     public Integer getSequence() {
-        int index = _group == null ? -1 : _group.getFields().indexOf(this);
-        return ++index;
+        return getIndex();
     }
 
     /**

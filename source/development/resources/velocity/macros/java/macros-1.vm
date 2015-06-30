@@ -2,6 +2,7 @@
 
 #macro(setJavaVariables)
     #setGlobalVariables()
+    #setJSFVariables()
     #set($imports = $VelocityAid.getNewTreeSet())
     #set($parents = $VelocityAid.getNewLinkedHashSet())
     #set($interfaces = $VelocityAid.getNewLinkedHashSet())

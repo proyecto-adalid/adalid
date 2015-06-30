@@ -15,14 +15,15 @@ import adalid.core.primitives.NumericPrimitive;
 public class FloatData extends NumericPrimitive {
 
 //  public static final Float ZERO = 0.0F;
-    public static final Double ZERO = 0.0;
+    public static final Double ZERO = 0.0D;
 
     {
         XS2.setDataClass(this, FloatData.class);
 //      XS2.setDataType(this, Float.class);
         XS2.setDataType(this, Double.class);
-        setMinNumber(Float.MIN_VALUE);
-        setMaxNumber(Float.MAX_VALUE);
+////    setMinNumber(Float.MIN_VALUE);
+//      setMinNumber(0.0F - Float.MAX_VALUE);
+//      setMaxNumber(Float.MAX_VALUE);
     }
 
 }

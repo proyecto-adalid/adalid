@@ -50,7 +50,6 @@ locale.language.tag=$project.locale.toLanguageTag()
 #macro(writeBundleMensajesEntity)
     #resetSQLVariables()
     #set($entityName = $entity.wrapper.sqlName)
-    #set($entityName = $entity.wrapper.sqlSchemaUnqualifiedShortName)
     #set($entityLabel = "$!entity.wrapper.bundleValidDefaultLabel")
     #set($entityKey = $VelocityAid.coalesce($entity.primaryKeyProperty, $FALSE))
     #if($entityKey)
@@ -105,7 +104,7 @@ locale.language.tag=$project.locale.toLanguageTag()
     #foreach($property in $properties)
         #if($property.isUnique() && $property.wrapper.sqlName != $entityKeyName)
             #set($uniqueKeyName = $property.wrapper.sqlName)
-            #set($uniqueKeyLabel = "$property.wrapper.bundleValidDefaultLabel")
+            #set($uniqueKeyLabel = "$property.wrapper.bundleValidDefaultShortLabel")
             #writeMensajesUniqueKey()
         #end
     #end##foreach-property
@@ -120,12 +119,12 @@ locale.language.tag=$project.locale.toLanguageTag()
                 #if($key.isSingleProperty())
                     #set($property = $key.theProperty)
                     #if($property.isUnique() || $property.isPrimaryKeyProperty())
-                        #set($uniqueKeyLabel = "$property.wrapper.bundleValidDefaultLabel")
+                        #set($uniqueKeyLabel = "$property.wrapper.bundleValidDefaultShortLabel")
                     #end
                 #end
                 #if($uniqueKeyLabel == '')
                     #foreach($field in $fields)
-                        #set($uniqueKeyLabel = "$uniqueKeyLabel, $field.property.wrapper.bundleValidDefaultLabel")
+                        #set($uniqueKeyLabel = "$uniqueKeyLabel, $field.property.wrapper.bundleValidDefaultShortLabel")
                     #end##foreach-field
                     #if($uniqueKeyLabel != '')
                         #set($uniqueKeyLabel = $StringUtils.removeStart($uniqueKeyLabel, ',').trim())
@@ -202,6 +201,7 @@ ${messageKey}=${StrUtils.getStringParametrizado("$pkstring1", "$entityLabel")}${
 #else
     #set($label = "$foreignKeyShortLabel ($foreignKeyLabel)")
 #end
+#set($label = "$foreignKeyShortLabel")
 ${constraint}.1=<${messageKey}.1>
 ${constraint}.2=<${messageKey}.2>
 ${messageKey}.1=${StrUtils.getStringParametrizado("$fkstring1", "$entityLabel")}${xxsuffix1}

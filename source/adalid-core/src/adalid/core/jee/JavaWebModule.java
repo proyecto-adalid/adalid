@@ -8,6 +8,7 @@ package adalid.core.jee;
 
 import adalid.core.DisplaySet;
 import adalid.core.Page;
+import adalid.core.interfaces.Entity;
 import java.util.List;
 
 /**
@@ -18,5 +19,7 @@ public interface JavaWebModule extends JavaModule {
     List<Page> getPagesList();
 
     List<DisplaySet> getPageSetsList();
+
+    List<Entity> getDisplayableEntitiesList();
 
 }

@@ -21,7 +21,6 @@
         #if($expression.isRowsAggregateExpression())
             #set($expname = $expression.wrapper.sqlName)
             #set($expname = $expression.wrapper.sqlExpressionSelectFunctionName)
-            #set($expname = $expression.wrapper.sqlSchemaQualifiedShortExpressionSelectFunctionName)
             #set($exptype = $expression.wrapper.sqlType)
             #set($exppath = $expression.pathString)
             #set($statement = $VelocityAid.coalesce($expression.wrapper.getSqlSelectStatement($query)))

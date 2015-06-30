@@ -33,7 +33,7 @@ $tab        <webuijsf:label id="etiquetaDenominacionFilaMaestro1"
 $tab            binding="#{${pageBeanName}.etiquetaDenominacionFilaMaestro1}"
     #if($page.reference)
 ##              text="$page.reference.wrapper.xmlValidDefaultShortLabel"
-$tab            text="BundleParametros.${page.entity.wrapper.sqlSchemaQualifiedShortName}.${page.reference.wrapper.sqlName}"
+$tab            text="BundleParametros.${page.entity.wrapper.sqlName}.${page.reference.wrapper.sqlName}"
     #else
 $tab            text="#{${pageBeanName}.gestor.i18n.textoEtiquetaDenominacionFilaMaestro}"
     #end

@@ -6,29 +6,26 @@
  */
 package meta.proyecto.base;
 
-import adalid.commons.util.ArrUtils;
-import adalid.core.predicates.IsEntityNameNotExcluded;
-import meta.predicado.base.IsModuloRegistroDisplay;
+import meta.enumeracion.base.TipoModuloBase;
+import meta.predicado.base.IsModuloRegistroResidualDisplay;
 
 /**
  * @author Jorge Campins
  */
 public class ModuloRegistro extends ModuloBase {
 
-    static final String[] EXCLUDED_ENTITY_NAMES = ArrUtils.join(String.class,
-        ModuloRegistroFiltro.INCLUDED_ENTITY_NAMES,
-        ModuloRegistroPrueba.INCLUDED_ENTITY_NAMES,
-        ModuloRegistroVista.INCLUDED_ENTITY_NAMES);
-
     public ModuloRegistro() {
         super();
         setAlias("Registro");
         setDefaultLabel("Registro de Recursos");
         setDefaultDescription("Registro de Recursos");
-        IsEntityNameNotExcluded entityPredicate = new IsEntityNameNotExcluded();
-        entityPredicate.setExcludedNames(EXCLUDED_ENTITY_NAMES);
-        IsModuloRegistroDisplay pagePredicate = new IsModuloRegistroDisplay(entityPredicate);
+        IsModuloRegistroResidualDisplay pagePredicate = new IsModuloRegistroResidualDisplay(this);
         setPagePredicate(pagePredicate);
+    }
+
+    @Override
+    public final TipoModuloBase getTipo() {
+        return TipoModuloBase.REGISTRO;
     }
 
 }

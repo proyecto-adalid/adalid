@@ -15,22 +15,14 @@
 #macro(writeCreateEnumFunctions)
     #resetSQLVariables()
     #set($entname = $entity.wrapper.sqlName)
-    #set($entname = $entity.wrapper.sqlSchemaQualifiedShortName)
     #set($keytype = $entity.primaryKeyProperty.wrapper.sqlType)
     #writeCreateEnumFunctionHeading()
-    #set($comma = ',')
     #set($rows = $entity.insertableRowsList)
     #foreach($row in $rows)
-        #if($foreach.last)
-            #if($foreach.first)
-                #set($comma = ",${EOL}out _filler$ $keytype")
-            #else
-                #set($comma = '')
-            #end
-        #end
         #set($kname = $row.wrapper.sqlName.toUpperCase())
         #writeCreateEnumFunctionEnumConstant1()
     #end##foreach-row
+    out record$filler $keytype
     #writeCreateEnumFunctionBody()
     #foreach($row in $rows)
         #set($kname = $row.wrapper.sqlName.toUpperCase())
@@ -41,18 +33,15 @@
 #end##writeCreateEnumFunctions
 
 #macro(writeCreateEnumFunctionHeading)
-#set($foo = "${sql_name_separator}enum")
-#set($function1 = "${entname}${foo}()")
-#set($function2 = "${entname}${foo}")
-#set($function3 = "${entname}${foo}()")
-drop function if exists $function1 cascade;
+#set($function1 = $entity.wrapper.getSuffixedSqlName("${sql_name_separator}enum"))
+drop function if exists $function1() cascade;
 #writeDelimiter('??')
-create or replace function $function2
+create or replace function $function1
 (
 #end##writeCreateEnumFunctionHeading
 
 #macro(writeCreateEnumFunctionEnumConstant1)
-out $kname $keytype$comma
+    out $kname $keytype,
 #end##writeCreateEnumFunctionEnumConstant1
 
 #macro(writeCreateEnumFunctionBody)

@@ -1,13 +1,28 @@
+#set($fieldColumns = 20)
+#set($fieldMaxLength = 0)
 #if($field.property.isByteData())
-    #set($fieldMaxLength = 4)##-256
+    #set($fieldMaxLength = 4)##-128
 #elseif($field.property.isShortData())
     #set($fieldMaxLength = 7)##-32,768
 #elseif($field.property.isIntegerData())
     #set($fieldMaxLength = 14)##-2.147.483.648
 #elseif($field.property.isLongData())
     #set($fieldMaxLength = 26)##-9.223.372.036.854.775.808
-#else
-    #set($fieldMaxLength = 0)
+#elseif($field.property.isBigDecimalData())
+    #set($fieldPrecision = $VelocityAid.coalesce($field.property.precision, 16))
+    #set($fieldScale = $VelocityAid.coalesce($field.property.scale, 0))
+    #set($fieldMaxLength = 1 + 4 * ((2 + $fieldPrecision) / 3))
+    #if($fieldPrecision > 48)
+        #set($fieldColumns = 80)
+    #elseif($fieldPrecision > 36)
+        #set($fieldColumns = 65)
+    #elseif($fieldPrecision > 24)
+        #set($fieldColumns = 45)
+    #elseif($fieldPrecision > 18)
+        #set($fieldColumns = 30)
+    #end
+#elseif($field.property.isBigIntegerData())
+    #set($fieldMaxLength = 26)##-9.223.372.036.854.775.808
 #end
 $tab<h:panelGrid id="panelGrid${panelGridSequence.next()}"
     #if($tabString == '')
@@ -20,7 +35,7 @@ $tab    <webuijsf:label id="label${fieldFirstName}${tabString}"
 $tab        binding="#{${pageBeanName}.label${fieldFirstName}${tabString}}"
 $tab        for="${campo1}${tabString}"
 ##          text="$field.property.wrapper.xmlValidDefaultShortLabel"/>
-$tab        text="BundleParametros.${page.entity.wrapper.sqlSchemaQualifiedShortName}.${field.property.wrapper.sqlName}"/>
+$tab        text="BundleParametros.${page.entity.wrapper.sqlName}.${field.property.wrapper.sqlName}"/>
 $tab</h:panelGrid>
 $tab<h:panelGrid id="panelGrid${panelGridSequence.next()}"
 $tab    columns="7"
@@ -32,7 +47,7 @@ $tab    rendered="#{${pageBeanName}.asistente.grid${fieldClassName}RenderedInsid
 $tab    styleClass="pdq-grid-elemento-1">
 $tab    <webuijsf:textField id="${campo1}${tabString}"
 $tab        binding="#{${pageBeanName}.${campo1}${tabString}}"
-$tab        columns="20"
+$tab        columns="$fieldColumns"
 $tab        converter="#{${pageBeanName}.converter${fieldFirstName}}"
         #if($fieldMaxLength > 0)
 $tab        maxLength="$fieldMaxLength"
@@ -41,7 +56,7 @@ $tab        readOnly="$fieldReadOnly"
 $tab        required="$fieldRequired"
 $tab        text="#{${sourceVar}.${fieldVariableName}}"
 ##          toolTip="$field.property.wrapper.xmlValidDefaultTooltip"
-$tab        toolTip="BundleParametros.${page.entity.wrapper.sqlSchemaQualifiedShortName}.${field.property.wrapper.sqlName}"
+$tab        toolTip="BundleParametros.${page.entity.wrapper.sqlName}.${field.property.wrapper.sqlName}"
 $tab        validatorExpression="#{${pageBeanName}.${campo1}_validate}"/>
 $tab    <webuijsf:staticText id="${campo1}${tabString}Texto1"
 $tab        binding="#{${pageBeanName}.${campo1}${tabString}Texto1}"
@@ -56,6 +71,6 @@ $tab        binding="#{${pageBeanName}.helpInline${fieldFirstName}${tabString}}"
 $tab        rendered="#{SessionBean1.contextoSesion.helpInlineRendered}"
 $tab        styleClass="pdq-helpInline-field"
 ##          text="$field.property.wrapper.xmlValidDefaultShortDescription"
-$tab        text="BundleParametros.${page.entity.wrapper.sqlSchemaQualifiedShortName}.${field.property.wrapper.sqlName}"
+$tab        text="BundleParametros.${page.entity.wrapper.sqlName}.${field.property.wrapper.sqlName}"
 $tab        type="field"/>
 $tab</h:panelGrid>

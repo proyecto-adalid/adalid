@@ -18,21 +18,41 @@ import adalid.core.interfaces.Artifact;
 import adalid.core.interfaces.Entity;
 import adalid.core.interfaces.Parameter;
 import adalid.core.interfaces.Property;
+import adalid.core.programmers.AbstractJavaProgrammer;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Properties;
 import java.util.ResourceBundle;
 import java.util.Set;
 import java.util.TreeSet;
-import meta.proyecto.comun.EntidadesComunes;
+import meta.entidad.comun.configuracion.basica.Aplicacion;
+import meta.entidad.comun.configuracion.basica.ClaseRecurso;
+import meta.entidad.comun.configuracion.basica.Dominio;
+import meta.entidad.comun.configuracion.basica.Funcion;
+import meta.entidad.comun.configuracion.basica.FuncionParametro;
+import meta.entidad.comun.configuracion.basica.GrupoProceso;
+import meta.entidad.comun.configuracion.basica.Pagina;
+import meta.entidad.comun.configuracion.basica.Parametro;
+import meta.enumeracion.base.TipoModuloBase;
+import meta.paquete.base.PaqueteBase;
+import meta.paquete.comun.PaqueteConsultaRecursosBasicos;
+import meta.paquete.comun.PaqueteRegistroRecursosBasicos;
+import meta.proyecto.comun.EntidadesBasicas;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
 
 /**
  * @author Jorge Campins
  */
 public abstract class ProyectoBase extends Project {
+
+    private final Logger logger = Logger.getLogger(Project.class);
 
     protected static final String PLATAFORMA_BASE = "jee1ap101";
 
@@ -52,6 +72,35 @@ public abstract class ProyectoBase extends Project {
 
     protected static final String VERSION_POSTGRESQL = "postgresql.version";
 
+    protected static final Map<String, String> ENBG = new LinkedHashMap<>(); // Entity Name Bundle Getters
+
+    protected static final Set<String> PAKS; // Package Alias Keyword Set
+
+    static {
+        ENBG.put(Aplicacion.class.getSimpleName(), "BundleWebui.getNombreAplicacion");
+        ENBG.put(ClaseRecurso.class.getSimpleName(), "BundleDominios.getNombreClaseRecurso");
+        ENBG.put(Dominio.class.getSimpleName(), "BundleDominios.getNombreDominio");
+//      ENBG.put(DominioParametro.class.getSimpleName(), "BundleParametros.getNombreDominioParametro");
+        ENBG.put(Funcion.class.getSimpleName(), "BundleFunciones.getNombreFuncion");
+        ENBG.put(FuncionParametro.class.getSimpleName(), "BundleParametros.getNombreFuncionParametro");
+        ENBG.put(GrupoProceso.class.getSimpleName(), "BundleFunciones.getNombreGrupoProceso");
+//      ENBG.put(OpcionMenu.class.getSimpleName(), "BundleMenus.getNombreOpcionMenu");
+        ENBG.put(Pagina.class.getSimpleName(), "BundleWebui.getNombrePagina");
+        ENBG.put(Parametro.class.getSimpleName(), "BundleParametros.getNombreParametro");
+        /**/
+        PAKS = AbstractJavaProgrammer.getJavaKeywords();
+        PAKS.add("context");
+        PAKS.add("pages");
+    }
+
+    public static String getEntityNameBundleGetter(Entity entity) {
+        return entity == null ? null : getEntityNameBundleGetter(entity.getName());
+    }
+
+    public static String getEntityNameBundleGetter(String entityName) {
+        return entityName == null ? null : ENBG.get(entityName);
+    }
+
     public static String getEsquemaEntidadesComunes() {
         String string = getString("adalid.schema");
         return StringUtils.trimToEmpty(string);
@@ -63,26 +112,23 @@ public abstract class ProyectoBase extends Project {
         getSingularPlatforms().add(PLATAFORMA_BASE);
     }
 
+    @ProjectModule(menu = Kleenean.FALSE, role = Kleenean.FALSE)
+    EntidadesBasicas entidadesBasicas;
+
     protected ModuloConsulta consulta;
 
     protected ModuloProcesamiento procesamiento;
 
     protected ModuloRegistro registro;
 
-    protected ModuloConsultaTarea tarea;
+    protected PaqueteConsultaRecursosBasicos consultaRecursosBasicos;
 
-    protected ModuloRegistroFiltro filtro;
-
-    protected ModuloRegistroPrueba prueba;
-
-    protected ModuloRegistroVista vista;
-
-    @ProjectModule(menu = Kleenean.FALSE, role = Kleenean.FALSE)
-    protected EntidadesComunes commons;
+    protected PaqueteRegistroRecursosBasicos registroRecursosBasicos;
 
     @Override
     public boolean analyze() {
         boolean analyzed = super.analyze();
+        analyzed &= analyzePackages();
         if (analyzed) {
 //          loadDictionary();
             initDictionary();
@@ -155,6 +201,8 @@ public abstract class ProyectoBase extends Project {
     }
     // </editor-fold>
 
+    private boolean _dictionaryEnabled;
+
     private Properties _entitiesDictionary;
 
     private Properties _operationsDictionary;
@@ -176,6 +224,20 @@ public abstract class ProyectoBase extends Project {
     private String _roleBasedAccessControllerName;
 
     private SecurityRealmType _securityRealmType = SecurityRealmType.JDBC;
+
+    /**
+     * @return true if the dictionary is enabled; false otherwise
+     */
+    public boolean isDictionaryEnabled() {
+        return _dictionaryEnabled;
+    }
+
+    /**
+     * enables the dictionary
+     */
+    public void enableDictionary() {
+        _dictionaryEnabled = true;
+    }
 
     /**
      * @return the entities dictionary
@@ -308,7 +370,10 @@ public abstract class ProyectoBase extends Project {
         if (StringUtils.isBlank(key)) {
             return "?";
         }
-        return _entitiesDictionary.getProperty(key, "?");
+        if (_dictionaryEnabled) {
+            return _entitiesDictionary.getProperty(key, "?");
+        }
+        return StrUtils.getLongNumericCode(StrUtils.getHumplessCase(key, '_'));
     }
 
     /**
@@ -346,7 +411,10 @@ public abstract class ProyectoBase extends Project {
         if (StringUtils.isBlank(key)) {
             return "?";
         }
-        return _operationsDictionary.getProperty(key, "?");
+        if (_dictionaryEnabled) {
+            return _operationsDictionary.getProperty(key, "?");
+        }
+        return StrUtils.getLongNumericCode(StrUtils.getHumplessCase(key, '_'));
     }
 
     /**
@@ -357,7 +425,10 @@ public abstract class ProyectoBase extends Project {
         if (StringUtils.isBlank(key)) {
             return "?";
         }
-        return _pagesDictionary.getProperty(key, "?");
+        if (_dictionaryEnabled) {
+            return _pagesDictionary.getProperty(key, "?");
+        }
+        return StrUtils.getLongNumericCode(StrUtils.getHumplessCase(key, '_'));
     }
 
     /**
@@ -422,7 +493,97 @@ public abstract class ProyectoBase extends Project {
         if (StringUtils.isBlank(key)) {
             return "?";
         }
-        return _parametersDictionary.getProperty(key, "?");
+        if (_dictionaryEnabled) {
+            return _parametersDictionary.getProperty(key, "?");
+        }
+        return StrUtils.getLongNumericCode(StrUtils.getHumplessCase(key, '_'));
+    }
+
+    private boolean analyzePackages() {
+        boolean ok = true;
+        String alias, dotted;
+        String[] words;
+        TipoModuloBase tipo;
+        Set<String> names, allNames;
+        Set<String> aliases = new LinkedHashSet<>();
+        Set<String> consultas = new LinkedHashSet<>();
+        Set<String> procesos = new LinkedHashSet<>();
+        Set<String> registros = new LinkedHashSet<>();
+        List<? extends PaqueteBase> packages = getPackages();
+        for (PaqueteBase paquete : packages) {
+            alias = paquete.getAlias();
+            if (StringUtils.isBlank(alias)) {
+                logger.error(paquete + " is invalid; its alias is null");
+                ok = false;
+            } else {
+                if (aliases.add(alias)) {
+                    dotted = StrUtils.getLowerCaseIdentifier(alias, '.');
+                    words = StringUtils.split(dotted, '.');
+                    for (String word : words) {
+                        for (String keyword : PAKS) {
+                            if (keyword.equalsIgnoreCase(word)) {
+                                logger.error(paquete + " is invalid; its alias contains keyword \"" + keyword + "\"");
+                                ok = false;
+                            }
+                        }
+                    }
+                } else {
+                    logger.error(paquete + " is invalid; duplicate alias \"" + alias + "\"");
+                    ok = false;
+                }
+            }
+            names = paquete.getLocallyDeclaredEntityClassSimpleNames();
+            if (names.isEmpty()) {
+                logger.error(paquete + " is invalid; it has no entities locally declared");
+                ok = false;
+            }
+            allNames = null;
+            tipo = paquete.getTipo();
+            if (tipo == null) {
+                logger.error(paquete + " is invalid; its type is null");
+                ok = false;
+            } else {
+                switch (tipo) {
+                    case CONSULTA:
+                        allNames = consultas;
+                        break;
+                    case PROCESAMIENTO:
+                        allNames = procesos;
+                        break;
+                    case REGISTRO:
+                        allNames = registros;
+                        break;
+                    default:
+                        logger.error(paquete + " is invalid; its type is " + tipo);
+                        ok = false;
+                        break;
+                }
+            }
+            if (allNames == null || names.isEmpty()) {
+            } else {
+                for (String name : names) {
+                    if (allNames.add(name)) {
+                    } else {
+                        logger.error(name + " is declared in more than one package of type " + tipo);
+                        ok = false;
+                    }
+                }
+            }
+        }
+        return ok;
+    }
+
+    private List<? extends PaqueteBase> getPackages() {
+        PaqueteBase paquete;
+        List<PaqueteBase> packages = new ArrayList<>();
+        List<Project> modules = getModulesList();
+        for (Project module : modules) {
+            if (module instanceof PaqueteBase) {
+                paquete = (PaqueteBase) module;
+                packages.add(paquete);
+            }
+        }
+        return packages;
     }
 
     private void loadDictionary() {

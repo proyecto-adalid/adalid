@@ -41,7 +41,7 @@
     #if($fieldRegularExpression != '')
         if (value instanceof String) {
             String valor = (String) value;
-            String regex = "$fieldRegularExpression";
+            String regex = "$StringEscapeUtils.escapeJava($fieldRegularExpression)";
             if (valor.matches(regex)) {
             } else {
                 String summary = Bitacora.getTextoMensaje(CBM.CHECK_CHANGES_EXCEPTION_6, regex);

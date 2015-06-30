@@ -13,13 +13,12 @@
 #macro(writeDropDefaultFunctions)
     #resetSQLVariables()
     #set($entname = $entity.wrapper.sqlName)
-    #set($entname = $entity.wrapper.sqlSchemaQualifiedShortName)
     #set($table = $entity.wrapper.sqlTableName)
-    #set($table = $entity.wrapper.sqlSchemaQualifiedShortTableName)
     #set($keytype = $entity.primaryKeyProperty.wrapper.sqlType)
-    #set($foo = "${sql_name_separator}default_value")
-##  #writeDropDefaultFunction("${entname}${foo}(${keytype})")
-##  #writeDropDefaultFunction("${entname}${foo}(${table})")
+    #set($function0 = $entity.wrapper.getSuffixedSqlName("${sql_name_separator}default_value"))
+##  #writeDropDefaultFunction("${function0}(${keytype})")
+    #writeDropDefaultFunction("${function0}(${table})")
+    #writeDropDefaultFunction("${function0}(${table}, ${table})")
 #end##writeDropDefaultFunctions
 
 #macro(writeDropDefaultFunction $function)
