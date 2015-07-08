@@ -26,6 +26,7 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.filefilter.FileFilterUtils;
 import org.apache.commons.io.filefilter.IOFileFilter;
 import org.apache.commons.io.filefilter.RegexFileFilter;
+import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
@@ -90,11 +91,13 @@ public class BaseBuilder {
 
     private final String velocityTemplatesTargetFolderPath;
 
+    private final String[] preservableFiles;
+
     private int binaryFilesCopied, textFilesCopied, propertiesFilesCreated, readingWarnings, readingErrors, writingErrors;
 
     private boolean excludeOracle;
 
-    Set<String> optionalEntityNames;
+    private Set<String> optionalEntityNames;
     // </editor-fold>
 
     public BaseBuilder() {
@@ -105,6 +108,7 @@ public class BaseBuilder {
             velocityFolderPath = rootFolderPath + FS + "adalid" + FS + "source" + FS + "development" + FS + "resources" + FS + "velocity";
             velocityPlatformsTargetFolderPath = velocityFolderPath + FS + "platforms" + FS + "jee1" + FS + "base";
             velocityTemplatesTargetFolderPath = velocityFolderPath + FS + "templates" + FS + "jee1" + FS + "base";
+            preservableFiles = new String[]{"javascript3.js"};
             projectFolder = new File(projectFolderPath);
             velocityFolder = new File(velocityFolderPath);
             if (velocityFolder.isDirectory()) {
@@ -244,6 +248,7 @@ public class BaseBuilder {
     private void createTextFilePropertiesFile(String source, String target) {
         File sourceFile = new File(source);
         String sourceFileName = StringUtils.substringBeforeLast(sourceFile.getName(), ".");
+        String sourceFilextName = sourceFile.getName();
         String sourceFolderName = StringUtils.substringBeforeLast(sourceFile.getParentFile().getName(), ".");
         String sourceEntityName = getOptionalEntityName(sourceFileName, sourceFolderName);
         String properties = source.replace(projectFolderPath, velocityPlatformsTargetFolderPath) + ".properties";
@@ -268,6 +273,8 @@ public class BaseBuilder {
             lines.add("disabled-when-missing = " + sourceEntityName);
         }
         if (source.endsWith(".css") || source.endsWith(".jrtx")) {
+            lines.add("preserve = true");
+        } else if (ArrayUtils.contains(preservableFiles, sourceFilextName)) {
             lines.add("preserve = true");
         }
         lines.add("dollar.string = $");

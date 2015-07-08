@@ -1,45 +1,41 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
     <head>
-        <title>remitiendo...</title>
+        <title>${project.wrapper.htmlValidDefaultLabel}</title>
     </head>
     <body>
         <script type="text/javascript">
-            //
-            var IE  = (navigator.appName.indexOf('Microsoft') == 0); // Microsoft Internet Explorer
-            var NS  = (navigator.appName.indexOf('Netscape' ) == 0); // Netscape
-            //
-            //  var DEFAULT_PROTOCOL  = 'http:';
-            //  var DEFAULT_HOST      = 'localhost:8080';
-            //  var DEFAULT_HOST_NAME = 'localhost';
-            //  var DEFAULT_PORT      = '8080';
+            var IE  = (navigator.appName.indexOf('Microsoft') === 0); // Microsoft Internet Explorer
+            var NS  = (navigator.appName.indexOf('Netscape' ) === 0); // Netscape
+        //  var DEFAULT_PROTOCOL  = 'http:';
+        //  var DEFAULT_HOST      = 'localhost:8080';
+        //  var DEFAULT_HOST_NAME = 'localhost';
+        //  var DEFAULT_PORT      = '8080';
             var DEFAULT_ROOT      = 'http://localhost:8080/';
-            //
             var REDIRECT_MODE     = 'RedirectMode';
             var REDIRECT_OPEN     = '0';
             var REDIRECT_SELF     = '1';
-            //
             var SESSION_FRAME     = 'SessionFrame';
             var SESSION_STAMP     = 'SessionStamp';
             var SESSION_STATE     = 'SessionState';
             var SESSION_RESTART   = '0';
             var SESSION_REDIRECT  = '1';
-            //
+        //
             function getCurrentTimeMillis() {
-                //  var currentDate = new Date();
-                //  return currentDate.getTime();
+            //  var currentDate = new Date();
+            //  return currentDate.getTime();
                 return 0;
             }
-            //
+        //
             function getDefaultWindowName() {
                 var ctx = getParametro(location.pathname, '', '/', '/');
                 var wcx = ctx.replace(/${backslash}-/gi, '_');
                 var pos = wcx.indexOf('_');
                 var dwn = pos > 0 ? wcx.substring(0, pos) : wcx;
-                //  alert('current window name = ' + window.name + ', context = ' + ctx + ', default window name = ' + dwn);
+            //  alert('current window name = ' + window.name + ', context = ' + ctx + ', default window name = ' + dwn);
                 return dwn;
             }
-            //
+        //
             function getEspecificacionesVentana(tipoVentana) {
                 var features  = 'resizable,scrollbars,status';
                 /**/
@@ -88,7 +84,7 @@
                 var newLeft   = avaLeft;
                 var newTop    = avaTop;
                 /**/
-                if (tipoVentana == 'ayuda') {
+                if (tipoVentana === 'ayuda') {
                     /**/
                     features += ',menubar,toolbar';
                     /**/
@@ -98,7 +94,7 @@
                     newLeft   = scrLeft < avaLeft + avaWidth / 2 ? avaLeft + avaWidth - newWidth : avaLeft;
                     newTop    = avaTop;
                 }
-                if (tipoVentana == 'popup') {
+                if (tipoVentana === 'popup') {
                     /*
                     features += ',dependent,dialog';
                      */
@@ -133,27 +129,27 @@
                  */
                 return features;
             }
-            //
+        //
             function getParametro(str, kw0, kw1, kw2) {
                 // Obtiene la posicion donde comenzar a buscar
-                var ix0 = kw0 == '' ?  0  : str.indexOf(kw0);
-                if (ix0 == -1) return '';
+                var ix0 = kw0 === '' ?  0  : str.indexOf(kw0);
+                if (ix0 === -1) return '';
                 ix0 += kw0.length;
                 // Obtiene la posicion donde comienza el valor
-                var ix1 = kw1 == '' ? ix0 : str.indexOf(kw1, ix0);
-                if (ix1 == -1) return '';
+                var ix1 = kw1 === '' ? ix0 : str.indexOf(kw1, ix0);
+                if (ix1 === -1) return '';
                 ix1 += kw1.length;
                 // Obtiene la posicion donde termina el valor
-                var ix2 = kw2 == '' ? ix1 : str.indexOf(kw2, ix1);
-                if (ix2 == -1) ix2 = str.length;
+                var ix2 = kw2 === '' ? ix1 : str.indexOf(kw2, ix1);
+                if (ix2 === -1) ix2 = str.length;
                 // Obtiene el valor
                 var valor = str.substring(ix1, ix2);
                 // Retorna el valor
                 return valor;
             }
-            //
+        //
             function closeVentana(urx, twn) {
-                //  alert('name=' + window.name + ', close(' + urx + ', ' + twn + ')');
+            //  alert('name=' + window.name + ', close(' + urx + ', ' + twn + ')');
                 if (IE) {
                     return null;
                 }
@@ -163,9 +159,9 @@
                 wrx.close();
                 return wrx;
             }
-            //
+        //
             function openVentana(urx, twn) {
-                //  alert('name=' + window.name + ', open(' + urx + ', ' + twn + ')');
+            //  alert('name=' + window.name + ', open(' + urx + ', ' + twn + ')');
                 var wcx = twn.replace(/${backslash}-/gi, '_');
                 var wfx = getEspecificacionesVentana('popup');
                 var rpl = '?' + REDIRECT_MODE + '=' + REDIRECT_OPEN
@@ -177,64 +173,64 @@
                 wrx.focus();
                 return wrx;
             }
-            //
+        //
             function selfClose() {
-                //  alert('name=' + window.name);
+            //  alert('name=' + window.name);
                 var urx = location.protocol + '//' + location.host;
-                location.replace(urx); // después de este replace las funciones de este documento ya no estan disponibles
+                location.replace(urx); // despues de este replace las funciones de este documento ya no estan disponibles
                 window.close();
             }
-            //
+        //
             function selfReplace(urx) {
                 var state = getParametro(unescape(location.search), '?', SESSION_STATE + '=', '&');
-                if (state == '') state = SESSION_RESTART;
+                if (state === '') state = SESSION_RESTART;
                 var rpl = '?' + REDIRECT_MODE + '=' + REDIRECT_SELF
                         + '&' + SESSION_FRAME + '=' + window.name
                         + '&' + SESSION_STAMP + '=' + getCurrentTimeMillis()
                         + '&' + SESSION_STATE + '=' + state;
-                location.replace(urx + rpl); // después de este replace las funciones de este documento ya no estan disponibles
+                location.replace(urx + rpl); // despues de este replace las funciones de este documento ya no estan disponibles
             }
-            //
+        //
             function tieneSufijo(str, kw0) {
-                var ix0 = kw0 == '' ?  0  : str.indexOf(kw0);
-                return (ix0 >= 0 && ix0 + kw0.length == str.length);
+                var ix0 = kw0 === '' ?  0  : str.indexOf(kw0);
+                return (ix0 >= 0 && ix0 + kw0.length === str.length);
             }
-            //
-            //  alert(window.name + ', ' + location.href);
-            //
-            //  document.title = window.name;
-            //  window.status  = window.name;
-            //
+        //
+        //  alert(window.name + ', ' + location.href);
+        //
+        //  document.title = window.name;
+        //  window.status  = window.name;
+        //
             var ur0 = location.protocol + '//' + location.host + '/';
             var hp0 = location.host;
             var ur1 = location.protocol + '//' + location.host + location.pathname;
             var pr1 = getParametro(ur1, '://', '/', '/'); // project (context)
             var dw1 = getDefaultWindowName();
-            if (window.name == '' || pr1 == '' || dw1 == '' || window.name.indexOf(dw1) != 0) {
+            if (window.name === '' || pr1 === '' || dw1 === '' || window.name.indexOf(dw1) !== 0) {
                 selfClose();
             } else {
                 var ur2 = getParametro(unescape(location.search), '?', 'url=', '&');
                 var jsp = getParametro(unescape(location.search), '?', 'jsp=', '&');
                 var twn = getParametro(unescape(location.search), '?', 'twn=', '&');
-                if (ur2 == '' && jsp != '') {
+                if (ur2 === '' && jsp !== '') {
                     ur2 = ur0 + pr1 + '/faces/' + jsp + '.jsp';
                 }
-                if (ur2 == '') {
+                if (ur2 === '') {
                     selfClose();
                 } else {
                     var pr2 = getParametro(ur2, '://', '/', '/'); // project (context)
-                    if (pr2 == '') {
+                    if (pr2 === '') {
                         selfClose();
                     } else {
-                        if (ur2.indexOf(DEFAULT_ROOT) == 0) {
+                        if (ur2.indexOf(DEFAULT_ROOT) === 0) {
                             var rex = new RegExp(DEFAULT_ROOT, 'gi');
                             ur2 = ur2.replace(rex, ur0);
                         }
-                        if (twn == '') {
+                        if (twn === '') {
                             twn = pr2;
                         }
                         var wc2 = twn.replace(/${backslash}-/gi, '_');
-                        if (wc2 == window.name) {
+                        if (wc2 === window.name) {
                             selfReplace(ur2);
                         } else {
                             closeVentana(ur0, twn);

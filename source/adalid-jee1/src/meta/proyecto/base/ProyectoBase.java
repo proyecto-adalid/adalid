@@ -211,6 +211,8 @@ public abstract class ProyectoBase extends Project {
 
     private Properties _parametersDictionary;
 
+    private boolean _internetAccessAllowed;
+
     private String _baseFolderName;
 
     private String _databaseName;
@@ -624,6 +626,20 @@ public abstract class ProyectoBase extends Project {
         PropertiesHandler.storeProperties(_operationsDictionary, OPERATIONS_DICTIONARY, getName());
         PropertiesHandler.storeProperties(_pagesDictionary, PAGES_DICTIONARY, getName());
         PropertiesHandler.storeProperties(_parametersDictionary, PARAMETERS_DICTIONARY, getName());
+    }
+
+    /**
+     * @return true if internet access is allowed; false otherwise
+     */
+    public boolean isInternetAccessAllowed() {
+        return _internetAccessAllowed;
+    }
+
+    /**
+     * @param internetAccessAllowed true if internet access is allowed; false otherwise
+     */
+    public void setInternetAccessAllowed(boolean internetAccessAllowed) {
+        _internetAccessAllowed = internetAccessAllowed;
     }
 
     /**

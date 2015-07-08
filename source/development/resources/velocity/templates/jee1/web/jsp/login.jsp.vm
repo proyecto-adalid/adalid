@@ -15,6 +15,7 @@
     }
     Locale locale = request.getLocale();
     String submit = BundleWebui.getString("login.jsp.txt30", locale);
+#***
     String entapp = request.getContextPath().substring(1, request.getContextPath().indexOf("-"));
     String prefix = entapp == null ? null : entapp.toUpperCase() + "_";
     String dirvar = prefix == null ? null : prefix + "DIR";
@@ -38,38 +39,68 @@
     String dbstr4 = dbvar4;
     boolean dirok = true;
     boolean dbcok = true;
+*###
 %>
 <html>
     <head>
         <title><% out.print(BundleWebui.getString("login.jsp.title", locale)); %></title>
     </head>
     <body bgcolor="#fafafa" style="font-family: Arial,Helvetica,sans-serif" onload="initialize()" onunload="terminate()">
+#if($project.isInternetAccessAllowed())
+        <script src="/${project.rootFolderName}-war/resources/javascript3.js"></script>
+#end
         <script type="text/javascript">
             function initialize() {
                 var winname = location.pathname;
+#***
                 winname = winname.replace(/\-/gi, '/');
                 winname = winname.replace(/\./gi, '/');
                 winname = winname.replace(/\_/gi, '/');
-                if (window.name == '') {
+*###
+                if (window.name === '') {
                     window.name = winname;
-                    text1.focus();
-                } else if (window.name == winname) {
-                    text2.focus();
-                //  text2.select();
+                    document.getElementById('text1').focus();
+                } else if (window.name === winname) {
+                    document.getElementById('text2').focus();
+                //  document.getElementById('text2').select();
                 } else {
                     window.name = winname;
                     location.reload();
                 }
             }
+#***
             function culminate() {
                 var winname = window.name.replace(/\//gi, '_');
                 window.name = winname;
             }
+*###
             function terminate() {
-            //  OJO: el onunload, aunque no tenga instrucciones, hace que siempre se ejecute el onload al regresar
+                // OJO: el onunload, aunque no tenga instrucciones, hace que siempre se ejecute el onload al regresar
             }
+#if($project.isInternetAccessAllowed())
+            var verifyUserResponse = function(g_recaptcha_response) {
+                g_recaptcha_response = g_recaptcha_response || '';
+                if (g_recaptcha_response.length > 0) {
+                //  document.getElementById('boton').style.visibility = "visible";
+                    document.getElementById('login').submit();
+                }
+            };
+            var onloadCallback = function() {
+                var container = document.getElementById('recaptcha');
+                var sitekey = grecaptchaSiteKey();
+                var params = {sitekey : sitekey, callback : verifyUserResponse};
+                grecaptcha.render(container, params);
+                document.getElementById('boton').style.visibility = "hidden";
+            };
+#end
         </script>
-        <form method="POST" action="j_security_check" onsubmit="culminate()">
+#if($project.isInternetAccessAllowed())
+        <script src="https://www.google.com/recaptcha/api.js?onload=onloadCallback&render=explicit"></script>
+#end
+#***
+        <form id="login" method="POST" action="j_security_check" onsubmit="culminate()">
+*###
+        <form id="login" method="POST" action="j_security_check">
             <div>
                 <img alt="" src="/${project.rootFolderName}-war/resources/masthead_left.png" style="float: left"/>
                 <img alt="" src="/${project.rootFolderName}-war/resources/masthead_right.png" style="float: right"/>
@@ -89,9 +120,11 @@
             <div style="float: left">
                 <img onclick="gohome()" alt="" src="/${project.rootFolderName}-war/resources/mastbody.png"/>
             </div>
+#***
             <%
               if (dbcok && dirok) {
             %>
+*###
             <div style="float: left; margin-left: 12px; margin-top: 8px">
                 <table border="0" cellspacing="5" style="margin-left: 4px; margin-top: 12px; font-size: 1em">
                     <tr>
@@ -113,10 +146,15 @@
                         </td>
                     </tr>
                 </table>
+#if($project.isInternetAccessAllowed())
+                <div id="recaptcha" style="margin-top: 36px"></div>
+#end
             </div>
+#***
             <%
               }
             %>
+*###
             <div style="clear: both"/>
             <div style="background-color: #e5e9ed; border: 1px solid gray">
                 <div style="display: table; height: 36px">

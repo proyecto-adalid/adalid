@@ -1,13 +1,13 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
     <head>
-        <title>Inicio de Sesi&${pound}243;n</title>
+        <title>${project.wrapper.htmlValidDefaultLabel}</title>
     </head>
     <body>
         <script type="text/javascript">
-            //  alert(location.href);
+        //  alert(location.href);
             var url  = location.protocol + '//' + location.host + '/${project.alias}-war/' + '?SessionState=' + 1;
-            //  alert(url);
+        //  alert(url);
             location.replace(url);
         </script>
     </body>

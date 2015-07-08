@@ -1,4 +1,4 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
     <head>
         <title>${project.wrapper.htmlValidDefaultLabel}</title>
@@ -12,42 +12,42 @@
             var htm = getParametro(unescape(location.search), '?', 'htm=', '&');
         //  alert(jsp);
         //  alert(htm);
-            if (htm == '') {
-            //  alert('no existe un archivo de ayuda que corresponda a esta pagina')
+            if (htm === '') {
+            //  alert('no existe un archivo de ayuda que corresponda a esta pagina');
             } else {
                 go(htm, jsp);
             }
-            //
+        //
             function getParametro(str, kw0, kw1, kw2) {
                 // Obtiene la posicion donde comenzar a buscar
-                var ix0 = kw0 == '' ?  0  : str.indexOf(kw0);
-                if (ix0 == -1) return '';
+                var ix0 = kw0 === '' ?  0  : str.indexOf(kw0);
+                if (ix0 === -1) return '';
                 ix0 += kw0.length;
                 // Obtiene la posicion donde comienza el valor
-                var ix1 = kw1 == '' ? ix0 : str.indexOf(kw1, ix0);
-                if (ix1 == -1) return '';
+                var ix1 = kw1 === '' ? ix0 : str.indexOf(kw1, ix0);
+                if (ix1 === -1) return '';
                 ix1 += kw1.length;
                 // Obtiene la posicion donde termina el valor
-                var ix2 = kw2 == '' ? ix1 : str.indexOf(kw2, ix1);
-                if (ix2 == -1) ix2 = str.length;
+                var ix2 = kw2 === '' ? ix1 : str.indexOf(kw2, ix1);
+                if (ix2 === -1) ix2 = str.length;
                 // Obtiene el valor
                 var valor = str.substring(ix1, ix2);
                 // Retorna el valor
                 return valor;
             }
-            //
+        //
             function go(htm, jsp) {
             //  var url = location.protocol + '//' + location.host + '/${project.rootFolderName}-war/ayuda.html' + location.search;
             //  alert(htm + '#' + jsp);
                 var pdq = location.pathname.replace(/ayuda\.html/gi, 'resources' + '/' + htm);
                 var url = location.protocol + '//' + location.host + pdq;
-                if (jsp != '') {
-                    url += "#" + jsp
+                if (jsp !== '') {
+                    url += "#" + jsp;
                 }
             //  alert(url);
                 location.replace(url);
             }
-            //
+        //
             function goback() {
             //  alert(window.opener ? '[' + window.opener.name + '>' + window.name + ']' : '[' + window.name + ']');
                 if (history.length>1) {
@@ -59,17 +59,17 @@
                 }
             }
         </script>
-        <b style="color: #90b7d0; font-size: 100%">
+        <b style="color: #90b7d0; font-size: 150%">
             ${project.wrapper.htmlValidDefaultLabel}
         </b>
         <br><br>
-        <img alt="warning" src="/${project.rootFolderName}-war/resources/warning_medium.gif"/>
+        <img alt="warning" src="/${project.rootFolderName}-war/resources/warning_medium.gif">
         <a>
-            P&aacute;gina en construcci&oacute;n
+            $StrUtils.getStringHtml($Bundle.getString('ayuda.html.txt10'))
         </a>
         <br><br>
         <a href='#' onclick="goback()">
-            Haga clic aqu&iacute; para regresar
+            $StrUtils.getStringHtml($Bundle.getString('ayuda.html.txt20'))
         </a>
     </body>
 </html>

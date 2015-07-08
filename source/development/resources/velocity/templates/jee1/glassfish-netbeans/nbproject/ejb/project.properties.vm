@@ -26,6 +26,7 @@ dist.javadoc.dir=${dollar}{dist.dir}/javadoc
 endorsed.classpath=${backslash}
     ${dollar}{libs.javaee-endorsed-api-6.0.classpath}
 *###
+endorsed.classpath=
 excludes=
 includes=**
 j2ee.compile.on.save=false

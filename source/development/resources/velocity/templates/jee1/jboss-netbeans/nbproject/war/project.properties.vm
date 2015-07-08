@@ -30,6 +30,7 @@ dist.war=${dollar}{dist.dir}/${dollar}{war.name}
 endorsed.classpath=${backslash}
     ${dollar}{libs.javaee-endorsed-api-6.0.classpath}
 *###
+endorsed.classpath=
 excludes=
 includes=**
 j2ee.compile.on.save=false

@@ -19,11 +19,17 @@
     <body bgcolor="#fafafa" style="font-family: Arial,Helvetica,sans-serif" onload="initialize()" onunload="terminate()">
         <script type="text/javascript">
             function initialize() {
-                boton.focus();
+                var winname = location.pathname;
+#***
+                winname = winname.replace(/\-/gi, '/');
+                winname = winname.replace(/\./gi, '/');
+                winname = winname.replace(/\_/gi, '/');
+*###
+                window.name = winname;
+                document.getElementById('boton').focus();
             }
             function terminate() {
-                var winname = window.name.replace(/\_/gi, '/');
-                window.name = winname;
+                // OJO: el onunload, aunque no tenga instrucciones, hace que siempre se ejecute el onload al regresar
             }
         </script>
         <!--<form>-->

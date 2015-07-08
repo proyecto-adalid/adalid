@@ -328,6 +328,10 @@ public class TareaUsuario extends AbstractPersistentEntity {
     @PropertyField(hidden = Kleenean.TRUE)
     public IntegerProperty prioridad;
 
+    @ColumnField(nullable = Kleenean.TRUE)
+    @PropertyField(hidden = Kleenean.TRUE)
+    public TimestampProperty fechaHoraUltimoCorreo;
+
     /**
      * notificar a destinatarios de nuevas tareas
      */
