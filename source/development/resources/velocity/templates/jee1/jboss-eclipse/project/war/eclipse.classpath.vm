@@ -2,11 +2,11 @@
 #if($targetJBossMajorVersion == '7')
     #set($jbossLibPrefix = 'jboss')
     #set($jbossRuntime = 'JBoss 7.1 Runtime')
-    #set($jbossOwnerProjectFacets = 'jst.ejb')
+    #set($jbossOwnerProjectFacets = 'jst.web')
 #else
     #set($jbossLibPrefix = 'wildfly')
     #set($jbossRuntime = 'WildFly 9.0 Runtime')
-    #set($jbossOwnerProjectFacets = 'jst.web;jst.jsf')
+    #set($jbossOwnerProjectFacets = 'jst.jsf;jst.web')
 #end
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>

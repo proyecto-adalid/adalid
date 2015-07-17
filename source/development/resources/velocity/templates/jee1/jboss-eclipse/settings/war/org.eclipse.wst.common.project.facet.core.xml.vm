@@ -1,9 +1,19 @@
+#setGlobalVariables()
+#if($targetJBossMajorVersion == '7')
+    #set($jbossRuntime = 'JBoss 7.1 Runtime')
+#else
+    #set($jbossRuntime = 'WildFly 9.0 Runtime')
+#end
 <?xml version="1.0" encoding="UTF-8"?>
 <faceted-project>
-    <runtime name="JBoss 7.1 Runtime"/>
+    <runtime name="${jbossRuntime}"/>
     <fixed facet="jst.web"/>
     <fixed facet="wst.jsdt.web"/>
     <fixed facet="java"/>
+#if($targetJBossMajorVersion != '7')
+    <fixed facet="jst.jsf"/>
+    <installed facet="jst.jsf" version="2.2"/>
+#end
     <installed facet="java" version="1.7"/>
     <installed facet="jst.web" version="3.0"/>
     <installed facet="wst.jsdt.web" version="1.0"/>

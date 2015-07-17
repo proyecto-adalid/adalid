@@ -1,0 +1,13 @@
+#setGlobalVariables()
+#if($targetJBossMajorVersion == '7')
+<root>
+</root>
+#else
+<root>
+  <facet id="jst.jsf">
+    <node name="libprov">
+      <attribute name="provider-id" value="runtime-library-provider"/>
+    </node>
+  </facet>
+</root>
+#end
