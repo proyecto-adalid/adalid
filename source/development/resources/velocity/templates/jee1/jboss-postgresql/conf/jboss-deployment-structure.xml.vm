@@ -17,7 +17,7 @@
             <module name="org.apache.commons.lang" export="true" />
             <module name="org.apache.log4j" export="true" />
             <module name="org.apache.velocity" export="true" />
-            <module name="org.joda.time" export="true" />
+##          <module name="org.joda.time" export="true" />
             <module name="org.postgresql.pgjdbc4" export="true" />
         </dependencies>
     </deployment>

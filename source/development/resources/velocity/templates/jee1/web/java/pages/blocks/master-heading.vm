@@ -29,6 +29,7 @@
                 throw e instanceof FacesException ? (FacesException) e : new FacesException(e);
             }
         }
+
         private void iniciar() throws Exception {
             Object id = getRecursoMaestroDataProvider().${primaryKeyPropertyDataProviderGetter}();
             $masterEntity = ${masterFacade}.find(id, true);

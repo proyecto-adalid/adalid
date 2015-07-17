@@ -1,6 +1,9 @@
 #setGlobalVariables()
-#parse('templates/jee1/macros/macros-3.vm')
-#setTargetEnvironmentVariables()
+#if($targetJBossMajorVersion == '7')
+    #set($jbossLibPrefix = 'jboss')
+#else
+    #set($jbossLibPrefix = 'wildfly')
+#end
 annotation.processing.enabled=true
 annotation.processing.enabled.in.editor=false
 annotation.processing.processors.list=
@@ -36,7 +39,7 @@ jar.compress=false
 jar.index=${dollar}{jnlp.enabled}
 javac.classpath=${backslash}
     ${dollar}{libs.adalid-compile-lib-1.classpath}:${backslash}
-    ${dollar}{libs.jboss-core-modules.classpath}:${backslash}
+    ${dollar}{libs.${jbossLibPrefix}-core-modules.classpath}:${backslash}
     ${dollar}{libs.jsf12-support.classpath}:${backslash}
     ${dollar}{libs.woodstock-components.classpath}
 ${pound} Space-separated list of extra javac options

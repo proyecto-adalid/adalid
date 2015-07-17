@@ -1,6 +1,11 @@
 #setGlobalVariables()
-#parse('templates/jee1/macros/macros-3.vm')
-#setTargetEnvironmentVariables()
+#if($targetJBossMajorVersion == '7')
+    #set($jbossLibPrefix = 'jboss')
+    #set($j2eeServerType = 'JBoss4')
+#else
+    #set($jbossLibPrefix = 'wildfly')
+    #set($j2eeServerType = 'WildFly')
+#end
 annotation.processing.enabled=true
 annotation.processing.enabled.in.editor=true
 annotation.processing.processor.options=-Aeclipselink.canonicalmodel.use_static_factory=false
@@ -22,24 +27,20 @@ dist.dir=dist
 dist.ear.jar=${dollar}{dist.dir}/${dollar}{jar.name}
 dist.jar=${dollar}{dist.dir}/${dollar}{jar.name}
 dist.javadoc.dir=${dollar}{dist.dir}/javadoc
-#*
-endorsed.classpath=${backslash}
-    ${dollar}{libs.javaee-endorsed-api-6.0.classpath}
-*###
 endorsed.classpath=
 excludes=
 includes=**
 j2ee.compile.on.save=false
 j2ee.deploy.on.save=false
 j2ee.platform=1.6
-j2ee.server.type=JBoss4
+j2ee.server.type=${j2eeServerType}
 jar.compress=false
 jar.name=${project.alias}-ejb.jar
 jars.in.ejbjar=false
 javac.classpath=${backslash}
     ${dollar}{reference.${project.alias}-lib.jar}:${backslash}
     ${dollar}{libs.adalid-compile-lib-1.classpath}:${backslash}
-    ${dollar}{libs.jboss-eclipselink.classpath}
+    ${dollar}{libs.${jbossLibPrefix}-eclipselink.classpath}
 javac.debug=true
 javac.deprecation=false
 javac.processorpath=${backslash}

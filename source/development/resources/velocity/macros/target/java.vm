@@ -2,5 +2,6 @@
 #if($targetJavaVersion == '')
     #set($targetJavaVersion = '1.7.0_25')
 #end
+#set($targetJavaMajorVersion = "$!StringUtils.substringBeforeLast($targetJavaVersion, '.')")
 #set($targetShortJavaVersion = "$!StringUtils.substringBeforeLast($targetJavaVersion, '.')")
 #break

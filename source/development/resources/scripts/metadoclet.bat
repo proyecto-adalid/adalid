@@ -13,7 +13,6 @@ set CLASSPATH=%CLASSPATH%;%adalid_dir%\source\adalid-commons\dist\adalid-commons
 set CLASSPATH=%CLASSPATH%;%third_party_dir%\lib\commons-collections-3.2.1.jar
 set CLASSPATH=%CLASSPATH%;%third_party_dir%\lib\commons-io-2.1.jar
 set CLASSPATH=%CLASSPATH%;%third_party_dir%\lib\commons-lang-2.6.jar
-set CLASSPATH=%CLASSPATH%;%third_party_dir%\lib\joda-time-1.6.2.jar
 set CLASSPATH=%CLASSPATH%;%third_party_dir%\lib\log4j-1.2.16.jar
 set CLASSPATH=%CLASSPATH%;%third_party_dir%\lib\velocity-1.7.jar
 set CLASSPATH

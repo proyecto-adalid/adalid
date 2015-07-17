@@ -1,16 +1,14 @@
 #setGlobalVariables()
-#parse('templates/jee1/macros/macros-3.vm')
-#setTargetEnvironmentVariables()
 ${pound}!/bin/bash
 clear
-cd /opt
+cd ${absolute}
 pwd
 ls -l
 rm -i Java
-rm -i jboss-as-${targetJBossVersion}
+rm -i ${targetJBossDir}
 rm -i PostgreSQL
 ls -l
 ln -s /cygdrive/c/"Program Files"/Java Java
-ln -s /cygdrive/c/"Program Files"/jboss-as-${targetJBossVersion} jboss-as-${targetJBossVersion}
+ln -s /cygdrive/c/${targetJBossDir} ${targetJBossDir}
 ln -s /cygdrive/c/"Program Files"/PostgreSQL PostgreSQL
 ls -l

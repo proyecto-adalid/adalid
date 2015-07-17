@@ -2,4 +2,5 @@
 #if($targetPostgreSQLVersion == '')
     #set($targetPostgreSQLVersion = '9.2')
 #end
+#set($targetPostgreSQLMajorVersion = "$!StringUtils.substringBefore($targetPostgreSQLVersion, '.')")
 #break

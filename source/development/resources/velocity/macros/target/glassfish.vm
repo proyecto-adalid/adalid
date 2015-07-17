@@ -2,4 +2,5 @@
 #if($targetGlassFishVersion == '')
     #set($targetGlassFishVersion = '4.0')
 #end
+#set($targetGlassFishMajorVersion = "$!StringUtils.substringBefore($targetGlassFishVersion, '.')")
 #break

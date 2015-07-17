@@ -4,6 +4,7 @@
         <title>${project.wrapper.htmlValidDefaultLabel}</title>
     </head>
     <body bgcolor="#fafafa" style="font-family: Arial,Helvetica,sans-serif; font-size: 70%">
+        <script src="/${project.rootFolderName}-war/resources/javascript1.js"></script>
         <script type="text/javascript">
         //
         //  alert(location.href);
@@ -16,24 +17,6 @@
             //  alert('no existe un archivo de ayuda que corresponda a esta pagina');
             } else {
                 go(htm, jsp);
-            }
-        //
-            function getParametro(str, kw0, kw1, kw2) {
-                // Obtiene la posicion donde comenzar a buscar
-                var ix0 = kw0 === '' ?  0  : str.indexOf(kw0);
-                if (ix0 === -1) return '';
-                ix0 += kw0.length;
-                // Obtiene la posicion donde comienza el valor
-                var ix1 = kw1 === '' ? ix0 : str.indexOf(kw1, ix0);
-                if (ix1 === -1) return '';
-                ix1 += kw1.length;
-                // Obtiene la posicion donde termina el valor
-                var ix2 = kw2 === '' ? ix1 : str.indexOf(kw2, ix1);
-                if (ix2 === -1) ix2 = str.length;
-                // Obtiene el valor
-                var valor = str.substring(ix1, ix2);
-                // Retorna el valor
-                return valor;
             }
         //
             function go(htm, jsp) {

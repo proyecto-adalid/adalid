@@ -24,7 +24,7 @@
         #writeDependentModule($dir 'lib' 'commons-io-2.1.jar')
         #writeDependentModule($dir 'lib' 'commons-javaflow-20060411.jar')
         #writeDependentModule($dir 'lib' 'commons-lang-2.6.jar')
-        #writeDependentModule($dir 'lib' 'commons-logging-1.1.2.jar')
+        #writeDependentModule($dir 'lib' 'commons-logging-1.1.3.jar')
         #writeDependentModule($dir 'lib' 'iText-2.1.7.jar')
         #writeDependentModule($dir 'lib' 'jasperreports-5.5.1.jar')
         #writeDependentModule($dir 'lib' 'jasperreports-fonts-5.5.1.jar')

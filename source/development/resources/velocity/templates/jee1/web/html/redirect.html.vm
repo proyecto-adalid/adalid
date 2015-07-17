@@ -4,9 +4,8 @@
         <title>${project.wrapper.htmlValidDefaultLabel}</title>
     </head>
     <body>
+        <script src="/${project.rootFolderName}-war/resources/javascript1.js"></script>
         <script type="text/javascript">
-            var IE  = (navigator.appName.indexOf('Microsoft') === 0); // Microsoft Internet Explorer
-            var NS  = (navigator.appName.indexOf('Netscape' ) === 0); // Netscape
         //  var DEFAULT_PROTOCOL  = 'http:';
         //  var DEFAULT_HOST      = 'localhost:8080';
         //  var DEFAULT_HOST_NAME = 'localhost';
@@ -21,146 +20,8 @@
             var SESSION_RESTART   = '0';
             var SESSION_REDIRECT  = '1';
         //
-            function getCurrentTimeMillis() {
-            //  var currentDate = new Date();
-            //  return currentDate.getTime();
-                return 0;
-            }
-        //
-            function getDefaultWindowName() {
-                var ctx = getParametro(location.pathname, '', '/', '/');
-                var wcx = ctx.replace(/${backslash}-/gi, '_');
-                var pos = wcx.indexOf('_');
-                var dwn = pos > 0 ? wcx.substring(0, pos) : wcx;
-            //  alert('current window name = ' + window.name + ', context = ' + ctx + ', default window name = ' + dwn);
-                return dwn;
-            }
-        //
-            function getEspecificacionesVentana(tipoVentana) {
-                var features  = 'resizable,scrollbars,status';
-                /**/
-                if (IE) {
-                    return features;
-                }
-                /**/
-                var bigEnough = true;
-                var barHeight = 0;                       //  window title bar height
-                var minWidth  = 640;                     //  minimum width
-                var minHeight = 320;                     //  minimum height
-                /**/
-                var avaWidth  = screen.availWidth;       //  amount of horizontal space in pixels available to the window
-                var avaHeight = screen.availHeight;      //  height of the screen, in pixels, minus permanent or semipermanent user interface features displayed by the operating system
-                var avaLeft   = screen.availLeft;        //  first available pixel available from the left side of the screen
-                var avaTop    = screen.availTop;         //  y-coordinate of the first pixel that is not allocated to permanent or semipermanent user interface features
-                /**/
-                var outWidth  = window.outerWidth;       //  width of the outside of the browser window
-                var outHeight = window.outerHeight;      //  height of the outside of the browser window
-                var scrLeft   = window.screenX;          //  horizontal distance of the left border of the user's browser from the left side of the screen
-                var scrTop    = window.screenY;          //  vertical distance of the top border of the user's browser from the top side of the screen
-                /**/
-                if (isNaN(avaWidth))   avaWidth  = 0;
-                if (isNaN(avaHeight))  avaHeight = 0;
-                if (isNaN(avaLeft))    avaLeft   = 0;
-                if (isNaN(avaTop))     avaTop    = 0;
-                /**/
-                if (isNaN(outWidth))   outWidth  = avaWidth;
-                if (isNaN(outHeight))  outHeight = avaHeight;
-                if (isNaN(scrLeft))    scrLeft   = avaLeft;
-                if (isNaN(scrTop))     scrTop    = avaTop;
-                /**/
-                if (outWidth  > avaWidth)  outWidth  = avaWidth;
-                if (outHeight > avaHeight) outHeight = avaHeight;
-                if (scrLeft   < avaLeft)   scrLeft   = avaLeft;
-                if (scrTop    < avaTop)    scrTop    = avaTop;
-                /**/
-                if (avaWidth  < minWidth)  bigEnough = false;
-                if (avaHeight < minHeight) bigEnough = false;
-                /**/
-                if (outWidth  < minWidth)  outWidth  = minWidth;
-                if (outHeight < minHeight) outHeight = minHeight;
-                /**/
-                var newWidth  = avaWidth;
-                var newHeight = avaHeight;
-                var newLeft   = avaLeft;
-                var newTop    = avaTop;
-                /**/
-                if (tipoVentana === 'ayuda') {
-                    /**/
-                    features += ',menubar,toolbar';
-                    /**/
-                    minWidth  = Math.round(avaWidth * 2 / 5);
-                    newWidth  = minWidth;
-                    newHeight = avaHeight;
-                    newLeft   = scrLeft < avaLeft + avaWidth / 2 ? avaLeft + avaWidth - newWidth : avaLeft;
-                    newTop    = avaTop;
-                }
-                if (tipoVentana === 'popup') {
-                    /*
-                    features += ',dependent,dialog';
-                     */
-                    newWidth  = outWidth;
-                    newHeight = outHeight - barHeight;
-                    newLeft   = scrLeft;
-                    newTop    = scrTop    + barHeight;
-                }
-                if (bigEnough) {
-                    if (newWidth  < minWidth)  newWidth  = minWidth;
-                    if (newHeight < minHeight) newHeight = minHeight;
-                    if (avaLeft + avaWidth < newLeft + newWidth) {
-                        if (avaLeft + avaWidth < newLeft + minWidth) {
-                            newWidth = minWidth;
-                            newLeft  = avaLeft + avaWidth - newWidth;
-                        } else {
-                            newWidth = avaLeft + avaWidth - newLeft;
-                        }
-                    }
-                    if (avaTop + avaHeight < newTop + newHeight) {
-                        if (avaTop + avaHeight < newTop + minHeight) {
-                            newHeight = minHeight;
-                            newTop    = avaTop + avaHeight - newHeight;
-                        } else {
-                            newHeight = avaTop + avaHeight - newTop;
-                        }
-                    }
-                    features += ',outerWidth=' + newWidth + ',outerHeight=' + newHeight + ',screenX=' + newLeft + ',screenY=' + newTop;
-                }
-                /*
-                alert(features);
-                 */
-                return features;
-            }
-        //
-            function getParametro(str, kw0, kw1, kw2) {
-                // Obtiene la posicion donde comenzar a buscar
-                var ix0 = kw0 === '' ?  0  : str.indexOf(kw0);
-                if (ix0 === -1) return '';
-                ix0 += kw0.length;
-                // Obtiene la posicion donde comienza el valor
-                var ix1 = kw1 === '' ? ix0 : str.indexOf(kw1, ix0);
-                if (ix1 === -1) return '';
-                ix1 += kw1.length;
-                // Obtiene la posicion donde termina el valor
-                var ix2 = kw2 === '' ? ix1 : str.indexOf(kw2, ix1);
-                if (ix2 === -1) ix2 = str.length;
-                // Obtiene el valor
-                var valor = str.substring(ix1, ix2);
-                // Retorna el valor
-                return valor;
-            }
-        //
-            function closeVentana(urx, twn) {
-            //  alert('name=' + window.name + ', close(' + urx + ', ' + twn + ')');
-                if (IE) {
-                    return null;
-                }
-                var wcx = twn.replace(/${backslash}-/gi, '_');
-                var wfx = 'resizable,scrollbars,status';
-                var wrx = window.open(urx, wcx, wfx);
-                wrx.close();
-                return wrx;
-            }
-        //
             function openVentana(urx, twn) {
+                resizeWindow();
             //  alert('name=' + window.name + ', open(' + urx + ', ' + twn + ')');
                 var wcx = twn.replace(/${backslash}-/gi, '_');
                 var wfx = getEspecificacionesVentana('popup');
@@ -168,7 +29,7 @@
                         + '&' + SESSION_FRAME + '=' + wcx
                         + '&' + SESSION_STAMP + '=' + getCurrentTimeMillis()
                         + '&' + SESSION_STATE + '=' + SESSION_RESTART;
-                var wrx = window.open(urx + rpl, wcx, wfx);
+                var wrx = openWindow(urx + rpl, wcx, wfx);
                 wrx.opener = window.opener;
                 wrx.focus();
                 return wrx;

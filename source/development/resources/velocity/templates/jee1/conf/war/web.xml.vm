@@ -3,6 +3,11 @@
 #writeXMLDeclaration()
 #writeXMLLicense()
 #writeXMLAuthor('Jorge Campins')
+#if($targetApplicationServerCode == 'jboss' && $targetJBossMajorVersion == '7')
+    #set($multipartUpload = 'false')
+#else
+    #set($multipartUpload = 'true')
+#end
 <web-app version="2.5" xmlns="http://java.sun.com/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd">
     <context-param>
         <param-name>javax.faces.STATE_SAVING_METHOD</param-name>

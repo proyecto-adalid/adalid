@@ -1,9 +1,7 @@
 #setGlobalVariables()
-#parse('templates/jee1/macros/macros-3.vm')
-#setTargetEnvironmentVariables()
 ${pound}!/bin/bash
 clear
-cd /opt
+cd ${absolute}
 pwd
 ls -l
 rm -i Java

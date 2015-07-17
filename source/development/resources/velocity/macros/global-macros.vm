@@ -36,11 +36,8 @@
     #set($tab   = $EMPTY)
     #set($globalTabCount = 0)
     #set($adalidMajorVersionNumber = '1.0')
-    #set($targetApplicationServerCode = $StringUtils.lowerCase("$!targetApplicationServer"))
-    #set($targetApplicationServerName = "$!targetApplicationServer")
-    #set($targetDatabaseServerCode = $StringUtils.lowerCase("$!targetDatabaseServer"))
-    #set($targetDatabaseServerName = "$!targetDatabaseServer")
     #set($sql_name_separator = '$')
+    #setTargetEnvironmentVariables()
     #setManifestInfo()
 #end##setGlobalVariables
 
@@ -87,6 +84,19 @@
     #set($globalTabCount = 0)
     #set($tab = $EMPTY)
 #end##resetIndentation
+
+#macro(setTargetEnvironmentVariables)
+    #set($targetApplicationServerCode = $StringUtils.lowerCase("$!targetApplicationServer"))
+    #set($targetApplicationServerName = "$!targetApplicationServer")
+    #set($targetDatabaseServerCode = $StringUtils.lowerCase("$!targetDatabaseServer"))
+    #set($targetDatabaseServerName = "$!targetDatabaseServer")
+    #set($targetProgrammingLanguageVersionTemplateName = 'macros/target/java.vm')
+    #parse($targetProgrammingLanguageVersionTemplateName)
+    #set($targetApplicationServerVersionTemplateName = "macros/target/${targetApplicationServerCode}.vm")
+    #parse($targetApplicationServerVersionTemplateName)
+    #set($targetDatabaseServerVersionTemplateName = "macros/target/${targetDatabaseServerCode}.vm")
+    #parse($targetDatabaseServerVersionTemplateName)
+#end##setTargetEnvironmentVariables
 
 #macro(setManifestInfo)
     #set($manifest = $VelocityAid.coalesce($ManUtils.getManifest(), $FALSE))

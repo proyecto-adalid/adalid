@@ -19,6 +19,20 @@ import org.apache.commons.lang.StringUtils;
  */
 public class FilUtils {
 
+    private static final String OS_NAME = System.getProperties().getProperty("os.name");
+
+    private static final boolean WINDOWS = StringUtils.containsIgnoreCase(OS_NAME, "windows");
+
+    private static final String ENV_VAR_LEFT_MARK = WINDOWS ? "%" : "${";
+
+    private static final String ENV_VAR_RIGHT_MARK = WINDOWS ? "%" : "}";
+
+    private static final String HOME_ENV_VAR = WINDOWS ? "USERPROFILE" : "HOME";
+
+    private static final String HOME_VAR = ENV_VAR_LEFT_MARK + HOME_ENV_VAR + ENV_VAR_RIGHT_MARK;
+
+    private static final String HOME_DIR = System.getenv(HOME_ENV_VAR);
+
     private static final String USER_DIR = System.getProperties().getProperty("user.dir");
 
     private static final String USER_HOME = System.getProperties().getProperty("user.home");
@@ -60,6 +74,23 @@ public class FilUtils {
         String key1 = "(?i)\\$" + WORKSPACE_FOLDER_NAME;
         String key2 = "(?i)\\$\\{" + WORKSPACE_FOLDER_NAME + "\\}";
         return new String[]{key1, key2};
+    }
+
+    public static String getDefaultEnvironmentalWorkspaceFolderPath() {
+        return HOME_VAR + FILE_SEP + WORKSPACE_FOLDER_NAME;
+    }
+
+    public static String getCurrentEnvironmentalWorkspaceFolderPath() {
+        if (StringUtils.isBlank(HOME_DIR) && StringUtils.isBlank(USER_HOME)) {
+            return workspace_folder_path;
+        }
+        if (StringUtils.startsWithIgnoreCase(workspace_folder_path, HOME_DIR)) {
+            return HOME_VAR + StringUtils.removeStartIgnoreCase(workspace_folder_path, HOME_DIR);
+        }
+        if (StringUtils.startsWithIgnoreCase(workspace_folder_path, USER_HOME)) {
+            return HOME_VAR + StringUtils.removeStartIgnoreCase(workspace_folder_path, USER_HOME);
+        }
+        return workspace_folder_path;
     }
 
     public static String getWorkspaceFolderPath() {

@@ -279,13 +279,23 @@
         // </editor-fold>
 
         private void init() {
-            getContextoPeticion().setFragmentoFiltroActual(this);
+            try {
+                iniciar();
+            } catch (Exception e) {
+                log(${project.rootPackageName}.lib.base.bundle.BundleWebui.getString("bean.initialization.error"), e);
+                throw e instanceof FacesException ? (FacesException) e : new FacesException(e);
+            }
         }
 
         private void destroy() {
             if (filtroDataProvider != null) {
                 filtroDataProvider.close();
             }
+        }
+
+        private void iniciar() {
+            getContextoPeticion().setFragmentoFiltroActual(this);
+            #writeSearchFieldsInitialization()
         }
 
         private void consultar() {
@@ -368,3 +378,75 @@
     #set($Campo1 = "Campo$fieldFirstName")
     #set($campo1 = "campo$fieldFirstName")
 #end##setSearchFieldVariables
+
+#macro(writeSearchFieldsInitialization)
+    #increaseIndentation()
+    #set($divString = 'DivFiltro1')
+    #foreach($field in $page.rootFields)
+        #if($field.property.equals($page.reference))
+        #elseif($field.property.isSearchField())
+            #setSearchFieldVariables()
+            #set($fieldFirstName = "${fieldFirstName}${divString}")
+            #if($field.property.isBigDecimalData())
+                #writeBigDecimalInitialization()
+            #elseif($field.property.isBigIntegerData())
+                #writeBigIntegerInitialization()
+            #elseif($field.property.isByteData())
+                #writeByteInitialization()
+            #elseif($field.property.isShortData())
+                #writeShortInitialization()
+            #elseif($field.property.isIntegerData())
+                #writeIntegerInitialization()
+            #elseif($field.property.isLongData())
+                #writeLongInitialization()
+            #elseif($field.property.isDoubleData())
+                #writeDoubleInitialization()
+            #elseif($field.property.isFloatData())
+                #writeFloatInitialization()
+            #elseif($field.property.isDateData())
+                #writeDateInitialization()
+            #elseif($field.property.isTimeData())
+                #writeTimeInitialization()
+            #elseif($field.property.isTimestampData())
+                #writeTimestampInitialization()
+            #end
+        #end
+    #end
+    #set($divString = '')
+    #decreaseIndentation()
+#end##writeSearchFieldsInitialization
+
+#macro(writeBigDecimalInitialization)
+#end##writeBigDecimalInitialization
+
+#macro(writeBigIntegerInitialization)
+#end##writeBigIntegerInitialization
+
+#macro(writeByteInitialization)
+#end##writeByteInitialization
+
+#macro(writeShortInitialization)
+#end##writeShortInitialization
+
+#macro(writeIntegerInitialization)
+#end##writeIntegerInitialization
+
+#macro(writeLongInitialization)
+#end##writeLongInitialization
+
+#macro(writeDoubleInitialization)
+#end##writeDoubleInitialization
+
+#macro(writeFloatInitialization)
+#end##writeFloatInitialization
+
+#macro(writeDateInitialization)
+            campo${fieldFirstName}.setDateFormatPattern(TimeUtils.getDateFormat());
+//          campo${fieldFirstName}.setDateFormatPatternHelp(TimeUtils.getDateFormat());
+#end##writeDateInitialization
+
+#macro(writeTimeInitialization)
+#end##writeTimeInitialization
+
+#macro(writeTimestampInitialization)
+#end##writeTimestampInitialization

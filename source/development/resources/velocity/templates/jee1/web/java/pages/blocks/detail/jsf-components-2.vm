@@ -101,6 +101,8 @@
 #end##writeFloatInitialization
 
 #macro(writeDateInitialization)
+        campo${fieldFirstName}.setDateFormatPattern(TimeUtils.getDateFormat());
+//      campo${fieldFirstName}.setDateFormatPatternHelp(TimeUtils.getDateFormat());
         converter${fieldFirstName}.setPattern(TimeUtils.getDateFormat());
         converter${fieldFirstName}.setType("date");
 #end##writeDateInitialization

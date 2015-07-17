@@ -1,6 +1,4 @@
 #setGlobalVariables()
-#parse('templates/jee1/macros/macros-3.vm')
-#setTargetEnvironmentVariables()
 annotation.processing.enabled=true
 annotation.processing.enabled.in.editor=false
 annotation.processing.processors.list=

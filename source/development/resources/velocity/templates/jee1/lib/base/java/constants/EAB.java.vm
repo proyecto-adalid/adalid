@@ -45,7 +45,9 @@ public class ${javaClassSimpleName} {
         #set($prefix1 = 'java:/')
         #set($prefix2 = 'jms/')
         #set($prefix3 = 'java:jboss/')
-        #set($customLifecycleCallbackMethodsEnabled = 'true')
+        #if($targetJBossMajorVersion == '7')
+            #set($customLifecycleCallbackMethodsEnabled = 'true')
+        #end
     #end
 ##  #set($added = $imports.add("${project.rootPackageName}.lib.base.bundle.BundleWebui"))
 #end##setLocalVariables

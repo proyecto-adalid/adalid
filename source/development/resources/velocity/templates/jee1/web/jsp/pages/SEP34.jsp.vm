@@ -5,6 +5,11 @@
 #writeJSPAuthor('Jorge Campins')
 #parse("$templatePath/blocks/console/set-variables.vm")
 #setLocalVariables()
+#if($targetApplicationServerCode == 'jboss' && $targetJBossMajorVersion == '7')
+    #set($multipartUpload = 'false')
+#else
+    #set($multipartUpload = 'true')
+#end
 #parse("$templatePath/blocks/root.vm")
 #break
 

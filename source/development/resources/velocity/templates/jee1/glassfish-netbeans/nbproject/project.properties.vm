@@ -1,6 +1,4 @@
 #setGlobalVariables()
-#parse('templates/jee1/macros/macros-3.vm')
-#setTargetEnvironmentVariables()
 build.classes.excludes=**/*.java,**/*.form,**/.nbattrs
 build.dir=build
 build.generated.dir=${dollar}{build.dir}/generated

@@ -788,6 +788,7 @@ public class Writer {
          * classes used in global macros must be loaded here
          */
         putClass(context, adalid.commons.velocity.VelocityAid.class);
+        putClass(context, adalid.commons.util.FilUtils.class);
         putClass(context, adalid.commons.util.ManUtils.class);
         putClass(context, adalid.commons.util.StrUtils.class);
         putClass(context, adalid.commons.util.TimeUtils.class);

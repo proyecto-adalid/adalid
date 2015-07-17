@@ -358,7 +358,7 @@ public class BaseBuilder {
             new RegexPathFilter(B + X + application + project + "-war" + S + "web" + S + "index" + D + "html" + E),
             new RegexPathFilter(B + X + application + project + "-war" + S + "web" + S + "index" + D + "jsp" + E),
             new RegexPathFilter(B + X + application + project + "-war" + S + "web" + S + "login" + D + "jsp" + E),
-            new RegexPathFilter(B + X + application + project + "-war" + S + "web" + S + "redirect" + D + "html" + E),
+            //  RegexPathFilter(B + X + application + project + "-war" + S + "web" + S + "redirect" + D + "html" + E),
             new RegexPathFilter(B + X + application + "src" + S + "conf" + S + "application" + D + "xml" + E),
             new RegexPathFilter(B + X + application + "src" + S + "conf" + S + "glassfish-application" + D + "xml" + E),
             new RegexPathFilter(B + X + management + "[\\w\\-\\_]*" + D + "bat" + E),
@@ -388,6 +388,7 @@ public class BaseBuilder {
             //  RegexFileFilter(B + "eclipse" + D + "project" + E),
             new RegexFileFilter(B + "genfiles" + D + "properties" + E),
             new RegexFileFilter(B + "org" + D + "eclipse" + D + "wst" + D + "common" + D + "project" + D + "facet" + D + "core" + D + "xml" + E),
+            new RegexFileFilter(B + "redirect" + D + "html" + E),
             excludeOracle ? new RegexFileFilter(B + "variables-oracle" + D + X + E) : new RegexFileFilter(B + E)
         };
 //      return FileFilterUtils.and(FileFilterUtils.or(ayes), FileFilterUtils.notFileFilter(FileFilterUtils.or(noes)));

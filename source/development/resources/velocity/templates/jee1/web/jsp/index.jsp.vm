@@ -62,11 +62,15 @@
         <title><% out.print(title); %></title>
     </head>
     <body bgcolor="#fafafa" style="font-family: Arial,Helvetica,sans-serif; font-size: 100%" onload="initialize()">
+        <script src="/${project.rootFolderName}-war/resources/javascript1.js"></script>
         <script type="text/javascript">
             var MZFF = 'http://www.mozilla-europe.org/es/firefox/';
             var HOME = 'http://www.google.com/';
+            var MAX_WINDOW_WIDTH  = 1280;
+            var MAX_WINDOW_HEIGHT = 960;
         //
             function initialize() {
+#***
                 var MZ = 'Mozilla';
                 var FF = 'Firefox';
                 var V1 = 3;
@@ -81,7 +85,7 @@
                     var w2 = 0;
                     var w3 = 0;
                     var w4 = 0;
-                    if (navigator.userAgent.indexOf(MZ) === 0 && navigator.userAgent.indexOf(FF) > 0) {
+                    if (navigator.userAgent.indexOf(FF) > 0) {
                         w1 = Number(getParametro(navigator.userAgent, FF,  '/', '.'));
                         if (isNaN(w1)) {
                             w1 = Number(getParametro(navigator.userAgent, FF,  '/', ' '));
@@ -120,6 +124,7 @@
                         location.replace(url);
                     }
                 }
+*###
                 return true;
             }
             function gomzff() {
@@ -134,11 +139,11 @@
                 var context   = getParametro(location.pathname, '', '/', '/');
                 var url       = location.protocol + '//' + location.host + '/' + context + '/redirect.html?jsp=' + jsp;
                 var target    = getDefaultWindowName();
-                var features  = getEspecificacionesVentana();
+                var features  = getEspecificacionesVentanaAjustada(MAX_WINDOW_WIDTH, MAX_WINDOW_HEIGHT);
                 /*
                 alert(url);
                  */
-                open(url, target, features);
+                openWindow(url, target, features);
                 return false;
             }
             function go2(jsp, folder) {
@@ -146,79 +151,12 @@
                 var twn       = folder.replace(/\-/gi, '_');
                 var url       = location.protocol + '//' + location.host + '/' + context + '/redirect.html?jsp=' + jsp + '&twn=' + twn;
                 var target    = getDefaultWindowName();
-                var features  = getEspecificacionesVentana();
+                var features  = getEspecificacionesVentanaAjustada(MAX_WINDOW_WIDTH, MAX_WINDOW_HEIGHT);
                 /*
                 alert(url);
                  */
-                open(url, target, features);
+                openWindow(url, target, features);
                 return false;
-            }
-        //
-            function getDefaultWindowName() {
-                var ctx = getParametro(location.pathname, '', '/', '/');
-                var wcx = ctx.replace(/\-/gi, '_');
-                var pos = wcx.indexOf('_');
-                var dwn = pos > 0 ? wcx.substring(0, pos) : wcx;
-            //  alert('current window name = ' + window.name + ', context = ' + ctx + ', default window name = ' + dwn);
-                return dwn;
-            }
-        //
-            function getEspecificacionesVentana() {
-                var features  = 'resizable,scrollbars,status';
-                /**/
-                var IE  = (navigator.appName.indexOf('Microsoft') === 0); // Microsoft Internet Explorer
-                if (IE) {
-                    return features;
-                }
-                /**/
-                var avaWidth  = screen.availWidth;       //  amount of horizontal space in pixels available to the window
-                var avaHeight = screen.availHeight;      //  height of the screen, in pixels, minus permanent or semipermanent user interface features displayed by the operating system
-                var avaLeft   = screen.availLeft;        //  first available pixel available from the left side of the screen
-                var avaTop    = screen.availTop;         //  y-coordinate of the first pixel that is not allocated to permanent or semipermanent user interface features
-                /**/
-                if (isNaN(avaWidth))   avaWidth  = 0;
-                if (isNaN(avaHeight))  avaHeight = 0;
-                if (isNaN(avaLeft))    avaLeft   = 0;
-                if (isNaN(avaTop))     avaTop    = 0;
-                /**/
-                if (avaWidth > 0 && avaHeight > 0) {
-                    var maxWidth  = 1280;
-                    var maxHeight = 960;
-                    /**/
-                    var outWidth  = avaWidth;
-                    var outHeight = avaHeight;
-                    var scrX      = avaLeft;
-                    var scrY      = avaTop;
-                    /**/
-                    if (outWidth  > maxWidth)  outWidth  = maxWidth;
-                    if (outHeight > maxHeight) outHeight = maxHeight;
-                    scrX = (avaWidth  - outWidth)  / 2;
-                    scrY = (avaHeight - outHeight) / 2;
-                    /**/
-                    features += ',outerWidth=' + outWidth + ',outerHeight=' + outHeight + ',screenX=' + scrX + ',screenY=' + scrY;
-                }
-                /*
-                alert(features);
-                 */
-                return features;
-            }
-        //
-            function getParametro(str, kw0, kw1, kw2) {
-                // Obtiene la posicion donde comenzar a buscar
-                var ix0 = kw0 === '' ?  0  : str.indexOf(kw0);
-                if (ix0 === -1) return '';
-                ix0 += kw0.length;
-                // Obtiene la posicion donde comienza el valor
-                var ix1 = kw1 === '' ? ix0 : str.indexOf(kw1, ix0);
-                if (ix1 === -1) return '';
-                ix1 += kw1.length;
-                // Obtiene la posicion donde termina el valor
-                var ix2 = kw2 === '' ? ix1 : str.indexOf(kw2, ix1);
-                if (ix2 === -1) ix2 = str.length;
-                // Obtiene el valor
-                var valor = str.substring(ix1, ix2);
-                // Retorna el valor
-                return valor;
             }
         </script>
         <!--<form>-->

@@ -1,6 +1,4 @@
 #setGlobalVariables()
-#parse('templates/jee1/macros/macros-3.vm')
-#setTargetEnvironmentVariables()
 build.classes.excludes=**/*.java,**/*.form,**/.nbattrs
 build.dir=build
 build.generated.dir=${dollar}{build.dir}/generated
@@ -17,7 +15,11 @@ endorsed.classpath=${backslash}
 j2ee.compile.on.save=false
 j2ee.deploy.on.save=false
 j2ee.platform=1.6
+#if($targetJBossMajorVersion == '7')
 j2ee.server.type=JBoss4
+#else
+j2ee.server.type=WildFly
+#end
 jar.compress=false
 jar.content.additional=${backslash}
     ${dollar}{reference.${project.alias}-lib.jar}:${backslash}

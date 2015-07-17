@@ -1,0 +1,20 @@
+#set($targetJBossVersion = "$!project.environmentVariables.get('jboss.version')")
+#if($targetJBossVersion == '')
+    #set($targetJBossVersion = '7.1.1.Final')
+#end
+#set($targetJBossMajorVersion = "$!StringUtils.substringBefore($targetJBossVersion, '.')")
+#set($fp = "$!absolute")
+#set($fs = "$!separator")
+#if($fs == '')
+    #set($fs = '/')
+#end
+#if($targetJBossMajorVersion == '7')
+    #set($targetJBossDir = "jboss-as-${targetJBossVersion}")
+    #set($targetJBossHomeDir = "${fp}${fs}${targetJBossDir}")
+    #set($targetJBossModulesDir = "${targetJBossHomeDir}${fs}modules")
+#else
+    #set($targetJBossDir = "wildfly-${targetJBossVersion}")
+    #set($targetJBossHomeDir = "${fp}${fs}${targetJBossDir}")
+    #set($targetJBossModulesDir = "${targetJBossHomeDir}${fs}modules${fs}system${fs}layers${fs}base")
+#end
+#break

@@ -47,6 +47,8 @@ public class GoogleRecaptcha {
 
     private static final String SECRET_KEY = "6LdZTgkTAAAAAHjLTTc9tdW75qBThFp_bZG-IIE8";
 
+    private static final boolean VERIFY_NULL_RESPONSE = true;
+
     public static boolean verifyUserResponse() {
         String userResponse = getRequestParameter(PARAMETER_KEY);
         return verify(userResponse);
@@ -75,7 +77,7 @@ public class GoogleRecaptcha {
 
     private static boolean verify(String userResponse) {
         if (userResponse == null) {
-            return false;
+            return VERIFY_NULL_RESPONSE;
         }
         URIBuilder builder = new URIBuilder();
         builder.setScheme("https");

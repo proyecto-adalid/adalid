@@ -12,6 +12,11 @@
 #writeJavaImports($imports)
 #addInterfaces()
 #writeJavaAuthor('Jorge Campins')
+#if($targetApplicationServerCode == 'jboss' && $targetJBossMajorVersion == '7')
+    #set($multipartUpload = 'false')
+#else
+    #set($multipartUpload = 'true')
+#end
 public class ${javaClassSimpleName} extends AbstractPageBean1#writeJavaImplements()
 
     public ${javaClassSimpleName}() {
