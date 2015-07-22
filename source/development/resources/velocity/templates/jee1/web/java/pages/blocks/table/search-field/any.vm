@@ -13,7 +13,7 @@
 
         public void set${capitalizedComponentAttr}(${componentClassName} $variableName) {
 #if(${componentClassName} == 'String')
-            ${entityDataProvider}.setCampoBusqueda("$componentName", "$fieldSqlName", StringUtils.trimToNull($variableName));
+            ${entityDataProvider}.setCampoBusqueda("$componentName", "$fieldSqlName", StringUtils.trimToNull($variableName), ${componentValueType}.class);
 #else
             ${entityDataProvider}.setCampoBusqueda("$componentName", "$fieldSqlName", $variableName);
 #end
@@ -29,4 +29,31 @@
             return null;
         }
 
+#writeValidatorExpression()
 #break
+
+#macro(writeValidatorExpression)
+    #if(${componentClassName} == 'String')
+        public void ${campo1}${divString}_validate(FacesContext context, UIComponent component, Object value) {
+            if (value instanceof String) {
+                Object valor = StringUtils.trimToNull((String) value);
+                if (valor != null) {
+                    CampoBusqueda cb = ${entityDataProvider}.setCampoBusqueda("$componentName", "$fieldSqlName", valor, ${componentValueType}.class);
+                    if (cb != null) {
+                        try {
+                            valor = cb.getValorComparacion();
+                            if (valor == null) {
+                                throwCheckChangesException4($conversionErrorMessageArgument);
+                            }
+                        } catch (ValidatorException ex) {
+                            throw ex;
+                        } catch (Exception ex) {
+                            throwCheckChangesException4($conversionErrorMessageArgument);
+                        }
+                    }
+                }
+            }
+        }
+
+    #end
+#end##writeValidatorExpression

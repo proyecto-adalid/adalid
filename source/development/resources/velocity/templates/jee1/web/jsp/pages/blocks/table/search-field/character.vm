@@ -18,8 +18,6 @@ $tab        readOnly="$fieldReadOnly"
 $tab        required="$fieldRequired"
 $tab        text="#{${filter}.${campo1}${divString}Text}"
 $tab        toolTip="BundleParametros.${page.entity.wrapper.sqlName}.${field.property.wrapper.sqlName}"/>
-$tab    <webuijsf:staticText id="${campo1}${divString}Texto1"
-$tab        binding="#{${filter}.${campo1}${divString}Texto1}"/>
 $tab    <webuijsf:message id="message${fieldFirstName}${divString}"
 $tab        for="${campo1}${divString}"/>
 $tab</h:panelGrid>

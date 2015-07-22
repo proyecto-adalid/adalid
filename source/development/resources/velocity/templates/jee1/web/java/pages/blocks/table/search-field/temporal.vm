@@ -1,3 +1,4 @@
+#*** no se puede usar calendar para poder escribir operadores de comparacion
 #if($field.property.isDateData())
     #set($componentTemplateName = 'calendar')
     #set($componentValueAttr = 'selectedDate')
@@ -5,16 +6,23 @@
     #set($componentTemplateName = 'text-field')
     #set($componentValueAttr = 'text')
 #end
+*###
+#set($componentTemplateName = 'text-field')
+#set($componentValueAttr = 'text')
 #set($componentName = "label${fieldFirstName}${divString}")
 #parse("$templatePath/blocks/webuijsf/label.vm")
 #set($componentName = "campo${fieldFirstName}${divString}")
 #parse("$templatePath/blocks/webuijsf/${componentTemplateName}.vm")
-#set($componentName = "campo${fieldFirstName}${divString}Texto1")
-#parse("$templatePath/blocks/webuijsf/static-text-1.vm")
 ##------------------------------------------------------------------------------
 #set($componentName = "campo${fieldFirstName}${divString}")
 #set($componentValueAttr = $componentValueAttr)
+#set($componentValueType = "${field.property.wrapper.javaPrimitiveType}")
+#***
 #set($componentClassName = 'java.util.Date')
 #set($componentClassSimpleName = "${field.property.dataType.simpleName}")
+*###
+#set($componentClassName = 'String')
+#set($componentClassSimpleName = 'String')
+#set($conversionErrorMessageArgument = 'TipoDatoParEnumeration.FECHA_HORA.getLabel()')
 #parse("$templatePath/blocks/table/search-field/any.vm")
 #break

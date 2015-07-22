@@ -315,6 +315,12 @@
             }
         }
 
+        private void throwCheckChangesException4(Object arg0) {
+            String summary = Bitacora.getTextoMensaje(CBM.CHECK_CHANGES_EXCEPTION_4, arg0);
+            FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_ERROR, summary, null);
+            throw new ValidatorException(message);
+        }
+
     }
 
 #break
@@ -441,8 +447,10 @@
 #end##writeFloatInitialization
 
 #macro(writeDateInitialization)
+#*** no se puede usar calendar para poder escribir operadores de comparacion
             campo${fieldFirstName}.setDateFormatPattern(TimeUtils.getDateFormat());
 //          campo${fieldFirstName}.setDateFormatPatternHelp(TimeUtils.getDateFormat());
+*###
 #end##writeDateInitialization
 
 #macro(writeTimeInitialization)

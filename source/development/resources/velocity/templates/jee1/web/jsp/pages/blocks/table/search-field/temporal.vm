@@ -11,29 +11,36 @@ $tab<h:panelGrid id="panelGrid${panelGridSequence.next()}"
 $tab    columns="7"
 $tab    rendered="#{${pageBeanName}.asistente.column${fieldClassName}Rendered}"
 $tab    styleClass="pdq-grid-elemento-1">
+#*** no se puede usar calendar para poder escribir operadores de comparacion
     #if($field.property.isDateData())
 $tab    <webuijsf:calendar id="${campo1}${divString}"
 $tab        binding="#{${filter}.${campo1}${divString}}"
-$tab        converter="#{${pageBeanName}.converter${fieldFirstName}}"
 $tab        maxDate="#{${pageBeanName}.gestor.defaultMaxDate}"
 $tab        minDate="#{${pageBeanName}.gestor.defaultMinDate}"
 $tab        readOnly="$fieldReadOnly"
 $tab        required="$fieldRequired"
 $tab        selectedDate="#{${filter}.${campo1}${divString}SelectedDate}"
-$tab        toolTip="BundleParametros.${page.entity.wrapper.sqlName}.${field.property.wrapper.sqlName}"/>
+$tab        toolTip="BundleParametros.${page.entity.wrapper.sqlName}.${field.property.wrapper.sqlName}"
+$tab        validatorExpression="#{${filter}.${campo1}${divString}_validate}"/>
     #else
 $tab    <webuijsf:textField id="${campo1}${divString}"
 $tab        binding="#{${filter}.${campo1}${divString}}"
 $tab        columns="70"
-$tab        converter="#{${pageBeanName}.converter${fieldFirstName}}"
 $tab        readOnly="$fieldReadOnly"
 $tab        required="$fieldRequired"
 $tab        text="#{${filter}.${campo1}${divString}Text}"
-$tab        toolTip="BundleParametros.${page.entity.wrapper.sqlName}.${field.property.wrapper.sqlName}"/>
+$tab        toolTip="BundleParametros.${page.entity.wrapper.sqlName}.${field.property.wrapper.sqlName}"
+$tab        validatorExpression="#{${filter}.${campo1}${divString}_validate}"/>
     #end
-$tab    <webuijsf:staticText id="${campo1}${divString}Texto1"
-$tab        binding="#{${filter}.${campo1}${divString}Texto1}"
-$tab        converter="#{${pageBeanName}.converter${fieldFirstName}}"/>
+*###
+$tab    <webuijsf:textField id="${campo1}${divString}"
+$tab        binding="#{${filter}.${campo1}${divString}}"
+$tab        columns="70"
+$tab        readOnly="$fieldReadOnly"
+$tab        required="$fieldRequired"
+$tab        text="#{${filter}.${campo1}${divString}Text}"
+$tab        toolTip="BundleParametros.${page.entity.wrapper.sqlName}.${field.property.wrapper.sqlName}"
+$tab        validatorExpression="#{${filter}.${campo1}${divString}_validate}"/>
 $tab    <webuijsf:message id="message${fieldFirstName}${divString}"
 $tab        for="${campo1}${divString}"/>
 $tab</h:panelGrid>

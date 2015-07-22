@@ -18,7 +18,6 @@ set xd=%xd% build
 set xd=%xd% dist
 set xd=%xd% private
 call:documents
-call:adalid-oracle
 call:eoj
 goto:eof
 

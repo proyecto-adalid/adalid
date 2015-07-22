@@ -2,12 +2,12 @@
 #parse("$templatePath/blocks/webuijsf/label.vm")
 #set($componentName = "campo${fieldFirstName}${divString}")
 #parse("$templatePath/blocks/webuijsf/text-field.vm")
-#set($componentName = "campo${fieldFirstName}${divString}Texto1")
-#parse("$templatePath/blocks/webuijsf/static-text-1.vm")
 ##------------------------------------------------------------------------------
 #set($componentName = "campo${fieldFirstName}${divString}")
 #set($componentValueAttr = 'text')
+#set($componentValueType = "${field.property.wrapper.javaPrimitiveType}")
 #set($componentClassName = "${field.property.wrapper.javaPrimitiveType}")
 #set($componentClassSimpleName = "${field.property.dataType.simpleName}")
+#set($conversionErrorMessageArgument = 'TipoDatoParEnumeration.ALFANUMERICO.getLabel()')
 #parse("$templatePath/blocks/table/search-field/any.vm")
 #break

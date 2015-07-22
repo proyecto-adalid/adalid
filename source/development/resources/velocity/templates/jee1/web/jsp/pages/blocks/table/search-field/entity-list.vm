@@ -19,8 +19,6 @@ $tab        items="#{${pageBeanName}.asistente.options${Campo1}}"
 $tab        required="$fieldRequired"
 $tab        selected="#{${filter}.${campo1}${divString}Selected}"
 $tab        toolTip="BundleParametros.${page.entity.wrapper.sqlName}.${field.property.wrapper.sqlName}"/>
-$tab    <webuijsf:staticText id="${campo1}${divString}Texto1"
-$tab        binding="#{${filter}.${campo1}${divString}Texto1}"/>
 $tab    <webuijsf:message id="message${fieldFirstName}${divString}"
 $tab        for="${campo1}${divString}"/>
 $tab</h:panelGrid>
