@@ -18,6 +18,7 @@ set xd=%xd% build
 set xd=%xd% dist
 set xd=%xd% private
 call:documents
+call:adalid-prime
 call:eoj
 goto:eof
 
@@ -31,6 +32,13 @@ goto:eof
 :adalid-oracle
 set source=%adalid_dir%\source\adalid-oracle
 set target=D:%HOMEPATH%\Dropbox\adalid\source\adalid-oracle
+set options=/np /log+:%log% /tee /mir /ndl
+call:robocopy
+goto:eof
+
+:adalid-prime
+set source=%adalid_dir%\source\adalid-prime
+set target=D:%HOMEPATH%\Dropbox\adalid\source\adalid-prime
 set options=/np /log+:%log% /tee /mir /ndl
 call:robocopy
 goto:eof

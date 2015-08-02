@@ -76,6 +76,11 @@ set LIBDIR=%project_dir%\lib
 call:copy-files "%LIBDIR%" %SUBDIR% *.*
 set jar="%VRPATH%\lib\adalid-oracle.jar"
 if /i "%exclude_oracle%" == "Y" if exist %jar% del %jar%
+set jar="%VRPATH%\lib\adalid-jee2.jar"
+if exist %jar% del %jar%
+set jar="%VRPATH%\lib\adalid-prime.jar"
+if exist %jar% del %jar%
+dir %VRPATH%\lib
 goto:eof
 
 :x-junction

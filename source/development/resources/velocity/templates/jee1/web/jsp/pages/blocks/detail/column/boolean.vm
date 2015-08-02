@@ -41,7 +41,7 @@ $tab        binding="#{${pageBeanName}.${campo1}${tabString}}"
         #if($tabString == '' && $field.property.isSubmitField())
 $tab        onChange="webui.suntheme4_2.common.timeoutSubmitForm(this.form, '${campo1}${tabString}');"
         #end
-$tab        readOnly="$fieldReadOnly"
+##          readOnly="$fieldReadOnly"
 $tab        selected="#{${sourceVar}.${fieldVariableName}}"
 ##          toolTip="$field.property.wrapper.xmlValidDefaultTooltip"/>
 $tab        toolTip="BundleParametros.${page.entity.wrapper.sqlName}.${field.property.wrapper.sqlName}"
