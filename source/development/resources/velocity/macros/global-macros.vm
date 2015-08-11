@@ -92,10 +92,14 @@
     #set($targetDatabaseServerName = "$!targetDatabaseServer")
     #set($targetProgrammingLanguageVersionTemplateName = 'macros/target/java.vm')
     #parse($targetProgrammingLanguageVersionTemplateName)
-    #set($targetApplicationServerVersionTemplateName = "macros/target/${targetApplicationServerCode}.vm")
-    #parse($targetApplicationServerVersionTemplateName)
-    #set($targetDatabaseServerVersionTemplateName = "macros/target/${targetDatabaseServerCode}.vm")
-    #parse($targetDatabaseServerVersionTemplateName)
+    #if($targetApplicationServerCode != '')
+        #set($targetApplicationServerVersionTemplateName = "macros/target/${targetApplicationServerCode}.vm")
+        #parse($targetApplicationServerVersionTemplateName)
+    #end
+    #if($targetDatabaseServerCode != '')
+        #set($targetDatabaseServerVersionTemplateName = "macros/target/${targetDatabaseServerCode}.vm")
+        #parse($targetDatabaseServerVersionTemplateName)
+    #end
 #end##setTargetEnvironmentVariables
 
 #macro(setManifestInfo)
