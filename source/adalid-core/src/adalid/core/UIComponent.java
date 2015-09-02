@@ -13,11 +13,12 @@ import org.apache.commons.lang.StringUtils;
 public abstract class UIComponent extends AbstractArtifact {
 
     public UIComponent(DisplayField field) {
-        super.setDeclared(name(field));
+        super();
         _field = field;
+        setDeclared(name(field));
     }
 
-    private DisplayField _field;
+    private final DisplayField _field;
 
     /**
      * @return the linked field
@@ -58,4 +59,5 @@ public abstract class UIComponent extends AbstractArtifact {
         return string;
     }
     // </editor-fold>
+
 }

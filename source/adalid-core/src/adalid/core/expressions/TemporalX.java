@@ -15,6 +15,7 @@ import adalid.core.interfaces.TemporalExpression;
 public class TemporalX extends VariantX implements TemporalExpression {
 
     public TemporalX() {
+        super();
         initDataType();
     }
 

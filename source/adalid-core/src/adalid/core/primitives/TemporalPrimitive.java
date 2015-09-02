@@ -21,7 +21,7 @@ import java.util.Calendar;
  */
 public abstract class TemporalPrimitive extends Primitive implements TemporalExpression {
 
-    private static Calendar calendar = Calendar.getInstance();
+    private static final Calendar calendar = Calendar.getInstance();
 
     public static long getEpochInMillis() {
         calendar.set(Calendar.YEAR, 1970);

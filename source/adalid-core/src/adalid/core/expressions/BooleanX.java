@@ -25,6 +25,7 @@ import adalid.core.interfaces.TemporalExpression;
 public class BooleanX extends VariantX implements Check, State {
 
     public BooleanX() {
+        super();
         initDataType();
     }
 

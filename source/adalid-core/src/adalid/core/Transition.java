@@ -32,9 +32,11 @@ public class Transition extends AbstractArtifact {
     }
 
     public Transition() {
+        super();
     }
 
     public Transition(State x, State y) {
+        super();
         _x = x;
         _y = y;
         setName(x + "_" + y);

@@ -24,14 +24,15 @@ import org.apache.commons.lang.StringUtils;
 public abstract class AbstractScalarX extends AbstractExpression implements ScalarX {
 
     protected AbstractScalarX(ScalarOp operator, Object operand) {
+        super();
         _operator = operator;
         _operand = operand;
         initDataType();
     }
 
-    private ScalarOp _operator;
+    private final ScalarOp _operator;
 
-    private Object _operand;
+    private final Object _operand;
 
     /**
      * @return the operator

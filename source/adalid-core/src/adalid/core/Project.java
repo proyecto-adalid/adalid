@@ -8,9 +8,12 @@ package adalid.core;
 
 import adalid.commons.bundles.Bundle;
 import adalid.commons.enums.LoggingLevel;
+import adalid.commons.util.ColUtils;
 import adalid.commons.util.ThrowableUtils;
 import adalid.commons.velocity.Writer;
+import adalid.core.annotations.AddAttributesMethod;
 import adalid.core.annotations.ProjectModule;
+import adalid.core.comparators.ByMethodSequence;
 import adalid.core.enums.DisplayFormat;
 import adalid.core.enums.DisplayMode;
 import adalid.core.exceptions.InstantiationRuntimeException;
@@ -22,10 +25,13 @@ import adalid.core.wrappers.PersistentEntityWrapper;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -245,6 +251,10 @@ public abstract class Project extends AbstractArtifact implements Comparable<Pro
     private final Map<String, Display> _displays = new LinkedHashMap<>();
 
     private Class<? extends Entity> _userEntityClass;
+
+    private final Set<Artifact> _artifacts = new LinkedHashSet<>();
+
+    private final Set<Method> _addAttributesMethods = new LinkedHashSet<>();
 
     private final Set<String> _singularPlatforms = new LinkedHashSet<>();
 
@@ -660,6 +670,111 @@ public abstract class Project extends AbstractArtifact implements Comparable<Pro
     }
 
     /**
+     * @return the artifacts set
+     */
+    public Set<Artifact> getArtifacts() {
+        return _artifacts;
+    }
+
+    /**
+     * clears the artifacts set
+     */
+    private void clearArtifacts() {
+        _artifacts.clear();
+    }
+
+    /**
+     * clears the attributes set of every artifact
+     */
+    private void clearArtifactsAttributes() {
+        for (Artifact artifact : _artifacts) {
+            artifact.clearAttributes();
+        }
+    }
+
+    /**
+     * adds an artifact to the set
+     *
+     * @param artifact
+     * @return
+     */
+    public boolean addArtifact(Artifact artifact) {
+        return _artifacts.add(artifact);
+    }
+
+    /**
+     * @return the addAttributes methods set
+     */
+    public Set<Method> getAddAttributesMethods() {
+        return _addAttributesMethods;
+    }
+
+    /**
+     * clears the addAttributes methods set
+     */
+    public void clearAddAttributesMethods() {
+        _addAttributesMethods.clear();
+    }
+
+    /**
+     *
+     * @param clazz
+     */
+    public void attachAddAttributesMethods(Class<?> clazz) {
+        logger.debug(signature("attachAddAttributesMethods", clazz));
+        String name;
+        boolean addAttributesMethod;
+        int modifiers;
+        Class<?> returnType;
+        Class<?>[] parameterTypes;
+        Method[] methods = clazz.getDeclaredMethods();
+        List<Method> list = Arrays.asList(methods);
+        Comparator<Method> comparator = new ByMethodSequence();
+        ColUtils.sort(list, comparator);
+        for (Method method : list) {
+            name = method.getName();
+            addAttributesMethod = method.isAnnotationPresent(AddAttributesMethod.class);
+            modifiers = method.getModifiers();
+            returnType = method.getReturnType();
+            parameterTypes = method.getParameterTypes();
+            if (addAttributesMethod
+                && Modifier.isPublic(modifiers) && Modifier.isStatic(modifiers)
+                && void.class.equals(returnType)
+                && parameterTypes.length == 1 && Artifact.class.isAssignableFrom(parameterTypes[0])) {
+                logger.debug(signature(clazz.getSimpleName() + "." + name, parameterTypes[0]));
+                _addAttributesMethods.add(method);
+            }
+        }
+    }
+
+    /**
+     *
+     */
+    private void invokeAddAttributesMethods() {
+        String name;
+        Class<?> clazz;
+        Class<?> parameterType;
+        for (Method method : _addAttributesMethods) {
+            clazz = method.getDeclaringClass();
+            name = method.getName();
+            parameterType = method.getParameterTypes()[0];
+            for (Artifact artifact : _artifacts) {
+                if (parameterType.isAssignableFrom(artifact.getClass())) {
+                    if (Entity.class.isAssignableFrom(artifact.getClass()) && artifact.depth() != 0) {
+                        continue;
+                    }
+                    try {
+                        logger.debug(signature(clazz.getSimpleName() + "." + name, parameterType + " " + artifact.getClassPath()));
+                        method.invoke(null, artifact);
+                    } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException ex) {
+                        fatal(ex);
+                    }
+                }
+            }
+        }
+    }
+
+    /**
      * @return the singular platforms set
      */
     public Set<String> getSingularPlatforms() {
@@ -675,6 +790,7 @@ public abstract class Project extends AbstractArtifact implements Comparable<Pro
     // </editor-fold>
 
     public Project() {
+        super();
         Class<?> namedClass = getNamedClass();
         String className = namedClass.getSimpleName();
         setDeclared(className);
@@ -685,6 +801,7 @@ public abstract class Project extends AbstractArtifact implements Comparable<Pro
     }
 
     protected void settleAttributes() {
+        track("settleAttributes");
     }
 
     // <editor-fold defaultstate="collapsed" desc="annotate">
@@ -753,20 +870,21 @@ public abstract class Project extends AbstractArtifact implements Comparable<Pro
 
     public boolean build() {
         logger.info(signature("build", getClass().getName()));
-        TLC.setProject(Project.this);
+        TLC.setProject(this);
+        clearArtifacts();
         boolean built = parse() && analyze();
         return built;
     }
 
     public boolean parse() {
         logger.info(signature("parse", getClass().getName()));
-        TLC.setProject(Project.this);
+        TLC.setProject(this);
         return getParser().parse();
     }
 
     public boolean analyze() {
         logger.info(signature("analyze", getClass().getName()));
-        TLC.setProject(Project.this);
+        TLC.setProject(this);
         List<Project> modulesList = getModulesList();
         Collections.sort(modulesList);
         boolean analyzed = true;
@@ -810,7 +928,9 @@ public abstract class Project extends AbstractArtifact implements Comparable<Pro
             logger.error("project alias matches platform name; generation aborted");
             return false;
         }
-        TLC.setProject(Project.this);
+        TLC.setProject(this);
+        clearArtifactsAttributes();
+        invokeAddAttributesMethods();
         configureWriter();
         Writer writer = getWriter();
         writer.setOptionalResourceNames(getEntitiesMap().keySet());
@@ -1099,6 +1219,12 @@ public abstract class Project extends AbstractArtifact implements Comparable<Pro
     }
     // </editor-fold>
 
+    private void fatal(Throwable throwable) {
+        Throwable cause = ThrowableUtils.getCause(throwable);
+        String message = throwable.equals(cause) ? throwable.getClass().getSimpleName() : throwable.getMessage();
+        logger.fatal(message, cause);
+    }
+
     private void log(Level level, String method, Object... parameters) {
         if (foul(logger, level)) {
             return;
@@ -1113,6 +1239,14 @@ public abstract class Project extends AbstractArtifact implements Comparable<Pro
 
     private boolean foul(Logger logger, Level level) {
         return !fair(logger, level);
+    }
+
+    private void track(String method) {
+        track(method, this);
+    }
+
+    private void track(String method, Object... parameters) {
+        getParser().track(depth(), round(), getClassPath(), method, parameters);
     }
 
     // <editor-fold defaultstate="collapsed" desc="Comparable">
@@ -1719,6 +1853,7 @@ public abstract class Project extends AbstractArtifact implements Comparable<Pro
         private void printSummary() {
             logger.info("maxDepthReached=" + maxDepthReached);
             logger.info("maxRoundReached=" + maxRoundReached);
+            logger.info("artifacts=" + _artifacts.size());
             logger.info("entities=" + entities);
             if (warnings == 0) {
                 logger.info("warnings=" + warnings);

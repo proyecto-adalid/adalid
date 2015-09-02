@@ -19,7 +19,7 @@
         #if($property.isPrimaryKeyProperty())
         #elseif($property.isUnique())
             #set($uk = "$property.wrapper.sqlName")
-            #writeCreateUniqueKeyStatement()
+            #writeCreateUniqueKeyStatement($property)
         #end
     #end##foreach-property
 ## -----------------------------------------------------------------------------------------------------------
@@ -42,7 +42,7 @@
                     #end##foreach-field
                     #if($uk != '')
                         #set($uk = $StringUtils.removeStart($uk, ',').trim())
-                        #writeCreateUniqueKeyStatement()
+                        #writeCreateUniqueKeyStatement($key)
                     #end
                 #end
             #end
@@ -51,8 +51,27 @@
 ## -----------------------------------------------------------------------------------------------------------
 #end##writeCreateUniqueKeys
 
-#macro(writeCreateUniqueKeyStatement)
+#macro(writeCreateUniqueKeyStatement $artifact)
 #setGlobalUniqueKeyName($entity)
 #set($constraint = $globalConstraintName)
-alter table $table add constraint $constraint unique ($uk);
+#setStorageParameters($artifact)
+#setTablespaceParameter($artifact)
+alter table $table add constraint $constraint unique ($uk)$storageParameters$tablespace;
 #end##writeCreateUniqueKeyStatement
+
+#macro(setStorageParameters $artifact)
+    #set($storageParameters = $!artifact.getStringAttribute('WITH'))
+    #if($storageParameters != '')
+        #set($storageParameters = " WITH $StrUtils.enclose($storageParameters)")
+    #end
+#end##setStorageParameters
+
+#macro(setTablespaceParameter $artifact)
+    #set($tablespace = $!artifact.getStringAttribute('TABLESPACE'))
+    #if($tablespace == '')
+        #set($tablespace = $!entity.getStringAttribute('TABLESPACE'))
+    #end
+    #if($tablespace != '')
+        #set($tablespace = " USING INDEX TABLESPACE $tablespace")
+    #end
+#end##setTablespaceParameter

@@ -39,79 +39,95 @@ public class InstanceField extends AbstractArtifact {
     }
 
     private InstanceField() {
+        super();
     }
 
     InstanceField(PersistentEntityReference property, Instance value) {
+        super();
         _property = property;
         _value = value;
     }
 
     InstanceField(Property property, BigDecimal value) {
+        super();
         _property = property;
         _value = value;
     }
 
     InstanceField(Property property, BigInteger value) {
+        super();
         _property = property;
         _value = value;
     }
 
     InstanceField(Property property, Boolean value) {
+        super();
         _property = property;
         _value = value;
     }
 
     InstanceField(Property property, Byte value) {
+        super();
         _property = property;
         _value = value;
     }
 
     InstanceField(Property property, Character value) {
+        super();
         _property = property;
         _value = value;
     }
 
     InstanceField(Property property, Date value) {
+        super();
         _property = property;
         _value = value;
     }
 
     InstanceField(Property property, Double value) {
+        super();
         _property = property;
         _value = value;
     }
 
     InstanceField(Property property, Float value) {
+        super();
         _property = property;
         _value = value;
     }
 
     InstanceField(Property property, Integer value) {
+        super();
         _property = property;
         _value = value;
     }
 
     InstanceField(Property property, Long value) {
+        super();
         _property = property;
         _value = value;
     }
 
     InstanceField(Property property, Short value) {
+        super();
         _property = property;
         _value = value;
     }
 
     InstanceField(Property property, String value) {
+        super();
         _property = property;
         _value = value;
     }
 
     InstanceField(Property property, Time value) {
+        super();
         _property = property;
         _value = value;
     }
 
     InstanceField(Property property, Timestamp value) {
+        super();
         _property = property;
         _value = value;
     }

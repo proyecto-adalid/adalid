@@ -20,6 +20,7 @@ import org.apache.commons.lang.StringUtils;
 public abstract class AbstractOrderedPairX extends AbstractExpression implements OrderedPairX {
 
     protected AbstractOrderedPairX(Object x, OrderedPairOp operator, Object y) {
+        super();
         _operator = operator;
 //      _x = x instanceof ScalarX ? (ScalarX) x : VariantScalarX.instanceOf(x);
 //      _y = y instanceof ScalarX ? (ScalarX) y : VariantScalarX.instanceOf(y);
@@ -28,11 +29,11 @@ public abstract class AbstractOrderedPairX extends AbstractExpression implements
         initDataType();
     }
 
-    private OrderedPairOp _operator;
+    private final OrderedPairOp _operator;
 
-    private Object _x;
+    private final Object _x;
 
-    private Object _y;
+    private final Object _y;
 
     /**
      * @return the operator

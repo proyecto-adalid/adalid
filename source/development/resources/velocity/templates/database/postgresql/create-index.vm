@@ -19,7 +19,7 @@
         #if($property.isUnique() || $property.isPrimaryKeyProperty())
         #elseif($property.isVersionProperty() || $property.isNameProperty() || $property.isForeignKey())
             #set($ix = $property.wrapper.sqlName)
-            #writeCreateIndexStatement()
+            #writeCreateIndexStatement($property)
         #end
     #end##foreach-property
 ## -----------------------------------------------------------------------------------------------------------
@@ -46,7 +46,7 @@
                     #end##foreach-field
                     #if($ix != '')
                         #set($ix = $StringUtils.removeStart($ix, ',').trim())
-                        #writeCreateIndexStatement()
+                        #writeCreateIndexStatement($key)
                     #end
                 #end
             #end
@@ -55,8 +55,30 @@
 ## -----------------------------------------------------------------------------------------------------------
 #end##writeCreateIndexes
 
-#macro(writeCreateIndexStatement)
+#macro(writeCreateIndexStatement $artifact)
 #setGlobalIndexName($entity)
 #set($constraint = $globalConstraintName)
-create index $constraint on $table ($ix);
+#setStorageParameters($artifact)
+#setTablespaceParameter($artifact)
+create index $constraint on $table ($ix)$storageParameters$tablespace;
 #end##writeCreateIndexStatement
+
+#macro(setStorageParameters $artifact)
+    #set($storageParameters = $!artifact.getStringAttribute('WITH'))
+    #if($storageParameters == '' && $artifact.isForeignKey())
+        #set($storageParameters = $!artifact.root.primaryKeyProperty.getStringAttribute('WITH'))
+    #end
+    #if($storageParameters != '')
+        #set($storageParameters = " WITH $StrUtils.enclose($storageParameters)")
+    #end
+#end##setStorageParameters
+
+#macro(setTablespaceParameter $artifact)
+    #set($tablespace = $!artifact.getStringAttribute('TABLESPACE'))
+    #if($tablespace == '')
+        #set($tablespace = $!entity.getStringAttribute('TABLESPACE'))
+    #end
+    #if($tablespace != '')
+        #set($tablespace = " TABLESPACE $tablespace")
+    #end
+#end##setTablespaceParameter

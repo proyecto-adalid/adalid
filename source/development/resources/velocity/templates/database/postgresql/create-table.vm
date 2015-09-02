@@ -43,6 +43,22 @@ create table $table
 #end##writeCreateTableColumn
 
 #macro(writeCreateTableFooter)
-    );
-
+    )
+    #writeStorageParameters()
+    #writeTablespaceParameter()
+;
 #end##writeCreateTableFooter
+
+#macro(writeStorageParameters)
+    #set($storageParameters = $!entity.getStringAttribute('WITH'))
+    #if($storageParameters != '')
+....    WITH $StrUtils.enclose($storageParameters)
+    #end
+#end##writeStorageParameters
+
+#macro(writeTablespaceParameter)
+    #set($tablespace = $!entity.getStringAttribute('TABLESPACE'))
+    #if($tablespace != '')
+....    TABLESPACE $tablespace
+    #end
+#end##writeTablespaceParameter

@@ -95,7 +95,7 @@ public class XB {
     // <editor-fold defaultstate="collapsed" desc="Entity">
     public class EntityExpressionBuilder {
 
-        private Class<? extends VariantX> EntityX = EntityX.class;
+        private final Class<? extends VariantX> EntityX = EntityX.class;
 
         public EntityExpression getForeignExpression(String name, Class<? extends Entity> clazz) {
             return (EntityExpression) XS2.getForeignExpression(EntityX, name, clazz);
@@ -345,7 +345,7 @@ public class XB {
     // <editor-fold defaultstate="collapsed" desc="Boolean">
     public class BooleanExpressionBuilder {
 
-        private Class<? extends VariantX> BooleanX = BooleanX.class;
+        private final Class<? extends VariantX> BooleanX = BooleanX.class;
 
         public BooleanExpression getForeignExpression(String name, Class<? extends Entity> clazz) {
             return (BooleanExpression) XS2.getForeignExpression(BooleanX, name, clazz);
@@ -602,7 +602,7 @@ public class XB {
     // <editor-fold defaultstate="collapsed" desc="Character">
     public class CharacterExpressionBuilder {
 
-        private Class<? extends VariantX> CharacterX = CharacterX.class;
+        private final Class<? extends VariantX> CharacterX = CharacterX.class;
 
         public CharacterExpression getForeignExpression(String name, Class<? extends Entity> clazz) {
             return (CharacterExpression) XS2.getForeignExpression(CharacterX, name, clazz);
@@ -1173,7 +1173,7 @@ public class XB {
     // <editor-fold defaultstate="collapsed" desc="Numeric">
     public class NumericExpressionBuilder {
 
-        private Class<? extends VariantX> NumericX = NumericX.class;
+        private final Class<? extends VariantX> NumericX = NumericX.class;
 
         public NumericExpression getForeignExpression(String name, Class<? extends Entity> clazz) {
             return (NumericExpression) XS2.getForeignExpression(NumericX, name, clazz);
@@ -1710,7 +1710,7 @@ public class XB {
     // <editor-fold defaultstate="collapsed" desc="Temporal">
     public class TemporalExpressionBuilder {
 
-        private Class<? extends VariantX> TemporalX = TemporalX.class;
+        private final Class<? extends VariantX> TemporalX = TemporalX.class;
 
         public TemporalExpression getForeignExpression(String name, Class<? extends Entity> clazz) {
             return (TemporalExpression) XS2.getForeignExpression(TemporalX, name, clazz);

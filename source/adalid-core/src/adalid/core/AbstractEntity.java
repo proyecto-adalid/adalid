@@ -109,6 +109,7 @@ import adalid.core.properties.BooleanProperty;
 import adalid.core.properties.IntegerProperty;
 import adalid.core.properties.LongProperty;
 import adalid.core.properties.StringProperty;
+import adalid.core.wrappers.EntityWrapper;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
@@ -2848,6 +2849,7 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
     // </editor-fold>
 
     public AbstractEntity(Artifact declaringArtifact, Field declaringField) {
+        super();
         if (declaringArtifact == null) {
             throw new IllegalArgumentException("null declaring artifact");
         }
@@ -3151,6 +3153,11 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
         setTableViewEnabledIndicator();
         setBasicDatabaseOperationsAttributes();
         check();
+    }
+
+    @Override
+    public Object addAttribute(Property property, String name, Object value) {
+        return property == null ? null : property.addAttribute(name, value);
     }
 
     void setKeyFields() {
@@ -4813,6 +4820,14 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
             }
         }
         return set;
+    }
+
+    /**
+     * @return the default wrapper class
+     */
+    @Override
+    public Class<? extends EntityWrapper> getDefaultWrapperClass() {
+        return EntityWrapper.class;
     }
 
     // <editor-fold defaultstate="collapsed" desc="EntityExpression">

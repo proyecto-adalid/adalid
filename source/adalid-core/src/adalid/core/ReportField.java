@@ -48,6 +48,7 @@ public class ReportField extends AbstractArtifact implements Comparable<ReportFi
     }
 
     private ReportField(ReportGroup group, String name) {
+        super();
         if (group != null && name != null) {
             _group = group;
             setDeclared(name);
@@ -56,6 +57,7 @@ public class ReportField extends AbstractArtifact implements Comparable<ReportFi
     }
 
     private ReportField(ReportGroup group, Property property) {
+        super();
         if (group != null && property != null) {
             _group = group;
             _property = property;
@@ -73,6 +75,7 @@ public class ReportField extends AbstractArtifact implements Comparable<ReportFi
     }
 
     private ReportField(ReportGroup group, ViewField field) {
+        super();
         if (group != null && field != null) {
             _group = group;
             _viewField = field;

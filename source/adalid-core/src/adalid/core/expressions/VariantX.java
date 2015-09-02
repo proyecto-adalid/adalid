@@ -18,6 +18,7 @@ import adalid.core.interfaces.Property;
 public class VariantX extends AbstractExpression {
 
     public VariantX() {
+        super();
         initDataType();
     }
 

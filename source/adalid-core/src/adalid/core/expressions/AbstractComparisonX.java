@@ -23,6 +23,7 @@ public abstract class AbstractComparisonX extends AbstractExpression implements 
     }
 
     protected AbstractComparisonX(Object x, ComparisonOp operator, Object y) {
+        super();
         _operator = operator;
 //      _x = x instanceof ScalarX ? (ScalarX) x : VariantScalarX.instanceOf(x);
 //      _y = y instanceof ScalarX ? (ScalarX) y : VariantScalarX.instanceOf(y);

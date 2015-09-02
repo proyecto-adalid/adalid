@@ -200,6 +200,34 @@ public interface Artifact {
     Field put(Class<? extends Annotation> annotation, Field field);
 
     /**
+     *
+     */
+    void clearAttributes();
+
+    /**
+     *
+     * @param name
+     * @param value
+     * @return
+     */
+    Object addAttribute(String name, Object value);
+
+    /**
+     *
+     * @param name
+     * @param value
+     * @return
+     */
+    Object addAttribute(String name, Object... value);
+
+    /**
+     *
+     * @param name
+     * @return
+     */
+    Object getAttribute(String name);
+
+    /**
      * @return the class path
      */
     String getClassPath();

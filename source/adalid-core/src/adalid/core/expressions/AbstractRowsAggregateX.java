@@ -31,6 +31,7 @@ public abstract class AbstractRowsAggregateX extends AbstractExpression implemen
     }
 
     protected AbstractRowsAggregateX(RowsAggregateOp operator, Object measure, Segment filter, Entity dimension) {
+        super();
         _operator = operator;
         _measure = measure;
         _filter = filter;

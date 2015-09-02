@@ -15,6 +15,7 @@ import adalid.core.interfaces.CharacterExpression;
 public class CharacterX extends VariantX implements CharacterExpression {
 
     public CharacterX() {
+        super();
         initDataType();
     }
 

@@ -29,9 +29,9 @@ public class Tab extends AbstractArtifact {
 
     private boolean _finalised;
 
-    private List<TabField> _tabFieldsList = new ArrayList<>();
+    private final List<TabField> _tabFieldsList = new ArrayList<>();
 
-    private Map<String, TabField> _tabFields = new LinkedHashMap<>();
+    private final Map<String, TabField> _tabFields = new LinkedHashMap<>();
 
     private TabField[] _tabField;
 
@@ -186,8 +186,8 @@ public class Tab extends AbstractArtifact {
         Property[] properties = property;
         TabField tabField;
         if (properties != null) {
-            for (int i = 0; i < properties.length; i++) {
-                tabField = new TabField(properties[i]);
+            for (Property p : properties) {
+                tabField = new TabField(p);
                 _tabFieldsList.add(tabField);
             }
         }

@@ -9,6 +9,8 @@ package adalid.core;
 import adalid.commons.TLB;
 import adalid.commons.interfaces.Wrappable;
 import adalid.commons.interfaces.Wrapper;
+import adalid.commons.util.KVP;
+import adalid.commons.util.StrUtils;
 import adalid.commons.util.ThrowableUtils;
 import adalid.core.expressions.VariantX;
 import adalid.core.interfaces.Artifact;
@@ -136,6 +138,11 @@ public abstract class AbstractArtifact implements Artifact, Wrappable {
      *
      */
     private final Map<Class<? extends Annotation>, Field> _annotations = new LinkedHashMap<>();
+
+    /**
+     * platform-specific attributes
+     */
+    private final Map<String, Object> _attributes = new LinkedHashMap<>();
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="field getters and setters">
@@ -549,6 +556,18 @@ public abstract class AbstractArtifact implements Artifact, Wrappable {
     Map<Class<? extends Annotation>, Field> getAnnotations() {
         return _annotations;
     }
+
+    @Override
+    public void clearAttributes() {
+        _attributes.clear();
+    }
+
+    /**
+     * @return the attributes map
+     */
+    public Map<String, Object> getAttributes() {
+        return _attributes;
+    }
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="annotate">
@@ -606,6 +625,40 @@ public abstract class AbstractArtifact implements Artifact, Wrappable {
         return _annotations.put(annotation, field);
     }
     // </editor-fold>
+
+    public AbstractArtifact() {
+        add();
+    }
+
+    private void add() {
+        Project project = TLC.getProject();
+        if (project != null) {
+            project.addArtifact(this);
+        }
+    }
+
+    @Override
+    public Object addAttribute(String name, Object value) {
+        return value == null ? _attributes.remove(name) : _attributes.put(name, value);
+    }
+
+    @Override
+    public Object addAttribute(String name, Object... value) {
+        return value == null ? _attributes.remove(name) : _attributes.put(name, value);
+    }
+
+    @Override
+    public Object getAttribute(String name) {
+        return _attributes.get(name);
+    }
+
+    public Object getStringAttribute(String name) {
+        return getStringAttribute(name, KVP.EQUALS, KVP.SEPARATOR, KVP.OPEN, KVP.CLOSE);
+    }
+
+    public Object getStringAttribute(String name, String equals, String separator, String open, String close) {
+        return StrUtils.getString(equals, separator, open, close, _attributes.get(name));
+    }
 
     /**
      * @return the class path

@@ -9,7 +9,24 @@ package adalid.core;
 import adalid.commons.util.ThrowableUtils;
 import adalid.core.enums.OperationKind;
 import adalid.core.expressions.VariantX;
-import adalid.core.interfaces.*;
+import adalid.core.interfaces.BooleanExpression;
+import adalid.core.interfaces.CharacterExpression;
+import adalid.core.interfaces.ComparisonX;
+import adalid.core.interfaces.ConditionalX;
+import adalid.core.interfaces.DataAggregateX;
+import adalid.core.interfaces.DataArtifact;
+import adalid.core.interfaces.Entity;
+import adalid.core.interfaces.EntityExpression;
+import adalid.core.interfaces.Expression;
+import adalid.core.interfaces.NaryExpression;
+import adalid.core.interfaces.NumericExpression;
+import adalid.core.interfaces.OrderedPairX;
+import adalid.core.interfaces.PersistentEntity;
+import adalid.core.interfaces.Property;
+import adalid.core.interfaces.RowsAggregateX;
+import adalid.core.interfaces.ScalarX;
+import adalid.core.interfaces.State;
+import adalid.core.interfaces.TemporalExpression;
 import adalid.core.sql.QueryJoin;
 import adalid.core.sql.QueryTable;
 import adalid.core.wrappers.ExpressionWrapper;
@@ -231,6 +248,7 @@ public abstract class AbstractExpression extends AbstractArtifact implements Nar
     }
 
     /**
+     * @param queryTable
      * @return the referenced joins list
      */
     @Override
@@ -253,6 +271,7 @@ public abstract class AbstractExpression extends AbstractArtifact implements Nar
     }
 
     /**
+     * @param queryTable
      * @return the referenced joins map
      */
     @Override
@@ -272,6 +291,7 @@ public abstract class AbstractExpression extends AbstractArtifact implements Nar
     }
 
     /**
+     * @param declaringEntity
      * @return the referenced expressions map
      */
     @Override
@@ -329,6 +349,7 @@ public abstract class AbstractExpression extends AbstractArtifact implements Nar
     }
 
     /**
+     * @param declaringEntity
      * @return true if is a TemporalExpression; otherwise false
      */
     @Override

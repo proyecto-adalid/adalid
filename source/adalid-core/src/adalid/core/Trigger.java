@@ -32,9 +32,11 @@ public class Trigger extends AbstractArtifact {
     }
 
     public Trigger() {
+        super();
     }
 
     public Trigger(State state, ProcessOperation operation) {
+        super();
         _state = state;
         _operation = operation;
         if (state != null && operation != null) {

@@ -28,9 +28,9 @@ public class Key extends AbstractArtifact {
 
     private boolean _finalised;
 
-    private List<KeyField> _keyFieldsList = new ArrayList<>();
+    private final List<KeyField> _keyFieldsList = new ArrayList<>();
 
-    private Map<String, KeyField> _keyFields = new LinkedHashMap<>();
+    private final Map<String, KeyField> _keyFields = new LinkedHashMap<>();
 
     private String _keyFieldsLastKey;
 
@@ -194,8 +194,8 @@ public class Key extends AbstractArtifact {
         Property[] properties = property;
         KeyField keyField;
         if (properties != null) {
-            for (int i = 0; i < properties.length; i++) {
-                keyField = new KeyField(properties[i]);
+            for (Property p : properties) {
+                keyField = new KeyField(p);
                 _keyFieldsList.add(keyField);
             }
         }

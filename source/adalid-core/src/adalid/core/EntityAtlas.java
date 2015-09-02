@@ -515,7 +515,6 @@ class EntityAtlas {
 
     // <editor-fold defaultstate="collapsed" desc="finaliseFields">
     private void finaliseFields() {
-        Class<?> c;
         String name;
         Class<?> type;
         int modifiers;
@@ -529,8 +528,7 @@ class EntityAtlas {
         };
         Class<?> dac = _declaringArtifact.getClass();
         Class<?> top = Entity.class;
-        for (int i = 0; i < classes.length; i++) {
-            c = classes[i];
+        for (Class<?> c : classes) {
             for (Field field : XS1.getFields(dac, top)) {
                 field.setAccessible(true);
                 logger.trace(field);

@@ -20,12 +20,13 @@ import org.apache.commons.lang.StringUtils;
 public abstract class AbstractDataAggregateX extends AbstractExpression implements DataAggregateX {
 
     protected AbstractDataAggregateX(DataAggregateOp operator, Object... operands) {
+        super();
         _operator = operator;
         _operands = operands;
         initDataType();
     }
 
-    private DataAggregateOp _operator;
+    private final DataAggregateOp _operator;
 
 //  @ExpressionArray()
     private Object[] _operands = null; // OJO: sin el = null no obtiene la anotación al ejecutar

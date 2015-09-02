@@ -15,6 +15,7 @@ import adalid.core.interfaces.NumericExpression;
 public class NumericX extends VariantX implements NumericExpression {
 
     public NumericX() {
+        super();
         initDataType();
     }
 

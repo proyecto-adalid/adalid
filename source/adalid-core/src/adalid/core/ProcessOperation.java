@@ -67,9 +67,10 @@ public abstract class ProcessOperation extends Operation {
         return _overloading;
     }
 
-    public void addTransition(State x, State y) {
+    public Transition addTransition(State x, State y) {
         Transition transition = new Transition(x, y);
         addTransition(transition);
+        return transition;
     }
 
     public void addTransition(Transition transition) {

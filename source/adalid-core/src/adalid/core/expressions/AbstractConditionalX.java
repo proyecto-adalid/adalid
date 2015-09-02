@@ -20,6 +20,7 @@ import org.apache.commons.lang.StringUtils;
 public abstract class AbstractConditionalX extends AbstractExpression implements ConditionalX {
 
     AbstractConditionalX(BooleanExpression booleanExpression, Object value) {
+        super();
         _operator = ConditionalOp.IF_THEN;
         _booleanExpression = booleanExpression;
         _thenValue = value;
@@ -27,19 +28,20 @@ public abstract class AbstractConditionalX extends AbstractExpression implements
     }
 
     AbstractConditionalX(ConditionalX conditional, Object value) {
+        super();
         _operator = ConditionalOp.IF_THEN_ELSE;
         _booleanExpression = conditional.getBooleanExpression();
         _thenValue = conditional.getThenValue();
         _elseValue = value;
     }
 
-    private ConditionalOp _operator;
+    private final ConditionalOp _operator;
 
-    private BooleanExpression _booleanExpression;
+    private final BooleanExpression _booleanExpression;
 
-    private Object _thenValue;
+    private final Object _thenValue;
 
-    private Object _elseValue;
+    private final Object _elseValue;
 
     /**
      * @return the operator

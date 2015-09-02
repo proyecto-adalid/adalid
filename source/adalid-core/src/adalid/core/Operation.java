@@ -363,6 +363,7 @@ public abstract class Operation extends AbstractArtifact implements Comparable<O
     }
 
     public Operation() {
+        super();
         initOperation();
         Artifact declaringArtifact = TLC.getDeclaringArtifact();
         if (declaringArtifact == null) {
@@ -376,6 +377,7 @@ public abstract class Operation extends AbstractArtifact implements Comparable<O
     }
 
     public Operation(Artifact declaringArtifact) {
+        super();
         initOperation();
         if (declaringArtifact == null) {
             String msg = "null declaring artifact";
@@ -766,7 +768,7 @@ public abstract class Operation extends AbstractArtifact implements Comparable<O
     }
 
     private void track(String method) {
-        track(method, this);
+        track(method, new Object[]{this});
     }
 
     private void track(String method, Artifact artifact) {

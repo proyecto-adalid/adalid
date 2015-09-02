@@ -405,6 +405,7 @@ public class VelocityAid {
     }
 
     /**
+     * @param objects
      * @return the first non-null parameter
      */
     public static Object coalesce(Object... objects) {

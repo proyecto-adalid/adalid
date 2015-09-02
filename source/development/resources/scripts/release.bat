@@ -133,8 +133,8 @@ if not defined VRNAME goto:eof
 if not defined VRPATH goto:eof
 rem call:replace-VnnRaammdd
 rem pause
-rem call:convert-text-files
-rem pause
+call:convert-text-files
+pause
 call:modify-files-date
 pause
 echo.
@@ -187,7 +187,7 @@ goto:eof
 echo.
 echo dos2unix %1
 echo.
-for /R "%VRPATH%" %%f in (%1) do %dos2unix% -U "%%f"
+for /R "%VRPATH%" %%f in (%1) do %dos2unix% -o -q "%%f"
 goto:eof
 
 :modify-files-date

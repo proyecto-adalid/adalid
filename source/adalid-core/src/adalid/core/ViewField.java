@@ -40,6 +40,7 @@ public class ViewField extends AbstractArtifact {
      * @param sort sort type
      */
     ViewField(View view, Property column, SortOption sort) {
+        super();
         _view = view;
         _column = column;
         _group = column;
@@ -55,6 +56,7 @@ public class ViewField extends AbstractArtifact {
      * @param group control-break column
      */
     ViewField(View view, Property column, Property group) {
+        super();
         _view = view;
         _column = column;
         _group = group;
@@ -71,6 +73,7 @@ public class ViewField extends AbstractArtifact {
      * @param sort sort type
      */
     ViewField(View view, Property column, ViewFieldAggregation aggregation, SortOption sort) {
+        super();
         _view = view;
         _column = column;
         _group = null;

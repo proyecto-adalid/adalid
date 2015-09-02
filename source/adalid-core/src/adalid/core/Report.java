@@ -56,15 +56,18 @@ public class Report extends AbstractArtifact implements Comparable<Report> {
     private static final int COLUMN_WIDTH = 960;
 
     private Report() {
+        super();
     }
 
     public Report(String name) {
+        super();
         if (name != null) {
             setDeclared(name);
         }
     }
 
     public Report(PersistentEntity entity) {
+        super();
         if (entity != null) {
             init(entity);
         }
@@ -82,6 +85,7 @@ public class Report extends AbstractArtifact implements Comparable<Report> {
     }
 
     public Report(View view) {
+        super();
         if (view != null) {
             init(view);
         }

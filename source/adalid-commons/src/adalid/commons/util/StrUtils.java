@@ -16,6 +16,7 @@ import java.sql.Timestamp;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 import java.util.Set;
@@ -324,6 +325,35 @@ public class StrUtils {
         } catch (MissingResourceException e) {
             return null;
         }
+    }
+
+    public static String getString(String equals, String separator, String open, String close, Object object) {
+        if (ObjUtils.isBlank(object)) {
+            return EMPTY;
+        }
+        if (object.getClass().isArray()) {
+            Object[] array = (Object[]) object;
+            return getString(equals, separator, open, close, array);
+        }
+        if (object instanceof KVP) {
+            KVP value = (KVP) object;
+            return value.toString(equals, separator, open, close);
+        }
+        if (object instanceof String) {
+            String value = (String) object;
+            return StringUtils.trimToEmpty(value);
+        }
+        return StringUtils.trimToEmpty(object.toString());
+    }
+
+    public static String getString(String equals, String separator, String open, String close, Object... objects) {
+        List<String> strings = new ArrayList<>();
+        for (Object object : objects) {
+            if (object != null) {
+                strings.add(getString(equals, separator, open, close, object));
+            }
+        }
+        return enclose(StringUtils.join(strings, separator), open, close);
     }
 
     public static String getNullStringWhenBlankOrEqualsToKey(String string, String key) {

@@ -25,6 +25,7 @@ public abstract class DisplayField extends AbstractArtifact implements Comparabl
     }
 
     public DisplayField(Display display, QueryTable queryTable, Property property, DisplayField parentField) {
+        super();
         _display = display;
         _dataArtifact = property;
         _parent = parentField;

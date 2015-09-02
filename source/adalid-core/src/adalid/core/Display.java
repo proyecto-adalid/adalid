@@ -30,6 +30,7 @@ import org.apache.commons.lang.StringUtils;
 public abstract class Display extends AbstractArtifact implements Comparable<Display> {
 
     public Display(String name) {
+        super();
         _displayType = DisplayType.UNSPECIFIED;
         _displayMode = DisplayMode.UNSPECIFIED;
         _displayFormat = DisplayFormat.UNSPECIFIED;

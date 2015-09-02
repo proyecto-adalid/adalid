@@ -56,6 +56,7 @@ public class ReportGroup extends AbstractArtifact implements Comparable<ReportGr
     }
 
     private ReportGroup(Report report) {
+        super();
         ReportGroup group = this;
         if (report != null) {
             _report = report;
@@ -106,6 +107,7 @@ public class ReportGroup extends AbstractArtifact implements Comparable<ReportGr
     }
 
     private ReportGroup(Report report, int sequence) {
+        super();
         _report = report;
         _sequence = sequence;
         _detail = false;
@@ -114,6 +116,7 @@ public class ReportGroup extends AbstractArtifact implements Comparable<ReportGr
     }
 
     private ReportGroup(Report report, View view) {
+        super();
         _report = report;
         _sequence = Integer.MAX_VALUE;
         _detail = true;
@@ -122,6 +125,7 @@ public class ReportGroup extends AbstractArtifact implements Comparable<ReportGr
     }
 
     private ReportGroup(Report report, ViewField field, int sequence) {
+        super();
         _report = report;
         _viewField = field;
         _sequence = sequence;

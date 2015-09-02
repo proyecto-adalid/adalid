@@ -35,6 +35,7 @@ public class KeyField extends AbstractArtifact {
     }
 
     private KeyField() {
+        super();
     }
 
     KeyField(Property property) {
@@ -42,6 +43,7 @@ public class KeyField extends AbstractArtifact {
     }
 
     KeyField(Property property, SortOption sortOption) {
+        super();
         _property = property;
         _sortOption = sortOption;
     }

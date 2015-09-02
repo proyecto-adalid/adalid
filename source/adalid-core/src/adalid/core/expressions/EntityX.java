@@ -16,6 +16,7 @@ import adalid.core.interfaces.EntityExpression;
 public class EntityX extends VariantX implements EntityExpression {
 
     public EntityX() {
+        super();
         initDataType();
     }
 

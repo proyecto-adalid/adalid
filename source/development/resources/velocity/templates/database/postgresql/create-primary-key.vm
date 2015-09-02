@@ -20,5 +20,24 @@
 #end##writeCreatePrimaryKey
 
 #macro(writeCreatePrimaryKeyStatement)
-alter table $table add constraint $constraint primary key ($pk);
+#setStorageParameters()
+#setTablespaceParameter()
+alter table $table add constraint $constraint primary key ($pk)$storageParameters$tablespace;
 #end##writeCreatePrimaryKeyStatement
+
+#macro(setStorageParameters)
+    #set($storageParameters = $!entity.primaryKeyProperty.getStringAttribute('WITH'))
+    #if($storageParameters != '')
+        #set($storageParameters = " WITH $StrUtils.enclose($storageParameters)")
+    #end
+#end##setStorageParameters
+
+#macro(setTablespaceParameter)
+    #set($tablespace = $!entity.primaryKeyProperty.getStringAttribute('TABLESPACE'))
+    #if($tablespace == '')
+        #set($tablespace = $!entity.getStringAttribute('TABLESPACE'))
+    #end
+    #if($tablespace != '')
+        #set($tablespace = " USING INDEX TABLESPACE $tablespace")
+    #end
+#end##setTablespaceParameter

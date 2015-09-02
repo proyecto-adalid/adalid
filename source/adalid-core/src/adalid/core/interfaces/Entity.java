@@ -677,6 +677,8 @@ public interface Entity extends Comparable<Entity>, DataArtifact {
 
     void finalise();
 
+    Object addAttribute(Property property, String name, Object value);
+
     /**
      * @return the declaring project, if any; null otherwise
      */

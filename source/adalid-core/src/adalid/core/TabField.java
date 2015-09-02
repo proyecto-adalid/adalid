@@ -24,9 +24,11 @@ public class TabField extends AbstractArtifact {
     }
 
     private TabField() {
+        super();
     }
 
     TabField(Property property) {
+        super();
         _property = property;
     }
 
