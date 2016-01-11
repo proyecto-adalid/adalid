@@ -101,11 +101,13 @@ ${entity_name}.${column_name}.property_select=$project.getOperationNumber($selec
 #end##writeRestrictedSelectColumnsMapElement
 
 #macro(writeBundleArchivosOperation)
-${entity_name}.${operation_name}.name=${entity_name}.${operation_name}
 #if($operation.view)
+....${entity_name}.${operation_name}.name=${entity_name}.${operation_name}
 ....${entity_name}.${operation_name}.detalle.name=${entity_name}.${operation_name}.detalle
 ....${entity_name}.${operation_name}.resumen.name=${entity_name}.${operation_name}.resumen
 ....${entity_name}.${operation_name}.grafico.name=${entity_name}.${operation_name}.grafico
+#else
+....${entity_name}.${operation_name}.name=${operation_noun}
 #end
 #if("$!{operation.viewName}" == '')
 ....${entity_name}.${operation_name}.nombre_vista_funcion_export=${entity_view}
@@ -122,11 +124,13 @@ ${entity_name}.${operation_name}.opcion_orden_funcion_export=${operation.sortOpt
 #end##writeBundleArchivosOperation
 
 #macro(writeBundleInformesOperation)
-${entity_name}.${operation_name}.name=${entity_name}.${operation_name}
 #if($operation.view)
+....${entity_name}.${operation_name}.name=${entity_name}.${operation_name}
 ....${entity_name}.${operation_name}.detalle.name=${entity_name}.${operation_name}.detalle
 ....${entity_name}.${operation_name}.resumen.name=${entity_name}.${operation_name}.resumen
 ....${entity_name}.${operation_name}.grafico.name=${entity_name}.${operation_name}.grafico
+#else
+....${entity_name}.${operation_name}.name=${operation_noun}
 #end
 #if("$!{operation.viewName}" == '')
 ....${entity_name}.${operation_name}.nombre_vista_funcion_report=${entity_view}
