@@ -8,6 +8,7 @@ package adalid.core.properties;
 
 import adalid.core.annotations.BaseField;
 import adalid.core.annotations.BusinessKey;
+import adalid.core.annotations.CastingField;
 import adalid.core.annotations.ColumnField;
 import adalid.core.annotations.DiscriminatorColumn;
 import adalid.core.annotations.NumericDataGen;
@@ -31,6 +32,7 @@ public class IntegerProperty extends IntegerData implements Property {
         List<Class<? extends Annotation>> valid = super.getValidFieldAnnotations();
         valid.add(BaseField.class);
         valid.add(BusinessKey.class);
+        valid.add(CastingField.class);
         valid.add(ColumnField.class);
         valid.add(DiscriminatorColumn.class);
         valid.add(NumericDataGen.class);

@@ -8,6 +8,7 @@ package adalid.core.properties;
 
 import adalid.core.annotations.BaseField;
 import adalid.core.annotations.BigDecimalField;
+import adalid.core.annotations.CastingField;
 import adalid.core.annotations.ColumnField;
 import adalid.core.annotations.NumericDataGen;
 import adalid.core.annotations.NumericField;
@@ -28,6 +29,7 @@ public class BigDecimalProperty extends BigDecimalData implements Property {
         List<Class<? extends Annotation>> valid = super.getValidFieldAnnotations();
         valid.add(BaseField.class);
         valid.add(BigDecimalField.class);
+        valid.add(CastingField.class);
         valid.add(ColumnField.class);
         valid.add(NumericDataGen.class);
         valid.add(NumericField.class);

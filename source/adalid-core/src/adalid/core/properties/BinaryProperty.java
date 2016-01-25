@@ -7,6 +7,7 @@
 package adalid.core.properties;
 
 import adalid.core.annotations.BaseField;
+import adalid.core.annotations.CastingField;
 import adalid.core.annotations.ColumnField;
 import adalid.core.annotations.PropertyField;
 import adalid.core.data.types.BinaryData;
@@ -23,6 +24,7 @@ public class BinaryProperty extends BinaryData implements Property {
     protected List<Class<? extends Annotation>> getValidFieldAnnotations() {
         List<Class<? extends Annotation>> valid = super.getValidFieldAnnotations();
         valid.add(BaseField.class);
+        valid.add(CastingField.class);
         valid.add(ColumnField.class);
         valid.add(PropertyField.class);
         return valid;

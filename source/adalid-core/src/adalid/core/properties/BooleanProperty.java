@@ -9,6 +9,7 @@ package adalid.core.properties;
 import adalid.core.annotations.BaseField;
 import adalid.core.annotations.BooleanDataGen;
 import adalid.core.annotations.BooleanField;
+import adalid.core.annotations.CastingField;
 import adalid.core.annotations.ColumnField;
 import adalid.core.annotations.InactiveIndicator;
 import adalid.core.annotations.PropertyField;
@@ -29,6 +30,7 @@ public class BooleanProperty extends BooleanData implements Property {
         valid.add(BaseField.class);
         valid.add(BooleanDataGen.class);
         valid.add(BooleanField.class);
+        valid.add(CastingField.class);
         valid.add(ColumnField.class);
         valid.add(InactiveIndicator.class);
         valid.add(PropertyField.class);

@@ -7,6 +7,7 @@
 package adalid.core.properties;
 
 import adalid.core.annotations.BaseField;
+import adalid.core.annotations.CastingField;
 import adalid.core.annotations.ColumnField;
 import adalid.core.annotations.LastTimeProperty;
 import adalid.core.annotations.PropertyField;
@@ -27,6 +28,7 @@ public class TimestampProperty extends TimestampData implements Property {
     protected List<Class<? extends Annotation>> getValidFieldAnnotations() {
         List<Class<? extends Annotation>> valid = super.getValidFieldAnnotations();
         valid.add(BaseField.class);
+        valid.add(CastingField.class);
         valid.add(ColumnField.class);
         valid.add(LastTimeProperty.class);
         valid.add(PropertyField.class);

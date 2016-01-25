@@ -8,8 +8,9 @@ package adalid.core.properties;
 
 import adalid.core.annotations.BaseField;
 import adalid.core.annotations.BusinessKey;
-import adalid.core.annotations.CharacterKey;
+import adalid.core.annotations.CastingField;
 import adalid.core.annotations.CharacterDataGen;
+import adalid.core.annotations.CharacterKey;
 import adalid.core.annotations.ColumnField;
 import adalid.core.annotations.DescriptionProperty;
 import adalid.core.annotations.DiscriminatorColumn;
@@ -34,6 +35,7 @@ public class StringProperty extends StringData implements Property {
         List<Class<? extends Annotation>> valid = super.getValidFieldAnnotations();
         valid.add(BaseField.class);
         valid.add(BusinessKey.class);
+        valid.add(CastingField.class);
         valid.add(CharacterKey.class);
         valid.add(CharacterDataGen.class);
         valid.add(ColumnField.class);
