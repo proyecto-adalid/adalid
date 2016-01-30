@@ -19,6 +19,8 @@ import org.apache.commons.lang.StringUtils;
  */
 public abstract class AbstractOrderedPairX extends AbstractExpression implements OrderedPairX {
 
+    private static final String EOL = "\n";
+
     protected AbstractOrderedPairX(Object x, OrderedPairOp operator, Object y) {
         super();
         _operator = operator;

@@ -26,6 +26,8 @@ public class Key extends AbstractArtifact {
 
     private static final Logger logger = Logger.getLogger(Key.class);
 
+    private static final String EOL = "\n";
+
     private boolean _finalised;
 
     private final List<KeyField> _keyFieldsList = new ArrayList<>();

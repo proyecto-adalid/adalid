@@ -27,6 +27,8 @@ public class Tab extends AbstractArtifact {
 
     private static final Logger logger = Logger.getLogger(Tab.class);
 
+    private static final String EOL = "\n";
+
     private boolean _finalised;
 
     private final List<TabField> _tabFieldsList = new ArrayList<>();

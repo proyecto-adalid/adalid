@@ -19,6 +19,8 @@ import org.apache.commons.lang.StringUtils;
  */
 public class DisplaySet extends AbstractArtifact implements Comparable<DisplaySet> {
 
+    private static final String EOL = "\n";
+
     public DisplaySet(String name) {
         super();
         setDeclared(name);

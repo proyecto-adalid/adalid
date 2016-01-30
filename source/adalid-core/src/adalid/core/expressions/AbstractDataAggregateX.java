@@ -19,6 +19,8 @@ import org.apache.commons.lang.StringUtils;
  */
 public abstract class AbstractDataAggregateX extends AbstractExpression implements DataAggregateX {
 
+    private static final String EOL = "\n";
+
     protected AbstractDataAggregateX(DataAggregateOp operator, Object... operands) {
         super();
         _operator = operator;

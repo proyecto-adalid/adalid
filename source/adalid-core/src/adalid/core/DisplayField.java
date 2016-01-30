@@ -20,6 +20,8 @@ import org.apache.commons.lang.StringUtils;
  */
 public abstract class DisplayField extends AbstractArtifact implements Comparable<DisplayField> {
 
+    private static final String EOL = "\n";
+
     public DisplayField(Display display, Property property) {
         this(display, display.getQueryTable(), property, null);
     }

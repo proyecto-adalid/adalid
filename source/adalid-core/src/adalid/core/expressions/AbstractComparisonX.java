@@ -18,6 +18,8 @@ import org.apache.commons.lang.StringUtils;
  */
 public abstract class AbstractComparisonX extends AbstractExpression implements ComparisonX {
 
+    private static final String EOL = "\n";
+
     protected AbstractComparisonX(Object x, ComparisonOp operator) {
         this(x, operator, null);
     }

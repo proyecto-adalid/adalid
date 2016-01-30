@@ -9,7 +9,7 @@ locale.language.tag=$project.locale.toLanguageTag()
 #set($xe15 = 1000000000000000)
 #set($xe18 = 1000000000000000000)
 #set($projectCode = $project.alias)
-#writeRoot($xe18 $project.wrapper.validDefaultLabel)
+#writeRoot($xe18 $project.wrapper.validDefaultLabel $project.defaultShortDescription)
 #set($modules = $ColUtils.filter($project.modulesList, $isMenuModule))
 #set($modules = $ColUtils.sort($modules, $byProjectDeclaringFieldName))
 #foreach($module in $modules)
@@ -85,10 +85,10 @@ locale.language.tag=$project.locale.toLanguageTag()
 #end##foreach-module
 #break
 
-#macro(writeRoot $id $name)
+#macro(writeRoot $id $name $description)
 #set($code = "${projectCode}")
 ${code}.name=$!bundleProgrammer.getValueString(${name})
-${code}.description=
+${code}.description=$!bundleProgrammer.getValueString(${description})
 #end##writeRoot
 
 ${code}.id=${id}
@@ -133,6 +133,7 @@ ${code}.branch=${branch}
 #set($leaf = $next + $branch)
 #set($name = $StringUtils.capitalize($page.entity.wrapper.validDefaultCollectionLabel))
 #set($description = "$!page.entity.defaultShortDescription")
+#setWebPageNameAsDescription($name)
 #set($url = "${redirect}${project.rootFolderName}-war/faces/${webPageName}&twn=${project.rootFolderName}-war-${webProjectSuffix}")
 #writeLeaf($leaf $name $description $branch $url)
 #end##writePage
@@ -144,6 +145,35 @@ ${code}.branch=${branch}
 ${code}.name=$!bundleProgrammer.getValueString(${name})
 ${code}.description=$!bundleProgrammer.getValueString(${description})
 #end##writeLeaf
+
+#macro(setWebPageNameAsDescription $name)
+    #set($webPageSort = '')
+    #if("$!page.displayMode" == 'UNSPECIFIED' || "$!page.displayFormat" == 'UNSPECIFIED')
+    #elseif("$!page.displayMode" == 'READING')
+        #if("$!page.displayFormat" == 'TABLE')
+            #set($webPageSort = ${Bundle.getString('BundleWebui.consulta')})
+        #elseif("$!page.displayFormat" == 'DETAIL')
+            #set($webPageSort = ${Bundle.getString('BundleWebui.consulta.detallada')})
+        #elseif("$!page.displayFormat" == 'TREE')
+            #set($webPageSort = ${Bundle.getString('BundleWebui.consulta.jerarquica')})
+        #end
+    #elseif("$!page.displayMode" == 'WRITING')
+        #if("$!page.displayFormat" == 'TABLE')
+            #set($webPageSort = ${Bundle.getString('BundleWebui.registro')})
+        #elseif("$!page.displayFormat" == 'DETAIL')
+            #set($webPageSort = ${Bundle.getString('BundleWebui.registro.detallado')})
+        #elseif("$!page.displayFormat" == 'TREE')
+            #set($webPageSort = ${Bundle.getString('BundleWebui.registro.jerarquico')})
+        #end
+    #elseif("$!page.displayMode" == 'PROCESSING')
+        #if("$!page.displayFormat" == 'CONSOLE')
+            #set($webPageSort = ${Bundle.getString('BundleWebui.procesamiento')})
+        #end
+    #end
+    #if($webPageSort != '')
+        #set($description = $StrUtils.getStringParametrizado("$webPageSort", "$name"))
+    #end
+#end##setWebPageNameAsDescription
 
 ${code}.id=${id}
 ${code}.name=$!bundleProgrammer.getValueString(${name})

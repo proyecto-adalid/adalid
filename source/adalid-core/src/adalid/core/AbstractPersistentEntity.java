@@ -87,6 +87,8 @@ public abstract class AbstractPersistentEntity extends AbstractDatabaseEntity im
      */
     private static final Logger logger = Logger.getLogger(Entity.class);
 
+    private static final String EOL = "\n";
+
     {
         setDatabaseEntityType(DatabaseEntityType.PERSISTENT);
     }

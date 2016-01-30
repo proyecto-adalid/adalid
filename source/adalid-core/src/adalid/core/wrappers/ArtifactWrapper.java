@@ -125,7 +125,7 @@ public class ArtifactWrapper implements Wrapper {
     }
 
     public String getValidDefaultTooltip() {
-        return StrUtils.coalesce(_artifact.getDefaultTooltip(), getValidDefaultLabel());
+        return StrUtils.coalesce(_artifact.getDefaultTooltip(), getValidDefaultShortDescription());
     }
 
     protected String getSomeLabel() {

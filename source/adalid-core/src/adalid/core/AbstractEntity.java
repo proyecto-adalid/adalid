@@ -157,6 +157,8 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
      */
     private static final Logger logger = Logger.getLogger(Entity.class);
 
+    private static final String EOL = "\n";
+
     /**
      *
      */

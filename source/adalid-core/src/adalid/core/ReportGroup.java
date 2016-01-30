@@ -21,6 +21,8 @@ import org.apache.commons.lang.StringUtils;
  */
 public class ReportGroup extends AbstractArtifact implements Comparable<ReportGroup> {
 
+    private static final String EOL = "\n";
+
     private Report _report;
 
     private ViewField _viewField;

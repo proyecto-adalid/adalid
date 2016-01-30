@@ -17,6 +17,8 @@ import org.apache.commons.lang.StringUtils;
  */
 public class StringData extends CharacterPrimitive {
 
+    private static final String EOL = "\n";
+
     public static final String EMPTY = "";
 
     {
@@ -128,4 +130,5 @@ public class StringData extends CharacterPrimitive {
         return string;
     }
     // </editor-fold>
+
 }

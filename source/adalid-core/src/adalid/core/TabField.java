@@ -14,6 +14,8 @@ import org.apache.commons.lang.StringUtils;
  */
 public class TabField extends AbstractArtifact {
 
+    private static final String EOL = "\n";
+
     private Property _property;
 
     /**

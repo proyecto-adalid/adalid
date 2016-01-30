@@ -19,6 +19,8 @@ import org.apache.commons.lang.StringUtils;
  */
 public class ViewField extends AbstractArtifact {
 
+    private static final String EOL = "\n";
+
     private final View _view;
 
     private final Property _column;

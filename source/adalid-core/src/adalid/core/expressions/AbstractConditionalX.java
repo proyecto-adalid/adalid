@@ -19,6 +19,8 @@ import org.apache.commons.lang.StringUtils;
  */
 public abstract class AbstractConditionalX extends AbstractExpression implements ConditionalX {
 
+    private static final String EOL = "\n";
+
     AbstractConditionalX(BooleanExpression booleanExpression, Object value) {
         super();
         _operator = ConditionalOp.IF_THEN;

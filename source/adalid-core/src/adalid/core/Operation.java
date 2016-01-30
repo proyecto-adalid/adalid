@@ -47,6 +47,8 @@ public abstract class Operation extends AbstractArtifact implements Comparable<O
 
     private static final Logger logger = Logger.getLogger(Operation.class);
 
+    private static final String EOL = "\n";
+
     private static final String SELECT_OPERATION_KEY = "select";
 
     private static final String INSERT_OPERATION_KEY = "insert";

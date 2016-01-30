@@ -27,10 +27,13 @@
     #set($web = $isWebModule.evaluate($module))
     #if($web)
         #set($pages = $module.displaysList)
+        #set($comparator = $byDisplayName)
     #else
         #set($pages = $module.master.displaysList)
+        #set($comparator = $ByDisplayEntityDeclaringFieldName.getInstance($module))
     #end
-    #set($pages = $ColUtils.sort($pages, $byDisplayName))
+##  #set($pages = $ColUtils.sort($pages, $byDisplayName))
+    #set($pages = $ColUtils.sort($pages, $comparator))
     #foreach($page in $pages)
         #if($web || $module.entitiesList.contains($page.entity))
             #if($page.master)

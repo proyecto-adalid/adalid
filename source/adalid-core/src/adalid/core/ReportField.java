@@ -23,6 +23,8 @@ import org.apache.commons.lang.StringUtils;
  */
 public class ReportField extends AbstractArtifact implements Comparable<ReportField> {
 
+    private static final String EOL = "\n";
+
     private ReportGroup _group;
 
     private Property _property;

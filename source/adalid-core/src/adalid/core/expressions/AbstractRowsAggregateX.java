@@ -18,6 +18,8 @@ import org.apache.commons.lang.StringUtils;
  */
 public abstract class AbstractRowsAggregateX extends AbstractExpression implements RowsAggregateX {
 
+    private static final String EOL = "\n";
+
     protected AbstractRowsAggregateX(RowsAggregateOp operator, Object measure) {
         this(operator, measure, null, null);
     }

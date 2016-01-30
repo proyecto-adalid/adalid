@@ -38,6 +38,8 @@ public class Instance extends AbstractArtifact {
 
     private static final Logger logger = Logger.getLogger(Instance.class);
 
+    private static final String EOL = "\n";
+
     private boolean _finalised;
 
     private int _index;

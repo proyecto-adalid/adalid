@@ -130,6 +130,8 @@ public abstract class AbstractDataArtifact extends AbstractArtifact implements D
      */
     private static final Logger logger = Logger.getLogger(DataArtifact.class);
 
+    private static final String EOL = "\n";
+
     /**
      * dataClass
      */

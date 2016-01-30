@@ -51,6 +51,10 @@ public abstract class Project extends AbstractArtifact implements Comparable<Pro
     // <editor-fold defaultstate="collapsed" desc="static fields">
     private final Logger logger = Logger.getLogger(Project.class);
 
+    private static final String EOL = "\n";
+
+    private static final String TAB = "\t";
+
     private static int _defaultMaxDepth = 1;
 
     private static int _defaultMaxRound = 0;

@@ -34,14 +34,14 @@ import org.apache.log4j.Logger;
  */
 class EntityAtlas {
 
-    private static final String EOL = "\n";
-
-    private static final String TAB = "\t";
-
     // <editor-fold defaultstate="collapsed" desc="field declarations">
     private static final Logger logger = Logger.getLogger(EntityAtlas.class);
 
     private static final Logger parserLogger = Logger.getLogger(Project.Parser.class);
+
+    private static final String EOL = "\n";
+
+    private static final String TAB = "\t";
 
     private final Entity _declaringArtifact;
 

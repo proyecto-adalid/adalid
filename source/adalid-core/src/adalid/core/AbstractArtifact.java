@@ -44,9 +44,7 @@ public abstract class AbstractArtifact implements Artifact, Wrappable {
      */
     private static final Logger logger = Logger.getLogger(Artifact.class);
 
-    protected static final String EOL = "\n";
-
-    protected static final String TAB = "\t";
+    private static final String EOL = "\n";
 
     // <editor-fold defaultstate="collapsed" desc="field declarations">
     /**

@@ -25,6 +25,10 @@ import org.apache.commons.lang.StringUtils;
  */
 public class Report extends AbstractArtifact implements Comparable<Report> {
 
+    private static final int COLUMN_WIDTH = 960;
+
+    private static final String EOL = "\n";
+
     private PersistentEntity _entity;
 
     private View _view;
@@ -52,8 +56,6 @@ public class Report extends AbstractArtifact implements Comparable<Report> {
     private boolean _devAtHand;
 
     private final Set<ViewFieldAggregation> _aggregations = new LinkedHashSet<>();
-
-    private static final int COLUMN_WIDTH = 960;
 
     private Report() {
         super();

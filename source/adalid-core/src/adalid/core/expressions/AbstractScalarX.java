@@ -23,6 +23,8 @@ import org.apache.commons.lang.StringUtils;
  */
 public abstract class AbstractScalarX extends AbstractExpression implements ScalarX {
 
+    private static final String EOL = "\n";
+
     protected AbstractScalarX(ScalarOp operator, Object operand) {
         super();
         _operator = operator;

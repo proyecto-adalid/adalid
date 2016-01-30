@@ -29,6 +29,8 @@ import org.apache.commons.lang.StringUtils;
  */
 public abstract class Display extends AbstractArtifact implements Comparable<Display> {
 
+    private static final String EOL = "\n";
+
     public Display(String name) {
         super();
         _displayType = DisplayType.UNSPECIFIED;

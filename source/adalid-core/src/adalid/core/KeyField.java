@@ -16,6 +16,8 @@ import org.apache.commons.lang.StringUtils;
  */
 public class KeyField extends AbstractArtifact {
 
+    private static final String EOL = "\n";
+
     private Property _property;
 
     private SortOption _sortOption = SortOption.ASC;

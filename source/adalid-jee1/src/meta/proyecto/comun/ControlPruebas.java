@@ -44,41 +44,41 @@ public class ControlPruebas extends Project {
         setDefaultDescription("Control de Pruebas");
     }
 
-    AmbientePrueba AmbientePrueba;
+    AmbientePrueba _10;
 
-    CasoPrueba CasoPrueba;
+    CasoPrueba _30;
 
-    DocumentoPrueba DocumentoPrueba;
+    DocumentoPrueba _80;
 
-    DocumentoPruebaX1 DocumentoPruebaX1;
+    DocumentoPruebaX1 _8030;
 
-    DocumentoPruebaX2 DocumentoPruebaX2;
+    DocumentoPruebaX2 _803010;
 
-    DocumentoPruebaX3 DocumentoPruebaX3;
+    DocumentoPruebaX3 _8040;
 
-    DocumentoPruebaX4 DocumentoPruebaX4;
+    DocumentoPruebaX4 _804010;
 
-    DocumentoPruebaX5 DocumentoPruebaX5;
+    DocumentoPruebaX5 _8050;
 
-    DocumentoPruebaX6 DocumentoPruebaX6;
+    DocumentoPruebaX6 _805010;
 
-    EjecucionLineaPrueba EjecucionLineaPrueba;
+    EjecucionLineaPrueba _5010;
 
-    EjecucionPrueba EjecucionPrueba;
+    EjecucionPrueba _50;
 
-    EscenarioPrueba EscenarioPrueba;
+    EscenarioPrueba _3010;
 
-    LineaPrueba LineaPrueba;
+    LineaPrueba _4010;
 
-    PaquetePrueba PaquetePrueba;
+    PaquetePrueba _20;
 
-    ParametroLineaPrueba ParametroLineaPrueba;
+    ParametroLineaPrueba _501010;
 
-    ParteAmbientePrueba ParteAmbientePrueba;
+    ParteAmbientePrueba _1020;
 
-    PiezaAmbientePrueba PiezaAmbientePrueba;
+    PiezaAmbientePrueba _1010;
 
-    ProgramaPrueba ProgramaPrueba;
+    ProgramaPrueba _40;
 
     TipoDocumentoPrueba TipoDocumentoPrueba;
 

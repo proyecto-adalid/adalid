@@ -66,14 +66,12 @@ public class ParteAmbientePrueba extends PersistentEntityBase {
     protected void settleAttributes() {
         super.settleAttributes();
         setSchema(ProyectoBase.getEsquemaEntidadesComunes());
-        setDefaultLabel("parte de ambiente de prueba");
-        setDefaultShortLabel("parte de ambiente");
-        setDefaultCollectionLabel("Partes de Ambientes de Prueba");
-        setDefaultCollectionShortLabel("Partes de Ambientes");
-        setDefaultCollectionLabel(ambiente, "Piezas del Ambiente de Prueba");
-        setDefaultCollectionShortLabel(ambiente, "Piezas");
-        setDefaultCollectionLabel(pieza, "Ambientes de Prueba por Pieza");
+        setDefaultLabel("asociación Pieza/Ambiente");
+        setDefaultCollectionLabel("Asociaciones Pieza/Ambiente");
+        setDefaultCollectionLabel(pieza, "Ambientes por Pieza");
         setDefaultCollectionShortLabel(pieza, "Ambientes");
+        setDefaultCollectionLabel(ambiente, "Piezas por Ambiente");
+        setDefaultCollectionShortLabel(ambiente, "Piezas");
     }
 
     @ColumnField(nullable = Kleenean.FALSE)

@@ -47,6 +47,10 @@ public abstract class AbstractExpression extends AbstractArtifact implements Nar
 
     private static final Logger logger = Logger.getLogger(Expression.class);
 
+    private static final String EOL = "\n";
+
+    private static final String TAB = "\t";
+
     /**
      *
      */

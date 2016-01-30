@@ -6,7 +6,6 @@
  */
 package adalid.core;
 
-import static adalid.core.AbstractArtifact.EOL;
 import adalid.core.enums.SelectOption;
 import adalid.core.enums.SortOption;
 import adalid.core.enums.ViewFieldAggregation;
@@ -28,6 +27,8 @@ import org.apache.log4j.Logger;
 public class View extends AbstractArtifact {
 
     private static final Logger logger = Logger.getLogger(View.class);
+
+    private static final String EOL = "\n";
 
     private static void log(Level level, String message) {
         if (level != null && !level.equals(Level.OFF)) {

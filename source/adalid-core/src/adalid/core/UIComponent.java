@@ -12,6 +12,8 @@ import org.apache.commons.lang.StringUtils;
 
 public abstract class UIComponent extends AbstractArtifact {
 
+    private static final String EOL = "\n";
+
     public UIComponent(DisplayField field) {
         super();
         _field = field;
