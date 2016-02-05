@@ -139,42 +139,95 @@ public class StrUtils {
         return digit + String.format("%02d", len % 100) + String.format("%02d", sum % 100);
     }
 
+    // <editor-fold defaultstate="collapsed" desc="getLongNumericCode">
+//  public static String getLongNumericCode(String string) {
+//      if (StringUtils.isBlank(string)) {
+//          return null;
+//      }
+//      String clean = string.trim();
+//      String first = firstDigit(clean);
+//      String split = StringUtils.join(StringUtils.splitByCharacterTypeCamelCase(clean), " ");
+//      String[] chunks = StringUtils.split(split, "!@#$%^&*()-_=+[]{}\\|;:'\",.<>/? ");
+//      for (int i = 0; i < chunks.length; i++) {
+//          chunks[i] = Damm.digit(getNumericString(chunks[i])) + "";
+//      }
+//      String nine;
+//      String join = StringUtils.join(chunks);
+//      int n = join.length();
+//      if (n < 10) {
+//          nine = StringUtils.rightPad(join, 9, "0");
+//      } else {
+//          int m = n / 2;
+//          nine = join.substring(0, 3) + join.substring(m - 1, m + 2) + join.substring(n - 3);
+//      }
+//      String numst = getNumericString(clean);
+//      String tenth = Damm.digit(numst) + "";
+//      char[] chars = clean.toCharArray();
+//      int len = chars.length;
+//      int sum = 0;
+//      for (char c : chars) {
+//          sum += c;
+//      }
+//      chunks = new String[]{first, nine, tenth, String.format("%03d", len % 1000), String.format("%05d", sum % 100000)};
+//      return StringUtils.join(chunks);
+//  }
+    // </editor-fold>
+//
+    private static final int MDD = 13; // maximum number of damm digits
+
+    private static final double X2MDD = Math.pow(10, MDD); // ten raised to the maximum number of damm digits
+
     public static String getLongNumericCode(String string) {
         if (StringUtils.isBlank(string)) {
             return null;
         }
         String clean = string.trim();
         String first = firstDigit(clean);
-        String split = StringUtils.join(StringUtils.splitByCharacterTypeCamelCase(clean), " ");
-        String[] chunks = StringUtils.split(split, "!@#$%^&*()-_=+[]{}\\|;:'\",.<>/? ");
-        for (int i = 0; i < chunks.length; i++) {
-            chunks[i] = Damm.digit(getNumericString(chunks[i])) + "";
-        }
-        String nine;
-        String join = StringUtils.join(chunks);
-        int n = join.length();
-        if (n < 10) {
-            nine = StringUtils.rightPad(join, 9, "0");
-        } else {
-            int m = n / 2;
-            nine = join.substring(0, 3) + join.substring(m - 1, m + 2) + join.substring(n - 3);
-        }
         String numst = getNumericString(clean);
-        String tenth = Damm.digit(numst) + "";
+        String digit = Damm.digit(numst) + "";
+        int l = clean.length();
+        int m = MDD; // maximum number of damm digits
+        int d = l < m ? l : m; // the actual number of damm digits to be determined
+        int w = l / d; // the minimum width of each chunk of the string
+        int x; // the actual width of the chunk
+        int r = l % d; // remainder width
+        int beginIndex = 0;
+        int endIndex;
+        String chunk;
+        String digits = "";
+        for (int i = 0; i < d; i++) {
+            x = i < r ? w + 1 : w;
+            endIndex = beginIndex + x;
+            chunk = clean.substring(beginIndex, endIndex);
+            digits += Damm.digit(getNumericString(chunk)) + "";
+            beginIndex = endIndex;
+        }
         char[] chars = clean.toCharArray();
-        int len = chars.length;
         int sum = 0;
         for (char c : chars) {
             sum += c;
         }
-        chunks = new String[]{first, nine, tenth, String.format("%03d", len % 1000), String.format("%05d", sum % 100000)};
-        return StringUtils.join(chunks);
+        if (m > beginIndex) {
+            String filler = ((long) X2MDD * sum / m) + "";
+            digits += filler.substring(0, m - beginIndex);
+        }
+        return first + digits + digit + String.format("%04d", sum % 10000); // 1 + 13 + 1 + 4 = 19
     }
 
     private static String firstDigit(String string) {
         char c = Character.toUpperCase(string.charAt(0));
-        int i = c < 'A' ? 0 : c < 'D' ? 1 : c < 'G' ? 2 : c < 'J' ? 3 : c < 'M' ? 4 : c < 'P' ? 5 : c < 'T' ? 6 : c < 'W' ? 7 : c > 'Z' ? 0 : 8;
+        int i = digitBetweenZeroAndEight(c);
         return i + "";
+    }
+//
+//  private static String lastDigit(String string) {
+//      char c = Character.toUpperCase(string.charAt(string.length() - 1));
+//      int i = Character.isDigit(c) ? 9 : digitBetweenZeroAndEight(c);
+//      return i + "";
+//  }
+
+    private static int digitBetweenZeroAndEight(char c) {
+        return c < 'A' ? 0 : c < 'D' ? 1 : c < 'G' ? 2 : c < 'J' ? 3 : c < 'M' ? 4 : c < 'P' ? 5 : c < 'T' ? 6 : c < 'W' ? 7 : c > 'Z' ? 0 : 8;
     }
 
     public static String getNumericString(String string) {

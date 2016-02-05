@@ -22,7 +22,7 @@ public class SqlTable extends SqlArtifact {
     private static final Logger logger = Logger.getLogger(SqlTable.class);
 
     // <editor-fold defaultstate="collapsed" desc="instance fields">
-    private SqlReader _reader;
+    private final SqlReader _reader;
 
     private String _defaultLabel;
 
@@ -42,19 +42,19 @@ public class SqlTable extends SqlArtifact {
 
     private SqlColumn _businessKey;
 
-    private Map<String, SqlColumn> _columns = new LinkedHashMap<>();
+    private final Map<String, SqlColumn> _columns = new LinkedHashMap<>();
 
-    private Map<String, SqlIndex> _indexes = new LinkedHashMap<>();
+    private final Map<String, SqlIndex> _indexes = new LinkedHashMap<>();
 
-    private Map<String, SqlTab> _tabs = new LinkedHashMap<>();
+    private final Map<String, SqlTab> _tabs = new LinkedHashMap<>();
 
-    private Map<String, SqlRow> _rows = new LinkedHashMap<>();
+    private final Map<String, SqlRow> _rows = new LinkedHashMap<>();
 
-    private Map<String, SqlRoutine> _routines = new LinkedHashMap<>();
+    private final Map<String, SqlRoutine> _routines = new LinkedHashMap<>();
 
-    private Map<SqlColumn, SqlTable> _references = new LinkedHashMap<>();
+    private final Map<SqlColumn, SqlTable> _references = new LinkedHashMap<>();
 
-    private Map<String, SqlTable> _extensions = new LinkedHashMap<>();
+    private final Map<String, SqlTable> _extensions = new LinkedHashMap<>();
 
     private int _discriminatorValue;
     // </editor-fold>

@@ -1,0 +1,10 @@
+select distinct
+lower(in1.index_name) as index_name,
+case when(in1.uniqueness='UNIQUE') then 'Y' else 'N' end as is_unique,
+in2.column_position as ordinal_position,
+lower(in2.column_name) as column_name,
+lower(in2.descend) as column_option
+from user_indexes in1
+inner join user_ind_columns in2 on in2.index_name=in1.index_name and in2.table_name=in1.table_name
+where in1.table_name=upper('$table')
+order by 1, 3

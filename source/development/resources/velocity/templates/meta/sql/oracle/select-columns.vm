@@ -1,0 +1,17 @@
+select distinct
+column_name,
+column_id as ordinal_position, 
+data_type,
+data_length as character_maximum_length,
+data_precision as numeric_precision,
+data_scale as numeric_scale, 
+null as datetime_precision, 
+null as column_default,
+nullable as is_nullable,
+'N' as is_primary_key,
+'N' as is_unique_key,
+'N' as is_booleanish,
+null as foreign_table_name
+from user_tab_columns
+where table_name='$table'
+order by column_id

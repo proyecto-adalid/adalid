@@ -7,7 +7,11 @@
 #writeJavaAuthor('Jorge Campins')
 #if(!$inheriting)
 ....@EntityClass(independent = $independent, resourceType = $resourceType)
-    #if($table.resourceType == 'operation')
+    #if($table.name.equals('informe') || $table.name.equals('proceso') || $table.name.startsWith('log_') || $table.name.endsWith('_plus'))
+........@EntityInsertOperation(enabled = Kleenean.FALSE)
+........@EntityUpdateOperation(enabled = Kleenean.FALSE)
+........@EntityDeleteOperation(enabled = Kleenean.FALSE)
+    #elseif($table.resourceType == 'operation')
 ........@EntityTableView(inserts = Kleenean.FALSE, updates = Kleenean.FALSE)
     #end
 #end
@@ -16,9 +20,11 @@
 #elseif(!$inheriting && $table.discriminatorValue > 0)
 ....@DiscriminatorValue("$table.discriminatorValue")
 #end
+#***
 #if(!$inheriting && !$table.enumeration && !$table.loadable)
 ....@EntityDataGen(start = 1, stop = 100)
 #end
+*###
 #if(!$inheriting && $table.root)
 ....@DiscriminatorValue("0")
 ....@InheritanceMapping(strategy = InheritanceMappingStrategy.JOINED)
@@ -151,8 +157,10 @@ public class ${javaClassSimpleName} extends $superClass {
 
     #end
 #end##foreach-column
-#foreach($index in $table.indexes)
-    Key $index.name;
+#set($indexes = $ColUtils.filter($table.indexes, $isCustomIndex))
+#set($indexes = $ColUtils.sort($indexes, $byIndexName))
+#foreach($index in $indexes)
+    Key $index.decapitalizedJavaName;
 
 #end
 #foreach($tab in $table.tabs)
@@ -200,14 +208,14 @@ public class ${javaClassSimpleName} extends $superClass {
 ....
     #end
 #end##foreach-column
-#foreach($index in $table.indexes)
+#foreach($index in $indexes)
     #if($foreach.first)
 ....    @Override
 ....    protected void settleKeys() {
 ....        super.settleKeys();
     #end
     #if($index.unique)
-//      ${index.name}.setUnique(${index.unique});
+        ${index.decapitalizedJavaName}.setUnique(${index.unique});
     #end
     #foreach($col in $index.columns)
         #setKeyField($col.column)
@@ -216,7 +224,7 @@ public class ${javaClassSimpleName} extends $superClass {
         #else
             #set($x = '    ')
         #end
-${x}    ${index.name}.newKeyField($col.column.decapitalizedJavaName#if("$!col.option" == 'desc'), SortOption.DESC#end);
+${x}    ${index.decapitalizedJavaName}.newKeyField($col.column.decapitalizedJavaName#if("$!col.option" == 'desc'), SortOption.DESC#end);
     #end
     #if($foreach.last)
 ....    }
@@ -262,20 +270,46 @@ ${x}    ${index.name}.newKeyField($col.column.decapitalizedJavaName#if("$!col.op
     #end##foreach-row
 #end
 #foreach($routine in $table.routines)
+    #if($routine.operationType == 'export')
+        #set($operationClass = 'ExportOperation')
+        #set($operationAnnotation = '@ExportOperationClass')
+    #elseif($routine.operationType == 'report')
+        #set($operationClass = 'ReportOperation')
+        #set($operationAnnotation = '@ReportOperationClass')
+    #else
+        #set($operationClass = 'ProcessOperation')
+        #set($operationAnnotation = '@ProcessOperationClass')
+    #end
     @OperationClass
-    public class $routine.capitalizedJavaName extends ProcessOperation {
+    $operationAnnotation
+    public class $routine.capitalizedJavaName extends $operationClass {
 
     #foreach($parameter in $routine.parameters)
         #set($instanceReference = $FALSE)
+        #set($linkedFieldComparisonOp = '')
         #set($namesake = $VelocityAid.coalesce($parameter.namesakeColumn, $FALSE))
+        #if($namesake)
+        #elseif($parameter.name.endsWith('_desde') || $parameter.name.endsWith('_hasta'))
+            #set($suffixlessParameterName = $StringUtils.substringBeforeLast($parameter.name, '_'))
+            #set($namesake = $VelocityAid.coalesce($parameter.getNamesakeColumn($suffixlessParameterName), $FALSE))
+            #if($namesake)
+                #if($parameter.name.endsWith('_desde'))
+                    #set($linkedFieldComparisonOp = 'GTEQ')
+                #elseif($parameter.name.endsWith('_hasta'))
+                    #set($linkedFieldComparisonOp = 'LTEQ')
+                #end
+            #end
+        #end
         #set($referencedTable = $VelocityAid.coalesce($parameter.referencedTable, $FALSE))
-        #set($linkedField = $FALSE)
         #set($referencedClassName = "$!parameter.referencedTable.capitalizedJavaName")
         #if($foreach.first && $javaClassSimpleName == $referencedClassName)
             #set($instanceReference = $TRUE)
             #set($metajavaType = $referencedClassName)
         #elseif($referencedClassName != '')
             #set($metajavaType = $referencedClassName)
+            #if($namesake && $referencedClassName != "$!namesake.foreignTable.capitalizedJavaName")
+                #set($namesake = $FALSE)
+            #end
         #elseif($parameter.type == 'integer'   && $parameter.name.startsWith('es_'))
             #set($metajavaType = 'BooleanParameter')
         #elseif($parameter.type == 'timestamp' && $parameter.name.startsWith('fecha') && !$parameter.name.startsWith('fecha_hora'))
@@ -303,7 +337,11 @@ ${x}    ${index.name}.newKeyField($col.column.decapitalizedJavaName#if("$!col.op
                 #set($separador = ', ')
             #end
             #if($namesake)
-                #set($elementos = "${elementos}${separador}linkedField = ""$parameter.decapitalizedJavaName""")
+                #set($elementos = "${elementos}${separador}linkedField = ""$namesake.decapitalizedJavaName""")
+                #set($separador = ', ')
+                #if($linkedFieldComparisonOp != '')
+                    #set($elementos = "${elementos}${separador}operator = StandardRelationalOp.$linkedFieldComparisonOp")
+                #end
             #end
             #if($elementos != '')
 ........        @ParameterField($elementos)
@@ -345,6 +383,12 @@ ${x}    ${index.name}.newKeyField($col.column.decapitalizedJavaName#if("$!col.op
         #if($reader.tablesInheritMap.containsKey($table.name))
             #set($inheriting = $TRUE)
             #set($superClass = $reader.tablesInheritMap.get($table.name))
+        #elseif($reader.tablesInheritMap.containsKey($table.name.toLowerCase()))
+            #set($inheriting = $TRUE)
+            #set($superClass = $reader.tablesInheritMap.get($table.name.toLowerCase()))
+        #elseif($reader.tablesInheritMap.containsKey($table.name.toUpperCase()))
+            #set($inheriting = $TRUE)
+            #set($superClass = $reader.tablesInheritMap.get($table.name.toUpperCase()))
         #elseif($table.enumeration)
             #set($superClass = 'AbstractPersistentEnumerationEntity')
         #else

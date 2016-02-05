@@ -313,12 +313,20 @@ public class SqlUtil {
         return FilUtils.fixPath(bootstrapping.getString(("metajava.path")));
     }
 
-    public String getSourceMetajavaPackage() {
+    public String getCommonsPackage() {
         return bootstrapping.getString("commons.package.name");
     }
 
+    public String getDefaultPackage() {
+        return bootstrapping.getString("default.package.name");
+    }
+
+    public String getSourceMetajavaPackage() {
+        return getCommonsPackage();
+    }
+
     public String getTargetMetajavaPackage() {
-        return bootstrapping.getString("default.package.name") + "." + _database.toLowerCase();
+        return getDefaultPackage() + "." + _database.toLowerCase();
     }
     // </editor-fold>
 

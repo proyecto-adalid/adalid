@@ -284,10 +284,18 @@ public class SqlColumn extends SqlArtifact {
         return !_nullable && matches("long", "version");
     }
 
+    /**
+     * @return the name indicator
+     */
+    public boolean isName() {
+        return !_nullable && matches("string", "nombre");
+    }
+
     public boolean matches(String type, String role) {
         String table = _table.getName();
         String name = getName();
-        return _type.equals(type) && (name.equals(role) || name.equals(role + '_' + table) || name.equals(table + '_' + role));
+        return _type.equalsIgnoreCase(type)
+            && (name.equalsIgnoreCase(role) || name.equalsIgnoreCase(role + '_' + table) || name.equalsIgnoreCase(table + '_' + role));
     }
 
     public boolean isOrdinary() {
@@ -299,11 +307,12 @@ public class SqlColumn extends SqlArtifact {
     }
 
     public String getTrueType() {
-        if (_type.equals("integer") && getName().startsWith("es_")) {
+        String name = getName().toLowerCase();
+        if (_type.equals("integer") && name.startsWith("es_")) {
             return "boolean";
-        } else if (_type.equals("timestamp") && getName().startsWith("fecha") && !getName().startsWith("fecha_hora")) {
+        } else if (_type.equals("timestamp") && name.startsWith("fecha") && !name.startsWith("fecha_hora")) {
             return "date";
-        } else if (_type.equals("timestamp") && getName().startsWith("hora")) {
+        } else if (_type.equals("timestamp") && name.startsWith("hora")) {
             return "time";
         } else {
             return _type;

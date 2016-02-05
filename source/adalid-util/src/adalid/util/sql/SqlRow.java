@@ -21,11 +21,11 @@ public class SqlRow extends SqlArtifact {
     private static final Logger logger = Logger.getLogger(SqlRow.class);
 
     // <editor-fold defaultstate="collapsed" desc="instance fields">
-    private SqlTable _table;
+    private final SqlTable _table;
 
     private int _position;
 
-    private Map<String, SqlRowValue> _values = new LinkedHashMap<>();
+    private final Map<String, SqlRowValue> _values = new LinkedHashMap<>();
     // </editor-fold>
 
     public SqlRow(SqlTable table) {

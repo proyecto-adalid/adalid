@@ -12,9 +12,9 @@ package adalid.util.sql;
 public class SqlRowValue extends SqlArtifact {
 
     // <editor-fold defaultstate="collapsed" desc="instance fields">
-    private SqlRow _row;
+    private final SqlRow _row;
 
-    private SqlColumn _column;
+    private final SqlColumn _column;
 
     private int _position;
 

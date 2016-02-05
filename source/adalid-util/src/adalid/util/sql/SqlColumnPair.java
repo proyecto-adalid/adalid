@@ -11,7 +11,7 @@ package adalid.util.sql;
  */
 public class SqlColumnPair {
 
-    private SqlColumn _newColumn, _oldColumn;
+    private final SqlColumn _newColumn, _oldColumn;
 
     private boolean _odd, _equals, _equates, _casts;
 

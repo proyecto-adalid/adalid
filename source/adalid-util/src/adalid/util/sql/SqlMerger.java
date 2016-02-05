@@ -57,25 +57,25 @@ public class SqlMerger extends SqlUtil {
 
     private Map<String, String> _tablesLoadMap = new LinkedHashMap<>();
 
-    private Set<String> _tableNames = new TreeSet<>();
+    private final Set<String> _tableNames = new TreeSet<>();
 
-    private Set<String> _currentKeyTableNames = new TreeSet<>();
+    private final Set<String> _currentKeyTableNames = new TreeSet<>();
 
-    private List<SqlTable> _addedTables = new ArrayList<>();
+    private final List<SqlTable> _addedTables = new ArrayList<>();
 
-    private List<SqlTable> _droppedTables = new ArrayList<>();
+    private final List<SqlTable> _droppedTables = new ArrayList<>();
 
-    private Map<String, SqlColumn> _newColumns = new LinkedHashMap<>();
+    private final Map<String, SqlColumn> _newColumns = new LinkedHashMap<>();
 
-    private Map<String, SqlColumn> _oldColumns = new LinkedHashMap<>();
+    private final Map<String, SqlColumn> _oldColumns = new LinkedHashMap<>();
 
-    private List<SqlColumn> _addedColumns = new ArrayList<>();
+    private final List<SqlColumn> _addedColumns = new ArrayList<>();
 
-    private List<SqlColumn> _droppedColumns = new ArrayList<>();
+    private final List<SqlColumn> _droppedColumns = new ArrayList<>();
 
-    private List<SqlTableWrapper> _sharedTables = new ArrayList<>();
+    private final List<SqlTableWrapper> _sharedTables = new ArrayList<>();
 
-    private Map<String, Set<String>> _warnings = new LinkedHashMap<>();
+    private final Map<String, Set<String>> _warnings = new LinkedHashMap<>();
     // </editor-fold>
 
     public SqlMerger(String[] args) {

@@ -17,11 +17,11 @@ import java.util.Set;
  */
 public class SqlTableWrapper {
 
-    private SqlTable _table;
+    private final SqlTable _table;
 
-    private SqlMerger _merger;
+    private final SqlMerger _merger;
 
-    private List<SqlColumnPair> _columnPairs = new ArrayList<>();
+    private final List<SqlColumnPair> _columnPairs = new ArrayList<>();
 
     private boolean _addedColumns;
 

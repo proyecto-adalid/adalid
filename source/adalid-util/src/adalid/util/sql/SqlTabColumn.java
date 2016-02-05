@@ -12,9 +12,9 @@ package adalid.util.sql;
 public class SqlTabColumn extends SqlArtifact {
 
     // <editor-fold defaultstate="collapsed" desc="instance fields">
-    private SqlTab _tab;
+    private final SqlTab _tab;
 
-    private SqlColumn _column;
+    private final SqlColumn _column;
 
     private int _position;
     // </editor-fold>

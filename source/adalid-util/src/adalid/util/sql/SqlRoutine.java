@@ -20,11 +20,13 @@ public class SqlRoutine extends SqlArtifact {
     private static final Logger logger = Logger.getLogger(SqlRoutine.class);
 
     // <editor-fold defaultstate="collapsed" desc="instance fields">
-    private SqlTable _table;
+    private final SqlTable _table;
 
     private int _position;
 
-    private Map<String, SqlRoutineParameter> _parameters = new LinkedHashMap<>();
+    private String _operationType;
+
+    private final Map<String, SqlRoutineParameter> _parameters = new LinkedHashMap<>();
     // </editor-fold>
 
     public SqlRoutine(SqlTable table) {
@@ -51,6 +53,20 @@ public class SqlRoutine extends SqlArtifact {
      */
     void setPosition(int position) {
         _position = position;
+    }
+
+    /**
+     * @return the operation type
+     */
+    public String getOperationType() {
+        return _operationType;
+    }
+
+    /**
+     * @param operationType the operation type to set
+     */
+    public void setOperationType(String operationType) {
+        _operationType = operationType;
     }
 
     /**

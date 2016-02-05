@@ -20,13 +20,13 @@ public class SqlTab extends SqlArtifact {
     private static final Logger logger = Logger.getLogger(SqlTab.class);
 
     // <editor-fold defaultstate="collapsed" desc="instance fields">
-    private SqlTable _table;
+    private final SqlTable _table;
 
     private int _position;
 
     private String _defaultLabel;
 
-    private Map<String, SqlTabColumn> _columns = new LinkedHashMap<>();
+    private final Map<String, SqlTabColumn> _columns = new LinkedHashMap<>();
     // </editor-fold>
 
     public SqlTab(SqlTable table) {

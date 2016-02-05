@@ -20,13 +20,15 @@ public class SqlIndex extends SqlArtifact {
     private static final Logger logger = Logger.getLogger(SqlIndex.class);
 
     // <editor-fold defaultstate="collapsed" desc="instance fields">
-    private SqlTable _table;
+    private final SqlTable _table;
 
     private int _position;
 
     private boolean _unique;
 
-    private Map<String, SqlIndexColumn> _columns = new LinkedHashMap<>();
+    private SqlIndexColumn _lastIndexColumn;
+
+    private final Map<String, SqlIndexColumn> _columns = new LinkedHashMap<>();
     // </editor-fold>
 
     public SqlIndex(SqlTable table) {
@@ -88,6 +90,27 @@ public class SqlIndex extends SqlArtifact {
     }
     // </editor-fold>
 
+    /**
+     * @return the single column index flag
+     */
+    public boolean isSingleColumnIndex() {
+        return _lastIndexColumn != null && _columns.size() == 1;
+    }
+
+    /**
+     * @return the column
+     */
+    public SqlColumn getSingleColumn() {
+        return !isSingleColumnIndex() ? null : _lastIndexColumn.getColumn();
+    }
+
+    /**
+     * @return the option
+     */
+    public String getSingleColumnOption() {
+        return !isSingleColumnIndex() ? null : _lastIndexColumn.getOption();
+    }
+
 //  private int columns;
 //
     void add(SqlIndexColumn column) {
@@ -101,6 +124,7 @@ public class SqlIndex extends SqlArtifact {
             text = "column " + name + " already added to index " + getQualifiedName();
             logger.error(SqlUtil.highlight(text));
         } else {
+            _lastIndexColumn = column;
             _columns.put(name, column);
         }
     }

@@ -1,0 +1,73 @@
+select
+lower(utc.column_name) as column_name,
+utc.column_id as ordinal_position, 
+lower(utc.data_type) as data_type,
+case when(utc.data_length>=1000) then(0) else(utc.data_length) end as character_maximum_length,
+utc.data_precision as numeric_precision,
+utc.data_scale as numeric_scale, 
+0 as datetime_precision, 
+utc.data_default as column_default,
+utc.nullable as is_nullable,
+case when(exists(select 'X'
+    from user_constraints pk1
+    inner join user_cons_columns pk2
+        on pk2.owner=pk1.owner and pk2.constraint_name=pk1.constraint_name and pk2.table_name=pk1.table_name and pk2.position=1
+    inner join(select owner,constraint_name,table_name,count(*) from user_cons_columns group by owner,constraint_name,table_name having count(*)=1) pk3
+        on pk3.owner=pk1.owner and pk3.constraint_name=pk1.constraint_name and pk3.table_name=pk1.table_name
+    where pk1.constraint_type='P'
+    and pk1.table_name=utc.table_name
+    and pk2.table_name=utc.table_name
+    and pk3.table_name=utc.table_name
+    and pk2.column_name=utc.column_name
+    and pk1.constraint_name not like 'SYS%'))
+    then('Y') else('N') end as is_primary_key,
+case when(exists(select 'X' 
+    from user_constraints uq1
+    inner join user_cons_columns uq2
+        on uq2.owner=uq1.owner and uq2.constraint_name=uq1.constraint_name and uq2.table_name=uq1.table_name and uq2.position=1
+    inner join(select owner,constraint_name,table_name,count(*) from user_cons_columns group by owner,constraint_name,table_name having count(*)=1) uq3
+        on uq3.owner=uq1.owner and uq3.constraint_name=uq1.constraint_name and uq3.table_name=uq1.table_name
+    where uq1.constraint_type='U'
+    and uq1.table_name=utc.table_name
+    and uq2.table_name=utc.table_name
+    and uq3.table_name=utc.table_name
+    and uq2.column_name=utc.column_name
+    and uq1.constraint_name not like 'SYS%'))
+    then('Y') else('N') end as is_unique_key,
+#***
+case when(exists(select 'X' 
+    from user_constraints cc1
+    inner join user_cons_columns cc2
+        on cc2.owner=cc1.owner and cc2.constraint_name=cc1.constraint_name and cc2.table_name=cc1.table_name and cc2.position=1
+    inner join(select owner,constraint_name,table_name,count(*) from user_cons_columns group by owner,constraint_name,table_name having count(*)=1) cc3
+        on cc3.owner=cc1.owner and cc3.constraint_name=cc1.constraint_name and cc3.table_name=cc1.table_name
+    where cc1.constraint_type='C'
+    and cc1.table_name=utc.table_name 
+    and cc2.table_name=utc.table_name 
+    and cc3.table_name=utc.table_name 
+    and cc2.column_name=utc.column_name
+    and cc1.constraint_name not like 'SYS%' 
+    and utc.data_type='NUMBER' and utc.data_precision=10 and utc.data_scale=0 and utc.column_name like 'ES\_%' escape '\'))
+    then('Y') else('N') end as is_booleanish,
+*###
+case when(utc.data_type='NUMBER' and utc.data_precision=10 and utc.data_scale=0 and utc.column_name like 'ES\_%' escape '\')
+    then('Y') else('N') end as is_booleanish,
+(
+    select lower(fkr.table_name)
+    from user_constraints fk1
+    inner join user_cons_columns fk2
+        on fk2.owner=fk1.owner and fk2.constraint_name=fk1.constraint_name and fk2.table_name=fk1.table_name and fk2.position=1
+    inner join(select owner,constraint_name,table_name,count(*) from user_cons_columns group by owner,constraint_name,table_name having count(*)=1) fk3
+        on fk3.owner=fk1.owner and fk3.constraint_name=fk1.constraint_name and fk3.table_name=fk1.table_name
+    inner join user_constraints fkr
+    	on fkr.owner=fk1.owner and fkr.constraint_name=fk1.r_constraint_name
+    where fk1.constraint_type='R'
+    and fk1.table_name=utc.table_name
+    and fk2.table_name=utc.table_name
+    and fk3.table_name=utc.table_name
+    and fk2.column_name=utc.column_name
+    and fk1.constraint_name not like 'SYS%'
+) as foreign_table_name
+from user_tab_columns utc
+where utc.table_name=upper('$table')
+order by utc.column_id

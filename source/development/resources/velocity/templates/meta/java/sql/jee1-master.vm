@@ -5,7 +5,7 @@
 #setLocalVariables()
 #writeJavaImports($imports)
 #writeJavaAuthor('Jorge Campins')
-public class ${javaClassSimpleName} extends ProyectoBase {
+public class Maestro extends ProyectoBase {
 
     public static void main(String[] args) {
 //      Maestro.setLocale(Locale.ENGLISH);
@@ -14,20 +14,33 @@ public class ${javaClassSimpleName} extends ProyectoBase {
 //      Maestro.setDetailLoggingLevel(LoggingLevel.INFO);
 //      Maestro.setTrackingLoggingLevel(LoggingLevel.INFO);
         Maestro maestro = new Maestro();
-//      maestro.setDefaultLabel("Enterprise Resource Management");
-        maestro.setDefaultLabel("Gestión de Recursos Empresariales");
-//      maestro.setDefaultDescription("Enterprise Resource Management");
-        maestro.setDefaultDescription("Gestión de Recursos Empresariales");
         if (maestro.build()) {
-            maestro.setAlias("$reader.database.toLowerCase()");
-            maestro.generate(PLATAFORMA_BASE);
+            maestro.putEnvironmentVariable(VERSION_JAVA, "1.8.0_25");
+            maestro.putEnvironmentVariable(VERSION_GLASSFISH, "4.1");
+//          maestro.putEnvironmentVariable(VERSION_JBOSS, "9.0.0.Final");
+            maestro.putEnvironmentVariable(VERSION_POSTGRESQL, "9.3");
+//          maestro.setSecurityRealmType(SecurityRealmType.LDAP);
+//          maestro.setRoleBasedAccessControllerName("LDAP");
+            maestro.setInternetAccessAllowed(true);
+//          maestro.attachAddAttributesMethods(meta.postgresql.PostgreSQLAttributes.class);
+//          maestro.attachAddAttributesMethods(meta.entidad.comun.operacion.basica.PostgreSQLAttributes.class);
+            maestro.setAlias("$masterProjectAlias");
             maestro.generate(PLATAFORMA_NETBEANS_POSTGRESQL_GLASSFISH);
+//          maestro.clearAddAttributesMethods();
         }
+    }
+
+    @Override
+    protected void settleAttributes() {
+        super.settleAttributes();
+        setDefaultLabel("Gestión de Recursos Empresariales");
+        setDefaultDescription("Gestión de Recursos Empresariales");
     }
 
     @ProjectModule(menu = Kleenean.TRUE, role = Kleenean.TRUE)
     Modulo1 mod1;
 
+#***
 //  @ProjectModule(menu = Kleenean.TRUE, role = Kleenean.TRUE)
 //  Modulo2 mod2;
 //
@@ -52,14 +65,21 @@ public class ${javaClassSimpleName} extends ProyectoBase {
 //  @ProjectModule(menu = Kleenean.TRUE, role = Kleenean.TRUE)
 //  Modulo9 mod9;
 //
+*###
     @ProjectModule(menu = Kleenean.TRUE, role = Kleenean.TRUE)
-    ControlAcceso modx;
+    Auditoria modx1;
 
     @ProjectModule(menu = Kleenean.TRUE, role = Kleenean.TRUE)
-    Auditoria mody;
+    ControlAcceso modx2;
 
     @ProjectModule(menu = Kleenean.TRUE, role = Kleenean.TRUE)
-    ControlPruebas modz;
+    ControlProcesos modx3;
+
+    @ProjectModule(menu = Kleenean.TRUE, role = Kleenean.TRUE)
+    ControlPruebas modx4;
+
+    @ProjectModule(menu = Kleenean.FALSE, role = Kleenean.TRUE)
+    ControlTareas modx5;
 
 }
 #break
@@ -72,5 +92,9 @@ public class ${javaClassSimpleName} extends ProyectoBase {
     #set($added = $imports.add("meta.proyecto.base.ProyectoBase"))
     #set($added = $imports.add("meta.proyecto.comun.Auditoria"))
     #set($added = $imports.add("meta.proyecto.comun.ControlAcceso"))
+    #set($added = $imports.add("meta.proyecto.comun.ControlProcesos"))
     #set($added = $imports.add("meta.proyecto.comun.ControlPruebas"))
+    #set($added = $imports.add("meta.proyecto.comun.ControlTareas"))   
+    #set($projectAliasSuffix = 'ap101')
+    #set($masterProjectAlias = "$StringUtils.removeEndIgnoreCase($reader.alias, $projectAliasSuffix)$projectAliasSuffix")
 #end

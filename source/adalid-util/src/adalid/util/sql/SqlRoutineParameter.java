@@ -15,7 +15,7 @@ import org.apache.commons.lang.StringUtils;
 public class SqlRoutineParameter extends SqlArtifact {
 
     // <editor-fold defaultstate="collapsed" desc="instance fields">
-    private SqlRoutine _routine;
+    private final SqlRoutine _routine;
 
     private int _position;
 
@@ -186,8 +186,16 @@ public class SqlRoutineParameter extends SqlArtifact {
      */
     public SqlColumn getNamesakeColumn() {
         String name = getName();
+        return getNamesakeColumn(name);
+    }
+
+    /**
+     * @param name
+     * @return the namesake column
+     */
+    public SqlColumn getNamesakeColumn(String name) {
         SqlColumn namesake = getRoutine().getTable().getSqlColumn(name);
-        return namesake != null && namesake.getType().equals(_type) ? namesake : null;
+        return namesake != null && namesake.getType().equals(getTrueType()) ? namesake : null;
     }
 
     /**
