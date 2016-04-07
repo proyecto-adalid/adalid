@@ -6,6 +6,7 @@
  */
 package adalid.core.annotations;
 
+import adalid.core.enums.Kleenean;
 import adalid.core.enums.MimeType;
 import adalid.core.enums.UploadStorageOption;
 import java.lang.annotation.ElementType;
@@ -27,5 +28,7 @@ public @interface FileReference {
     UploadStorageOption storage() default UploadStorageOption.UNSPECIFIED;
 
     String joinField() default "";
+
+    Kleenean updateable() default Kleenean.UNSPECIFIED; // FALSE
 
 }

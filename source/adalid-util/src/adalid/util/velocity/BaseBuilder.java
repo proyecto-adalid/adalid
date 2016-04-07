@@ -9,6 +9,7 @@ package adalid.util.velocity;
 import adalid.commons.properties.PropertiesHandler;
 import adalid.commons.util.FilUtils;
 import adalid.commons.util.StrUtils;
+import adalid.util.io.RegexPathFilter;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;

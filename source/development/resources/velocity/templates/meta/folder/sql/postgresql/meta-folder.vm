@@ -1,0 +1,56 @@
+#parsePostgreSQLMacros()
+#setPostgreSQLVariables()
+#writePostgreSQLLicense()
+#writePostgreSQLAuthor('Jorge Campins')
+#writeDDL()
+#writeInsertValues()
+#break
+
+#macro(writeDDL)
+#end##writeDDL
+
+#macro(writeInsertValues)
+    #set($NULL = 'null')
+    #set($ENGLISH = 'en')
+    #set($nf = $NumberFormat.getNumberInstance($Locale.forLanguageTag($ENGLISH)))
+    #set($rootFolderPath = $root.rootFolderPath)
+    #set($baseFolderPath = $root.baseFolderPath)
+    #set($metaFolderPath = $root.metaFolderPath)
+..../*
+.... * root = $rootFolderPath
+.... * base = $baseFolderPath
+.... * meta = $metaFolderPath
+.... * size = $root.files.size() files of $root.fileTypes.size() different types stored in $root.folders.size() folders
+.... */
+    #set($sequence = $Sequence.startWith(1))
+    #foreach($key in $root.folders.keySet())
+        #set($wrapper = $root.folders.get($key))
+........insert into container (
+....    id, name, parent,
+....    local_files, local_bytes, local_lines,
+....    total_files, total_bytes, total_lines,
+....    files_share, bytes_share, lines_share
+........) values (
+....    $sequence.next(), '$key', #if($key.parent)'$key.parent'#else$NULL#end,
+....    $wrapper.localFiles, $wrapper.localBytes, $wrapper.localLines,
+....    $wrapper.totalFiles, $wrapper.totalBytes, $wrapper.totalLines,
+....    $nf.format($wrapper.filesShare), $nf.format($wrapper.bytesShare), $nf.format($wrapper.linesShare)
+........);
+    #end##foreach-folder-wrapper
+    #set($sequence = $Sequence.startWith(1))
+    #foreach($key in $root.files.keySet())
+        #set($wrapper = $root.files.get($key))
+........insert into component (
+....    id, name, container,
+....    type, charset, bytes, lines
+........) values (
+....    $sequence.next(), '$wrapper.file.name', '$wrapper.getRelativePath($baseFolderPath).parent',
+....    '$wrapper.type', '$wrapper.charset', $wrapper.bytes, $wrapper.lines
+........);
+    #end##foreach-file-wrapper
+    #set($sequence = $Sequence.startWith(1))
+    #foreach($key in $root.fileTypes.keySet())
+        #set($count = $root.fileTypes.get($key))
+........insert into component_type (id, name, files) values ($sequence.next(), '$key', $count);
+    #end##foreach-file-type
+#end##writeInsertValues

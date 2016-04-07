@@ -11,7 +11,7 @@
 ........@EntityInsertOperation(enabled = Kleenean.FALSE)
 ........@EntityUpdateOperation(enabled = Kleenean.FALSE)
 ........@EntityDeleteOperation(enabled = Kleenean.FALSE)
-    #elseif($table.resourceType == 'operation')
+    #elseif($tipoRecurso == 'operation')
 ........@EntityTableView(inserts = Kleenean.FALSE, updates = Kleenean.FALSE)
     #end
 #end
@@ -49,6 +49,17 @@ public class ${javaClassSimpleName} extends $superClass {
 #break
 
 #macro(writeTheRestOfTheClass)
+    @Override
+    protected void settleAttributes() {
+        super.settleAttributes();
+#if($table.defaultLabel)
+        setDefaultLabel("$table.defaultLabel.toLowerCase()");
+#end
+#if($table.defaultCollectionLabel)
+        setDefaultCollectionLabel("$table.defaultCollectionLabel.toLowerCase()");
+#end
+    }
+
 #set($tableFieldCount = 0)
 #set($nonNullableFieldFound = $FALSE)
 #foreach($column in $table.columns)
@@ -65,7 +76,7 @@ public class ${javaClassSimpleName} extends $superClass {
         #set($nonNullableFieldFound = $TRUE)
         #break
     #end
-#end
+#end##foreach-column
 #if($table.root)
     @DiscriminatorColumn
     @ForeignKey(onDelete = OnDeleteAction.NONE, onUpdate = OnUpdateAction.NONE)
@@ -153,41 +164,10 @@ public class ${javaClassSimpleName} extends $superClass {
         #else
             #set($metajavaType = $column.metajavaType)
         #end
-....    $metajavaType $column.decapitalizedJavaName;
+....    public $metajavaType $column.decapitalizedJavaName;
 
     #end
 #end##foreach-column
-#set($indexes = $ColUtils.filter($table.indexes, $isCustomIndex))
-#set($indexes = $ColUtils.sort($indexes, $byIndexName))
-#foreach($index in $indexes)
-    Key $index.decapitalizedJavaName;
-
-#end
-#foreach($tab in $table.tabs)
-    Tab $tab.name;
-
-#end
-#if($table.enumeration)
-    #foreach($row in $table.rows)
-....    public Instance $row.javaConstantName;
-
-    #end
-#end
-#foreach($routine in $table.routines)
-    $routine.capitalizedJavaName $routine.decapitalizedJavaName;
-
-#end
-    @Override
-    protected void settleAttributes() {
-        super.settleAttributes();
-#if($table.defaultLabel)
-        setDefaultLabel("$table.defaultLabel.toLowerCase()");
-#end
-#if($table.defaultCollectionLabel)
-        setDefaultCollectionLabel("$table.defaultCollectionLabel.toLowerCase()");
-#end
-    }
-
 #foreach($column in $table.columns)
     #if($foreach.first)
 ....    @Override
@@ -208,6 +188,12 @@ public class ${javaClassSimpleName} extends $superClass {
 ....
     #end
 #end##foreach-column
+#set($indexes = $ColUtils.filter($table.indexes, $isCustomIndex))
+#set($indexes = $ColUtils.sort($indexes, $byIndexName))
+#foreach($index in $indexes)
+    protected Key $index.decapitalizedJavaName;
+
+#end##foreach-index
 #foreach($index in $indexes)
     #if($foreach.first)
 ....    @Override
@@ -225,12 +211,16 @@ public class ${javaClassSimpleName} extends $superClass {
             #set($x = '    ')
         #end
 ${x}    ${index.decapitalizedJavaName}.newKeyField($col.column.decapitalizedJavaName#if("$!col.option" == 'desc'), SortOption.DESC#end);
-    #end
+    #end##foreach-col
     #if($foreach.last)
 ....    }
 ....
     #end
 #end##foreach-index
+#foreach($tab in $table.tabs)
+    protected Tab $tab.name;
+
+#end##foreach-tab
 #foreach($tab in $table.tabs)
     #if($foreach.first)
 ....    @Override
@@ -242,13 +232,17 @@ ${x}    ${index.decapitalizedJavaName}.newKeyField($col.column.decapitalizedJava
     #end
     #foreach($col in $tab.columns)
         ${tab.name}.newTabField($col.column.decapitalizedJavaName);
-    #end
+    #end##foreach-col
     #if($foreach.last)
 ....    }
 ....
     #end
 #end##foreach-tab
 #if($table.enumeration)
+    #foreach($row in $table.rows)
+....    public Instance $row.javaConstantName;
+
+    #end##foreach-row
     #foreach($row in $table.rows)
         #if($foreach.first)
 ........    @Override
@@ -262,13 +256,17 @@ ${x}    ${index.decapitalizedJavaName}.newKeyField($col.column.decapitalizedJava
 ............        ${row.javaConstantName}.newInstanceField($value.column.decapitalizedJavaName, $javaValueString);
                 #end
             #end
-        #end
+        #end##foreach-value
         #if($foreach.last)
 ........    }
 ........
         #end
     #end##foreach-row
 #end
+#foreach($routine in $table.routines)
+    protected $routine.capitalizedJavaName $routine.decapitalizedJavaName;
+
+#end##foreach-routine
 #foreach($routine in $table.routines)
     #if($routine.operationType == 'export')
         #set($operationClass = 'ExportOperation')
@@ -347,7 +345,7 @@ ${x}    ${index.decapitalizedJavaName}.newKeyField($col.column.decapitalizedJava
 ........        @ParameterField($elementos)
             #end
         #end
-        $metajavaType $parameter.decapitalizedJavaName;
+        protected $metajavaType $parameter.decapitalizedJavaName;
 
     #end##foreach-parameter
     #foreach($parameter in $routine.parameters)
@@ -375,7 +373,12 @@ ${x}    ${index.decapitalizedJavaName}.newKeyField($col.column.decapitalizedJava
 
 #macro(setLocalVariables)
     #set($independent = "Kleenean.$table.independent.toString().toUpperCase()")
-    #set($resourceType = "ResourceType.$table.resourceType.toUpperCase()")
+    #set($tipoRecurso = "$!table.resourceType")
+    #if($tipoRecurso == '')
+        #set($resourceType = "ResourceType.UNSPECIFIED")
+    #else
+        #set($resourceType = "ResourceType.$table.resourceType.toUpperCase()")
+    #end
     #set($inheriting = $FALSE)
     #set($superClass = "$!table.superTable.capitalizedJavaName")
     #if($superClass == '')

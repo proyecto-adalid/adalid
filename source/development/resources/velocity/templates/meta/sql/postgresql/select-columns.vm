@@ -3,7 +3,10 @@ column_name, ordinal_position, data_type, character_maximum_length, numeric_prec
 case when(is_nullable='NO')then(false) else(true) end as is_nullable,
 case when(pkc.oid is null) then(false) else(true) end as is_primary_key,
 case when(uqc.oid is null) then(false) else(true) end as is_unique_key,
+#*
 case when(ckc.oid is null) then(false) else(true) end as is_booleanish,
+*#
+case when(data_type='integer' and column_name like'es\_%') then(true) else(false) end as is_booleanish,
 ftab.relname as foreign_table_name
 from information_schema.columns
 inner join pg_namespace nsp on nsp.nspname=table_schema

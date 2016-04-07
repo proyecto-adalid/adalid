@@ -1,0 +1,75 @@
+#writeLines()
+#break
+
+#macro(writeLines)
+    #set($TINY_BS = $VelocityAid.valueOf($FileBytesSize, 'TINY'))
+    #set($SMALL_BS = $VelocityAid.valueOf($FileBytesSize, 'SMALL'))
+    #set($MEDIUM_BS = $VelocityAid.valueOf($FileBytesSize, 'MEDIUM'))
+    #set($LARGE_BS = $VelocityAid.valueOf($FileBytesSize, 'LARGE'))
+    #set($HUGE_BS = $VelocityAid.valueOf($FileBytesSize, 'HUGE'))
+    #set($TINY_LS = $VelocityAid.valueOf($FileLinesSize, 'TINY'))
+    #set($SMALL_LS = $VelocityAid.valueOf($FileLinesSize, 'SMALL'))
+    #set($MEDIUM_LS = $VelocityAid.valueOf($FileLinesSize, 'MEDIUM'))
+    #set($LARGE_LS = $VelocityAid.valueOf($FileLinesSize, 'LARGE'))
+    #set($HUGE_LS = $VelocityAid.valueOf($FileLinesSize, 'HUGE'))
+    #set($NULL = '')
+    #set($df = $DecimalFormat.getInstance())
+    #set($ds = $df.getDecimalFormatSymbols())
+    #if($ds.groupingSeparator == ',')
+        #set($LS = ';')
+    #elseif($ds.decimalSeparator == ',')
+        #set($LS = ';')
+    #else
+        #set($LS = ',')
+    #end
+    #set($baseFolderPath = $root.baseFolderPath)
+    #set($metaFolderWrapper = $root.metaFolderWrapper)
+    #set($sequence = $Sequence.startWith(1))
+....id$LS ##
+....name$LS ##
+....parent$LS ##
+....local_files$LS ##
+....local_bytes$LS ##
+....local_lines$LS ##
+....total_files$LS ##
+....total_bytes$LS ##
+....total_lines$LS ##
+....files_share$LS ##
+....bytes_share$LS ##
+....lines_share$LS ##
+....tiny_bytes_files$LS ##
+....small_bytes_files$LS ##
+....medium_bytes_files$LS ##
+....large_bytes_files$LS ##
+....huge_bytes_files$LS ##
+....tiny_lines_files$LS ##
+....small_lines_files$LS ##
+....medium_lines_files$LS ##
+....large_lines_files$LS ##
+....huge_lines_files$LS
+    #foreach($key in $root.folders.keySet())
+        #set($wrapper = $root.folders.get($key))
+........$sequence.next()$LS ##
+........$key$LS ##
+........#if($key.parent)$key.parent#else$NULL#end$LS ##
+........$wrapper.localFiles$LS ##
+........$wrapper.localBytes$LS ##
+........$wrapper.localLines$LS ##
+........$wrapper.totalFiles$LS ##
+........$wrapper.totalBytes$LS ##
+........$wrapper.totalLines$LS ##
+........$df.format($wrapper.filesShare)$LS ##
+........$df.format($wrapper.bytesShare)$LS ##
+........$df.format($wrapper.linesShare)$LS ##
+........$wrapper.bytesSizes.get($TINY_BS).value()$LS ##
+........$wrapper.bytesSizes.get($SMALL_BS).value()$LS ##
+........$wrapper.bytesSizes.get($MEDIUM_BS).value()$LS ##
+........$wrapper.bytesSizes.get($LARGE_BS).value()$LS ##
+........$wrapper.bytesSizes.get($HUGE_BS).value()$LS ##
+........$wrapper.linesSizes.get($TINY_LS).value()$LS ##
+........$wrapper.linesSizes.get($SMALL_LS).value()$LS ##
+........$wrapper.linesSizes.get($MEDIUM_LS).value()$LS ##
+........$wrapper.linesSizes.get($LARGE_LS).value()$LS ##
+........$wrapper.linesSizes.get($HUGE_LS).value()
+    #end##foreach-folder-wrapper
+#end##writeLines

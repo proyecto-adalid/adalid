@@ -19,7 +19,7 @@ set CLASSPATH
 set SOURCEPATH=
 set SOURCEPATH=%SOURCEPATH%;%adalid_dir%\source\adalid-core\src
 set SOURCEPATH
-set JEXE1="%ProgramFiles%\Java\jdk1.7.0_25\bin\javadoc.exe"
+set JEXE1="%ProgramFiles%\Java\jdk1.8.0_25\bin\javadoc.exe"
 set JEXE1
 set JOPT1=%JOPT1% -J-DMetaDoclet.printOptions=false
 set JOPT1=%JOPT1% -J-DMetaDoclet.printPackages=false

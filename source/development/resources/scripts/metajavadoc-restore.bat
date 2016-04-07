@@ -10,9 +10,9 @@ set DBNAME="metajavadoc"
 set DBNAME
 set PGCOPT=--host localhost --port 5432 --username "postgres" --no-password
 set PGCOPT
-set PGEXE1="%ProgramFiles%\PostgreSQL\9.2\bin\psql.exe"
+set PGEXE1="%ProgramFiles%\PostgreSQL\9.3\bin\psql.exe"
 set PGEXE1
-set PGEXE2="%ProgramFiles%\PostgreSQL\9.2\bin\vacuumdb.exe"
+set PGEXE2="%ProgramFiles%\PostgreSQL\9.3\bin\vacuumdb.exe"
 set PGEXE2
 set PGLOG1="%~dpn0.log"
 set PGLOG1

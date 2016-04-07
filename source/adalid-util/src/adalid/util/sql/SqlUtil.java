@@ -13,6 +13,7 @@ import adalid.commons.util.FilUtils;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import org.apache.commons.collections.ExtendedProperties;
 import org.apache.commons.lang.StringUtils;
@@ -236,15 +237,15 @@ public class SqlUtil {
         return _connection == null;
     }
 
-    protected boolean executeStatement(String statement) {
+    protected boolean executeStatement(String statement) throws SQLException {
         try {
             logger.debug(statement);
             PreparedStatement prepareStatement = _connection.prepareStatement(statement);
             return prepareStatement.execute();
         } catch (SQLException ex) {
             logger.fatal(statement, ex);
+            throw ex;
         }
-        return false;
     }
 
     protected PreparedStatement prepareStatement(String statement) {
@@ -255,6 +256,12 @@ public class SqlUtil {
             logger.fatal(statement, ex);
         }
         return null;
+    }
+
+    protected void close(PreparedStatementWrapper wrapper) {
+        if (wrapper != null) {
+            close(wrapper.getPreparedStatement());
+        }
     }
 
     protected void close(PreparedStatement statement) {
@@ -329,5 +336,35 @@ public class SqlUtil {
         return getDefaultPackage() + "." + _database.toLowerCase();
     }
     // </editor-fold>
+
+    protected class PreparedStatementWrapper {
+
+        String _statement;
+
+        PreparedStatement _preparedStatement;
+
+        public PreparedStatementWrapper(String statement) {
+            _statement = statement;
+            _preparedStatement = prepareStatement(statement);
+        }
+
+        public String getStatement() {
+            return _statement;
+        }
+
+        public PreparedStatement getPreparedStatement() {
+            return _preparedStatement;
+        }
+
+        public ResultSet executeQuery() throws SQLException {
+            return _preparedStatement.executeQuery();
+        }
+
+        @Override
+        public String toString() {
+            return _statement;
+        }
+
+    }
 
 }

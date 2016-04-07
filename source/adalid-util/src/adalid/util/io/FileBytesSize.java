@@ -4,29 +4,31 @@
  * Este programa se distribuye con la esperanza de que pueda ser util, pero SIN NINGUNA GARANTIA;
  * vea la licencia "GNU General Public License" para obtener mas informacion.
  */
-package adalid.commons.util;
+package adalid.util.io;
 
 /**
+ *
  * @author Jorge Campins
  */
-public class Sequence {
+public enum FileBytesSize {
 
-    private int _i;
+    TINY(400L),
+    SMALL(2000L),
+    MEDIUM(8000L),
+    LARGE(24000L),
+    HUGE(Long.MAX_VALUE);
 
-    private Sequence(int i) {
-        _i = i < 0 ? 0 : i;
+    final long limit;
+
+    FileBytesSize(long l) {
+        limit = l;
     }
 
-    public static Sequence startWith(int i) {
-        return new Sequence(i);
-    }
-
-    public int next() {
-        return _i++;
-    }
-
-    public int value() {
-        return _i;
+    /**
+     * @return the limit
+     */
+    public long getLimit() {
+        return limit;
     }
 
 }

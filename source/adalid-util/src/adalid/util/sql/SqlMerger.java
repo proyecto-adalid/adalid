@@ -8,6 +8,7 @@ package adalid.util.sql;
 
 import adalid.commons.properties.PropertiesGetter;
 import adalid.commons.velocity.Writer;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedHashMap;
@@ -213,12 +214,23 @@ public class SqlMerger extends SqlUtil {
 
     private boolean read1() {
         boolean read = initReader1();
-        read = read && _reader1.connect();
-        read = read && createDefaults();
-        read = read && _reader1.read(false);
-        read = read && dropDefaults();
-        read = read && _reader1.close();
-        return read;
+        if (read) {
+            SqlReader.SqlAid aid = _reader1.getSqlAid();
+            if (aid != null) {
+                if (_reader1.connect()) {
+                    try {
+                        aid.createDefaults();
+                        read = _reader1.read(false);
+                        aid.dropDefaults();
+                        return read;
+                    } catch (SQLException ex) {
+                    } finally {
+                        _reader1.close();
+                    }
+                }
+            }
+        }
+        return false;
     }
 
     private boolean initReader1() {
@@ -227,16 +239,6 @@ public class SqlMerger extends SqlUtil {
         _reader1.setSelectTemplatesPath("templates/meta/sql");
         _reader1.setTablesLoadMap(_tablesLoadMap);
         return _reader1.isInitialised();
-    }
-
-    private boolean createDefaults() {
-        String statement = "select " + _reader1.getSchema() + "." + "create_defaults()" + ";";
-        return _reader1.executeStatement(statement);
-    }
-
-    private boolean dropDefaults() {
-        String statement = "select " + _reader1.getSchema() + "." + "drop_defaults()" + ";";
-        return _reader1.executeStatement(statement);
     }
 
     private boolean read2() {

@@ -2,7 +2,7 @@
 cd /d "%~dp0"
 setlocal
 call variables
-set keytool="%ProgramFiles%\Java\jdk1.7.0_25\bin\keytool.exe"
+set keytool="%ProgramFiles%\Java\jdk1.8.0_25\bin\keytool.exe"
 set alias=adalid
 set dname="CN=Jorge Campins, OU=Development, O=Adalid, L=Caracas, ST=Miranda, C=VE"
 set keypass=sesamo

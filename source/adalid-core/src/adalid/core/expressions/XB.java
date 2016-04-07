@@ -1161,7 +1161,7 @@ public class XB {
             }
 
             public CharacterScalarX toCharString(Object x) {
-                return x == null ? null : new CharacterScalarX(ScalarOp.TO_STRING, x);
+                return x == null ? null : x instanceof String ? new CharacterScalarX(null, x) : new CharacterScalarX(ScalarOp.TO_STRING, x);
             }
 
         }

@@ -1,4 +1,3 @@
-#*
 select
 table_name,
 null as default_label,
@@ -11,7 +10,7 @@ where table_catalog='$database'
 and table_schema='$schema'
 and table_type='BASE TABLE'
 order by table_name
-*#
+#*
 select distinct
 table_name,
 null as default_label,
@@ -25,3 +24,4 @@ where table_catalog='$database'
 and table_schema='$schema'
 and table_type='BASE TABLE'
 order by table_name
+*#

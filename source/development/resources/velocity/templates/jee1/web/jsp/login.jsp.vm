@@ -68,16 +68,28 @@
                     location.reload();
                 }
             }
-#***
-            function culminate() {
-                var winname = window.name.replace(/\//gi, '_');
-                window.name = winname;
-            }
-*###
             function terminate() {
                 // OJO: el onunload, aunque no tenga instrucciones, hace que siempre se ejecute el onload al regresar
             }
 #if($project.isInternetAccessAllowed())
+            function check13(inputEvent) {
+                var x0 = document.getElementById('boton').style.visibility;
+                if (x0 === "hidden") {
+                //  alert("check13");
+                    var x1 = 0;
+                    var x2 = 0;
+                    var x3 = 0;
+                    if (inputEvent.which)    x1 = inputEvent.which;
+                    if (inputEvent.charCode) x2 = inputEvent.charCode;
+                    if (inputEvent.keyCode)  x3 = inputEvent.keyCode;
+                    if (x1 === 13 || x2 === 13 || x3 === 13) {
+                    //  alert("enter key is disabled");
+                    //  document.getElementById('login').reset();
+                        return false;
+                    }
+                }
+                return true;
+            }
             var verifyUserResponse = function(g_recaptcha_response) {
                 g_recaptcha_response = g_recaptcha_response || '';
                 if (g_recaptcha_response.length > 0) {
@@ -96,11 +108,10 @@
         </script>
 #if($project.isInternetAccessAllowed())
         <script src="https://www.google.com/recaptcha/api.js?onload=onloadCallback&render=explicit"></script>
-#end
-#***
-        <form id="login" method="POST" action="j_security_check" onsubmit="culminate()">
-*###
+        <form id="login" method="POST" action="j_security_check" onkeypress="return check13(event)">
+#else
         <form id="login" method="POST" action="j_security_check">
+#end
             <div>
                 <img alt="" src="/${project.rootFolderName}-war/resources/masthead_left.png" style="float: left"/>
                 <img alt="" src="/${project.rootFolderName}-war/resources/masthead_right.png" style="float: right"/>

@@ -10,9 +10,9 @@ import adalid.commons.util.BitUtils;
 import adalid.commons.util.IntUtils;
 import adalid.commons.util.NumUtils;
 import adalid.commons.util.StrUtils;
+import adalid.commons.util.ThrowableUtils;
 import adalid.commons.velocity.VelocityEngineer;
 import java.io.File;
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Arrays;
@@ -57,18 +57,23 @@ public class SqlReader extends SqlUtil {
     }
 
     // <editor-fold defaultstate="collapsed" desc="instance getters and setters">
-    private SqlAid getSqlAid() {
-        switch (_dbms) {
-            case "oracle":
-                return new OracleAid();
-            case "postgresql":
-                return new PostgreSqlAid();
-            case "sqlserver":
-//              return new SqlServerAid();
-                return null;
-            default:
-                return null;
+    private SqlAid _sqlAid;
+
+    protected SqlAid getSqlAid() {
+        if (_sqlAid == null) {
+            switch (_dbms) {
+                case "oracle":
+                    _sqlAid = new OracleAid();
+                    break;
+                case "postgresql":
+                    _sqlAid = new PostgreSqlAid();
+                    break;
+                default:
+                    _sqlAid = null;
+                    break;
+            }
         }
+        return _sqlAid;
     }
 
     /**
@@ -207,13 +212,13 @@ public class SqlReader extends SqlUtil {
         if (aid == null) {
             return false;
         }
-        PreparedStatement select = null;
-        PreparedStatement selectTables = null;
-        PreparedStatement selectColumns = null;
-        PreparedStatement selectIndexes = null;
-        PreparedStatement selectTabs = null;
-        PreparedStatement selectRows = null;
-        PreparedStatement selectRoutines = null;
+        PreparedStatementWrapper select = null;
+        PreparedStatementWrapper selectTables = null;
+        PreparedStatementWrapper selectColumns = null;
+        PreparedStatementWrapper selectIndexes = null;
+        PreparedStatementWrapper selectTabs = null;
+        PreparedStatementWrapper selectRows = null;
+        PreparedStatementWrapper selectRoutines = null;
         ResultSet tablesResultSet, columnsResultSet, indexesResultSet, tabsResultSet, rowsResultSet, routinesResultSet;
         int tables = 0, columns = 0, indexes = 0, tabs = 0, rows = 0, routines = 0;
         try {
@@ -232,6 +237,7 @@ public class SqlReader extends SqlUtil {
                         } else {
                             continue;
                         }
+                        logger.info(sqlTable.getName());
                         selectColumns = aid.getSelectColumnsStatement(sqlTable);
                         if (selectColumns == null) {
                             continue;
@@ -302,25 +308,30 @@ public class SqlReader extends SqlUtil {
                             selectRows = aid.getSelectRowsStatement(sqlTable);
                             if (selectRows != null) {
                                 select = selectRows;
-                                rowsResultSet = selectRows.executeQuery();
-                                if (rowsResultSet.next()) {
-                                    SqlRow sqlRow;
-                                    int n = 0;
-                                    do {
-                                        sqlRow = aid.getSqlRow(rowsResultSet, sqlTable);
-                                        if (sqlRow != null) {
-                                            n++;
-                                            rows++;
-                                            sqlTable.add(sqlRow);
+                                try {
+                                    rowsResultSet = selectRows.executeQuery();
+                                    if (rowsResultSet.next()) {
+                                        SqlRow sqlRow;
+                                        int n = 0;
+                                        do {
+                                            sqlRow = aid.getSqlRow(rowsResultSet, sqlTable);
+                                            if (sqlRow != null) {
+                                                n++;
+                                                rows++;
+                                                sqlTable.add(sqlRow);
+                                            }
+                                        } while (rowsResultSet.next());
+                                        if (n >= ROW_LIMIT) {
+                                            warnRowLimit(sqlTable);
                                         }
-                                    } while (rowsResultSet.next());
-                                    if (n >= ROW_LIMIT) {
-                                        warnRowLimit(sqlTable);
                                     }
+                                    sqlTable.setLoaded(true);
+                                } catch (SQLException ex) {
+                                    logger.info(select + " / " + ThrowableUtils.getString(ex));
+                                } finally {
+                                    close(selectRows);
+                                    selectRows = null;
                                 }
-                                close(selectRows);
-                                selectRows = null;
-                                sqlTable.setLoaded(true);
                             }
                         }
                         selectRoutines = aid.getSelectRoutinesStatement(sqlTable);
@@ -432,48 +443,52 @@ public class SqlReader extends SqlUtil {
         }
     }
 
-    abstract class SqlAid {
+    protected abstract class SqlAid {
 
-        PreparedStatement getSelectTablesStatement() {
+        abstract boolean createDefaults() throws SQLException;
+
+        abstract boolean dropDefaults() throws SQLException;
+
+        PreparedStatementWrapper getSelectTablesStatement() {
             String template = getTemplateName("tables");
             VelocityContext context = new VelocityContext();
             return getSelectStatement(template, context);
         }
 
-        PreparedStatement getSelectColumnsStatement(SqlTable sqlTable) {
+        PreparedStatementWrapper getSelectColumnsStatement(SqlTable sqlTable) {
             String template = getTemplateName("columns");
             return getSelectStatement(template, sqlTable);
         }
 
-        PreparedStatement getSelectIndexesStatement(SqlTable sqlTable) {
+        PreparedStatementWrapper getSelectIndexesStatement(SqlTable sqlTable) {
             String template = getTemplateName("indexes");
             return getSelectStatement(template, sqlTable);
         }
 
-        PreparedStatement getSelectTabsStatement(SqlTable sqlTable) {
+        PreparedStatementWrapper getSelectTabsStatement(SqlTable sqlTable) {
             String template = getTemplateName("tabs");
             return getSelectStatement(template, sqlTable);
         }
 
-        PreparedStatement getSelectRowsStatement(SqlTable sqlTable) {
+        PreparedStatementWrapper getSelectRowsStatement(SqlTable sqlTable) {
             String name = sqlTable.getName();
             String pk = sqlTable.getPrimaryKey().getName();
             String sql = "select * from " + _schema + "." + name + " order by " + pk;
             return getSelectStatement(sql);
         }
 
-        PreparedStatement getSelectRoutinesStatement(SqlTable sqlTable) {
+        PreparedStatementWrapper getSelectRoutinesStatement(SqlTable sqlTable) {
             String template = getTemplateName("routines");
             return getSelectStatement(template, sqlTable);
         }
 
-        PreparedStatement getSelectStatement(String template, SqlTable sqlTable) {
+        PreparedStatementWrapper getSelectStatement(String template, SqlTable sqlTable) {
             VelocityContext context = new VelocityContext();
             context.put("table", sqlTable.getName());
             return getSelectStatement(template, context);
         }
 
-        PreparedStatement getSelectStatement(String template, VelocityContext context) {
+        PreparedStatementWrapper getSelectStatement(String template, VelocityContext context) {
             context.put("database", _database);
             context.put("schema", _schema);
             String templatePath;
@@ -491,8 +506,8 @@ public class SqlReader extends SqlUtil {
             return null;
         }
 
-        PreparedStatement getSelectStatement(String statement) {
-            return prepareStatement(statement);
+        PreparedStatementWrapper getSelectStatement(String statement) {
+            return new PreparedStatementWrapper(statement);
         }
 
         String getTemplateName(String type) {
@@ -682,7 +697,19 @@ public class SqlReader extends SqlUtil {
     class OracleAid extends SqlAid {
 
         @Override
-        PreparedStatement getSelectRowsStatement(SqlTable sqlTable) {
+        boolean createDefaults() throws SQLException {
+            String statement = "call " + _schema + "." + "create_defaults()";
+            return executeStatement(statement);
+        }
+
+        @Override
+        boolean dropDefaults() throws SQLException {
+            String statement = "call " + _schema + "." + "drop_defaults()";
+            return executeStatement(statement);
+        }
+
+        @Override
+        PreparedStatementWrapper getSelectRowsStatement(SqlTable sqlTable) {
             String name = sqlTable.getName();
             String pk = sqlTable.getPrimaryKey().getName();
             String sql = "select * from " + _schema + "." + name + " where ROWNUM<=" + ROW_LIMIT + " order by " + pk;
@@ -1045,7 +1072,19 @@ public class SqlReader extends SqlUtil {
     class PostgreSqlAid extends SqlAid {
 
         @Override
-        PreparedStatement getSelectRowsStatement(SqlTable sqlTable) {
+        boolean createDefaults() throws SQLException {
+            String statement = "select " + _schema + "." + "create_defaults()" + ";";
+            return executeStatement(statement);
+        }
+
+        @Override
+        boolean dropDefaults() throws SQLException {
+            String statement = "select " + _schema + "." + "drop_defaults()" + ";";
+            return executeStatement(statement);
+        }
+
+        @Override
+        PreparedStatementWrapper getSelectRowsStatement(SqlTable sqlTable) {
             String name = sqlTable.getName();
             String pk = sqlTable.getPrimaryKey().getName();
             String sql = "select * from " + _schema + "." + name + " order by " + pk + " limit " + ROW_LIMIT;
@@ -1356,9 +1395,6 @@ public class SqlReader extends SqlUtil {
                                                                                     : null;
         }
 
-    }
-
-    class SqlServerAid extends SqlAid {
     }
 
 }

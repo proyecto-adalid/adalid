@@ -792,6 +792,15 @@ public class Writer {
         putClass(context, adalid.commons.util.ManUtils.class);
         putClass(context, adalid.commons.util.StrUtils.class);
         putClass(context, adalid.commons.util.TimeUtils.class);
+        putClass(context, java.text.ChoiceFormat.class);
+        putClass(context, java.text.DateFormat.class);
+        putClass(context, java.text.DateFormatSymbols.class);
+        putClass(context, java.text.DecimalFormat.class);
+        putClass(context, java.text.DecimalFormatSymbols.class);
+        putClass(context, java.text.MessageFormat.class);
+        putClass(context, java.text.NumberFormat.class);
+        putClass(context, java.text.SimpleDateFormat.class);
+        putClass(context, java.util.Locale.class);
         putClass(context, org.apache.commons.lang.StringUtils.class);
         putClass(context, org.apache.commons.lang.StringEscapeUtils.class);
         /*

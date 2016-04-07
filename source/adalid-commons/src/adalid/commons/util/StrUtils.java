@@ -1222,22 +1222,27 @@ public class StrUtils {
             return isDelimited(string, open);
         }
         String s = StringUtils.trimToEmpty(string);
+        int j = 1; // delimiter length
+        int k = 2 * j;
         int l = s.length();
-        int n = l - 1;
-        if (s.charAt(0) == open && s.charAt(n) == close) {
-            int opened = 0;
-            int closed = 0;
-            for (int x = 0; x < l; x++) {
-                if (s.charAt(x) == open) {
-                    opened++;
-                } else if (s.charAt(x) == close) {
-                    closed++;
-                }
-                if (opened > closed) {
-                } else {
-                    return opened == closed && x == n;
-                }
-            }
+        int n = l - j;
+        if (l >= k && s.charAt(0) == open && s.charAt(n) == close) {
+            // <editor-fold defaultstate="collapsed" desc="section disabled because it fails if one of the delimiters is a literal within the string">
+//          int opened = 0;
+//          int closed = 0;
+//          for (int x = 0; x < l; x++) {
+//              if (s.charAt(x) == open) {
+//                  opened++;
+//              } else if (s.charAt(x) == close) {
+//                  closed++;
+//              }
+//              if (opened > closed) {
+//              } else {
+//                  return opened == closed && x == n;
+//              }
+//          }
+            // </editor-fold>
+            return l == k || (s.substring(j, n).indexOf(open) < 0 && s.substring(j, n).indexOf(close) < 0);
         }
         return false;
     }
@@ -1256,25 +1261,28 @@ public class StrUtils {
         int l = s.length();
         int n = l - j;
         if (l >= k && s.startsWith(open) && s.endsWith(close)) {
-            int opened = 0;
-            int closed = 0;
-            int x = 0;
-            int y, z;
-            for (; x < l;) {
-                y = s.indexOf(open, x);
-                z = s.indexOf(close, x);
-                if (y >= x && y < z) {
-                    opened++;
-                    x = y + open.length();
-                } else if (z >= x) {
-                    closed++;
-                    x = z + close.length();
-                }
-                if (opened > closed) {
-                } else {
-                    return opened == closed && x == l;
-                }
-            }
+            // <editor-fold defaultstate="collapsed" desc="section disabled because it fails if one of the delimiters is a literal within the string">
+//          int opened = 0;
+//          int closed = 0;
+//          int x = 0;
+//          int y, z;
+//          for (; x < l;) {
+//              y = s.indexOf(open, x);
+//              z = s.indexOf(close, x);
+//              if (y >= x && y < z) {
+//                  opened++;
+//                  x = y + open.length();
+//              } else if (z >= x) {
+//                  closed++;
+//                  x = z + close.length();
+//              }
+//              if (opened > closed) {
+//              } else {
+//                  return opened == closed && x == l;
+//              }
+//          }
+            // </editor-fold>
+            return l == k || (!s.substring(i, n).contains(open) && !s.substring(i, n).contains(close));
         }
         return false;
     }

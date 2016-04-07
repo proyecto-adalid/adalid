@@ -137,7 +137,7 @@
         String query = consultaBusqueda${fieldClassName}.getQuerySql();
         List<? extends ${clazz}Base> list = get${clazz}Facade().findByQuery(query, EnumTipoQuery.NATIVE, true);
     #else
-        List<? extends ${clazz}Base> list = get${clazz}Facade().findAll();
+        List<? extends ${clazz}Base> list = get${clazz}Facade().findAll(true);
     #end
         return JSF.getListaOpciones(list, true, EnumColumnaEtiqueta.$enumColumnaEtiqueta, $sortedByLabel);
     }

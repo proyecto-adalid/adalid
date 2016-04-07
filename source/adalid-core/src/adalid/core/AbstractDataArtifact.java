@@ -415,6 +415,11 @@ public abstract class AbstractDataArtifact extends AbstractArtifact implements D
     /**
      *
      */
+    private boolean _updateableFileReference;
+
+    /**
+     *
+     */
     private BooleanExpression _renderingFilter;
 
     /**
@@ -1201,6 +1206,14 @@ public abstract class AbstractDataArtifact extends AbstractArtifact implements D
     }
 
     /**
+     * @return the updateable file reference indicator
+     */
+//  @Override -- Implements method from: FileReference (StringProperty/StringParameter)
+    public boolean isUpdateableFileReference() {
+        return _updateableFileReference;
+    }
+
+    /**
      * @return the rendering filter
      */
     @Override
@@ -1596,6 +1609,7 @@ public abstract class AbstractDataArtifact extends AbstractArtifact implements D
         _joinFieldName = null;
         _joinField = null;
         _joinProperty = null;
+        _updateableFileReference = false;
     }
 
     @Override
@@ -2133,6 +2147,7 @@ public abstract class AbstractDataArtifact extends AbstractArtifact implements D
                     _joinProperty = XS1.getProperty(_joinField, declaringEntity);
                 }
             }
+            _updateableFileReference = annotation.updateable().toBoolean(_updateableFileReference);
         }
     }
 

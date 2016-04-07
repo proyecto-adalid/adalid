@@ -1,0 +1,27 @@
+#writeLines()
+#break
+
+#macro(writeLines)
+    #set($NULL = '')
+    #set($df = $DecimalFormat.getInstance())
+    #set($ds = $df.getDecimalFormatSymbols())
+    #if($ds.groupingSeparator == ',')
+        #set($LS = ';')
+    #elseif($ds.decimalSeparator == ',')
+        #set($LS = ';')
+    #else
+        #set($LS = ',')
+    #end
+    #set($baseFolderPath = $root.baseFolderPath)
+    #set($metaFolderWrapper = $root.metaFolderWrapper)
+    #set($sequence = $Sequence.startWith(1))
+....id$LS ##
+....name$LS ##
+....files
+    #foreach($key in $root.fileTypes.keySet())
+        #set($count = $root.fileTypes.get($key))
+........$sequence.next()$LS ##
+........$key$LS ##
+........$count
+    #end##foreach-file-type
+#end##writeLines

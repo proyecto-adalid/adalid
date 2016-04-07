@@ -22,6 +22,7 @@
         #set($kname = $row.wrapper.sqlName.toUpperCase())
         #writeCreateEnumFunctionEnumConstant1()
     #end##foreach-row
+    out record$filling $keytype,
     out record$filler $keytype
     #writeCreateEnumFunctionBody()
     #foreach($row in $rows)

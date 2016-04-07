@@ -1,0 +1,23 @@
+#parsePostgreSQLMacros()
+#setPostgreSQLVariables()
+#writePostgreSQLLicense()
+#writePostgreSQLAuthor('Jorge Campins')
+#writeDDL()
+#writeInsertValues()
+#break
+
+#macro(writeDDL)
+#end##writeDDL
+
+#macro(writeInsertValues)
+/*
+ * name=$root.name
+ * file=$root.propertiesFile.path
+ * size=$root.getTemplatesMap().values().size()
+ */
+    #set($templates = $root.templatesMap.values())
+    #foreach($template in $templates)
+........insert into template_file (path, type, disabled, disabled_when_missing, preserve)
+........values('$template.path', '$template.type', $template.disabled, $template.disabledWhenMissing, $template.preserveExistingFile);
+    #end##foreach-template
+#end##writeInsertValues
