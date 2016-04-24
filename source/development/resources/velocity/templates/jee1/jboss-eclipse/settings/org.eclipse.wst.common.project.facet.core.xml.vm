@@ -1,8 +1,8 @@
 #setGlobalVariables()
 #if($targetJBossMajorVersion == '7')
-    #set($jbossRuntime = 'JBoss 7.1 Runtime')
+    #set($jbossRuntime = "JBoss $targetJBossShortVersion Runtime")
 #else
-    #set($jbossRuntime = 'WildFly 9.0 Runtime')
+    #set($jbossRuntime = "WildFly $targetJBossShortVersion Runtime")
 #end
 <?xml version="1.0" encoding="UTF-8"?>
 <faceted-project>

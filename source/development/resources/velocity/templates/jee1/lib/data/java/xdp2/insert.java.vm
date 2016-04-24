@@ -39,7 +39,13 @@
     protected void posAppendRow(RowKey rowKey, long funcion) {
         super.posAppendRow(rowKey, funcion);
         #foreach($property in $dataProviderColumns)
-            #writeSetInitialValue("$!property.wrapper.javaInitialValue")
+            #set($value = "$!property.wrapper.javaInitialValue")
+            #if($value != '' && $value != 'null')
+                #writeSetInitialValue("$!property.wrapper.javaInitialValue")
+            #elseif($property.isNullable())
+            #else
+                #writeSetInitialValue("$!property.wrapper.javaDefaultValue")
+            #end
         #end##foreach-property
         #set($discriminatorVariableName = '')
         #if($esRecursoDiscriminado)

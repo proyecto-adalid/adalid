@@ -46,6 +46,11 @@
     #elseif($operationType == 'PROCESS')
         #set($operationStringConstantName = $operationProcessConstantName)
     #end
+    #if($operationStringConstantName == '')
+        #set($operationLabelConstantName = '')
+    #else
+        #set($operationLabelConstantName = "${entityClassName}Constants.ETIQUETA_FUNCION_${operation.operationType}_${operationConstantName}")
+    #end
     #if("$!operation.operationKind" == 'CLASS')
         #set($classOperation = $TRUE)
     #else
@@ -62,9 +67,11 @@
     #set($operationEntityConstants = "${operationEntity.wrapper.javaClassName}Constants")
     #if($tipoOperacion == '')
         #set($operationNumberConstant = '')
+        #set($operationLabelConstant  = '')
         #set($operationStringConstant = '')
     #else
         #set($operationNumberConstant = "${operationEntityConstants}.FUNCION_${operationType}_${operationConstantName}")
+        #set($operationLabelConstant  = "${operationEntityConstants}.ETIQUETA_FUNCION_${operationType}_${operationConstantName}")
         #set($operationStringConstant = "${operationEntityConstants}.${tipoOperacion}_FUNCION_${operationConstantName}")
     #end
     #set($parameters = $operation.parametersList)
@@ -105,11 +112,12 @@
         #set($fieldForeignNameSqlName = '')
         #set($fieldForeignNameVariableName = '')
     #end
-    #set($fieldRequired = "$parameter.isRequiredParameter()")
+    #set($fieldRequired = $parameter.isRequiredParameter())
     #set($Campo1 = "Campo$fieldFirstName")
     #set($campo1 = "campo$fieldFirstName")
     #set($fieldBundleParametrosKey = "BundleParametros.${parameterBundleKey}")
     #set($referenceSelectFunctionConstantName = "FUNCION_SELECT_${parameter.root.wrapper.javaConstantName}")
+####
     #set($parameterObjUtilsMethod = '')
     #set($parameterValueExpression = 'null')
     #if($parameter.isEntity())

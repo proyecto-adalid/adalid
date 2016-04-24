@@ -3,7 +3,7 @@
 #writeJavaLicense()
 #writeJavaPackage()
 #parse('templates/jee1/lib/data/java/XDP0.java.vm')
-#parse("$templatePath/macros/entity-class.vm")
+#parse("$templatePath/macros/entity-class-${targetDatabaseServerCode}.vm")
 #parse("$templatePath/interfaces/RecursoIdentificable.java.vm")
 #parse("$templatePath/interfaces/RecursoVersionable.java.vm")
 #parse("$templatePath/interfaces/RecursoEnumerable.java.vm")

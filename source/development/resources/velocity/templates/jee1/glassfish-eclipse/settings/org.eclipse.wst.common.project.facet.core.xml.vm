@@ -1,5 +1,6 @@
+#setGlobalVariables()
 <?xml version="1.0" encoding="UTF-8"?>
 <faceted-project>
-    <runtime name="GlassFish 4.0"/>
+    <runtime name="GlassFish $targetGlassFishMajorVersion"/>
     <installed facet="jst.ear" version="6.0"/>
 </faceted-project>

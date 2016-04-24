@@ -204,6 +204,18 @@ public class Writer {
 
     private static final String HINT = EOL + "hint: ";
 
+    private static final String DOT = ".";
+
+    private static final String HYPHEN = "-";
+
+    private static final String SLASH = "/";
+
+    private static final String CARET = "^";
+
+    private static final String DOLLAR = "$";
+
+    private static final String ASTERISK = "*";
+
     private static final String DO_CASCADED_DELETE = "do.cascaded.delete";
 
     private static final String DO_ISOLATED_DELETE = "do.isolated.delete";
@@ -432,54 +444,30 @@ public class Writer {
             deletePreviouslyGeneratedFiles(mergeExtendedProperties);
             WriterContext platformWriterContext = newWriterContext(platformContext);
             File platformsFolder = platformPropertiesFile.getParentFile();
-//          File platformPropertiesFolder = new File(platformsFolder, platform);
             ExtendedProperties platformExtendedProperties = PropertiesHandler.getExtendedProperties(platformPropertiesFile);
             String[] pathnames = platformExtendedProperties.getStringArray(FILE_RESOURCE_LOADER_PATH);
             String[] pathfilters = platformExtendedProperties.getStringArray(FILE_RESOURCE_LOADER_PATH_FILTER);
             Map<String, File> folders = new LinkedHashMap<>();
             if (pathnames == null || pathnames.length == 0) {
-//              folders.putAll(FilUtils.directoriesMap(platformPropertiesFolder));
             } else {
-//              folders.putAll(FilUtils.directoriesMap(platformsFolder, pathnames, platformsFolder));
                 for (File folder : bootstrappingPlatformsFolders) {
                     folders.putAll(FilUtils.directoriesMap(folder, pathnames, folder));
                 }
             }
-            // <editor-fold defaultstate="collapsed">
-//          if (pathnames != null) {
-//              logger.debug(FILE_RESOURCE_LOADER_PATH + "=" + pathnames.length);
-//              for (String pathname : pathnames) {
-//                  logger.debug(FILE_RESOURCE_LOADER_PATH + "=" + pathname);
-//              }
-//          }
-//          if (pathfilters != null) {
-//              logger.debug(FILE_RESOURCE_LOADER_PATH_FILTER + "=" + pathfilters.length);
-//              for (String pathfilter : pathfilters) {
-//                  logger.debug(FILE_RESOURCE_LOADER_PATH_FILTER + "=" + pathfilter);
-//              }
-//          }
-//          logger.debug("all folders=" + folders.size());
-            // </editor-fold>
             if (pathfilters != null && pathfilters.length > 0) {
                 String[] keyArray = folders.keySet().toArray(new String[folders.keySet().size()]);
                 String slashedFilter, slashedPath;
                 for (String pathfilter : pathfilters) {
-                    slashedFilter = pathfilter.replace(FILE_SEPARATOR, "/");
+                    slashedFilter = pathfilter.replace(FILE_SEPARATOR, SLASH);
                     for (String key : keyArray) {
-                        slashedPath = key.replace(FILE_SEPARATOR, "/") + "/";
-                        if (slashedPath.contains(slashedFilter)) {
+                        slashedPath = key.replace(FILE_SEPARATOR, SLASH) + SLASH;
+                        if (StringUtils.containsIgnoreCase(slashedPath, slashedFilter)) {
                             folders.remove(key);
                             logger.debug(pathfilter + " excludes " + key);
                         }
                     }
                 }
             }
-            // <editor-fold defaultstate="collapsed">
-//          logger.debug("filtered folders=" + folders.size());
-//          for (String folder : folders.keySet()) {
-//              logger.debug(folder);
-//          }
-            // </editor-fold>
             File[] templateFiles;
             Properties templateProperties;
             String disabled;
@@ -493,6 +481,9 @@ public class Writer {
                 templateFiles = folder.listFiles(propertiesFileFilter);
                 Arrays.sort(templateFiles);
                 for (File templatePropertiesFile : templateFiles) {
+                    if (reject(templatePropertiesFile, pathfilters)) {
+                        continue;
+                    }
                     templateProperties = PropertiesHandler.loadProperties(templatePropertiesFile);
                     disabled = templateProperties.getProperty(TP_DISABLED, Boolean.FALSE.toString());
                     disabledMissing = templateProperties.getProperty(TP_DISABLED_MISSING);
@@ -521,6 +512,53 @@ public class Writer {
             error(throwable);
         }
         printSummary();
+    }
+
+    private boolean reject(File templatePropertiesFile, String[] pathfilters) {
+        return !accept(templatePropertiesFile, pathfilters);
+    }
+
+    private boolean accept(File templatePropertiesFile, String[] pathfilters) {
+        if (templatePropertiesFile == null) {
+            return false;
+        }
+        if (pathfilters == null || pathfilters.length == 0) {
+            return true;
+        }
+        String name = StringUtils.removeEndIgnoreCase(templatePropertiesFile.getName(), PROPERTIES_SUFFIX);
+        String lowerName = name.toLowerCase();
+        String fileFilter;
+        String anything = ".*";
+        String delimiters = "[\\W]";
+        String word = "[\\w\\-]*";
+        for (String pathfilter : pathfilters) {
+            fileFilter = pathfilter.replace(FILE_SEPARATOR, SLASH);
+            fileFilter = fileFilter.toLowerCase();
+            fileFilter = StringUtils.removeStart(fileFilter, SLASH);
+            fileFilter = StringUtils.removeEnd(fileFilter, SLASH);
+            if (fileFilter.isEmpty()) {
+                continue;
+            }
+            if (fileFilter.matches(word)) {
+                if (lowerName.matches(CARET + anything + delimiters + fileFilter + delimiters + anything + DOLLAR)) {
+                    logger.debug("filter " + ASTERISK + pathfilter + ASTERISK + " excludes " + name);
+                    return false;
+                }
+                if (lowerName.matches(CARET + fileFilter + delimiters + anything)) {
+                    logger.debug("filter " + pathfilter + ASTERISK + " excludes " + name);
+                    return false;
+                }
+                if (lowerName.matches(anything + delimiters + fileFilter + DOLLAR)) {
+                    logger.debug("filter " + ASTERISK + pathfilter + " excludes " + name);
+                    return false;
+                }
+                if (lowerName.matches(CARET + fileFilter + DOLLAR)) {
+                    logger.debug("filter " + pathfilter + " excludes " + name);
+                    return false;
+                }
+            }
+        }
+        return true;
     }
 
     private boolean missing(String resourceName) {
@@ -626,7 +664,7 @@ public class Writer {
         String templatePathString = pathString(template);
         String templatePath = StringUtils.substringBeforeLast(templatePathString, FILE_SEPARATOR);
         fileContext.put(VC_TEMPLATE, StringEscapeUtils.escapeJava(templatePathString));
-        fileContext.put(VC_TEMPLATE_PATH, StringUtils.replace(templatePath, FILE_SEPARATOR, "/"));
+        fileContext.put(VC_TEMPLATE_PATH, StringUtils.replace(templatePath, FILE_SEPARATOR, SLASH));
         fileContext.put(VC_FILE, fileName);
         if (filePath == null) {
 //          filePath = rootPath;
@@ -645,7 +683,7 @@ public class Writer {
         }
         fileContext.put(VC_PATH, StringEscapeUtils.escapeJava(filePath));
         if (filePack != null) {
-            filePath += FILE_SEPARATOR + pathString(StringUtils.replace(filePack, ".", "/"));
+            filePath += FILE_SEPARATOR + pathString(StringUtils.replace(filePack, DOT, SLASH));
             fileContext.put(VC_PACKAGE, dottedString(filePack));
         }
         File path = new File(filePath);
@@ -715,7 +753,7 @@ public class Writer {
     private void writeFile(String document, String filename) {
         log(_trackingLevel, "writeFile", "document=" + document, "filename=" + filename);
         String message = "failed to write file \"" + filename + "\" copying document \"" + document + "\"";
-        String path = FILE_SEPARATOR + document.replaceAll("/", "\\" + FILE_SEPARATOR);
+        String path = FILE_SEPARATOR + document.replaceAll(SLASH, "\\" + FILE_SEPARATOR);
         String[] fileResourceLoaderPathArray = VelocityEngineer.getFileResourceLoaderPathArray();
         if (fileResourceLoaderPathArray != null && fileResourceLoaderPathArray.length > 0) {
             File source, target;
@@ -1030,11 +1068,12 @@ public class Writer {
     private String getTemplate(File propertiesFile) {
         String slashedPath;
         String shortestPath = null;
-        String propertiesFilePath = propertiesFile.getPath().replace(FILE_SEPARATOR, "/");
+        String propertiesFilePath = propertiesFile.getPath().replace(FILE_SEPARATOR, SLASH);
         String[] velocityFileResourceLoaderPathArray = VelocityEngineer.getFileResourceLoaderPathArray();
         if (velocityFileResourceLoaderPathArray != null && velocityFileResourceLoaderPathArray.length > 0) {
             for (String path : velocityFileResourceLoaderPathArray) {
-                slashedPath = path.replace(FILE_SEPARATOR, "/");
+//              slashedPath = path.replace(FILE_SEPARATOR, SLASH);
+                slashedPath = StringUtils.removeEnd(path.replace(FILE_SEPARATOR, SLASH), SLASH) + SLASH;
                 if (StringUtils.startsWithIgnoreCase(propertiesFilePath, slashedPath)) {
                     if (shortestPath == null || slashedPath.length() < shortestPath.length()) {
                         shortestPath = slashedPath;
@@ -1046,7 +1085,8 @@ public class Writer {
             return propertiesFile.getName();
         }
         String template = StringUtils.removeStartIgnoreCase(propertiesFilePath, shortestPath);
-        return StringUtils.removeStartIgnoreCase(template, "/");
+//      return StringUtils.removeStartIgnoreCase(template, SLASH);
+        return template;
     }
 
     private StringWriter mergeTemplate(VelocityContext context, String template) {
@@ -1102,8 +1142,8 @@ public class Writer {
         Collection<File> matchingFiles;
         Arrays.sort(stringArray);
         for (String string : stringArray) {
-            pathname = StringUtils.substringBeforeLast(string, "/");
-            wildcard = StringUtils.substringAfterLast(string, "/");
+            pathname = StringUtils.substringBeforeLast(string, SLASH);
+            wildcard = StringUtils.substringAfterLast(string, SLASH);
             if (StringUtils.isBlank(wildcard)) {
                 logger.error("invalid property: " + name + "=" + string);
                 continue;
@@ -1265,7 +1305,7 @@ public class Writer {
 //  }
 
     private String dottedString(String string) {
-        return trimSplitJoin(string, FILE_SEPARATOR_CHARS, ".");
+        return trimSplitJoin(string, FILE_SEPARATOR_CHARS, DOT);
     }
 
     private String pathString(String string) {

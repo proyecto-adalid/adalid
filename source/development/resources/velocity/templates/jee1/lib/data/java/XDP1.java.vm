@@ -149,7 +149,6 @@ public class ${javaClassSimpleName} extends RecursoCachedRowSetDataProvider#writ
     }
 
 #end##foreach-property
-#parse('templates/jee1/lib/data/java/xdp1/write-value-accessors.vm')
     private Map<String, String> columnAliasNameMap;
 
     protected Map<String, String> getColumnAliasNameMap() {

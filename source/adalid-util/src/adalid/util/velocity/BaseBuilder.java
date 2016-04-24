@@ -55,12 +55,6 @@ public class BaseBuilder {
 
     private static final String D = "\\.";
 
-    private static final String application = S + project + S + "source" + S + project + S;
-
-    private static final String management = S + project + S + "source" + S + "management" + S;
-
-    private static final String resources = S + project + S + "source" + S + "management" + S + "resources" + S;
-
     private static final Charset[] STANDARD_CHARSETS = new Charset[]{
         StandardCharsets.ISO_8859_1,
         StandardCharsets.UTF_8,
@@ -92,6 +86,8 @@ public class BaseBuilder {
 
     private final String velocityTemplatesTargetFolderPath;
 
+    private final String projectRoot, application, management, resources;
+
     private final String[] preservableFiles;
 
     private int binaryFilesCopied, textFilesCopied, propertiesFilesCreated, readingWarnings, readingErrors, writingErrors;
@@ -118,6 +114,14 @@ public class BaseBuilder {
             } else {
                 throw new RuntimeException("invalid velocity folder: " + velocityFolder);
             }
+            projectRoot = S + rootFolder.getName() + S + project + S;
+            application = projectRoot + "source" + S + project + S;
+            management = projectRoot + "source" + S + "management" + S;
+            resources = management + "resources" + S;
+            logger.debug("projectRoot " + projectRoot);
+            logger.debug("application " + application);
+            logger.debug("management " + management);
+            logger.debug("resources " + resources);
         } else {
             throw new RuntimeException("invalid root folder: " + rootFolder);
         }
@@ -345,6 +349,7 @@ public class BaseBuilder {
 
     private IOFileFilter textFileFilter() {
         IOFileFilter[] noes = new IOFileFilter[]{
+            new RegexPathFilter(B + X + projectRoot + "delete" + X + D + "bat" + X + E),
             new RegexPathFilter(B + X + application + project + "-ejb" + S + "nbproject" + S + "project" + D + "properties" + E),
             new RegexPathFilter(B + X + application + project + "-ejb" + S + "src" + S + "conf" + S + "persistence" + D + "xml" + E),
             new RegexPathFilter(B + X + application + project + "-ejb" + S + "src" + S + "conf" + S + "sun-ejb-jar" + D + "xml" + E),
@@ -384,7 +389,6 @@ public class BaseBuilder {
             new RegexFileFilter(B + "ant-deploy" + D + "xml" + E),
             new RegexFileFilter(B + "build-impl" + D + "xml" + E),
             new RegexFileFilter(B + "build" + D + "xml" + E),
-            new RegexFileFilter(B + "delete-generated-files" + D + X + E),
             new RegexFileFilter(B + "eclipse" + D + "classpath" + E),
             //  RegexFileFilter(B + "eclipse" + D + "project" + E),
             new RegexFileFilter(B + "genfiles" + D + "properties" + E),
@@ -398,6 +402,7 @@ public class BaseBuilder {
 
     private IOFileFilter textDirFilter() {
         IOFileFilter[] noes = new IOFileFilter[]{
+            new RegexPathFilter(B + X + projectRoot + "release" + E),
             new RegexPathFilter(B + X + application + "EarContent" + X + E),
             new RegexPathFilter(B + X + application + "eclipse.settings" + X + E),
             new RegexPathFilter(B + X + application + project + "-ejb" + S + "ejbModule" + X + E),
@@ -422,11 +427,11 @@ public class BaseBuilder {
             new RegexPathFilter(B + X + resources + "database" + S + "postgresql" + S + "views" + S + "jasper-report" + X + E),
             new RegexPathFilter(B + X + resources + "database" + S + "postgresql" + S + "views" + S + "system" + X + E),
             //  RegexPathFilter(B + X + resources + "reporting" + X + E),
+            new RegexPathFilter(B + X + management + "setup" + S + "config" + S + "jboss" + X + E),
             new RegexPathFilter(B + X + management + "sql" + X + E),
             new RegexFileFilter(B + "build" + E),
             new RegexFileFilter(B + "dist" + E),
             new RegexFileFilter(B + "private" + E),
-            new RegexFileFilter(B + "release" + E),
             new RegexFileFilter(B + "test" + E),
             excludeOracle ? new RegexFileFilter(B + "oracle" + E) : new RegexFileFilter(B + E)
         };

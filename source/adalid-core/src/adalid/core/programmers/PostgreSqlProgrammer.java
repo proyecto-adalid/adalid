@@ -183,16 +183,40 @@ public class PostgreSqlProgrammer extends AbstractSqlProgrammer {
     public String getSqlParameterType(Artifact artifact) {
         if (artifact == null) {
             return null;
+        } else if (artifact instanceof BinaryData) {
+            return BINARY;
+        } else if (artifact instanceof BooleanData) {
+            return BOOLEAN;
+        } else if (artifact instanceof CharacterData) {
+            return TEXT;
         } else if (artifact instanceof StringData) {
             return TEXT;
+        } else if (artifact instanceof ByteData) {
+            return INTEGER;
+        } else if (artifact instanceof ShortData) {
+            return INTEGER;
+        } else if (artifact instanceof IntegerData) {
+            return INTEGER;
+        } else if (artifact instanceof LongData) {
+            return LONG;
+        } else if (artifact instanceof FloatData) {
+            return DOUBLE;
+        } else if (artifact instanceof DoubleData) {
+            return DOUBLE;
+        } else if (artifact instanceof BigIntegerData) {
+            return BIGINT;
         } else if (artifact instanceof BigDecimalData) {
             return NUMERIC;
+        } else if (artifact instanceof DateData) {
+            return DATE;
         } else if (artifact instanceof TimeData) {
             return TIMEX;
         } else if (artifact instanceof TimestampData) {
             return TIMESTAMPX;
+        } else if (artifact instanceof Entity) {
+            return getEntityReferenceType((Entity) artifact);
         } else {
-            return getSqlType(artifact);
+            return null;
         }
     }
 
@@ -243,10 +267,10 @@ public class PostgreSqlProgrammer extends AbstractSqlProgrammer {
             TimestampData data = (TimestampData) artifact;
             int p = IntUtils.valueOf(data.getPrecision(), 3);
             return format(TIMESTAMP, p);
-        } else if (artifact instanceof Expression) {
-            return getExpressionType((Expression) artifact);
         } else if (artifact instanceof Entity) {
             return getEntityReferenceType((Entity) artifact);
+        } else if (artifact instanceof Expression) {
+            return getExpressionType((Expression) artifact);
         } else {
             return null;
         }

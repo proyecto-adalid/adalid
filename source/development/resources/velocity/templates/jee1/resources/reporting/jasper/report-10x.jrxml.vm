@@ -5,7 +5,7 @@
 #writeXMLAuthor('Jorge Campins')
 #setGlobalVariables()
 #setLocalVariables()
-#parse("$templatePath/macros/macros-${sqlProgrammer.DBMS.toLowerCase()}.vm")
+#parse("$templatePath/macros/macros-${targetDatabaseServerCode}.vm")
 #writeReport()
 #break
 

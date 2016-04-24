@@ -6,7 +6,6 @@
  */
 package adalid.util.sql;
 
-import adalid.commons.properties.PropertiesGetter;
 import adalid.commons.velocity.Writer;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -17,7 +16,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
-import org.apache.commons.collections.ExtendedProperties;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
@@ -35,17 +33,6 @@ public class SqlMerger extends SqlUtil {
     private static final String USER_DIR = System.getProperties().getProperty("user.dir");
 
     private static final String TEST_DIR = USER_DIR + FILE_SEPARATOR + "test";
-
-    public static synchronized void main(String[] args) {
-        if (args.length == 0) {
-            ExtendedProperties properties = PropertiesGetter.getPrivateProperties();
-            args = properties.getStringArray(SqlMerger.class.getName() + ".args");
-        }
-        SqlMerger merger = new SqlMerger(args);
-        if (merger.isInitialised()) {
-            merger.merge();
-        }
-    }
 
     // <editor-fold defaultstate="collapsed" desc="instance fields">
     private String _oldSchema;

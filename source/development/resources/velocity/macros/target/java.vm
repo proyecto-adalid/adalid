@@ -1,7 +1,9 @@
 #set($targetJavaVersion = "$!project.environmentVariables.get('java.version')")
 #if($targetJavaVersion == '')
     #set($targetJavaVersion = '1.7.0_25')
+    #set($targetJavaVersion = '1.8.0_25')
+    #set($targetJavaVersion = '1.8.0_77')
 #end
 #set($targetJavaMajorVersion = "$!StringUtils.substringBeforeLast($targetJavaVersion, '.')")
-#set($targetShortJavaVersion = "$!StringUtils.substringBeforeLast($targetJavaVersion, '.')")
+#set($targetJavaShortVersion = "$!StringUtils.substringBeforeLast($targetJavaVersion, '.')")
 #break

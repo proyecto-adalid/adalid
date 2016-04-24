@@ -1,6 +1,12 @@
 #set($targetPostgreSQLVersion = "$!project.environmentVariables.get('postgresql.version')")
 #if($targetPostgreSQLVersion == '')
     #set($targetPostgreSQLVersion = '9.2')
+    #set($targetPostgreSQLVersion = '9.3')
+    #set($targetPostgreSQLVersion = '9.5')
 #end
 #set($targetPostgreSQLMajorVersion = "$!StringUtils.substringBefore($targetPostgreSQLVersion, '.')")
+#set($targetPostgreSQLShortVersion = "$!StringUtils.substringBeforeLast($targetPostgreSQLVersion, '.')")
+#if($targetPostgreSQLShortVersion == $targetPostgreSQLMajorVersion)
+    #set($targetPostgreSQLShortVersion = $targetPostgreSQLVersion)
+#end
 #break

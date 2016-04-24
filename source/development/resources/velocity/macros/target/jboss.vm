@@ -1,8 +1,15 @@
 #set($targetJBossVersion = "$!project.environmentVariables.get('jboss.version')")
 #if($targetJBossVersion == '')
     #set($targetJBossVersion = '7.1.1.Final')
+    #set($targetJBossVersion = '9.0.0.Final')
+    #set($targetJBossVersion = '10.0.0.Final')
 #end
 #set($targetJBossMajorVersion = "$!StringUtils.substringBefore($targetJBossVersion, '.')")
+#set($targetJBossMinorVersion = "$!StringUtils.removeEndIgnoreCase($targetJBossVersion, '.Final')")
+#set($targetJBossShortVersion = "$!StringUtils.substringBeforeLast($targetJBossMinorVersion, '.')")
+#if($targetJBossShortVersion == $targetJBossMajorVersion)
+    #set($targetJBossShortVersion = $targetJBossMinorVersion)
+#end
 #set($fp = "$!absolute")
 #set($fs = "$!separator")
 #if($fs == '')

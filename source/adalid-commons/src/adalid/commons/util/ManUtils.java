@@ -144,17 +144,17 @@ public class ManUtils {
         Attributes attributes = manifest.getMainAttributes();
         return attributes.getValue(Attributes.Name.EXTENSION_NAME);
     }
-
-    public static String getExtensionInstallation(Manifest manifest) {
-        if (manifest == null) {
-            manifest = getManifest();
-        }
-        if (manifest == null) {
-            return null;
-        }
-        Attributes attributes = manifest.getMainAttributes();
-        return attributes.getValue(Attributes.Name.EXTENSION_INSTALLATION);
-    }
+//
+//  public static String getExtensionInstallation(Manifest manifest) {
+//      if (manifest == null) {
+//          manifest = getManifest();
+//      }
+//      if (manifest == null) {
+//          return null;
+//      }
+//      Attributes attributes = manifest.getMainAttributes();
+//      return attributes.getValue(Attributes.Name.EXTENSION_INSTALLATION);
+//  }
 
     public static String getImplementationTitle(Manifest manifest) {
         if (manifest == null) {
@@ -188,28 +188,28 @@ public class ManUtils {
         Attributes attributes = manifest.getMainAttributes();
         return attributes.getValue(Attributes.Name.IMPLEMENTATION_VENDOR);
     }
-
-    public static String getImplementationVendorId(Manifest manifest) {
-        if (manifest == null) {
-            manifest = getManifest();
-        }
-        if (manifest == null) {
-            return null;
-        }
-        Attributes attributes = manifest.getMainAttributes();
-        return attributes.getValue(Attributes.Name.IMPLEMENTATION_VENDOR_ID);
-    }
-
-    public static String getImplementationUrl(Manifest manifest) {
-        if (manifest == null) {
-            manifest = getManifest();
-        }
-        if (manifest == null) {
-            return null;
-        }
-        Attributes attributes = manifest.getMainAttributes();
-        return attributes.getValue(Attributes.Name.IMPLEMENTATION_URL);
-    }
+//
+//  public static String getImplementationVendorId(Manifest manifest) {
+//      if (manifest == null) {
+//          manifest = getManifest();
+//      }
+//      if (manifest == null) {
+//          return null;
+//      }
+//      Attributes attributes = manifest.getMainAttributes();
+//      return attributes.getValue(Attributes.Name.IMPLEMENTATION_VENDOR_ID);
+//  }
+//
+//  public static String getImplementationUrl(Manifest manifest) {
+//      if (manifest == null) {
+//          manifest = getManifest();
+//      }
+//      if (manifest == null) {
+//          return null;
+//      }
+//      Attributes attributes = manifest.getMainAttributes();
+//      return attributes.getValue(Attributes.Name.IMPLEMENTATION_URL);
+//  }
 
     public static String getImplementationDate(Manifest manifest) {
         if (manifest == null) {

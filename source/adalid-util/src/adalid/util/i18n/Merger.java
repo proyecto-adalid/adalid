@@ -6,7 +6,6 @@
  */
 package adalid.util.i18n;
 
-import adalid.commons.properties.PropertiesGetter;
 import adalid.commons.properties.PropertiesHandler;
 import adalid.commons.properties.SortedProperties;
 import java.io.File;
@@ -14,7 +13,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
-import org.apache.commons.collections.ExtendedProperties;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
@@ -38,19 +36,6 @@ public class Merger {
     private static final String OLD_VALUE = "[-]";
 
     private static final String TRAN_REQD = "<?>";
-
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String[] args) {
-        if (args.length == 0) {
-            ExtendedProperties properties = PropertiesGetter.getPrivateProperties();
-            args = properties.getStringArray(Merger.class.getName() + ".args");
-        }
-        for (int i = 0; i < args.length; i++) {
-            merge(args[i]);
-        }
-    }
 
     public static void merge(String project) {
         logger.info(project);

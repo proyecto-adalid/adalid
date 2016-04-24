@@ -1,11 +1,11 @@
 #setGlobalVariables()
 #if($targetJBossMajorVersion == '7')
     #set($jbossLibPrefix = 'jboss')
-    #set($jbossRuntime = 'JBoss 7.1 Runtime')
+    #set($jbossRuntime = "JBoss $targetJBossShortVersion Runtime")
     #set($jbossOwnerProjectFacets = 'jst.web')
 #else
     #set($jbossLibPrefix = 'wildfly')
-    #set($jbossRuntime = 'WildFly 9.0 Runtime')
+    #set($jbossRuntime = "WildFly $targetJBossShortVersion Runtime")
     #set($jbossOwnerProjectFacets = 'jst.jsf;jst.web')
 #end
 <?xml version="1.0" encoding="UTF-8"?>
@@ -20,7 +20,7 @@
     <classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/${jbossLibPrefix}-eclipselink"/>
     <classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/jsf12-support"/>
     <classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/woodstock-components"/>
-    <classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/jre7">
+    <classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER">
         <attributes>
             <attribute name="owner.project.facets" value="java"/>
         </attributes>

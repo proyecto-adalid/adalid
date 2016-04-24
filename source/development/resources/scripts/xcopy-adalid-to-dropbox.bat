@@ -48,7 +48,7 @@ set source
 set target
 set options
 echo.
-set siono=N
+set siono=Y
 set /p siono="copy source files into target, Are you sure  (Y/N)? [%siono%] "
 if /i "%siono%" == "Y" robocopy %source% %target% /e %xd% %xf% %options%
 echo.

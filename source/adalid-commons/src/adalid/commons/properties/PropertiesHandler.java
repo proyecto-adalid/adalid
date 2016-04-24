@@ -40,11 +40,13 @@ public class PropertiesHandler {
 
     private static final String FILE_SEP = System.getProperties().getProperty("file.separator");
 
-    private static final String BOOTSTRAPPING_FILE_NAME = "bootstrapping.properties";
+    private static final String BOOTSTRAPPING_FILE_NAME = BootstrappingFile.getName();
 
     private static final String BOOTSTRAPPING_FILE_PATH = USER_DIR + FILE_SEP + BOOTSTRAPPING_FILE_NAME;
 
     private static final String USER_VELOCITY_RESOURCES_DIR = USER_DIR + FILE_SEP + "resources" + FILE_SEP + "velocity";
+
+    private static final String PRIVATE_PROPERTIES = USER_DIR + FILE_SEP + "nbproject" + FILE_SEP + "private" + FILE_SEP + "private.properties";
 
     private static final ExtendedProperties bootstrapping;
 
@@ -72,6 +74,12 @@ public class PropertiesHandler {
      */
     public static ExtendedProperties getBootstrapping() {
         return bootstrapping;
+    }
+
+    public static ExtendedProperties getProgramProperties() {
+        File file = new File(PRIVATE_PROPERTIES);
+        ExtendedProperties properties = getExtendedProperties(file, Level.TRACE);
+        return properties == null || properties.isEmpty() ? bootstrapping : properties;
     }
 
     public static Properties loadProperties(String filename) {

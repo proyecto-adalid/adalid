@@ -1,6 +1,21 @@
 #set($targetGlassFishVersion = "$!project.environmentVariables.get('glassfish.version')")
 #if($targetGlassFishVersion == '')
     #set($targetGlassFishVersion = '4.0')
+    #set($targetGlassFishVersion = '4.1')
+    #set($targetGlassFishVersion = '4.1.1')
 #end
 #set($targetGlassFishMajorVersion = "$!StringUtils.substringBefore($targetGlassFishVersion, '.')")
+#set($targetGlassFishShortVersion = "$!StringUtils.substringBeforeLast($targetGlassFishVersion, '.')")
+#if($targetGlassFishShortVersion == $targetGlassFishMajorVersion)
+    #set($targetGlassFishShortVersion = $targetGlassFishVersion)
+#end
+#set($targetGlassFishFacetVersion = "${targetGlassFishShortVersion}")
+#set($targetGlassFishFacetVersion = "${targetGlassFishMajorVersion}.0")
+#set($fp = "$!absolute")
+#set($fs = "$!separator")
+#if($fs == '')
+    #set($fs = '/')
+#end
+#set($targetGlassFishDir = "glassfish-${targetGlassFishVersion}")
+#set($targetGlassFishHomeDir = "${fp}${fs}${targetGlassFishDir}")
 #break

@@ -1,0 +1,36 @@
+#setGlobalVariables()
+#set($root1 = '/cygdrive/c')
+#set($root2 = '/cygdrive/c/"Program Files"')
+${pound}!/bin/bash
+clear
+cd ${absolute}
+pwd
+ls -l
+#if($targetJavaVersion)
+    #writeSymbolicLink($root2 'Java')
+#end
+#if($targetApplicationServerCode == 'glassfish')
+    #writeSymbolicLink($root2 $targetGlassFishDir)
+#end
+#if($targetApplicationServerCode == 'jboss' || $targetApplicationServerCode == 'wildfly')
+    #writeSymbolicLink($root1 $targetJBossDir)
+#end
+#if($targetDatabaseServerCode == 'oracle')
+    #writeSymbolicLink($root1 'oraclexe')
+#end
+#if($targetDatabaseServerCode == 'postgresql')
+    #writeSymbolicLink($root2 'PostgreSQL')
+#end
+echo ""
+ls -l
+echo ""
+#break
+
+#macro(writeSymbolicLink $root $link)
+echo ""
+[ -L $link ] && rm -i $link
+if [ ! -x $link ]; then
+    echo "ln: create symbolic link '$link' to $root/$link"
+    ln -s $root/$link $link
+fi
+#end##writeSymbolicLink

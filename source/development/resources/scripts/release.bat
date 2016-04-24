@@ -28,35 +28,26 @@ echo.
 
 set DQPATH="%VRPATH%"
 rem DQPATH
-echo.
-pause
-echo.
 
 echo rd %DQPATH%
 if exist %DQPATH% rd %DQPATH% /s/q
-echo.
 
 echo md %DQPATH%
 md %DQPATH%
-echo.
 
 call:x-development
-pause
-echo.
 call:x-documents
-echo.
 call:x-lib
-pause
-echo.
 call:sweep
-pause
-echo.
 call:x-junction
+if defined %~n0-no-pause goto:eof
 pause
 echo.
 goto:eof
 
 :x-development
+set velocity-oracle-junction-no-pause=true
+call "%~dp0velocity-oracle-junction"
 call:set-sub-dir "%VRPATH%\source"
 call:robocopy-folder "%project_source_dir%" %SUBDIR% development
 goto:eof
@@ -74,15 +65,16 @@ goto:eof
 call:set-sub-dir "%VRPATH%\lib"
 set LIBDIR=%project_dir%\lib
 call:copy-files "%LIBDIR%" %SUBDIR% *.*
-set jar="%VRPATH%\lib\adalid-jee2.jar"
-if exist %jar% del %jar%
-set jar="%VRPATH%\lib\adalid-meta.jar"
-if exist %jar% del %jar%
-set jar="%VRPATH%\lib\adalid-oracle.jar"
-if /i "%exclude_oracle%" == "Y" if exist %jar% del %jar%
-set jar="%VRPATH%\lib\adalid-prime.jar"
-if exist %jar% del %jar%
+call:delete-jar "%VRPATH%\lib\adalid-jee2.jar"
+call:delete-jar "%VRPATH%\lib\adalid-meta.jar"
+call:delete-jar "%VRPATH%\lib\adalid-prime.jar"
+if /i "%exclude_oracle%" == "Y" call:delete-jar "%VRPATH%\lib\adalid-oracle.jar"
 dir %VRPATH%\lib
+echo.
+goto:eof
+
+:delete-jar
+if exist "%~f1" del "%~f1"
 goto:eof
 
 :x-junction
@@ -119,27 +111,22 @@ if not exist %SOURCE% (
 )
 set SOURCE="%~f1\%~3"
 echo copy %SOURCE% %TARGET%
+echo.
 call copy %SOURCE% %TARGET%
 echo.
 goto:eof
 
 :set-sub-dir
 set SUBDIR="%~f1"
-set SUBDIR
 if not exist %SUBDIR% md %SUBDIR%
-echo.
 goto:eof
 
 :sweep
 if not defined VRNAME goto:eof
 if not defined VRPATH goto:eof
 rem call:replace-VnnRaammdd
-rem pause
 call:convert-text-files
-pause
 call:modify-files-date
-pause
-echo.
 call:modify-libraries-timestamp
 goto:eof
 
@@ -166,9 +153,12 @@ echo.
 goto:eof
 
 :convert-text-files
+set siono=Y
+set /p siono="dos2unix: convert text files (Y|N) [%siono%] "
+echo.
+if /i not "%siono%" == "Y" goto:eof
 set dos2unix="%third_party_dir%\tools\dos2unix\bin\dos2unix.exe"
 if not exist %dos2unix% set dos2unix=
-echo.
 set dos2unix
 echo.
 if not defined dos2unix goto:eof
@@ -182,17 +172,19 @@ call:dos2unix *.sql
 call:dos2unix *.txt
 call:dos2unix *.vm
 call:dos2unix *.xml
-echo.
 goto:eof
 
 :dos2unix
-echo.
 echo dos2unix %1
 echo.
 for /R "%VRPATH%" %%f in (%1) do %dos2unix% -o -q "%%f"
 goto:eof
 
 :modify-files-date
+set siono=Y
+set /p siono="filedate: modify files date (Y|N) [%siono%] "
+echo.
+if /i not "%siono%" == "Y" goto:eof
 set filedate="%third_party_dir%\tools\abfTools\FileDate\FileDate.exe"
 set filedate="%third_party_dir%\tools\FileTouch\FileTouch.exe"
 if not exist %filedate% set filedate=
@@ -203,7 +195,7 @@ if /i "%filedate%" == "filedate" (
     %filedate% "%VRPATH%\*.txt" %mm%/%dd%/%aaaa% %hh24%-00-00
     %filedate% "%VRPATH%\source\*" %mm%/%dd%/%aaaa% %hh24%-00-00 /r
 ) else (
-    %filedate% /W /A /C /S /D %mm%/%dd%/%aaaa% /T %hh24%:00:00 "%VRPATH%\*.txt"
+    %filedate% /W /A /C /S /D %mm%/%dd%/%aaaa% /T %hh24%:00:00 "%VRPATH%\*.txt" 1>nul
     set newmm=%mm%
     set newdd=%dd%
     set newhh=%hh24%
@@ -227,19 +219,20 @@ set /p siono="modify NBM and JAR files date and time (Y|N) [%siono%] "
 echo.
 if /i not "%siono%" == "Y" goto:eof
 set newmm=%mm%
+set newdd=%dd%
+set newhh=%hh24%
+set newnn=%nn%
+set newnn=00
+goto:do-modify-libraries-timestamp
 set /p newmm="Double-digit Month (01-12) [%newmm%] "
 echo.
 if not defined newmm goto:eof
-set newdd=%dd%
 set /p newdd="Double-digit Day (01-31) [%newdd%] "
 echo.
 if not defined newdd goto:eof
-set newhh=%hh24%
 set /p newhh="Double-digit Hour (00-23) [%newhh%] "
 echo.
 if not defined newhh goto:eof
-set newnn=%nn%
-set newnn=00
 set /p newnn="Double-digit Minute (00-59) [%newnn%] "
 echo.
 if not defined newnn goto:eof
@@ -247,14 +240,13 @@ set siono=Y
 set /p siono="mm/dd/yyyy=%newmm%/%newdd%/%aaaa%, hh-mm=%newhh%-%newnn%-00 (Y|N) [%siono%] "
 echo.
 if /i not "%siono%" == "Y" goto:eof
+:do-modify-libraries-timestamp
 if /i "%filedate%" == "filedate" (
-    rem %filedate% "%VRPATH%\lib\*" %newmm%/%newdd%/%aaaa% %newhh%-%newnn%-00 /r
     %filedate% "%VRPATH%\lib\*.nbm" %newmm%/%newdd%/%aaaa% %newhh%-%newnn%-00 /r
     %filedate% "%VRPATH%\lib\*.jar" %newmm%/%newdd%/%aaaa% %newhh%-%newnn%-00 /r
 ) else (
-    rem %filedate% /W /A /C /S /D %newmm%/%newdd%/%aaaa% /T %newhh%:%newnn%:00 "%VRPATH%\lib\*"
-    %filedate% /W /A /C /S /D %newmm%/%newdd%/%aaaa% /T %newhh%:%newnn%:00 "%VRPATH%\lib\*.nbm"
-    %filedate% /W /A /C /S /D %newmm%/%newdd%/%aaaa% /T %newhh%:%newnn%:00 "%VRPATH%\lib\*.jar"
+    %filedate% /W /A /C /S /D %newmm%/%newdd%/%aaaa% /T %newhh%:%newnn%:00 "%VRPATH%\lib\*.nbm" 1>nul
+    %filedate% /W /A /C /S /D %newmm%/%newdd%/%aaaa% /T %newhh%:%newnn%:00 "%VRPATH%\lib\*.jar" 1>nul
 )
 echo.
 dir %VRPATH%\lib
@@ -262,8 +254,8 @@ echo.
 goto:eof
 
 :forFileTouch
-for /R %1 %%f in (*) do %filedate% /W /A /C    /D %newmm%/%newdd%/%aaaa% /T %newhh%:%newnn%:00 "%%f" >> %log%
-for /R %1 %%f in (.) do %filedate% /W /A /C /S /D %newmm%/%newdd%/%aaaa% /T %newhh%:%newnn%:00 "%%~dpf*" >> %log%
+for /R %1 %%f in (*) do %filedate% /W /A /C    /D %newmm%/%newdd%/%aaaa% /T %newhh%:%newnn%:00 "%%f"     1>nul
+for /R %1 %%f in (.) do %filedate% /W /A /C /S /D %newmm%/%newdd%/%aaaa% /T %newhh%:%newnn%:00 "%%~dpf*" 1>nul
 goto:eof
 
 :robocopy-folder
@@ -272,6 +264,7 @@ if "%~2" == "" goto:eof
 if "%~3" == "" goto:eof
 set SOURCE="%~f1\%3"
 set TARGET="%~f2\%3"
+echo robocopy %SOURCE% %TARGET%
 if not exist %SOURCE% (
     echo %SOURCE% no existe!
     echo.

@@ -4,7 +4,7 @@
 #writeXMLLicense()
 #writeXMLAuthor('Jorge Campins')
 #parse("$templatePath/macros/macros-1.vm")
-#parse("$templatePath/macros/macros-${sqlProgrammer.DBMS.toLowerCase()}.vm")
+#parse("$templatePath/macros/macros-${targetDatabaseServerCode}.vm")
 #setLocalVariables()
 #writeJasperReport()
 #break

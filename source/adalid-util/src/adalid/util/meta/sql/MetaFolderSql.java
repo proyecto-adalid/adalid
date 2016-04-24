@@ -240,9 +240,9 @@ public class MetaFolderSql {
         logger.info(files.size() + " files ");
         logger.info(folders.size() + " folders ");
         logger.info(fileTypes.size() + " file types ");
-        for (String type : fileTypes.keySet()) {
-            logger.info(type + "=" + fileTypes.get(type));
-        }
+//      for (String type : fileTypes.keySet()) {
+//          logger.info(type + "=" + fileTypes.get(type));
+//      }
         logger.info(readingWarnings + " reading warnings ");
         logger.info(readingErrors + " reading errors ");
     }

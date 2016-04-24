@@ -53,8 +53,8 @@ javac.debug=true
 javac.deprecation=false
 javac.processorpath=${backslash}
     ${dollar}{javac.classpath}
-javac.source=$targetShortJavaVersion
-javac.target=$targetShortJavaVersion
+javac.source=$targetJavaShortVersion
+javac.target=$targetJavaShortVersion
 javac.test.classpath=${backslash}
     ${dollar}{javac.classpath}:${backslash}
     ${dollar}{build.classes.dir}

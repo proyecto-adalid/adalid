@@ -11,12 +11,12 @@ package adalid.core.enums;
  */
 public enum DatabaseTriggerType {
 
-    BEFORE_INSERT_ROW("before", "insert", "row", "new", "bir", "bix"),
-    BEFORE_UPDATE_ROW("before", "update", "row", "new", "bur", "bux"),
-    BEFORE_DELETE_ROW("before", "delete", "row", "old", "bdr", "bdx"),
-    AFTER_INSERT_ROW("after", "insert", "row", "null", "air", "aix"),
-    AFTER_UPDATE_ROW("after", "update", "row", "null", "aur", "aux"),
-    AFTER_DELETE_ROW("after", "delete", "row", "null", "adr", "adx");
+    BEFORE_INSERT_ROW("before", "insert", "row", "new", "bir", "bis", "bix"),
+    BEFORE_UPDATE_ROW("before", "update", "row", "new", "bur", "bus", "bux"),
+    BEFORE_DELETE_ROW("before", "delete", "row", "old", "bdr", "bds", "bdx"),
+    AFTER_INSERT_ROW("after", "insert", "row", "null", "air", "ais", "aix"),
+    AFTER_UPDATE_ROW("after", "update", "row", "null", "aur", "aus", "aux"),
+    AFTER_DELETE_ROW("after", "delete", "row", "null", "adr", "ads", "adx");
 
     private final String _adverb;
 
@@ -28,15 +28,18 @@ public enum DatabaseTriggerType {
 
     private final String _acronym;
 
-    private final String _anonym;
+    private final String _statementAcronym;
 
-    private DatabaseTriggerType(String adverb, String verb, String level, String variable, String acronym, String anonym) {
+    private final String _extensionAcronym;
+
+    private DatabaseTriggerType(String adverb, String verb, String level, String variable, String acronym, String statement, String extension) {
         _adverb = adverb;
         _verb = verb;
         _level = level;
         _variable = variable;
         _acronym = acronym;
-        _anonym = anonym;
+        _statementAcronym = statement;
+        _extensionAcronym = extension;
     }
 
     public String getAdverb() {
@@ -59,8 +62,12 @@ public enum DatabaseTriggerType {
         return _acronym;
     }
 
-    public String getAnonym() {
-        return _anonym;
+    public String getStatementAcronym() {
+        return _statementAcronym;
+    }
+
+    public String getExtensionAcronym() {
+        return _extensionAcronym;
     }
 
 }

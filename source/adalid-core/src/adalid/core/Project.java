@@ -8,6 +8,7 @@ package adalid.core;
 
 import adalid.commons.bundles.Bundle;
 import adalid.commons.enums.LoggingLevel;
+import adalid.commons.properties.BootstrappingFile;
 import adalid.commons.util.ColUtils;
 import adalid.commons.util.ThrowableUtils;
 import adalid.commons.velocity.Writer;
@@ -69,6 +70,10 @@ public abstract class Project extends AbstractArtifact implements Comparable<Pro
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="static fields' public getters and setters">
+    public static void setBootstrappingFileName(String name) {
+        BootstrappingFile.setName(name);
+    }
+
     /**
      * @return the locale
      */
@@ -795,6 +800,10 @@ public abstract class Project extends AbstractArtifact implements Comparable<Pro
 
     public Project() {
         super();
+        init();
+    }
+
+    private void init() {
         Class<?> namedClass = getNamedClass();
         String className = namedClass.getSimpleName();
         setDeclared(className);
@@ -1038,7 +1047,7 @@ public abstract class Project extends AbstractArtifact implements Comparable<Pro
         }
         DisplayMode mode = DisplayFormat.CONSOLE.equals(format) ? DisplayMode.PROCESSING
             : DisplayFormat.CONSOLE.equals(displayFormat) ? DisplayMode.UNSPECIFIED
-                : displayMode;
+            : displayMode;
         /**/
         Entity siblingEntity;
         Entity siblingMaster;
@@ -1106,7 +1115,7 @@ public abstract class Project extends AbstractArtifact implements Comparable<Pro
         }
         DisplayMode mode = DisplayFormat.CONSOLE.equals(format) ? DisplayMode.PROCESSING
             : DisplayFormat.CONSOLE.equals(displayFormat) ? DisplayMode.UNSPECIFIED
-                : displayMode;
+            : displayMode;
         /**/
         Entity cousinEntity;
         Entity cousinMaster;
