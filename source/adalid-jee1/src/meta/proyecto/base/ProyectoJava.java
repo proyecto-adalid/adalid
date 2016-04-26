@@ -13,6 +13,7 @@ import adalid.core.Operation;
 import adalid.core.Project;
 import adalid.core.annotations.ProjectModule;
 import adalid.core.enums.Kleenean;
+import adalid.core.enums.ProjectStage;
 import adalid.core.enums.SecurityRealmType;
 import adalid.core.interfaces.Artifact;
 import adalid.core.interfaces.Entity;
@@ -201,8 +202,6 @@ public abstract class ProyectoJava extends Project {
 
     private Properties _parametersDictionary;
 
-    private boolean _internetAccessAllowed;
-
     private String _baseFolderName;
 
     private String _databaseName;
@@ -211,11 +210,17 @@ public abstract class ProyectoJava extends Project {
 
     private String _rootPackageName;
 
+    private boolean _internetAccessAllowed;
+
+    private boolean _projectMailingEnabled;
+
+    private ProjectStage _projectStage;
+
+    private SecurityRealmType _securityRealmType;
+
     private String _securityRealmName;
 
     private String _roleBasedAccessControllerName;
-
-    private SecurityRealmType _securityRealmType = SecurityRealmType.JDBC;
 
     /**
      * @return true if the dictionary is enabled; false otherwise
@@ -617,20 +622,6 @@ public abstract class ProyectoJava extends Project {
     }
 
     /**
-     * @return true if internet access is allowed; false otherwise
-     */
-    public boolean isInternetAccessAllowed() {
-        return _internetAccessAllowed;
-    }
-
-    /**
-     * @param internetAccessAllowed true if internet access is allowed; false otherwise
-     */
-    public void setInternetAccessAllowed(boolean internetAccessAllowed) {
-        _internetAccessAllowed = internetAccessAllowed;
-    }
-
-    /**
      * @return the base folder name
      */
     public String getBaseFolderName() {
@@ -687,6 +678,62 @@ public abstract class ProyectoJava extends Project {
     }
 
     /**
+     * @return true if internet access should be allowed; false otherwise
+     */
+    public boolean isInternetAccessAllowed() {
+        return _internetAccessAllowed;
+    }
+
+    /**
+     * @param allowed true if internet access is allowed; false otherwise
+     */
+    public void setInternetAccessAllowed(boolean allowed) {
+        _internetAccessAllowed = allowed;
+    }
+
+    /**
+     * @return true if project mailing should be enabled; false otherwise
+     */
+    public boolean isProjectMailingEnabled() {
+        return _projectMailingEnabled;
+    }
+
+    /**
+     * @param enabled true if project mailing should be enabled; false otherwise
+     */
+    public void setProjectMailingEnabled(boolean enabled) {
+        _projectMailingEnabled = enabled;
+    }
+
+    /**
+     * @return the project stage
+     */
+    public ProjectStage getProjectStage() {
+        return _projectStage == null ? ProjectStage.DEVELOPMENT : _projectStage;
+    }
+
+    /**
+     * @param stage the project stage to set
+     */
+    public void setProjectStage(ProjectStage stage) {
+        _projectStage = stage;
+    }
+
+    /**
+     * @return the security realm type
+     */
+    public SecurityRealmType getSecurityRealmType() {
+        return _securityRealmType == null ? SecurityRealmType.JDBC : _securityRealmType;
+    }
+
+    /**
+     * @param securityRealmType the security realm type to set
+     */
+    public void setSecurityRealmType(SecurityRealmType securityRealmType) {
+        _securityRealmType = securityRealmType;
+    }
+
+    /**
      * @return the security realm name
      */
     public String getSecurityRealmName() {
@@ -704,7 +751,7 @@ public abstract class ProyectoJava extends Project {
      * @return the role-based-access-controller (RBAC) name
      */
     public String getRoleBasedAccessControllerName() {
-        return StringUtils.defaultIfBlank(_roleBasedAccessControllerName, "$LOWER_CASE_CODE");
+        return StringUtils.defaultIfBlank(_roleBasedAccessControllerName, getDefaultRoleBasedAccessControllerName());
     }
 
     /**
@@ -712,20 +759,6 @@ public abstract class ProyectoJava extends Project {
      */
     public void setRoleBasedAccessControllerName(String roleBasedAccessControllerName) {
         _roleBasedAccessControllerName = roleBasedAccessControllerName;
-    }
-
-    /**
-     * @return the security realm type
-     */
-    public SecurityRealmType getSecurityRealmType() {
-        return _securityRealmType;
-    }
-
-    /**
-     * @param securityRealmType the security realm type to set
-     */
-    public void setSecurityRealmType(SecurityRealmType securityRealmType) {
-        _securityRealmType = securityRealmType;
     }
 
     protected String getDefaultDatabaseName() {
@@ -746,9 +779,12 @@ public abstract class ProyectoJava extends Project {
     protected String getDefaultSecurityRealmName() {
         String string = StringUtils.defaultIfBlank(getAlias(), getName());
         String prefix = StrUtils.getLowerCaseIdentifier(string, '-');
-        String srtype = _securityRealmType == null ? "jdbc" : _securityRealmType.name().toLowerCase();
         String suffix = "realm";
-        return prefix + "-" + srtype + "-" + suffix;
+        return prefix + "-" + getSecurityRealmType().name().toLowerCase() + "-" + suffix;
+    }
+
+    protected String getDefaultRoleBasedAccessControllerName() {
+        return getSecurityRealmType().name();
     }
 
 }

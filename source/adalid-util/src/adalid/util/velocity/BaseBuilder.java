@@ -350,6 +350,7 @@ public class BaseBuilder {
     private IOFileFilter textFileFilter() {
         IOFileFilter[] noes = new IOFileFilter[]{
             new RegexPathFilter(B + X + projectRoot + "delete" + X + D + "bat" + X + E),
+            new RegexPathFilter(B + X + projectRoot + "home-compare" + D + "bat" + X + E),
             new RegexPathFilter(B + X + application + project + "-ejb" + S + "nbproject" + S + "project" + D + "properties" + E),
             new RegexPathFilter(B + X + application + project + "-ejb" + S + "src" + S + "conf" + S + "persistence" + D + "xml" + E),
             new RegexPathFilter(B + X + application + project + "-ejb" + S + "src" + S + "conf" + S + "sun-ejb-jar" + D + "xml" + E),
@@ -378,6 +379,7 @@ public class BaseBuilder {
             new RegexPathFilter(B + X + management + "setup" + S + "scripts" + S + "linux" + S + "ln-s" + D + "sh" + E),
             new RegexPathFilter(B + X + management + "setup" + S + "scripts" + S + "linux" + S + "variables-conf" + D + "sh" + E),
             new RegexPathFilter(B + X + management + "setup" + S + "scripts" + S + "linux" + S + "variables-home" + D + "sh" + E),
+            new RegexPathFilter(B + X + management + "setup" + S + "scripts" + S + "windows" + S + "ln-s" + D + "bat" + E),
             new RegexPathFilter(B + X + management + "setup" + S + "scripts" + S + "windows" + S + "variables-conf" + D + "bat" + E),
             new RegexPathFilter(B + X + management + "setup" + S + "scripts" + S + "windows" + S + "variables-home" + D + "bat" + E),
             new RegexFileFilter(B + X + D + "gif" + E),
@@ -428,6 +430,7 @@ public class BaseBuilder {
             new RegexPathFilter(B + X + resources + "database" + S + "postgresql" + S + "views" + S + "system" + X + E),
             //  RegexPathFilter(B + X + resources + "reporting" + X + E),
             new RegexPathFilter(B + X + management + "setup" + S + "config" + S + "jboss" + X + E),
+            new RegexPathFilter(B + X + management + "setup" + S + "config" + S + "wildfly" + S + X + S + "9.0.0" + S + X + E),
             new RegexPathFilter(B + X + management + "sql" + X + E),
             new RegexFileFilter(B + "build" + E),
             new RegexFileFilter(B + "dist" + E),

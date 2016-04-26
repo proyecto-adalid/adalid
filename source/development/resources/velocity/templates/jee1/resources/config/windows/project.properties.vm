@@ -2,7 +2,12 @@
 #setPropertiesVariables()
 #writePropertiesLicense()
 #writePropertiesAuthor('Jorge Campins')
-RBAC=${project.roleBasedAccessControllerName}
+#set($roleBasedAccessControllerName = "$!{project.roleBasedAccessControllerName}")
+#if($roleBasedAccessControllerName.equalsIgnoreCase('LDAP'))
+....RBAC=LDAP
+#else
+....RBAC=${dollar}LOWER_CASE_CODE
+#end
 CONTENT_ROOT_DIR=${dollar}CONTENT_ROOT_DIR
 HOME_DIR=${dollar}HOME_DIR
 JDBC_DRIVER=${dollar}JDBC_DRIVER

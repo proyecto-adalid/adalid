@@ -8,20 +8,22 @@
 public class Maestro extends ProyectoBase {
 
     public static void main(String[] args) {
-//      Maestro.setLocale(Locale.ENGLISH);
-        Maestro.setLocale(Locale.forLanguageTag("es"));
-        Maestro.setAlertLoggingLevel(LoggingLevel.OFF);
-//      Maestro.setDetailLoggingLevel(LoggingLevel.INFO);
-//      Maestro.setTrackingLoggingLevel(LoggingLevel.INFO);
+//      setBootstrappingFileName("bootstrapping.properties");
+//      setLocale(Locale.ENGLISH);
+        setLocale(Locale.forLanguageTag("es"));
+        setAlertLoggingLevel(LoggingLevel.OFF);
+//      setDetailLoggingLevel(LoggingLevel.INFO);
+//      setTrackingLoggingLevel(LoggingLevel.INFO);
         Maestro maestro = new Maestro();
         if (maestro.build()) {
-            maestro.putEnvironmentVariable(VERSION_JAVA, "1.8.0_25");
-            maestro.putEnvironmentVariable(VERSION_GLASSFISH, "4.1");
-//          maestro.putEnvironmentVariable(VERSION_JBOSS, "9.0.0.Final");
-            maestro.putEnvironmentVariable(VERSION_POSTGRESQL, "9.3");
-//          maestro.setSecurityRealmType(SecurityRealmType.LDAP);
-//          maestro.setRoleBasedAccessControllerName("LDAP");
+            maestro.putEnvironmentVariable(VERSION_JAVA, "1.8.0_77");
+            maestro.putEnvironmentVariable(VERSION_GLASSFISH, "4.1.1");
+            maestro.putEnvironmentVariable(VERSION_WILDFLY, "10.0.0.Final");
+            maestro.putEnvironmentVariable(VERSION_POSTGRESQL, "9.5");
             maestro.setInternetAccessAllowed(true);
+            maestro.setProjectMailingEnabled(true);
+//          maestro.setProjectStage(ProjectStage.PRODUCTION);
+//          maestro.setSecurityRealmType(SecurityRealmType.LDAP);
 //          maestro.attachAddAttributesMethods(meta.postgresql.PostgreSQLAttributes.class);
 //          maestro.attachAddAttributesMethods(meta.entidad.comun.operacion.basica.PostgreSQLAttributes.class);
             maestro.setAlias("$masterProjectAlias");
@@ -40,32 +42,6 @@ public class Maestro extends ProyectoBase {
     @ProjectModule(menu = Kleenean.TRUE, role = Kleenean.TRUE)
     Modulo1 mod1;
 
-#***
-//  @ProjectModule(menu = Kleenean.TRUE, role = Kleenean.TRUE)
-//  Modulo2 mod2;
-//
-//  @ProjectModule(menu = Kleenean.TRUE, role = Kleenean.TRUE)
-//  Modulo3 mod3;
-//
-//  @ProjectModule(menu = Kleenean.TRUE, role = Kleenean.TRUE)
-//  Modulo4 mod4;
-//
-//  @ProjectModule(menu = Kleenean.TRUE, role = Kleenean.TRUE)
-//  Modulo5 mod5;
-//
-//  @ProjectModule(menu = Kleenean.TRUE, role = Kleenean.TRUE)
-//  Modulo6 mod6;
-//
-//  @ProjectModule(menu = Kleenean.TRUE, role = Kleenean.TRUE)
-//  Modulo7 mod7;
-//
-//  @ProjectModule(menu = Kleenean.TRUE, role = Kleenean.TRUE)
-//  Modulo8 mod8;
-//
-//  @ProjectModule(menu = Kleenean.TRUE, role = Kleenean.TRUE)
-//  Modulo9 mod9;
-//
-*###
     @ProjectModule(menu = Kleenean.TRUE, role = Kleenean.TRUE)
     Auditoria modx1;
 
@@ -94,7 +70,7 @@ public class Maestro extends ProyectoBase {
     #set($added = $imports.add("meta.proyecto.comun.ControlAcceso"))
     #set($added = $imports.add("meta.proyecto.comun.ControlProcesos"))
     #set($added = $imports.add("meta.proyecto.comun.ControlPruebas"))
-    #set($added = $imports.add("meta.proyecto.comun.ControlTareas"))   
+    #set($added = $imports.add("meta.proyecto.comun.ControlTareas"))
     #set($projectAliasSuffix = 'ap101')
     #set($masterProjectAlias = "$StringUtils.removeEndIgnoreCase($reader.alias, $projectAliasSuffix)$projectAliasSuffix")
 #end

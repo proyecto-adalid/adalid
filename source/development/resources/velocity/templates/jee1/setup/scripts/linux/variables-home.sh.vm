@@ -1,0 +1,53 @@
+#setGlobalVariables()
+${pound}!/bin/bash
+#set($environmentalWorkspaceFolderPath = $FilUtils.getCurrentEnvironmentalWorkspaceFolderPath())
+#set($environmentalWorkspaceFolderPath = $FilUtils.getDefaultEnvironmentalWorkspaceFolderPath())
+#set($environmentalWorkspaceFolderPath = $absolute)
+#if($targetJavaVersion)
+export JAVA_HOME=${absolute}/Java/jdk${targetJavaVersion}
+#end
+#if($targetApplicationServerCode == 'glassfish')
+export GLASSFISH_HOME=${absolute}/glassfish-${targetGlassFishVersion}/glassfish
+#end
+#if($targetApplicationServerCode == 'jboss' || $targetApplicationServerCode == 'wildfly')
+export JBOSS_HOME=${targetJBossHomeDir}
+#end
+#if($targetDatabaseServerCode == 'oracle')
+export ORACLE_HOME=${absolute}/oraclexe/app/oracle/product/${targetOracleVersion}/server
+#end
+#if($targetDatabaseServerCode == 'postgresql')
+export POSTGRESQL_HOME=${absolute}/PostgreSQL/${targetPostgreSQLVersion}
+#end
+#if($environmentalWorkspaceFolderPath != '')
+export THIRD_PARTY_HOME=${absolute}/third-party
+#end
+#if($environmentalWorkspaceFolderPath != "${absolute}/workspace")
+if [ ! -d "$THIRD_PARTY_HOME" ]; then
+    export THIRD_PARTY_HOME=${absolute}/workspace/third-party
+fi
+#end
+#if($environmentalWorkspaceFolderPath != "$HOME/workspace")
+if [ ! -d "$THIRD_PARTY_HOME" ]; then
+    export THIRD_PARTY_HOME=$HOME/workspace/third-party
+fi
+#end
+#if($targetJavaVersion)
+export JAVA_MAJOR=${targetJavaMajorVersion}
+export JAVA_VERSION=${targetJavaVersion}
+#end
+#if($targetApplicationServerCode == 'glassfish')
+export GLASSFISH_MAJOR=${targetGlassFishMajorVersion}
+export GLASSFISH_VERSION=${targetGlassFishVersion}
+#end
+#if($targetApplicationServerCode == 'jboss' || $targetApplicationServerCode == 'wildfly')
+export JBOSS_MAJOR=${targetJBossMajorVersion}
+export JBOSS_VERSION=${targetJBossVersion}
+#end
+#if($targetDatabaseServerCode == 'oracle')
+export ORACLE_MAJOR=${targetOracleMajorVersion}
+export ORACLE_VERSION=${targetOracleVersion}
+#end
+#if($targetDatabaseServerCode == 'postgresql')
+export POSTGRESQL_MAJOR=${targetPostgreSQLMajorVersion}
+export POSTGRESQL_VERSION=${targetPostgreSQLVersion}
+#end

@@ -1,0 +1,116 @@
+#setGlobalVariables()
+#set($fs = '\')
+#set($environmentalWorkspaceFolderPath = $FilUtils.getCurrentEnvironmentalWorkspaceFolderPath())
+#set($environmentalWorkspaceFolderPath = $FilUtils.getDefaultEnvironmentalWorkspaceFolderPath())
+#set($environmentalWorkspaceFolderPath = $absolute)
+#set($environmentalWorkspaceFolderPath = '%SystemDrive%')
+#set($root1 = '%SystemDrive%')
+#set($root2 = '%ProgramFiles%')
+@echo off
+cd /d "%~dp0"
+
+setlocal
+#if($environmentalWorkspaceFolderPath != '')
+set THIRD_PARTY_HOME=${environmentalWorkspaceFolderPath}${fs}third-party
+#end
+#if($environmentalWorkspaceFolderPath != "%SystemDrive%${fs}workspace")
+if not exist "%THIRD_PARTY_HOME%" (
+    set THIRD_PARTY_HOME=%SystemDrive%${fs}workspace${fs}third-party
+)
+#end
+#if($environmentalWorkspaceFolderPath != "%USERPROFILE%${fs}workspace")
+if not exist "%THIRD_PARTY_HOME%" (
+    set THIRD_PARTY_HOME=%USERPROFILE%${fs}workspace${fs}third-party
+)
+#end
+set junction="%THIRD_PARTY_HOME%${backslash}tools${backslash}junction${backslash}junction.exe"
+set junction
+if not exist %junction% (
+    echo %junction% no existe!
+    echo.
+    pause
+    goto:eof
+)
+echo.
+call:d-junction
+#if($targetJavaVersion)
+    #writeSymbolicLink($root2 'Java')
+#end
+#if($targetApplicationServerCode == 'glassfish')
+    #writeSymbolicLink($root2 $targetGlassFishDir)
+#end
+#if($targetApplicationServerCode == 'jboss' || $targetApplicationServerCode == 'wildfly')
+    #writeSymbolicLink($root1 $targetJBossDir)
+#end
+#if($targetDatabaseServerCode == 'oracle')
+    #writeSymbolicLink($root1 'oraclexe')
+#end
+#if($targetDatabaseServerCode == 'postgresql')
+    #writeSymbolicLink($root2 'PostgreSQL')
+#end
+call:x-junction "%THIRD_PARTY_HOME%"
+call:d-junction
+goto:eof
+
+:d-junction
+set junction-token=
+dir /a:d /o:n>junction.log
+for /f "tokens=1,2,3* delims=<>" %%i in (junction.log) do (
+    if /i "[%%j]" == "[JUNCTION]" (
+        echo %%i%%j%%k
+        set junction-token=%%j
+    )
+)
+del junction.log
+if defined junction-token (
+    echo.
+    pause
+    echo.
+)
+goto:eof
+
+:x-junction
+set source="%~f1"
+call:set-target %source%
+call:c-junction %target%
+if defined junction-token (
+    echo junction -d %target%
+    %junction% -d %target%
+    echo.
+)
+if not exist %target% (
+    if exist %source% (
+        echo junction %target% %source%
+        %junction% %target% %source%
+        echo.
+    )
+)
+pause
+echo.
+goto:eof
+
+:set-target
+set target=%~nx1
+goto:eof
+
+:c-junction
+echo junction %target%
+set junction-token=
+%junction% %1>junction.log
+type junction.log
+for /f "skip=4 tokens=3 delims=:" %%a in (junction.log) do call:set-junction-token %%a
+del junction.log
+goto:eof
+
+:set-junction-token
+set pdq=%*
+rem set pdq=%pdq: =%
+if "[%pdq%]" == "[JUNCTION]" set junction-token=%pdq%
+goto:eof
+#break
+
+#macro(writeSymbolicLink $root $link)
+#if($root && $link)
+....call:x-junction "$root\\$link"
+#end
+#end##writeSymbolicLink

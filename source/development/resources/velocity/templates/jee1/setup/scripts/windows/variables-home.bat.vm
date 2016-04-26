@@ -1,0 +1,54 @@
+#setGlobalVariables()
+#set($fs = '\')
+#set($environmentalWorkspaceFolderPath = $FilUtils.getCurrentEnvironmentalWorkspaceFolderPath())
+#set($environmentalWorkspaceFolderPath = $FilUtils.getDefaultEnvironmentalWorkspaceFolderPath())
+#set($environmentalWorkspaceFolderPath = $absolute)
+#set($environmentalWorkspaceFolderPath = '%SystemDrive%')
+#if($targetJavaVersion)
+set JAVA_HOME=%ProgramFiles%${fs}Java${fs}jdk${targetJavaVersion}
+#end
+#if($targetApplicationServerCode == 'glassfish')
+set GLASSFISH_HOME=%ProgramFiles%${fs}glassfish-${targetGlassFishVersion}${fs}glassfish
+#end
+#if($targetApplicationServerCode == 'jboss' || $targetApplicationServerCode == 'wildfly')
+set JBOSS_HOME=%SystemDrive%${fs}${targetJBossDir}
+#end
+#if($targetDatabaseServerCode == 'oracle')
+set ORACLE_HOME=%SystemDrive%${fs}oraclexe${fs}app${fs}oracle${fs}product${fs}${targetOracleVersion}${fs}server
+#end
+#if($targetDatabaseServerCode == 'postgresql')
+set POSTGRESQL_HOME=%ProgramFiles%${fs}PostgreSQL${fs}${targetPostgreSQLVersion}
+#end
+#if($environmentalWorkspaceFolderPath != '')
+set THIRD_PARTY_HOME=${environmentalWorkspaceFolderPath}${fs}third-party
+#end
+#if($environmentalWorkspaceFolderPath != "%SystemDrive%${fs}workspace")
+if not exist "%THIRD_PARTY_HOME%" (
+    set THIRD_PARTY_HOME=%SystemDrive%${fs}workspace${fs}third-party
+)
+#end
+#if($environmentalWorkspaceFolderPath != "%USERPROFILE%${fs}workspace")
+if not exist "%THIRD_PARTY_HOME%" (
+    set THIRD_PARTY_HOME=%USERPROFILE%${fs}workspace${fs}third-party
+)
+#end
+#if($targetJavaVersion)
+set JAVA_MAJOR=${targetJavaMajorVersion}
+set JAVA_VERSION=${targetJavaVersion}
+#end
+#if($targetApplicationServerCode == 'glassfish')
+set GLASSFISH_MAJOR=${targetGlassFishMajorVersion}
+set GLASSFISH_VERSION=${targetGlassFishVersion}
+#end
+#if($targetApplicationServerCode == 'jboss' || $targetApplicationServerCode == 'wildfly')
+set JBOSS_MAJOR=${targetJBossMajorVersion}
+set JBOSS_VERSION=${targetJBossVersion}
+#end
+#if($targetDatabaseServerCode == 'oracle')
+set ORACLE_MAJOR=${targetOracleMajorVersion}
+set ORACLE_VERSION=${targetOracleVersion}
+#end
+#if($targetDatabaseServerCode == 'postgresql')
+set POSTGRESQL_MAJOR=${targetPostgreSQLMajorVersion}
+set POSTGRESQL_VERSION=${targetPostgreSQLVersion}
+#end
