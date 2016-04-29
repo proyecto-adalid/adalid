@@ -65,9 +65,9 @@ goto:eof
 call:set-sub-dir "%VRPATH%\lib"
 set LIBDIR=%project_dir%\lib
 call:copy-files "%LIBDIR%" %SUBDIR% *.*
-call:delete-jar "%VRPATH%\lib\adalid-jee2.jar"
 call:delete-jar "%VRPATH%\lib\adalid-meta.jar"
 call:delete-jar "%VRPATH%\lib\adalid-prime.jar"
+call:delete-jar "%VRPATH%\lib\adalid-xmi.jar"
 if /i "%exclude_oracle%" == "Y" call:delete-jar "%VRPATH%\lib\adalid-oracle.jar"
 dir %VRPATH%\lib
 echo.

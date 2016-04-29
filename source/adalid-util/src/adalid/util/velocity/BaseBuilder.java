@@ -86,7 +86,7 @@ public class BaseBuilder {
 
     private final String velocityTemplatesTargetFolderPath;
 
-    private final String projectRoot, application, management, resources;
+    private final String projectRoot, application, development, management, resources;
 
     private final String[] preservableFiles;
 
@@ -116,6 +116,7 @@ public class BaseBuilder {
             }
             projectRoot = S + rootFolder.getName() + S + project + S;
             application = projectRoot + "source" + S + project + S;
+            development = projectRoot + "source" + S + "development" + S;
             management = projectRoot + "source" + S + "management" + S;
             resources = management + "resources" + S;
             logger.debug("projectRoot " + projectRoot);
@@ -368,6 +369,10 @@ public class BaseBuilder {
             //  RegexPathFilter(B + X + application + project + "-war" + S + "web" + S + "redirect" + D + "html" + E),
             new RegexPathFilter(B + X + application + "src" + S + "conf" + S + "application" + D + "xml" + E),
             new RegexPathFilter(B + X + application + "src" + S + "conf" + S + "glassfish-application" + D + "xml" + E),
+            new RegexPathFilter(B + X + development + "resources" + S + "scripts" + S + "windows" + S + "clean-jasper-reports" + D + "bat" + E),
+            new RegexPathFilter(B + X + development + "resources" + S + "scripts" + S + "windows" + S + "copy-properties" + D + "bat" + E),
+            new RegexPathFilter(B + X + development + "resources" + S + "scripts" + S + "windows" + S + "xcopy-jboss-modules" + D + "bat" + E),
+            new RegexPathFilter(B + X + development + "resources" + S + "scripts" + S + "windows" + S + "xcopy-wildfly-modules" + D + "bat" + E),
             new RegexPathFilter(B + X + management + "[\\w\\-\\_]*" + D + "bat" + E),
             new RegexPathFilter(B + X + management + "[\\w\\-\\_]*" + D + "password" + E),
             new RegexPathFilter(B + X + management + "[\\w\\-\\_]*" + D + "sh" + E),
@@ -382,6 +387,7 @@ public class BaseBuilder {
             new RegexPathFilter(B + X + management + "setup" + S + "scripts" + S + "windows" + S + "ln-s" + D + "bat" + E),
             new RegexPathFilter(B + X + management + "setup" + S + "scripts" + S + "windows" + S + "variables-conf" + D + "bat" + E),
             new RegexPathFilter(B + X + management + "setup" + S + "scripts" + S + "windows" + S + "variables-home" + D + "bat" + E),
+            new RegexFileFilter(B + X + D + "cli" + E),
             new RegexFileFilter(B + X + D + "gif" + E),
             new RegexFileFilter(B + X + D + "jpg" + E),
             new RegexFileFilter(B + X + D + "lnk" + E),
