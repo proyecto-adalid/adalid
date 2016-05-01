@@ -6,6 +6,7 @@
  */
 package adalid.commons.properties;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
 /**
@@ -29,7 +30,7 @@ public class BootstrappingFile {
 
     public static void setName(String name) {
         if (bootstrapping_file_name == null) {
-            if (name == null) {
+            if (StringUtils.isBlank(name)) {
                 bootstrapping_file_name = BOOTSTRAPPING_FILE_NAME;
                 logger.warn("null value for name parameter; defaults to " + bootstrapping_file_name);
             } else {

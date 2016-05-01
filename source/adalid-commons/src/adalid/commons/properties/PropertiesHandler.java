@@ -76,10 +76,10 @@ public class PropertiesHandler {
         return bootstrapping;
     }
 
-    public static ExtendedProperties getProgramProperties() {
+    public static ExtendedProperties getPrivateProperties() {
         File file = new File(PRIVATE_PROPERTIES);
         ExtendedProperties properties = getExtendedProperties(file, Level.TRACE);
-        return properties == null || properties.isEmpty() ? bootstrapping : properties;
+        return properties;
     }
 
     public static Properties loadProperties(String filename) {

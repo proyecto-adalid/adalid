@@ -9,6 +9,7 @@ package adalid.util;
 import adalid.commons.properties.BootstrappingFile;
 import adalid.commons.properties.PropertiesHandler;
 import org.apache.commons.collections.ExtendedProperties;
+import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
 /**
@@ -23,29 +24,40 @@ public class Utility {
     private static final String ARGS_SUFFIX = ".args";
 
     public static String[] getArguments(Class<?> clazz) {
+        ExtendedProperties properties;
+        String[] arguments = null;
         if (clazz == null) {
             logger.error(ARGS_FAILED + "; null value for clazz parameter");
         } else {
-            ExtendedProperties properties = PropertiesHandler.getProgramProperties();
-            if (properties == null) {
-                logger.error(ARGS_FAILED + "; properties is null");
-            } else if (properties.isEmpty()) {
-                logger.error(ARGS_FAILED + "; properties is empty");
-            } else {
-                String key = clazz.getName() + ARGS_SUFFIX;
-                try {
-                    String[] strings = properties.getStringArray(key);
-                    if (strings == null || strings.length == 0) {
-                        logger.error(ARGS_FAILED + "; property " + key + " not found");
-                    } else {
-                        return strings;
-                    }
-                } catch (Exception e) {
-                    logger.error(ARGS_FAILED + "; " + key + " not properly defined (" + e + ")");
-                }
+            properties = PropertiesHandler.getPrivateProperties();
+            arguments = getArguments(clazz, properties, Level.TRACE);
+            if (arguments == null) {
+                properties = PropertiesHandler.getBootstrapping();
+                arguments = getArguments(clazz, properties, Level.ERROR);
             }
         }
-        return new String[0];
+        return arguments == null ? new String[0] : arguments;
+    }
+
+    private static String[] getArguments(Class<?> clazz, ExtendedProperties properties, Level level) {
+        if (properties == null) {
+            logger.log(level, ARGS_FAILED + "; properties is null");
+        } else if (properties.isEmpty()) {
+            logger.log(level, ARGS_FAILED + "; properties is empty");
+        } else {
+            String key = clazz.getName() + ARGS_SUFFIX;
+            try {
+                String[] strings = properties.getStringArray(key);
+                if (strings == null || strings.length == 0) {
+                    logger.log(level, ARGS_FAILED + "; property " + key + " not found");
+                } else {
+                    return strings;
+                }
+            } catch (Exception e) {
+                logger.log(level, ARGS_FAILED + "; " + key + " not properly defined (" + e + ")");
+            }
+        }
+        return null;
     }
 
     public static void setBootstrappingFileName(String name) {

@@ -6,6 +6,7 @@
  */
 package adalid.util.sql;
 
+import adalid.commons.util.FilUtils;
 import adalid.commons.velocity.Writer;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -32,10 +33,10 @@ public class SqlMerger extends SqlUtil {
 
     private static final String USER_DIR = System.getProperties().getProperty("user.dir");
 
-    private static final String TEST_DIR = USER_DIR + FILE_SEPARATOR + "test";
-
     // <editor-fold defaultstate="collapsed" desc="instance fields">
     private String _oldSchema;
+
+    private String _projectAlias;
 
     private String _oldDataFolder;
 
@@ -102,32 +103,71 @@ public class SqlMerger extends SqlUtil {
         return _oldSchema;
     }
 
-    public String getOldDataFolder() {
-        if (_oldDataFolder == null) {
-            _oldDataFolder = defaultOldDataFolder();
+    public String getProjectAlias() {
+        return _projectAlias == null ? defaultProjectAlias() : _projectAlias;
+    }
+
+    public void setProjectAlias(String alias) {
+        if (StringUtils.isBlank(alias)) {
+            logger.warn("null value for alias parameter; project alias remains " + getProjectAlias());
+        } else if (!alias.matches("^[a-z][a-z0-9]*$")) {
+            logger.warn(alias + " is an invalid project alias; project alias remains " + getProjectAlias());
+        } else if (alias.equalsIgnoreCase("meta") || alias.equalsIgnoreCase("workspace")) {
+            logger.warn(alias + " is a restricted project alias; project alias remains " + getProjectAlias());
+        } else {
+            _projectAlias = alias;
         }
-        return _oldDataFolder;
+    }
+
+    private String defaultProjectAlias() {
+        boolean oracle = StringUtils.equalsIgnoreCase(_dbms, "oracle");
+        return (oracle ? _schema : _database).toLowerCase();
+    }
+
+    private boolean checkProjectAlias() {
+        String alias = getProjectAlias();
+        if (StringUtils.isBlank(alias)) {
+            logger.error("invalid project alias; generation aborted");
+            return false;
+        } else if (!alias.matches("^[a-z][a-z0-9]*$")) {
+            logger.error(alias + " is an invalid project alias; generation aborted");
+            return false;
+        } else if (alias.equalsIgnoreCase("meta") || alias.equalsIgnoreCase("workspace")) {
+            logger.error(alias + " is a restricted project alias; generation aborted");
+            return false;
+        } else {
+            return true;
+        }
+    }
+
+    public String getOldDataFolder() {
+        return _oldDataFolder == null ? defaultOldDataFolder() : _oldDataFolder;
     }
 
     public void setOldDataFolder(String folder) {
-        if (folder != null) {
+        if (StringUtils.isBlank(folder)) {
+            logger.warn("null value for folder parameter; old data folder remains " + getOldDataFolder());
+        } else {
             folder = folder.replace("\\", "/");
             if (folder.endsWith("/")) {
             } else {
                 folder += "/";
             }
+            _oldDataFolder = folder;
         }
-        _oldDataFolder = folder;
     }
 
     private String defaultOldDataFolder() {
-        String defaultOldDataFolder = TEST_DIR;
-        defaultOldDataFolder += FILE_SEPARATOR + _database;
-        defaultOldDataFolder += FILE_SEPARATOR + _dbms;
-        defaultOldDataFolder += FILE_SEPARATOR + _oldSchema;
-        defaultOldDataFolder += FILE_SEPARATOR;
-        defaultOldDataFolder = defaultOldDataFolder.replace("\\", "/");
-        return defaultOldDataFolder;
+        String folder = FilUtils.getWorkspaceFolderPath();
+        folder += FILE_SEPARATOR + getProjectAlias();
+        folder += FILE_SEPARATOR + "source";
+        folder += FILE_SEPARATOR + "management";
+        folder += FILE_SEPARATOR + "backup";
+        folder += FILE_SEPARATOR + _dbms;
+        folder += FILE_SEPARATOR + _oldSchema;
+        folder += FILE_SEPARATOR;
+        folder = folder.replace("\\", "/");
+        return folder;
     }
 
     public Set<String> getTableNames() {
@@ -181,22 +221,27 @@ public class SqlMerger extends SqlUtil {
 
     public synchronized boolean merge(boolean testing) {
         logger.info("merge");
-        _testingPhase = testing;
-        _tableNames.clear();
-        _currentKeyTableNames.clear();
-        _currentKeyTableNames.add("rol");
-        _addedTables.clear();
-        _droppedTables.clear();
-        _newColumns.clear();
-        _oldColumns.clear();
-        _addedColumns.clear();
-        _droppedColumns.clear();
-        boolean merge = _initialised;
-        merge = merge && read1();
-        merge = merge && read2();
-        merge = merge && mergeTables();
-        merge = merge && write();
-        return merge;
+        boolean ok = checkProjectAlias();
+        if (ok) {
+            _testingPhase = testing;
+            _tableNames.clear();
+            _currentKeyTableNames.clear();
+            _currentKeyTableNames.add("rol");
+            _addedTables.clear();
+            _droppedTables.clear();
+            _newColumns.clear();
+            _oldColumns.clear();
+            _addedColumns.clear();
+            _droppedColumns.clear();
+            boolean merge = _initialised;
+            merge = merge && read1();
+            merge = merge && read2();
+            merge = merge && mergeTables();
+            merge = merge && write();
+            return merge;
+        } else {
+            return false;
+        }
     }
 
     private boolean read1() {
@@ -265,6 +310,23 @@ public class SqlMerger extends SqlUtil {
     private boolean mergeTables() {
         Map<String, SqlTable> map1 = _reader1.getTablesMap();
         Map<String, SqlTable> map2 = _reader2.getTablesMap();
+        if (map1.isEmpty()) {
+            logger.info("schema " + _reader1.getSchema() + " contains no tables");
+        } else {
+            logger.info("schema " + _reader1.getSchema() + " contains " + map1.size() + " tables");
+        }
+        if (map2.isEmpty()) {
+            logger.info("schema " + _reader2.getSchema() + " contains no tables");
+        } else {
+            logger.info("schema " + _reader2.getSchema() + " contains " + map2.size() + " tables");
+        }
+        if (map1.isEmpty() && map2.isEmpty()) {
+            logger.error("none of the schemas contains tables");
+            return false;
+        } else if (map1.isEmpty() || map2.isEmpty()) {
+            logger.error("one of the schemas contains no tables");
+            return false;
+        }
         _tableNames.addAll(map1.keySet());
         _tableNames.addAll(map2.keySet());
         SqlTable table1, table2;

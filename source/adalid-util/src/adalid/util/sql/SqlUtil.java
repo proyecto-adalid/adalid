@@ -61,14 +61,22 @@ public class SqlUtil {
     // </editor-fold>
 
     public SqlUtil(String[] args) {
-        _initialised = true;
-        _initialised = _initialised && dbms(args);
-        _initialised = _initialised && host(args);
-        _initialised = _initialised && port(args);
-        _initialised = _initialised && user(args);
-        _initialised = _initialised && password(args);
-        _initialised = _initialised && database(args);
-        _initialised = _initialised && schema(args);
+        if (args == null || args.length == 0) {
+            illegalArguments();
+        } else {
+            _initialised = true;
+            _initialised = _initialised && dbms(args);
+            _initialised = _initialised && host(args);
+            _initialised = _initialised && port(args);
+            _initialised = _initialised && user(args);
+            _initialised = _initialised && password(args);
+            _initialised = _initialised && database(args);
+            _initialised = _initialised && schema(args);
+        }
+    }
+
+    private void illegalArguments() {
+        logSyntaxError();
     }
 
     // <editor-fold defaultstate="collapsed" desc="args">

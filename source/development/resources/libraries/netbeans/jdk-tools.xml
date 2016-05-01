@@ -5,7 +5,7 @@
     <display-name>jdk-tools</display-name>
     <volume>
         <type>classpath</type>
-        <resource>jar:file:/C:/Program%20Files/Java/jdk1.7.0_25/lib/tools.jar!/</resource>
+        <resource>jar:file:/C:/Program%20Files/Java/jdk1.8.0_77/lib/tools.jar!/</resource>
     </volume>
     <volume>
         <type>src</type>
