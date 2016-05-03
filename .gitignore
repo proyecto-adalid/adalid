@@ -1,4 +1,6 @@
-/source/adalid-jee2/
+*.lnk
+*.log
+/.svnversion
 /source/adalid-meta/
 /source/adalid-oracle/
 /source/adalid-prime/
