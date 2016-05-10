@@ -3,34 +3,30 @@
 <project name="${project.alias}-ejb" default="perform-weaving-task" basedir=".">
 
     <target name="define-weaving-task">
-        <echo level="warning" message="define-weaving-task: task definition for EclipseLink static weaving"/>
+        <echo level="info" message="define-weaving-task: task definition for EclipseLink static weaving"/>
         <taskdef name="weave" classname="org.eclipse.persistence.tools.weaving.jpa.StaticWeaveAntTask"/>
     </target>
 
     <target name="perform-weaving-task" depends="define-weaving-task">
         <dirname file="build/classes/META-INF" property="eclipselink.static.weaving.dir"/>
-        <echo level="warning" message="perform-weaving-task: perform EclipseLink static weaving of ${eclipselink.static.weaving.dir}"/>
+        <echo level="info" message="perform-weaving-task: perform EclipseLink static weaving of ${dollar}{eclipselink.static.weaving.dir}"/>
         <weave
-            source="${eclipselink.static.weaving.dir}"
-            target="${eclipselink.static.weaving.dir}"
+            source="${dollar}{eclipselink.static.weaving.dir}"
+            target="${dollar}{eclipselink.static.weaving.dir}"
             loglevel="INFO">
             <classpath>
 #set($fs = $separator)
+#***
 #if($targetJBossMajorVersion == '7')
-#***
-                <pathelement path="${targetJBossModulesDir}${fs}org${fs}eclipse${fs}persistence${fs}main${fs}eclipselink-2.4.0.jar"/>
-*###
                 <pathelement path="${dollar}{adalid.jee1.third-party.dir}${fs}lib${fs}eclipselink-2.4.0.jar"/>
-                <pathelement path="${targetJBossModulesDir}${fs}javax${fs}persistence${fs}api${fs}main${fs}hibernate-jpa-2.0-api-1.0.1.Final.jar"/>
-                <pathelement path="${targetJBossModulesDir}${fs}javax${fs}jms${fs}api${fs}main${fs}jboss-jms-api_1.1_spec-1.0.0.Final.jar"/>
+                <pathelement path="${dollar}{jboss.modules.base.dir}${fs}javax${fs}persistence${fs}api${fs}main${fs}hibernate-jpa-2.0-api-1.0.1.Final.jar"/>
+                <pathelement path="${dollar}{jboss.modules.base.dir}${fs}javax${fs}jms${fs}api${fs}main${fs}jboss-jms-api_1.1_spec-1.0.0.Final.jar"/>
 #else
-#***
-                <pathelement path="${targetJBossModulesDir}${fs}org${fs}eclipse${fs}persistence${fs}main${fs}eclipselink-2.4.0.jar"/>
-*###
-                <pathelement path="${dollar}{adalid.jee1.third-party.dir}${fs}lib${fs}eclipselink-2.4.0.jar"/>
-                <pathelement path="${targetJBossModulesDir}${fs}javax${fs}persistence${fs}api${fs}main${fs}hibernate-jpa-2.1-api-1.0.0.Final.jar"/>
-                <pathelement path="${targetJBossModulesDir}${fs}javax${fs}jms${fs}api${fs}main${fs}jboss-jms-api_2.0_spec-1.0.0.Final.jar"/>
+                <pathelement path="${dollar}{adalid.jee1.third-party.dir}${fs}lib${fs}eclipselink-2.6.1.jar"/>
+                <pathelement path="${dollar}{jboss.modules.base.dir}${fs}javax${fs}persistence${fs}api${fs}main${fs}hibernate-jpa-2.1-api-1.0.0.Final.jar"/>
+                <pathelement path="${dollar}{jboss.modules.base.dir}${fs}javax${fs}jms${fs}api${fs}main${fs}jboss-jms-api_2.0_spec-1.0.0.Final.jar"/>
 #end
+*###
                 <pathelement path="..${fs}${project.alias}-lib${fs}build"/>
             </classpath>
         </weave>

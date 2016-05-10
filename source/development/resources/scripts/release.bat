@@ -48,6 +48,8 @@ goto:eof
 :x-development
 set velocity-oracle-junction-no-pause=true
 call "%~dp0velocity-oracle-junction"
+set velocity-prime-junction-no-pause=true
+call "%~dp0velocity-prime-junction"
 call:set-sub-dir "%VRPATH%\source"
 call:robocopy-folder "%project_source_dir%" %SUBDIR% development
 goto:eof
@@ -66,9 +68,9 @@ call:set-sub-dir "%VRPATH%\lib"
 set LIBDIR=%project_dir%\lib
 call:copy-files "%LIBDIR%" %SUBDIR% *.*
 call:delete-jar "%VRPATH%\lib\adalid-meta.jar"
-call:delete-jar "%VRPATH%\lib\adalid-prime.jar"
 call:delete-jar "%VRPATH%\lib\adalid-xmi.jar"
 if /i "%exclude_oracle%" == "Y" call:delete-jar "%VRPATH%\lib\adalid-oracle.jar"
+if /i "%exclude_prime%"  == "Y" call:delete-jar "%VRPATH%\lib\adalid-prime.jar"
 dir %VRPATH%\lib
 echo.
 goto:eof
@@ -282,6 +284,8 @@ set xd=/xd
 set xd=%xd% %SOURCE%\resources\libraries
 set xd=%xd% %SOURCE%\resources\log4j
 set xd=%xd% %SOURCE%\resources\scripts
+if /i "%exclude_oracle%" == "Y" set xd=%xd% %SOURCE%\resources\velocity-oracle
+if /i "%exclude_prime%"  == "Y" set xd=%xd% %SOURCE%\resources\velocity-prime
 robocopy %SOURCE% %TARGET% /s %xf% %xd% /nfl /ndl /log+:%robocopy-log%
 echo.
 goto:eof

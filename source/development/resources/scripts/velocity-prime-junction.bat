@@ -7,13 +7,13 @@ set already_exists=
 set junction=%third_party_dir%\tools\junction\junction.exe
 call:check-exist junction executable file "%junction%"
 if defined does_not_exist goto:eof
-set source_dir=%project_source_dir%\adalid-oracle\resources\velocity
+set source_dir=%project_source_dir%\adalid-prime\resources\velocity
 call:check-exist source directory "%source_dir%"
 if defined does_not_exist goto:eof
 set target_dir=%project_source_dir%\development\resources
 call:check-exist target directory "%target_dir%"
 if defined does_not_exist goto:eof
-set target_lnk=velocity-oracle
+set target_lnk=velocity-prime
 call:junction
 echo.
 if defined %~n0-no-pause goto:eof
