@@ -5,5 +5,5 @@
 #end##traceModulePage
 
 #macro(traceProjectPage)
-//      found: $projectPage.name @ $project.name ($project.wrapper.hyphenatedAlias)
+//      found: $projectPage.name @ $project.name ($project.alias)
 #end

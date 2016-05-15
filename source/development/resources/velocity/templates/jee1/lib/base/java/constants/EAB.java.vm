@@ -21,7 +21,7 @@ public class ${javaClassSimpleName} {
 
     public static final String DATABASE_RESOURCE_MAPPED_NAME = "${prefix1}jdbc/${project.databaseName}";
 
-    public static final String ENTERPRISE_APPLICATION_CODE = "${project.wrapper.hyphenatedAlias}";
+    public static final String ENTERPRISE_APPLICATION_CODE = "${project.alias}";
 #*
     public static final String ENTERPRISE_APPLICATION_NAME = BundleWebui.getString(ENTERPRISE_APPLICATION_CODE);
 *#

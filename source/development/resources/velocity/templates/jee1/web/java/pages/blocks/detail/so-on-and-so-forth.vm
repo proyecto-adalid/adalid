@@ -73,7 +73,7 @@
 #else
     #set($cousin = $project.getConsoleCousinOf($page))
     #if($cousin)
-//      relate $cousin.name @ $project.name ($project.wrapper.hyphenatedAlias)
+//      relate $cousin.name @ $project.name ($project.alias)
 //      String urx = URX.${cousin.entity.wrapper.javaConstantName}_${cousin.displayMode}_${cousin.displayFormat};
         return gestor.isLoteSinCambios();
     #else
@@ -119,7 +119,7 @@
 #else
     #set($cousin = $project.getConsoleCousinOf($page))
     #if($cousin)
-//      relate $cousin.name @ $project.name ($project.wrapper.hyphenatedAlias)
+//      relate $cousin.name @ $project.name ($project.alias)
         String urx = URX.${cousin.entity.wrapper.javaConstantName}_${cousin.displayMode}_${cousin.displayFormat};
         return gestor.getScriptAbrirVentana(urx);
     #else

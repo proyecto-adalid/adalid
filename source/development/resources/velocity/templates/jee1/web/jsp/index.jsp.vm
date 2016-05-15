@@ -9,7 +9,7 @@
 #set($jspMenu = 'copy/Menu')
 #set($jspFavoritos = 'copy/Favoritos')
 #set($jspTarea = 'crop/consulta/recursos/basicos/tarea/TareaUsuario11')
-#set($twnTarea = "${project.rootFolderName}-war-consulta-recursos-basicos-tarea")
+#set($twnTarea = "${project.alias}-war-consulta-recursos-basicos-tarea")
 #set($jspPassword = 'copy/Password')
 <%@ page import="${project.rootPackageName}.lib.base.bundle.BundleWebui" %>
 <%@ page import="${project.rootPackageName}.lib.base.util.TimeUtils" %>
@@ -62,7 +62,7 @@
         <title><% out.print(title); %></title>
     </head>
     <body bgcolor="#fafafa" style="font-family: Arial,Helvetica,sans-serif; font-size: 100%" onload="initialize()">
-        <script src="/${project.rootFolderName}-war/resources/javascript1.js"></script>
+        <script src="/${project.alias}-war/resources/javascript1.js"></script>
         <script type="text/javascript">
             var MZFF = 'http://www.mozilla-europe.org/es/firefox/';
             var HOME = 'http://www.google.com/';
@@ -161,8 +161,8 @@
         </script>
         <!--<form>-->
         <div>
-            <img onclick="gohome()" alt="" src="/${project.rootFolderName}-war/resources/masthead_left.png"  style="float: left"/>
-            <img onclick="gohome()" alt="" src="/${project.rootFolderName}-war/resources/masthead_right.png" style="float: right"/>
+            <img onclick="gohome()" alt="" src="/${project.alias}-war/resources/masthead_left.png"  style="float: left"/>
+            <img onclick="gohome()" alt="" src="/${project.alias}-war/resources/masthead_right.png" style="float: right"/>
         </div>
         <div style="clear: both"/>
         <div style="background-color: #e5e9ed; border: 1px solid gray">
@@ -170,14 +170,14 @@
                 <div style="display: table-cell; vertical-align: middle">
                     <b style="margin-left: 4px">
                         <font size="4" color="black">
-                            <% out.print(BundleWebui.getString("${project.wrapper.hyphenatedAlias}", locale)); %>
+                            <% out.print(BundleWebui.getString("${project.alias}", locale)); %>
                         </font>
                     </b>
                 </div>
             </div>
         </div>
         <div style="float: left">
-            <img onclick="gohome()" alt="" src="/${project.rootFolderName}-war/resources/mastbody.png"/>
+            <img onclick="gohome()" alt="" src="/${project.alias}-war/resources/mastbody.png"/>
         </div>
         <div style="float: left; margin-left: 36px">
             <%

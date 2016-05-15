@@ -3,16 +3,15 @@
 #writeXMLDeclaration()
 #writeXMLLicense()
 #writeXMLAuthor('Jorge Campins')
-#set($projectAlias = "${javaProgrammer.getJavaVariableName($project.alias)}")
 <application version="6" xmlns="http://java.sun.com/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/application_6.xsd">
-    <display-name>${projectAlias}</display-name>
+    <display-name>${project.alias}</display-name>
     <module>
-        <ejb>${project.rootFolderName}-ejb.jar</ejb>
+        <ejb>${project.alias}-ejb.jar</ejb>
     </module>
     <module>
         <web>
-            <web-uri>${project.rootFolderName}-war.war</web-uri>
-            <context-root>/${project.rootFolderName}-war</context-root>
+            <web-uri>${project.alias}-war.war</web-uri>
+            <context-root>/${project.alias}-war</context-root>
         </web>
     </module>
     #writeSecurityRoles()

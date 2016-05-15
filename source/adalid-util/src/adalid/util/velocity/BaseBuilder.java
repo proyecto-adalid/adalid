@@ -172,6 +172,20 @@ public class BaseBuilder {
         velocityTemplatesTargetFolder.mkdirs();
     }
 
+    private static final String PROJECT_ALIAS = "${project.alias}";
+
+    private static final String PROJECT_ALIAS_UPPER_CASE = "${project.alias.toUpperCase()}";
+
+    private static final String DATABASE_NAME = "${project.databaseName}";
+
+    private static final String ROOT_FOLDER_SLASHED_PATH = "${rootFolderSlashedPath}";
+
+    private static final String BASE_FOLDER_NAME = "${project.baseFolderName}";
+
+    private static final String ROOT_FOLDER_NAME = "${project.rootFolderName}";
+
+    private static final String ROOT_PACKAGE_NAME = "${project.rootPackageName}";
+
     private boolean copyBinaryFiles() {
         Collection<File> files = FileUtils.listFiles(projectFolder, binaryFileFilter(), binaryDirFilter());
 //      ColUtils.sort(files);
@@ -202,12 +216,13 @@ public class BaseBuilder {
             replace(FS, "/");
         String path = StringUtils.substringBeforeLast(StringUtils.substringAfter(source, projectFolderPath), FS).
             replace(FS, "/").
-            replace(project, "${project.alias}");
+            replace(project, PROJECT_ALIAS);
+        path = replaceAliasWithRootFolderName(path);
         String file = StringUtils.substringAfterLast(source, FS).
-            replace(project, "${project.alias}");
+            replace(project, PROJECT_ALIAS);
         lines.add("template = " + template);
         lines.add("template-type = document");
-        lines.add("path = ${rootFolderSlashedPath}/${project.alias}" + path);
+        lines.add("path = " + ROOT_FOLDER_SLASHED_PATH + "/" + BASE_FOLDER_NAME + path);
         lines.add("file = " + file);
         lines.add("preserve = true");
         FilUtils.mkdirs(folder);
@@ -216,15 +231,26 @@ public class BaseBuilder {
         }
     }
 
+    private static final String PACKAGE_REGEX = "^package [\\w\\.]*;$";
+
     private boolean copyTextFiles() {
         Collection<File> files = FileUtils.listFiles(projectFolder, textFileFilter(), textDirFilter());
 //      ColUtils.sort(files);
         String source, target, targetParent;
+        boolean java, jrxml, jsp, properties, sh, bat, xml;
+        String[] precedingWords = {"extends", "import", "new", "@see", "@throws"};
         SmallFile smallSource;
         List<String> sourceLines;
         List<String> targetLines = new ArrayList<>();
         for (File file : files) {
             source = file.getPath();
+            java = StringUtils.endsWithIgnoreCase(source, ".java");
+            jrxml = StringUtils.endsWithIgnoreCase(source, ".jrxml");
+            jsp = StringUtils.endsWithIgnoreCase(source, ".jsp");
+            properties = StringUtils.endsWithIgnoreCase(source, ".properties");
+            sh = StringUtils.endsWithIgnoreCase(source, ".sh");
+            bat = StringUtils.endsWithIgnoreCase(source, ".bat");
+            xml = StringUtils.endsWithIgnoreCase(source, ".xml");
             target = source.replace(projectFolderPath, velocityTemplatesTargetFolderPath);
             targetParent = StringUtils.substringBeforeLast(target, FS);
             targetLines.clear();
@@ -234,11 +260,43 @@ public class BaseBuilder {
             if (smallSource.isNotEmpty()) {
                 for (String line : sourceLines) {
                     if (StringUtils.isNotBlank(line)) {
-                        line = line.replace("$", "${dollar}");
-                        line = line.replace("#", "${pound}");
-                        line = line.replace("\\", "${backslash}");
-                        line = line.replace(project, "${project.alias}");
-                        line = line.replace(PROJECT, "${project.alias.toUpperCase()}");
+                        if (java && line.matches(PACKAGE_REGEX)) {
+                            line = "package $package;";
+                        } else {
+                            line = line.replace("$", "${dollar}");
+                            line = line.replace("#", "${pound}");
+                            line = line.replace("\\", "${backslash}");
+                            line = line.replace(project, PROJECT_ALIAS);
+                            line = line.replace(PROJECT, PROJECT_ALIAS_UPPER_CASE);
+                            if (java) {
+                                for (String word : precedingWords) {
+                                    line = replaceAliasWithRootPackageName(line, word + " ", ".");
+                                }
+                            }
+                            if (jrxml) {
+                                line = replaceAliasWithRootPackageName(line, "<import value=\"", ".");
+                            }
+                            if (jsp) {
+                                line = replaceAliasWithRootPackageName(line, "<%@ page import=\"", ".");
+                            }
+                            if (properties) {
+                                line = StrUtils.replaceAfter(line, PROJECT_ALIAS + ".", ROOT_PACKAGE_NAME + ".", "${pound}");
+                                line = StrUtils.replaceAfter(line, PROJECT_ALIAS + ".", ROOT_PACKAGE_NAME + ".", "file.resource.loader.class");
+                                line = replaceAliasWithRootPackageName(line, "log4j.category.", "=");
+                                line = replaceAliasWithRootPackageName(line, "log4j.additivity.", "=");
+                            }
+                            if (sh) {
+                                line = StrUtils.replaceAfter(line, PROJECT_ALIAS, DATABASE_NAME, "dbname=");
+                            }
+                            if (bat) {
+                                line = StrUtils.replaceAfter(line, PROJECT_ALIAS, DATABASE_NAME, "dbname=");
+                            }
+                            if (xml) {
+                                line = replaceAliasWithDatabaseName(line, "jdbc/", "");
+                                line = replaceAliasWithDatabaseName(line, "localhost:5432/", "");
+                                line = replaceAliasWithRootPackageName(line, "<logger category=\"", "\">");
+                            }
+                        }
                     }
                     targetLines.add(line);
                 }
@@ -251,7 +309,19 @@ public class BaseBuilder {
         return true;
     }
 
+    private String replaceAliasWithDatabaseName(String line, String prefix, String suffix) {
+        return line.replace(prefix + PROJECT_ALIAS + suffix, prefix + DATABASE_NAME + suffix);
+    }
+
+    private String replaceAliasWithRootPackageName(String line, String prefix, String suffix) {
+        return line.replace(prefix + PROJECT_ALIAS + suffix, prefix + ROOT_PACKAGE_NAME + suffix);
+    }
+
+    private static final String SRC = "/src/";
+
     private void createTextFilePropertiesFile(String source, String target) {
+        boolean java = StringUtils.endsWithIgnoreCase(source, ".java");
+        boolean bundle = StringUtils.endsWithIgnoreCase(source, ".properties");
         File sourceFile = new File(source);
         String sourceFileName = StringUtils.substringBeforeLast(sourceFile.getName(), ".");
         String sourceFilextName = sourceFile.getName();
@@ -263,15 +333,31 @@ public class BaseBuilder {
             replace(FS, "/");
         String path = StringUtils.substringBeforeLast(StringUtils.substringAfter(source, projectFolderPath), FS).
             replace(FS, "/").
-            replace(project, "${project.alias}").
+            replace(project, PROJECT_ALIAS).
             replace("eclipse.settings", ".settings");
+        path = replaceAliasWithRootFolderName(path);
+        String pack = null;
+        if (java || bundle) {
+            String s1 = StringUtils.substringAfter(path, SRC);
+            if (StringUtils.contains(s1, PROJECT_ALIAS)) {
+                String s2 = StringUtils.substringBefore(s1, PROJECT_ALIAS);
+                String s3 = SRC + s2;
+                String s4 = StringUtils.substringBefore(path, s3) + s3;
+                String s5 = StringUtils.substringAfter(s1, PROJECT_ALIAS).replace("/", ".");
+                path = StringUtils.removeEnd(s4, "/");
+                pack = ROOT_PACKAGE_NAME + s5;
+            }
+        }
         String file = StringUtils.substringAfterLast(source, FS).
-            replace(project, "${project.alias}").
+            replace(project, PROJECT_ALIAS).
             replace("eclipse.project", ".project");
         List<String> lines = new ArrayList<>();
         lines.add("template = " + template);
 //      lines.add("template-type = velocity");
-        lines.add("path = ${rootFolderSlashedPath}/${project.alias}" + path);
+        lines.add("path = " + ROOT_FOLDER_SLASHED_PATH + "/" + BASE_FOLDER_NAME + path);
+        if (StringUtils.isNotBlank(pack)) {
+            lines.add("package = " + pack);
+        }
         lines.add("file = " + file);
         if (sourceFileName.equals("eclipse") || sourceFolderName.equals("eclipse") || sourceFolderName.equals("nbproject")) {
             lines.add("disabled = true");
@@ -290,6 +376,20 @@ public class BaseBuilder {
         if (write(properties, lines, StandardCharsets.ISO_8859_1)) {
             propertiesFilesCreated++;
         }
+    }
+
+    private static final String SOURCE_PROJECT_ALIAS = "/source/" + PROJECT_ALIAS + "/";
+
+    private static final String SOURCE_PROJECT_ROOT_FOLDER_NAME = "/source/" + ROOT_FOLDER_NAME + "/";
+
+    private String replaceAliasWithRootFolderName(String path) {
+        String p = path + "/";
+        if (StringUtils.startsWithIgnoreCase(p, SOURCE_PROJECT_ALIAS)) {
+            p = SOURCE_PROJECT_ROOT_FOLDER_NAME + StringUtils.removeStartIgnoreCase(p, SOURCE_PROJECT_ALIAS);
+            p = StringUtils.removeEnd(p, "/");
+            return p;
+        }
+        return path;
     }
 
     private String getOptionalEntityName(String sourceFileName, String sourceFolderName) {
@@ -388,10 +488,12 @@ public class BaseBuilder {
             new RegexPathFilter(B + X + management + "setup" + S + "scripts" + S + "windows" + S + "variables-conf" + D + "bat" + E),
             new RegexPathFilter(B + X + management + "setup" + S + "scripts" + S + "windows" + S + "variables-home" + D + "bat" + E),
             new RegexFileFilter(B + X + D + "cli" + E),
+            new RegexFileFilter(B + X + D + "err" + E),
             new RegexFileFilter(B + X + D + "gif" + E),
             new RegexFileFilter(B + X + D + "jpg" + E),
             new RegexFileFilter(B + X + D + "lnk" + E),
             new RegexFileFilter(B + X + D + "log" + E),
+            new RegexFileFilter(B + X + D + "out" + E),
             new RegexFileFilter(B + X + D + "png" + E),
             new RegexFileFilter(B + "Thumbs" + D + "db" + E),
             new RegexFileFilter(B + "ant-deploy" + D + "xml" + E),
@@ -399,6 +501,7 @@ public class BaseBuilder {
             new RegexFileFilter(B + "build" + D + "xml" + E),
             new RegexFileFilter(B + "eclipse" + D + "classpath" + E),
             //  RegexFileFilter(B + "eclipse" + D + "project" + E),
+            new RegexFileFilter(B + "faces-config" + D + "NavData" + E),
             new RegexFileFilter(B + "genfiles" + D + "properties" + E),
             new RegexFileFilter(B + "org" + D + "eclipse" + D + "wst" + D + "common" + D + "project" + D + "facet" + D + "core" + D + "xml" + E),
             new RegexFileFilter(B + "redirect" + D + "html" + E),

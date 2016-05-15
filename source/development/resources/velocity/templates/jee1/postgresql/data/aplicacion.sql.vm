@@ -8,7 +8,7 @@ select count(*) from aplicacion;
 #break
 
 #macro(writeInsertSSCC)
-#set($codigo = "$!{project.rootFolderName}-war")
+#set($codigo = "$!{project.alias}-war")
 #set($nombre = "$!{project.wrapper.validDefaultShortDescription}")
 insert into aplicacion (id_aplicacion, codigo_aplicacion, nombre_aplicacion, descripcion_aplicacion, es_especial)
 values (10101, '${codigo}', '${nombre}', '${nombre}, versión ${implementationVersionStamp}', true);

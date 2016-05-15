@@ -110,7 +110,7 @@ select count(*) from opcion_menu;
 #set($projectCode = $project.alias)
 #set($REDIRECT = 'redirect.html?url=http://localhost:8080/')
 #set($WAR = 'double-u--a--ar')
-#set($WAR = "${project.rootFolderName}-war")
+#set($WAR = "${project.alias}-war")
 #set($FACES = '/faces/')
 #end##setLocalVariables
 

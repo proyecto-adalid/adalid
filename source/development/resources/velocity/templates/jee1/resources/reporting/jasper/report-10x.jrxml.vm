@@ -211,7 +211,7 @@
 
 #macro(writeParameters)
     <parameter name="ENTERPRISE_APPLICATION_CODE" class="java.lang.String" isForPrompting="false">
-        <defaultValueExpression><![CDATA["${project.rootPackageName}"]]></defaultValueExpression>
+        <defaultValueExpression><![CDATA["${project.alias}"]]></defaultValueExpression>
     </parameter>
     <parameter name="ENTERPRISE_APPLICATION_NAME" class="java.lang.String" isForPrompting="false">
         <defaultValueExpression><![CDATA[JRBundleWebui.getString($locale, ${BOP}ENTERPRISE_APPLICATION_CODE${EOP})]]></defaultValueExpression>

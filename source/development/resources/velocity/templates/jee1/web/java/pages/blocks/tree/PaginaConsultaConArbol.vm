@@ -28,7 +28,7 @@
 #else
     #set($sibling = $project.getTableSiblingOf($page))
     #if($sibling)
-//      relate $sibling.name @ $project.name ($project.wrapper.hyphenatedAlias)
+//      relate $sibling.name @ $project.name ($project.alias)
         return "$Bundle.getString('DisplayFormat.TABLE.outcome')";
     #else
         return null;
@@ -46,7 +46,7 @@
 #else
     #set($sibling = $project.getDetailSiblingOf($page))
     #if($sibling)
-//      relate $sibling.name @ $project.name ($project.wrapper.hyphenatedAlias)
+//      relate $sibling.name @ $project.name ($project.alias)
         return "$Bundle.getString('DisplayFormat.DETAIL.outcome')";
     #else
         #set($cousin = $FALSE)
@@ -57,7 +57,7 @@
         #else
             #set($cousin = $project.getDetailCousinOf($page))
             #if($cousin)
-........//      cousin $cousin.name @ $project.name ($project.wrapper.hyphenatedAlias)
+........//      cousin $cousin.name @ $project.name ($project.alias)
 ........        return "$Bundle.getString('DisplayFormat.DETAIL.outcome')";
             #else
                 return null;

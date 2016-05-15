@@ -4,7 +4,7 @@
         <title>${project.wrapper.htmlValidDefaultLabel}</title>
     </head>
     <body bgcolor="#fafafa" style="font-family: Arial,Helvetica,sans-serif; font-size: 70%">
-        <script src="/${project.rootFolderName}-war/resources/javascript1.js"></script>
+        <script src="/${project.alias}-war/resources/javascript1.js"></script>
         <script type="text/javascript">
         //
         //  alert(location.href);
@@ -20,7 +20,7 @@
             }
         //
             function go(htm, jsp) {
-            //  var url = location.protocol + '//' + location.host + '/${project.rootFolderName}-war/ayuda.html' + location.search;
+            //  var url = location.protocol + '//' + location.host + '/${project.alias}-war/ayuda.html' + location.search;
             //  alert(htm + '#' + jsp);
                 var pdq = location.pathname.replace(/ayuda\.html/gi, 'resources' + '/' + htm);
                 var url = location.protocol + '//' + location.host + pdq;
@@ -46,7 +46,7 @@
             ${project.wrapper.htmlValidDefaultLabel}
         </b>
         <br><br>
-        <img alt="warning" src="/${project.rootFolderName}-war/resources/warning_medium.gif">
+        <img alt="warning" src="/${project.alias}-war/resources/warning_medium.gif">
         <a>
             $StrUtils.getStringHtml($Bundle.getString('ayuda.html.txt10'))
         </a>

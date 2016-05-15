@@ -114,7 +114,7 @@
 #else
     #set($cousin = $project.getConsoleCousinOf($page))
     #if($cousin)
-//      relate $cousin.name @ $project.name ($project.wrapper.hyphenatedAlias)
+//      relate $cousin.name @ $project.name ($project.alias)
         String urx = URX.${cousin.entity.wrapper.javaConstantName}_${cousin.displayMode}_${cousin.displayFormat};
         return gestor.getScriptAbrirVentana(urx);
     #else
@@ -177,7 +177,7 @@
 #else
     #set($sibling = $project.getDetailSiblingOf($page))
     #if($sibling)
-//      relate $sibling.name @ $project.name ($project.wrapper.hyphenatedAlias)
+//      relate $sibling.name @ $project.name ($project.alias)
         String urx = URX.${sibling.entity.wrapper.javaConstantName}_${sibling.displayMode}_${sibling.displayFormat};
         return gestor.getScriptAbrirVentanaVerDetalle(urx);
     #else
@@ -191,7 +191,7 @@
         #else
             #set($cousin = $project.getDetailCousinOf($page))
             #if($cousin)
-........//      cousin $cousin.name @ $project.name ($project.wrapper.hyphenatedAlias)
+........//      cousin $cousin.name @ $project.name ($project.alias)
 ........        String urx = URX.${cousin.entity.wrapper.javaConstantName}_${cousin.displayMode}_${cousin.displayFormat};
 ........        return gestor.getScriptAbrirVentanaVerDetalle(urx);
             #else
@@ -212,7 +212,7 @@
 #else
     #set($cousin = $project.getConsoleCousinOf($page))
     #if($cousin)
-//      relate $cousin.name @ $project.name ($project.wrapper.hyphenatedAlias)
+//      relate $cousin.name @ $project.name ($project.alias)
 //      String urx = URX.${cousin.entity.wrapper.javaConstantName}_${cousin.displayMode}_${cousin.displayFormat};
         return gestor.isLoteSinCambios();
     #else

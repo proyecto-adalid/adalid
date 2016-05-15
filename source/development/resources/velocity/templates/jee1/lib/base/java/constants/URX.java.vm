@@ -8,7 +8,7 @@
 #writeJavaAuthor('Jorge Campins')
 public class ${javaClassSimpleName} { // URI/URL de las páginas de la aplicación
 
-    public static final String WAR = "${project.rootFolderName}-war";
+    public static final String WAR = "${project.alias}-war";
 
 #set($pages = $project.displaysList)
 #set($pages = $ColUtils.sort($pages, $byDisplayName))
@@ -41,23 +41,23 @@ public class ${javaClassSimpleName} { // URI/URL de las páginas de la aplicación
     #set($fee = "${page.entity.wrapper.javaConstantName}")
     #set($faa = "${page.module.wrapper.hyphenatedAlias}")
     #set($foo = "crop/${page.module.wrapper.dottedAlias.replace('.', '/')}/$!{webPageNamePrefix}${page.name}.jsp")
-    public static final String ${fee}${specialInfix}_${page.displayMode}_${page.displayFormat} = "/${project.rootFolderName}-war/faces/${foo}";
+    public static final String ${fee}${specialInfix}_${page.displayMode}_${page.displayFormat} = "/${project.alias}-war/faces/${foo}";
 #end##
 
 #macro(writeURXOOBB)
     #set($por = "$!{Bundle.getString('java.web.page_name_connective')}")
     // <editor-fold defaultstate="collapsed" desc="Operaciones Basicas">
-    public static final String REDIRECT = "/${project.rootFolderName}-war/redirect.html";
+    public static final String REDIRECT = "/${project.alias}-war/redirect.html";
 
-    public static final String AYUDA = "/${project.rootFolderName}-war/ayuda.html";
+    public static final String AYUDA = "/${project.alias}-war/ayuda.html";
 
-    public static final String REJECT = "/${project.rootFolderName}-war/faces/copy/reject.jsp";
+    public static final String REJECT = "/${project.alias}-war/faces/copy/reject.jsp";
 
-    public static final String INICIO = "/${project.rootFolderName}-war/faces/copy/Menu.jsp";
+    public static final String INICIO = "/${project.alias}-war/faces/copy/Menu.jsp";
 
-    public static final String FAVORITOS = "/${project.rootFolderName}-war/faces/copy/Favoritos.jsp";
+    public static final String FAVORITOS = "/${project.alias}-war/faces/copy/Favoritos.jsp";
 
-    public static final String CAMBIO_PASSWORD = "/${project.rootFolderName}-war/faces/copy/Password.jsp";
+    public static final String CAMBIO_PASSWORD = "/${project.alias}-war/faces/copy/Password.jsp";
 
     public static final String FILTRO_FUNCION = FILTRO_FUNCION_SPECIAL_WRITING_TABLE;
 
@@ -67,9 +67,9 @@ public class ${javaClassSimpleName} { // URI/URL de las páginas de la aplicación
 
     public static final String FILTRO_FUNCION_PAR_DETALLE = FILTRO_FUNCION_PAR_SPECIAL_WRITING_DETAIL;
 
-    public static final String FILTRO_FUNCION_PAR_RECURSO = "/${project.rootFolderName}-war/faces/copy/recurso_filtro/RecursoFiltro1.jsp";
+    public static final String FILTRO_FUNCION_PAR_RECURSO = "/${project.alias}-war/faces/copy/recurso_filtro/RecursoFiltro1.jsp";
 
-    public static final String FILTRO_FUNCION_PAR_RECURSO_ARBOL = "/${project.rootFolderName}-war/faces/copy/recurso_filtro/RecursoFiltro3.jsp";
+    public static final String FILTRO_FUNCION_PAR_RECURSO_ARBOL = "/${project.alias}-war/faces/copy/recurso_filtro/RecursoFiltro3.jsp";
 
     public static final String VISTA_FUNCION = VISTA_FUNCION_SPECIAL_WRITING_TABLE;
 
@@ -79,9 +79,9 @@ public class ${javaClassSimpleName} { // URI/URL de las páginas de la aplicación
 
     public static final String VISTA_FUNCION_COL_DETALLE = VISTA_FUNCION_COL_SPECIAL_WRITING_DETAIL;
 
-    public static final String LISTA_RECURSOS = "/${project.rootFolderName}-war/faces/copy/recurso/Recurso1.jsp";
+    public static final String LISTA_RECURSOS = "/${project.alias}-war/faces/copy/recurso/Recurso1.jsp";
 
-    public static final String ARBOL_RECURSOS = "/${project.rootFolderName}-war/faces/copy/recurso/Recurso3.jsp";
+    public static final String ARBOL_RECURSOS = "/${project.alias}-war/faces/copy/recurso/Recurso3.jsp";
 
     public static final String RASTRO_FUNCION = RASTRO_FUNCION_READING_TABLE;
 
@@ -99,23 +99,23 @@ public class ${javaClassSimpleName} { // URI/URL de las páginas de la aplicación
     private static final Map<String, String> twn = new LinkedHashMap<>();
 
     static {
-        twn.put(INICIO, "${project.rootFolderName}-war");
-        twn.put(FAVORITOS, "${project.rootFolderName}-war");
-        twn.put(CAMBIO_PASSWORD, "${project.rootFolderName}-war");
+        twn.put(INICIO, "${project.alias}-war");
+        twn.put(FAVORITOS, "${project.alias}-war");
+        twn.put(CAMBIO_PASSWORD, "${project.alias}-war");
 #***
-        twn.put(FILTRO_FUNCION, "${project.rootFolderName}-war-registro-filtro");
-        twn.put(FILTRO_FUNCION_DETALLE, "${project.rootFolderName}-war-registro-filtro");
-        twn.put(FILTRO_FUNCION_PAR, "${project.rootFolderName}-war-registro-filtro");
-        twn.put(FILTRO_FUNCION_PAR_DETALLE, "${project.rootFolderName}-war-registro-filtro");
+        twn.put(FILTRO_FUNCION, "${project.alias}-war-registro-filtro");
+        twn.put(FILTRO_FUNCION_DETALLE, "${project.alias}-war-registro-filtro");
+        twn.put(FILTRO_FUNCION_PAR, "${project.alias}-war-registro-filtro");
+        twn.put(FILTRO_FUNCION_PAR_DETALLE, "${project.alias}-war-registro-filtro");
 *###
-        twn.put(FILTRO_FUNCION_PAR_RECURSO, "${project.rootFolderName}-war-recurso-filtro");
-        twn.put(FILTRO_FUNCION_PAR_RECURSO_ARBOL, "${project.rootFolderName}-war-recurso-filtro");
-        twn.put(LISTA_RECURSOS, "${project.rootFolderName}-war-recurso");
-        twn.put(ARBOL_RECURSOS, "${project.rootFolderName}-war-recurso");
+        twn.put(FILTRO_FUNCION_PAR_RECURSO, "${project.alias}-war-recurso-filtro");
+        twn.put(FILTRO_FUNCION_PAR_RECURSO_ARBOL, "${project.alias}-war-recurso-filtro");
+        twn.put(LISTA_RECURSOS, "${project.alias}-war-recurso");
+        twn.put(ARBOL_RECURSOS, "${project.alias}-war-recurso");
 #***
-        twn.put(RASTRO_FUNCION, "${project.rootFolderName}-war-consulta");
-        twn.put(RASTRO_INFORME, "${project.rootFolderName}-war-consulta");
-        twn.put(RASTRO_PROCESO, "${project.rootFolderName}-war-consulta");
+        twn.put(RASTRO_FUNCION, "${project.alias}-war-consulta");
+        twn.put(RASTRO_INFORME, "${project.alias}-war-consulta");
+        twn.put(RASTRO_PROCESO, "${project.alias}-war-consulta");
 *###
 #foreach($page in $pages)
     #setSpecialMasterDetailPage()
@@ -124,7 +124,7 @@ public class ${javaClassSimpleName} { // URI/URL de las páginas de la aplicación
     #else
         #set($fee = $page.entity.wrapper.javaConstantName)
         #set($faa = $page.module.wrapper.hyphenatedAlias)
-        twn.put(${fee}${specialInfix}_${page.displayMode}_${page.displayFormat}, "${project.rootFolderName}-war-${faa}");
+        twn.put(${fee}${specialInfix}_${page.displayMode}_${page.displayFormat}, "${project.alias}-war-${faa}");
     #end
 #end##foreach-page
     }

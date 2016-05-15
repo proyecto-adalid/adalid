@@ -202,6 +202,10 @@ public abstract class ProyectoJava extends Project {
 
     private Properties _parametersDictionary;
 
+    private String _groupId;
+
+    private String _version;
+
     private String _baseFolderName;
 
     private String _databaseName;
@@ -622,6 +626,34 @@ public abstract class ProyectoJava extends Project {
     }
 
     /**
+     * @return the group id
+     */
+    public String getGroupId() {
+        return StringUtils.defaultIfBlank(_groupId, getDefaultGroupId());
+    }
+
+    /**
+     * @param groupId the group id to set
+     */
+    public void setGroupId(String groupId) {
+        _groupId = StrUtils.getLowerCaseIdentifier(groupId, '.');
+    }
+
+    /**
+     * @return the version
+     */
+    public String getVersion() {
+        return StringUtils.defaultIfBlank(_version, "1.0");
+    }
+
+    /**
+     * @param version the version to set
+     */
+    public void setVersion(String version) {
+        _version = StrUtils.getIdentifier(version, '.');
+    }
+
+    /**
      * @return the base folder name
      */
     public String getBaseFolderName() {
@@ -632,7 +664,7 @@ public abstract class ProyectoJava extends Project {
      * @param baseFolderName the base folder name to set
      */
     public void setBaseFolderName(String baseFolderName) {
-        _baseFolderName = baseFolderName;
+        _baseFolderName = StrUtils.getLowerCaseIdentifier(baseFolderName, '-');
     }
 
     /**
@@ -646,7 +678,7 @@ public abstract class ProyectoJava extends Project {
      * @param databaseName the database name to set
      */
     public void setDatabaseName(String databaseName) {
-        _databaseName = databaseName;
+        _databaseName = StrUtils.getLowerCaseIdentifier(databaseName, '-');
     }
 
     /**
@@ -660,7 +692,7 @@ public abstract class ProyectoJava extends Project {
      * @param rootFolderName the root folder name to set
      */
     public void setRootFolderName(String rootFolderName) {
-        _rootFolderName = rootFolderName;
+        _rootFolderName = StrUtils.getLowerCaseIdentifier(rootFolderName, '-');
     }
 
     /**
@@ -674,7 +706,7 @@ public abstract class ProyectoJava extends Project {
      * @param rootPackageName the root package name to set
      */
     public void setRootPackageName(String rootPackageName) {
-        _rootPackageName = rootPackageName;
+        _rootPackageName = StrUtils.getLowerCaseIdentifier(rootPackageName, '.');
     }
 
     /**
@@ -744,7 +776,7 @@ public abstract class ProyectoJava extends Project {
      * @param securityRealmName the security realm name to set
      */
     public void setSecurityRealmName(String securityRealmName) {
-        _securityRealmName = securityRealmName;
+        _securityRealmName = StrUtils.getLowerCaseIdentifier(securityRealmName, '-');
     }
 
     /**
@@ -758,7 +790,14 @@ public abstract class ProyectoJava extends Project {
      * @param roleBasedAccessControllerName the role-based-access-controller (RBAC) name to set
      */
     public void setRoleBasedAccessControllerName(String roleBasedAccessControllerName) {
-        _roleBasedAccessControllerName = roleBasedAccessControllerName;
+        _roleBasedAccessControllerName = StrUtils.getIdentifier(roleBasedAccessControllerName);
+    }
+
+    protected String getDefaultGroupId() {
+        String tld = "name";
+        String name = System.getProperties().getProperty("user.name");
+        String string = StringUtils.defaultIfBlank(getAlias(), getName());
+        return tld + "." + StrUtils.getLowerCaseIdentifier(name, '.') + "." + StrUtils.getLowerCaseIdentifier(string, '.');
     }
 
     protected String getDefaultDatabaseName() {

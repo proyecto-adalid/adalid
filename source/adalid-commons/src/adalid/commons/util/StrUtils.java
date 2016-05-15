@@ -906,7 +906,7 @@ public class StrUtils {
     public static String getWordyString(String string) {
         return StringUtils.isBlank(string) ? EMPTY
             : isMixedCase(string) ? getHumplessCase(string, ' ')
-                : string.toLowerCase().replace('_', ' ').replaceAll("  ", " ").trim();
+            : string.toLowerCase().replace('_', ' ').replaceAll("  ", " ").trim();
     }
 
     public static String getUnderscoreless(String string) {
@@ -927,6 +927,20 @@ public class StrUtils {
 
     public static String getStringXml(String string) {
         return StringUtils.isBlank(string) ? null : StringEscapeUtils.escapeXml(string);
+    }
+
+    public static String escapeMeta(String string) {
+        final char[] meta = {'\\', '^', '$', '.', '*', '+', '?', '|', '-', '&', '{', '}', '[', ']', '(', ')', '<', '>'};
+        if (StringUtils.containsAny(string, meta)) {
+            String s;
+            for (char c : meta) {
+                s = String.valueOf(c);
+                if (string.contains(s)) {
+                    string = string.replace(s, "\\" + s);
+                }
+            }
+        }
+        return string;
     }
 
     public static String getToken(String string) {
@@ -1290,7 +1304,7 @@ public class StrUtils {
     public static String encloseSqlExpression(String expression) {
         return expression == null ? null
             : esInvocacionFuncionSql(expression) ? expression
-                : enclose(expression, '(', ')');
+            : enclose(expression, '(', ')');
     }
 
     public static String enclose(String argument) {
@@ -1301,25 +1315,25 @@ public class StrUtils {
     public static String enclose(String argument, char delimiter) {
         return argument == null ? null
             : isDelimited(argument, delimiter) ? argument
-                : delimiter + argument + delimiter;
+            : delimiter + argument + delimiter;
     }
 
     public static String enclose(String argument, char open, char close) {
         return argument == null ? null
             : isDelimited(argument, open, close) ? argument
-                : open + argument + close;
+            : open + argument + close;
     }
 
     public static String enclose(String argument, String delimiter) {
         return argument == null ? null
             : isDelimited(argument, delimiter) ? argument
-                : delimiter + argument + delimiter;
+            : delimiter + argument + delimiter;
     }
 
     public static String enclose(String argument, String open, String close) {
         return argument == null ? null
             : isDelimited(argument, open, close) ? argument
-                : open + argument + close;
+            : open + argument + close;
     }
 
     public static String disclose(String argument) {
@@ -1330,25 +1344,130 @@ public class StrUtils {
     public static String disclose(String argument, char delimiter) {
         return argument == null ? null
             : isDelimited(argument, delimiter) ? argument.substring(1, argument.length() - 1)
-                : argument;
+            : argument;
     }
 
     public static String disclose(String argument, char open, char close) {
         return argument == null ? null
             : isDelimited(argument, open, close) ? argument.substring(1, argument.length() - 1)
-                : argument;
+            : argument;
     }
 
     public static String disclose(String argument, String delimiter) {
         return argument == null ? null
             : isDelimited(argument, delimiter) ? argument.substring(1, argument.length() - 1)
-                : argument;
+            : argument;
     }
 
     public static String disclose(String argument, String open, String close) {
         return argument == null ? null
             : isDelimited(argument, open, close) ? argument.substring(1, argument.length() - 1)
-                : argument;
+            : argument;
+    }
+
+    /**
+     * Removes all occurrences of a String within another String that are found after another String.
+     *
+     * @param text the String to search and remove in
+     * @param search the String to search for
+     * @param preceding the String used as lower boundary of the search; if it is null or empty, the search begins at the beginning of text
+     * @return the text with any removements processed
+     */
+    public static String removeAfter(String text, String search, String preceding) {
+        return removeBetween(text, search, preceding, null);
+    }
+
+    /**
+     * Removes all occurrences of a String within another String that are found before another String.
+     *
+     * @param text the String to search and remove in
+     * @param search the String to search for
+     * @param following the String used as upper boundary of the search; if it is null or empty, the search ends at the end of text
+     * @return the text with any removements processed
+     */
+    public static String removeBefore(String text, String search, String following) {
+        return removeBetween(text, search, null, following);
+    }
+
+    /**
+     * Removes all occurrences of a String within another String that are found between another two Strings.
+     *
+     * @param text the String to search and remove in
+     * @param search the String to search for
+     * @param preceding the String used as lower boundary of the search; if it is null or empty, the search begins at the beginning of text
+     * @param following the String used as upper boundary of the search; if it is null or empty, the search ends at the end of text
+     * @return the text with any removements processed
+     */
+    public static String removeBetween(String text, String search, String preceding, String following) {
+        return replaceBetween(text, search, "", preceding, following);
+    }
+
+    /**
+     * Replaces all occurrences of a String within another String that are found after another String.
+     *
+     * @param text the String to search and replace in
+     * @param search the String to search for
+     * @param replacement the String to replace it with
+     * @param preceding the String used as lower boundary of the search; if it is null or empty, the search begins at the beginning of text
+     * @return the text with any replacements processed
+     */
+    public static String replaceAfter(String text, String search, String replacement, String preceding) {
+        return replaceBetween(text, search, replacement, preceding, null);
+    }
+
+    /**
+     * Replaces all occurrences of a String within another String that are found before another String.
+     *
+     * @param text the String to search and replace in
+     * @param search the String to search for
+     * @param replacement the String to replace it with
+     * @param following the String used as upper boundary of the search; if it is null or empty, the search ends at the end of text
+     * @return the text with any replacements processed
+     */
+    public static String replaceBefore(String text, String search, String replacement, String following) {
+        return replaceBetween(text, search, replacement, null, following);
+    }
+
+    /**
+     * Replaces all occurrences of a String within another String that are found between another two Strings.
+     *
+     * @param text the String to search and replace in
+     * @param search the String to search for
+     * @param replacement the String to replace it with
+     * @param preceding the String used as lower boundary of the search; if it is null or empty, the search begins at the beginning of text
+     * @param following the String used as upper boundary of the search; if it is null or empty, the search ends at the end of text
+     * @return the text with any replacements processed
+     */
+    public static String replaceBetween(String text, String search, String replacement, String preceding, String following) {
+        final String turbofan = "\t\r\b\f\n";
+        if (text != null && search != null && replacement != null && text.length() > 0 && search.length() > 0 && text.contains(search)) {
+            boolean preceded = preceding != null && preceding.length() > 0;
+            if (preceded && !text.contains(preceding)) {
+                return text;
+            }
+            boolean followed = following != null && following.length() > 0;
+            if (followed && !text.contains(following)) {
+                return text;
+            }
+            if (preceded || followed) {
+                String searchless = text.replace(search, turbofan);
+                String beforePreceding = preceded ? StringUtils.substringBefore(searchless, preceding) : "";
+                String afterPreceding = preceded ? StringUtils.substringAfter(searchless, preceding) : "";
+                String beforeFollowing = followed ? StringUtils.substringBefore(preceded ? afterPreceding : searchless, following) : "";
+                String afterFollowing = followed ? StringUtils.substringAfter(preceded ? afterPreceding : searchless, following) : "";
+                String inBetween = preceded && followed ? StringUtils.substringBetween(searchless, preceding, following) : "";
+                String substring = preceded && followed ? inBetween : preceded ? afterPreceding : beforeFollowing;
+                if (StringUtils.contains(substring, turbofan)) {
+                    String string = substring.replace(turbofan, replacement);
+                    String concat = beforePreceding + (preceded ? preceding : "") + string + (followed ? following : "") + afterFollowing;
+                    String result = concat.replace(turbofan, search);
+                    return result;
+                }
+            } else {
+                return text.replace(search, replacement);
+            }
+        }
+        return text;
     }
 
     public static String removeWords(String string, Class<?> dataType) {

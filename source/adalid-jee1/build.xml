@@ -81,6 +81,9 @@
 
     <target name="-post-init">
         <echo level="info" message="-post-init"/>
+        <property name="adalid.m2r.dir" value="${user.home}/.m2/repository/org/adalid/${application.name}/${application.version}"/>
+        <property name="adalid.m2r.jar" value="${adalid.m2r.dir}/${application.name}-${application.version}.jar"/>
+        <available file="${adalid.m2r.dir}" type="dir" property="adalid.m2r.dir.available"/>
     </target>
 
     <target name="-pre-compile">
@@ -190,23 +193,32 @@
         </manifest>
     </target>
 
-    <target name="-post-jar" if="adalid.lib.dir.available">
+    <target name="-post-jar">
         <echo level="info" message="-post-jar"/>
         <!--
         <move file="MANIFEST.MF" todir="${build.dir}/classes/META-INF"/>
-        <copy file="${dist.jar}" tofile="${dist.dir}/${application.name}-${application.version}.jar" failonerror="false" overwrite="true"/>
         -->
-        <copy file="${dist.jar}" todir="${adalid.lib.dir}" failonerror="false" overwrite="true"/>
         <echo level="${implementation.version.remark.level}"
               message="Extension-Name: ${application.name}"/>
         <echo level="${implementation.version.remark.level}"
               message="Implementation-Version: ${implementation.version} ${implementation.version.remark}"/>
+        <antcall target="-copy-jar-to-lib"/>
+        <antcall target="-copy-jar-to-m2r"/>
+    </target>
+
+    <target name="-copy-jar-to-lib" if="adalid.lib.dir.available">
+        <copy file="${dist.jar}" todir="${adalid.lib.dir}" failonerror="false" overwrite="true"/>
+    </target>
+
+    <target name="-copy-jar-to-m2r" if="adalid.m2r.dir.available">
+        <copy file="${dist.jar}" tofile="${adalid.m2r.jar}" failonerror="false" overwrite="true"/>
     </target>
 
     <target name="-post-clean">
         <echo level="info" message="-post-clean"/>
         <basename property="adalid.jar.file" file="${dist.jar}"/>
         <delete file="${adalid.lib.dir}/${adalid.jar.file}"/>
+        <delete file="${adalid.m2r.jar}"/>
         <delete file="MANIFEST.MF"/>
     </target>
 

@@ -134,7 +134,7 @@ ${code}.branch=${branch}
 #set($name = $StringUtils.capitalize($page.entity.wrapper.validDefaultCollectionLabel))
 #set($description = "$!page.entity.defaultShortDescription")
 #setWebPageNameAsDescription($name)
-#set($url = "${redirect}${project.rootFolderName}-war/faces/${webPageName}&twn=${project.rootFolderName}-war-${webProjectSuffix}")
+#set($url = "${redirect}${project.alias}-war/faces/${webPageName}&twn=${project.alias}-war-${webProjectSuffix}")
 #writeLeaf($leaf $name $description $branch $url)
 #end##writePage
 

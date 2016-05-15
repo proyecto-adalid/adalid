@@ -151,7 +151,6 @@
 #end##setLocalVariables
 
 #macro(writeJasperReport)
-##  resourceBundle="${project.rootPackageName}.lib.base.bundle.copy.BundleWebui"
 <jasperReport
     xmlns="http://jasperreports.sourceforge.net/jasperreports"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -187,7 +186,7 @@
 
     <template><![CDATA[${BOP}CUSTOM_STYLE_TEMPLATE${EOP}]]></template>
     <parameter name="ENTERPRISE_APPLICATION_CODE" class="java.lang.String" isForPrompting="false">
-        <defaultValueExpression><![CDATA["$project.wrapper.hyphenatedAlias"]]></defaultValueExpression>
+        <defaultValueExpression><![CDATA["$project.alias"]]></defaultValueExpression>
     </parameter>
     <parameter name="ENTERPRISE_APPLICATION_NAME" class="java.lang.String" isForPrompting="false">
         <defaultValueExpression><![CDATA["$project.wrapper.validDefaultShortDescription"]]></defaultValueExpression>
