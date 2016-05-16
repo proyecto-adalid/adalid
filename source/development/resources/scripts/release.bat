@@ -35,6 +35,7 @@ if exist %DQPATH% rd %DQPATH% /s/q
 echo md %DQPATH%
 md %DQPATH%
 
+echo.
 call:x-development
 call:x-documents
 call:x-lib
@@ -46,12 +47,10 @@ echo.
 goto:eof
 
 :x-development
-set velocity-oracle-junction-no-pause=true
-call "%~dp0velocity-oracle-junction"
-set velocity-prime-junction-no-pause=true
-call "%~dp0velocity-prime-junction"
 call:set-sub-dir "%VRPATH%\source"
 call:robocopy-folder "%project_source_dir%" %SUBDIR% development
+dir %VRPATH%\source\development\resources /a:d /o:n
+echo.
 goto:eof
 
 :x-documents
