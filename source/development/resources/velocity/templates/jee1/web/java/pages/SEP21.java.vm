@@ -63,14 +63,11 @@ public class ${javaClassSimpleName} extends AbstractPageBean1#writeJavaImplement
     #if($page.entity.isTableViewWithMasterHeading())
         #if($page.rootMasterHeadingFields.isEmpty())
             #set($viewWithMasterHeading  = $FALSE)
-            #set($masterHeadingViewWidth = 0)
         #else
             #set($viewWithMasterHeading = $TRUE)
-            #set($masterHeadingViewWidth = $page.entity.tableViewWidth)
         #end
     #else
         #set($viewWithMasterHeading = $FALSE)
-        #set($masterHeadingViewWidth = 0)
     #end
     #setDataProviderVariables()
 #end##setLocalVariables

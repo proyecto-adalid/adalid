@@ -419,6 +419,25 @@ public class VelocityAid {
         return null;
     }
 
+    /**
+     * @param objects
+     * @return the first non-null/non-blank parameter
+     */
+    public static Object nvl(Object... objects) {
+        if (objects != null && objects.length > 0) {
+            for (Object object : objects) {
+                if (object instanceof String) {
+                    if (StringUtils.isNotBlank((String) object)) {
+                        return object;
+                    }
+                } else if (object != null) {
+                    return object;
+                }
+            }
+        }
+        return null;
+    }
+
     public static String[] array(String... string) {
         return string;
     }

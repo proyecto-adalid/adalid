@@ -32,7 +32,8 @@
             #set($masterHeadingViewWidth = 0)
         #else
             #set($viewWithMasterHeading = $TRUE)
-            #set($masterHeadingViewWidth = $page.entity.tableViewWidth)
+##          #set($masterHeadingViewWidth = $page.entity.tableViewWidth)
+            #set($masterHeadingViewWidth = $VelocityAid.nvl($page.entity.getAttribute('table_view_width'), $project_table_view_width))
         #end
     #else
         #set($viewWithMasterHeading = $FALSE)

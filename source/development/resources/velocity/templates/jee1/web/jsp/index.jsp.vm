@@ -62,12 +62,12 @@
         <title><% out.print(title); %></title>
     </head>
     <body bgcolor="#fafafa" style="font-family: Arial,Helvetica,sans-serif; font-size: 100%" onload="initialize()">
-        <script src="/${project.alias}-war/resources/javascript1.js"></script>
+        <script type="text/javascript" src="/${project.alias}-war/resources/javascript1.js"></script>
         <script type="text/javascript">
             var MZFF = 'http://www.mozilla-europe.org/es/firefox/';
             var HOME = 'http://www.google.com/';
-            var MAX_WINDOW_WIDTH  = 1280;
-            var MAX_WINDOW_HEIGHT = 960;
+            var MAX_WINDOW_WIDTH  = $project_window_width;
+            var MAX_WINDOW_HEIGHT = $project_window_height;
         //
             function initialize() {
 #***

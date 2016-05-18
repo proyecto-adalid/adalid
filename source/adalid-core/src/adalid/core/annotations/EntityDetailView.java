@@ -22,7 +22,7 @@ public @interface EntityDetailView {
     Kleenean enabled() default Kleenean.UNSPECIFIED; // TRUE
 
     Kleenean heading() default Kleenean.UNSPECIFIED; // FALSE
-
-    int width() default 1200; // 800 <= width <= 2400
+//
+//  int width() default 1200; // 800 <= width <= 2400
 
 }

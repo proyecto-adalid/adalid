@@ -3,7 +3,6 @@
 #writeXMLDeclaration()
 #writeXMLLicense()
 #writeXMLAuthor('Jorge Campins')
-#set($projectAlias = "${javaProgrammer.getJavaVariableName($project.alias)}")
 #set($securityRealmType = "$!project.securityRealmType")
 #set($ldap = $securityRealmType.equals('LDAP'))
 <!DOCTYPE glassfish-application PUBLIC "-//GlassFish.org//DTD GlassFish Application Server 3.1 Java EE Application 6.0//EN" "http://glassfish.org/dtds/glassfish-application_6_0-1.dtd">
@@ -18,21 +17,21 @@
         <role-name>SuperGestor</role-name>
         <group-name>SuperGestor</group-name>
     #if($ldap)
-        <group-name>SuperGestor-${projectAlias}</group-name>
+        <group-name>SuperGestor-${project.alias}</group-name>
     #end
     </security-role-mapping>
     <security-role-mapping>
         <role-name>SuperLector</role-name>
         <group-name>SuperLector</group-name>
     #if($ldap)
-        <group-name>SuperLector-${projectAlias}</group-name>
+        <group-name>SuperLector-${project.alias}</group-name>
     #end
     </security-role-mapping>
     <security-role-mapping>
         <role-name>Operador</role-name>
         <group-name>Operador</group-name>
     #if($ldap)
-        <group-name>Operador-${projectAlias}</group-name>
+        <group-name>Operador-${project.alias}</group-name>
     #end
     </security-role-mapping>
     #set($tipoRol = $project.getEntity($TipoRol))
@@ -50,7 +49,7 @@
         <role-name>${role}${module.name}</role-name>
         <group-name>${role}${module.name}</group-name>
     #if($ldap)
-        <group-name>${role}${module.name}-${projectAlias}</group-name>
+        <group-name>${role}${module.name}-${project.alias}</group-name>
     #end
     </security-role-mapping>
 #end##foreach-row

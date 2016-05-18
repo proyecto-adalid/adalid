@@ -1,4 +1,5 @@
 #parse("$templatePath/blocks/set-field-variables.vm")
+#set($tableViewWidth = $VelocityAid.nvl($page.entity.getAttribute('table_view_width'), $project_table_view_width))
 $tab<webuijsf:table id="table1"
 $tab    binding="#{${pageBeanName}.table1}"
 $tab    clearSortButton="true"
@@ -8,7 +9,7 @@ $tab    paginationControls="true"
 $tab    rendered="#{${pageBeanName}.gestor.filaDisponible}"
 $tab    selectMultipleButton="true"
 $tab    sortPanelToggleButton="true"
-$tab    width="$page.entity.tableViewWidth">
+$tab    width="$tableViewWidth">
 $tab    <webuijsf:tableRowGroup id="tableRowGroup1"
 $tab        binding="#{${pageBeanName}.tableRowGroup1}"
 $tab        rows="$page.entity.tableViewRows"

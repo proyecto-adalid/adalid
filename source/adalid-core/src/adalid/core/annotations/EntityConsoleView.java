@@ -20,7 +20,7 @@ import java.lang.annotation.Target;
 public @interface EntityConsoleView {
 
     Kleenean enabled() default Kleenean.UNSPECIFIED; // TRUE
-
-    int width() default 1200; // 800 <= width <= 2400
+//
+//  int width() default 1200; // 800 <= width <= 2400
 
 }

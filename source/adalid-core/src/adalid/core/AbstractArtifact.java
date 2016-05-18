@@ -560,6 +560,10 @@ public abstract class AbstractArtifact implements Artifact, Wrappable {
         _attributes.clear();
     }
 
+    @Override
+    public void addAttributes() {
+    }
+
     /**
      * @return the attributes map
      */

@@ -1,3 +1,4 @@
+#set($detailViewWidth = $VelocityAid.nvl($page.entity.getAttribute('detail_view_width'), $project_detail_view_width))
 $tab<!-- detail form body opening -->
 $tab<div class="pos-div-detalle">
 $tab    <h:panelGrid id="panelGrid${panelGridSequence.next()}">
@@ -22,7 +23,7 @@ $tab        </h:panelGrid>
             #end
 $tab        <h:panelGrid id="panelGrid${panelGridSequence.next()}"
 $tab            rendered="#{${pageBeanName}.gestor.filaDisponible}"
-$tab            style="width: ${page.entity.detailViewWidth}px"
+$tab            style="width: ${detailViewWidth}px"
 $tab            styleClass="pdq-grid-detalle-1">
                 #increaseIndentationBy(3)
                 #parse("$templatePath/blocks/detail/detail-heading.vm")

@@ -1,3 +1,4 @@
+#set($consoleViewWidth = $VelocityAid.nvl($page.entity.getAttribute('console_view_width'), $project_console_view_width))
 $tab<!-- console form body opening -->
 $tab<div class="pos-div-detalle">
 $tab    <h:panelGrid id="panelGrid${panelGridSequence.next()}">
@@ -14,7 +15,7 @@ $tab                    url="#{${pageBeanName}.gestor.urlAnclaPie1}"/>
 $tab            </h:panelGrid>
 $tab        </h:panelGrid>
 $tab        <h:panelGrid id="panelGrid${panelGridSequence.next()}"
-$tab            style="width: ${page.entity.consoleViewWidth}px"
+$tab            style="width: ${consoleViewWidth}px"
 $tab            styleClass="pdq-grid-detalle-1">
                 #increaseIndentationBy(3)
                 #parse("$templatePath/blocks/console/console-heading.vm")

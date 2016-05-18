@@ -3,7 +3,7 @@
         enabled="true"
         from="${emailAccount}"
         host="smtp.gmail.com"
-        jndi-name="mail/${projectAlias}MailerBeanSession"
+        jndi-name="mail/${project.alias}MailerBeanSession"
         object-type="user"
         store-protocol="imaps"
         store-protocol-class="com.sun.mail.imap.IMAPSSLStore"

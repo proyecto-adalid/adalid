@@ -1,32 +1,32 @@
     <admin-object-resource
         enabled="true"
-        jndi-name="jms/${projectAlias}${resourceNamePrefix}RequestMessageQueue"
+        jndi-name="jms/${project.alias}${resourceNamePrefix}RequestMessageQueue"
         object-type="user"
         res-adapter="jmsra"
         res-type="javax.jms.Queue">
-        <property name="Name" value="${projectAlias}${resourceNamePrefix}RequestMessageQueue"/>
+        <property name="Name" value="${project.alias}${resourceNamePrefix}RequestMessageQueue"/>
     </admin-object-resource>
     <admin-object-resource
         enabled="true"
-        jndi-name="jms/${projectAlias}${resourceNamePrefix}ReplyMessageQueue"
+        jndi-name="jms/${project.alias}${resourceNamePrefix}ReplyMessageQueue"
         object-type="user"
         res-adapter="jmsra"
         res-type="javax.jms.Queue">
-        <property name="Name" value="${projectAlias}${resourceNamePrefix}ReplyMessageQueue"/>
+        <property name="Name" value="${project.alias}${resourceNamePrefix}ReplyMessageQueue"/>
     </admin-object-resource>
     <admin-object-resource
         enabled="true"
-        jndi-name="jms/${projectAlias}${resourceNamePrefix}ReturnMessageQueue"
+        jndi-name="jms/${project.alias}${resourceNamePrefix}ReturnMessageQueue"
         object-type="user"
         res-adapter="jmsra"
         res-type="javax.jms.Queue">
-        <property name="Name" value="${projectAlias}${resourceNamePrefix}ReturnMessageQueue"/>
+        <property name="Name" value="${project.alias}${resourceNamePrefix}ReturnMessageQueue"/>
     </admin-object-resource>
     <connector-resource
         enabled="true"
-        jndi-name="jms/${projectAlias}${resourceNamePrefix}MessageFactory"
+        jndi-name="jms/${project.alias}${resourceNamePrefix}MessageFactory"
         object-type="user"
-        pool-name="jms/${projectAlias}${resourceNamePrefix}MessageFactoryPool">
+        pool-name="jms/${project.alias}${resourceNamePrefix}MessageFactoryPool">
     </connector-resource>
     <connector-connection-pool
         associate-with-thread="false"
@@ -44,7 +44,7 @@
         max-connection-usage-count="0"
         max-pool-size="32"
         max-wait-time-in-millis="60000"
-        name="jms/${projectAlias}${resourceNamePrefix}MessageFactoryPool"
+        name="jms/${project.alias}${resourceNamePrefix}MessageFactoryPool"
         pool-resize-quantity="2"
         resource-adapter-name="jmsra"
         steady-pool-size="8"

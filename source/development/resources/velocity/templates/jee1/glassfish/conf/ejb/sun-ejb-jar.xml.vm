@@ -3,27 +3,26 @@
 #writeXMLDeclaration()
 #writeXMLLicense()
 #writeXMLAuthor('Jorge Campins')
-#set($projectAlias = "${javaProgrammer.getJavaVariableName($project.alias)}")
 <!DOCTYPE sun-ejb-jar PUBLIC "-//Sun Microsystems, Inc.//DTD Application Server 9.0 EJB 3.0//EN" "http://www.sun.com/software/appserver/dtds/sun-ejb-jar_3_0-0.dtd">
 <sun-ejb-jar>
     <enterprise-beans>
         <ejb>
             <ejb-name>BusinessProcessMessengerBean</ejb-name>
             <resource-ref>
-                <res-ref-name>jms/${projectAlias}BusinessProcessMessageFactory</res-ref-name>
-                <jndi-name>jms/${projectAlias}BusinessProcessMessageFactory</jndi-name>
+                <res-ref-name>jms/${project.alias}BusinessProcessMessageFactory</res-ref-name>
+                <jndi-name>jms/${project.alias}BusinessProcessMessageFactory</jndi-name>
             </resource-ref>
             <message-destination-ref>
-                <message-destination-ref-name>jms/${projectAlias}BusinessProcessRequestMessageQueue</message-destination-ref-name>
-                <jndi-name>jms/${projectAlias}BusinessProcessRequestMessageQueue</jndi-name>
+                <message-destination-ref-name>jms/${project.alias}BusinessProcessRequestMessageQueue</message-destination-ref-name>
+                <jndi-name>jms/${project.alias}BusinessProcessRequestMessageQueue</jndi-name>
             </message-destination-ref>
             <message-destination-ref>
-                <message-destination-ref-name>jms/${projectAlias}BusinessProcessReplyMessageQueue</message-destination-ref-name>
-                <jndi-name>jms/${projectAlias}BusinessProcessReplyMessageQueue</jndi-name>
+                <message-destination-ref-name>jms/${project.alias}BusinessProcessReplyMessageQueue</message-destination-ref-name>
+                <jndi-name>jms/${project.alias}BusinessProcessReplyMessageQueue</jndi-name>
             </message-destination-ref>
             <message-destination-ref>
-                <message-destination-ref-name>jms/${projectAlias}BusinessProcessReturnMessageQueue</message-destination-ref-name>
-                <jndi-name>jms/${projectAlias}BusinessProcessReturnMessageQueue</jndi-name>
+                <message-destination-ref-name>jms/${project.alias}BusinessProcessReturnMessageQueue</message-destination-ref-name>
+                <jndi-name>jms/${project.alias}BusinessProcessReturnMessageQueue</jndi-name>
             </message-destination-ref>
         </ejb>
         <ejb>
@@ -39,20 +38,20 @@
         <ejb>
             <ejb-name>UtilityProcessMessengerBean</ejb-name>
             <resource-ref>
-                <res-ref-name>jms/${projectAlias}UtilityProcessMessageFactory</res-ref-name>
-                <jndi-name>jms/${projectAlias}UtilityProcessMessageFactory</jndi-name>
+                <res-ref-name>jms/${project.alias}UtilityProcessMessageFactory</res-ref-name>
+                <jndi-name>jms/${project.alias}UtilityProcessMessageFactory</jndi-name>
             </resource-ref>
             <message-destination-ref>
-                <message-destination-ref-name>jms/${projectAlias}UtilityProcessRequestMessageQueue</message-destination-ref-name>
-                <jndi-name>jms/${projectAlias}UtilityProcessRequestMessageQueue</jndi-name>
+                <message-destination-ref-name>jms/${project.alias}UtilityProcessRequestMessageQueue</message-destination-ref-name>
+                <jndi-name>jms/${project.alias}UtilityProcessRequestMessageQueue</jndi-name>
             </message-destination-ref>
             <message-destination-ref>
-                <message-destination-ref-name>jms/${projectAlias}UtilityProcessReplyMessageQueue</message-destination-ref-name>
-                <jndi-name>jms/${projectAlias}UtilityProcessReplyMessageQueue</jndi-name>
+                <message-destination-ref-name>jms/${project.alias}UtilityProcessReplyMessageQueue</message-destination-ref-name>
+                <jndi-name>jms/${project.alias}UtilityProcessReplyMessageQueue</jndi-name>
             </message-destination-ref>
             <message-destination-ref>
-                <message-destination-ref-name>jms/${projectAlias}UtilityProcessReturnMessageQueue</message-destination-ref-name>
-                <jndi-name>jms/${projectAlias}UtilityProcessReturnMessageQueue</jndi-name>
+                <message-destination-ref-name>jms/${project.alias}UtilityProcessReturnMessageQueue</message-destination-ref-name>
+                <jndi-name>jms/${project.alias}UtilityProcessReturnMessageQueue</jndi-name>
             </message-destination-ref>
         </ejb>
         <ejb>

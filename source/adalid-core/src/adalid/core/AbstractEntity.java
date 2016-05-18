@@ -633,11 +633,11 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
      *
      */
     private int _tableViewRows;
-
-    /**
-     *
-     */
-    private int _tableViewWidth;
+//
+//  /**
+//   *
+//   */
+//  private int _tableViewWidth;
 
     /**
      *
@@ -648,11 +648,11 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
      *
      */
     private boolean _detailViewWithMasterHeading;
-
-    /**
-     *
-     */
-    private int _detailViewWidth;
+//
+//  /**
+//   *
+//   */
+//  private int _detailViewWidth;
 
     /**
      *
@@ -663,11 +663,11 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
      *
      */
     private boolean _consoleViewEnabled;
-
-    /**
-     *
-     */
-    private int _consoleViewWidth;
+//
+//  /**
+//   *
+//   */
+//  private int _consoleViewWidth;
 
     /**
      *
@@ -1903,14 +1903,14 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
     public int getTableViewRows() {
         return _tableViewRows;
     }
-
-    /**
-     * @return the table view width
-     */
-//  @Override
-    public int getTableViewWidth() {
-        return _tableViewWidth;
-    }
+//
+//  /**
+//   * @return the table view width
+//   */
+////@Override
+//  public int getTableViewWidth() {
+//      return _tableViewWidth;
+//  }
 
     /**
      * @return the detail-view enabled indicator
@@ -1927,14 +1927,14 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
     public boolean isDetailViewWithMasterHeading() {
         return _detailViewWithMasterHeading;
     }
-
-    /**
-     * @return the detail view width
-     */
-//  @Override
-    public int getDetailViewWidth() {
-        return _detailViewWidth;
-    }
+//
+//  /**
+//   * @return the detail view width
+//   */
+////@Override
+//  public int getDetailViewWidth() {
+//      return _detailViewWidth;
+//  }
 
     /**
      * @return the tree-view enabled indicator
@@ -1951,14 +1951,14 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
     public boolean isConsoleViewEnabled() {
         return _consoleViewEnabled;
     }
-
-    /**
-     * @return the console view width
-     */
-//  @Override
-    public int getConsoleViewWidth() {
-        return _consoleViewWidth;
-    }
+//
+//  /**
+//   * @return the console view width
+//   */
+////@Override
+//  public int getConsoleViewWidth() {
+//      return _consoleViewWidth;
+//  }
 
     /**
      * @return the warnings enabled indicator
@@ -2852,6 +2852,10 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
 
     public AbstractEntity(Artifact declaringArtifact, Field declaringField) {
         super();
+        init(declaringArtifact, declaringField);
+    }
+
+    private void init(Artifact declaringArtifact, Field declaringField) {
         if (declaringArtifact == null) {
             throw new IllegalArgumentException("null declaring artifact");
         }
@@ -3884,13 +3888,13 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
         _tableViewWithDeleteEnabled = true;
         _tableViewWithMasterHeading = true;
         _tableViewRows = 10;
-        _tableViewWidth = 1200;
+//      _tableViewWidth = 1200;
         _detailViewEnabled = true;
         _detailViewWithMasterHeading = true;
-        _detailViewWidth = 1200;
+//      _detailViewWidth = 1200;
         _treeViewEnabled = true;
         _consoleViewEnabled = true;
-        _consoleViewWidth = 1200;
+//      _consoleViewWidth = 1200;
         _warningsEnabled = true;
         _sqlCodeGenEnabled = true;
         _searchType = SearchType.UNSPECIFIED;
@@ -4466,7 +4470,7 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
                 _tableViewWithDeleteEnabled = annotation.deletes().toBoolean(_tableViewWithDeleteEnabled);
                 _tableViewWithMasterHeading = annotation.heading().toBoolean(_tableViewWithMasterHeading);
                 _tableViewRows = Math.min(50, Math.max(1, annotation.rows()));
-                _tableViewWidth = Math.min(2400, Math.max(800, annotation.width()));
+//              _tableViewWidth = Math.min(2400, Math.max(800, annotation.width()));
                 _annotatedWithEntityTableView = true;
             }
         }
@@ -4480,7 +4484,7 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
                 _detailViewEnabled = annotation.enabled().toBoolean(_detailViewEnabled);
                 _annotatedWithEntityDetailView = true;
                 _detailViewWithMasterHeading = annotation.heading().toBoolean(_detailViewWithMasterHeading);
-                _detailViewWidth = Math.min(2400, Math.max(800, annotation.width()));
+//              _detailViewWidth = Math.min(2400, Math.max(800, annotation.width()));
             }
         }
     }
@@ -4503,7 +4507,7 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
             if (annotation != null) {
                 _consoleViewEnabled = annotation.enabled().toBoolean(_consoleViewEnabled);
                 _annotatedWithEntityConsoleView = true;
-                _consoleViewWidth = Math.min(2400, Math.max(800, annotation.width()));
+//              _consoleViewWidth = Math.min(2400, Math.max(800, annotation.width()));
             }
         }
     }

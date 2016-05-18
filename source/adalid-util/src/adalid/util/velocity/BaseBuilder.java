@@ -294,6 +294,7 @@ public class BaseBuilder {
                             if (xml) {
                                 line = replaceAliasWithDatabaseName(line, "jdbc/", "");
                                 line = replaceAliasWithDatabaseName(line, "localhost:5432/", "");
+                                line = StrUtils.replaceAfter(line, PROJECT_ALIAS + "-pool", DATABASE_NAME + "-pool", "pool-name=");
                                 line = replaceAliasWithRootPackageName(line, "<logger category=\"", "\">");
                             }
                         }

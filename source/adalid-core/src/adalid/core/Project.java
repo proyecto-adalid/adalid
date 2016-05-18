@@ -702,6 +702,15 @@ public abstract class Project extends AbstractArtifact implements Comparable<Pro
     }
 
     /**
+     * executes the addAttributes method of every artifact
+     */
+    private void addArtifactsAttributes() {
+        for (Artifact artifact : _artifacts) {
+            artifact.addAttributes();
+        }
+    }
+
+    /**
      * adds an artifact to the set
      *
      * @param artifact
@@ -885,6 +894,7 @@ public abstract class Project extends AbstractArtifact implements Comparable<Pro
         logger.info(signature("build", getClass().getName()));
         TLC.setProject(this);
         clearArtifacts();
+        addArtifact(this);
         boolean built = parse() && analyze();
         return built;
     }
@@ -944,6 +954,7 @@ public abstract class Project extends AbstractArtifact implements Comparable<Pro
         TLC.setProject(this);
         clearArtifactsAttributes();
         invokeAddAttributesMethods();
+        addArtifactsAttributes();
         configureWriter();
         Writer writer = getWriter();
         writer.setOptionalResourceNames(getEntitiesMap().keySet());

@@ -206,6 +206,11 @@ public interface Artifact {
 
     /**
      *
+     */
+    void addAttributes();
+
+    /**
+     *
      * @param name
      * @param value
      * @return

@@ -48,7 +48,6 @@ public class ${javaClassSimpleName} extends AbstractPageBean1#writeJavaImplement
     #set($divString = '')
     #set($tabString = '')
     #set($viewWithMasterHeading = $FALSE)
-    #set($masterHeadingViewWidth = 0)
     #setDataProviderVariables()
 #end##setLocalVariables
 

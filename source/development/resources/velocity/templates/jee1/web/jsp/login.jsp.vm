@@ -47,7 +47,7 @@
     </head>
     <body bgcolor="#fafafa" style="font-family: Arial,Helvetica,sans-serif" onload="initialize()" onunload="terminate()">
 #if($project.isInternetAccessAllowed())
-        <script src="/${project.alias}-war/resources/javascript3.js"></script>
+        <script type="text/javascript" src="/${project.alias}-war/resources/javascript3.js"></script>
 #end
         <script type="text/javascript">
             function initialize() {
