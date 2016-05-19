@@ -15,10 +15,8 @@ public class ProjectAttributeKeys {
 
     public static final String DEFAULT_WINDOW_HEIGHT = "default_window_height";
 
-    public static final String DEFAULT_TABLE_VIEW_WIDTH = "default_table_view_width";
+    public static final String DEFAULT_TABLE_VIEW_ROWS = "default_table_view_rows";
 
-    public static final String DEFAULT_DETAIL_VIEW_WIDTH = "default_detail_view_width";
-
-    public static final String DEFAULT_CONSOLE_VIEW_WIDTH = "default_console_view_width";
+    public static final String MAX_TABLE_VIEW_ROWS = "max_table_view_rows";
 
 }

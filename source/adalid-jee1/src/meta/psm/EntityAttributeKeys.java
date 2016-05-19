@@ -11,6 +11,8 @@ package meta.psm;
  */
 public class EntityAttributeKeys {
 
+    public static final String TABLE_VIEW_ROWS = "table_view_rows";
+
     public static final String TABLE_VIEW_WIDTH = "table_view_width";
 
     public static final String DETAIL_VIEW_WIDTH = "detail_view_width";

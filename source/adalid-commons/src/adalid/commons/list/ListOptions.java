@@ -6,7 +6,7 @@
  */
 package adalid.commons.list;
 
-import adalid.commons.util.StrUtils;
+import adalid.commons.bundles.Bundle;
 import java.util.ArrayList;
 import java.util.Collections;
 
@@ -14,6 +14,8 @@ import java.util.Collections;
  * @author Jorge Campins
  */
 public class ListOptions {
+
+    private static final String NULL_VALUE_STRING = Bundle.getString("null_value.string");
 
     private ArrayList<ListOption> list;
 
@@ -33,7 +35,7 @@ public class ListOptions {
         sortedByLabel = ordenado;
         alreadySorted = true;
         if (addNullOption) {
-            add("", StrUtils.NULL_VALUE_STRING);
+            add("", NULL_VALUE_STRING);
         }
     }
 

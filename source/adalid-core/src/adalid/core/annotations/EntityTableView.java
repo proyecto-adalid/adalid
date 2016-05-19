@@ -28,8 +28,8 @@ public @interface EntityTableView {
     Kleenean deletes() default Kleenean.UNSPECIFIED; // TRUE
 
     Kleenean heading() default Kleenean.UNSPECIFIED; // FALSE
-
-    int rows() default 10; // 1 <= rows <= 50
+//
+//  int rows() default 10; // 1 <= rows <= 50
 //
 //  int width() default 1200; // 800 <= width <= 2400
 

@@ -10,16 +10,11 @@ import adalid.commons.bundles.Bundle;
 import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.sql.Date;
-import java.sql.Time;
-import java.sql.Timestamp;
 import java.text.MessageFormat;
 import java.util.ArrayList;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
-import java.util.Set;
 import java.util.UUID;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringEscapeUtils;
@@ -33,11 +28,19 @@ public class StrUtils {
 
     private static final Logger logger = Logger.getLogger(StrUtils.class);
 
-    private static final String EMPTY = "";
+    public static final String VALID_CHARS = "abcdefghijklmnopqrstuvwxyz_1234567890";
 
-    public static final String NULL_VALUE_STRING = Bundle.getString("null_value.string");
+    public static String ltrim(String s) {
+        return s == null ? null : s.replaceAll("^\\s+", "");
+    }
 
-    public static String ID_PREFIX_STRING = Bundle.getString("id_prefix.string");
+    public static String rtrim(String s) {
+        return s == null ? null : s.replaceAll("\\s+$", "");
+    }
+
+    public static String toString(Object obj) {
+        return obj == null ? null : obj instanceof String ? (String) obj : obj.toString();
+    }
 
     public static boolean allAreBlank(String... strings) {
         for (String string : strings) {
@@ -103,12 +106,12 @@ public class StrUtils {
      */
     public static String coalesceToEmpty(String strings) {
         String string = coalesce(strings);
-        return string == null ? EMPTY : string;
+        return string == null ? StringUtils.EMPTY : string;
     }
 
     public static String coalesceToEmpty(String... strings) {
         String string = coalesce(strings);
-        return string == null ? EMPTY : string;
+        return string == null ? StringUtils.EMPTY : string;
     }
 
     /*
@@ -116,63 +119,14 @@ public class StrUtils {
      */
     public static String coalesceToNull(String strings) {
         String string = coalesce(strings);
-        return string == null ? NULL_VALUE_STRING : string;
+        return string == null ? Bundle.getString("null_value.string") : string;
     }
 
     public static String coalesceToNull(String... strings) {
         String string = coalesce(strings);
-        return string == null ? NULL_VALUE_STRING : string;
+        return string == null ? Bundle.getString("null_value.string") : string;
     }
 
-    public static String getNumericCode(String string) {
-        if (StringUtils.isBlank(string)) {
-            return null;
-        }
-        String num = getNumericString(string);
-        int digit = Damm.digit(num);
-        char[] chars = string.trim().toCharArray();
-        int len = chars.length;
-        int sum = 0;
-        for (char c : chars) {
-            sum += c;
-        }
-        return digit + String.format("%02d", len % 100) + String.format("%02d", sum % 100);
-    }
-
-    // <editor-fold defaultstate="collapsed" desc="getLongNumericCode">
-//  public static String getLongNumericCode(String string) {
-//      if (StringUtils.isBlank(string)) {
-//          return null;
-//      }
-//      String clean = string.trim();
-//      String first = firstDigit(clean);
-//      String split = StringUtils.join(StringUtils.splitByCharacterTypeCamelCase(clean), " ");
-//      String[] chunks = StringUtils.split(split, "!@#$%^&*()-_=+[]{}\\|;:'\",.<>/? ");
-//      for (int i = 0; i < chunks.length; i++) {
-//          chunks[i] = Damm.digit(getNumericString(chunks[i])) + "";
-//      }
-//      String nine;
-//      String join = StringUtils.join(chunks);
-//      int n = join.length();
-//      if (n < 10) {
-//          nine = StringUtils.rightPad(join, 9, "0");
-//      } else {
-//          int m = n / 2;
-//          nine = join.substring(0, 3) + join.substring(m - 1, m + 2) + join.substring(n - 3);
-//      }
-//      String numst = getNumericString(clean);
-//      String tenth = Damm.digit(numst) + "";
-//      char[] chars = clean.toCharArray();
-//      int len = chars.length;
-//      int sum = 0;
-//      for (char c : chars) {
-//          sum += c;
-//      }
-//      chunks = new String[]{first, nine, tenth, String.format("%03d", len % 1000), String.format("%05d", sum % 100000)};
-//      return StringUtils.join(chunks);
-//  }
-    // </editor-fold>
-//
     private static final int MDD = 13; // maximum number of damm digits
 
     private static final double X2MDD = Math.pow(10, MDD); // ten raised to the maximum number of damm digits
@@ -230,20 +184,6 @@ public class StrUtils {
         return c < 'A' ? 0 : c < 'D' ? 1 : c < 'G' ? 2 : c < 'J' ? 3 : c < 'M' ? 4 : c < 'P' ? 5 : c < 'T' ? 6 : c < 'W' ? 7 : c > 'Z' ? 0 : 8;
     }
 
-    public static String getNumericString(String string) {
-        if (StringUtils.isBlank(string)) {
-            return null;
-        }
-        char[] chars = string.trim().toCharArray();
-        String num = "";
-        int i;
-        for (char c : chars) {
-            i = c;
-            num += String.format("%03d", i);
-        }
-        return num;
-    }
-
     public static String getRandomString() {
         return getRandomString(0);
     }
@@ -251,7 +191,7 @@ public class StrUtils {
     public static String getRandomString(int length) {
         String uuid = UUID.randomUUID().toString().toUpperCase().replaceAll("-", "");
         int endIndex = length < 1 || length > uuid.length() ? uuid.length() : length;
-        return UUID.randomUUID().toString().toUpperCase().replaceAll("-", "").substring(0, endIndex);
+        return uuid.substring(0, endIndex);
     }
 
     public static String getSimpleString(Object obj) {
@@ -269,26 +209,24 @@ public class StrUtils {
     public static String getString(Object obj) {
         if (obj == null) {
             return null;
-        } else if (obj instanceof Date) {
-            return TimeUtils.defaultDateString(obj);
-        } else if (obj instanceof Time) {
-            return TimeUtils.defaultTimeString(obj);
         } else if (obj instanceof java.util.Date) {
-            return TimeUtils.defaultTemporalString(obj);
+            return TimeUtils.defaultString((java.util.Date) obj);
         } else {
-            return String.valueOf(obj);
+            return obj.toString();
         }
     }
 
     public static String getStringDelimitado(Object obj) {
         String string = getString(obj);
         if (string == null) {
+            return null;
+        } else if (obj instanceof String) {
+            return "'" + string + "'";
+//      } else if (obj instanceof java.util.Date) {
+//          return "'" + string + "'";
+        } else {
             return string;
         }
-        if (obj instanceof String) {
-            return "'" + string + "'";
-        }
-        return string;
     }
 
     public static String getStringNoDelimitado(String delimitado) {
@@ -322,14 +260,10 @@ public class StrUtils {
     public static String getStringSql(Object obj) {
         if (obj == null) {
             return null;
-        } else if (obj instanceof Date) {
-            return TimeUtils.jdbcDateString(obj);
-        } else if (obj instanceof Time) {
-            return TimeUtils.jdbcTimeString(obj);
         } else if (obj instanceof java.util.Date) {
-            return TimeUtils.jdbcTimestampString(obj);
+            return TimeUtils.jdbcString((java.util.Date) obj);
         } else {
-            return String.valueOf(obj);
+            return obj.toString();
         }
     }
 
@@ -339,11 +273,7 @@ public class StrUtils {
             return null;
         } else if (obj instanceof String) {
             return "'" + string + "'";
-        } else if (obj instanceof Date) {
-            return "'" + string + "'";
-        } else if (obj instanceof Time) {
-            return "'" + string + "'";
-        } else if (obj instanceof Timestamp || obj instanceof java.util.Date) {
+        } else if (obj instanceof java.util.Date) {
             return "'" + string + "'";
         } else {
             return string;
@@ -382,7 +312,7 @@ public class StrUtils {
 
     public static String getString(String equals, String separator, String open, String close, Object object) {
         if (ObjUtils.isBlank(object)) {
-            return EMPTY;
+            return StringUtils.EMPTY;
         }
         if (object.getClass().isArray()) {
             Object[] array = (Object[]) object;
@@ -422,8 +352,10 @@ public class StrUtils {
     }
 
     public static boolean esIdentificadorSqlValido(String string) {
-        String validChars = "abcdefghijklmnopqrstuvwxyz_1234567890";
-        return (StringUtils.isNotBlank(string) && StringUtils.containsOnly(string, validChars) && StringUtils.isAlpha(string.substring(0, 1)));
+        String validChars = VALID_CHARS;
+        return StringUtils.isNotBlank(string)
+            && StringUtils.containsOnly(string, validChars)
+            && StringUtils.isAlpha(string.substring(0, 1));
     }
 
     public static boolean esInvocacionFuncionSql(String string) {
@@ -439,8 +371,9 @@ public class StrUtils {
     }
 
     public static boolean esIdentificadorArchivoValido(String string) {
-        String validChars = "abcdefghijklmnopqrstuvwxyz_1234567890";
-        return (StringUtils.isNotBlank(string) && StringUtils.containsOnly(string, validChars));
+        String validChars = VALID_CHARS;
+        return StringUtils.isNotBlank(string)
+            && StringUtils.containsOnly(string, validChars);
     }
 
     public static String getIdentificadorSql(String string, int maxLength) {
@@ -516,7 +449,7 @@ public class StrUtils {
                 shorterString = trimmedPrefix + numericCode + trimmedSuffix;
             }
         }
-        logIdentificadorSql(endlessString, shorterString);
+//      logIdentificadorSql(endlessString, shorterString);
         return shorterString;
     }
 
@@ -582,24 +515,53 @@ public class StrUtils {
                 shorterString = trimmedString.substring(0, maxLength);
             }
         }
-        logIdentificadorSql(endlessString, shorterString);
+//      logIdentificadorSql(endlessString, shorterString);
         return shorterString;
     }
+//
+//  private static final Set<String> setIdentificadorSql = new LinkedHashSet<>();
+//
+//  private static void logIdentificadorSql(String endless, String shorter) {
+//      if (endless.equals(shorter)) {
+//          return;
+//      }
+//      String shorterLength = String.format("%03d", shorter.length());
+//      String endlessLength = String.format("%03d", endless.length());
+//      String string = "[" + shorterLength + " < " + endlessLength + "] " + shorter + " < " + endless;
+//      if (setIdentificadorSql.contains(string)) {
+//      } else {
+//          setIdentificadorSql.add(string);
+//          logger.trace(string);
+//      }
+//  }
 
-    private static final Set<String> setIdentificadorSql = new LinkedHashSet<>();
+    public static String getNumericCode(String string) {
+        if (StringUtils.isBlank(string)) {
+            return null;
+        }
+        String num = getNumericString(string);
+        int digit = Damm.digit(num);
+        char[] chars = string.trim().toCharArray();
+        int len = chars.length;
+        int sum = 0;
+        for (char c : chars) {
+            sum += c;
+        }
+        return digit + String.format("%02d", len % 100) + String.format("%02d", sum % 100);
+    }
 
-    private static void logIdentificadorSql(String endless, String shorter) {
-        if (endless.equals(shorter)) {
-            return;
+    public static String getNumericString(String string) {
+        if (StringUtils.isBlank(string)) {
+            return null;
         }
-        String shorterLength = String.format("%03d", shorter.length());
-        String endlessLength = String.format("%03d", endless.length());
-        String string = "[" + shorterLength + " < " + endlessLength + "] " + shorter + " < " + endless;
-        if (setIdentificadorSql.contains(string)) {
-        } else {
-            setIdentificadorSql.add(string);
-            logger.trace(string);
+        char[] chars = string.trim().toCharArray();
+        String num = "";
+        int i;
+        for (char c : chars) {
+            i = c;
+            num += String.format("%03d", i);
         }
+        return num;
     }
 
     public static String getIdentificadorSql(String string) {
@@ -804,7 +766,7 @@ public class StrUtils {
         }
         String x = string.trim();
         String y = "";
-        String z = StringUtils.isBlank(gap) ? EMPTY : gap.trim();
+        String z = StringUtils.isBlank(gap) ? StringUtils.EMPTY : gap.trim();
         boolean b = false;
         boolean g = false;
         char c;
@@ -891,20 +853,23 @@ public class StrUtils {
     }
 
     public static boolean isMixedCase(String string) {
-        String trimmed = StringUtils.trimToEmpty(string);
-        if (trimmed.isEmpty()) {
-            return false;
-        }
-        trimmed = trimmed.replaceAll("[^a-zA-Z]", "");
-        return !trimmed.isEmpty() && !StringUtils.isAllLowerCase(trimmed) && !StringUtils.isAllUpperCase(trimmed);
+        return !isNotMixedCase(string);
     }
 
     public static boolean isNotMixedCase(String string) {
-        return !isMixedCase(string);
+        string = StringUtils.trimToEmpty(string);
+        if (string.isEmpty()) {
+            return true;
+        }
+        string = string.replaceAll("[^a-zA-Z]", "");
+        if (string.isEmpty()) {
+            return true;
+        }
+        return StringUtils.isAllLowerCase(string) || StringUtils.isAllUpperCase(string);
     }
 
     public static String getWordyString(String string) {
-        return StringUtils.isBlank(string) ? EMPTY
+        return StringUtils.isBlank(string) ? StringUtils.EMPTY
             : isMixedCase(string) ? getHumplessCase(string, ' ')
             : string.toLowerCase().replace('_', ' ').replaceAll("  ", " ").trim();
     }
@@ -978,24 +943,24 @@ public class StrUtils {
     }
 
     public static Object getObjeto(String string) {
-        Object objeto = null;
         String cadena = StringUtils.trimToNull(string);
         if (cadena == null) {
             return null;
         }
+        Object objeto = null;
         if (StringUtils.isNumeric(cadena)) {
 //          objeto = getObjeto(cadena, EnumTipoDatoParametro.ENTERO);
             objeto = getObjeto(cadena, Integer.class);
+            if (objeto == null) {
+//              objeto = getObjeto(cadena, EnumTipoDatoParametro.ENTERO_GRANDE);
+                objeto = getObjeto(cadena, Long.class);
+            }
         }
-        if (objeto == null && StringUtils.isNumeric(cadena)) {
-//          objeto = getObjeto(cadena, EnumTipoDatoParametro.ENTERO_GRANDE);
-            objeto = getObjeto(cadena, BigInteger.class);
-        }
-        if (objeto == null && cadena.startsWith(ID_PREFIX_STRING)) {
+        if (objeto == null && cadena.startsWith(Bundle.getString("id_prefix.string"))) {
             String substr = cadena.substring(1);
             if (StringUtils.isNumeric(substr)) {
 //              objeto = getObjeto(substr, EnumTipoDatoParametro.ENTERO_GRANDE);
-                objeto = getObjeto(substr, BigInteger.class);
+                objeto = getObjeto(substr, Long.class);
             }
         }
         if (objeto == null) {
@@ -1004,7 +969,7 @@ public class StrUtils {
         }
         if (objeto == null) {
 //          objeto = getObjeto(cadena, EnumTipoDatoParametro.FECHA_HORA);
-            objeto = getObjeto(cadena, Timestamp.class);
+            objeto = getObjeto(cadena, java.util.Date.class);
         }
         if (objeto == null) {
 //          objeto = getObjeto(cadena, EnumTipoDatoParametro.ALFANUMERICO);
@@ -1037,149 +1002,30 @@ public class StrUtils {
             } else if (String.class.isAssignableFrom(clazz)) {          // ALFANUMERICO
                 return string;
             } else if (Boolean.class.isAssignableFrom(clazz)) {
-                return BitUtils.valueOf(value);
+                return BitUtils.toBoolean(value);
             } else if (Byte.class.isAssignableFrom(clazz)) {
-                return new BigDecimal(value).byteValue();
+                return NumUtils.toByte(value);
             } else if (Short.class.isAssignableFrom(clazz)) {
-                return new BigDecimal(value).shortValue();
+                return NumUtils.toShort(value);
             } else if (Integer.class.isAssignableFrom(clazz)) {         // ENTERO
-                return new BigDecimal(value).intValue();
-            } else if (Long.class.isAssignableFrom(clazz)) {
-                return new BigDecimal(value).longValue();
+                return NumUtils.toInteger(value);
+            } else if (Long.class.isAssignableFrom(clazz)) {            // ENTERO_GRANDE
+                return NumUtils.toLong(value);
             } else if (Float.class.isAssignableFrom(clazz)) {
-                return new BigDecimal(value).floatValue();
+                return NumUtils.toFloat(value);
             } else if (Double.class.isAssignableFrom(clazz)) {
-                return new BigDecimal(value).doubleValue();
-            } else if (BigInteger.class.isAssignableFrom(clazz)) {      // ENTERO_GRANDE
-                return new BigDecimal(value).longValue();
+                return NumUtils.toDouble(value);
+            } else if (BigInteger.class.isAssignableFrom(clazz)) {
+                return NumUtils.toBigInteger(value);
             } else if (BigDecimal.class.isAssignableFrom(clazz)) {      // NUMERICO
-                return new BigDecimal(value);
+                return NumUtils.toBigDecimal(value);
             } else if (java.util.Date.class.isAssignableFrom(clazz)) {  // FECHA_HORA
-                int year = 0;
-                int month = 0;
-                int day = 0;
-                int hour = 0;
-                int minute = 0;
-                int second = 0;
-                String xm = "";
-                String xs = "";
-                int len = value.length();
-                switch (len) {
-                    case 22:
-                        xm = value.substring(20);
-                    case 19:
-                        if (xm.equals("")) {
-                            xs = value.substring(17, 19);
-                        }
-                        if (xs.equalsIgnoreCase("AM") || xs.equalsIgnoreCase("PM")) {
-                            xm = xs;
-                        } else {
-                            second = Integer.parseInt(value.substring(17, 19));
-                        }
-                    case 16:
-                        minute = Integer.parseInt(value.substring(14, 16));
-                        hour = Integer.parseInt(value.substring(11, 13));
-                        if (xm.equalsIgnoreCase("AM") && hour == 12) {
-                            hour = 0;
-                        }
-                        if (xm.equalsIgnoreCase("PM") && hour <= 11) {
-                            hour += 12;
-                        }
-                    case 10:
-                        year = Integer.parseInt(value.substring(6, 10));
-                        month = Integer.parseInt(value.substring(3, 5));
-                        day = Integer.parseInt(value.substring(0, 2));
-                        break;
-                }
-                if (nbw(year, 1, 9999) || nbw(month, 1, 12) || nbw(day, 1, 31) || nbw(hour, 0, 23) || nbw(minute, 0, 59) || nbw(second, 0, 59)) {
-                    return null;
-                }
-                if (Timestamp.class.isAssignableFrom(clazz)) {
-                    return TimeUtils.newTimestamp(year, month, day, hour, minute, second);
-                } else if (Time.class.isAssignableFrom(clazz)) {
-                    return TimeUtils.newTime(hour, minute, second);
-                } else if (Date.class.isAssignableFrom(clazz)) {
-                    return TimeUtils.newDate(year, month, day);
-                } else {
-                    return TimeUtils.newUtilDate(year, month, day, hour, minute, second);
-                }
+                return TimeUtils.parse(value);
             }
-//      } catch (NumberFormatException e) {
-//          return null;
         } catch (RuntimeException e) {
             return null;
         }
         return null;
-    }
-
-    private static boolean nbw(int i, int lower, int upper) {
-        return i < lower || i > upper;
-    }
-
-    public static boolean esObjetoEnRango(Object objeto, Object minimo, Object maximo) {
-        boolean es = true;
-//      EnumTipoDatoParametro tipo;
-        if (objeto == null) {
-            return false;
-        } else if (objeto instanceof String) {
-//          tipo = EnumTipoDatoParametro.ALFANUMERICO;
-            String val1 = (String) objeto;
-            String min1 = (String) minimo;
-            String max1 = (String) maximo;
-            if (min1 != null && val1.compareTo(min1) < 0) {
-                es = false;
-            }
-            if (max1 != null && val1.compareTo(max1) > 0) {
-                es = false;
-            }
-        } else if (objeto instanceof Integer) {
-//          tipo = EnumTipoDatoParametro.ENTERO;
-            Integer val4 = (Integer) objeto;
-            Integer min4 = (Integer) minimo;
-            Integer max4 = (Integer) maximo;
-            if (min4 != null && val4.compareTo(min4) < 0) {
-                es = false;
-            }
-            if (max4 != null && val4.compareTo(max4) > 0) {
-                es = false;
-            }
-        } else if (objeto instanceof Long || objeto instanceof BigInteger) {
-//          tipo = EnumTipoDatoParametro.ENTERO_GRANDE;
-            Long val5 = objeto instanceof BigInteger ? ((BigInteger) objeto).longValue() : (Long) objeto;
-            Long min5 = (Long) minimo;
-            Long max5 = (Long) maximo;
-            if (min5 != null && val5.compareTo(min5) < 0) {
-                es = false;
-            }
-            if (max5 != null && val5.compareTo(max5) > 0) {
-                es = false;
-            }
-        } else if (objeto instanceof BigDecimal) {
-//          tipo = EnumTipoDatoParametro.NUMERICO;
-            BigDecimal val2 = (BigDecimal) objeto;
-            BigDecimal min2 = (BigDecimal) minimo;
-            BigDecimal max2 = (BigDecimal) maximo;
-            if (min2 != null && val2.compareTo(min2) < 0) {
-                es = false;
-            }
-            if (max2 != null && val2.compareTo(max2) > 0) {
-                es = false;
-            }
-        } else if (objeto instanceof Timestamp) {
-//          tipo = EnumTipoDatoParametro.FECHA_HORA;
-            Timestamp val3 = (Timestamp) objeto;
-            Timestamp min3 = (Timestamp) minimo;
-            Timestamp max3 = (Timestamp) maximo;
-            if (min3 != null && val3.compareTo(min3) < 0) {
-                es = false;
-            }
-            if (max3 != null && val3.compareTo(max3) > 0) {
-                es = false;
-            }
-        } else {
-            return false;
-        }
-        return es;
     }
 
     public static String lineSeparator() {
@@ -1308,8 +1154,7 @@ public class StrUtils {
     }
 
     public static String enclose(String argument) {
-        return argument == null ? null
-            : enclose(argument, '(', ')');
+        return argument == null ? null : enclose(argument, '(', ')');
     }
 
     public static String enclose(String argument, char delimiter) {
@@ -1555,6 +1400,18 @@ public class StrUtils {
             : affixType == 'p' ? StringUtils.removeStart(string, remove + separator)
                 : affixType == 's' ? StringUtils.removeEnd(string, separator + remove)
                     : StringUtils.replace(string, separator + remove + separator, separator);
+    }
+
+    public static String replaceOnceRepeatedly(String text, String searchString, Object... replacements) {
+        if (StringUtils.isBlank(text) || StringUtils.isBlank(searchString) || replacements == null || replacements.length == 0) {
+            return text;
+        }
+        String replacement;
+        for (Object obj : replacements) {
+            replacement = StringUtils.trimToEmpty(getString(obj));
+            text = StringUtils.replaceOnce(text, searchString, replacement);
+        }
+        return text;
     }
 
 }

@@ -4,11 +4,6 @@
     #setGlobalVariables()
     #setJSFVariables()
     #set($javaClassSimpleName = $StringUtils.removeEndIgnoreCase($fileName, '.jsp'))
-    #set($project_window_width = $VelocityAid.nvl($project.getAttribute('default_window_width'), 1280))
-    #set($project_window_height = $VelocityAid.nvl($project.getAttribute('default_window_height'), 960))
-    #set($project_table_view_width = $VelocityAid.nvl($project.getAttribute('default_table_view_width'), 1200))
-    #set($project_detail_view_width = $VelocityAid.nvl($project.getAttribute('default_detail_view_width'), 1200))
-    #set($project_console_view_width = $VelocityAid.nvl($project.getAttribute('default_console_view_width'), 1200))
 #end##setJSPVariables
 
 #macro(writeJSPLicense)

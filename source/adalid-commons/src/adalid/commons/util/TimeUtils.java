@@ -10,6 +10,7 @@ import adalid.commons.bundles.Bundle;
 import java.sql.Date;
 import java.sql.Time;
 import java.sql.Timestamp;
+import java.text.ParsePosition;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import org.apache.commons.lang.StringUtils;
@@ -51,14 +52,12 @@ public class TimeUtils {
         currentTimeMillis = System.currentTimeMillis();
         if (lastTimeMillis < currentTimeMillis) {
             currentTimeMillis();
+        } else if (++micros < 1000) {
+            lastTimeMicros++;
+            lastTimeNanos = lastTimeMicros * 1000;
+            nanos = 0;
         } else {
-            if (++micros < 1000) {
-                lastTimeMicros++;
-                lastTimeNanos = lastTimeMicros * 1000;
-                nanos = 0;
-            } else {
-                currentTimeMillis();
-            }
+            currentTimeMillis();
         }
         return lastTimeMicros;
     }
@@ -67,12 +66,10 @@ public class TimeUtils {
         currentTimeMillis = System.currentTimeMillis();
         if (lastTimeMillis < currentTimeMillis) {
             currentTimeMillis();
+        } else if (++nanos < 1000) {
+            lastTimeNanos++;
         } else {
-            if (++nanos < 1000) {
-                lastTimeNanos++;
-            } else {
-                currentTimeMicros();
-            }
+            currentTimeMicros();
         }
         return lastTimeNanos;
     }
@@ -139,19 +136,49 @@ public class TimeUtils {
         return date == null ? currentTimestamp() : new Timestamp(date.getTime());
     }
 
-    public static final String DEFAULT_DATE_FORMAT = "dd/MM/yyyy";
+    private static final String DEFAULT_DATE_FORMAT = "dd/MM/yyyy";
 
-    public static final String DEFAULT_TIME_FORMAT = "hh:mm aa";
+    private static final String DEFAULT_TIME_FORMAT = "hh:mm aa";
 
-    public static final String DEFAULT_TIMESTAMP_FORMAT = "dd/MM/yyyy hh:mm:ss aa";
+    private static final String DEFAULT_TIMESTAMP_FORMAT = "dd/MM/yyyy hh:mm:ss aa";
 
-    public static final SimpleDateFormat DEFAULT_DATE_FORMATTER = new SimpleDateFormat(getDateFormat());
+    private static final ThreadLocal<SimpleDateFormat> dateFormatter = new ThreadLocal<>();
 
-    public static final SimpleDateFormat DEFAULT_TIME_FORMATTER = new SimpleDateFormat(getTimeFormat());
+    private static final ThreadLocal<SimpleDateFormat> timeFormatter = new ThreadLocal<>();
 
-    public static final SimpleDateFormat DEFAULT_TIMESTAMP_FORMATTER = new SimpleDateFormat(getTimestampFormat());
+    private static final ThreadLocal<SimpleDateFormat> timestampFormatter = new ThreadLocal<>();
 
     private static final String BUNDLE_KEY_PREFIX = TimeUtils.class.getName() + ".";
+
+    private static SimpleDateFormat dateFormatter() {
+        SimpleDateFormat formatter = dateFormatter.get();
+        if (formatter == null) {
+            formatter = new SimpleDateFormat(getDateFormat());
+            formatter.setLenient(false);
+            dateFormatter.set(formatter);
+        }
+        return formatter;
+    }
+
+    private static SimpleDateFormat timeFormatter() {
+        SimpleDateFormat formatter = timeFormatter.get();
+        if (formatter == null) {
+            formatter = new SimpleDateFormat(getTimeFormat());
+            formatter.setLenient(false);
+            timeFormatter.set(formatter);
+        }
+        return formatter;
+    }
+
+    private static SimpleDateFormat timestampFormatter() {
+        SimpleDateFormat formatter = timestampFormatter.get();
+        if (formatter == null) {
+            formatter = new SimpleDateFormat(getTimestampFormat());
+            formatter.setLenient(false);
+            timestampFormatter.set(formatter);
+        }
+        return formatter;
+    }
 
     public static String getDateFormat() {
         String string = Bundle.getTrimmedToNullString(BUNDLE_KEY_PREFIX + "date.pattern");
@@ -171,6 +198,21 @@ public class TimeUtils {
         return format;
     }
 
+    public static String defaultString(java.util.Date util) {
+        if (util == null) {
+            return null;
+        } else if (util instanceof Date) {
+            return defaultDateString(util);
+        } else if (util instanceof Time) {
+            return defaultTimeString(util);
+        } else if (util instanceof Timestamp) {
+            return defaultTimestampString(util);
+        } else {
+//          return defaultTemporalString(util);
+            return defaultString(getSqlExtension(util));
+        }
+    }
+
     public static String defaultDateString() {
         return defaultDateString(currentDate());
     }
@@ -181,7 +223,7 @@ public class TimeUtils {
     }
 
     public static String defaultDateString(java.util.Date date) {
-        return date == null ? null : DEFAULT_DATE_FORMATTER.format(date);
+        return date == null ? null : dateFormatter().format(date);
     }
 
     public static String defaultTimeString() {
@@ -194,7 +236,7 @@ public class TimeUtils {
     }
 
     public static String defaultTimeString(java.util.Date date) {
-        return date == null ? null : DEFAULT_TIME_FORMATTER.format(date);
+        return date == null ? null : timeFormatter().format(date);
     }
 
     public static String defaultTimestampString() {
@@ -207,7 +249,7 @@ public class TimeUtils {
     }
 
     public static String defaultTimestampString(java.util.Date date) {
-        return date == null ? null : DEFAULT_TIMESTAMP_FORMATTER.format(date);
+        return date == null ? null : timestampFormatter().format(date);
     }
 
     public static String defaultTemporalString(Object object) {
@@ -229,17 +271,31 @@ public class TimeUtils {
         return timeless ? defaultDateString(date) : dateless ? defaultTimeString(date) : defaultTimestampString(date);
     }
 
-    public static final String JDBC_DATE_FORMAT = "yyyy-MM-dd";
+    private static final String JDBC_DATE_FORMAT = "yyyy-MM-dd";
 
-    public static final String JDBC_TIME_FORMAT = "HH:mm:ss";
+    private static final String JDBC_TIME_FORMAT = "HH:mm:ss";
 
-    public static final String JDBC_TIMESTAMP_FORMAT = "yyyy-MM-dd HH:mm:ss";
+    private static final String JDBC_TIMESTAMP_FORMAT = "yyyy-MM-dd HH:mm:ss";
 
-    public static final SimpleDateFormat JDBC_DATE_FORMATTER = new SimpleDateFormat(JDBC_DATE_FORMAT);
+    private static final SimpleDateFormat JDBC_DATE_FORMATTER = new SimpleDateFormat(JDBC_DATE_FORMAT);
 
-    public static final SimpleDateFormat JDBC_TIME_FORMATTER = new SimpleDateFormat(JDBC_TIME_FORMAT);
+    private static final SimpleDateFormat JDBC_TIME_FORMATTER = new SimpleDateFormat(JDBC_TIME_FORMAT);
 
-    public static final SimpleDateFormat JDBC_TIMESTAMP_FORMATTER = new SimpleDateFormat(JDBC_TIMESTAMP_FORMAT);
+    private static final SimpleDateFormat JDBC_TIMESTAMP_FORMATTER = new SimpleDateFormat(JDBC_TIMESTAMP_FORMAT);
+
+    public static String jdbcString(java.util.Date util) {
+        if (util == null) {
+            return null;
+        } else if (util instanceof Date) {
+            return jdbcDateString(util);
+        } else if (util instanceof Time) {
+            return jdbcTimeString(util);
+        } else if (util instanceof Timestamp) {
+            return jdbcTimestampString(util);
+        } else {
+            return jdbcString(getSqlExtension(util));
+        }
+    }
 
     public static String jdbcDateString() {
         return jdbcDateString(currentDate());
@@ -479,68 +535,99 @@ public class TimeUtils {
         return new java.util.Date(t.getTime());
     }
 
+    public static java.util.Date toJavaDate(Object object, Class<? extends java.util.Date> targetClass) {
+        if (object == null) {
+            return null;
+        }
+        Class<?> sourceClass = object.getClass();
+        if (targetClass == null || targetClass.isAssignableFrom(sourceClass)) {
+            return (java.util.Date) object;
+        } else if (targetClass.equals(Date.class)) {
+            return toDate(object);
+        } else if (targetClass.equals(Time.class)) {
+            return toTime(object);
+        } else if (targetClass.equals(Timestamp.class)) {
+            return toTimestamp(object);
+        } else {
+            return (java.util.Date) object;
+        }
+    }
+
     public static Date toDate(Object obj) {
-        return obj instanceof Date ? (Date) obj : newDate(obj);
+        return obj == null ? null : obj instanceof Date ? (Date) obj : newDate(obj);
     }
 
     public static Time toTime(Object obj) {
-        return obj instanceof Time ? (Time) obj : newTime(obj);
+        return obj == null ? null : obj instanceof Time ? (Time) obj : newTime(obj);
     }
 
     public static Timestamp toTimestamp(Object obj) {
-        return obj instanceof Timestamp ? (Timestamp) obj : newTimestamp(obj);
+        return obj == null ? null : obj instanceof Timestamp ? (Timestamp) obj : newTimestamp(obj);
     }
 
-    private static java.util.Date parse(String pdq) {
-        String string = pdq == null ? null : pdq.trim();
-        if (string == null || string.isEmpty()) {
+    public static java.util.Date parse(String pdq) {
+        if (StringUtils.isBlank(pdq)) {
             return null;
         }
-        int year = 0;
-        int monthOfYear = 0;
-        int dayOfMonth = 0;
-        int hourOfDay = 0;
-        int minuteOfHour = 0;
-        int secondOfMinute = 0;
-        String xm = "";
-        String xs = "";
-        int len = string.length();
-        switch (len) {
-            case 22:
-                xm = string.substring(20);
-            case 19:
-                if (xm.isEmpty()) {
-                    xs = string.substring(17, 19);
-                }
-                if (xs.equalsIgnoreCase("AM") || xs.equalsIgnoreCase("PM")) {
-                    xm = xs;
-                } else {
-                    secondOfMinute = Integer.parseInt(string.substring(17, 19));
-                }
-            case 16:
-                minuteOfHour = Integer.parseInt(string.substring(14, 16));
-                hourOfDay = Integer.parseInt(string.substring(11, 13));
-                if (xm.equalsIgnoreCase("AM") && hourOfDay == 12) {
-                    hourOfDay = 0;
-                }
-                if (xm.equalsIgnoreCase("PM") && hourOfDay <= 11) {
-                    hourOfDay += 12;
-                }
-            case 10:
-                year = Integer.parseInt(string.substring(6, 10));
-                monthOfYear = Integer.parseInt(string.substring(3, 5));
-                dayOfMonth = Integer.parseInt(string.substring(0, 2));
-                break;
+        String string = pdq.trim();
+        ParsePosition position = new ParsePosition(0);
+        java.util.Date util = timestampFormatter().parse(string, position);
+        int i = position.getIndex();
+        int l = string.length();
+        if (util != null && i == l) {
+            return new Timestamp(util.getTime());
         }
-        Calendar c = Calendar.getInstance();
-        c.set(Calendar.YEAR, year);
-        c.set(Calendar.MONTH, monthOfYear - 1);
-        c.set(Calendar.DAY_OF_MONTH, dayOfMonth);
-        c.set(Calendar.HOUR_OF_DAY, hourOfDay);
-        c.set(Calendar.MINUTE, minuteOfHour);
-        c.set(Calendar.SECOND, secondOfMinute);
-        c.set(Calendar.MILLISECOND, 0);
-        return new Date(c.getTimeInMillis());
+        position.setIndex(0);
+        util = dateFormatter().parse(string, position);
+        i = position.getIndex();
+        if (util != null) {
+            if (i == l) {
+                return new Date(util.getTime());
+            }
+            java.util.Date time = timeFormatter().parse(string, position);
+            i = position.getIndex();
+            if (time != null && i == l) {
+                return merge(util, time);
+            }
+        }
+        position.setIndex(0);
+        util = timeFormatter().parse(string, position);
+        i = position.getIndex();
+        if (util != null && i == l) {
+            return new Time(util.getTime());
+        }
+        return null;
+    }
+
+    private static Timestamp merge(java.util.Date date, java.util.Date time) {
+        Calendar d = Calendar.getInstance();
+        Calendar t = Calendar.getInstance();
+        d.setTimeInMillis(date.getTime());
+        t.setTimeInMillis(time.getTime());
+        d.set(Calendar.HOUR_OF_DAY, t.get(Calendar.HOUR_OF_DAY));
+        d.set(Calendar.MINUTE, t.get(Calendar.MINUTE));
+        d.set(Calendar.SECOND, t.get(Calendar.SECOND));
+        d.set(Calendar.MILLISECOND, t.get(Calendar.MILLISECOND));
+        return new Timestamp(d.getTimeInMillis());
+    }
+
+    public static java.util.Date getSqlExtension(java.util.Date util) {
+        if (util == null) {
+            return null;
+        } else if (util instanceof Date || util instanceof Time || util instanceof Timestamp) {
+            return util;
+        } else {
+            long milliseconds = util.getTime();
+            Date date = newDate(util);
+            if (date.getTime() == milliseconds) {
+                return date;
+            }
+            Time time = newTime(util);
+            if (time.getTime() == milliseconds) {
+                return time;
+            }
+            return new Timestamp(milliseconds);
+        }
     }
 
     public static Date addDate(java.util.Date date, int addend, char unit) {

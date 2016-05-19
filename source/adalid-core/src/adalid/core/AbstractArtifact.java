@@ -10,6 +10,7 @@ import adalid.commons.TLB;
 import adalid.commons.interfaces.Wrappable;
 import adalid.commons.interfaces.Wrapper;
 import adalid.commons.util.KVP;
+import adalid.commons.util.ObjUtils;
 import adalid.commons.util.StrUtils;
 import adalid.commons.util.ThrowableUtils;
 import adalid.core.expressions.VariantX;
@@ -654,11 +655,22 @@ public abstract class AbstractArtifact implements Artifact, Wrappable {
         return _attributes.get(name);
     }
 
-    public Object getStringAttribute(String name) {
+    public Integer getIntegerAttribute(String name) {
+        Object attribute = _attributes.get(name);
+        return ObjUtils.toInteger(attribute);
+    }
+
+    public Integer getIntegerAttribute(String name, Integer min, Integer max) {
+        Object attribute = _attributes.get(name);
+        Integer integer = ObjUtils.toInteger(attribute);
+        return ObjUtils.between(integer, min, max) ? integer : null;
+    }
+
+    public String getStringAttribute(String name) {
         return getStringAttribute(name, KVP.EQUALS, KVP.SEPARATOR, KVP.OPEN, KVP.CLOSE);
     }
 
-    public Object getStringAttribute(String name, String equals, String separator, String open, String close) {
+    public String getStringAttribute(String name, String equals, String separator, String open, String close) {
         return StrUtils.getString(equals, separator, open, close, _attributes.get(name));
     }
 

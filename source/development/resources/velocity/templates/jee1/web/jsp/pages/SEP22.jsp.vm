@@ -33,8 +33,7 @@
             #set($masterHeadingViewWidth = 0)
         #else
             #set($viewWithMasterHeading = $TRUE)
-##          #set($masterHeadingViewWidth = $page.entity.detailViewWidth)
-            #set($masterHeadingViewWidth = $VelocityAid.nvl($page.entity.getAttribute('detail_view_width'), $project_detail_view_width))
+            #set($masterHeadingViewWidth = $VelocityAid.nvl($page.entity.getIntegerAttribute('detail_view_width', $project_min_view_width, $project_max_view_width), $project_max_view_width))
         #end
     #else
         #set($viewWithMasterHeading = $FALSE)

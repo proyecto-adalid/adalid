@@ -1,4 +1,4 @@
-#set($detailViewWidth = $VelocityAid.nvl($page.entity.getAttribute('detail_view_width'), $project_detail_view_width))
+#set($detailViewWidth = $VelocityAid.nvl($page.entity.getIntegerAttribute('detail_view_width', $project_min_view_width, $project_max_view_width), $project_max_view_width))
 $tab<!-- detail form body opening -->
 $tab<div class="pos-div-detalle">
 $tab    <h:panelGrid id="panelGrid${panelGridSequence.next()}">

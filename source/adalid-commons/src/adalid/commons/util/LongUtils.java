@@ -35,6 +35,10 @@ public class LongUtils {
         return l == null ? j : l;
     }
 
+    public static long defaultIfNull(Long l, long defaultValue) {
+        return l == null ? defaultValue : l;
+    }
+
     public static long getNewId(String string) {
         String number = StrUtils.getLongNumericCode(string); // 19 digitos: 1x + 10c + 3l + 5s;
         return number == null ? getNewId() : Long.valueOf(number);

@@ -3,4 +3,10 @@
 #macro(setJSFVariables)
     #set($checkBoxesAreAllowed = $TRUE)
     #set($checkBoxesAreNotAllowed = $FALSE)
+    #set($project_window_width = $VelocityAid.nvl($project.getIntegerAttribute('default_window_width', 640, 3840), 1280))
+    #set($project_window_height = $VelocityAid.nvl($project.getIntegerAttribute('default_window_height', 480, 2160), 960))
+    #set($project_max_view_width = $project_window_width - 80)
+    #set($project_min_view_width = 480)
+    #set($project_max_table_view_rows = $VelocityAid.nvl($project.getIntegerAttribute('max_table_view_rows', 10, 50), 50))
+    #set($project_table_view_rows = $VelocityAid.nvl($project.getIntegerAttribute('default_table_view_rows', 1, $project_max_table_view_rows), 10))
 #end##setJSFVariables

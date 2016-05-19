@@ -14,6 +14,14 @@ import adalid.commons.enums.EnumBitLabelSet;
  */
 public class BitUtils {
 
+    public static Boolean getAsBoolean(Object o) {
+        return o == null ? null : toBoolean(o);
+    }
+
+    public static String getAsString(Object o) {
+        return o == null ? null : toBoolean(o).toString();
+    }
+
     public static boolean valueOf(Boolean b, boolean value) {
         return b != null ? b : value;
     }
@@ -68,6 +76,9 @@ public class BitUtils {
     }
 
     public static String getLabel(Boolean b, EnumBitLabelSet bls) {
+        if (b == null) {
+            return Bundle.getString("bit.null");
+        }
         switch (bls) {
             case YES_OR_NO:
                 return b ? Bundle.getString("bit.yes") : Bundle.getString("bit.no");
@@ -84,6 +95,14 @@ public class BitUtils {
             default:
                 return b ? Bundle.getString("bit.yes") : Bundle.getString("bit.no");
         }
+    }
+
+    public static Boolean newBoolean(Object obj) {
+        return obj == null ? null : obj instanceof Boolean ? (Boolean) obj : valueOf(obj);
+    }
+
+    public static Boolean toBoolean(Object obj) {
+        return obj == null ? null : obj instanceof Boolean ? (Boolean) obj : valueOf(obj);
     }
 
 }
