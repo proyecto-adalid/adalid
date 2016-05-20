@@ -958,7 +958,10 @@ public abstract class Project extends AbstractArtifact implements Comparable<Pro
         configureWriter();
         Writer writer = getWriter();
         writer.setOptionalResourceNames(getEntitiesMap().keySet());
-        return writer.write(platform);
+        boolean ok = writer.write(platform);
+        String message = ok ? "successfully generated" : "generated with errors";
+        logger.info("project " + alias + " " + message);
+        return ok;
     }
 
     private void configureWriter() {
