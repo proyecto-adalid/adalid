@@ -628,11 +628,16 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
      *
      */
     private boolean _tableViewWithMasterHeading;
-//
-//  /**
-//   *
-//   */
-//  private int _tableViewRows;
+
+    /**
+     *
+     */
+    private int _tableViewRowsLimit;
+
+    /**
+     *
+     */
+    private int _tableViewRows;
 //
 //  /**
 //   *
@@ -1895,14 +1900,22 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
     public boolean isTableViewWithMasterHeading() {
         return _tableViewWithMasterHeading;
     }
-//
-//  /**
-//   * @return the table view rows
-//   */
-////@Override
-//  public int getTableViewRows() {
-//      return _tableViewRows;
-//  }
+
+    /**
+     * @return the table view rows limit
+     */
+//  @Override
+    public int getTableViewRowsLimit() {
+        return _tableViewRowsLimit;
+    }
+
+    /**
+     * @return the table view rows
+     */
+//  @Override
+    public int getTableViewRows() {
+        return _tableViewRows;
+    }
 //
 //  /**
 //   * @return the table view width
@@ -3887,7 +3900,8 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
         _tableViewWithUpdateEnabled = true;
         _tableViewWithDeleteEnabled = true;
         _tableViewWithMasterHeading = true;
-//      _tableViewRows = 10;
+        _tableViewRowsLimit = Constants.DEFAULT_ROWS_PER_PAGE_LIMIT;
+        _tableViewRows = Constants.DEFAULT_ROWS_PER_PAGE;
 //      _tableViewWidth = 1200;
         _detailViewEnabled = true;
         _detailViewWithMasterHeading = true;
@@ -4469,7 +4483,8 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
                 _tableViewWithUpdateEnabled = annotation.updates().toBoolean(_tableViewWithUpdateEnabled);
                 _tableViewWithDeleteEnabled = annotation.deletes().toBoolean(_tableViewWithDeleteEnabled);
                 _tableViewWithMasterHeading = annotation.heading().toBoolean(_tableViewWithMasterHeading);
-//              _tableViewRows = Math.min(50, Math.max(1, annotation.rows()));
+                _tableViewRowsLimit = Math.min(Constants.DEFAULT_ROWS_PER_PAGE_LIMIT, Math.max(Constants.DEFAULT_ROWS_PER_PAGE, annotation.rowsLimit()));
+                _tableViewRows = Math.min(_tableViewRowsLimit, Math.max(1, annotation.rows()));
 //              _tableViewWidth = Math.min(2400, Math.max(800, annotation.width()));
                 _annotatedWithEntityTableView = true;
             }

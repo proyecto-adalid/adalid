@@ -236,8 +236,14 @@ public class BaseBuilder {
     private boolean copyTextFiles() {
         Collection<File> files = FileUtils.listFiles(projectFolder, textFileFilter(), textDirFilter());
 //      ColUtils.sort(files);
+        final String oldJava1 = "textoFilasPorPagina1Validator1.setMaximum(50L);";
+        final String newJava1 = "textoFilasPorPagina1Validator1.setMaximum(${Constants.getDefaultRowsPerPageLimit()}L);";
+        final String oldJSP01 = "id=\"table1\" width=\"1200\"";
+        final String newJSP01 = "id=\"table1\" width=\"${project_max_view_width}\"";
+        final String oldJSP02 = "id=\"tableRowGroup1\" rows=\"10\"";
+        final String newJSP02 = "id=\"tableRowGroup1\" rows=\"${Constants.getDefaultRowsPerPage()}\"";
         String source, target, targetParent;
-        boolean java, jrxml, jsp, properties, sh, bat, xml;
+        boolean java, jrxml, jsp, properties, sh, bat, sql, xml;
         String[] precedingWords = {"extends", "import", "new", "@see", "@throws"};
         SmallFile smallSource;
         List<String> sourceLines;
@@ -250,10 +256,24 @@ public class BaseBuilder {
             properties = StringUtils.endsWithIgnoreCase(source, ".properties");
             sh = StringUtils.endsWithIgnoreCase(source, ".sh");
             bat = StringUtils.endsWithIgnoreCase(source, ".bat");
+            sql = StringUtils.endsWithIgnoreCase(source, ".sql");
             xml = StringUtils.endsWithIgnoreCase(source, ".xml");
             target = source.replace(projectFolderPath, velocityTemplatesTargetFolderPath);
             targetParent = StringUtils.substringBeforeLast(target, FS);
             targetLines.clear();
+            if (java) {
+                javaHeading(targetLines);
+            } else if (jsp) {
+                jspHeading(targetLines);
+            } else if (properties) {
+                propertiesHeading(targetLines);
+            } else if (sql) {
+                sqlHeading(targetLines);
+            } else if (xml || jrxml) {
+                xmlHeading(targetLines);
+            } else {
+                genericHeading(targetLines);
+            }
             FilUtils.mkdirs(targetParent);
             smallSource = new SmallFile(source);
             sourceLines = smallSource.read();
@@ -272,12 +292,15 @@ public class BaseBuilder {
                                 for (String word : precedingWords) {
                                     line = replaceAliasWithRootPackageName(line, word + " ", ".");
                                 }
+                                line = line.replace(oldJava1, newJava1);
                             }
                             if (jrxml) {
                                 line = replaceAliasWithRootPackageName(line, "<import value=\"", ".");
                             }
                             if (jsp) {
                                 line = replaceAliasWithRootPackageName(line, "<%@ page import=\"", ".");
+                                line = line.replace(oldJSP01, newJSP01);
+                                line = line.replace(oldJSP02, newJSP02);
                             }
                             if (properties) {
                                 line = StrUtils.replaceAfter(line, PROJECT_ALIAS + ".", ROOT_PACKAGE_NAME + ".", "${pound}");
@@ -308,6 +331,35 @@ public class BaseBuilder {
             }
         }
         return true;
+    }
+
+    private void javaHeading(List<String> targetLines) {
+//      targetLines.add("#parseJavaMacros()");
+//      targetLines.add("#setJavaVariables()");
+    }
+
+    private void jspHeading(List<String> targetLines) {
+        targetLines.add("#parseJSPMacros()");
+        targetLines.add("#setJSPVariables()");
+    }
+
+    private void propertiesHeading(List<String> targetLines) {
+//      targetLines.add("#parsePropertiesMacros()");
+//      targetLines.add("#setPropertiesVariables()");
+    }
+
+    private void sqlHeading(List<String> targetLines) {
+//      targetLines.add("#parseSQLMacros()");
+//      targetLines.add("#setSQLVariables()");
+    }
+
+    private void xmlHeading(List<String> targetLines) {
+//      targetLines.add("#parseXMLMacros()");
+//      targetLines.add("#setXMLVariables()");
+    }
+
+    private void genericHeading(List<String> targetLines) {
+//      targetLines.add("#setGlobalVariables()");
     }
 
     private String replaceAliasWithDatabaseName(String line, String prefix, String suffix) {

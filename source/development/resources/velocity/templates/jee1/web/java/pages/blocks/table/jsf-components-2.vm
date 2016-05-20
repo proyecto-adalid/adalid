@@ -32,7 +32,7 @@
     #end
 #end
         textoFilasPorPagina1Validator1.setMinimum(1L);
-        textoFilasPorPagina1Validator1.setMaximum(${project_max_table_view_rows}L);
+        textoFilasPorPagina1Validator1.setMaximum(${page.entity.tableViewRowsLimit}L);
 #initDataProviders()
     }
     // </editor-fold>

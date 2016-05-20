@@ -6,6 +6,7 @@
  */
 package adalid.core.annotations;
 
+import adalid.core.Constants;
 import adalid.core.enums.Kleenean;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -28,8 +29,10 @@ public @interface EntityTableView {
     Kleenean deletes() default Kleenean.UNSPECIFIED; // TRUE
 
     Kleenean heading() default Kleenean.UNSPECIFIED; // FALSE
-//
-//  int rows() default 10; // 1 <= rows <= 50
+
+    int rowsLimit() default Constants.DEFAULT_ROWS_PER_PAGE_LIMIT;
+
+    int rows() default Constants.DEFAULT_ROWS_PER_PAGE;
 //
 //  int width() default 1200; // 800 <= width <= 2400
 

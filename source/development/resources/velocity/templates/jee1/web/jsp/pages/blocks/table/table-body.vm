@@ -1,5 +1,4 @@
 #parse("$templatePath/blocks/set-field-variables.vm")
-#set($tableViewRows = $VelocityAid.nvl($page.entity.getIntegerAttribute('table_view_rows', 1, $project_max_table_view_rows), $project_table_view_rows))
 #set($tableViewWidth = $VelocityAid.nvl($page.entity.getIntegerAttribute('table_view_width', $project_min_view_width, $project_max_view_width), $project_max_view_width))
 $tab<webuijsf:table id="table1"
 $tab    binding="#{${pageBeanName}.table1}"
@@ -13,7 +12,7 @@ $tab    sortPanelToggleButton="true"
 $tab    width="$tableViewWidth">
 $tab    <webuijsf:tableRowGroup id="tableRowGroup1"
 $tab        binding="#{${pageBeanName}.tableRowGroup1}"
-$tab        rows="$tableViewRows"
+$tab        rows="$page.entity.tableViewRows"
 $tab        selected="#{${pageBeanName}.gestor.filaEscogida}"
 $tab        sourceData="#{${pageBeanName}.${entityDataProvider}}"
 $tab        sourceVar="currentRow">

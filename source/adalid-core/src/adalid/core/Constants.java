@@ -13,6 +13,10 @@ import adalid.core.enums.SortOption;
  */
 public class Constants {
 
+    public static final int DEFAULT_ROWS_PER_PAGE = 10;
+
+    public static final int DEFAULT_ROWS_PER_PAGE_LIMIT = 50;
+
     public static final int DEFAULT_SELECT_ROWS_LIMIT = 500;
 
     public static final SortOption DEFAULT_SELECT_SORT_OPTION = SortOption.ASC;
@@ -40,6 +44,24 @@ public class Constants {
     public static final int MAX_STRING_LENGTH = 8000;
 
     public static final int MAX_TIME_PRECISION = 6;
+
+    /**
+     * DEFAULT_ROWS_PER_PAGE getter (for velocity templates)
+     *
+     * @return DEFAULT_ROWS_PER_PAGE
+     */
+    public static int getDefaultRowsPerPage() {
+        return DEFAULT_ROWS_PER_PAGE;
+    }
+
+    /**
+     * DEFAULT_ROWS_PER_PAGE_LIMIT getter (for velocity templates)
+     *
+     * @return DEFAULT_ROWS_PER_PAGE_LIMIT
+     */
+    public static int getDefaultRowsPerPageLimit() {
+        return DEFAULT_ROWS_PER_PAGE_LIMIT;
+    }
 
     /**
      * DEFAULT_SELECT_ROWS_LIMIT getter (for velocity templates)
