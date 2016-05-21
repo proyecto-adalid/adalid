@@ -1,8 +1,8 @@
 $tab<webuijsf:form id="form1"
 $tab    binding="#{${pageBeanName}.form1}"
-#if("$!multipartUpload" == 'true' && "$page.displayMode" == 'PROCESSING' && "$page.displayFormat" == 'CONSOLE')
+    #if("$!multipartUpload" == 'true' && "$page.displayMode" == 'PROCESSING' && "$page.displayFormat" == 'CONSOLE')
 $tab    enctype="multipart/form-data"
-#end
+    #end
 $tab    virtualFormsConfig="$virtualFormsConfig">
 $tab    <div class="pos-div-cab-1">
 $tab        <jsp:directive.include file="/fragments/FragmentoCabeza1.jspf"/>
@@ -25,7 +25,11 @@ $tab            </div>
                 #parse("$templatePath/blocks/$page.displayFormat.name().toLowerCase()/form-body.vm")
                 #decreaseIndentationBy(3)
 $tab            <div class="pos-div-pie-3">
+    #if("$page.displayFormat" == 'DETAIL' || "$page.displayFormat" == 'CONSOLE')
+$tab                <jsp:directive.include file="/fragments/FragmentoPie3D.jspf"/>
+    #else
 $tab                <jsp:directive.include file="/fragments/FragmentoPie3.jspf"/>
+    #end
 $tab            </div>
 $tab        </div>
 $tab        <div class="pos-div-join">

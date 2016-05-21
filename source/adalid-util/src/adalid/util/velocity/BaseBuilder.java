@@ -242,8 +242,12 @@ public class BaseBuilder {
         final String newJSP01 = "id=\"table1\" width=\"${project_max_view_width}\"";
         final String oldJSP02 = "id=\"tableRowGroup1\" rows=\"10\"";
         final String newJSP02 = "id=\"tableRowGroup1\" rows=\"${Constants.getDefaultRowsPerPage()}\"";
+        final String oldJSP03 = "style=\"width: 1200px\" styleClass=\"pdq-grid-detalle-1\"";
+        final String newJSP03 = "style=\"width: ${project_max_view_width}px\" styleClass=\"pdq-grid-detalle-1\"";
+        final String oldJSPF1 = "id=\"messageGroup1\" style=\"width: 1200px";
+        final String newJSPF1 = "id=\"messageGroup1\" style=\"width: ${project_max_view_width}px";
         String source, target, targetParent;
-        boolean java, jrxml, jsp, properties, sh, bat, sql, xml;
+        boolean java, jrxml, jsp, jspf, properties, sh, bat, sql, xml;
         String[] precedingWords = {"extends", "import", "new", "@see", "@throws"};
         SmallFile smallSource;
         List<String> sourceLines;
@@ -253,6 +257,7 @@ public class BaseBuilder {
             java = StringUtils.endsWithIgnoreCase(source, ".java");
             jrxml = StringUtils.endsWithIgnoreCase(source, ".jrxml");
             jsp = StringUtils.endsWithIgnoreCase(source, ".jsp");
+            jspf = StringUtils.endsWithIgnoreCase(source, ".jspf");
             properties = StringUtils.endsWithIgnoreCase(source, ".properties");
             sh = StringUtils.endsWithIgnoreCase(source, ".sh");
             bat = StringUtils.endsWithIgnoreCase(source, ".bat");
@@ -263,7 +268,7 @@ public class BaseBuilder {
             targetLines.clear();
             if (java) {
                 javaHeading(targetLines);
-            } else if (jsp) {
+            } else if (jsp || jspf) {
                 jspHeading(targetLines);
             } else if (properties) {
                 propertiesHeading(targetLines);
@@ -301,6 +306,10 @@ public class BaseBuilder {
                                 line = replaceAliasWithRootPackageName(line, "<%@ page import=\"", ".");
                                 line = line.replace(oldJSP01, newJSP01);
                                 line = line.replace(oldJSP02, newJSP02);
+                                line = line.replace(oldJSP03, newJSP03);
+                            }
+                            if (jspf) {
+                                line = line.replace(oldJSPF1, newJSPF1);
                             }
                             if (properties) {
                                 line = StrUtils.replaceAfter(line, PROJECT_ALIAS + ".", ROOT_PACKAGE_NAME + ".", "${pound}");
