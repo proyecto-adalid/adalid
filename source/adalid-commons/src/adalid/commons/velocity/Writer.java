@@ -38,6 +38,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
+import java.util.regex.Pattern;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.ComparatorUtils;
 import org.apache.commons.collections.ExtendedProperties;
@@ -342,6 +343,8 @@ public class Writer {
 
     private int disabledTemplates = 0;
 
+    private int excludedFiles = 0;
+
     private int preservedFiles = 0;
 
     private int copiedFiles = 0;
@@ -352,7 +355,11 @@ public class Writer {
 
     private int errors = 0;
 
-    Set<String> optionalResourceNames;
+    private List<Pattern> fileExclusionPatterns;
+
+    private List<Pattern> filePreservationPatterns;
+
+    private Set<String> optionalResourceNames;
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="instance fields' public getters and setters">
@@ -368,6 +375,22 @@ public class Writer {
      */
     public String getSubjectKey() {
         return subjectKey;
+    }
+
+    public List<Pattern> getFileExclusionPatterns() {
+        return fileExclusionPatterns;
+    }
+
+    public void setFileExclusionPatterns(List<Pattern> fileExclusionPatterns) {
+        this.fileExclusionPatterns = fileExclusionPatterns;
+    }
+
+    public List<Pattern> getFilePreservationPatterns() {
+        return filePreservationPatterns;
+    }
+
+    public void setFilePreservationPatterns(List<Pattern> filePreservationPatterns) {
+        this.filePreservationPatterns = filePreservationPatterns;
     }
 
     public Set<String> getOptionalResourceNames() {
@@ -638,7 +661,9 @@ public class Writer {
         String preserve = StringUtils.trimToNull(properties.getProperty(TP_PRESERVE));
         String charset1 = StringUtils.trimToNull(properties.getProperty(TP_ENCODING));
         String charset2 = StringUtils.trimToNull(properties.getProperty(TP_CHARSET));
-        String hint = ", check property \"{0}\" at file \"{1}\"";
+        String root = getRoot().getPath();
+        String raiz = root.replace('\\', '/');
+        String hint = "; check property \"{0}\" at file \"{1}\"";
         if (ArrayUtils.contains(TP_TYPE_ARRAY, temptype)) {
         } else {
             String pattern = "failed to obtain a valid template type" + hint;
@@ -705,12 +730,53 @@ public class Writer {
             return;
         }
         String fullname = path.getPath() + FILE_SEPARATOR + fileName;
-        if (BitUtils.valueOf(preserve) && FilUtils.exists(fullname)) {
-            preservedFiles++;
-            String pattern = "file {2} already exists and will not be replaced" + hint;
-            String message = MessageFormat.format(pattern, TP_PRESERVE, templatePropertiesFile, fullname);
-            log(_detailLevel, message);
-            return;
+        String slashedPath = fullname.replace('\\', '/');
+        File file = new File(fullname);
+        if (file.exists()) {
+            String regex, pattern, message;
+            for (Pattern fxp : fileExclusionPatterns) {
+                regex = fxp.pattern();
+                if (slashedPath.matches(regex)) {
+                    excludedFiles++;
+                    pattern = "file {0} will be deleted; it matches exclusion expression \"{1}\"";
+                    message = MessageFormat.format(pattern, StringUtils.removeStartIgnoreCase(slashedPath, raiz), regex);
+                    log(_alertLevel, message);
+                    warnings++;
+                    FileUtils.deleteQuietly(file);
+                    return;
+                }
+            }
+            if (BitUtils.valueOf(preserve)) {
+                preservedFiles++;
+                pattern = "file {2} will not be replaced" + hint;
+                message = MessageFormat.format(pattern, TP_PRESERVE, templatePropertiesFile, fullname);
+                log(_detailLevel, message);
+                return;
+            }
+            for (Pattern fxp : filePreservationPatterns) {
+                regex = fxp.pattern();
+                if (slashedPath.matches(regex)) {
+                    preservedFiles++;
+                    pattern = "file {0} will not be replaced; it matches preservation expression \"{1}\"";
+                    message = MessageFormat.format(pattern, StringUtils.removeStartIgnoreCase(slashedPath, raiz), regex);
+                    log(_alertLevel, message);
+                    warnings++;
+                    return;
+                }
+            }
+        } else {
+            String regex, pattern, message;
+            for (Pattern fxp : fileExclusionPatterns) {
+                regex = fxp.pattern();
+                if (slashedPath.matches(regex)) {
+                    excludedFiles++;
+                    pattern = "file {0} will not be written; it matches exclusion expression \"{1}\"";
+                    message = MessageFormat.format(pattern, StringUtils.removeStartIgnoreCase(slashedPath, raiz), regex);
+                    log(_alertLevel, message);
+                    warnings++;
+                    return;
+                }
+            }
         }
         if (charset1 != null && !Charset.isSupported(charset1)) {
             String pattern = "{2} is not a supported character set" + hint;
@@ -1136,6 +1202,9 @@ public class Writer {
         String raiz = root.replace('\\', '/');
         String path, pathname, wildcard;
         String recursively = recursive ? "and all its subdirectories" : "";
+        String slashedPath, regex, pattern, message;
+        String hint = "; check property: {0}={1}";
+        boolean delete;
         File directory;
         IOFileFilter fileFilter;
         IOFileFilter dirFilter = recursive ? ignoreVersionControlFilter : null;
@@ -1143,15 +1212,27 @@ public class Writer {
         Arrays.sort(stringArray);
         for (String string : stringArray) {
             pathname = StringUtils.substringBeforeLast(string, SLASH);
+            if (StringUtils.isBlank(string) || !StringUtils.contains(string, SLASH) || StringUtils.isBlank(pathname)) {
+                pattern = "directory is missing or invalid" + hint;
+                message = MessageFormat.format(pattern, name, string);
+                log(_alertLevel, message);
+                warnings++;
+                continue;
+            }
             wildcard = StringUtils.substringAfterLast(string, SLASH);
             if (StringUtils.isBlank(wildcard)) {
-                logger.error("invalid property: " + name + "=" + string);
+                pattern = "wildcard is missing or invalid" + hint;
+                message = MessageFormat.format(pattern, name, string);
+                log(_alertLevel, message);
+                warnings++;
                 continue;
             }
             directory = new File(pathname);
-//          if (FilUtils.isNotVisibleDirectory(directory)) {
             if (FilUtils.isNotWritableDirectory(directory)) {
-                log(_alertLevel, pathname + " is not a valid directory, check property: " + name + "=" + string);
+                pattern = "{2} is not a writable directory" + hint;
+                message = MessageFormat.format(pattern, name, string, StringUtils.removeStartIgnoreCase(pathname, raiz));
+                log(_alertLevel, message);
+                warnings++;
                 continue;
             }
             log(_detailLevel, "deleting files " + wildcard + " from " + StringUtils.removeStartIgnoreCase(pathname, raiz) + " " + recursively);
@@ -1159,8 +1240,23 @@ public class Writer {
             matchingFiles = FileUtils.listFiles(directory, fileFilter, dirFilter);
             for (File file : matchingFiles) {
                 path = file.getPath();
-                logger.trace("deleting " + StringUtils.removeStartIgnoreCase(path, root));
-                FileUtils.deleteQuietly(file);
+                slashedPath = path.replace('\\', '/');
+                delete = true;
+                for (Pattern fxp : filePreservationPatterns) {
+                    regex = fxp.pattern();
+                    if (slashedPath.matches(regex)) {
+                        delete = false;
+                        pattern = "file {0} will not be deleted; it matches preservation expression \"{1}\"";
+                        message = MessageFormat.format(pattern, StringUtils.removeStartIgnoreCase(slashedPath, raiz), regex);
+                        log(_alertLevel, message);
+                        warnings++;
+                        break;
+                    }
+                }
+                if (delete) {
+                    logger.trace("deleting " + StringUtils.removeStartIgnoreCase(path, root));
+                    FileUtils.deleteQuietly(file);
+                }
             }
         }
     }
@@ -1351,7 +1447,8 @@ public class Writer {
         logger.info("templates=" + templates);
         logger.info("disabled-templates=" + disabledTemplates);
         logger.info("enabled-templates=" + (templates - disabledTemplates));
-        logger.info("files=" + (preservedFiles + copiedFiles + mergedFiles));
+        logger.info("excluded-files=" + excludedFiles);
+        logger.info("included-files=" + (preservedFiles + copiedFiles + mergedFiles));
         logger.info("preserved-files=" + preservedFiles);
         logger.info("written-files=" + (copiedFiles + mergedFiles));
         logger.info("copied-files=" + copiedFiles);
@@ -1372,6 +1469,7 @@ public class Writer {
         platforms = 0;
         templates = 0;
         disabledTemplates = 0;
+        excludedFiles = 0;
         preservedFiles = 0;
         copiedFiles = 0;
         mergedFiles = 0;

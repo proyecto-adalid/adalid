@@ -40,6 +40,8 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
@@ -268,6 +270,10 @@ public abstract class Project extends AbstractArtifact implements Comparable<Pro
     private final Set<String> _singularPlatforms = new LinkedHashSet<>();
 
     private final Set<String> _processingGroups = new TreeSet<>();
+
+    private final List<Pattern> _fileExclusionPatterns = new ArrayList<>();
+
+    private final List<Pattern> _filePreservationPatterns = new ArrayList<>();
 
     private boolean _annotatedWithProjectModule;
 
@@ -826,6 +832,52 @@ public abstract class Project extends AbstractArtifact implements Comparable<Pro
         track("settleAttributes");
     }
 
+    /**
+     * Clears the platform-specific directives
+     */
+    public void clearDirectives() {
+        track("clearDirectives");
+        _fileExclusionPatterns.clear();
+        _filePreservationPatterns.clear();
+    }
+
+    /**
+     * Adds the platform-specific directives
+     */
+    public void addDirectives() {
+        track("addDirectives");
+    }
+
+    /**
+     * Adds a pattern to the file exclusion patterns list.
+     *
+     * @param regex regular expression to be compiled into a file exclusion pattern
+     */
+    public void addFileExclusionPattern(String regex) {
+        if (StringUtils.isNotBlank(regex)) {
+            try {
+                _fileExclusionPatterns.add(Pattern.compile(regex));
+            } catch (PatternSyntaxException ex) {
+                getParser().error(regex + " is an invalid regular expression; file exclusion pattern cannot be added");
+            }
+        }
+    }
+
+    /**
+     * Adds a pattern to the file preservation patterns list.
+     *
+     * @param regex regular expression to be compiled into a file preservation pattern
+     */
+    public void addFilePreservationPattern(String regex) {
+        if (StringUtils.isNotBlank(regex)) {
+            try {
+                _filePreservationPatterns.add(Pattern.compile(regex));
+            } catch (PatternSyntaxException ex) {
+                getParser().error(regex + " is an invalid regular expression; file preservation pattern cannot be added");
+            }
+        }
+    }
+
     // <editor-fold defaultstate="collapsed" desc="annotate">
     @Override
     void initializeAnnotations() {
@@ -895,6 +947,7 @@ public abstract class Project extends AbstractArtifact implements Comparable<Pro
         TLC.setProject(this);
         clearArtifacts();
         addArtifact(this);
+        clearDirectives();
         boolean built = parse() && analyze();
         return built;
     }
@@ -957,6 +1010,8 @@ public abstract class Project extends AbstractArtifact implements Comparable<Pro
         addArtifactsAttributes();
         configureWriter();
         Writer writer = getWriter();
+        writer.setFileExclusionPatterns(_fileExclusionPatterns);
+        writer.setFilePreservationPatterns(_filePreservationPatterns);
         writer.setOptionalResourceNames(getEntitiesMap().keySet());
         boolean ok = writer.write(platform);
         String message = ok ? "successfully generated" : "generated with errors";
@@ -1359,6 +1414,7 @@ public abstract class Project extends AbstractArtifact implements Comparable<Pro
             resetCounters();
             try {
                 printSettings();
+                addDirectives();
                 putReferences();
                 printProjectSummary(Level.INFO);
                 printProjectReferencesSummary(Level.INFO);
@@ -1404,6 +1460,10 @@ public abstract class Project extends AbstractArtifact implements Comparable<Pro
                     logger.debug(TAB + string);
                 }
             }
+        }
+
+        private void addDirectives() {
+            Project.this.addDirectives();
         }
 
         // <editor-fold defaultstate="collapsed" desc="put references">
