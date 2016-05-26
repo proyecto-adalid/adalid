@@ -467,7 +467,7 @@ begin
     #end##foreach-parameter
 #end
 #set($sqlQualifier = $VelocityAid.valueOf($SqlQualifierType, 'SUFFIX'))
-#set($checkPrefix = 'los argumentos de la operación no cumplen con la restricción')
+#set($checkPrefix = 'los argumentos de la operacion no cumplen con la restriccion')
 #foreach($check in $checksList)
     #set($checkName = "${entity.wrapper.sqlName}.${operation.wrapper.sqlName}.${check.wrapper.sqlName}")
     #set($checkStr1 = "$!check.wrapper.defaultErrorMessageChoice")

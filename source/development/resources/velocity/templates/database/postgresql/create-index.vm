@@ -16,7 +16,7 @@
 ## -----------------------------------------------------------------------------------------------------------
     #set($properties = $entity.columnsList)
     #foreach($property in $properties)
-        #if($property.isUnique() || $property.isPrimaryKeyProperty())
+        #if($property.isUnique() || $property.isSinglePropertyOfUniqueKey() || $property.isPrimaryKeyProperty())
         #elseif($property.isVersionProperty() || $property.isNameProperty() || $property.isForeignKey())
             #set($ix = $property.wrapper.sqlName)
             #writeCreateIndexStatement($property)
@@ -32,7 +32,7 @@
             #if($fieldsSize != 0)
                 #if($key.isSingleProperty())
                     #set($property = $key.theProperty)
-                    #if($property.isUnique() || $property.isPrimaryKeyProperty() || $property.isVersionProperty() || $property.isNameProperty() || $property.isForeignKey())
+                    #if($property.isUnique() || $property.isSinglePropertyOfUniqueKey() || $property.isPrimaryKeyProperty() || $property.isVersionProperty() || $property.isNameProperty() || $property.isForeignKey())
                         #set($ix = 'x')
                     #end
                 #end

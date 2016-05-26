@@ -102,7 +102,7 @@ EnumFormatoGuardar.INFORME=Informe
 ${pound} EnumTipoInforme
 EnumTipoInforme.DETALLE=Detalle
 EnumTipoInforme.RESUMEN=Resumen
-EnumTipoInforme.GRAFICO=Gráfico
+EnumTipoInforme.GRAFICO=Gr\u00E1fico
 ${pound} ListOptions
 seleccione_una_opcion=(elija una opci${backslash}u00f3n)
 ${pound} </${project.alias}.lib.base.Bundle>

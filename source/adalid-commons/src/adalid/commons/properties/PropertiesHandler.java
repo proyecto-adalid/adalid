@@ -56,7 +56,9 @@ public class PropertiesHandler {
 
     private static final String VELOCITY_FILE_KEY = "velocity.properties.file";
 
-    private static final File root_folder, velocity_properties_file;
+    private static final String VELOCITY_SUP_FILE_KEY = "velocity.supplementary.properties.file";
+
+    private static final File root_folder, velocity_properties_file, velocity_supplementary_properties_file;
 
     private static final File[] velocity_folders, platforms_folders;
 
@@ -64,6 +66,7 @@ public class PropertiesHandler {
         bootstrapping = getExtendedProperties(BOOTSTRAPPING_FILE_PATH);
         root_folder = rootFolder();
         velocity_properties_file = velocityPropertiesFile();
+        velocity_supplementary_properties_file = velocitySupplementaryPropertiesFile();
         velocity_folders = velocityFolders();
         platforms_folders = platformsFolders();
 //      log(bootstrapping, Level.INFO);
@@ -79,6 +82,18 @@ public class PropertiesHandler {
     public static ExtendedProperties getPrivateProperties() {
         File file = new File(PRIVATE_PROPERTIES);
         ExtendedProperties properties = getExtendedProperties(file, Level.TRACE);
+        return properties;
+    }
+
+    public static Properties getVelocityProperties() {
+        File file = getVelocityPropertiesFile();
+        Properties properties = loadProperties(file);
+        return properties;
+    }
+
+    public static Properties getVelocitySupplementaryProperties() {
+        File file = getVelocitySupplementaryPropertiesFile();
+        Properties properties = loadProperties(file);
         return properties;
     }
 
@@ -332,11 +347,12 @@ public class PropertiesHandler {
     private static File rootFolder() {
         String pathname = getPath(ROOT_FOLDER_KEY);
         if (StringUtils.isBlank(pathname)) {
-            logMissingProperty(ROOT_FOLDER_KEY);
             pathname = FilUtils.getWorkspaceFolderPath();
             if (StringUtils.isBlank(pathname)) {
+                logMissingProperty(ROOT_FOLDER_KEY);
                 return null;
             }
+            logMissingProperty(ROOT_FOLDER_KEY, pathname);
         }
         File file = new File(pathname);
         if (FilUtils.isNotVisibleDirectory(file)) {
@@ -349,12 +365,30 @@ public class PropertiesHandler {
     private static File velocityPropertiesFile() {
         String pathname = getPath(VELOCITY_FILE_KEY);
         if (StringUtils.isBlank(pathname)) {
-            logMissingProperty(VELOCITY_FILE_KEY);
             pathname = USER_DIR + FILE_SEP + "velocity.properties";
+            logMissingProperty(VELOCITY_FILE_KEY, pathname);
         }
         File file = new File(pathname);
         if (FilUtils.isNotVisibleFile(file)) {
             logInvalidFile(VELOCITY_FILE_KEY, pathname);
+            return null;
+        }
+        return file;
+    }
+
+    private static File velocitySupplementaryPropertiesFile() {
+        String pathname = getPath(VELOCITY_SUP_FILE_KEY);
+        if (StringUtils.isBlank(pathname)) {
+            if (velocity_properties_file == null) {
+                pathname = USER_DIR + FILE_SEP + "velocity.supplementary.properties";
+            } else {
+                pathname = velocity_properties_file.getParent() + FILE_SEP + "velocity.supplementary.properties";
+            }
+            logMissingProperty(VELOCITY_SUP_FILE_KEY, pathname);
+        }
+        File file = new File(pathname);
+        if (FilUtils.isNotVisibleFile(file)) {
+            logInvalidFile(VELOCITY_SUP_FILE_KEY, pathname);
             return null;
         }
         return file;
@@ -433,8 +467,8 @@ public class PropertiesHandler {
     }
 
     private static void logMissingProperty(String key, String value) {
-        String pattern = "property \"{1}\" defaults to \"{0}\", check file \"{2}\"";
-        String message = MessageFormat.format(pattern, value, key, BOOTSTRAPPING_FILE_PATH);
+        String pattern = "property \"{0}\" is missing from file \"{1}\"; defaults to \"{2}\"";
+        String message = MessageFormat.format(pattern, key, BOOTSTRAPPING_FILE_PATH, value);
         logger.warn(message);
     }
 
@@ -466,6 +500,10 @@ public class PropertiesHandler {
 
     public static File getVelocityPropertiesFile() {
         return velocity_properties_file;
+    }
+
+    public static File getVelocitySupplementaryPropertiesFile() {
+        return velocity_supplementary_properties_file;
     }
 
     public static File[] getPlatformsFolders() {

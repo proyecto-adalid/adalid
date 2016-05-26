@@ -10,6 +10,7 @@ import adalid.commons.bundles.Bundle;
 import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.nio.charset.StandardCharsets;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
@@ -707,32 +708,21 @@ public class StrUtils {
         return null;
     }
 
+    public static String diacriticless(String string) {
+        final String with = "áäâàéëêèíïîìóöôòúüûùçñÁÄÂÀÉËÊÈÍÏÎÌÓÖÔÒÚÜÛÙÇÑ";
+        final String sans = "aaaaeeeeiiiioooouuuucnAAAAEEEEIIIIOOOOUUUUCN";
+        String dless = string == null ? null : StringUtils.replaceChars(StringUtils.trimToEmpty(string), with, sans);
+        return dless;
+    }
+
     public static String getStringAscii(String string) {
         if (string == null) {
             return null;
         }
-        String s = StringUtils.trimToEmpty(string);
-        s = s.replace("á", "a");
-        s = s.replace("é", "e");
-        s = s.replace("í", "i");
-        s = s.replace("ó", "o");
-        s = s.replace("ú", "u");
-        s = s.replace("ü", "u");
-        s = s.replace("ñ", "n");
-        s = s.replace("Á", "A");
-        s = s.replace("É", "E");
-        s = s.replace("Í", "I");
-        s = s.replace("Ó", "O");
-        s = s.replace("Ú", "U");
-        s = s.replace("Ü", "U");
-        s = s.replace("Ñ", "N");
-        try {
-            byte[] bytes = s.getBytes();
-            return new String(bytes, "US-ASCII");
-        } catch (UnsupportedEncodingException ex) {
-            logger.fatal(ThrowableUtils.getString(ex), ex);
-        }
-        return s;
+        String dless = diacriticless(string);
+        byte[] bytes = dless.getBytes();
+        String ascii = new String(bytes, StandardCharsets.US_ASCII);
+        return ascii;
     }
 
     public static String getStringUtf8(String string) {

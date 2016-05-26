@@ -10,10 +10,10 @@ import adalid.commons.properties.PropertiesHandler;
 import adalid.commons.util.FilUtils;
 import adalid.commons.util.StrUtils;
 import adalid.util.io.RegexPathFilter;
+import adalid.util.io.SmallFile;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.CopyOption;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -22,7 +22,9 @@ import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.filefilter.FileFilterUtils;
 import org.apache.commons.io.filefilter.IOFileFilter;
@@ -55,14 +57,7 @@ public class BaseBuilder {
 
     private static final String D = "\\.";
 
-    private static final Charset[] STANDARD_CHARSETS = new Charset[]{
-        StandardCharsets.ISO_8859_1,
-        StandardCharsets.UTF_8,
-        StandardCharsets.UTF_16,
-        StandardCharsets.UTF_16BE,
-        StandardCharsets.UTF_16LE,
-        StandardCharsets.US_ASCII
-    };
+    private static final Charset LOCAL_CHARSET = Charset.forName("windows-1252");
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="instance fields">
@@ -89,6 +84,8 @@ public class BaseBuilder {
     private final String projectRoot, application, development, management, resources;
 
     private final String[] preservableFiles;
+
+    private final Map<String, Map<String, Integer>> extensionCharsetMap;
 
     private int binaryFilesCopied, textFilesCopied, propertiesFilesCreated, readingWarnings, readingErrors, writingErrors;
 
@@ -119,6 +116,7 @@ public class BaseBuilder {
             development = projectRoot + "source" + S + "development" + S;
             management = projectRoot + "source" + S + "management" + S;
             resources = management + "resources" + S;
+            extensionCharsetMap = new TreeMap<>();
             logger.debug("projectRoot " + projectRoot);
             logger.debug("application " + application);
             logger.debug("management " + management);
@@ -218,15 +216,16 @@ public class BaseBuilder {
             replace(FS, "/").
             replace(project, PROJECT_ALIAS);
         path = replaceAliasWithRootFolderName(path);
+        path = finalisePath(path);
         String file = StringUtils.substringAfterLast(source, FS).
             replace(project, PROJECT_ALIAS);
         lines.add("template = " + template);
         lines.add("template-type = document");
-        lines.add("path = " + ROOT_FOLDER_SLASHED_PATH + "/" + BASE_FOLDER_NAME + path);
+        lines.add("path = " + path);
         lines.add("file = " + file);
         lines.add("preserve = true");
         FilUtils.mkdirs(folder);
-        if (write(properties, lines, StandardCharsets.ISO_8859_1)) {
+        if (write(properties, lines, LOCAL_CHARSET)) {
             propertiesFilesCreated++;
         }
     }
@@ -282,6 +281,7 @@ public class BaseBuilder {
             FilUtils.mkdirs(targetParent);
             smallSource = new SmallFile(source);
             sourceLines = smallSource.read();
+            check(smallSource);
             if (smallSource.isNotEmpty()) {
                 for (String line : sourceLines) {
                     if (StringUtils.isNotBlank(line)) {
@@ -334,7 +334,7 @@ public class BaseBuilder {
                     targetLines.add(line);
                 }
             }
-            if (write(target, targetLines, smallSource.charset)) {
+            if (write(target, targetLines, LOCAL_CHARSET)) {
                 textFilesCopied++;
                 createTextFilePropertiesFile(source, target);
             }
@@ -410,13 +410,14 @@ public class BaseBuilder {
                 pack = ROOT_PACKAGE_NAME + s5;
             }
         }
+        path = finalisePath(path);
         String file = StringUtils.substringAfterLast(source, FS).
             replace(project, PROJECT_ALIAS).
             replace("eclipse.project", ".project");
         List<String> lines = new ArrayList<>();
         lines.add("template = " + template);
 //      lines.add("template-type = velocity");
-        lines.add("path = " + ROOT_FOLDER_SLASHED_PATH + "/" + BASE_FOLDER_NAME + path);
+        lines.add("path = " + path);
         if (StringUtils.isNotBlank(pack)) {
             lines.add("package = " + pack);
         }
@@ -435,7 +436,7 @@ public class BaseBuilder {
         lines.add("pound.string = #");
         lines.add("backslash.string = \\\\");
         FilUtils.mkdirs(folder);
-        if (write(properties, lines, StandardCharsets.ISO_8859_1)) {
+        if (write(properties, lines, LOCAL_CHARSET)) {
             propertiesFilesCreated++;
         }
     }
@@ -452,6 +453,62 @@ public class BaseBuilder {
             return p;
         }
         return path;
+    }
+
+    private static final String EAR_PROJECT_FOLDER_NAME = SOURCE_PROJECT_ROOT_FOLDER_NAME;
+
+    private static final String EJB_PROJECT_FOLDER_NAME = SOURCE_PROJECT_ROOT_FOLDER_NAME + PROJECT_ALIAS + "-ejb/";
+
+    private static final String WAR_PROJECT_FOLDER_NAME = SOURCE_PROJECT_ROOT_FOLDER_NAME + PROJECT_ALIAS + "-war/";
+
+    private static final String LIB_PROJECT_FOLDER_NAME = SOURCE_PROJECT_ROOT_FOLDER_NAME + PROJECT_ALIAS + "-lib/";
+
+    private static final String RESOURCES_PROJECT_FOLDER_NAME = SOURCE_PROJECT_ROOT_FOLDER_NAME + PROJECT_ALIAS + "-resources/";
+
+    private String finalisePath(String path) {
+        String p = path + "/";
+        if (StringUtils.startsWithIgnoreCase(p, SOURCE_PROJECT_ROOT_FOLDER_NAME)) {
+            if (StringUtils.startsWithIgnoreCase(p, RESOURCES_PROJECT_FOLDER_NAME)) {
+                p = "${resourcesProjectFolderPath}/" + StringUtils.removeStartIgnoreCase(p, RESOURCES_PROJECT_FOLDER_NAME);
+                p = p.replace("/src/conf/", "/${resourcesConfigurationFilesFolder}/");
+                p = p.replace("/src/code/", "/${resourcesJavaMainFolder}/");
+                p = p.replace("/src/copy/", "/${resourcesPacketsFolder}/");
+                p = p.replace("/src/crop/", "/${resourcesBundlesFolder}/");
+            } else if (StringUtils.startsWithIgnoreCase(p, LIB_PROJECT_FOLDER_NAME)) {
+                p = "${libProjectFolderPath}/" + StringUtils.removeStartIgnoreCase(p, LIB_PROJECT_FOLDER_NAME);
+                p = p.replace("/src/conf/", "/${libConfigurationFilesFolder}/");
+                p = p.replace("/src/java/code/", "/${libJavaMainFolder}/");
+                p = p.replace("/src/java/copy/", "/${libJavaCopyFolder}/");
+                p = p.replace("/src/java/crop/", "/${libJavaSourcesFolder}/");
+            } else if (StringUtils.startsWithIgnoreCase(p, WAR_PROJECT_FOLDER_NAME)) {
+                p = "${warProjectFolderPath}/" + StringUtils.removeStartIgnoreCase(p, WAR_PROJECT_FOLDER_NAME);
+                p = p.replace("/src/conf/", "/${warConfigurationFilesFolder}/");
+                p = p.replace("/src/java/code/", "/${webJavaMainFolder}/");
+                p = p.replace("/src/java/copy/", "/${webJavaCopyFolder}/");
+                p = p.replace("/src/java/copy-1/", "/${webJavaCopy1Folder}/");
+                p = p.replace("/src/java/copy-2/", "/${webJavaCopy2Folder}/");
+                p = p.replace("/src/java/crop/", "/${webJavaSourcesFolder}/");
+                p = p.replace("/web/WEB-INF/", "/${webConfigurationFilesFolder}/");
+                p = p.replace("/web/code/", "/${webPagesMainFolder}/");
+                p = p.replace("/web/copy/", "/${webPagesCopyFolder}/");
+                p = p.replace("/web/crop/", "/${webPagesSourcesFolder}/");
+                p = p.replace("/web/", "/${webPagesFolder}/");
+            } else if (StringUtils.startsWithIgnoreCase(p, EJB_PROJECT_FOLDER_NAME)) {
+                p = "${ejbProjectFolderPath}/" + StringUtils.removeStartIgnoreCase(p, EJB_PROJECT_FOLDER_NAME);
+                p = p.replace("/src/conf/", "/${ejbConfigurationFilesFolder}/");
+                p = p.replace("/src/java/code/", "/${ejbJavaMainFolder}/");
+                p = p.replace("/src/java/copy/", "/${ejbJavaCopyFolder}/");
+                p = p.replace("/src/java/crop/", "/${ejbJavaSourcesFolder}/");
+            } else if (StringUtils.startsWithIgnoreCase(p, EAR_PROJECT_FOLDER_NAME)) {
+                p = "${earProjectFolderPath}/" + StringUtils.removeStartIgnoreCase(p, EAR_PROJECT_FOLDER_NAME);
+                p = p.replace("/src/conf/", "/${earConfigurationFilesFolder}/");
+            } else {
+                p = ROOT_FOLDER_SLASHED_PATH + "/" + BASE_FOLDER_NAME + p;
+            }
+            p = StringUtils.removeEnd(p, "/");
+            return p;
+        }
+        return ROOT_FOLDER_SLASHED_PATH + "/" + BASE_FOLDER_NAME + path;
     }
 
     private String getOptionalEntityName(String sourceFileName, String sourceFolderName) {
@@ -487,6 +544,14 @@ public class BaseBuilder {
         logger.info(readingWarnings + " reading warnings ");
         logger.info(readingErrors + " reading errors ");
         logger.info(writingErrors + " writing errors ");
+        Map<String, Integer> map;
+        for (String extension : extensionCharsetMap.keySet()) {
+            map = extensionCharsetMap.get(extension);
+            logger.trace(extension);
+            for (String charset : map.keySet()) {
+                logger.trace("\t" + StringUtils.rightPad(charset + " ", 20, '.') + " " + map.get(charset));
+            }
+        }
     }
 
     // <editor-fold defaultstate="collapsed" desc="filters">
@@ -624,51 +689,48 @@ public class BaseBuilder {
         Files.copy(sourcePath, targetPath, options);
     }
 
-    private class SmallFile {
-
-        private SmallFile(String path) {
-            this.name = path;
-            this.path = Paths.get(path);
-        }
-
-        private final String name;
-
-        private final Path path;
-
-        private Charset charset;
-
-        private List<String> lines;
-
-        private List<String> read() {
-            charset = null;
-            for (Charset cs : STANDARD_CHARSETS) {
-                try {
-                    lines = Files.readAllLines(path, cs);
-                    if (isEmpty()) {
-                        readingWarnings++;
-                        logger.warn(name + " is empty ");
-                    }
-                    charset = cs;
-                    return lines;
-                } catch (IOException ex) {
-                    readingWarnings++;
-                    logger.warn(ex);
-                    logger.warn("\t" + name + " could not be read using " + cs);
+    private void check(SmallFile sf) {
+        String cs;
+        Integer count;
+        Map<String, Integer> map;
+        if (sf != null) {
+            Charset charset = sf.getCharset();
+            String name = sf.getName();
+            String extension = StringUtils.defaultIfBlank(sf.getExtension().toLowerCase(), "?");
+            if (charset == null) {
+                readingErrors++;
+                logger.error(name + " could not be read using any of the specified character sets ");
+            } else if (sf.isEmpty()) {
+                readingWarnings++;
+                logger.warn(name + " is empty ");
+            } else {
+                cs = charset.toString();
+                switch (cs) {
+                    case "UTF-8":
+                        if (extension.equalsIgnoreCase("java")) {
+                        } else {
+                            logger.warn(cs + "/" + extension + " " + name);
+                        }
+                        break;
+                    case "ISO_8859_1":
+                        logger.warn(cs + "/" + extension + " " + name);
+                        break;
+                    default:
+                        break;
                 }
+                map = extensionCharsetMap.get(extension);
+                if (map == null) {
+                    map = new TreeMap<>();
+                }
+                count = map.get(cs);
+                if (count == null) {
+                    map.put(cs, 1);
+                } else {
+                    map.put(cs, ++count);
+                }
+                extensionCharsetMap.put(extension, map);
             }
-            readingErrors++;
-            logger.error(name + " could not be read using a standard charset ");
-            return null;
         }
-
-        private boolean isEmpty() {
-            return lines == null || lines.isEmpty();
-        }
-
-        private boolean isNotEmpty() {
-            return !isEmpty();
-        }
-
     }
 
     private boolean write(String target, List<String> lines, Charset charset) {

@@ -58,11 +58,14 @@ public class VelocityEngineer {
 
     private static String[] fileResourceLoaderPathArray;
 
+    private static final Properties supplementaryProperties;
+
     static {
         init();
         Object property;
         String str;
         String defaultStr;
+        supplementaryProperties = PropertiesHandler.getVelocitySupplementaryProperties();
         property = Velocity.getProperty("input.encoding");
         str = StrUtils.getString(property);
         defaultStr = Bundle.getString(VELOCITY_TEMPLATE_ENCODING);
@@ -243,29 +246,35 @@ public class VelocityEngineer {
     }
 
     private static String getTemplateEncoding(String filename) {
-        String substring = StringUtils.substringAfterLast(filename, "/");
-        if (StringUtils.isBlank(substring)) {
-            return VELOCITY_TEMPLATE_DEFAULT_ENCODING;
-        }
-        String extension = StringUtils.substringAfter(substring, ".");
+//      String substring = StringUtils.substringAfterLast(filename, "/");
+//      if (StringUtils.isBlank(substring)) {
+//          return VELOCITY_TEMPLATE_DEFAULT_ENCODING;
+//      }
+//      String extension = StringUtils.substringAfter(substring, ".");
+        String extension = StringUtils.substringAfterLast(filename, ".");
         if (StringUtils.isBlank(extension)) {
             return VELOCITY_TEMPLATE_DEFAULT_ENCODING;
         }
-        String encoding = Bundle.getTrimmedToNullString(VELOCITY_TEMPLATE_ENCODING + "." + extension.toLowerCase());
-        return encoding == null ? VELOCITY_TEMPLATE_DEFAULT_ENCODING : encoding;
+        String key = VELOCITY_TEMPLATE_ENCODING + "." + extension.toLowerCase();
+        String property = supplementaryProperties.getProperty(key, VELOCITY_TEMPLATE_DEFAULT_ENCODING);
+        String encoding = StringUtils.isBlank(property) ? VELOCITY_TEMPLATE_DEFAULT_ENCODING : property;
+        return encoding;
     }
 
     private static String getDocumentEncoding(String filename) {
-        String substring = StringUtils.substringAfterLast(filename, FILE_SEPARATOR);
-        if (StringUtils.isBlank(substring)) {
-            return VELOCITY_DOCUMENT_DEFAULT_ENCODING;
-        }
-        String extension = StringUtils.substringAfter(substring, ".");
+//      String substring = StringUtils.substringAfterLast(filename, FILE_SEPARATOR);
+//      if (StringUtils.isBlank(substring)) {
+//          return VELOCITY_DOCUMENT_DEFAULT_ENCODING;
+//      }
+//      String extension = StringUtils.substringAfter(substring, ".");
+        String extension = StringUtils.substringAfterLast(filename, ".");
         if (StringUtils.isBlank(extension)) {
             return VELOCITY_DOCUMENT_DEFAULT_ENCODING;
         }
-        String encoding = Bundle.getTrimmedToNullString(VELOCITY_DOCUMENT_ENCODING + "." + extension.toLowerCase());
-        return encoding == null ? VELOCITY_DOCUMENT_DEFAULT_ENCODING : encoding;
+        String key = VELOCITY_DOCUMENT_ENCODING + "." + extension.toLowerCase();
+        String property = supplementaryProperties.getProperty(key, VELOCITY_DOCUMENT_DEFAULT_ENCODING);
+        String encoding = StringUtils.isBlank(property) ? VELOCITY_DOCUMENT_DEFAULT_ENCODING : property;
+        return encoding;
     }
 
 }

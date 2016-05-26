@@ -3007,6 +3007,19 @@ public abstract class AbstractDataArtifact extends AbstractArtifact implements D
         }
     }
 
+    public boolean isSinglePropertyOfUniqueKey() {
+        Entity root = getDeclaringEntityRoot();
+        if (root != null) {
+            List<Key> keys = root.getKeysList();
+            for (Key key : keys) {
+                if (key.isUnique() && key.isSingleProperty() && this.equals(key.getTheProperty())) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
     // <editor-fold defaultstate="collapsed" desc="toString">
     @Override
     protected String fieldsToString(int n, String key, boolean verbose, boolean fields, boolean maps) {

@@ -8,13 +8,13 @@ locale.language.tag=$project.locale.toLanguageTag()
 
 #parse("$templatePath/base/BundleMensajes.properties.vm")
 #*
-#set($ckstring1 = 'el registro {1} no cumple con la restricción ${checkName}')
-#set($ckstring2 = 'los argumentos de la operación no cumplen con la restricción ${checkName}')
+#set($ckstring1 = 'el registro {1} no cumple con la restricci\u00F3n ${checkName}')
+#set($ckstring2 = 'los argumentos de la operaci\u00F3n no cumplen con la restricci\u00F3n ${checkName}')
 #set($fkstring1 = 'existen instancias de la clase "${entityLabel}" que hacen referencia a este registro')
 #set($fkstring2 = 'no existe una instancia de la clase "${foreignKeyRefTabLabel}" identificada con el valor de ${label}')
 #set($pkstring1 = 'ya existe otra instancia de la clase "${entityLabel}" con la misma identificaci\u00F3n')
 #set($ukstring1 = 'ya existe otra instancia de la clase "${entityLabel}" con igual ${uniqueKeyLabel}')
-#set($ukstring2 = 'ya existe otra instancia de la clase "${entityLabel}" con igual combinación de ${uniqueKeyLabel}')
+#set($ukstring2 = 'ya existe otra instancia de la clase "${entityLabel}" con igual combinaci\u00F3n de ${uniqueKeyLabel}')
 #set($xxsuffix1 = '; no es posible {0} el registro {1}')
 *###
 #set($ckstring1 = ${Bundle.getString('BundleMensajes.ck.string.1')})

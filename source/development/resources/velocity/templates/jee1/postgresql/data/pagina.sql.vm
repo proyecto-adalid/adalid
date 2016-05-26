@@ -53,7 +53,7 @@ select count(*) from pagina;
 
 #macro(writeP3)
     #set($webPageType = '3')
-    #set($webPageSort = 'registro jerárquico de ')
+    #set($webPageSort = 'registro jerarquico de ')
     #set($webPageSort = ${Bundle.getString('BundleWebui.registro.jerarquico')})
     #writeInsertRow()
 #end##
@@ -81,7 +81,7 @@ select count(*) from pagina;
 
 #macro(writeP7)
     #set($webPageType = '7')
-    #set($webPageSort = 'consulta jerárquica de ')
+    #set($webPageSort = 'consulta jerarquica de ')
     #set($webPageSort = ${Bundle.getString('BundleWebui.consulta.jerarquica')})
     #writeInsertRow()
 #end##
