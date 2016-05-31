@@ -566,26 +566,7 @@ public class StrUtils {
     }
 
     public static String getIdentificadorSql(String string) {
-        if (string == null) {
-            return null;
-        }
-        String x = getStringAscii(string);
-        String y = "";
-        String z;
-        char c;
-        boolean b = false;
-        for (int i = 0; i < x.length(); i++) {
-            c = x.charAt(i);
-            if ((c >= 'a') && (c <= 'z') || (c >= 'A') && (c <= 'Z') || (c >= '0') && (c <= '9')) {
-                y += c;
-                b = false;
-            } else {
-                z = b ? "" : "_";
-                y += z;
-                b = true;
-            }
-        }
-        return y;
+        return string == null ? null : getIdentifier(string);
     }
 
     public static String getIdentificadorSqlLowerCase(String string) {
@@ -605,10 +586,12 @@ public class StrUtils {
     }
 
     public static String getIdentifier(String string, String separator) {
+        final String invalidSeparators = "[\\u0000-\\u001F0-9A-Za-z\\u0080-\\uFFFF]";
         if (string == null) {
             return null;
         }
-        String x = getStringAscii(string);
+        String s = separator == null ? "_" : separator.replaceAll(invalidSeparators, "_");
+        String x = diacriticlessAscii(string, s);
         String y = "";
         String z;
         char c;
@@ -619,7 +602,7 @@ public class StrUtils {
                 y += c;
                 b = false;
             } else {
-                z = b ? "" : separator;
+                z = b ? "" : s;
                 y += z;
                 b = true;
             }
@@ -708,18 +691,84 @@ public class StrUtils {
         return null;
     }
 
+    /**
+     * replaces all non-printable and control characters in a string with an underscore.
+     *
+     * @param string
+     * @return an ASCII string
+     */
+    public static String ascii(String string) {
+        return ascii(string, '_');
+    }
+
+    /**
+     * replaces all non-printable and control characters in a string with the specified replacement character.
+     *
+     * @param string
+     * @param replacement
+     * @return an ASCII string
+     */
+    public static String ascii(String string, char replacement) {
+        return ascii(string, "" + replacement);
+    }
+
+    /**
+     * replaces all non-printable and control characters in a string with the specified replacement string.
+     *
+     * @param string
+     * @param replacement
+     * @return an ASCII string
+     */
+    public static String ascii(String string, String replacement) {
+        final String invalidCharacters = "[^ -~]";
+        if (string == null) {
+            return null;
+        }
+        String valid = replacement == null ? "_" : replacement.replaceAll(invalidCharacters, "_");
+        String ascii = StringUtils.trimToEmpty(string).replaceAll(invalidCharacters, valid);
+        return ascii;
+    }
+
+    /**
+     * replaces all characters with diacritical marks in a string with their corresponding letter.
+     *
+     * @param string
+     * @return a string without diacritical marks
+     */
     public static String diacriticless(String string) {
-        final String with = "áäâàéëêèíïîìóöôòúüûùçñÁÄÂÀÉËÊÈÍÏÎÌÓÖÔÒÚÜÛÙÇÑ";
-        final String sans = "aaaaeeeeiiiioooouuuucnAAAAEEEEIIIIOOOOUUUUCN";
+        final String with = "ÀÁÂÃÄÅÇÈÉÊËÌÍÎÏÑÒÓÔÕÖÙÚÛÜÝàáâãäåçèéêëìíîïñòóôõöùúûüýÿ";
+        final String sans = "AAAAAACEEEEIIIINOOOOOUUUUYaaaaaaceeeeiiiinooooouuuuyy";
         String dless = string == null ? null : StringUtils.replaceChars(StringUtils.trimToEmpty(string), with, sans);
         return dless;
+    }
+
+    /**
+     * replaces all characters with diacritical marks with their corresponding letter and all non-printable and control characters with an undersocre.
+     *
+     * @param string
+     * @return an ASCII string
+     */
+    public static String diacriticlessAscii(String string) {
+        return diacriticlessAscii(string, "_");
+    }
+
+    /**
+     * replaces all characters with diacritical marks with their corresponding letter and all non-printable and control characters with the specified
+     * replacement string.
+     *
+     * @param string
+     * @param replacement
+     * @return an ASCII string
+     */
+    public static String diacriticlessAscii(String string, String replacement) {
+        return ascii(diacriticless(string), replacement);
     }
 
     public static String getStringAscii(String string) {
         if (string == null) {
             return null;
         }
-        String dless = diacriticless(string);
+        String dless = diacriticlessAscii(string);
         byte[] bytes = dless.getBytes();
         String ascii = new String(bytes, StandardCharsets.US_ASCII);
         return ascii;

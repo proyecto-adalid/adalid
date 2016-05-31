@@ -11,7 +11,6 @@ import adalid.commons.util.StrUtils;
 import adalid.util.Utility;
 import java.io.File;
 import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Collection;
@@ -48,8 +47,12 @@ public class FileBrowser extends Utility {
     }
 
     public static boolean browse(String path) {
+        return browse(path, false);
+    }
+
+    public static boolean browse(String path, boolean detail) {
         logger.info("browse" + StrUtils.enclose(path));
-        FileBrowser fileBrowser = new FileBrowser(path);
+        FileBrowser fileBrowser = new FileBrowser(path, detail);
         return fileBrowser.browse();
     }
 
@@ -71,9 +74,11 @@ public class FileBrowser extends Utility {
     private final Map<Path, SmallFile> files;
 
     private final Map<String, Integer> fileTypes;
+
+    private boolean detail;
     // </editor-fold>
 
-    private FileBrowser(String path) {
+    private FileBrowser(String path, boolean detail) {
         rootFolder = PropertiesHandler.getRootFolder();
         if (rootFolder == null) {
             throw new RuntimeException("root folder is missing or invalid");
@@ -104,6 +109,7 @@ public class FileBrowser extends Utility {
         logger.info("base-folder=" + baseFolderPath);
         files = new TreeMap<>();
         fileTypes = new TreeMap<>();
+        this.detail = detail;
     }
 
     private boolean browse() {
@@ -158,30 +164,36 @@ public class FileBrowser extends Utility {
     private void printSummary() {
         logger.info(files.size() + " files ");
         logger.info(fileTypes.size() + " file types ");
-        Charset charset;
-        String extension;
-        final String ASCII = StandardCharsets.US_ASCII.toString();
-        final String UTF_8 = StandardCharsets.UTF_8.toString();
-        boolean b1, b2;
-        String baseFolderPathString = baseFolderPath.toString();
         for (String type : fileTypes.keySet()) {
             logger.info(type + " = " + fileTypes.get(type));
-            b1 = type.startsWith(ASCII) && !type.endsWith("?");
-//          b2 = type.startsWith(UTF_8) && (type.endsWith("java") || type.endsWith("jrxml"));
-            if (b1) {
-            } else {
-                for (SmallFile sf : files.values()) {
-                    charset = sf.getCharset();
-                    extension = StringUtils.defaultIfBlank(sf.getExtension(), "?");
-                    if (charset != null && type.startsWith(charset.toString()) && type.endsWith(extension)) {
-                        logger.info("\t" + StringUtils.removeStartIgnoreCase(sf.getName(), baseFolderPathString));
-                    }
-                }
+            if (detail) {
+                printDetail(type);
             }
         }
         logger.info(readingWarnings + " reading warnings ");
         logger.info(readingErrors + " reading errors ");
         logger.info("");
+    }
+
+    private void printDetail(String type) {
+//      final String ASCII = StandardCharsets.US_ASCII.toString();
+//      final String UTF_8 = StandardCharsets.UTF_8.toString();
+//      boolean b1, b2;
+//      b1 = type.startsWith(ASCII) && !type.endsWith("?");
+//      b2 = type.startsWith(UTF_8) && (type.endsWith("java") || type.endsWith("jrxml"));
+//      if (b1 || b2) {
+//          return;
+//      }
+        Charset charset;
+        String extension;
+        String baseFolderPathString = baseFolderPath.toString();
+        for (SmallFile sf : files.values()) {
+            charset = sf.getCharset();
+            extension = StringUtils.defaultIfBlank(sf.getExtension(), "?");
+            if (charset != null && type.startsWith(charset.toString()) && type.endsWith(extension)) {
+                logger.info("\t" + StringUtils.removeStartIgnoreCase(sf.getName(), baseFolderPathString));
+            }
+        }
     }
 
     private IOFileFilter fileFilter() {
@@ -190,11 +202,14 @@ public class FileBrowser extends Utility {
             new RegexFileFilter(B + X + D + "class" + E),
             new RegexFileFilter(B + X + D + "db" + E),
             new RegexFileFilter(B + X + D + "ear" + E),
+            new RegexFileFilter(B + X + D + "err" + E),
             new RegexFileFilter(B + X + D + "gif" + E),
             new RegexFileFilter(B + X + D + "jar" + E),
             new RegexFileFilter(B + X + D + "jpg" + E),
             new RegexFileFilter(B + X + D + "lnk" + E),
             new RegexFileFilter(B + X + D + "log" + E),
+            new RegexFileFilter(B + X + D + "nbm" + E),
+            new RegexFileFilter(B + X + D + "out" + E),
             new RegexFileFilter(B + X + D + "png" + E),
             new RegexFileFilter(B + X + D + "war" + E),
             new RegexFileFilter(B + X + D + "zip" + E),
