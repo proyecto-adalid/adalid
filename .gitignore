@@ -1,6 +1,8 @@
 *.lnk
 *.log
 /.svnversion
+/source/adalid-jaas/google.recaptcha.secret.key
+/source/adalid-jaas/google.recaptcha.site.key
 /source/adalid-meta/
 /source/adalid-oracle/
 /source/adalid-prime/
