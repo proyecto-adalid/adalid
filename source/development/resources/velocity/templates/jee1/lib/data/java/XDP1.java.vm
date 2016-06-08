@@ -33,12 +33,12 @@
 #set($added = $imports.add("com.sun.data.provider.RowKey"))
 #set($added = $imports.add("javax.sql.rowset.CachedRowSet"))
 #set($added = $imports.add("${project.rootPackageName}.lib.base.bundle.BundleDominios"))
-#set($added = $imports.add("${project.rootPackageName}.lib.base.bundle.BundleWebui"))
 #set($added = $imports.add("${project.rootPackageName}.lib.base.util.BitUtils"))
 #set($added = $imports.add("${project.rootPackageName}.lib.base.util.IntUtils"))
 #set($added = $imports.add("${project.rootPackageName}.lib.base.util.NumUtils"))
 #set($added = $imports.add("${project.rootPackageName}.lib.base.util.TimeUtils"))
 #set($added = $imports.add("${project.rootPackageName}.lib.core.db.xdp.RecursoCachedRowSetDataProvider"))
+#set($added = $imports.add("${project.rootPackageName}.lib.core.web.bundle.BundleWebui"))
 #***
 #set($entityNameBundleGetter = $FALSE)
 #if($esRecursoCodificable && $esRecursoNombrable)

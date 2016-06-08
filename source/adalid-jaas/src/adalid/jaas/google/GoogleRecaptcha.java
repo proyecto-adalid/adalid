@@ -7,11 +7,14 @@
 package adalid.jaas.google;
 
 import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.StringReader;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.json.Json;
@@ -35,19 +38,76 @@ import org.apache.http.impl.client.HttpClients;
  */
 public class GoogleRecaptcha {
 
+    //  <editor-fold defaultstate="collapsed" desc="quick-setup">
+    //  Edit web/resources/javascript3.js in the war module of your enterprise project.
+    //  Find the return statement of function grecaptchaSiteKey and replace the returned value with your site key.
+    //
+    //  Add a property named google.recaptcha.secret.key to the application server system properties; the property
+    //  value should be your secret key. Alternatively, store your secret key in a file and add a property named
+    //  google.recaptcha.secret.key.file to the application server system properties; the property value should be
+    //  the absolute path of the file containing your secret key. Alternatively, store your secret key in a file
+    //  named google.recaptcha.secret.key in the application server user directory.
+    //
+    //  </editor-fold>
+    //
     public static final String RESPONSE_SUCCESSFULLY_VERIFIED = "Google ReCAPTCHA: user's response successfully verified";
 
     public static final String RESPONSE_COULD_NOT_BE_VERIFIED = "Google ReCAPTCHA: user's response could not be verified";
 
     private static final Logger logger = Logger.getLogger(GoogleRecaptcha.class.getName());
 
+    private static final String USER_DIR = System.getProperties().getProperty("user.dir");
+
+    private static final String FILE_SEP = System.getProperties().getProperty("file.separator");
+
+    private static final String SECRET_KEY_PROPERTY_KEY = "google.recaptcha.secret.key";
+
+    private static final String SECRET_KEY_FILE_PROPERTY_KEY = "google.recaptcha.secret.key.file";
+
+    private static final String SECRET_KEY_FILE_DEFAULT_PATH = USER_DIR + FILE_SEP + SECRET_KEY_PROPERTY_KEY;
+
+    private static final String MISSING_SECRET_KEY = "Google ReCAPTCHA secret key is missing; test secret key will be used";
+
+    private static final String DEFAULT_SECRET_KEY = "6LeIxAcTAAAAAGG-vFI1TnRWxMZNFuojJ4WifJWe";
+
     private static final Level TRACE = Level.FINE;
 
     private static final String PARAMETER_KEY = "g-recaptcha-response";
 
-    private static final String SECRET_KEY = "6LdZTgkTAAAAAHjLTTc9tdW75qBThFp_bZG-IIE8";
+    private static final String VALIDATOR_KEY = "g-recaptcha-response-validator";
+
+    private static final String SECRET_KEY = secretKey();
 
     private static final boolean VERIFY_NULL_RESPONSE = true;
+
+    private static String secretKey() {
+        logger.log(Level.INFO, VALIDATOR_KEY + " = {0}", GoogleRecaptcha.class.getName());
+        String secretKey = System.getProperties().getProperty(SECRET_KEY_PROPERTY_KEY);
+        if (secretKey == null || secretKey.isEmpty()) {
+            String path = secretKeyFilePath();
+            File file = new File(path);
+            if (file.isFile()) {
+                logger.log(TRACE, SECRET_KEY_FILE_PROPERTY_KEY + " = {0}", path);
+                try {
+                    secretKey = new Scanner(file).useDelimiter("\\Z").next();
+                } catch (FileNotFoundException ex) {
+                    logger.log(Level.WARNING, SECRET_KEY_FILE_PROPERTY_KEY + " {0} is missing", path);
+                }
+            } else {
+                logger.log(Level.WARNING, SECRET_KEY_FILE_PROPERTY_KEY + " {0} is missing or invalid", path);
+            }
+        }
+        if (secretKey == null || secretKey.isEmpty()) {
+            logger.log(Level.WARNING, MISSING_SECRET_KEY);
+            return DEFAULT_SECRET_KEY;
+        }
+        return secretKey;
+    }
+
+    private static String secretKeyFilePath() {
+        String path = System.getProperties().getProperty(SECRET_KEY_FILE_PROPERTY_KEY);
+        return path == null || path.isEmpty() ? SECRET_KEY_FILE_DEFAULT_PATH : path.replace('\\', '/').replace("/", FILE_SEP);
+    }
 
     public static boolean verifyUserResponse() {
         String userResponse = getRequestParameter(PARAMETER_KEY);

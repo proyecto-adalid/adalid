@@ -14,6 +14,7 @@ import java.nio.charset.Charset;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 import org.apache.commons.io.FileUtils;
@@ -56,6 +57,12 @@ public class FileBrowser extends Utility {
         return fileBrowser.browse();
     }
 
+    public static boolean browse(String path, List<String> details) {
+        logger.info("browse" + StrUtils.enclose(path));
+        FileBrowser fileBrowser = new FileBrowser(path, details);
+        return fileBrowser.browse();
+    }
+
     // <editor-fold defaultstate="collapsed" desc="instance fields">
     private final File rootFolder;
 
@@ -69,16 +76,18 @@ public class FileBrowser extends Utility {
 
     private final Path baseFolderPath;
 
-    private int readingWarnings, readingErrors;
-
     private final Map<Path, SmallFile> files;
 
     private final Map<String, Integer> fileTypes;
 
-    private boolean detail;
+    private boolean detailAll;
+
+    private List<String> detailPatterns;
+
+    private int readingWarnings, readingErrors;
     // </editor-fold>
 
-    private FileBrowser(String path, boolean detail) {
+    private FileBrowser(String path) {
         rootFolder = PropertiesHandler.getRootFolder();
         if (rootFolder == null) {
             throw new RuntimeException("root folder is missing or invalid");
@@ -109,7 +118,17 @@ public class FileBrowser extends Utility {
         logger.info("base-folder=" + baseFolderPath);
         files = new TreeMap<>();
         fileTypes = new TreeMap<>();
-        this.detail = detail;
+    }
+
+    private FileBrowser(String path, boolean detail) {
+        this(path);
+        this.detailAll = detail;
+    }
+
+    private FileBrowser(String path, List<String> details) {
+        this(path);
+        this.detailAll = false;
+        this.detailPatterns = details;
     }
 
     private boolean browse() {
@@ -162,13 +181,13 @@ public class FileBrowser extends Utility {
     }
 
     private void printSummary() {
+        String tab;
         logger.info(files.size() + " files ");
         logger.info(fileTypes.size() + " file types ");
         for (String type : fileTypes.keySet()) {
-            logger.info(type + " = " + fileTypes.get(type));
-            if (detail) {
-                printDetail(type);
-            }
+            tab = type.contains("/") ? "\t" : "";
+            logger.info(tab + type + " = " + fileTypes.get(type));
+            printDetail(type);
         }
         logger.info(readingWarnings + " reading warnings ");
         logger.info(readingErrors + " reading errors ");
@@ -176,24 +195,31 @@ public class FileBrowser extends Utility {
     }
 
     private void printDetail(String type) {
-//      final String ASCII = StandardCharsets.US_ASCII.toString();
-//      final String UTF_8 = StandardCharsets.UTF_8.toString();
-//      boolean b1, b2;
-//      b1 = type.startsWith(ASCII) && !type.endsWith("?");
-//      b2 = type.startsWith(UTF_8) && (type.endsWith("java") || type.endsWith("jrxml"));
-//      if (b1 || b2) {
-//          return;
-//      }
-        Charset charset;
-        String extension;
-        String baseFolderPathString = baseFolderPath.toString();
-        for (SmallFile sf : files.values()) {
-            charset = sf.getCharset();
-            extension = StringUtils.defaultIfBlank(sf.getExtension(), "?");
-            if (charset != null && type.startsWith(charset.toString()) && type.endsWith(extension)) {
-                logger.info("\t" + StringUtils.removeStartIgnoreCase(sf.getName(), baseFolderPathString));
+        if (detailAll || matches(type)) {
+            Charset charset;
+            String extension;
+            String baseFolderPathString = baseFolderPath.toString();
+            String tab = type.contains("/") ? "\t" : "";
+            for (SmallFile sf : files.values()) {
+                charset = sf.getCharset();
+                extension = StringUtils.defaultIfBlank(sf.getExtension(), "?");
+                if (charset != null && type.equals(charset + " / " + extension)) {
+                    logger.info(tab + "\t" + StringUtils.removeStartIgnoreCase(sf.getName(), baseFolderPathString));
+                }
             }
         }
+    }
+
+    private boolean matches(String type) {
+        if (detailPatterns == null || detailPatterns.isEmpty()) {
+            return false;
+        }
+        for (String regex : detailPatterns) {
+            if (type.matches(regex)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private IOFileFilter fileFilter() {
@@ -212,8 +238,7 @@ public class FileBrowser extends Utility {
             new RegexFileFilter(B + X + D + "out" + E),
             new RegexFileFilter(B + X + D + "png" + E),
             new RegexFileFilter(B + X + D + "war" + E),
-            new RegexFileFilter(B + X + D + "zip" + E),
-            new RegexFileFilter(B + D + X + E)
+            new RegexFileFilter(B + X + D + "zip" + E)
         };
         IOFileFilter noesFileFilter = FileFilterUtils.notFileFilter(FileFilterUtils.or(noes));
         IOFileFilter filter = FileFilterUtils.and(fileFileFilter, noesFileFilter);
@@ -221,7 +246,16 @@ public class FileBrowser extends Utility {
     }
 
     private IOFileFilter dirFilter() {
-        return FileFilterUtils.makeCVSAware(FileFilterUtils.makeSVNAware(null));
+        IOFileFilter makeCVSSVNAware = FileFilterUtils.makeCVSAware(FileFilterUtils.makeSVNAware(null));
+        IOFileFilter[] noes = new IOFileFilter[]{
+            new RegexFileFilter(B + X + D + "git" + E),
+            new RegexFileFilter(B + "build" + E),
+            new RegexFileFilter(B + "dist" + E),
+            new RegexFileFilter(B + "target" + E)
+        };
+        IOFileFilter noesFileFilter = FileFilterUtils.notFileFilter(FileFilterUtils.or(noes));
+        IOFileFilter filter = FileFilterUtils.and(makeCVSSVNAware, noesFileFilter);
+        return filter;
     }
 
     /**

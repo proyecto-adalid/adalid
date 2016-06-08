@@ -72,10 +72,10 @@ public class ${javaClassSimpleName} extends AbstractPageBean1#writeJavaImplement
 ##  #set($added = $imports.add("${project.rootPackageName}.web.${module.wrapper.dottedAlias}.interfaces.${PaginaActualizacion}"))
     #set($added = $imports.add("${project.rootPackageName}.web.commons.assistants.AsistentePaginaActualizacion${page.entity.wrapper.javaClassName}"))
     #set($added = $imports.add("${project.rootPackageName}.web.commons.interfaces.${PaginaActualizacion}"))
-    #set($added = $imports.add("${project.rootPackageName}.lib.base.util.ObjUtils"))
     #set($added = $imports.add("${project.rootPackageName}.lib.base.util.TimeUtils"))
     #set($added = $imports.add("${project.rootPackageName}.lib.core.app.TLC"))
     #set($added = $imports.add("${project.rootPackageName}.lib.core.jsf.component.BigDecimalValidator"))
+    #set($added = $imports.add("${project.rootPackageName}.lib.core.web.util.ObjUtils"))
     #addDataProviderImports()
     #addPageBeanImports()
 #end##addImports

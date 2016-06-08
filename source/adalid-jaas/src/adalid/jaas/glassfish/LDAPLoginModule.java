@@ -9,6 +9,7 @@ package adalid.jaas.glassfish;
 import adalid.jaas.google.GoogleRecaptcha;
 import com.sun.appserv.security.AppservPasswordLoginModule;
 import com.sun.enterprise.security.auth.realm.ldap.LDAPRealm;
+import java.util.logging.Level;
 import javax.security.auth.login.LoginException;
 
 /**
@@ -28,6 +29,11 @@ public class LDAPLoginModule extends AppservPasswordLoginModule {
     //      third-party/lib/httpcomponents-client-4.3.2/lib/*.jar
     //
     //  </editor-fold>
+    //
+    static {
+        _logger.log(Level.INFO, "login-module = {0}", LDAPLoginModule.class.getName());
+    }
+
     com.sun.enterprise.security.auth.login.LDAPLoginModule LDAPLoginModule;
 
     @Override

@@ -6,7 +6,7 @@
 #writeJSPLicense()
 #writeJSPAuthor('Jorge Campins')
 *###
-<%@ page import="${project.rootPackageName}.lib.base.bundle.BundleWebui" %>
+<%@ page import="${project.rootPackageName}.lib.core.web.bundle.BundleWebui" %>
 <%@ page import="java.util.Locale" %>
 <%
     Locale locale = request.getLocale();

@@ -189,7 +189,7 @@
         <defaultValueExpression><![CDATA["$project.alias"]]></defaultValueExpression>
     </parameter>
     <parameter name="ENTERPRISE_APPLICATION_NAME" class="java.lang.String" isForPrompting="false">
-        <defaultValueExpression><![CDATA["$project.wrapper.validDefaultShortDescription"]]></defaultValueExpression>
+        <defaultValueExpression><![CDATA[JRBundleWebui.getString($locale, ${BOP}ENTERPRISE_APPLICATION_CODE${EOP})]]></defaultValueExpression>
     </parameter>
     <parameter name="RESOURCES_DIR" class="java.lang.String" isForPrompting="false">
         <defaultValueExpression><![CDATA["./resources/"]]></defaultValueExpression>

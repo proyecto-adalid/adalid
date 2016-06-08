@@ -55,9 +55,9 @@ public class ${javaClassSimpleName} extends AbstractPageBean1#writeJavaImplement
     #set($added = $imports.add("${project.rootPackageName}.lib.core.enumeration.EnumColumnaEtiqueta"))
     #set($added = $imports.add("${project.rootPackageName}.lib.core.enumeration.EnumOpcionZumNodo"))
     #set($added = $imports.add("com.sun.data.provider.RowKey"))
-    #set($added = $imports.add("${project.rootPackageName}.lib.base.util.ObjUtils"))
     #set($added = $imports.add("${project.rootPackageName}.lib.base.util.TimeUtils"))
     #set($added = $imports.add("${project.rootPackageName}.lib.core.app.TLC"))
+    #set($added = $imports.add("${project.rootPackageName}.lib.core.web.util.ObjUtils"))
     #addDataProviderImports()
     #addPageBeanImports()
 #end##addImports

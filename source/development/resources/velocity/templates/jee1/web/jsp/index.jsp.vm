@@ -11,11 +11,11 @@
 #set($jspTarea = 'crop/consulta/recursos/basicos/tarea/TareaUsuario11')
 #set($twnTarea = "${project.alias}-war-consulta-recursos-basicos-tarea")
 #set($jspPassword = 'copy/Password')
-<%@ page import="${project.rootPackageName}.lib.base.bundle.BundleWebui" %>
 <%@ page import="${project.rootPackageName}.lib.base.util.TimeUtils" %>
 <%@ page import="${project.rootPackageName}.lib.core.control.UsuarioAutenticado" %>
 <%@ page import="${project.rootPackageName}.lib.core.control.UsuarioAutenticadoCachingServiceLocator" %>
 <%@ page import="${project.rootPackageName}.lib.core.util.EA" %>
+<%@ page import="${project.rootPackageName}.lib.core.web.bundle.BundleWebui" %>
 <%@ page import="java.util.Locale" %>
 #***
 <%--

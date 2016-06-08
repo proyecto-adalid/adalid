@@ -7,6 +7,8 @@
 package adalid.jaas.jboss;
 
 import adalid.jaas.google.GoogleRecaptcha;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.security.auth.login.LoginException;
 
 /**
@@ -23,6 +25,12 @@ public class JDBCLoginModule extends org.jboss.security.auth.spi.DatabaseServerL
     //
     //  </editor-fold>
     //
+    private static final Logger logger = Logger.getLogger(JDBCLoginModule.class.getName());
+
+    static {
+        logger.log(Level.INFO, "login-module = {0}", JDBCLoginModule.class.getName());
+    }
+
     @Override
     public boolean login() throws LoginException {
         if (!GoogleRecaptcha.verifyUserResponse()) {

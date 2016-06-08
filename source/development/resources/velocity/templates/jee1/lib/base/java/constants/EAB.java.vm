@@ -49,7 +49,6 @@ public class ${javaClassSimpleName} {
             #set($customLifecycleCallbackMethodsEnabled = 'true')
         #end
     #end
-##  #set($added = $imports.add("${project.rootPackageName}.lib.base.bundle.BundleWebui"))
 #end##setLocalVariables
 
 #macro(writeJavaMessageServiceConstants)

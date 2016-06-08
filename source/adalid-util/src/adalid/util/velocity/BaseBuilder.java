@@ -297,6 +297,8 @@ public class BaseBuilder {
                                 for (String word : precedingWords) {
                                     line = replaceAliasWithRootPackageName(line, word + " ", ".");
                                 }
+                                line = replaceAliasWithRootPackageName(line, "String BASE_NAME = ", ".");
+                                line = replaceAliasWithRootPackageName(line, "new ResourceBundleHandler(", ".");
                                 line = line.replace(oldJava1, newJava1);
                             }
                             if (jrxml) {

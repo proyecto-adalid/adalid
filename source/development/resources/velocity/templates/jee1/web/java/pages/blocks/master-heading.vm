@@ -25,7 +25,7 @@
             try {
                 iniciar();
             } catch (Exception e) {
-                log(${project.rootPackageName}.lib.base.bundle.BundleWebui.getString("bean.initialization.error"), e);
+                log(${project.rootPackageName}.lib.core.web.bundle.BundleWebui.getString("bean.initialization.error"), e);
                 throw e instanceof FacesException ? (FacesException) e : new FacesException(e);
             }
         }

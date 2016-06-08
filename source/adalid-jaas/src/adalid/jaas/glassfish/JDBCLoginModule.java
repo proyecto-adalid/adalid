@@ -30,6 +30,11 @@ public class JDBCLoginModule extends AppservPasswordLoginModule {
     //      third-party/lib/httpcomponents-client-4.3.2/lib/*.jar
     //
     //  </editor-fold>
+    //
+    static {
+        _logger.log(Level.INFO, "login-module = {0}", JDBCLoginModule.class.getName());
+    }
+
     com.sun.enterprise.security.ee.auth.login.JDBCLoginModule JDBCLoginModule;
 
     @Override

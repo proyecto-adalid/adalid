@@ -19,6 +19,7 @@ set xd=%xd% dist
 set xd=%xd% private
 call:documents
 call:adalid-prime
+if defined %~n0-no-pause goto:eof
 call:eoj
 goto:eof
 
@@ -61,5 +62,6 @@ if /i "%siono%" == "Y" (
     start /d %SystemRoot% notepad %log%
     echo.
     pause
+    echo.
 )
 goto:eof
