@@ -1154,7 +1154,7 @@ public abstract class AbstractDataArtifact extends AbstractArtifact implements D
      */
 //  @Override
     public Object getDataGenFactor() {
-        return _dataGenFactor;
+        return _dataGenFactor == null && isNumericPrimitive() ? 1 : _dataGenFactor;
     }
 
     /**
