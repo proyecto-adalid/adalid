@@ -31,17 +31,20 @@
 #if($strategy != '' && $strategy != 'UNSPECIFIED')
 @Inheritance(strategy = InheritanceType.$strategy)
 #end
+#set($base = "$!{entity.baseRoot.wrapper.javaClassName}")
 #if($strategy == 'SINGLE_TABLE' || $strategy == 'JOINED')
     #set($discriminatorColName = "$!entity.discriminatorProperty.wrapper.sqlName")
     #if($discriminatorColName != '')
-        #set($discriminatorColType = "$!entity.discriminatorType")
-        #set($discriminatorColLength = "$!entity.discriminatorProperty.maxLength")
-        #if($discriminatorColType == '')
-............@DiscriminatorColumn(name = "$discriminatorColName")
-        #elseif($discriminatorColType == 'STRING' && $discriminatorColLength != '')
-............@DiscriminatorColumn(name = "$discriminatorColName", discriminatorType = DiscriminatorType.STRING, length = $discriminatorColLength)
-        #else
-............@DiscriminatorColumn(name = "$discriminatorColName", discriminatorType = DiscriminatorType.$discriminatorColType)
+        #if($base == '')
+            #set($discriminatorColType = "$!entity.discriminatorType")
+            #set($discriminatorColLength = "$!entity.discriminatorProperty.maxLength")
+            #if($discriminatorColType == '')
+................@DiscriminatorColumn(name = "$discriminatorColName")
+            #elseif($discriminatorColType == 'STRING' && $discriminatorColLength != '')
+................@DiscriminatorColumn(name = "$discriminatorColName", discriminatorType = DiscriminatorType.STRING, length = $discriminatorColLength)
+            #else
+................@DiscriminatorColumn(name = "$discriminatorColName", discriminatorType = DiscriminatorType.$discriminatorColType)
+            #end
         #end
         #set($discriminatorValue = "$!entity.discriminatorValue")
         #if($entity.isAbstractClass() || $discriminatorValue == '')
@@ -51,7 +54,6 @@
         #end
     #end
 #end
-#set($base = "$!{entity.baseRoot.wrapper.javaClassName}")
 #if($base != '')
     #set($extends = " extends $base")
 #else
