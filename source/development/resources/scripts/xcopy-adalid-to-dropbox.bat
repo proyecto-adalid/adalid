@@ -8,6 +8,7 @@ set xf=/xf
 set xf=%xf% Thumbs.db
 set xf=%xf% build-impl.xml
 set xf=%xf% genfiles.properties
+set xf=%xf% *.bat~*
 set xf=%xf% *.laccb
 set xf=%xf% *.lnk
 set xf=%xf% *.log
