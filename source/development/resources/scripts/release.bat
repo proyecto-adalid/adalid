@@ -66,6 +66,7 @@ goto:eof
 call:set-sub-dir "%VRPATH%\lib"
 set LIBDIR=%project_dir%\lib
 call:copy-files "%LIBDIR%" %SUBDIR% *.*
+call:delete-jar "%VRPATH%\lib\adalid-jaas.jar"
 call:delete-jar "%VRPATH%\lib\adalid-meta.jar"
 call:delete-jar "%VRPATH%\lib\adalid-xmi.jar"
 if /i "%exclude_oracle%" == "Y" call:delete-jar "%VRPATH%\lib\adalid-oracle.jar"
@@ -186,28 +187,21 @@ set siono=Y
 set /p siono="filedate: modify files date (Y|N) [%siono%] "
 echo.
 if /i not "%siono%" == "Y" goto:eof
-set filedate="%third_party_dir%\tools\abfTools\FileDate\FileDate.exe"
 set filedate="%third_party_dir%\tools\FileTouch\FileTouch.exe"
 if not exist %filedate% set filedate=
 set filedate
 echo.
 if not defined filedate goto:eof
-if /i "%filedate%" == "filedate" (
-    %filedate% "%VRPATH%\*.txt" %mm%/%dd%/%aaaa% %hh24%-00-00
-    %filedate% "%VRPATH%\source\*" %mm%/%dd%/%aaaa% %hh24%-00-00 /r
-) else (
-    %filedate% /W /A /C /S /D %mm%/%dd%/%aaaa% /T %hh24%:00:00 "%VRPATH%\*.txt" 1>nul
-    set newmm=%mm%
-    set newdd=%dd%
-    set newhh=%hh24%
-    set newnn=00
-    call:forFileTouch "%VRPATH%\source"
-)
+%filedate% /W /A /C /S /D %mm%/%dd%/%aaaa% /T %hh24%:00:00 "%VRPATH%\*.txt" 1>nul
+set newmm=%mm%
+set newdd=%dd%
+set newhh=%hh24%
+set newnn=00
+call:forFileTouch "%VRPATH%\source"
 echo.
 goto:eof
 
 :modify-libraries-timestamp
-set filedate="%third_party_dir%\tools\abfTools\FileDate\FileDate.exe"
 set filedate="%third_party_dir%\tools\FileTouch\FileTouch.exe"
 if not exist %filedate% set filedate=
 set filedate
@@ -242,13 +236,8 @@ set /p siono="mm/dd/yyyy=%newmm%/%newdd%/%aaaa%, hh-mm=%newhh%-%newnn%-00 (Y|N) 
 echo.
 if /i not "%siono%" == "Y" goto:eof
 :do-modify-libraries-timestamp
-if /i "%filedate%" == "filedate" (
-    %filedate% "%VRPATH%\lib\*.nbm" %newmm%/%newdd%/%aaaa% %newhh%-%newnn%-00 /r
-    %filedate% "%VRPATH%\lib\*.jar" %newmm%/%newdd%/%aaaa% %newhh%-%newnn%-00 /r
-) else (
-    %filedate% /W /A /C /S /D %newmm%/%newdd%/%aaaa% /T %newhh%:%newnn%:00 "%VRPATH%\lib\*.nbm" 1>nul
-    %filedate% /W /A /C /S /D %newmm%/%newdd%/%aaaa% /T %newhh%:%newnn%:00 "%VRPATH%\lib\*.jar" 1>nul
-)
+%filedate% /W /A /C /S /D %newmm%/%newdd%/%aaaa% /T %newhh%:%newnn%:00 "%VRPATH%\lib\*.nbm" 1>nul
+%filedate% /W /A /C /S /D %newmm%/%newdd%/%aaaa% /T %newhh%:%newnn%:00 "%VRPATH%\lib\*.jar" 1>nul
 echo.
 dir %VRPATH%\lib
 echo.

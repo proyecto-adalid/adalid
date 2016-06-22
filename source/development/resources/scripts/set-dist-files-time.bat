@@ -5,7 +5,6 @@ call variables
 cd /d "%project_source_dir%"
 dir *.nbm /s
 dir adalid-*.jar /s
-set filedate="%third_party_dir%\tools\abfTools\FileDate\FileDate.exe"
 set filedate="%third_party_dir%\tools\FileTouch\FileTouch.exe"
 if not exist %filedate% set filedate=
 set filedate

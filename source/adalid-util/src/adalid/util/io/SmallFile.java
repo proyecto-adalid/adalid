@@ -29,10 +29,12 @@ public class SmallFile {
         StandardCharsets.UTF_16
     };
 
+    static final Charset WINDOWS_CHARSET = Charset.forName("windows-1252");
+
     static final Charset[] DEFAULT_CHARSETS = new Charset[]{
         StandardCharsets.US_ASCII,
         StandardCharsets.UTF_8,
-        Charset.forName("windows-1252"),
+        WINDOWS_CHARSET,
         StandardCharsets.ISO_8859_1
     };
 

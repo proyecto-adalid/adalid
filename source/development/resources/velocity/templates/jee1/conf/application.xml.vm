@@ -4,6 +4,7 @@
 #writeXMLLicense()
 #writeXMLAuthor('Jorge Campins')
 <application version="6" xmlns="http://java.sun.com/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/application_6.xsd">
+##  <application-name>${project.alias}</application-name>
     <display-name>${project.alias}</display-name>
     <module>
         <ejb>${project.alias}-ejb.jar</ejb>

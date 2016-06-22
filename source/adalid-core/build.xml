@@ -83,6 +83,8 @@
         <echo level="info" message="-post-init"/>
         <property name="adalid.m2r.dir" value="${user.home}/.m2/repository/org/adalid/${application.name}/${application.version}"/>
         <property name="adalid.m2r.jar" value="${adalid.m2r.dir}/${application.name}-${application.version}.jar"/>
+        <property name="adalid.m2r.javadoc.jar" value="${adalid.m2r.dir}/${application.name}-${application.version}-javadoc.jar"/>
+        <property name="adalid.m2r.sources.jar" value="${adalid.m2r.dir}/${application.name}-${application.version}-sources.jar"/>
         <available file="${adalid.m2r.dir}" type="dir" property="adalid.m2r.dir.available"/>
     </target>
 
@@ -204,6 +206,10 @@
               message="Implementation-Version: ${implementation.version} ${implementation.version.remark}"/>
         <antcall target="-copy-jar-to-lib"/>
         <antcall target="-copy-jar-to-m2r"/>
+        <!--
+        <antcall target="-bundle-javadoc-jar-m2r"/>
+        -->
+        <antcall target="-bundle-sources-jar-m2r"/>
     </target>
 
     <target name="-copy-jar-to-lib" if="adalid.lib.dir.available">
@@ -214,11 +220,23 @@
         <copy file="${dist.jar}" tofile="${adalid.m2r.jar}" failonerror="false" overwrite="true"/>
     </target>
 
+    <target depends="-javadoc-build" description="bundle javadoc in a jar" name="-bundle-javadoc-jar-m2r" if="adalid.m2r.dir.available">
+        <echo level="info" message="-bundle-javadoc-jar-m2r"/>
+        <jar basedir="dist/javadoc" destfile="${adalid.m2r.javadoc.jar}"/>
+    </target>
+
+    <target description="bundle sources in a jar" name="-bundle-sources-jar-m2r" if="adalid.m2r.dir.available">
+        <echo level="info" message="-bundle-sources-jar-m2r"/>
+        <jar basedir="src" destfile="${adalid.m2r.sources.jar}"/>
+    </target>
+
     <target name="-post-clean">
         <echo level="info" message="-post-clean"/>
         <basename property="adalid.jar.file" file="${dist.jar}"/>
         <delete file="${adalid.lib.dir}/${adalid.jar.file}"/>
         <delete file="${adalid.m2r.jar}"/>
+        <delete file="${adalid.m2r.javadoc.jar}"/>
+        <delete file="${adalid.m2r.sources.jar}"/>
         <delete file="MANIFEST.MF"/>
     </target>
 
