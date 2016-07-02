@@ -33,7 +33,6 @@
         #writeDependentModule($dir 'lib' 'jcommon-1.0.15.jar')
         #writeDependentModule($dir 'lib' 'jdt-compiler-3.1.1.jar')
         #writeDependentModule($dir 'lib' 'jfreechart-1.0.12.jar')
-        #writeDependentModule($dir 'lib' 'joda-time-1.6.2.jar')
         #writeDependentModule($dir 'lib' 'jxl-2.6.10.jar')
         #writeDependentModule($dir 'lib' 'log4j-1.2.16.jar')
         #writeDependentModule($dir 'lib' 'spring.jar')

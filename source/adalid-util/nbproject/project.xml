@@ -6,6 +6,7 @@
             <name>adalid-util</name>
             <source-roots>
                 <root id="src.dir"/>
+                <root id="srx.dir" name="Resources"/>
             </source-roots>
             <test-roots>
                 <root id="test.src.dir"/>

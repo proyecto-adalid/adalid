@@ -267,8 +267,6 @@ public abstract class Project extends AbstractArtifact implements Comparable<Pro
 
     private final Set<Method> _addAttributesMethods = new LinkedHashSet<>();
 
-    private final Set<String> _singularPlatforms = new LinkedHashSet<>();
-
     private final Set<String> _processingGroups = new TreeSet<>();
 
     private final List<Pattern> _fileExclusionPatterns = new ArrayList<>();
@@ -799,13 +797,6 @@ public abstract class Project extends AbstractArtifact implements Comparable<Pro
     }
 
     /**
-     * @return the singular platforms set
-     */
-    public Set<String> getSingularPlatforms() {
-        return _singularPlatforms;
-    }
-
-    /**
      * @return the processing groups set
      */
     public Set<String> getProcessingGroups() {
@@ -1000,14 +991,12 @@ public abstract class Project extends AbstractArtifact implements Comparable<Pro
         } else if (alias.equalsIgnoreCase("meta") || alias.equalsIgnoreCase("workspace")) {
             logger.error(alias + " is a restricted project alias; generation aborted");
             return false;
-        } else if (_singularPlatforms.contains(platform) && platform.equals(alias)) {
-            logger.error("project alias matches platform name; generation aborted");
-            return false;
         }
         TLC.setProject(this);
         clearArtifactsAttributes();
         invokeAddAttributesMethods();
         addArtifactsAttributes();
+        beforeWriting(platform);
         configureWriter();
         Writer writer = getWriter();
         writer.setFileExclusionPatterns(_fileExclusionPatterns);
@@ -1017,6 +1006,10 @@ public abstract class Project extends AbstractArtifact implements Comparable<Pro
         String message = ok ? "successfully generated" : "generated with errors";
         logger.info("project " + alias + " " + message);
         return ok;
+    }
+
+    protected void beforeWriting(String platform) {
+        logger.trace(signature("beforeWriting", "platform=" + platform));
     }
 
     private void configureWriter() {

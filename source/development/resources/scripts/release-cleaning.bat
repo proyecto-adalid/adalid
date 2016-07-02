@@ -9,6 +9,7 @@ cd release
 set release=%CD%
 set release
 echo.
+set siono=S
 for /D %%d in (V??R*) do call:remove-dir %%d
 if not exist workspace (echo el directorio workspace no existe & echo. & pause & goto:eof)
 pushd workspace
@@ -22,7 +23,6 @@ set nx1=%~nx1
 goto:eof
 
 :remove-dir
-set siono=S
 set /p siono="eliminar el directorio %~f1 (S/N)? [%siono%] "
 if /i "%siono%" == "N" echo. & goto:eof
 echo rmdir /s /q "%~f1"
@@ -43,7 +43,6 @@ if not exist %junction% (
     goto:eof
 )
 %junction% %1
-set siono=S
 set /p siono="eliminar %1 (S/N)? [%siono%] "
 if /i "%siono%" == "N" echo. & goto:eof
 echo.

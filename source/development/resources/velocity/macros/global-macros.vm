@@ -103,6 +103,7 @@
 #end##setTargetEnvironmentVariables
 
 #macro(setManifestInfo)
+    #set($buildDateTime = $buildTimestamp.substring(0,13))
     #set($manifest = $VelocityAid.coalesce($ManUtils.getManifest(), $FALSE))
     #if($manifest)
         #set($builtBy = $ManUtils.getBuiltBy($manifest))
@@ -111,11 +112,11 @@
         #set($implementationDate = $ManUtils.getImplementationDate($manifest))
         #set($implementationTimestamp = $ManUtils.getImplementationTimestamp($manifest))
         #if($implementationVersion)
-            #set($implementationVersionStamp = "${buildTimestamp}-${implementationVersion}")
+            #set($implementationVersionStamp = "${buildDateTime}-${implementationVersion}")
         #else
-            #set($implementationVersionStamp = $buildTimestamp)
+            #set($implementationVersionStamp = $buildDateTime)
         #end
     #else
-        #set($implementationVersionStamp = $buildTimestamp)
+        #set($implementationVersionStamp = $buildDateTime)
     #end
 #end##setManifestInfo

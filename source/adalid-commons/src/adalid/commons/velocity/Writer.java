@@ -26,6 +26,9 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.nio.charset.Charset;
+import java.nio.file.InvalidPathException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -216,6 +219,8 @@ public class Writer {
     private static final String DOLLAR = "$";
 
     private static final String ASTERISK = "*";
+
+    private static final String DO_CREATE_DIR = "do.create.dir";
 
     private static final String DO_CASCADED_DELETE = "do.cascaded.delete";
 
@@ -464,6 +469,7 @@ public class Writer {
             Properties properties = mergeProperties(platformContext, platformPropertiesFile);
             putStrings(platformContext, properties);
             ExtendedProperties mergeExtendedProperties = mergeExtendedProperties(platformContext, platformPropertiesFile);
+            createDirectories(mergeExtendedProperties);
             deletePreviouslyGeneratedFiles(mergeExtendedProperties);
             WriterContext platformWriterContext = newWriterContext(platformContext);
             File platformsFolder = platformPropertiesFile.getParentFile();
@@ -1175,6 +1181,52 @@ public class Writer {
                 string2 = StringUtils.trimToEmpty(properties.getProperty(name));
                 velocityKey = StrUtils.getCamelCase(string1, true);
                 context.put(velocityKey, string2);
+            }
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    private void createDirectories(ExtendedProperties properties) {
+        String[] stringArray;
+        Set<String> stringPropertyNames = properties.keySet();
+        for (String name : stringPropertyNames) {
+            switch (name) {
+                case DO_CREATE_DIR:
+                    stringArray = properties.getStringArray(name);
+                    createDirectories(name, stringArray);
+                    break;
+            }
+        }
+    }
+
+    private void createDirectories(String name, String[] stringArray) {
+        String root = getRoot().getPath();
+        String raiz = root.replace('\\', '/');
+        String rama, pattern, message;
+        String hint = "; check property: {0}={1}";
+        Path path;
+        Arrays.sort(stringArray);
+        for (String string : stringArray) {
+            if (StringUtils.isBlank(string)) {
+                pattern = "directory name is missing" + hint;
+                message = MessageFormat.format(pattern, name, string);
+                log(_alertLevel, message);
+                warnings++;
+                continue;
+            }
+            try {
+                path = Paths.get(string);
+            } catch (InvalidPathException e) {
+                pattern = ThrowableUtils.getString(e) + hint;
+                message = MessageFormat.format(pattern, name, string);
+                log(_alertLevel, message);
+                warnings++;
+                continue;
+            }
+            rama = StringUtils.removeStartIgnoreCase(string, raiz);
+            log(_trackingLevel, "about to create directory " + rama);
+            if (path.toFile().mkdirs()) {
+                log(Level.INFO, "directory " + rama + " was created, along with all necessary parent directories");
             }
         }
     }

@@ -63,13 +63,54 @@ public class PropertiesHandler {
     private static final File[] velocity_folders, platforms_folders;
 
     static {
-        bootstrapping = getExtendedProperties(BOOTSTRAPPING_FILE_PATH);
+        bootstrapping = getBootstrappingProperties();
         root_folder = rootFolder();
         velocity_properties_file = velocityPropertiesFile();
         velocity_supplementary_properties_file = velocitySupplementaryPropertiesFile();
         velocity_folders = velocityFolders();
         platforms_folders = platformsFolders();
 //      log(bootstrapping, Level.INFO);
+    }
+
+    private static ExtendedProperties getBootstrappingProperties() {
+        ExtendedProperties properties = getExtendedProperties(BOOTSTRAPPING_FILE_PATH, Level.INFO);
+        return properties == null || properties.isEmpty() ? getResourceAsExtendedProperties("/" + BOOTSTRAPPING_FILE_NAME) : properties;
+    }
+
+    public static Properties getResourceAsProperties(String resource) {
+        if (StringUtils.isBlank(resource)) {
+            return null;
+        }
+        Properties properties = new Properties();
+        try (InputStream stream = PropertiesHandler.class.getResourceAsStream(resource)) {
+            if (stream == null) {
+                logger.error("resource " + resource + " is missing");
+            } else {
+                properties.load(stream);
+                logger.info("resource " + resource + " loaded (" + properties.size() + " properties)");
+            }
+        } catch (Exception ex) {
+            logger.fatal(ex);
+        }
+        return properties;
+    }
+
+    public static ExtendedProperties getResourceAsExtendedProperties(String resource) {
+        if (StringUtils.isBlank(resource)) {
+            return null;
+        }
+        ExtendedProperties properties = new ExtendedProperties();
+        try (InputStream stream = PropertiesHandler.class.getResourceAsStream(resource)) {
+            if (stream == null) {
+                logger.error("resource " + resource + " is missing");
+            } else {
+                properties.load(stream);
+                logger.info("resource " + resource + " loaded (" + properties.size() + " properties)");
+            }
+        } catch (Exception ex) {
+            logger.fatal(ex);
+        }
+        return properties;
     }
 
     /**
@@ -269,9 +310,24 @@ public class PropertiesHandler {
         return getExtendedProperties(filename, Level.ERROR);
     }
 
+    public static ExtendedProperties getExtendedProperties(String... filename) {
+        if (filename == null || filename.length == 0) {
+            return null;
+        }
+        int last = filename.length - 1;
+        ExtendedProperties properties = null;
+        for (int i = 0; i < filename.length && (properties == null || properties.isEmpty()); i++) {
+            properties = getExtendedProperties(filename[i], i == last ? Level.ERROR : Level.INFO, Level.INFO);
+        }
+        return properties;
+    }
+
     public static ExtendedProperties getExtendedProperties(String filename, Level badFileLogLevel) {
-        return StringUtils.isBlank(filename) ? null
-            : getExtendedProperties(new File(filename), badFileLogLevel);
+        return getExtendedProperties(filename, badFileLogLevel, Level.TRACE);
+    }
+
+    public static ExtendedProperties getExtendedProperties(String filename, Level badFileLogLevel, Level goodFileLogLevel) {
+        return StringUtils.isBlank(filename) ? null : getExtendedProperties(new File(filename), badFileLogLevel, goodFileLogLevel);
     }
 
     public static ExtendedProperties getExtendedProperties(File file) {
@@ -279,6 +335,10 @@ public class PropertiesHandler {
     }
 
     public static ExtendedProperties getExtendedProperties(File file, Level badFileLogLevel) {
+        return getExtendedProperties(file, badFileLogLevel, Level.TRACE);
+    }
+
+    public static ExtendedProperties getExtendedProperties(File file, Level badFileLogLevel, Level goodFileLogLevel) {
         ExtendedProperties extendedProperties = new ExtendedProperties();
         String filename = file == null ? "" : file.getPath();
         if (file == null) {
@@ -289,6 +349,7 @@ public class PropertiesHandler {
                 try (InputStream inStream = new FileInputStream(filename)) {
                     extendedProperties.load(inStream);
                 }
+                logger.log(goodFileLogLevel, "file " + filename + " loaded (" + extendedProperties.size() + " properties)");
                 printExtendedProperties(extendedProperties);
             } catch (Exception ex) {
                 logger.fatal(ThrowableUtils.getString(ex), ex);

@@ -81,7 +81,7 @@
 
     <target name="-post-init">
         <echo level="info" message="-post-init"/>
-        <property name="adalid.m2r.dir" value="${user.home}/.m2/repository/org/adalid/${application.name}/${application.version}"/>
+        <property name="adalid.m2r.dir" value="${user.home}/.m2/repository/org/proyecto-adalid/${application.name}/${application.version}"/>
         <property name="adalid.m2r.jar" value="${adalid.m2r.dir}/${application.name}-${application.version}.jar"/>
         <property name="adalid.m2r.javadoc.jar" value="${adalid.m2r.dir}/${application.name}-${application.version}-javadoc.jar"/>
         <property name="adalid.m2r.sources.jar" value="${adalid.m2r.dir}/${application.name}-${application.version}-sources.jar"/>
@@ -205,11 +205,11 @@
         <echo level="${implementation.version.remark.level}"
               message="Implementation-Version: ${implementation.version} ${implementation.version.remark}"/>
         <antcall target="-copy-jar-to-lib"/>
-        <antcall target="-copy-jar-to-m2r"/>
         <!--
+        <antcall target="-copy-jar-to-m2r"/>
         <antcall target="-bundle-javadoc-jar-m2r"/>
-        -->
         <antcall target="-bundle-sources-jar-m2r"/>
+        -->
     </target>
 
     <target name="-copy-jar-to-lib" if="adalid.lib.dir.available">
@@ -234,10 +234,14 @@
         <echo level="info" message="-post-clean"/>
         <basename property="adalid.jar.file" file="${dist.jar}"/>
         <delete file="${adalid.lib.dir}/${adalid.jar.file}"/>
+        <!--
         <delete file="${adalid.m2r.jar}"/>
         <delete file="${adalid.m2r.javadoc.jar}"/>
         <delete file="${adalid.m2r.sources.jar}"/>
+        -->
         <delete file="MANIFEST.MF"/>
     </target>
+
+    <target depends="init,-javadoc-build,-bundle-javadoc-jar-m2r" description="Build Javadoc..." name="javadoc"/>
 
 </project>

@@ -55,8 +55,6 @@ public abstract class ProyectoJava extends Project {
 
     private final Logger logger = Logger.getLogger(Project.class);
 
-    protected static final String PLATAFORMA_BASE = "jee1ap101";
-
     protected static final String VERSION_JAVA = "java.version";
 
     protected static final Map<String, String> ENBG = new LinkedHashMap<>(); // Entity Name Bundle Getters
@@ -100,7 +98,6 @@ public abstract class ProyectoJava extends Project {
 
     private void init() {
         setUserEntityClass(meta.entidad.comun.control.acceso.Usuario.class);
-        getSingularPlatforms().add(PLATAFORMA_BASE);
     }
 
     @ProjectModule(menu = Kleenean.FALSE, role = Kleenean.FALSE)
@@ -201,10 +198,6 @@ public abstract class ProyectoJava extends Project {
     private Properties _pagesDictionary;
 
     private Properties _parametersDictionary;
-
-    private String _groupId;
-
-    private String _version;
 
     private String _baseFolderName;
 
@@ -626,45 +619,17 @@ public abstract class ProyectoJava extends Project {
     }
 
     /**
-     * @return the group id
-     */
-    public String getGroupId() {
-        return StringUtils.defaultIfBlank(_groupId, getDefaultGroupId());
-    }
-
-    /**
-     * @param groupId the group id to set
-     */
-    public void setGroupId(String groupId) {
-        _groupId = StrUtils.getLowerCaseIdentifier(groupId, '.');
-    }
-
-    /**
-     * @return the version
-     */
-    public String getVersion() {
-        return StringUtils.defaultIfBlank(_version, "1.0");
-    }
-
-    /**
-     * @param version the version to set
-     */
-    public void setVersion(String version) {
-        _version = StrUtils.getIdentifier(version, '.');
-    }
-
-    /**
      * @return the base folder name
      */
     public String getBaseFolderName() {
-        return StringUtils.defaultIfBlank(_baseFolderName, getDefaultFolderName());
+        return StringUtils.defaultIfBlank(_baseFolderName, getDefaultBaseFolderName());
     }
 
     /**
      * @param baseFolderName the base folder name to set
      */
     public void setBaseFolderName(String baseFolderName) {
-        _baseFolderName = StrUtils.getLowerCaseIdentifier(baseFolderName, '-');
+        _baseFolderName = StrUtils.getFileName(baseFolderName);
     }
 
     /**
@@ -685,21 +650,21 @@ public abstract class ProyectoJava extends Project {
      * @return the root folder name
      */
     public String getRootFolderName() {
-        return StringUtils.defaultIfBlank(_rootFolderName, getDefaultFolderName());
+        return StringUtils.defaultIfBlank(_rootFolderName, getDefaultRootFolderName());
     }
 
     /**
      * @param rootFolderName the root folder name to set
      */
     public void setRootFolderName(String rootFolderName) {
-        _rootFolderName = StrUtils.getLowerCaseIdentifier(rootFolderName, '-');
+        _rootFolderName = StrUtils.getFileName(rootFolderName);
     }
 
     /**
      * @return the root package name
      */
     public String getRootPackageName() {
-        return StringUtils.defaultIfBlank(_rootPackageName, getDefaultPackageName());
+        return StringUtils.defaultIfBlank(_rootPackageName, getDefaultRootPackageName());
     }
 
     /**
@@ -793,33 +758,24 @@ public abstract class ProyectoJava extends Project {
         _roleBasedAccessControllerName = StrUtils.getIdentifier(roleBasedAccessControllerName);
     }
 
-    protected String getDefaultGroupId() {
-        String tld = "name";
-        String name = System.getProperties().getProperty("user.name");
-        String string = StringUtils.defaultIfBlank(getAlias(), getName());
-        return tld + "." + StrUtils.getLowerCaseIdentifier(name, '.') + "." + StrUtils.getLowerCaseIdentifier(string, '.');
-    }
-
     protected String getDefaultDatabaseName() {
-        String string = StringUtils.defaultIfBlank(getAlias(), getName());
-        return StrUtils.getLowerCaseIdentifier(string, '-');
+        return getAlias();
     }
 
-    protected String getDefaultFolderName() {
-        String string = StringUtils.defaultIfBlank(getAlias(), getName());
-        return StrUtils.getLowerCaseIdentifier(string, '-');
+    protected String getDefaultBaseFolderName() {
+        return getAlias();
     }
 
-    protected String getDefaultPackageName() {
-        String string = StringUtils.defaultIfBlank(getAlias(), getName());
-        return StrUtils.getLowerCaseIdentifier(string, '.');
+    protected String getDefaultRootFolderName() {
+        return getAlias();
+    }
+
+    protected String getDefaultRootPackageName() {
+        return getAlias();
     }
 
     protected String getDefaultSecurityRealmName() {
-        String string = StringUtils.defaultIfBlank(getAlias(), getName());
-        String prefix = StrUtils.getLowerCaseIdentifier(string, '-');
-        String suffix = "realm";
-        return prefix + "-" + getSecurityRealmType().name().toLowerCase() + "-" + suffix;
+        return getAlias() + "-" + getSecurityRealmType().name().toLowerCase() + "-" + "realm";
     }
 
     protected String getDefaultRoleBasedAccessControllerName() {

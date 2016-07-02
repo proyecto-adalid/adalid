@@ -49,7 +49,11 @@ public class SecondBaseBuilder extends Utility {
 
     protected static final String D = "\\.";
 
-    protected static final String NSX = "[^" + S + "]*";
+    protected static final String NOSX = "[^" + S + "]*";
+
+    protected static final String BONL = "(?!"; // begin of negative lookahead
+
+    protected static final String EONL = ")"; // end of negative lookahead
 
     protected static final String FS = System.getProperties().getProperty("file.separator");
 
@@ -716,7 +720,7 @@ public class SecondBaseBuilder extends Utility {
     protected IOFileFilter textFileFilter() {
         String projectRoot = getRootFolder().getName() + S + project;
         IOFileFilter[] noes = new IOFileFilter[]{
-            new RegexPathFilter(B + X + S + projectRoot + S + NSX + E),
+            new RegexPathFilter(B + X + S + projectRoot + S + NOSX + E),
             new RegexFileFilter(B + D + "gitignore" + E),
             new RegexFileFilter(B + D + "classpath" + E),
             new RegexFileFilter(B + D + "project" + E),
@@ -763,8 +767,8 @@ public class SecondBaseBuilder extends Utility {
             new RegexPathFilter(B + X + S + bundlesPack + E),
             new RegexPathFilter(B + X + S + "src" + S + "more" + S + "java" + E),
             new RegexPathFilter(B + X + S + "src" + S + "more" + S + "resources" + E),
-            //* RegexPathFilter(B + X + S + "src" + S + "main" + S + "webapp" + S + X + S + "base" + E),
-            //* RegexPathFilter(B + X + S + "src" + S + "main" + S + "webapp" + S + X + S + "custom-base" + E),
+            new RegexPathFilter(B + X + S + "src" + S + "main" + S + "webapp" + S + "views" + S + "base" + S + "crop" + E),
+            new RegexPathFilter(B + X + S + "src" + S + "main" + S + "webapp" + S + X + S + "custom-base" + E),
             new RegexFileFilter(B + D + "git" + E),
             new RegexFileFilter(B + D + "svn" + E),
             new RegexFileFilter(B + D + "settings" + E),
@@ -799,12 +803,21 @@ public class SecondBaseBuilder extends Utility {
     protected String[] preservableFileExpressions() {
         String projectRoot = getRootFolder().getName() + S + project;
         String application = projectRoot + S + "source" + S + project;
+        String dotSettings = D + "settings";
+        String notBaseCode = BONL + "base" + S + "code" + S + EONL;
         return new String[]{
-            B + X + S + application + S + X + D + "settings" + S + X + E,
-            B + X + S + application + S + X + "nbproject" + S + X + E,
-            B + X + S + application + S + X + D + "css" + E,
-            B + X + S + application + S + X + D + "jrtx" + E,
-            B + X + S + application + S + X + S + "webapp" + S + X + S + "custom-base" + S + X + E
+            B + X + S + projectRoot + S + X + D + "gif" + E,
+            B + X + S + projectRoot + S + X + D + "jpg" + E,
+            B + X + S + projectRoot + S + X + D + "png" + E,
+            B + X + S + projectRoot + S + X + D + "jrtx" + E,
+            B + X + S + application + S + dotSettings + S + X + E,
+            B + X + S + application + S + "nbproject" + S + X + E,
+            B + X + S + application + S + X + S + dotSettings + S + X + E,
+            B + X + S + application + S + X + S + "nbproject" + S + X + E,
+            B + X + S + application + S + X + S + "resources" + S + "css" + S + X + E,
+            B + X + S + application + S + X + S + "resources" + S + "images" + S + X + E,
+            B + X + S + application + S + X + S + "resources" + S + "js" + S + notBaseCode + X + E,
+            B + X + S + application + S + X + S + "resources" + S + "media" + S + X + E
         };
     }
 

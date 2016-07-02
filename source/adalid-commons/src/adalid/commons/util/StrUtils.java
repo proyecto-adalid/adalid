@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 import java.util.UUID;
+import java.util.regex.Pattern;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
@@ -353,10 +354,7 @@ public class StrUtils {
     }
 
     public static boolean esIdentificadorSqlValido(String string) {
-        String validChars = VALID_CHARS;
-        return StringUtils.isNotBlank(string)
-            && StringUtils.containsOnly(string, validChars)
-            && StringUtils.isAlpha(string.substring(0, 1));
+        return StringUtils.isNotBlank(string) && string.matches("^[a-z][a-z_0-9]*$");
     }
 
     public static boolean esInvocacionFuncionSql(String string) {
@@ -372,9 +370,7 @@ public class StrUtils {
     }
 
     public static boolean esIdentificadorArchivoValido(String string) {
-        String validChars = VALID_CHARS;
-        return StringUtils.isNotBlank(string)
-            && StringUtils.containsOnly(string, validChars);
+        return StringUtils.isNotBlank(string) && string.matches("^[\\w\\-\\.]*$");
     }
 
     public static String getIdentificadorSql(String string, int maxLength) {
@@ -577,8 +573,12 @@ public class StrUtils {
         return string == null ? null : getIdentificadorSql(string).toUpperCase();
     }
 
+    private static final String DEFAULT_SEPARATOR = "_";
+
+    private static final String INVALID_SEPARATOR = "[\\u0000-\\u001F0-9A-Za-z\\u0080-\\uFFFF]";
+
     public static String getIdentifier(String string) {
-        return getIdentifier(string, "_");
+        return getIdentifier(string, DEFAULT_SEPARATOR);
     }
 
     public static String getIdentifier(String string, char separator) {
@@ -586,32 +586,18 @@ public class StrUtils {
     }
 
     public static String getIdentifier(String string, String separator) {
-        final String invalidSeparators = "[\\u0000-\\u001F0-9A-Za-z\\u0080-\\uFFFF]";
         if (string == null) {
             return null;
         }
-        String s = separator == null ? "_" : separator.replaceAll(invalidSeparators, "_");
-        String x = diacriticlessAscii(string, s);
-        String y = "";
-        String z;
-        char c;
-        boolean b = false;
-        for (int i = 0; i < x.length(); i++) {
-            c = x.charAt(i);
-            if ((c >= 'a') && (c <= 'z') || (c >= 'A') && (c <= 'Z') || (c >= '0') && (c <= '9')) {
-                y += c;
-                b = false;
-            } else {
-                z = b ? "" : s;
-                y += z;
-                b = true;
-            }
-        }
-        return y;
+        String sep = separator == null ? DEFAULT_SEPARATOR : separator.replaceAll(INVALID_SEPARATOR, DEFAULT_SEPARATOR);
+        String invalidCharactersRegex = "[^a-zA-Z0-9]";
+        String severalSeparatorsRegex = sep.length() == 0 ? null : Pattern.quote(sep) + "+";
+        String dhxless = dhxless(string, sep, invalidCharactersRegex, severalSeparatorsRegex);
+        return dhxless;
     }
 
     public static String getLowerCaseIdentifier(String string) {
-        return string == null ? null : getLowerCaseIdentifier(string, "_");
+        return string == null ? null : getLowerCaseIdentifier(string, DEFAULT_SEPARATOR);
     }
 
     public static String getLowerCaseIdentifier(String string, char separator) {
@@ -623,7 +609,7 @@ public class StrUtils {
     }
 
     public static String getUpperCaseIdentifier(String string) {
-        return string == null ? null : getUpperCaseIdentifier(string, "_");
+        return string == null ? null : getUpperCaseIdentifier(string, DEFAULT_SEPARATOR);
     }
 
     public static String getUpperCaseIdentifier(String string, char separator) {
@@ -632,6 +618,54 @@ public class StrUtils {
 
     public static String getUpperCaseIdentifier(String string, String separator) {
         return string == null ? null : getHumplessCase(getIdentifier(string, separator), separator).toUpperCase();
+    }
+
+    public static String getMavenIdentifier(String string) {
+        String fileName = getFileName(string);
+        return fileName == null ? null : fileName.matches("^[a-z].*$") ? fileName : "x" + fileName;
+    }
+
+    public static String getFileName(String string) {
+        return getFileName(string, null);
+    }
+
+    public static String getFileName(String string, String separator) {
+        if (string == null) {
+            return null;
+        }
+        final String defaultSeparator = "-";
+        final String escapedSeparator = "\\_\\-\\.";
+        final String invalidSeparator = "[^" + escapedSeparator + "]";
+        final String prefixSeparators = "^[" + escapedSeparator + "]+";
+        final String suffixSeparators = "[" + escapedSeparator + "]+$";
+        String sep = separator == null ? defaultSeparator : separator.replaceAll(invalidSeparator, defaultSeparator);
+        String invalidCharactersRegex = "[^\\w\\-\\.]";
+        String severalSeparatorsRegex = Pattern.quote(sep) + "+";
+        String dhxless = dhxless(string, sep, invalidCharactersRegex, severalSeparatorsRegex);
+        String trimmed = dhxless.replaceAll(prefixSeparators, "").replaceAll(suffixSeparators, "");
+        return trimmed;
+    }
+
+    private static String dhxless(String string, String separator, String... expressions) {
+        assert string != null;
+        assert separator != null;
+        assert expressions != null;
+        assert expressions.length > 0;
+        String s = separator.replaceAll(INVALID_SEPARATOR, DEFAULT_SEPARATOR);
+        String t = string.trim();
+        String d = diacriticless(t);
+        String h = getHumplessCase(d, s);
+        String x = h;
+        for (String regex : expressions) {
+            if (regex != null) {
+                x = x.replaceAll(regex, s);
+            }
+        }
+        return x;
+    }
+
+    private static boolean isLetterOrDigit(char c) {
+        return ((c >= 'A') && (c <= 'Z')) || ((c >= 'a') && (c <= 'z')) || ((c >= '0') && (c <= '9'));
     }
 
     public static String getQualifiedName(String name, String qualifier) {
@@ -691,6 +725,8 @@ public class StrUtils {
         return null;
     }
 
+    private static final String DEFAULT_REPLACEMENT = "_";
+
     /**
      * replaces all non-printable and control characters in a string with an underscore.
      *
@@ -724,7 +760,7 @@ public class StrUtils {
         if (string == null) {
             return null;
         }
-        String valid = replacement == null ? "_" : replacement.replaceAll(invalidCharacters, "_");
+        String valid = replacement == null ? DEFAULT_REPLACEMENT : replacement.replaceAll(invalidCharacters, DEFAULT_REPLACEMENT);
         String ascii = StringUtils.trimToEmpty(string).replaceAll(invalidCharacters, valid);
         return ascii;
     }
@@ -749,7 +785,7 @@ public class StrUtils {
      * @return an ASCII string
      */
     public static String diacriticlessAscii(String string) {
-        return diacriticlessAscii(string, "_");
+        return diacriticlessAscii(string, DEFAULT_REPLACEMENT);
     }
 
     /**
@@ -811,22 +847,17 @@ public class StrUtils {
         char c;
         for (int i = 0; i < x.length(); i++) {
             c = x.charAt(i);
-            switch (c) {
-                case '_':
-                case '-':
-                case '.':
-                    b = true;
-                    break;
-                default:
-                    if (b) {
-                        y += g ? z : "";
-                        y += Character.toUpperCase(c);
-                    } else {
-                        y += toLowerCaseLess ? c : Character.toLowerCase(c);
-                    }
-                    b = false;
-                    g = true;
-                    break;
+            if (isLetterOrDigit(c)) {
+                if (b) {
+                    y += g ? z : "";
+                    y += Character.toUpperCase(c);
+                } else {
+                    y += toLowerCaseLess ? c : Character.toLowerCase(c);
+                }
+                b = false;
+                g = true;
+            } else {
+                b = true;
             }
         }
         return y;
@@ -876,7 +907,7 @@ public class StrUtils {
             } else {
                 y += c;
             }
-            b = true;
+            b = isLetterOrDigit(c);
         }
         return y;
     }
@@ -910,7 +941,7 @@ public class StrUtils {
     public static String getWordyString(String string) {
         return StringUtils.isBlank(string) ? StringUtils.EMPTY
             : isMixedCase(string) ? getHumplessCase(string, ' ')
-            : string.toLowerCase().replace('_', ' ').replaceAll("  ", " ").trim();
+            : string.toLowerCase().replace('_', ' ').replaceAll(" +", " ").trim();
     }
 
     public static String getUnderscoreless(String string) {

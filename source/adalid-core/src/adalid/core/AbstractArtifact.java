@@ -255,7 +255,7 @@ public abstract class AbstractArtifact implements Artifact, Wrappable {
      */
     @Override
     public String getAlias() {
-        return _alias;
+        return _alias == null ? _name : _alias;
     }
 
     /**
