@@ -12,26 +12,26 @@
                     <path-in-war>/lib</path-in-war>
                 </library>
                 <library>
-                    <file>${dollar}{reference.${project.alias}-lib.jar}</file>
+                    <file>${dollar}{reference.${project.libProjectName}.jar}</file>
                     <path-in-war>/lib</path-in-war>
                 </library>
                 <library>
-                    <file>${dollar}{reference.${project.alias}-resources.jar}</file>
+                    <file>${dollar}{reference.${project.resourcesProjectName}.jar}</file>
                     <path-in-war>/lib</path-in-war>
                 </library>
                 <library>
-                    <file>${dollar}{reference.${project.alias}-ejb.dist-ear}</file>
+                    <file>${dollar}{reference.${project.ejbProjectName}.dist-ear}</file>
                     <path-in-war>/</path-in-war>
                 </library>
                 <library>
-                    <file>${dollar}{reference.${project.alias}-war.dist-ear}</file>
+                    <file>${dollar}{reference.${project.webProjectName}.dist-ear}</file>
                     <path-in-war>/</path-in-war>
                 </library>
             </web-module-additional-libraries>
         </data>
         <references xmlns="http://www.netbeans.org/ns/ant-project-references/1">
             <reference>
-                <foreign-project>${project.alias}-ejb</foreign-project>
+                <foreign-project>${project.ejbProjectName}</foreign-project>
                 <artifact-type>j2ee_ear_archive</artifact-type>
                 <script>build.xml</script>
                 <target>dist-ear</target>
@@ -39,7 +39,7 @@
                 <id>dist-ear</id>
             </reference>
             <reference>
-                <foreign-project>${project.alias}-lib</foreign-project>
+                <foreign-project>${project.libProjectName}</foreign-project>
                 <artifact-type>jar</artifact-type>
                 <script>build.xml</script>
                 <target>jar</target>
@@ -47,7 +47,7 @@
                 <id>jar</id>
             </reference>
             <reference>
-                <foreign-project>${project.alias}-resources</foreign-project>
+                <foreign-project>${project.resourcesProjectName}</foreign-project>
                 <artifact-type>jar</artifact-type>
                 <script>build.xml</script>
                 <target>jar</target>
@@ -55,7 +55,7 @@
                 <id>jar</id>
             </reference>
             <reference>
-                <foreign-project>${project.alias}-war</foreign-project>
+                <foreign-project>${project.webProjectName}</foreign-project>
                 <artifact-type>j2ee_ear_archive</artifact-type>
                 <script>build.xml</script>
                 <target>dist-ear</target>

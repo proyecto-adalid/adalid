@@ -625,6 +625,12 @@ public class StrUtils {
         return fileName == null ? null : fileName.matches("^[a-z].*$") ? fileName : "x" + fileName;
     }
 
+    public static String getMavenVersion(String string) {
+        final String DEFAULT_VERSION = "1.0-SNAPSHOT";
+        String fileName = getFileName(string, ".");
+        return fileName == null ? null : fileName.matches("^[\\d]+\\.[\\d]+.*$") ? fileName : DEFAULT_VERSION;
+    }
+
     public static String getFileName(String string) {
         return getFileName(string, null);
     }

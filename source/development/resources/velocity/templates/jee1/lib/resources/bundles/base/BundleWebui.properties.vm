@@ -2,36 +2,57 @@ DateTimeConverter.date.pattern=$bundleProgrammer.getValueString($TimeUtils.getDa
 DateTimeConverter.time.pattern=$bundleProgrammer.getValueString($TimeUtils.getTimeFormat())
 DateTimeConverter.both.pattern=$bundleProgrammer.getValueString($TimeUtils.getTimestampFormat())
 
-${pound} <login.jsp>
-login.jsp.title=Inicio de Sesi${backslash}u00f3n
-login.jsp.txt10=Usuario
-login.jsp.txt20=Contrase${backslash}u00f1a
-login.jsp.txt30=Iniciar Sesi${backslash}u00f3n
-${pound} </login.jsp>
+${pound} <login.${webPagesFileExtension}>
+login.${webPagesFileExtension}.title=Inicio de Sesi${backslash}u00f3n
+login.${webPagesFileExtension}.txt10=Usuario
+login.${webPagesFileExtension}.txt20=Contrase${backslash}u00f1a
+login.${webPagesFileExtension}.txt30=Iniciar Sesi${backslash}u00f3n
+${pound} </login.${webPagesFileExtension}>
 
-${pound} <error.jsp>
-error.jsp.title=Inicio de Sesi${backslash}u00f3n
-error.jsp.txt10=Usuario o Contrase${backslash}u00f1a inv${backslash}u00e1lida
-error.jsp.txt30=Reintentar
-${pound} </error.jsp>
+${pound} <logout.${webPagesFileExtension}>
+logout.${webPagesFileExtension}.title=Final de Sesi${backslash}u00f3n
+logout.${webPagesFileExtension}.txt10=Ha finalizado su sesi${backslash}u00f3n de trabajo
+logout.${webPagesFileExtension}.txt20=Reiniciar
+logout.${webPagesFileExtension}.txt30=Iniciar una nueva sesi${backslash}u00f3n de trabajo
+${pound} </logout.${webPagesFileExtension}>
 
-${pound} <index.jsp>
-index.jsp.title=Men${backslash}u00fa Principal
-index.jsp.txt10=Ha comenzado una nueva sesi${backslash}u00f3n de trabajo
-index.jsp.txt20=Haga clic aqu${backslash}u00ed para ir al Men${backslash}u00fa de Inicio
-index.jsp.txt30=Haga clic aqu${backslash}u00ed para ir a su Lista de Favoritos
-index.jsp.txt40=Haga clic aqu${backslash}u00ed para ir a su Lista de Tareas
-index.jsp.txt50=Haga clic aqu${backslash}u00ed para ir a cambiar su contrase${backslash}u00f1a
-index.jsp.txt90=La acci${backslash}u00f3n "Salir" del navegador finalizar${backslash}u00e1 su sesi${backslash}u00f3n
-${pound} </index.jsp>
+${pound} <error.${webPagesFileExtension}>
+error.${webPagesFileExtension}.title=Inicio de Sesi${backslash}u00f3n
+error.${webPagesFileExtension}.txt10=Usuario o Contrase${backslash}u00f1a inv${backslash}u00e1lida
+error.${webPagesFileExtension}.txt30=Reintentar
+${pound} </error.${webPagesFileExtension}>
 
-${pound} <reject.jsp>
-reject.jsp.title=Control de Acceso
-reject.jsp.txt05=Se ha denegado el acceso a la p${backslash}u00e1gina solicitada
-reject.jsp.txt10=Haga clic aqu${backslash}u00ed para regresar
-reject.jsp.txt20=Haga clic aqu${backslash}u00ed para ir al Men${backslash}u00fa de Inicio
-reject.jsp.txt30=Haga clic aqu${backslash}u00ed para ir a su Lista de Favoritos
-${pound} </reject.jsp>
+${pound} <index.${webPagesFileExtension}>
+index.${webPagesFileExtension}.title=Men${backslash}u00fa Principal
+index.${webPagesFileExtension}.txt10=Ha comenzado una nueva sesi${backslash}u00f3n de trabajo
+index.${webPagesFileExtension}.txt20=Haga clic aqu${backslash}u00ed para ir al Men${backslash}u00fa de Inicio
+index.${webPagesFileExtension}.txt30=Haga clic aqu${backslash}u00ed para ir a su Lista de Favoritos
+index.${webPagesFileExtension}.txt40=Haga clic aqu${backslash}u00ed para ir a su Lista de Tareas
+index.${webPagesFileExtension}.txt50=Haga clic aqu${backslash}u00ed para ir a cambiar su contrase${backslash}u00f1a
+index.${webPagesFileExtension}.txt90=La acci${backslash}u00f3n "Salir" del navegador finalizar${backslash}u00e1 su sesi${backslash}u00f3n
+index.${webPagesFileExtension}.txt91=Finalizar
+index.${webPagesFileExtension}.txt92=Finalizar su sesi${backslash}u00f3n de trabajo
+${pound} </index.${webPagesFileExtension}>
+
+${pound} <ayuda.${webPagesFileExtension}>
+ayuda.${webPagesFileExtension}.title=${Bundle.getString('ayuda.html.title')}
+ayuda.${webPagesFileExtension}.txt10=${Bundle.getString('ayuda.html.txt10')}
+ayuda.${webPagesFileExtension}.txt20=${Bundle.getString('ayuda.html.txt20')}
+ayuda.${webPagesFileExtension}.txt30=${Bundle.getString('ayuda.html.txt30')}
+${pound} </ayuda.${webPagesFileExtension}>
+
+${pound} <reject.${webPagesFileExtension}>
+reject.${webPagesFileExtension}.title=Control de Acceso
+reject.${webPagesFileExtension}.txt05=Se ha denegado el acceso a la p${backslash}u00e1gina solicitada
+reject.${webPagesFileExtension}.txt10=Haga clic aqu${backslash}u00ed para regresar
+reject.${webPagesFileExtension}.txt20=Haga clic aqu${backslash}u00ed para ir al Men${backslash}u00fa de Inicio
+reject.${webPagesFileExtension}.txt30=Haga clic aqu${backslash}u00ed para ir a su Lista de Favoritos
+${pound} </reject.${webPagesFileExtension}>
+
+${pound} <layout>
+layout.east.header.text=Acciones
+layout.west.header.text=P${backslash}u00e1ginas
+${pound} </layout>
 
 ${pound} <${project.alias}.ejb.core.Bundle>
 ${pound} AuditorBean
@@ -152,6 +173,8 @@ ${pound} HipervinculoVerDetalle
 HipervinculoVerDetalle.text=Ver detalle
 HipervinculoVerDetalle.toolTip=Ver detalle...
 ${pound} Botones
+botonAbrirBitacoraArchivos.text=Bit${backslash}u00e1cora de Archivos Adjuntos
+botonAbrirBitacoraArchivos.toolTip=Abrir la bit${backslash}u00e1cora de carga de archivos adjuntos
 botonAbrirBitacoraFunciones.text=Bit${backslash}u00e1cora de Funciones
 botonAbrirBitacoraFunciones.toolTip=Abrir la bit${backslash}u00e1cora de ejecuci${backslash}u00f3n de funciones
 botonAbrirBitacoraInformes.text=Bit${backslash}u00e1cora de Informes
@@ -162,6 +185,8 @@ botonAbrirFavoritos.text=Favoritos
 botonAbrirFavoritos.toolTip=Abrir la p${backslash}u00e1gina de Favoritos
 botonAgregarFavoritos.text=Favoritos
 botonAgregarFavoritos.toolTip=Agregar a Favoritos
+botonAbrirMenuInicio.text=Inicio
+botonAbrirMenuInicio.toolTip=Abrir el Men${backslash}u00fa de Inicio
 botonAbrirTareas.text=Tareas
 botonAbrirTareas.toolTip=Abrir la p${backslash}u00e1gina de Tareas
 botonAgregar.text=Agregar

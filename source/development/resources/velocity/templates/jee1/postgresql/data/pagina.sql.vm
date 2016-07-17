@@ -33,7 +33,7 @@
 select setval('pagina_sq___', 1000000000);
 update pagina set descripcion_pagina = nombre_pagina where descripcion_pagina is null;
 *#
-update pagina set url_pagina = '/faces/'||codigo_pagina||'.jsp' where url_pagina is null;
+update pagina set url_pagina = '/faces/'||codigo_pagina||'.${webPagesFileExtension}' where url_pagina is null;
 select count(*) from pagina;
 #break
 
@@ -88,7 +88,7 @@ select count(*) from pagina;
 
 #macro(writeInsertRow)
 #set($webPageName = "$!{webPageNamePrefix}${page.name}")
-#set($webPagePath = "/faces/crop/${page.module.wrapper.dottedAlias.replace('.', '/')}/$!{webPageNamePrefix}${page.name}.jsp")
+#set($webPagePath = "/${webPagesSourcesFaces}/${page.module.wrapper.dottedAlias.replace('.', '/')}/$!{webPageNamePrefix}${page.name}.${webPagesFileExtension}")
 #set($webPageNumber = $project.getPageNumber($webPageName))
 #set($webProjectCodeSuffix = $page.module.wrapper.hyphenatedAlias)
 #set($name = $StringUtils.capitalize("$webPageSort$page.entity.wrapper.validDefaultCollectionLabel"))

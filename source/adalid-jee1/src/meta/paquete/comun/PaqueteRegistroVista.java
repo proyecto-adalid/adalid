@@ -25,6 +25,7 @@ public class PaqueteRegistroVista extends PaqueteRegistroBase {
         setFragmentoVisorEnabled(false);
         setFragmentoCabezaBotonAbrirFavoritosEnabled(false);
         setFragmentoCabezaBotonAgregarFavoritosEnabled(false);
+        setFragmentoCabezaBotonAbrirTareasEnabled(false);
         setFragmentoCabezaBotonCambiarPasswordEnabled(false);
     }
 

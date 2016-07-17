@@ -1,6 +1,6 @@
 #setGlobalVariables()
 <?xml version="1.0" encoding="UTF-8"?>
-<project name="${project.alias}-ejb" default="perform-weaving-task" basedir=".">
+<project name="${project.ejbProjectName}" default="perform-weaving-task" basedir=".">
 
     <target name="define-weaving-task">
         <echo level="info" message="define-weaving-task: task definition for EclipseLink static weaving"/>
@@ -27,7 +27,7 @@
                 <pathelement path="${dollar}{jboss.modules.base.dir}${fs}javax${fs}jms${fs}api${fs}main${fs}jboss-jms-api_2.0_spec-1.0.0.Final.jar"/>
 #end
 *###
-                <pathelement path="..${fs}${project.alias}-lib${fs}build"/>
+                <pathelement path="..${fs}${project.libProjectName}${fs}build"/>
             </classpath>
         </weave>
     </target>

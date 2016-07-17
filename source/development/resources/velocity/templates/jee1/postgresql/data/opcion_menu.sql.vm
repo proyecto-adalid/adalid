@@ -110,8 +110,8 @@ select count(*) from opcion_menu;
 #set($projectCode = $project.alias)
 #set($REDIRECT = 'redirect.html?url=http://localhost:8080/')
 #set($WAR = 'double-u--a--ar')
-#set($WAR = "${project.alias}-war")
-#set($FACES = '/faces/')
+#set($WAR = "${project.webProjectName}")
+#set($FACES = "/${webPagesSourcesFaces}/")
 #end##setLocalVariables
 
 #macro(writeRoot $id $name)
@@ -145,7 +145,7 @@ values ($id, '$code', '$name', $branch);
 #end##writeBranch
 
 #macro(writeInsertRow $branch)
-#set($webPageName = "crop/${page.module.wrapper.dottedAlias.replace('.', '/')}/$!{webPageNamePrefix}${page.name}.jsp")
+#set($webPageName = "${page.module.wrapper.dottedAlias.replace('.', '/')}/$!{webPageNamePrefix}${page.name}.${webPagesFileExtension}")
 #set($webProjectSuffix = $page.module.wrapper.hyphenatedAlias)
 #set($next = $next + 1)
 #set($leaf = $next + $branch)
@@ -168,8 +168,10 @@ values ($id, '$code', '$name', $branch);
 
 #macro(writeLeaf $id $name $branch $url)
 #set($plus = $id - $moduleRoot)
+#set($rx01 = '\.')
+#set($rx02 = "${rx01}${webPagesFileExtension}$")
 #set($code = "${projectCode}.${moduleCode}.${plus}")
-#set($code = "${projectCode}.${moduleCode}.${webPageName.replaceAll('\.jsp$', '').replace('/', '.').replace('-', '_')}")
+#set($code = "${projectCode}.${moduleCode}.${webPageName.replaceAll($rx02, '').replace('/', '.').replace('-', '_')}")
 insert into opcion_menu (id_opcion_menu, codigo_opcion_menu, nombre_opcion_menu, id_opcion_menu_superior, url_opcion_menu)
 values ($id, '$code', '$name', $branch, '$url');
 #end##writeLeaf

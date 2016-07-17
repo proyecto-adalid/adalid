@@ -127,21 +127,23 @@ ${code}.especial=false
 ${code}.branch=${branch}
 
 #macro(writePage $branch)
-#set($webPageName = "crop/${page.module.wrapper.dottedAlias.replace('.', '/')}/$!{webPageNamePrefix}${page.name}.jsp")
+#set($webPageName = "${page.module.wrapper.dottedAlias.replace('.', '/')}/$!{webPageNamePrefix}${page.name}.${webPagesFileExtension}")
 #set($webProjectSuffix = $page.module.wrapper.hyphenatedAlias)
 #set($next = $next + 1)
 #set($leaf = $next + $branch)
 #set($name = $StringUtils.capitalize($page.entity.wrapper.validDefaultCollectionLabel))
 #set($description = "$!page.entity.defaultShortDescription")
 #setWebPageNameAsDescription($name)
-#set($url = "${redirect}${project.alias}-war/faces/${webPageName}&twn=${project.alias}-war-${webProjectSuffix}")
+#set($url = "${redirect}${project.webProjectName}/faces/${webPageName}&twn=${project.webProjectName}-${webProjectSuffix}")
 #writeLeaf($leaf $name $description $branch $url)
 #end##writePage
 
 #macro(writeLeaf $id $name $description $branch $url)
 #set($plus = $id - $moduleRoot)
+#set($rx01 = '\.')
+#set($rx02 = "${rx01}${webPagesFileExtension}$")
 #set($code = "${projectCode}.${moduleCode}.${plus}")
-#set($code = "${projectCode}.${moduleCode}.${webPageName.replaceAll('\.jsp$', '').replace('/', '.').replace('-', '_')}")
+#set($code = "${projectCode}.${moduleCode}.${webPageName.replaceAll($rx02, '').replace('/', '.').replace('-', '_')}")
 ${code}.name=$!bundleProgrammer.getValueString(${name})
 ${code}.description=$!bundleProgrammer.getValueString(${description})
 #end##writeLeaf

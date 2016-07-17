@@ -38,8 +38,8 @@ j2ee.platform=1.7
 j2ee.server.type=gfv3ee6
 jar.compress=false
 javac.classpath=${backslash}
-    ${dollar}{reference.${project.alias}-ejb.dist}:${backslash}
-    ${dollar}{reference.${project.alias}-lib.jar}:${backslash}
+    ${dollar}{reference.${project.ejbProjectName}.dist}:${backslash}
+    ${dollar}{reference.${project.libProjectName}.jar}:${backslash}
     ${dollar}{libs.adalid-compile-lib-1.classpath}:${backslash}
     ${dollar}{libs.jsf12-support.classpath}:${backslash}
     ${dollar}{libs.woodstock-components.classpath}
@@ -71,10 +71,10 @@ javadoc.windowtitle=
 lib.dir=${dollar}{web.docbase.dir}/WEB-INF/lib
 persistence.xml.dir=${dollar}{conf.dir}
 platform.active=default_platform
-project.${project.alias}-ejb=../${project.alias}-ejb
-project.${project.alias}-lib=../${project.alias}-lib
-reference.${project.alias}-ejb.dist=${dollar}{project.${project.alias}-ejb}/dist/${project.alias}-ejb.jar
-reference.${project.alias}-lib.jar=${dollar}{project.${project.alias}-lib}/dist/${project.alias}-lib.jar
+project.${project.ejbProjectName}=../${project.ejbProjectName}
+project.${project.libProjectName}=../${project.libProjectName}
+reference.${project.ejbProjectName}.dist=${dollar}{project.${project.ejbProjectName}}/dist/${project.ejbProjectName}.jar
+reference.${project.libProjectName}.jar=${dollar}{project.${project.libProjectName}}/dist/${project.libProjectName}.jar
 resource.dir=setup
 run.test.classpath=${backslash}
     ${dollar}{javac.test.classpath}:${backslash}
@@ -91,6 +91,6 @@ src.java.crop.dir=${dollar}{source.root}/java/crop
 test.src.dir=test
 war.content.additional=
 war.ear.name=${dollar}{war.name}
-war.name=${project.alias}-war.war
+war.name=${project.webProjectName}.war
 web.docbase.dir=web
 webinf.dir=web/WEB-INF

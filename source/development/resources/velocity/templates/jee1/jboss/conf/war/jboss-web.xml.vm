@@ -4,7 +4,7 @@
 #writeXMLLicense()
 #writeXMLAuthor('Jorge Campins')
 <jboss-web>
-    <context-root>/${project.alias}-war</context-root>
+    <context-root>/${project.webProjectName}</context-root>
     <resource-ref>
         <res-ref-name>jdbc/${project.databaseName}</res-ref-name> <!-- Logical name only. -->
         <jndi-name>java:/jdbc/${project.databaseName}</jndi-name> <!-- Real JNDI name. -->

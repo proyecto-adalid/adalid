@@ -191,12 +191,12 @@ ${project.rootPackageName}.web.pages.fragmento_cabeza_boton_abrir_favoritos_enab
 #Propiedad enabled del boton botonFavoritos2 del fragmento FragmentoCabeza2
 ${project.rootPackageName}.web.pages.fragmento_cabeza_boton_agregar_favoritos_enabled=false
 #Propiedad enabled del boton botonTareas1 del fragmento FragmentoCabeza2
-${project.rootPackageName}.web.pages.fragmento_cabeza_boton_abrir_tareas_enabled=false
+${project.rootPackageName}.web.pages.fragmento_cabeza_boton_abrir_tareas_enabled=true
 #Propiedad enabled del boton botonCambiarPassword1 del fragmento FragmentoCabeza2
 ${project.rootPackageName}.web.pages.fragmento_cabeza_boton_cambiar_password_enabled=true
 
 #C\u00F3digo de la aplicaci\u00F3n
-${project.rootPackageName}.web.recurso.pages.codigo_aplicacion=${project.alias}-war-recurso
+${project.rootPackageName}.web.recurso.pages.codigo_aplicacion=${project.webProjectName}-recurso
 #Nombre de la aplicaci\u00F3n
 ${project.rootPackageName}.web.recurso.pages.nombre_aplicacion=B\u00FAsqueda de Recursos
 #Propiedad enabled del fragmento FragmentoVisor
@@ -215,7 +215,7 @@ ${project.rootPackageName}.web.recurso.pages.fragmento_cabeza_boton_abrir_tareas
 ${project.rootPackageName}.web.recurso.pages.fragmento_cabeza_boton_cambiar_password_enabled=false
 
 #C\u00F3digo de la aplicaci\u00F3n
-${project.rootPackageName}.web.recurso_filtro.pages.codigo_aplicacion=${project.alias}-war-recurso-filtro
+${project.rootPackageName}.web.recurso_filtro.pages.codigo_aplicacion=${project.webProjectName}-recurso-filtro
 #Nombre de la aplicaci\u00F3n
 ${project.rootPackageName}.web.recurso_filtro.pages.nombre_aplicacion=B\u00FAsqueda de Recursos
 #Propiedad enabled del fragmento FragmentoVisor
@@ -236,7 +236,7 @@ ${project.rootPackageName}.web.recurso_filtro.pages.fragmento_cabeza_boton_cambi
 #end##writeSSCC1
 
 #macro(writeWebModule1)
-#set($webProjectName = "${project.alias}-war-${module.wrapper.hyphenatedAlias}")
+#set($webProjectName = "${project.webProjectName}-${module.wrapper.hyphenatedAlias}")
 #set($webProjectPackageName = "${project.rootPackageName}.web.${module.wrapper.dottedAlias}")
 #C\u00F3digo de la aplicaci\u00F3n
 ${webProjectPackageName}.pages.codigo_aplicacion=${webProjectName}
@@ -297,27 +297,27 @@ ${webProjectPackageName}.pages.fragmento_cabeza_boton_cambiar_password_enabled=$
 
 #macro(writeCopiedPages)
 --
---  /${project.alias}-war/faces/copy
+--  /${project.webProjectName}/${webPagesCopyFaces}
 --
-Favoritos=/${project.alias}-war/faces/copy/Favoritos.jsp
+Favoritos=/${project.webProjectName}/${webPagesCopyFaces}/Favoritos.${webPagesFileExtension}
 Favoritos.help.file.name=$!{project.helpFileName}
 Favoritos.help.file.bookmark=Favoritos
-Menu=/${project.alias}-war/faces/copy/Menu.jsp
+Menu=/${project.webProjectName}/${webPagesCopyFaces}/Menu.${webPagesFileExtension}
 Menu.help.file.name=$!{project.helpFileName}
 Menu.help.file.bookmark=Menu
-Password=/${project.alias}-war/faces/copy/Password.jsp
+Password=/${project.webProjectName}/${webPagesCopyFaces}/Password.${webPagesFileExtension}
 Password.help.file.name=$!{project.helpFileName}
 Password.help.file.bookmark=Password
-Recurso1=/${project.alias}-war/faces/copy/recurso/Recurso1.jsp
+Recurso1=/${project.webProjectName}/${webPagesCopyFaces}/recurso/Recurso1.${webPagesFileExtension}
 Recurso1.help.file.name=$!{project.helpFileName}
 Recurso1.help.file.bookmark=Recurso1
-Recurso3=/${project.alias}-war/faces/copy/recurso/Recurso3.jsp
+Recurso3=/${project.webProjectName}/${webPagesCopyFaces}/recurso/Recurso3.${webPagesFileExtension}
 Recurso3.help.file.name=$!{project.helpFileName}
 Recurso3.help.file.bookmark=Recurso3
-RecursoFiltro1=/${project.alias}-war/faces/copy/recurso_filtro/RecursoFiltro1.jsp
+RecursoFiltro1=/${project.webProjectName}/${webPagesCopyFaces}/recurso_filtro/RecursoFiltro1.${webPagesFileExtension}
 RecursoFiltro1.help.file.name=$!{project.helpFileName}
 RecursoFiltro1.help.file.bookmark=RecursoFiltro1
-RecursoFiltro3=/${project.alias}-war/faces/copy/recurso_filtro/RecursoFiltro3.jsp
+RecursoFiltro3=/${project.webProjectName}/${webPagesCopyFaces}/recurso_filtro/RecursoFiltro3.${webPagesFileExtension}
 RecursoFiltro3.help.file.name=$!{project.helpFileName}
 RecursoFiltro3.help.file.bookmark=RecursoFiltro3
 #end##writeCopiedPages
@@ -430,7 +430,7 @@ RecursoFiltro3.help.file.bookmark=RecursoFiltro3
 #end##write2
 
 #macro(writeURX $foo)
-#set($urx = "/${project.alias}-war/faces/crop/${foo.module.wrapper.dottedAlias.replace('.', '/')}/$!{webPageNamePrefix}${foo.name}.jsp")
+#set($urx = "/${project.webProjectName}/${webPagesSourcesFaces}/${foo.module.wrapper.dottedAlias.replace('.', '/')}/$!{webPageNamePrefix}${foo.name}.${webPagesFileExtension}")
 $key=$urx
 #end##writeURX
 

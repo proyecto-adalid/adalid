@@ -6,7 +6,7 @@
     <body>
         <script type="text/javascript">
         //  alert(location.href);
-            var url  = location.protocol + '//' + location.host + '/${project.alias}-war/' + '?SessionState=' + 1;
+            var url  = location.protocol + '//' + location.host + '/${project.webProjectName}/' + '?SessionState=' + 1;
         //  alert(url);
             location.replace(url);
         </script>

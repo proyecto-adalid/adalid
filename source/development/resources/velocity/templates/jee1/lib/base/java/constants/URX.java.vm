@@ -6,9 +6,9 @@
 #set($added = $imports.add('java.util.Map'))
 #writeJavaImports($imports)
 #writeJavaAuthor('Jorge Campins')
-public class ${javaClassSimpleName} { // URI/URL de las páginas de la aplicación
+public class ${javaClassSimpleName} { // URI/URL de las paginas de la aplicacion
 
-    public static final String WAR = "${project.alias}-war";
+    public static final String WAR = "${project.webProjectName}";
 
 #set($pages = $project.displaysList)
 #set($pages = $ColUtils.sort($pages, $byDisplayName))
@@ -35,29 +35,29 @@ public class ${javaClassSimpleName} { // URI/URL de las páginas de la aplicación
     #if($pdq != '')
 
     #else
-    // <editor-fold defaultstate="collapsed" desc="Páginas propias de la Aplicación">
+    // <editor-fold defaultstate="collapsed" desc="Paginas propias de la Aplicacion">
     #end
     #set($pdq = 'true')
     #set($fee = "${page.entity.wrapper.javaConstantName}")
     #set($faa = "${page.module.wrapper.hyphenatedAlias}")
-    #set($foo = "crop/${page.module.wrapper.dottedAlias.replace('.', '/')}/$!{webPageNamePrefix}${page.name}.jsp")
-    public static final String ${fee}${specialInfix}_${page.displayMode}_${page.displayFormat} = "/${project.alias}-war/faces/${foo}";
+    #set($foo = "${page.module.wrapper.dottedAlias.replace('.', '/')}/$!{webPageNamePrefix}${page.name}.${webPagesFileExtension}")
+    public static final String ${fee}${specialInfix}_${page.displayMode}_${page.displayFormat} = "/${project.webProjectName}/${webPagesSourcesFaces}/${foo}";
 #end##
 
 #macro(writeURXOOBB)
     #set($por = "$!{Bundle.getString('java.web.page_name_connective')}")
     // <editor-fold defaultstate="collapsed" desc="Operaciones Basicas">
-    public static final String REDIRECT = "/${project.alias}-war/redirect.html";
+    public static final String REDIRECT = "/${project.webProjectName}/redirect.html";
 
-    public static final String AYUDA = "/${project.alias}-war/ayuda.html";
+    public static final String AYUDA = "/${project.webProjectName}/ayuda.html";
 
-    public static final String REJECT = "/${project.alias}-war/faces/copy/reject.jsp";
+    public static final String REJECT = "/${project.webProjectName}/${webPagesCopyFaces}/reject.${webPagesFileExtension}";
 
-    public static final String INICIO = "/${project.alias}-war/faces/copy/Menu.jsp";
+    public static final String INICIO = "/${project.webProjectName}/${webPagesCopyFaces}/Menu.${webPagesFileExtension}";
 
-    public static final String FAVORITOS = "/${project.alias}-war/faces/copy/Favoritos.jsp";
+    public static final String FAVORITOS = "/${project.webProjectName}/${webPagesCopyFaces}/Favoritos.${webPagesFileExtension}";
 
-    public static final String CAMBIO_PASSWORD = "/${project.alias}-war/faces/copy/Password.jsp";
+    public static final String CAMBIO_PASSWORD = "/${project.webProjectName}/${webPagesCopyFaces}/Password.${webPagesFileExtension}";
 
     public static final String FILTRO_FUNCION = FILTRO_FUNCION_SPECIAL_WRITING_TABLE;
 
@@ -67,9 +67,9 @@ public class ${javaClassSimpleName} { // URI/URL de las páginas de la aplicación
 
     public static final String FILTRO_FUNCION_PAR_DETALLE = FILTRO_FUNCION_PAR_SPECIAL_WRITING_DETAIL;
 
-    public static final String FILTRO_FUNCION_PAR_RECURSO = "/${project.alias}-war/faces/copy/recurso_filtro/RecursoFiltro1.jsp";
+    public static final String FILTRO_FUNCION_PAR_RECURSO = "/${project.webProjectName}/${webPagesCopyFaces}/recurso_filtro/RecursoFiltro1.${webPagesFileExtension}";
 
-    public static final String FILTRO_FUNCION_PAR_RECURSO_ARBOL = "/${project.alias}-war/faces/copy/recurso_filtro/RecursoFiltro3.jsp";
+    public static final String FILTRO_FUNCION_PAR_RECURSO_ARBOL = "/${project.webProjectName}/${webPagesCopyFaces}/recurso_filtro/RecursoFiltro3.${webPagesFileExtension}";
 
     public static final String VISTA_FUNCION = VISTA_FUNCION_SPECIAL_WRITING_TABLE;
 
@@ -79,9 +79,9 @@ public class ${javaClassSimpleName} { // URI/URL de las páginas de la aplicación
 
     public static final String VISTA_FUNCION_COL_DETALLE = VISTA_FUNCION_COL_SPECIAL_WRITING_DETAIL;
 
-    public static final String LISTA_RECURSOS = "/${project.alias}-war/faces/copy/recurso/Recurso1.jsp";
+    public static final String LISTA_RECURSOS = "/${project.webProjectName}/${webPagesCopyFaces}/recurso/Recurso1.${webPagesFileExtension}";
 
-    public static final String ARBOL_RECURSOS = "/${project.alias}-war/faces/copy/recurso/Recurso3.jsp";
+    public static final String ARBOL_RECURSOS = "/${project.webProjectName}/${webPagesCopyFaces}/recurso/Recurso3.${webPagesFileExtension}";
 
     public static final String RASTRO_FUNCION = RASTRO_FUNCION_READING_TABLE;
 
@@ -99,23 +99,23 @@ public class ${javaClassSimpleName} { // URI/URL de las páginas de la aplicación
     private static final Map<String, String> twn = new LinkedHashMap<>();
 
     static {
-        twn.put(INICIO, "${project.alias}-war");
-        twn.put(FAVORITOS, "${project.alias}-war");
-        twn.put(CAMBIO_PASSWORD, "${project.alias}-war");
+        twn.put(INICIO, "${project.webProjectName}");
+        twn.put(FAVORITOS, "${project.webProjectName}");
+        twn.put(CAMBIO_PASSWORD, "${project.webProjectName}");
 #***
-        twn.put(FILTRO_FUNCION, "${project.alias}-war-registro-filtro");
-        twn.put(FILTRO_FUNCION_DETALLE, "${project.alias}-war-registro-filtro");
-        twn.put(FILTRO_FUNCION_PAR, "${project.alias}-war-registro-filtro");
-        twn.put(FILTRO_FUNCION_PAR_DETALLE, "${project.alias}-war-registro-filtro");
+        twn.put(FILTRO_FUNCION, "${project.webProjectName}-registro-filtro");
+        twn.put(FILTRO_FUNCION_DETALLE, "${project.webProjectName}-registro-filtro");
+        twn.put(FILTRO_FUNCION_PAR, "${project.webProjectName}-registro-filtro");
+        twn.put(FILTRO_FUNCION_PAR_DETALLE, "${project.webProjectName}-registro-filtro");
 *###
-        twn.put(FILTRO_FUNCION_PAR_RECURSO, "${project.alias}-war-recurso-filtro");
-        twn.put(FILTRO_FUNCION_PAR_RECURSO_ARBOL, "${project.alias}-war-recurso-filtro");
-        twn.put(LISTA_RECURSOS, "${project.alias}-war-recurso");
-        twn.put(ARBOL_RECURSOS, "${project.alias}-war-recurso");
+        twn.put(FILTRO_FUNCION_PAR_RECURSO, "${project.webProjectName}-recurso-filtro");
+        twn.put(FILTRO_FUNCION_PAR_RECURSO_ARBOL, "${project.webProjectName}-recurso-filtro");
+        twn.put(LISTA_RECURSOS, "${project.webProjectName}-recurso");
+        twn.put(ARBOL_RECURSOS, "${project.webProjectName}-recurso");
 #***
-        twn.put(RASTRO_FUNCION, "${project.alias}-war-consulta");
-        twn.put(RASTRO_INFORME, "${project.alias}-war-consulta");
-        twn.put(RASTRO_PROCESO, "${project.alias}-war-consulta");
+        twn.put(RASTRO_FUNCION, "${project.webProjectName}-consulta");
+        twn.put(RASTRO_INFORME, "${project.webProjectName}-consulta");
+        twn.put(RASTRO_PROCESO, "${project.webProjectName}-consulta");
 *###
 #foreach($page in $pages)
     #setSpecialMasterDetailPage()
@@ -124,7 +124,7 @@ public class ${javaClassSimpleName} { // URI/URL de las páginas de la aplicación
     #else
         #set($fee = $page.entity.wrapper.javaConstantName)
         #set($faa = $page.module.wrapper.hyphenatedAlias)
-        twn.put(${fee}${specialInfix}_${page.displayMode}_${page.displayFormat}, "${project.alias}-war-${faa}");
+        twn.put(${fee}${specialInfix}_${page.displayMode}_${page.displayFormat}, "${project.webProjectName}-${faa}");
     #end
 #end##foreach-page
     }

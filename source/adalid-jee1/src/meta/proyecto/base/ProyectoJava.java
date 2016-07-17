@@ -199,6 +199,16 @@ public abstract class ProyectoJava extends Project {
 
     private Properties _parametersDictionary;
 
+    private String _earProjectName;
+
+    private String _ejbProjectName;
+
+    private String _libProjectName;
+
+    private String _resourcesProjectName;
+
+    private String _webProjectName;
+
     private String _baseFolderName;
 
     private String _databaseName;
@@ -619,6 +629,76 @@ public abstract class ProyectoJava extends Project {
     }
 
     /**
+     * @return the ear project name
+     */
+    public String getEarProjectName() {
+        return StringUtils.defaultIfBlank(_earProjectName, getDefaultEarProjectName());
+    }
+
+    /**
+     * @param earProjectName the ear project name to set
+     */
+    public void setEarProjectName(String earProjectName) {
+        _earProjectName = StrUtils.getLowerCaseIdentifier(earProjectName, '-');
+    }
+
+    /**
+     * @return the ejb project name
+     */
+    public String getEjbProjectName() {
+        return StringUtils.defaultIfBlank(_ejbProjectName, getDefaultEjbProjectName());
+    }
+
+    /**
+     * @param ejbProjectName the ejb project name to set
+     */
+    public void setEjbProjectName(String ejbProjectName) {
+        _ejbProjectName = StrUtils.getLowerCaseIdentifier(ejbProjectName, '-');
+    }
+
+    /**
+     * @return the lib project name
+     */
+    public String getLibProjectName() {
+        return StringUtils.defaultIfBlank(_libProjectName, getDefaultLibProjectName());
+    }
+
+    /**
+     * @param libProjectName the lib project name to set
+     */
+    public void setLibProjectName(String libProjectName) {
+        _libProjectName = StrUtils.getLowerCaseIdentifier(libProjectName, '-');
+    }
+
+    /**
+     * @return the resources project name
+     */
+    public String getResourcesProjectName() {
+        return StringUtils.defaultIfBlank(_resourcesProjectName, getDefaultResourcesProjectName());
+    }
+
+    /**
+     * @param resourcesProjectName the resources project name to set
+     */
+    public void setResourcesProjectName(String resourcesProjectName) {
+        _resourcesProjectName = StrUtils.getLowerCaseIdentifier(resourcesProjectName, '-');
+    }
+
+    /**
+     * @return the web project name
+     */
+    public String getWebProjectName() {
+        return StringUtils.defaultIfBlank(_webProjectName, getDefaultWebProjectName());
+    }
+
+    /**
+     * @param webProjectName the web project name to set
+     */
+    public void setWebProjectName(String webProjectName) {
+        _webProjectName = StrUtils.getLowerCaseIdentifier(webProjectName, '-');
+    }
+
+    /**
      * @return the base folder name
      */
     public String getBaseFolderName() {
@@ -756,6 +836,26 @@ public abstract class ProyectoJava extends Project {
      */
     public void setRoleBasedAccessControllerName(String roleBasedAccessControllerName) {
         _roleBasedAccessControllerName = StrUtils.getIdentifier(roleBasedAccessControllerName);
+    }
+
+    protected String getDefaultEarProjectName() {
+        return getAlias();
+    }
+
+    protected String getDefaultEjbProjectName() {
+        return getAlias() + "-ejb";
+    }
+
+    protected String getDefaultLibProjectName() {
+        return getAlias() + "-lib";
+    }
+
+    protected String getDefaultResourcesProjectName() {
+        return getAlias() + "-resources";
+    }
+
+    protected String getDefaultWebProjectName() {
+        return getAlias() + "-war";
     }
 
     protected String getDefaultDatabaseName() {

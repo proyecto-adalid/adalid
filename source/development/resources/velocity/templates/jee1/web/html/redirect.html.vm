@@ -4,7 +4,7 @@
         <title>${project.wrapper.htmlValidDefaultLabel}</title>
     </head>
     <body>
-        <script type="text/javascript" src="/${project.alias}-war/resources/javascript1.js"></script>
+        <script type="text/javascript" src="/${project.webProjectName}/resources/javascript1.js"></script>
         <script type="text/javascript">
         //  var DEFAULT_PROTOCOL  = 'http:';
         //  var DEFAULT_HOST      = 'localhost:8080';

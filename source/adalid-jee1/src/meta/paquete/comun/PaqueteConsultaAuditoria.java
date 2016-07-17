@@ -24,7 +24,7 @@ public class PaqueteConsultaAuditoria extends PaqueteConsultaBase {
         setAlias("RecursosAuditoria");
         setDefaultLabel("Rastros de Auditoría");
         setDefaultDescription("Rastros de Auditoría");
-        setFragmentoCabezaBotonAbrirTareasEnabled(false);
+        setFragmentoCabezaBotonAgregarFavoritosEnabled(false);
     }
 
     ArchivoAdjunto ArchivoAdjunto;

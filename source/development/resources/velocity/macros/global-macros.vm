@@ -10,6 +10,12 @@
     #parse('macros/jsp/macros-1.vm')
 #end##parseJSPMacros
 
+#macro(parseXHTMLMacros)
+    #parse('macros/xml/macros-1.vm')
+    #parse('macros/jsf/macros-1.vm')
+    #parse('macros/xhtml/macros-1.vm')
+#end##parseXHTMLMacros
+
 #macro(parsePropertiesMacros)
     #parse('macros/properties/macros-1.vm')
 #end##parsePropertiesMacros

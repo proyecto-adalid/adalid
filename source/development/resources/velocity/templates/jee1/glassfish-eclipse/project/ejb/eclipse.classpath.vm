@@ -5,7 +5,7 @@
     <classpathentry kind="src" path="src/java/code"/>
     <classpathentry kind="src" path="src/java/copy"/>
     <classpathentry kind="src" path="src/java/crop"/>
-    <classpathentry combineaccessrules="false" kind="src" path="/${project.alias}-lib"/>
+    <classpathentry combineaccessrules="false" kind="src" path="/${project.libProjectName}"/>
     <classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/adalid-compile-lib-1"/>
     <classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/glassfish-eclipselink"/>
 ##  <classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/glassfish-server-runtime"/>

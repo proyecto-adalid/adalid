@@ -27,6 +27,7 @@ public class PaqueteRegistroFiltro extends PaqueteRegistroBase {
         setFragmentoFiltroBotonFiltroEnabled(false);
         setFragmentoCabezaBotonAbrirFavoritosEnabled(false);
         setFragmentoCabezaBotonAgregarFavoritosEnabled(false);
+        setFragmentoCabezaBotonAbrirTareasEnabled(false);
         setFragmentoCabezaBotonCambiarPasswordEnabled(false);
     }
 

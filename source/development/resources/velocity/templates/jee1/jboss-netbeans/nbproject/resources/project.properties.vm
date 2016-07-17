@@ -4,7 +4,7 @@ annotation.processing.enabled.in.editor=false
 annotation.processing.processors.list=
 annotation.processing.run.all.processors=true
 annotation.processing.source.output=${dollar}{build.generated.sources.dir}/ap-source-output
-application.title=${project.alias}-resources
+application.title=${project.resourcesProjectName}
 application.vendor=Jorge Campins
 build.classes.dir=${dollar}{build.dir}/classes
 build.classes.excludes=**/*.java,**/*.form
@@ -24,7 +24,7 @@ debug.test.classpath=${backslash}
     ${dollar}{run.test.classpath}
 ${pound} This directory is removed when the project is cleaned:
 dist.dir=dist
-dist.jar=${dollar}{dist.dir}/${project.alias}-resources.jar
+dist.jar=${dollar}{dist.dir}/${project.resourcesProjectName}.jar
 dist.javadoc.dir=${dollar}{dist.dir}/javadoc
 endorsed.classpath=
 excludes=

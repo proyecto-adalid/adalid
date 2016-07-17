@@ -2,17 +2,17 @@
 <project-modules id="moduleCoreId" project-version="1.5.0">
     <wb-module deploy-name="${project.alias}">
         <wb-resource deploy-path="/" source-path="/EarContent" tag="defaultRootSource"/>
-        <dependent-module archiveName="${project.alias}-ejb.jar" deploy-path="/" handle="module:/resource/${project.alias}-ejb/${project.alias}-ejb">
+        <dependent-module archiveName="${project.ejbProjectName}.jar" deploy-path="/" handle="module:/resource/${project.ejbProjectName}/${project.ejbProjectName}">
             <dependent-object/>
             <dependency-type>uses</dependency-type>
         </dependent-module>
-        <dependent-module archiveName="${project.alias}-lib.jar" deploy-path="/lib" handle="module:/resource/${project.alias}-lib/${project.alias}-lib">
+        <dependent-module archiveName="${project.libProjectName}.jar" deploy-path="/lib" handle="module:/resource/${project.libProjectName}/${project.libProjectName}">
             <dependency-type>uses</dependency-type>
         </dependent-module>
-        <dependent-module archiveName="${project.alias}-resources.jar" deploy-path="/lib" handle="module:/resource/${project.alias}-resources/${project.alias}-resources">
+        <dependent-module archiveName="${project.resourcesProjectName}.jar" deploy-path="/lib" handle="module:/resource/${project.resourcesProjectName}/${project.resourcesProjectName}">
             <dependency-type>uses</dependency-type>
         </dependent-module>
-        <dependent-module archiveName="${project.alias}-war.war" deploy-path="/" handle="module:/resource/${project.alias}-war/${project.alias}-war">
+        <dependent-module archiveName="${project.webProjectName}.war" deploy-path="/" handle="module:/resource/${project.webProjectName}/${project.webProjectName}">
             <dependent-object/>
             <dependency-type>uses</dependency-type>
         </dependent-module>

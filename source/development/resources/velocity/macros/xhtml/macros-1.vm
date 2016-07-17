@@ -1,0 +1,26 @@
+#break
+
+#macro(setXHTMLVariables)
+    #setGlobalVariables()
+    #setJSFVariables()
+    #set($javaClassSimpleName = $StringUtils.removeEndIgnoreCase($fileName, '.xhtml'))
+#end##setXHTMLVariables
+
+#macro(writeXHTMLLicense)
+    #if("$!writeLicense" == '')
+        #set($writeLicense = 'on')
+    #end
+    #if($writeLicense == 'on')
+        #include('licenses/license-xml.txt')
+    #end
+#end##writeXHTMLLicense
+
+#macro(writeXHTMLAuthor $author)
+    #if("$!writeLicense" == 'on')
+<!--
+    author: adalid $adalidMajorVersionNumber
+    template: $template.replace('\\', '/')
+    template-author: $author
+-->
+    #end
+#end##writeXHTMLAuthor

@@ -27,6 +27,7 @@ public class PaqueteConsultaFiltro extends PaqueteConsultaBase {
         setFragmentoFiltroBotonFiltroEnabled(false);
         setFragmentoCabezaBotonAbrirFavoritosEnabled(false);
         setFragmentoCabezaBotonAgregarFavoritosEnabled(false);
+        setFragmentoCabezaBotonAbrirTareasEnabled(false);
         setFragmentoCabezaBotonCambiarPasswordEnabled(false);
     }
 

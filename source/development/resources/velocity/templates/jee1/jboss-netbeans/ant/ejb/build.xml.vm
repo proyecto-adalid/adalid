@@ -8,8 +8,8 @@
 <!-- the Compile on Save feature is turned off for the project. -->
 <!-- You can turn off the Compile on Save (or Deploy on Save) setting -->
 <!-- in the project's Project Properties dialog box.-->
-<project name="${project.alias}-ejb" default="default" basedir="." xmlns:ejbjarproject="http://www.netbeans.org/ns/j2ee-ejbjarproject/3">
-    <description>Builds, tests, and runs the project ${project.alias}-ejb.</description>
+<project name="${project.ejbProjectName}" default="default" basedir="." xmlns:ejbjarproject="http://www.netbeans.org/ns/j2ee-ejbjarproject/3">
+    <description>Builds, tests, and runs the project ${project.ejbProjectName}.</description>
     <import file="nbproject/build-impl.xml"/>
     <!--
 
@@ -92,7 +92,7 @@
                 <pathelement path="${dollar}{var.jboss.modules.base.dir}${fs}javax${fs}jms${fs}api${fs}main${fs}jboss-jms-api_2.0_spec-1.0.0.Final.jar"/>
 #end
 *###
-                <pathelement path="..${fs}${project.alias}-lib${fs}dist${fs}${project.alias}-lib.jar"/>
+                <pathelement path="..${fs}${project.libProjectName}${fs}dist${fs}${project.libProjectName}.jar"/>
             </classpath>
         </weave>
     </target>

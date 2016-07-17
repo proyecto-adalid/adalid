@@ -7,12 +7,12 @@
 ##  <application-name>${project.alias}</application-name>
     <display-name>${project.alias}</display-name>
     <module>
-        <ejb>${project.alias}-ejb.jar</ejb>
+        <ejb>${project.ejbProjectName}.jar</ejb>
     </module>
     <module>
         <web>
-            <web-uri>${project.alias}-war.war</web-uri>
-            <context-root>/${project.alias}-war</context-root>
+            <web-uri>${project.webProjectName}.war</web-uri>
+            <context-root>/${project.webProjectName}</context-root>
         </web>
     </module>
     #writeSecurityRoles()

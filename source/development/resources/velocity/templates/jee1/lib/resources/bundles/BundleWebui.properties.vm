@@ -7,7 +7,7 @@ locale.language.tag=$project.locale.toLanguageTag()
 #parse("$templatePath/base/BundleWebui.properties.vm")
 
 ${project.alias}=${project.wrapper.javaValidDefaultLabel}
-${project.alias}-war=${project.wrapper.javaValidDefaultLabel}
+${project.webProjectName}=${project.wrapper.javaValidDefaultLabel}
 ##
 ## á=\u00E1 é=\u00E9 í=\u00ED ó=\u00F3 ú=\u00FA ü=\u00FC Ñ=\u00D1 ñ=\u00F1
 ##
@@ -25,7 +25,7 @@ ${project.alias}-war=${project.wrapper.javaValidDefaultLabel}
 #break
 
 #macro(writeFavoritos)
-#${project.alias}-war
+#${project.webProjectName}
 Favoritos=Favoritos
 Favoritos_ETIQUETA_MIGAS_PAN=Favoritos
 Favoritos_ETIQUETA_CLASE_DETALLE=Favoritos
@@ -65,7 +65,7 @@ RecursoFiltro3_ETIQUETA_CLASE_MAESTRO=
 #end##writeFavoritos
 
 #macro(writeFavoritosI18N)
-#${project.alias}-war
+#${project.webProjectName}
 Favoritos=${Bundle.getString('BundleWebui.favoritos')}
 Favoritos_ETIQUETA_MIGAS_PAN=${Bundle.getString('BundleWebui.favoritos')}
 Favoritos_ETIQUETA_CLASE_DETALLE=${Bundle.getString('BundleWebui.favoritos')}
@@ -117,18 +117,18 @@ ${project.rootPackageName}.web.recurso_filtro.pages.nombre_aplicacion=${Bundle.g
 #end##writeSSCC1I18N
 
 #macro(writeWarModule)
-#set($webProjectName = "${project.alias}-war-${module.wrapper.hyphenatedAlias}")
+#set($webProjectName = "${project.webProjectName}-${module.wrapper.hyphenatedAlias}")
 ${webProjectName}=$module.wrapper.bundleValidDefaultShortDescription
 #end##writeWarModule
 
 #macro(writeWebModule1)
-#set($webProjectName = "${project.alias}-war-${module.wrapper.hyphenatedAlias}")
+#set($webProjectName = "${project.webProjectName}-${module.wrapper.hyphenatedAlias}")
 #set($webProjectPackageName = "${project.rootPackageName}.web.${module.wrapper.dottedAlias}")
 ${webProjectPackageName}.pages.nombre_aplicacion=$module.wrapper.bundleValidDefaultShortDescription
 #end##writeWebModule1
 
 #macro(writeWebModule2)
-#set($webProjectName = "${project.alias}-war-${module.wrapper.hyphenatedAlias}")
+#set($webProjectName = "${project.webProjectName}-${module.wrapper.hyphenatedAlias}")
 #set($webProjectPackageName = "${project.rootPackageName}.web.${module.wrapper.dottedAlias}")
 #${webProjectName} ($module.wrapper.bundleValidDefaultShortDescription)
 #set($pages = $module.displaysList)

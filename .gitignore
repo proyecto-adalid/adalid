@@ -2,8 +2,10 @@
 *.log
 /source/adalid-jaas/google.recaptcha.secret.key
 /source/adalid-jaas/google.recaptcha.site.key
+/source/adalid-jaas/nbproject/private/
 /source/adalid-meta/
 /source/adalid-oracle/
 /source/adalid-prime/
 /source/adalid.jks
-/source/adalid-jaas/nbproject/private/
+/source/development/resources/velocity-oracle/
+/source/development/resources/velocity-prime/

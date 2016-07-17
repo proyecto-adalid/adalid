@@ -74,7 +74,7 @@ public abstract class ProyectoMaven extends ProyectoJava {
      * @param version the version to set
      */
     public void setVersion(String version) {
-        _version = StrUtils.getIdentifier(version, '.');
+        _version = StrUtils.getMavenVersion(version);
     }
 
     protected String getDefaultGroupId() {
@@ -87,6 +87,16 @@ public abstract class ProyectoMaven extends ProyectoJava {
 
     protected String getDefaultVersion() {
         return DEFAULT_VERSION;
+    }
+
+    @Override
+    protected String getDefaultEarProjectName() {
+        return getAlias() + "-ear";
+    }
+
+    @Override
+    protected String getDefaultWebProjectName() {
+        return getAlias() + "-web";
     }
 
     @Override

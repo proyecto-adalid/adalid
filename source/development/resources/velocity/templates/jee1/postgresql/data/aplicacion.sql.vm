@@ -8,9 +8,15 @@ select count(*) from aplicacion;
 #break
 
 #macro(writeInsertSSCC)
-#set($codigo = "$!{project.alias}-war")
+#set($codigo = "${project.webProjectName}")
 #set($nombre = "$!{project.wrapper.validDefaultShortDescription}")
 insert into aplicacion (id_aplicacion, codigo_aplicacion, nombre_aplicacion, descripcion_aplicacion, es_especial)
-values (10101, '${codigo}', '${nombre}', '${nombre}, version ${implementationVersionStamp}', true);
+values (
+    10101,
+    '${codigo}',
+    '${nombre}',
+    '${nombre}, version ${implementationVersionStamp}',
+    true
+);
 
 #end##writeInsertSSCC
