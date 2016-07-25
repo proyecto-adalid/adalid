@@ -145,7 +145,7 @@
             #end
         #elseif($parameter.isPassword())
             #set($parameterValueExpression = "${parameterObjUtilsMethod}(${campo1})")
-            #set($parameterValueExpression = "Utils.Digest($parameterValueExpression)")
+            #set($parameterValueExpression = "Utils.digest($parameterValueExpression)")
         #else
             #set($parameterValueExpression = "${parameterObjUtilsMethod}(${campo1})")
         #end

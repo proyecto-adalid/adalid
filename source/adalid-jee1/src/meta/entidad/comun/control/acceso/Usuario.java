@@ -96,7 +96,7 @@ public class Usuario extends AbstractPersistentEntity {
     public StringProperty nombreUsuario;
 
     @PropertyField(auditable = Kleenean.FALSE, password = Kleenean.TRUE, hidden = Kleenean.TRUE, filter = Kleenean.FALSE)
-    @StringField(maxLength = 32)
+    @StringField(maxLength = 128)
     public StringProperty passwordUsuario;
 
     @StringField(maxLength = 100)
@@ -266,19 +266,19 @@ public class Usuario extends AbstractPersistentEntity {
         ADMINISTRADOR.newInstanceField(idUsuario, 101);
         ADMINISTRADOR.newInstanceField(codigoUsuario, "admin");
         ADMINISTRADOR.newInstanceField(nombreUsuario, "Administrador");
-        ADMINISTRADOR.newInstanceField(passwordUsuario, "08b34b490b607342b007843310a284c6"); // sesamo
+        ADMINISTRADOR.newInstanceField(passwordUsuario, "sesamo");
         ADMINISTRADOR.newInstanceField(esSuperUsuario, true);
         ADMINISTRADOR.newInstanceField(esUsuarioEspecial, true);
         AUDITOR.newInstanceField(idUsuario, 102);
         AUDITOR.newInstanceField(codigoUsuario, "audit");
         AUDITOR.newInstanceField(nombreUsuario, "Auditor");
-        AUDITOR.newInstanceField(passwordUsuario, "08b34b490b607342b007843310a284c6"); // sesamo
+        AUDITOR.newInstanceField(passwordUsuario, "sesamo");
         AUDITOR.newInstanceField(esSuperUsuario, false);
         AUDITOR.newInstanceField(esUsuarioEspecial, true);
         OPERADOR.newInstanceField(idUsuario, 103);
         OPERADOR.newInstanceField(codigoUsuario, "oper");
         OPERADOR.newInstanceField(nombreUsuario, "Operador");
-        OPERADOR.newInstanceField(passwordUsuario, "08b34b490b607342b007843310a284c6"); // sesamo
+        OPERADOR.newInstanceField(passwordUsuario, "sesamo");
         OPERADOR.newInstanceField(esSuperUsuario, false);
         OPERADOR.newInstanceField(esUsuarioEspecial, true);
     }

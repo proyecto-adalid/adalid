@@ -94,7 +94,7 @@
                         if (wc2 === window.name) {
                             selfReplace(ur2);
                         } else {
-                            closeVentana(ur0, twn);
+                            closeVentana(twn);
                             openVentana(ur2, twn);
                             selfClose();
                         }

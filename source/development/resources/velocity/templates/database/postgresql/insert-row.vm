@@ -4,6 +4,8 @@
 #writePostgreSQLAuthor('Jorge Campins')
 #set($entities = $ColUtils.filter($project.entitiesList, $isEntitySqlCodeGenEnabled, $isPersistentEntityTable))
 #set($entities = $ColUtils.sort($entities, $byEntityName))
+#set($messageDigestAlgorithm = "$!project.messageDigestAlgorithm")
+#set($messageDigestAlgorithm = "$!StringUtils.defaultIfBlank($messageDigestAlgorithm, 'MD5')")
 #foreach($entity in $entities)
     #writeTemplate('remark-entity')
     #writeInsertRows()
@@ -37,12 +39,19 @@
 ........    )
 ........values
 ........    (
-        #set($comma = ',')
         #foreach($field in $fields)
             #if($foreach.last)
                 #set($comma = '')
+            #else
+                #set($comma = ',')
             #end
-........    $sqlProgrammer.getSqlExpression($field.value)$comma
+            #if($field.property.isPassword())
+                #set($value = "$StrUtils.digest($field.value, $messageDigestAlgorithm)")
+                #set($comma = "$comma -- $messageDigestAlgorithm")
+            #else
+                #set($value = $field.value)
+            #end
+........    $sqlProgrammer.getSqlExpression($value)$comma
         #end
 ........    );
     #end

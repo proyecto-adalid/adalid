@@ -275,10 +275,14 @@ botonMostrarVisor.text=Guardar
 botonMostrarVisor.toolTip=Mostrar el cuadro para guardar los resultados de la consulta
 botonGuardarResultadoConsulta.text=Guardar
 botonGuardarResultadoConsulta.toolTip=Guardar los resultados de la consulta
+botonRegresar.text=Regresar
+botonRegresar.toolTip=Regresar
 botonRetornar.text=Retornar
 botonRetornar.toolTip=Retornar
 botonRetornarFila.text=retornar
 botonRetornarFila.toolTip=Seleccionar y retornar
+botonFinalizarSesion.text=Finalizar
+botonFinalizarSesion.toolTip=Finalizar su sesi${backslash}u00f3n de trabajo
 botonVerArbol.text=Arbol
 botonVerArbol.toolTip=Ver los recursos en un "${backslash}u00e1rbol de jerarqu${backslash}u00eda"
 botonVerDetalle.text=Detalle
@@ -370,8 +374,16 @@ xdp.etiqueta_segmento_recurso=#bundleKeyPropertyLabel('SEGMENT')
 ${pound} </${project.alias}.lib.core.db.xdp>
 
 ${pound} <jasper>
+PAGE_NUMBER_STRING_0=p${backslash}u00e1ginas
 PAGE_NUMBER_STRING_1=p${backslash}u00e1gina
 PAGE_NUMBER_STRING_2=de
+PAGE_NUMBER_STRING_3=del
+PAGE_NUMBER_STRING_4=de la
+PAGE_NUMBER_STRING_5=a
+PAGE_NUMBER_STRING_6=al
+PAGE_NUMBER_STRING_7=a la
+PAGE_NUMBER_STRING_8=fila
+PAGE_NUMBER_STRING_9=filas
 ${pound} </jasper>
 #break
 

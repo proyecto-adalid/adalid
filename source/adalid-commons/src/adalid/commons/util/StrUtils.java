@@ -11,6 +11,8 @@ import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
@@ -31,6 +33,53 @@ public class StrUtils {
     private static final Logger logger = Logger.getLogger(StrUtils.class);
 
     public static final String VALID_CHARS = "abcdefghijklmnopqrstuvwxyz_1234567890";
+
+    /**
+     * Digest password or other credentials and convert the result to a corresponding hex string.
+     *
+     * @param credentials Password or other credentials
+     * @return the digested hex string. If exception, the plain credentials string is returned.
+     */
+    public static String digest(String credentials) {
+        return digest(credentials, null);
+    }
+
+    /**
+     * Digest password or other credentials and convert the result to a corresponding hex string.
+     *
+     * @param credentials Password or other credentials
+     * @param algorithm Algorithm used to do the digest
+     * @return the digested hex string. If exception, the plain credentials string is returned.
+     */
+    public static String digest(String credentials, String algorithm) {
+        return digest(credentials, algorithm, null);
+    }
+
+    /**
+     * Digest password using the algorithm especified and convert the result to a corresponding hex string.
+     *
+     * @param credentials Password or other credentials
+     * @param algorithm Algorithm used to do the digest
+     * @param encoding Character encoding of the string to digest
+     * @return the digested hex string. If exception, the plain credentials string is returned.
+     */
+    public static String digest(String credentials, String algorithm, String encoding) {
+        if (StringUtils.isBlank(credentials)) {
+            return credentials;
+        }
+        algorithm = StringUtils.defaultIfBlank(algorithm, "MD5");
+        try {
+            MessageDigest md = (MessageDigest) MessageDigest.getInstance(algorithm).clone();
+            if (StringUtils.isBlank(encoding)) {
+                md.update(credentials.getBytes());
+            } else {
+                md.update(credentials.getBytes(encoding));
+            }
+            return HexUtils.convert(md.digest());
+        } catch (NoSuchAlgorithmException | CloneNotSupportedException | UnsupportedEncodingException ex) {
+            return credentials;
+        }
+    }
 
     public static String ltrim(String s) {
         return s == null ? null : s.replaceAll("^\\s+", "");

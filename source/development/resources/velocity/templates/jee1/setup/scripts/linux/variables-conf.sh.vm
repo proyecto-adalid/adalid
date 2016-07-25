@@ -1,4 +1,6 @@
 #setGlobalVariables()
+#set($messageDigestAlgorithm = "$!project.messageDigestAlgorithm")
+#set($messageDigestAlgorithm = "$!StringUtils.defaultIfBlank($messageDigestAlgorithm, 'MD5')")
 ${pound}!/bin/bash
 EEAS=$targetApplicationServer
 DBMS=$targetDatabaseServer
@@ -17,3 +19,6 @@ DBMS=$targetDatabaseServer
 ....# su valor debe ser Development, Testing, Acceptance o Production
 ....PROJECT_STAGE=$StringUtils.capitalize($project.projectStage.name().toLowerCase())
 #end
+# la variable MESSAGE_DIGEST_ALGORITHM especifica el algoritmo para encriptar los password
+# su valor debe ser MD2, MD5, SHA-1, SHA-256, SHA-384 o SHA-512
+MESSAGE_DIGEST_ALGORITHM=$messageDigestAlgorithm

@@ -59,6 +59,8 @@ public class ${javaClassSimpleName} { // URI/URL de las paginas de la aplicacion
 
     public static final String CAMBIO_PASSWORD = "/${project.webProjectName}/${webPagesCopyFaces}/Password.${webPagesFileExtension}";
 
+    public static final String TAREAS = TAREA_USUARIO_READING_TABLE;
+
     public static final String FILTRO_FUNCION = FILTRO_FUNCION_SPECIAL_WRITING_TABLE;
 
     public static final String FILTRO_FUNCION_DETALLE = FILTRO_FUNCION_SPECIAL_WRITING_DETAIL;
@@ -82,6 +84,8 @@ public class ${javaClassSimpleName} { // URI/URL de las paginas de la aplicacion
     public static final String LISTA_RECURSOS = "/${project.webProjectName}/${webPagesCopyFaces}/recurso/Recurso1.${webPagesFileExtension}";
 
     public static final String ARBOL_RECURSOS = "/${project.webProjectName}/${webPagesCopyFaces}/recurso/Recurso3.${webPagesFileExtension}";
+
+    public static final String RASTRO_ARCHIVO = ARCHIVO_ADJUNTO_READING_TABLE;
 
     public static final String RASTRO_FUNCION = RASTRO_FUNCION_READING_TABLE;
 

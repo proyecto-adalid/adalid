@@ -31,6 +31,8 @@ public class ${javaClassSimpleName} {
 
     public static final String MAILER_BEAN_SESSION = "${prefix3}mail/${prefix0}MailerBeanSession";
 
+    public static final String MESSAGE_DIGEST_ALGORITHM = "$messageDigestAlgorithm";
+
     #writeJavaMessageServiceConstants()
 }
 #break
@@ -49,6 +51,8 @@ public class ${javaClassSimpleName} {
             #set($customLifecycleCallbackMethodsEnabled = 'true')
         #end
     #end
+    #set($messageDigestAlgorithm = "$!project.messageDigestAlgorithm")
+    #set($messageDigestAlgorithm = "$!StringUtils.defaultIfBlank($messageDigestAlgorithm, 'MD5')")
 #end##setLocalVariables
 
 #macro(writeJavaMessageServiceConstants)

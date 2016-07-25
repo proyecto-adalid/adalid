@@ -10,6 +10,7 @@ import adalid.commons.bundles.Bundle;
 import adalid.commons.enums.LoggingLevel;
 import adalid.commons.properties.BootstrappingFile;
 import adalid.commons.util.ColUtils;
+import adalid.commons.util.StrUtils;
 import adalid.commons.util.ThrowableUtils;
 import adalid.commons.velocity.Writer;
 import adalid.core.annotations.AddAttributesMethod;
@@ -280,6 +281,8 @@ public abstract class Project extends AbstractArtifact implements Comparable<Pro
     private boolean _roleModule;
 
     private String _helpFileName;
+
+    private String _messageDigestAlgorithm;
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="instance fields' public getters and setters">
@@ -598,6 +601,30 @@ public abstract class Project extends AbstractArtifact implements Comparable<Pro
      */
     public void setHelpFileName(String helpFileName) {
         _helpFileName = helpFileName;
+    }
+
+    /**
+     * Returns a string that identifies the algorithm, independent of implementation details. The name should be a standard Java Security name (such
+     * as "SHA", "MD5", and so on). See the MessageDigest section in the Java Cryptography Architecture Standard Algorithm Name Documentation for
+     * information about standard algorithm names.
+     *
+     * @return the message digest algorithm
+     */
+    public String getMessageDigestAlgorithm() {
+        return StringUtils.defaultIfBlank(_messageDigestAlgorithm, "MD5");
+    }
+
+    /**
+     * Sets the message digest algorithm.
+     *
+     * The following algorithm names can be specified when generating an instance of MessageDigest: MD2, MD5, SHA-1, SHA-256, SHA-384, SHA-512.
+     * SHA-256 is a 256-bit hash function intended to provide 128 bits of security against collision attacks, while SHA-512 is a 512-bit hash function
+     * intended to provide 256 bits of security. A 384-bit hash may be obtained by truncating the SHA-512 output.
+     *
+     * @param messageDigestAlgorithm the message digest algorithm to set
+     */
+    public void setMessageDigestAlgorithm(String messageDigestAlgorithm) {
+        _messageDigestAlgorithm = StrUtils.getIdentifier(messageDigestAlgorithm, '-');
     }
     // </editor-fold>
 
