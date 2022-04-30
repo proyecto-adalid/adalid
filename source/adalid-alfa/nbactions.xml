@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<actions>
+    <action>
+        <actionName>CUSTOM-CLEAN-BUILD-WITH-ALL-THE-FIXINGS</actionName>
+        <displayName>Clean and Build with all the fixings</displayName>
+        <goals>
+            <goal>clean</goal>
+            <goal>install</goal>
+        </goals>
+        <activatedProfiles>
+            <activatedProfile>maven-gpg</activatedProfile>
+            <activatedProfile>maven-javadoc</activatedProfile>
+            <activatedProfile>maven-source</activatedProfile>
+        </activatedProfiles>
+    </action>
+    <action>
+        <actionName>CUSTOM-CLEAN-DEPLOY-SNAPSHOT</actionName>
+        <displayName>Clean and Deploy Snapshot</displayName>
+        <goals>
+            <goal>clean</goal>
+            <goal>deploy</goal>
+        </goals>
+        <activatedProfiles>
+            <activatedProfile>maven-gpg</activatedProfile>
+        </activatedProfiles>
+    </action>
+    <action>
+        <actionName>CUSTOM-CLEAN-DEPLOY-SNAPSHOT-WITH-ALL-THE-FIXINGS</actionName>
+        <displayName>Clean and Deploy Snapshot with all the fixings</displayName>
+        <goals>
+            <goal>clean</goal>
+            <goal>deploy</goal>
+        </goals>
+        <activatedProfiles>
+            <activatedProfile>maven-gpg</activatedProfile>
+            <activatedProfile>maven-javadoc</activatedProfile>
+            <activatedProfile>maven-source</activatedProfile>
+        </activatedProfiles>
+    </action>
+    <action>
+        <actionName>CUSTOM-CLEAN-DEPLOY</actionName>
+        <displayName>Clean and Deploy</displayName>
+        <goals>
+            <goal>clean</goal>
+            <goal>deploy</goal>
+        </goals>
+        <activatedProfiles>
+            <activatedProfile>maven-gpg</activatedProfile>
+            <activatedProfile>maven-javadoc</activatedProfile>
+            <activatedProfile>maven-source</activatedProfile>
+        </activatedProfiles>
+    </action>
+</actions>

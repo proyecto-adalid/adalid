@@ -1,0 +1,42 @@
+/*
+ * Copyright 2017 Jorge Campins y David Uzcategui
+ *
+ * Este archivo forma parte de Adalid.
+ *
+ * Adalid es software libre; usted puede redistribuirlo y/o modificarlo bajo los terminos de la
+ * licencia "GNU General Public License" publicada por la Fundacion "Free Software Foundation".
+ * Adalid se distribuye con la esperanza de que pueda ser util, pero SIN NINGUNA GARANTIA; sin
+ * siquiera las garantias implicitas de COMERCIALIZACION e IDONEIDAD PARA UN PROPOSITO PARTICULAR.
+ *
+ * Para mas detalles vea la licencia "GNU General Public License" en http://www.gnu.org/licenses
+ */
+package adalid.core.predicates;
+
+import adalid.core.enums.*;
+import adalid.core.interfaces.*;
+import org.apache.commons.collections.Predicate;
+
+/**
+ * @author Jorge Campins
+ */
+public class IsTableViewEnabledEntityReference implements Predicate {
+
+    @Override
+    public boolean evaluate(Object object) {
+        if (object instanceof EntityReference) {
+            EntityReference reference = (EntityReference) object;
+            Entity declaringEntity = reference.getDeclaringEntity();
+            if (declaringEntity != null) { // && declaringEntity.isSelectEnabled()
+//              Entity parentProperty = declaringEntity.getParentProperty();
+//              if (declaringEntity.isTreeViewEnabled() && reference.equals(parentProperty)) {
+//                  return false;
+//              }
+                MasterDetailView masterDetailView = reference.getMasterDetailView();
+                return MasterDetailView.TABLE.equals(masterDetailView)
+                    || MasterDetailView.TABLE_AND_DETAIL.equals(masterDetailView);
+            }
+        }
+        return false;
+    }
+
+}

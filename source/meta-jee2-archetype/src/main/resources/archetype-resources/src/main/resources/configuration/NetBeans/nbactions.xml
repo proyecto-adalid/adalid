@@ -1,0 +1,91 @@
+#set($dollar = '$')
+#set($pound = '#')
+#set($backslash = '\')
+<?xml version="1.0" encoding="UTF-8"?>
+<actions>
+    <action>
+        <actionName>CUSTOM-CLEAN-BUILD-WITH-ALL-THE-FIXINGS</actionName>
+        <displayName>Clean and Build with all the fixings</displayName>
+        <goals>
+            <goal>clean</goal>
+            <goal>install</goal>
+        </goals>
+        <activatedProfiles>
+            <activatedProfile>maven-gpg</activatedProfile>
+            <activatedProfile>maven-javadoc</activatedProfile>
+            <activatedProfile>maven-source</activatedProfile>
+        </activatedProfiles>
+    </action>
+    <action>
+        <actionName>run</actionName>
+        <packagings>
+            <packaging>jar</packaging>
+        </packagings>
+        <goals>
+            <goal>process-classes</goal>
+            <goal>org.codehaus.mojo:exec-maven-plugin:3.0.0:exec</goal>
+        </goals>
+        <properties>
+            <exec.args>-Xms1g -Xmx4g -classpath %classpath ${package}.meta.Runner</exec.args>
+            <exec.executable>java</exec.executable>
+            <Env.MAVEN_OPTS>
+                -Djansi.passthrough=true -Dorg.slf4j.simpleLogger.defaultLogLevel=warn -Dorg.slf4j.simpleLogger.log.org.netbeans.modules.maven.event=off
+            </Env.MAVEN_OPTS>
+        </properties>
+    </action>
+    <action>
+        <actionName>run.single.main</actionName>
+        <packagings>
+            <packaging>*</packaging>
+        </packagings>
+        <goals>
+            <goal>process-classes</goal>
+            <goal>org.codehaus.mojo:exec-maven-plugin:3.0.0:exec</goal>
+        </goals>
+        <properties>
+            <exec.args>-Xms1g -Xmx4g -classpath %classpath ${dollar}{packageClassName}</exec.args>
+            <exec.executable>java</exec.executable>
+            <exec.classpathScope>${dollar}{classPathScope}</exec.classpathScope>
+            <Env.MAVEN_OPTS>
+                -Djansi.passthrough=true -Dorg.slf4j.simpleLogger.defaultLogLevel=warn -Dorg.slf4j.simpleLogger.log.org.netbeans.modules.maven.event=off
+            </Env.MAVEN_OPTS>
+        </properties>
+    </action>
+    <action>
+        <actionName>debug</actionName>
+        <packagings>
+            <packaging>jar</packaging>
+        </packagings>
+        <goals>
+            <goal>process-classes</goal>
+            <goal>org.codehaus.mojo:exec-maven-plugin:3.0.0:exec</goal>
+        </goals>
+        <properties>
+            <exec.args>-Xms1g -Xmx4g -agentlib:jdwp=transport=dt_socket,server=n,address=${dollar}{jpda.address} -classpath %classpath ${dollar}{packageClassName}</exec.args>
+            <exec.executable>java</exec.executable>
+            <jpda.listen>true</jpda.listen>
+            <Env.MAVEN_OPTS>
+                -Djansi.passthrough=true -Dorg.slf4j.simpleLogger.defaultLogLevel=warn -Dorg.slf4j.simpleLogger.log.org.netbeans.modules.maven.event=off
+            </Env.MAVEN_OPTS>
+        </properties>
+    </action>
+    <action>
+        <actionName>debug.single.main</actionName>
+        <packagings>
+            <packaging>*</packaging>
+        </packagings>
+        <goals>
+            <goal>process-classes</goal>
+            <goal>org.codehaus.mojo:exec-maven-plugin:3.0.0:exec</goal>
+        </goals>
+        <properties>
+            <exec.args>-Xms1g -Xmx4g -agentlib:jdwp=transport=dt_socket,server=n,address=${dollar}{jpda.address} -classpath %classpath ${dollar}{packageClassName}</exec.args>
+            <exec.executable>java</exec.executable>
+            <exec.classpathScope>${dollar}{classPathScope}</exec.classpathScope>
+            <jpda.listen>true</jpda.listen>
+            <Env.MAVEN_OPTS>
+                -Djansi.passthrough=true -Dorg.slf4j.simpleLogger.defaultLogLevel=warn -Dorg.slf4j.simpleLogger.log.org.netbeans.modules.maven.event=off
+            </Env.MAVEN_OPTS>
+        </properties>
+    </action>
+</actions>

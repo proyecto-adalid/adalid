@@ -1,0 +1,132 @@
+/*
+ * Copyright 2017 Jorge Campins y David Uzcategui
+ *
+ * Este archivo forma parte de Adalid.
+ *
+ * Adalid es software libre; usted puede redistribuirlo y/o modificarlo bajo los terminos de la
+ * licencia "GNU General Public License" publicada por la Fundacion "Free Software Foundation".
+ * Adalid se distribuye con la esperanza de que pueda ser util, pero SIN NINGUNA GARANTIA; sin
+ * siquiera las garantias implicitas de COMERCIALIZACION e IDONEIDAD PARA UN PROPOSITO PARTICULAR.
+ *
+ * Para mas detalles vea la licencia "GNU General Public License" en http://www.gnu.org/licenses
+ */
+package meta.entidad.comun.control.acceso;
+
+import adalid.core.*;
+import adalid.core.annotations.*;
+import adalid.core.enums.*;
+import adalid.core.interfaces.*;
+import adalid.core.properties.*;
+import java.lang.reflect.Field;
+import meta.entidad.comun.configuracion.basica.Pagina;
+
+/**
+ * @author Jorge Campins
+ */
+@EntityClass(independent = Kleenean.FALSE, resourceType = ResourceType.OPERATION, resourceGender = ResourceGender.FEMININE)
+@EntityCodeGen(bws = Kleenean.FALSE, fws = Kleenean.FALSE)
+@EntitySelectOperation(enabled = Kleenean.TRUE)
+@EntityInsertOperation(enabled = Kleenean.TRUE)
+@EntityUpdateOperation(enabled = Kleenean.TRUE)
+@EntityDeleteOperation(enabled = Kleenean.TRUE)
+@EntityTableView(enabled = Kleenean.TRUE)
+@EntityDetailView(enabled = Kleenean.FALSE)
+@EntityTreeView(enabled = Kleenean.FALSE)
+@EntityConsoleView(enabled = Kleenean.FALSE)
+public class RolPagina extends AbstractPersistentEntity {
+
+    // <editor-fold defaultstate="collapsed" desc="class constructors">
+    public RolPagina(Artifact declaringArtifact, Field declaringField) {
+        super(declaringArtifact, declaringField);
+    }
+    // </editor-fold>
+
+    @PrimaryKey
+    public LongProperty id;
+
+    @VersionProperty
+    public LongProperty version;
+
+    @ForeignKey(onDelete = OnDeleteAction.CASCADE, onUpdate = OnUpdateAction.CASCADE)
+    @ManyToOne(navigability = Navigability.BIDIRECTIONAL, view = MasterDetailView.TABLE)
+    @ColumnField(nullable = Kleenean.FALSE)
+    @PropertyField(required = Kleenean.TRUE, table = Kleenean.TRUE, report = Kleenean.TRUE)
+    @Allocation(maxDepth = 1, maxRound = 0)
+    public Rol rol;
+
+//  20171213: remove foreign-key referring to Pagina
+//  @ForeignKey(onDelete = OnDeleteAction.NONE, onUpdate = OnUpdateAction.NONE)
+    @ManyToOne(navigability = Navigability.UNIDIRECTIONAL, view = MasterDetailView.NONE, quickAdding = QuickAddingFilter.MISSING)
+    @ColumnField(nullable = Kleenean.FALSE)
+    @PropertyField(required = Kleenean.TRUE, table = Kleenean.TRUE, report = Kleenean.TRUE)
+    @Allocation(maxDepth = 2, maxRound = 0)
+    public Pagina pagina;
+
+    @Override
+    protected void settleAttributes() {
+        super.settleAttributes();
+//      setSchema(ProyectoBase.getEsquemaEntidadesComunes());
+        // <editor-fold defaultstate="collapsed" desc="localization of RolPagina's attributes">
+        setLocalizedLabel(ENGLISH, "role/page association");
+        setLocalizedLabel(SPANISH, "asociación Rol/Página");
+        setLocalizedCollectionLabel(ENGLISH, "Role/Page Associations");
+        setLocalizedCollectionLabel(SPANISH, "Asociaciones Rol/Página");
+        /**/
+        setLocalizedCollectionLabel(ENGLISH, rol, "Favorites by Role");
+        setLocalizedCollectionLabel(SPANISH, rol, "Favoritos por Rol");
+        setLocalizedCollectionShortLabel(ENGLISH, rol, "Favorites");
+        setLocalizedCollectionShortLabel(SPANISH, rol, "Favoritos");
+        // </editor-fold>
+    }
+
+    @Override
+    protected void settleProperties() {
+        super.settleProperties();
+        // <editor-fold defaultstate="collapsed" desc="localization of RolPagina's properties">
+        rol.setLocalizedLabel(ENGLISH, "role");
+        rol.setLocalizedLabel(SPANISH, "rol");
+        /**/
+        pagina.setLocalizedLabel(ENGLISH, "page");
+        pagina.setLocalizedLabel(SPANISH, "página");
+        // </editor-fold>
+    }
+
+    protected Key uk_rol_pagina_0001;
+
+    @Override
+    protected void settleKeys() {
+        super.settleKeys();
+        uk_rol_pagina_0001.setUnique(true);
+        uk_rol_pagina_0001.newKeyField(rol, pagina);
+    }
+
+    protected Check check101;
+
+    @Override
+    protected void settleExpressions() {
+        super.settleExpressions();
+        check101 = and(pagina.esEspecial.isFalse(),
+            pagina.tipoPagina.isNotEqualTo(pagina.tipoPagina.DETALLE),
+            pagina.tipoPagina.isNotEqualTo(pagina.tipoPagina.CONSULTA_DETALLE),
+            pagina.dominio.isNotNull(),
+            pagina.dominioMaestro.isNull(),
+            pagina.parametro.isNull()
+        );
+
+        // <editor-fold defaultstate="collapsed" desc="localization of RolPagina's expressions">
+        check101.setLocalizedLabel(ENGLISH, "check page");
+        check101.setLocalizedLabel(SPANISH, "chequear página");
+        check101.setLocalizedDescription(ENGLISH, "the page should not be a special or detail or master/detail page");
+        check101.setLocalizedDescription(SPANISH, "la página no debe ser una página especial, ni de detalle, ni de maestro/detalle");
+        check101.setLocalizedErrorMessage(ENGLISH, "the page is a special or detail or master/detail page");
+        check101.setLocalizedErrorMessage(SPANISH, "la página es una página especial, o de detalle, o de maestro/detalle");
+        // </editor-fold>
+    }
+
+    @Override
+    protected void settleFilters() {
+        super.settleFilters();
+        pagina.setSearchQueryFilter(check101);
+    }
+
+}

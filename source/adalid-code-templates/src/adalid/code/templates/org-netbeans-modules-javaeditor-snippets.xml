@@ -1,0 +1,842 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE codetemplates PUBLIC "-//NetBeans//DTD Editor Code Templates settings 1.0//EN" "http://www.netbeans.org/dtds/EditorCodeTemplates-1_0.dtd">
+<codetemplates>
+
+    <codetemplate abbreviation="$$" xml:space="preserve">
+    <code><![CDATA[${vartype editable=true} ${varname newVarName};]]></code>
+    <description>Code template for a field</description>
+</codetemplate>
+
+    <!-- entity methods -->
+
+    <codetemplate abbreviation="$aas" xml:space="preserve">
+    <code><![CDATA[@Override
+    protected void addAllocationStrings() {
+        super.addAllocationStrings();
+        /*
+         * El método addAllocationStrings(String... strings) se utiliza para establecer las cadenas de asignación (allocation strings) de la entidad u
+         * operación. Las cadenas de asignación permiten especificar entidades referenciadas por expresiones de la entidad u operación, y que, por lo
+         * tanto, deben ser construidas (instanciadas) al generar la aplicación. El método addAllocationStrings(String... strings) debe ejecutarse en
+         * el método addAllocationStrings().
+         */
+        super.addAllocationStrings(
+            "fee",
+            "faa",
+            "foo"
+        );
+    }]]></code>
+    <description>Code template for method addAllocationStrings</description>
+</codetemplate>
+
+    <!-- entity key properties -->
+
+    <codetemplate abbreviation="$owner" xml:space="preserve">
+    <code><![CDATA[/** owner entity reference property field */
+    @${anno1 editable=false type="adalid.core.annotations.OwnerProperty"}
+//  @${anno2 editable=false type="adalid.core.annotations.Allocation"}(maxDepth = 1, maxRound = 0) // better to use addAllocationStrings instead of @Allocation
+    @${anno3 editable=false type="adalid.core.annotations.ColumnField"}()
+    @${anno4 editable=false type="adalid.core.annotations.ForeignKey"}(onDelete = ${onDelete editable=false type="adalid.core.enums.OnDeleteAction"}.NONE, onUpdate = ${onUpdate editable=false type="adalid.core.enums.OnUpdateAction"}.NONE)
+    @${anno5 editable=false type="adalid.core.annotations.ManyToOne"}(view = ${view editable=false type="adalid.core.enums.MasterDetailView"}.NONE)
+    @${anno6 editable=false type="adalid.core.annotations.PropertyField"}()
+    public ${vartype editable=true} ${varname default="owner"};]]></code>
+    <description>Code template for an owner entity reference property field</description>
+</codetemplate>
+
+    <codetemplate abbreviation="$parent" xml:space="preserve">
+    <code><![CDATA[/** parent entity reference property field */
+    @${anno1 editable=false type="adalid.core.annotations.ParentProperty"}
+//  @${anno2 editable=false type="adalid.core.annotations.Allocation"}(maxDepth = 1, maxRound = 0) // better to use addAllocationStrings instead of @Allocation
+    @${anno3 editable=false type="adalid.core.annotations.ColumnField"}()
+    @${anno4 editable=false type="adalid.core.annotations.ForeignKey"}(onDelete = ${onDelete editable=false type="adalid.core.enums.OnDeleteAction"}.NONE, onUpdate = ${onUpdate editable=false type="adalid.core.enums.OnUpdateAction"}.NONE)
+    @${anno5 editable=false type="adalid.core.annotations.ManyToOne"}(view = ${view editable=false type="adalid.core.enums.MasterDetailView"}.NONE)
+    @${anno6 editable=false type="adalid.core.annotations.PropertyField"}()
+    public ${vartype editable=true} ${varname default="parent"};]]></code>
+    <description>Code template for a parent entity reference property field</description>
+</codetemplate>
+
+    <codetemplate abbreviation="$segment" xml:space="preserve">
+    <code><![CDATA[/** segment entity reference property field */
+    @${anno1 editable=false type="adalid.core.annotations.SegmentProperty"}
+//  @${anno2 editable=false type="adalid.core.annotations.Allocation"}(maxDepth = 1, maxRound = 0) // better to use addAllocationStrings instead of @Allocation
+    @${anno3 editable=false type="adalid.core.annotations.ColumnField"}()
+    @${anno4 editable=false type="adalid.core.annotations.ForeignKey"}(onDelete = ${onDelete editable=false type="adalid.core.enums.OnDeleteAction"}.NONE, onUpdate = ${onUpdate editable=false type="adalid.core.enums.OnUpdateAction"}.NONE)
+    @${anno5 editable=false type="adalid.core.annotations.ManyToOne"}(view = ${view editable=false type="adalid.core.enums.MasterDetailView"}.NONE)
+    @${anno6 editable=false type="adalid.core.annotations.PropertyField"}()
+    public ${vartype editable=true} ${varname default="segment"};]]></code>
+    <description>Code template for a segment entity reference property field</description>
+</codetemplate>
+
+    <!-- entity annotations, parameters and properties -->
+
+    <codetemplate abbreviation="$entpar" xml:space="preserve">
+    <code><![CDATA[/** entity reference parameter field */
+    @${anno6 editable=false type="adalid.core.annotations.ParameterField"}()
+    protected ${vartype editable=true} ${varname newVarName};]]></code>
+    <description>Code template for an entity reference parameter field</description>
+</codetemplate>
+
+    <codetemplate abbreviation="$entpro" xml:space="preserve">
+    <code><![CDATA[/** entity reference property field */
+//  @${anno2 editable=false type="adalid.core.annotations.Allocation"}(maxDepth = 1, maxRound = 0) // better to use addAllocationStrings instead of @Allocation
+    @${anno3 editable=false type="adalid.core.annotations.ColumnField"}()
+    @${anno6 editable=false type="adalid.core.annotations.PropertyField"}()
+    public ${vartype editable=true} ${varname newVarName};]]></code>
+    <description>Code template for an entity reference property field</description>
+</codetemplate>
+
+    <codetemplate abbreviation="$many" xml:space="preserve">
+    <code><![CDATA[/** many-to-one entity reference property field */
+//  @${anno2 editable=false type="adalid.core.annotations.Allocation"}(maxDepth = 1, maxRound = 0) // better to use addAllocationStrings instead of @Allocation
+    @${anno3 editable=false type="adalid.core.annotations.ColumnField"}()
+    @${anno4 editable=false type="adalid.core.annotations.ForeignKey"}(onDelete = ${onDelete editable=false type="adalid.core.enums.OnDeleteAction"}.NONE, onUpdate = ${onUpdate editable=false type="adalid.core.enums.OnUpdateAction"}.NONE)
+    @${anno5 editable=false type="adalid.core.annotations.ManyToOne"}(view = ${view editable=false type="adalid.core.enums.MasterDetailView"}.NONE)
+    @${anno6 editable=false type="adalid.core.annotations.PropertyField"}()
+    public ${vartype editable=true} ${varname newVarName};]]></code>
+    <description>Code template for a many-to-one entity reference property field</description>
+</codetemplate>
+
+    <codetemplate abbreviation="$one" xml:space="preserve">
+    <code><![CDATA[/** one-to-one entity reference property field */
+//  @${anno2 editable=false type="adalid.core.annotations.Allocation"}(maxDepth = 1, maxRound = 0) // better to use addAllocationStrings instead of @Allocation
+    @${anno3 editable=false type="adalid.core.annotations.ColumnField"}()
+    @${anno4 editable=false type="adalid.core.annotations.ForeignKey"}(onDelete = ${onDelete editable=false type="adalid.core.enums.OnDeleteAction"}.NONE, onUpdate = ${onUpdate editable=false type="adalid.core.enums.OnUpdateAction"}.NONE)
+    @${anno5 editable=false type="adalid.core.annotations.OneToOne"}(navigability = ${navigability editable=false type="adalid.core.enums.Navigability"}.UNIDIRECTIONAL)
+    @${anno6 editable=false type="adalid.core.annotations.PropertyField"}()
+    public ${vartype editable=true} ${varname newVarName};]]></code>
+    <description>Code template for a one-to-one entity reference property field</description>
+</codetemplate>
+
+    <!-- primitive key properties -->
+
+    <codetemplate abbreviation="$id" xml:space="preserve">
+    <code><![CDATA[/** long primary key property field */
+    @${anno1 editable=false type="adalid.core.annotations.PrimaryKey"}
+    public ${vartype editable=false type="adalid.core.properties.LongProperty"} ${varname default="id"};]]></code>
+    <description>Code template for a long primary key property field</description>
+</codetemplate>
+
+    <codetemplate abbreviation="$version" xml:space="preserve">
+    <code><![CDATA[/** version property field */
+    @${anno1 editable=false type="adalid.core.annotations.VersionProperty"}
+    public ${vartype editable=false type="adalid.core.properties.LongProperty"} ${varname default="version"};]]></code>
+    <description>Code template for a version property field</description>
+</codetemplate>
+
+    <codetemplate abbreviation="$number" xml:space="preserve">
+    <code><![CDATA[/** integer primary key property field */
+    @${anno1 editable=false type="adalid.core.annotations.PrimaryKey"}
+    public ${vartype editable=false type="adalid.core.properties.IntegerProperty"} ${varname default="number"};]]></code>
+    <description>Code template for an integer primary key property field</description>
+</codetemplate>
+
+    <codetemplate abbreviation="$code" xml:space="preserve">
+    <code><![CDATA[/** business key property field */
+    @${anno1 editable=false type="adalid.core.annotations.BusinessKey"}
+    public ${vartype editable=false type="adalid.core.properties.StringProperty"} ${varname default="code"};]]></code>
+    <description>Code template for a business key property field</description>
+</codetemplate>
+
+    <codetemplate abbreviation="$name" xml:space="preserve">
+    <code><![CDATA[/** name property field */
+    @${anno1 editable=false type="adalid.core.annotations.NameProperty"}
+    public ${vartype editable=false type="adalid.core.properties.StringProperty"} ${varname default="name"};]]></code>
+    <description>Code template for a name property field</description>
+</codetemplate>
+
+    <codetemplate abbreviation="$description" xml:space="preserve">
+    <code><![CDATA[/** description property field */
+    @${anno1 editable=false type="adalid.core.annotations.DescriptionProperty"}
+    public ${vartype editable=false type="adalid.core.properties.StringProperty"} ${varname default="description"};]]></code>
+    <description>Code template for a description property field</description>
+</codetemplate>
+
+    <codetemplate abbreviation="$inactive" xml:space="preserve">
+    <code><![CDATA[/** inactive indicator property field */
+    @${anno1 editable=false type="adalid.core.annotations.InactiveIndicator"}
+    public ${vartype editable=false type="adalid.core.properties.BooleanProperty"} ${varname default="inactive"};]]></code>
+    <description>Code template for an inactive indicator property field</description>
+</codetemplate>
+
+    <codetemplate abbreviation="$url" xml:space="preserve">
+    <code><![CDATA[/** URL property field */
+    @${anno1 editable=false type="adalid.core.annotations.UrlProperty"}
+    public ${vartype editable=false type="adalid.core.properties.StringProperty"} ${varname default="locator"};]]></code>
+    <description>Code template for an URL property field</description>
+</codetemplate>
+
+    <!-- business key properties -->
+
+    <codetemplate abbreviation="$charbizkey" xml:space="preserve">
+    <code><![CDATA[/** character business key property field */
+    @${anno1 editable=false type="adalid.core.annotations.BusinessKey"}
+    public ${vartype editable=false type="adalid.core.properties.StringProperty"} ${varname default="code"};]]></code>
+    <description>Code template for a character business key property field</description>
+</codetemplate>
+
+    <codetemplate abbreviation="$numbizkey" xml:space="preserve">
+    <code><![CDATA[/** numeric business key property field */
+    @${anno1 editable=false type="adalid.core.annotations.BusinessKey"}
+    public ${vartype editable=false type="adalid.core.properties.IntegerProperty"} ${varname default="number"};]]></code>
+    <description>Code template for a numeric business key property field</description>
+</codetemplate>
+
+    <!-- unique key properties -->
+
+    <codetemplate abbreviation="$charkey" xml:space="preserve">
+    <code><![CDATA[/** character key property field */
+    @${anno1 editable=false type="adalid.core.annotations.CharacterKey"}
+    public ${vartype editable=false type="adalid.core.properties.StringProperty"} ${varname default="code"};]]></code>
+    <description>Code template for a character key property field</description>
+</codetemplate>
+
+    <codetemplate abbreviation="$numkey" xml:space="preserve">
+    <code><![CDATA[/** numeric key property field */
+    @${anno1 editable=false type="adalid.core.annotations.NumericKey"}
+    public ${vartype editable=false type="adalid.core.properties.IntegerProperty"} ${varname default="number"};]]></code>
+    <description>Code template for a numeric key property field</description>
+</codetemplate>
+
+    <!-- primitive annotations, parameters and properties -->
+
+    <codetemplate abbreviation="$bigdec" xml:space="preserve">
+    <code><![CDATA[@${anno7 editable=false type="adalid.core.annotations.BigDecimalField"}()]]></code>
+    <description>Code template for a big decimal field annotation</description>
+</codetemplate>
+
+    <codetemplate abbreviation="$bigdecpar" xml:space="preserve">
+    <code><![CDATA[/** big decimal parameter field */
+    @${anno7 editable=false type="adalid.core.annotations.BigDecimalField"}()
+    @${anno6 editable=false type="adalid.core.annotations.ParameterField"}()
+    protected ${vartype editable=false type="adalid.core.parameters.BigDecimalParameter"} ${varname newVarName};]]></code>
+    <description>Code template for a big decimal parameter field</description>
+</codetemplate>
+
+    <codetemplate abbreviation="$bigdecpro" xml:space="preserve">
+    <code><![CDATA[/** big decimal property field */
+    @${anno7 editable=false type="adalid.core.annotations.BigDecimalField"}()
+    @${anno3 editable=false type="adalid.core.annotations.ColumnField"}()
+    @${anno6 editable=false type="adalid.core.annotations.PropertyField"}()
+    public ${vartype editable=false type="adalid.core.properties.BigDecimalProperty"} ${varname newVarName};]]></code>
+    <description>Code template for a big decimal property field</description>
+</codetemplate>
+
+
+    <codetemplate abbreviation="$bigintpar" xml:space="preserve">
+    <code><![CDATA[/** big integer parameter field */
+    @${anno6 editable=false type="adalid.core.annotations.ParameterField"}()
+    protected ${vartype editable=false type="adalid.core.parameters.BigIntegerParameter"} ${varname newVarName};]]></code>
+    <description>Code template for a big integer parameter field</description>
+</codetemplate>
+
+    <codetemplate abbreviation="$bigintpro" xml:space="preserve">
+    <code><![CDATA[/** big integer property field */
+    @${anno3 editable=false type="adalid.core.annotations.ColumnField"}()
+    @${anno6 editable=false type="adalid.core.annotations.PropertyField"}()
+    public ${vartype editable=false type="adalid.core.properties.BigIntegerProperty"} ${varname newVarName};]]></code>
+    <description>Code template for a big integer property field</description>
+</codetemplate>
+
+
+    <codetemplate abbreviation="$boolpar" xml:space="preserve">
+    <code><![CDATA[/** boolean parameter field */
+    @${anno6 editable=false type="adalid.core.annotations.ParameterField"}()
+    protected ${vartype editable=false type="adalid.core.parameters.BooleanParameter"} ${varname newVarName};]]></code>
+    <description>Code template for a boolean parameter field</description>
+</codetemplate>
+
+    <codetemplate abbreviation="$boolpro" xml:space="preserve">
+    <code><![CDATA[/** boolean property field */
+    @${anno3 editable=false type="adalid.core.annotations.ColumnField"}()
+    @${anno6 editable=false type="adalid.core.annotations.PropertyField"}()
+    public ${vartype editable=false type="adalid.core.properties.BooleanProperty"} ${varname newVarName};]]></code>
+    <description>Code template for a boolean property field</description>
+</codetemplate>
+
+
+    <codetemplate abbreviation="$bytepar" xml:space="preserve">
+    <code><![CDATA[/** byte parameter field */
+    @${anno6 editable=false type="adalid.core.annotations.ParameterField"}()
+    protected ${vartype editable=false type="adalid.core.parameters.ByteParameter"} ${varname newVarName};]]></code>
+    <description>Code template for a byte parameter field</description>
+</codetemplate>
+
+    <codetemplate abbreviation="$bytepro" xml:space="preserve">
+    <code><![CDATA[/** byte property field */
+    @${anno3 editable=false type="adalid.core.annotations.ColumnField"}()
+    @${anno6 editable=false type="adalid.core.annotations.PropertyField"}()
+    public ${vartype editable=false type="adalid.core.properties.ByteProperty"} ${varname newVarName};]]></code>
+    <description>Code template for a byte property field</description>
+</codetemplate>
+
+
+    <codetemplate abbreviation="$charpar" xml:space="preserve">
+    <code><![CDATA[/** character parameter field */
+    @${anno6 editable=false type="adalid.core.annotations.ParameterField"}()
+    protected ${vartype editable=false type="adalid.core.parameters.CharacterParameter"} ${varname newVarName};]]></code>
+    <description>Code template for a character parameter field</description>
+</codetemplate>
+
+    <codetemplate abbreviation="$charpro" xml:space="preserve">
+    <code><![CDATA[/** character property field */
+    @${anno3 editable=false type="adalid.core.annotations.ColumnField"}()
+    @${anno6 editable=false type="adalid.core.annotations.PropertyField"}()
+    public ${vartype editable=false type="adalid.core.properties.CharacterProperty"} ${varname newVarName};]]></code>
+    <description>Code template for a character property field</description>
+</codetemplate>
+
+
+    <codetemplate abbreviation="$datepar" xml:space="preserve">
+    <code><![CDATA[/** date parameter field */
+    @${anno6 editable=false type="adalid.core.annotations.ParameterField"}()
+    protected ${vartype editable=false type="adalid.core.parameters.DateParameter"} ${varname newVarName};]]></code>
+    <description>Code template for a date parameter field</description>
+</codetemplate>
+
+    <codetemplate abbreviation="$datepro" xml:space="preserve">
+    <code><![CDATA[/** date property field */
+    @${anno3 editable=false type="adalid.core.annotations.ColumnField"}()
+    @${anno6 editable=false type="adalid.core.annotations.PropertyField"}()
+    public ${vartype editable=false type="adalid.core.properties.DateProperty"} ${varname newVarName};]]></code>
+    <description>Code template for a date property field</description>
+</codetemplate>
+
+
+    <codetemplate abbreviation="$doublepar" xml:space="preserve">
+    <code><![CDATA[/** double parameter field */
+    @${anno6 editable=false type="adalid.core.annotations.ParameterField"}()
+    protected ${vartype editable=false type="adalid.core.parameters.DoubleParameter"} ${varname newVarName};]]></code>
+    <description>Code template for a double parameter field</description>
+</codetemplate>
+
+    <codetemplate abbreviation="$doublepro" xml:space="preserve">
+    <code><![CDATA[/** double property field */
+    @${anno3 editable=false type="adalid.core.annotations.ColumnField"}()
+    @${anno6 editable=false type="adalid.core.annotations.PropertyField"}()
+    public ${vartype editable=false type="adalid.core.properties.DoubleProperty"} ${varname newVarName};]]></code>
+    <description>Code template for a double property field</description>
+</codetemplate>
+
+
+    <codetemplate abbreviation="$floatpar" xml:space="preserve">
+    <code><![CDATA[/** float parameter field */
+    @${anno6 editable=false type="adalid.core.annotations.ParameterField"}()
+    protected ${vartype editable=false type="adalid.core.parameters.FloatParameter"} ${varname newVarName};]]></code>
+    <description>Code template for a float parameter field</description>
+</codetemplate>
+
+    <codetemplate abbreviation="$floatpro" xml:space="preserve">
+    <code><![CDATA[/** float property field */
+    @${anno3 editable=false type="adalid.core.annotations.ColumnField"}()
+    @${anno6 editable=false type="adalid.core.annotations.PropertyField"}()
+    public ${vartype editable=false type="adalid.core.properties.FloatProperty"} ${varname newVarName};]]></code>
+    <description>Code template for a float property field</description>
+</codetemplate>
+
+
+    <codetemplate abbreviation="$intpar" xml:space="preserve">
+    <code><![CDATA[/** integer parameter field */
+    @${anno6 editable=false type="adalid.core.annotations.ParameterField"}()
+    protected ${vartype editable=false type="adalid.core.parameters.IntegerParameter"} ${varname newVarName};]]></code>
+    <description>Code template for a integer parameter field</description>
+</codetemplate>
+
+    <codetemplate abbreviation="$intpro" xml:space="preserve">
+    <code><![CDATA[/** integer property field */
+    @${anno3 editable=false type="adalid.core.annotations.ColumnField"}()
+    @${anno6 editable=false type="adalid.core.annotations.PropertyField"}()
+    public ${vartype editable=false type="adalid.core.properties.IntegerProperty"} ${varname newVarName};]]></code>
+    <description>Code template for a integer property field</description>
+</codetemplate>
+
+
+    <codetemplate abbreviation="$longpar" xml:space="preserve">
+    <code><![CDATA[/** long parameter field */
+    @${anno6 editable=false type="adalid.core.annotations.ParameterField"}()
+    protected ${vartype editable=false type="adalid.core.parameters.LongParameter"} ${varname newVarName};]]></code>
+    <description>Code template for a long parameter field</description>
+</codetemplate>
+
+    <codetemplate abbreviation="$longpro" xml:space="preserve">
+    <code><![CDATA[/** long property field */
+    @${anno3 editable=false type="adalid.core.annotations.ColumnField"}()
+    @${anno6 editable=false type="adalid.core.annotations.PropertyField"}()
+    public ${vartype editable=false type="adalid.core.properties.LongProperty"} ${varname newVarName};]]></code>
+    <description>Code template for a long property field</description>
+</codetemplate>
+
+
+    <codetemplate abbreviation="$shortpar" xml:space="preserve">
+    <code><![CDATA[/** short parameter field */
+    @${anno6 editable=false type="adalid.core.annotations.ParameterField"}()
+    protected ${vartype editable=false type="adalid.core.parameters.ShortParameter"} ${varname newVarName};]]></code>
+    <description>Code template for a short parameter field</description>
+</codetemplate>
+
+    <codetemplate abbreviation="$shortpro" xml:space="preserve">
+    <code><![CDATA[/** short property field */
+    @${anno3 editable=false type="adalid.core.annotations.ColumnField"}()
+    @${anno6 editable=false type="adalid.core.annotations.PropertyField"}()
+    public ${vartype editable=false type="adalid.core.properties.ShortProperty"} ${varname newVarName};]]></code>
+    <description>Code template for a short property field</description>
+</codetemplate>
+
+
+    <codetemplate abbreviation="$string" xml:space="preserve">
+    <code><![CDATA[@${anno7 editable=false type="adalid.core.annotations.StringField"}()]]></code>
+    <description>Code template for a string field annotation</description>
+</codetemplate>
+
+    <codetemplate abbreviation="$stringpar" xml:space="preserve">
+    <code><![CDATA[/** string parameter field */
+    @${anno6 editable=false type="adalid.core.annotations.ParameterField"}()
+    @${anno7 editable=false type="adalid.core.annotations.StringField"}()
+    protected ${vartype editable=false type="adalid.core.parameters.StringParameter"} ${varname newVarName};]]></code>
+    <description>Code template for a string parameter field</description>
+</codetemplate>
+
+    <codetemplate abbreviation="$stringpro" xml:space="preserve">
+    <code><![CDATA[/** string property field */
+    @${anno3 editable=false type="adalid.core.annotations.ColumnField"}()
+    @${anno6 editable=false type="adalid.core.annotations.PropertyField"}()
+    @${anno7 editable=false type="adalid.core.annotations.StringField"}()
+    public ${vartype editable=false type="adalid.core.properties.StringProperty"} ${varname newVarName};]]></code>
+    <description>Code template for a string property field</description>
+</codetemplate>
+
+
+    <codetemplate abbreviation="$time" xml:space="preserve">
+    <code><![CDATA[@${anno7 editable=false type="adalid.core.annotations.TimeField"}()]]></code>
+    <description>Code template for a time field annotation</description>
+</codetemplate>
+
+    <codetemplate abbreviation="$timepar" xml:space="preserve">
+    <code><![CDATA[/** time parameter field */
+    @${anno6 editable=false type="adalid.core.annotations.ParameterField"}()
+    @${anno7 editable=false type="adalid.core.annotations.TimeField"}()
+    protected ${vartype editable=false type="adalid.core.parameters.TimeParameter"} ${varname newVarName};]]></code>
+    <description>Code template for a time parameter field</description>
+</codetemplate>
+
+    <codetemplate abbreviation="$timepro" xml:space="preserve">
+    <code><![CDATA[/** time property field */
+    @${anno3 editable=false type="adalid.core.annotations.ColumnField"}()
+    @${anno6 editable=false type="adalid.core.annotations.PropertyField"}()
+    @${anno7 editable=false type="adalid.core.annotations.TimeField"}()
+    public ${vartype editable=false type="adalid.core.properties.TimeProperty"} ${varname newVarName};]]></code>
+    <description>Code template for a time property field</description>
+</codetemplate>
+
+
+    <codetemplate abbreviation="$stamp" xml:space="preserve">
+    <code><![CDATA[@${anno7 editable=false type="adalid.core.annotations.TimestampField"}()]]></code>
+    <description>Code template for a timestamp field annotation</description>
+</codetemplate>
+
+    <codetemplate abbreviation="$stamppar" xml:space="preserve">
+    <code><![CDATA[/** timestamp parameter field */
+    @${anno6 editable=false type="adalid.core.annotations.ParameterField"}()
+    @${anno7 editable=false type="adalid.core.annotations.TimestampField"}()
+    protected ${vartype editable=false type="adalid.core.parameters.TimestampParameter"} ${varname newVarName};]]></code>
+    <description>Code template for a timestamp parameter field</description>
+</codetemplate>
+
+    <codetemplate abbreviation="$stamppro" xml:space="preserve">
+    <code><![CDATA[/** timestamp property field */
+    @${anno3 editable=false type="adalid.core.annotations.ColumnField"}()
+    @${anno6 editable=false type="adalid.core.annotations.PropertyField"}()
+    @${anno7 editable=false type="adalid.core.annotations.TimestampField"}()
+    public ${vartype editable=false type="adalid.core.properties.TimestampProperty"} ${varname newVarName};]]></code>
+    <description>Code template for a timestamp property field</description>
+</codetemplate>
+
+    <!-- file reference annotation, parameter and property -->
+
+    <codetemplate abbreviation="$fileref" xml:space="preserve">
+    <code><![CDATA[@${anno1 editable=false type="adalid.core.annotations.FileReference"}()]]></code>
+    <description>Code template for a file reference annotation</description>
+</codetemplate>
+
+    <codetemplate abbreviation="$filerefpar" xml:space="preserve">
+    <code><![CDATA[/** file reference parameter field */
+    @${anno1 editable=false type="adalid.core.annotations.FileReference"}()
+    @${anno6 editable=false type="adalid.core.annotations.ParameterField"}()
+    protected ${vartype editable=false type="adalid.core.parameters.StringParameter"} ${varname newVarName};]]></code>
+    <description>Code template for a file reference parameter field</description>
+</codetemplate>
+
+    <codetemplate abbreviation="$filerefpro" xml:space="preserve">
+    <code><![CDATA[/** file reference property field */
+    @${anno1 editable=false type="adalid.core.annotations.FileReference"}()
+    @${anno3 editable=false type="adalid.core.annotations.ColumnField"}()
+    @${anno6 editable=false type="adalid.core.annotations.PropertyField"}()
+    @${anno7 editable=false type="adalid.core.annotations.StringField"}()
+    public ${vartype editable=false type="adalid.core.properties.StringProperty"} ${varname newVarName};]]></code>
+    <description>Code template for a file reference property field</description>
+</codetemplate>
+
+    <!-- instance reference annotation, parameter and property -->
+
+    <codetemplate abbreviation="$insref" xml:space="preserve">
+    <code><![CDATA[@${anno1 editable=false type="adalid.core.annotations.InstanceReference"}]]></code>
+    <description>Code template for an instance reference parameter annotation</description>
+</codetemplate>
+
+    <codetemplate abbreviation="$insrefpar" xml:space="preserve">
+    <code><![CDATA[/** instance reference parameter field */
+    @${anno1 editable=false type="adalid.core.annotations.InstanceReference"}
+    protected ${vartype editable=true} ${varname newVarName};]]></code>
+    <description>Code template for an instance reference parameter field</description>
+</codetemplate>
+
+    <!-- field annotations -->
+
+    <codetemplate abbreviation="$alloc" xml:space="preserve">
+    <code><![CDATA[@${anno2 editable=false type="adalid.core.annotations.Allocation"}(maxDepth = 1, maxRound = 0)]]></code>
+    <description>Code template for an allocation annotation</description>
+</codetemplate>
+
+    <codetemplate abbreviation="$base" xml:space="preserve">
+    <code><![CDATA[@${annotation editable=false type="adalid.core.annotations.BaseField"}]]></code>
+    <description>Code template for a base field annotation</description>
+</codetemplate>
+
+    <codetemplate abbreviation="$casting" xml:space="preserve">
+    <code><![CDATA[@${annotation editable=false type="adalid.core.annotations.CastingField"}("${field}")]]></code>
+    <description>Code template for a casting field annotation</description>
+</codetemplate>
+
+    <codetemplate abbreviation="$column" xml:space="preserve">
+    <code><![CDATA[@${anno3 editable=false type="adalid.core.annotations.ColumnField"}()]]></code>
+    <description>Code template for a column field annotation</description>
+</codetemplate>
+
+    <codetemplate abbreviation="$discol" xml:space="preserve">
+    <code><![CDATA[@${annotation editable=false type="adalid.core.annotations.DiscriminatorColumn"}]]></code>
+    <description>Code template for a discriminator column annotation</description>
+</codetemplate>
+
+    <codetemplate abbreviation="$extension" xml:space="preserve">
+    <code><![CDATA[@${annotation editable=false type="adalid.core.annotations.Extension"}]]></code>
+    <description>Code template for an extension annotation</description>
+</codetemplate>
+
+    <codetemplate abbreviation="$parameter" xml:space="preserve">
+    <code><![CDATA[@${anno6 editable=false type="adalid.core.annotations.ParameterField"}()]]></code>
+    <description>Code template for a parameter field annotation</description>
+</codetemplate>
+
+    <codetemplate abbreviation="$property" xml:space="preserve">
+    <code><![CDATA[@${anno6 editable=false type="adalid.core.annotations.PropertyField"}()]]></code>
+    <description>Code template for a property field annotation</description>
+</codetemplate>
+
+    <codetemplate abbreviation="$unique" xml:space="preserve">
+    <code><![CDATA[@${annotation editable=false type="adalid.core.annotations.UniqueKey"}]]></code>
+    <description>Code template for a unique key annotation</description>
+</codetemplate>
+
+    <!-- type annotations -->
+
+    <codetemplate abbreviation="$abstract" xml:space="preserve">
+    <code><![CDATA[@${annotation editable=false type="adalid.core.annotations.AbstractClass"}]]></code>
+    <description>Code template for an abstract class annotation</description>
+</codetemplate>
+
+    <codetemplate abbreviation="$allocover" xml:space="preserve">
+    <code><![CDATA[@${annotation editable=false type="adalid.core.annotations.AllocationOverride"}(field = "${field}", maxDepth = 1, maxRound = 0)]]></code>
+    <description>Code template for a single allocation override annotation</description>
+</codetemplate>
+
+    <codetemplate abbreviation="$allocovers" xml:space="preserve">
+    <code><![CDATA[@${annotation editable=false type="adalid.core.annotations.AllocationOverrides"}({
+    @${alloc1 editable=false type="adalid.core.annotations.AllocationOverride"}(field = "${field1}", maxDepth = 1, maxRound = 0),
+    @${alloc2 editable=false type="adalid.core.annotations.AllocationOverride"}(field = "${field2}", maxDepth = 1, maxRound = 0),
+    @${alloc3 editable=false type="adalid.core.annotations.AllocationOverride"}(field = "${field3}", maxDepth = 1, maxRound = 0)})]]></code>
+    <description>Code template for a set of allocation override annotations</description>
+</codetemplate>
+
+    <codetemplate abbreviation="$disval" xml:space="preserve">
+    <code><![CDATA[@${annotation editable=false type="adalid.core.annotations.DiscriminatorValue"}("${value}")]]></code>
+    <description>Code template for a discriminator value annotation</description>
+</codetemplate>
+
+    <codetemplate abbreviation="$entity" xml:space="preserve">
+    <code><![CDATA[@${annotation editable=false type="adalid.core.annotations.EntityClass"}(resourceType = ${resourceType editable=false type="adalid.core.enums.ResourceType"}.OPERATION, resourceGender = ${resourceGender editable=false type="adalid.core.enums.ResourceGender"}.UNSPECIFIED, startWith = 1)]]></code>
+    <description>Code template for an entity class annotation</description>
+</codetemplate>
+
+    <codetemplate abbreviation="$console" xml:space="preserve">
+    <code><![CDATA[@${annotation editable=false type="adalid.core.annotations.EntityConsoleView"}()]]></code>
+    <description>Code template for an entity console view annotation</description>
+</codetemplate>
+
+    <codetemplate abbreviation="$delete" xml:space="preserve">
+    <code><![CDATA[@${annotation editable=false type="adalid.core.annotations.EntityDeleteOperation"}()]]></code>
+    <description>Code template for an entity delete operation annotation</description>
+</codetemplate>
+
+    <codetemplate abbreviation="$detail" xml:space="preserve">
+    <code><![CDATA[@${annotation editable=false type="adalid.core.annotations.EntityDetailView"}()]]></code>
+    <description>Code template for an entity detail view annotation</description>
+</codetemplate>
+
+    <codetemplate abbreviation="$export" xml:space="preserve">
+    <code><![CDATA[@${annotation editable=false type="adalid.core.annotations.EntityExportOperation"}(rowsLimit = ${rowsLimit editable=false type="adalid.core.Constants"}.DEFAULT_EXPORT_ROWS_LIMIT)]]></code>
+    <description>Code template for an entity export operation annotation</description>
+</codetemplate>
+
+    <codetemplate abbreviation="$insert" xml:space="preserve">
+    <code><![CDATA[@${annotation editable=false type="adalid.core.annotations.EntityInsertOperation"}()]]></code>
+    <description>Code template for an entity insert operation annotation</description>
+</codetemplate>
+
+    <codetemplate abbreviation="$search" xml:space="preserve">
+    <code><![CDATA[@${annotation editable=false type="adalid.core.annotations.EntityReferenceSearch"}(searchType = ${searchType editable=false type="adalid.core.enums.SearchType"}.DISPLAY, listStyle = ${listStyle editable=false type="adalid.core.enums.ListStyle"}.UNSPECIFIED, displayMode = ${displayMode editable=false type="adalid.core.enums.DisplayMode"}.READING)]]></code>
+    <description>Code template for an entity reference search annotation</description>
+</codetemplate>
+
+    <codetemplate abbreviation="$report" xml:space="preserve">
+    <code><![CDATA[@${annotation editable=false type="adalid.core.annotations.EntityReportOperation"}(rowsLimit = ${rowsLimit editable=false type="adalid.core.Constants"}.DEFAULT_REPORT_ROWS_LIMIT)]]></code>
+    <description>Code template for an entity report operation annotation</description>
+</codetemplate>
+
+    <codetemplate abbreviation="$select" xml:space="preserve">
+    <code><![CDATA[@${annotation editable=false type="adalid.core.annotations.EntitySelectOperation"}(rowsLimit = ${rowsLimit editable=false type="adalid.core.Constants"}.DEFAULT_SELECT_ROWS_LIMIT)]]></code>
+    <description>Code template for an entity select operation annotation</description>
+</codetemplate>
+
+    <codetemplate abbreviation="$table" xml:space="preserve">
+    <code><![CDATA[@${annotation editable=false type="adalid.core.annotations.EntityTableView"}()]]></code>
+    <description>Code template for an entity table view annotation</description>
+</codetemplate>
+
+    <codetemplate abbreviation="$tree" xml:space="preserve">
+    <code><![CDATA[@${annotation editable=false type="adalid.core.annotations.EntityTreeView"}()]]></code>
+    <description>Code template for an entity tree view annotation</description>
+</codetemplate>
+
+    <codetemplate abbreviation="$triggers" xml:space="preserve">
+    <code><![CDATA[@${annotation editable=false type="adalid.core.annotations.EntityTriggers"}()]]></code>
+    <description>Code template for an entity triggers annotation</description>
+</codetemplate>
+
+    <codetemplate abbreviation="$update" xml:space="preserve">
+    <code><![CDATA[@${annotation editable=false type="adalid.core.annotations.EntityUpdateOperation"}()]]></code>
+    <description>Code template for an entity update operation annotation</description>
+</codetemplate>
+
+    <codetemplate abbreviation="$inhmap" xml:space="preserve">
+    <code><![CDATA[@${annotation editable=false type="adalid.core.annotations.InheritanceMapping"}(strategy = ${strategy editable=false type="adalid.core.enums.InheritanceMappingStrategy"}.JOINED)]]></code>
+    <description>Code template for an entity inheritance mapping annotation</description>
+</codetemplate>
+
+    <!-- operations -->
+
+    <codetemplate abbreviation="$operation" xml:space="preserve">
+    <code><![CDATA[@${annotation editable=false type="adalid.core.annotations.OperationClass"}(access = ${access editable=false type="adalid.core.enums.OperationAccess"}.RESTRICTED)]]></code>
+    <description>Code template for an operation class annotation</description>
+</codetemplate>
+
+    <codetemplate abbreviation="$exportop" xml:space="preserve">
+    <code><![CDATA[protected ${vartype editable=true} ${varname newVarName};
+
+    @${anno1 editable=false type="adalid.core.annotations.ExportOperationClass"}()
+    @${anno2 editable=false type="adalid.core.annotations.OperationClass"}(access = ${access editable=false type="adalid.core.enums.OperationAccess"}.RESTRICTED)
+    public class ${vartype} extends ${type editable=false type="adalid.core.ExportOperation"} {
+
+        @Override
+        protected void addAllocationStrings() {
+            super.addAllocationStrings();
+//          super.addAllocationStrings("fee", "faa", "foo");
+        }
+
+        @Override
+        protected void settleAttributes() {
+            super.settleAttributes();
+//          setDefaultCollectionLabel("${vartype}"); // nombre del archivo en los rastros de auditoría
+//          setDefaultLabel("exportar archivo ${vartype}"); // nombre de la función en menús y listas de selección
+        }
+
+        @Override
+        protected void settleParameters() {
+            super.settleParameters();
+        }
+
+        @Override
+        protected void settleExpressions() {
+            super.settleExpressions();
+        }
+
+        @Override
+        protected void settleFilters() {
+            super.settleFilters();
+        }
+
+    }]]></code>
+    <description>Code template for an export operation</description>
+</codetemplate>
+
+    <codetemplate abbreviation="$reportop" xml:space="preserve">
+    <code><![CDATA[protected ${vartype editable=true} ${varname newVarName};
+
+    @${anno1 editable=false type="adalid.core.annotations.ReportOperationClass"}()
+    @${anno2 editable=false type="adalid.core.annotations.OperationClass"}(access = ${access editable=false type="adalid.core.enums.OperationAccess"}.RESTRICTED)
+    public class ${vartype} extends ${type editable=false type="adalid.core.ReportOperation"} {
+
+        @Override
+        protected void addAllocationStrings() {
+            super.addAllocationStrings();
+//          super.addAllocationStrings("fee", "faa", "foo");
+        }
+
+        @Override
+        protected void settleAttributes() {
+            super.settleAttributes();
+//          setDefaultCollectionLabel("${vartype}"); // nombre del informe en los rastros de auditoría
+//          setDefaultLabel("emitir informe ${vartype}"); // nombre de la función en menús y listas de selección
+        }
+
+        @Override
+        protected void settleParameters() {
+            super.settleParameters();
+        }
+
+        @Override
+        protected void settleExpressions() {
+            super.settleExpressions();
+        }
+
+        @Override
+        protected void settleFilters() {
+            super.settleFilters();
+        }
+
+    }]]></code>
+    <description>Code template for a report operation</description>
+</codetemplate>
+
+    <codetemplate abbreviation="$procedure" xml:space="preserve">
+    <code><![CDATA[protected ${vartype editable=true} ${varname newVarName};
+
+    @${anno1 editable=false type="adalid.core.annotations.ProcedureOperationClass"}()
+    @${anno2 editable=false type="adalid.core.annotations.OperationClass"}(access = ${access editable=false type="adalid.core.enums.OperationAccess"}.RESTRICTED)
+    public class ${vartype} extends ${type editable=false type="adalid.core.ProcedureOperation"} {
+
+        @Override
+        protected void addAllocationStrings() {
+            super.addAllocationStrings();
+//          super.addAllocationStrings("fee", "faa", "foo");
+        }
+
+        @Override
+        protected void settleAttributes() {
+            super.settleAttributes();
+        }
+
+        @Override
+        protected void settleParameters() {
+            super.settleParameters();
+        }
+
+        @Override
+        protected void settleExpressions() {
+            super.settleExpressions();
+        }
+
+        @Override
+        protected void settleFilters() {
+            super.settleFilters();
+        }
+
+    }]]></code>
+    <description>Code template for a procedure operation</description>
+</codetemplate>
+
+    <codetemplate abbreviation="$process" xml:space="preserve">
+    <code><![CDATA[protected ${vartype editable=true} ${varname newVarName};
+
+    @${anno2 editable=false type="adalid.core.annotations.OperationClass"}(access = ${access editable=false type="adalid.core.enums.OperationAccess"}.RESTRICTED)
+    public class ${vartype} extends ${type editable=false type="adalid.core.ProcessOperation"} {
+
+        @Override
+        protected void addAllocationStrings() {
+            super.addAllocationStrings();
+//          super.addAllocationStrings("fee", "faa", "foo");
+        }
+
+        @Override
+        protected void settleAttributes() {
+            super.settleAttributes();
+        }
+
+        @Override
+        protected void settleParameters() {
+            super.settleParameters();
+        }
+
+        @Override
+        protected void settleExpressions() {
+            super.settleExpressions();
+        }
+
+        @Override
+        protected void settleFilters() {
+            super.settleFilters();
+        }
+
+    }]]></code>
+    <description>Code template for a process operation</description>
+</codetemplate>
+
+    <!-- projects -->
+
+    <codetemplate abbreviation="$promod" xml:space="preserve">
+    <code><![CDATA[@${annotation editable=false type="adalid.core.annotations.ProjectModule"}()]]></code>
+    <description>Code template for a project module annotation</description>
+</codetemplate>
+
+    <!-- expressions -->
+
+    <codetemplate abbreviation="$checkx" xml:space="preserve">
+    <code><![CDATA[protected ${vartype editable=false type="adalid.core.interfaces.Check"} ${varname newVarName};]]></code>
+    <description>Code template for a check expression field</description>
+</codetemplate>
+
+    <codetemplate abbreviation="$segmentx" xml:space="preserve">
+    <code><![CDATA[protected ${vartype editable=false type="adalid.core.interfaces.Segment"} ${varname newVarName};]]></code>
+    <description>Code template for a segment expression field</description>
+</codetemplate>
+
+    <codetemplate abbreviation="$statex" xml:space="preserve">
+    <code><![CDATA[protected ${vartype editable=false type="adalid.core.interfaces.State"} ${varname newVarName};]]></code>
+    <description>Code template for a state expression field</description>
+</codetemplate>
+
+    <!-- other artifacts -->
+
+    <codetemplate abbreviation="$key" xml:space="preserve">
+    <code><![CDATA[protected ${vartype editable=false type="adalid.core.Key"} ${varname newVarName};]]></code>
+    <description>Code template for a key field</description>
+</codetemplate>
+
+    <codetemplate abbreviation="$tab" xml:space="preserve">
+    <code><![CDATA[protected ${vartype editable=false type="adalid.core.Tab"} ${varname newVarName};]]></code>
+    <description>Code template for a tab field</description>
+</codetemplate>
+
+    <codetemplate abbreviation="$instance" xml:space="preserve">
+    <code><![CDATA[public ${vartype editable=false type="adalid.core.Instance"} ${varname newVarName};]]></code>
+    <description>Code template for a instance field</description>
+</codetemplate>
+
+    <codetemplate abbreviation="$trigger" xml:space="preserve">
+    <code><![CDATA[protected ${vartype editable=false type="adalid.core.Trigger"} ${varname newVarName};]]></code>
+    <description>Code template for a trigger field</description>
+</codetemplate>
+
+    <codetemplate abbreviation="$transition" xml:space="preserve">
+    <code><![CDATA[protected ${vartype editable=false type="adalid.core.Transition"} ${varname newVarName};]]></code>
+    <description>Code template for a transition field</description>
+</codetemplate>
+
+</codetemplates>
