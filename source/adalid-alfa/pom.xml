@@ -26,9 +26,9 @@
         </developer>
     </developers>
     <scm>
-        <connection>scm:git:https://gitlab.com/proyecto-adalid/adalid.git</connection>
-        <developerConnection>scm:git:https://gitlab.com/proyecto-adalid/adalid.git</developerConnection>
-        <url>https://gitlab.com/proyecto-adalid/adalid</url>
+        <connection>scm:git:https://github.com/proyecto-adalid/adalid.git</connection>
+        <developerConnection>scm:git:https://github.com/proyecto-adalid/adalid.git</developerConnection>
+        <url>https://github.com/proyecto-adalid/adalid</url>
     </scm>
 
     <distributionManagement>
