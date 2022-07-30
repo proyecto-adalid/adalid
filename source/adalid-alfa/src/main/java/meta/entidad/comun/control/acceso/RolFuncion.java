@@ -45,6 +45,8 @@ public class RolFuncion extends AbstractPersistentEntity {
     protected void addAllocationStrings() {
         super.addAllocationStrings();
         super.addAllocationStrings(
+            "rol.grupo",
+            "conjuntoSegmento.claseRecurso",
             "funcion.dominio.claseRecurso.claseRecursoSegmento",
             "funcion.tipoFuncion"
         );
@@ -76,26 +78,23 @@ public class RolFuncion extends AbstractPersistentEntity {
     @ForeignKey(onDelete = OnDeleteAction.NONE, onUpdate = OnUpdateAction.NONE) // CASCADE -> Mutatis mutandis
     @ManyToOne(navigability = Navigability.BIDIRECTIONAL, view = MasterDetailView.TABLE)
     @ColumnField(nullable = Kleenean.FALSE)
-    @PropertyField(required = Kleenean.TRUE, table = Kleenean.TRUE, report = Kleenean.TRUE)
-    @Allocation(maxDepth = 1, maxRound = 0)
+    @PropertyField(required = Kleenean.TRUE, table = Kleenean.TRUE, report = Kleenean.TRUE, heading = Kleenean.TRUE, overlay = Kleenean.TRUE)
     public Rol rol;
 
 //  20171213: remove foreign-key referring to Funcion
 //  @ForeignKey(onDelete = OnDeleteAction.NONE, onUpdate = OnUpdateAction.NONE)
     @ManyToOne(navigability = Navigability.UNIDIRECTIONAL, view = MasterDetailView.NONE, quickAdding = QuickAddingFilter.MISSING)
     @ColumnField(nullable = Kleenean.FALSE)
-    @PropertyField(required = Kleenean.TRUE, table = Kleenean.TRUE, report = Kleenean.TRUE)
-//->@Allocation(maxDepth = 4, maxRound = 1)
+    @PropertyField(required = Kleenean.TRUE, table = Kleenean.TRUE, report = Kleenean.TRUE, heading = Kleenean.TRUE, overlay = Kleenean.TRUE, access = PropertyAccess.RESTRICTED_WRITING)
     public Funcion funcion;
 
     @ForeignKey(onDelete = OnDeleteAction.CASCADE, onUpdate = OnUpdateAction.CASCADE)
     @ManyToOne(navigability = Navigability.UNIDIRECTIONAL, view = MasterDetailView.NONE)
-    @PropertyField(required = Kleenean.FALSE, table = Kleenean.TRUE, report = Kleenean.TRUE, create = Kleenean.TRUE)
-    @Allocation(maxDepth = 2, maxRound = 0)
+    @PropertyField(required = Kleenean.FALSE, table = Kleenean.TRUE, report = Kleenean.TRUE, create = Kleenean.TRUE, access = PropertyAccess.RESTRICTED_WRITING)
     public ConjuntoSegmento conjuntoSegmento;
 
     @ColumnField(nullable = Kleenean.FALSE)
-    @PropertyField(required = Kleenean.FALSE, table = Kleenean.TRUE, report = Kleenean.TRUE, create = Kleenean.TRUE, defaultCheckpoint = Checkpoint.USER_INTERFACE)
+    @PropertyField(required = Kleenean.FALSE, table = Kleenean.TRUE, report = Kleenean.TRUE, create = Kleenean.TRUE, access = PropertyAccess.RESTRICTED_WRITING, defaultCheckpoint = Checkpoint.USER_INTERFACE)
     public BooleanProperty esAccesoPersonalizado;
 
     @ColumnField(nullable = Kleenean.FALSE)
@@ -130,13 +129,19 @@ public class RolFuncion extends AbstractPersistentEntity {
         // </editor-fold>
     }
 
-    protected Key uk_rol_funcion_0001;
+    @Override
+    protected void settleLinks() {
+        super.settleLinks();
+        linkForeignSegmentProperty(rol.grupo);
+    }
+
+    protected Key ix_rol_funcion_0001;
 
     @Override
     protected void settleKeys() {
         super.settleKeys();
-        uk_rol_funcion_0001.setUnique(true);
-        uk_rol_funcion_0001.newKeyField(rol, funcion);
+        ix_rol_funcion_0001.setUnique(false);
+        ix_rol_funcion_0001.newKeyField(rol, funcion);
     }
 
     protected Segment modificables;

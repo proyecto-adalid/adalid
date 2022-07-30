@@ -491,9 +491,8 @@ public class PropertiesHandler {
         }
     }
     /**/
-    char _06f51ddc8c6949a689e549bac65ce4b6;
     // </editor-fold>
-
+/**/
     public static ExtendedProperties getExtendedProperties(String filename) {
         return getExtendedProperties(filename, Level.ERROR);
     }

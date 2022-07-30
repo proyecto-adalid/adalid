@@ -44,6 +44,14 @@ public class VariableRutina extends AbstractPersistentEntity {
     // </editor-fold>
 
     @Override
+    protected void addAllocationStrings() {
+        super.addAllocationStrings();
+        super.addAllocationStrings(
+            "rutina.variable"
+        );
+    }
+
+    @Override
     protected void settleAttributes() {
         super.settleAttributes();
         setOrderBy(rutina, nombre);
@@ -74,11 +82,9 @@ public class VariableRutina extends AbstractPersistentEntity {
     @VersionProperty
     public LongProperty version;
 
-    @Allocation(maxDepth = 2, maxRound = 1)
     @ForeignKey(onDelete = OnDeleteAction.CASCADE, onUpdate = OnUpdateAction.CASCADE)
     @ManyToOne(main = Kleenean.TRUE, navigability = Navigability.BIDIRECTIONAL, view = MasterDetailView.TABLE_AND_DETAIL)
     @ColumnField(nullable = Kleenean.FALSE)
-    @Filter(owner = Kleenean.FALSE, segment = Kleenean.FALSE)
     public RutinaUsuario rutina;
 
     @NameProperty

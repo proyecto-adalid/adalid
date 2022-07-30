@@ -24,11 +24,6 @@ import java.lang.reflect.Field;
  */
 public class Enumeracion extends AbstractPersistentEnumerationEntity {
 
-    @Deprecated()
-    private Enumeracion() {
-        this(null, null);
-    }
-
     public Enumeracion(Artifact declaringArtifact, Field declaringField) {
         super(declaringArtifact, declaringField);
     }

@@ -64,14 +64,12 @@ public class FiltroFuncion extends AbstractPersistentEntity {
 //  @ForeignKey(onDelete = OnDeleteAction.NONE, onUpdate = OnUpdateAction.NONE)
     @ManyToOne(navigability = Navigability.BIDIRECTIONAL, view = MasterDetailView.TABLE_AND_DETAIL)
     @ColumnField(nullable = Kleenean.FALSE)
-//->@Allocation(maxDepth = 2, maxRound = 0)
     public Funcion funcion;
 
     @OwnerProperty
     @ForeignKey(onDelete = OnDeleteAction.CASCADE, onUpdate = OnUpdateAction.CASCADE)
     @ManyToOne(navigability = Navigability.UNIDIRECTIONAL, view = MasterDetailView.NONE)
     @ColumnField(nullable = Kleenean.TRUE)
-    @Allocation(maxDepth = 1, maxRound = 0)
     @PropertyField(create = Kleenean.FALSE, update = Kleenean.FALSE, search = Kleenean.TRUE, table = Kleenean.TRUE, report = Kleenean.TRUE, defaultCondition = DefaultCondition.IF_NULL_ON_INSERT, defaultCheckpoint = Checkpoint.USER_INTERFACE)
     public Usuario usuario;
 
@@ -240,6 +238,7 @@ public class FiltroFuncion extends AbstractPersistentEntity {
         @Override
         protected void settleAttributes() {
             super.settleAttributes();
+            /**/
             // <editor-fold defaultstate="collapsed" desc="localization of EnviarCopia's attributes">
             /**/
             setLocalizedLabel(ENGLISH, "send a copy");
@@ -252,20 +251,20 @@ public class FiltroFuncion extends AbstractPersistentEntity {
             setLocalizedSuccessMessage(SPANISH, "se envió una copia del filtro al destinatario especificado");
             /**/
             // </editor-fold>
+            /**/
         }
 
         @InstanceReference
-        @EntityReferenceSearch(searchType = SearchType.LIST, listStyle = ListStyle.NAME)
-//      @Filter(owner = Kleenean.TRUE)
         protected FiltroFuncion filtro;
 
         @ParameterField(required = Kleenean.TRUE)
-        @EntityReferenceSearch(searchType = SearchType.LIST, listStyle = ListStyle.CHARACTER_KEY_AND_NAME)
+        @EntityReferenceConversionValidation(restrictedAccess = Kleenean.FALSE)
         protected Usuario destinatario;
 
         @Override
         protected void settleParameters() {
             super.settleParameters();
+            /**/
             // <editor-fold defaultstate="collapsed" desc="localization of EnviarCopia's parameters">
             /**/
             filtro.setLocalizedLabel(ENGLISH, "filter");
@@ -284,17 +283,20 @@ public class FiltroFuncion extends AbstractPersistentEntity {
             destinatario.codigoUsuario.setLocalizedShortLabel(SPANISH, "destinatario");
             /**/
             // </editor-fold>
+            /**/
         }
 
-        protected Check check101, check102;
+        protected Check check101, check102, check201, check202;
 
         @Override
         protected void settleExpressions() {
             super.settleExpressions();
             /**/
-            check101 = filtro.usuario.id.isEqualTo(CURRENT_USER_ID).and(filtro.esPublico.isFalse());
+            check101 = filtro.esPublico.isFalse();
+            check102 = filtro.usuario.id.isEqualTo(CURRENT_USER_ID);
             /**/
-            check102 = destinatario.esUsuarioEspecial.isFalse();
+            check201 = destinatario.esUsuarioEspecial.isFalse();
+            check202 = destinatario.id.isNotEqualTo(CURRENT_USER_ID);
             /**/
             // <editor-fold defaultstate="collapsed" desc="localization of EnviarCopia's expressions">
             /**/
@@ -303,20 +305,30 @@ public class FiltroFuncion extends AbstractPersistentEntity {
             check101.setLocalizedErrorMessage(ENGLISH, "it is not allowed to send copies of public filters");
             check101.setLocalizedErrorMessage(SPANISH, "no está permitido enviar copias de filtros públicos");
             /**/
-            check102.setLocalizedDescription(ENGLISH, "the recipient is not a special user");
-            check102.setLocalizedDescription(SPANISH, "el destinatario no es un usuario especial");
-            check102.setLocalizedErrorMessage(ENGLISH, "it is not allowed to send copies of filters to special users");
-            check102.setLocalizedErrorMessage(SPANISH, "no está permitido enviar copias de filtros a usuarios especiales");
+            check102.setLocalizedDescription(ENGLISH, "the filter belongs to the current user");
+            check102.setLocalizedDescription(SPANISH, "el filtro le pertenece al usuario actual");
+            check102.setLocalizedErrorMessage(ENGLISH, "it is not allowed to send copies of filters that do not belong to you");
+            check102.setLocalizedErrorMessage(SPANISH, "no está permitido enviar copias de filtros que no le pertenecen");
+            /**/
+            check201.setLocalizedDescription(ENGLISH, "the recipient is not a special user");
+            check201.setLocalizedDescription(SPANISH, "el destinatario no es un usuario especial");
+            check201.setLocalizedErrorMessage(ENGLISH, "it is not allowed to send copies of filters to special users");
+            check201.setLocalizedErrorMessage(SPANISH, "no está permitido enviar copias de filtros a usuarios especiales");
+            /**/
+            check202.setLocalizedDescription(ENGLISH, "the recipient is not the current user");
+            check202.setLocalizedDescription(SPANISH, "el destinatario no es el usuario actual");
+            check202.setLocalizedErrorMessage(ENGLISH, "it is not allowed to send copies of filters to yourself");
+            check202.setLocalizedErrorMessage(SPANISH, "no está permitido enviarse copias de filtros a uno mismo");
             /**/
             // </editor-fold>
+            /**/
         }
 
         @Override
         protected void settleFilters() {
             super.settleFilters();
             /**/
-            filtro.setSearchQueryFilter(check101);
-            destinatario.setSearchQueryFilter(check102);
+            destinatario.setSearchQueryFilter(and(check201, check202));
             /**/
         }
 
@@ -330,6 +342,7 @@ public class FiltroFuncion extends AbstractPersistentEntity {
         @Override
         protected void settleAttributes() {
             super.settleAttributes();
+            /**/
             // <editor-fold defaultstate="collapsed" desc="localization of Publicar's attributes">
             /**/
             setLocalizedLabel(ENGLISH, "publish");
@@ -342,11 +355,10 @@ public class FiltroFuncion extends AbstractPersistentEntity {
             setLocalizedSuccessMessage(SPANISH, "el filtro se publicó con éxito");
             /**/
             // </editor-fold>
+            /**/
         }
 
         @InstanceReference
-        @EntityReferenceSearch(searchType = SearchType.LIST, listStyle = ListStyle.NAME)
-//      @Filter(owner = Kleenean.TRUE)
         protected FiltroFuncion filtro;
 
         @Override
@@ -362,15 +374,17 @@ public class FiltroFuncion extends AbstractPersistentEntity {
             filtro.setLocalizedLabel(SPANISH, "filtro");
             /**/
             // </editor-fold>
+            /**/
         }
 
-        protected Check check101;
+        protected Check check101, check102;
 
         @Override
         protected void settleExpressions() {
             super.settleExpressions();
             /**/
-            check101 = filtro.usuario.id.isEqualTo(CURRENT_USER_ID).and(filtro.esPublico.isFalse());
+            check101 = filtro.esPublico.isFalse();
+            check102 = filtro.usuario.id.isEqualTo(CURRENT_USER_ID);
             /**/
             // <editor-fold defaultstate="collapsed" desc="localization of Publicar's expressions">
             /**/
@@ -379,14 +393,12 @@ public class FiltroFuncion extends AbstractPersistentEntity {
             check101.setLocalizedErrorMessage(ENGLISH, "the filter is already public");
             check101.setLocalizedErrorMessage(SPANISH, "el filtro ya es público");
             /**/
-            // </editor-fold>
-        }
-
-        @Override
-        protected void settleFilters() {
-            super.settleFilters();
+            check102.setLocalizedDescription(ENGLISH, "the filter belongs to the current user");
+            check102.setLocalizedDescription(SPANISH, "el filtro le pertenece al usuario actual");
+            check102.setLocalizedErrorMessage(ENGLISH, "it is not allowed to publish filters that do not belong to you");
+            check102.setLocalizedErrorMessage(SPANISH, "no está permitido publicar filtros que no le pertenecen");
             /**/
-            filtro.setSearchQueryFilter(check101);
+            // </editor-fold>
             /**/
         }
 
@@ -400,6 +412,7 @@ public class FiltroFuncion extends AbstractPersistentEntity {
         @Override
         protected void settleAttributes() {
             super.settleAttributes();
+            /**/
             // <editor-fold defaultstate="collapsed" desc="localization of Privatizar's attributes">
             /**/
             setLocalizedLabel(ENGLISH, "privatize");
@@ -412,10 +425,10 @@ public class FiltroFuncion extends AbstractPersistentEntity {
             setLocalizedSuccessMessage(SPANISH, "el filtro se privatizó con éxito");
             /**/
             // </editor-fold>
+            /**/
         }
 
         @InstanceReference
-//      @EntityReferenceSearch(searchType = SearchType.LIST, listStyle = ListStyle.NAME)
         protected FiltroFuncion filtro;
 
         @Override
@@ -431,6 +444,7 @@ public class FiltroFuncion extends AbstractPersistentEntity {
             filtro.setLocalizedLabel(SPANISH, "filtro");
             /**/
             // </editor-fold>
+            /**/
         }
 
         protected Check check101;
@@ -449,13 +463,6 @@ public class FiltroFuncion extends AbstractPersistentEntity {
             check101.setLocalizedErrorMessage(SPANISH, "el filtro ya es privado");
             /**/
             // </editor-fold>
-        }
-
-        @Override
-        protected void settleFilters() {
-            super.settleFilters();
-            /**/
-            filtro.setSearchQueryFilter(check101);
             /**/
         }
 

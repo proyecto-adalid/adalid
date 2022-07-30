@@ -72,10 +72,18 @@ public class SQLWriter extends Utility {
     };
 
     public static void write(String[] args) {
-        write(args, TABLAS_EXCLUIDAS);
+        write(args, 0);
+    }
+
+    public static void write(String[] args, int maxPrefijo) {
+        write(args, maxPrefijo, TABLAS_EXCLUIDAS);
     }
 
     public static void write(String[] args, String[] tablasExcluidas) {
+        write(args, 0, tablasExcluidas);
+    }
+
+    public static void write(String[] args, int maxPrefijo, String[] tablasExcluidas) {
         SqlWriter writer = new SqlWriter(args);
         if (writer.isInitialised()) {
             // Use method setProjectAlias to specify the project alias used to define the target meta-java package.
@@ -84,6 +92,7 @@ public class SQLWriter extends Utility {
             logger.info("projectAlias=" + writer.getProjectAlias());
             EntidadesComunes entidadesComunes = new EntidadesComunes();
             if (entidadesComunes.build()) {
+                writer.setMaxTablePrefixLength(maxPrefijo);
                 writer.setTablesExcludeSet(tablasExcluidas);
                 writer.setTablesInheritMap(entidadesComunes.getTablesMap());
                 writer.setLoadConfigurationTables(false);

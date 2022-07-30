@@ -60,7 +60,6 @@ public class ConjuntoSegmento extends AbstractPersistentEntity {
     @StringField(maxLength = 0)
     public StringProperty descripcionConjuntoSegmento;
 
-//->@Allocation(maxDepth = 2, maxRound = 1)
 //  20171213: remove foreign-key referring to ClaseRecurso
 //  @ForeignKey(onDelete = OnDeleteAction.NONE, onUpdate = OnUpdateAction.NONE)
     @ManyToOne(navigability = Navigability.UNIDIRECTIONAL, view = MasterDetailView.NONE)
@@ -68,24 +67,29 @@ public class ConjuntoSegmento extends AbstractPersistentEntity {
     @PropertyField(heading = Kleenean.TRUE)
     public ClaseRecurso claseRecurso;
 
-    @Allocation(maxDepth = 1, maxRound = 0)
     @ForeignKey(onDelete = OnDeleteAction.CASCADE, onUpdate = OnUpdateAction.CASCADE)
     @ManyToOne(navigability = Navigability.UNIDIRECTIONAL, view = MasterDetailView.NONE)
     @PropertyField(hidden = Kleenean.TRUE)
     public Usuario usuarioSupervisor;
 
-    @Allocation(maxDepth = 1, maxRound = 0)
     @ForeignKey(onDelete = OnDeleteAction.NONE, onUpdate = OnUpdateAction.NONE)
     @ManyToOne(navigability = Navigability.UNIDIRECTIONAL, view = MasterDetailView.NONE)
     @PropertyField(create = Kleenean.TRUE)
     public ClaseFabricador claseFabricador;
 
     @PropertyField(hidden = Kleenean.TRUE, defaultCondition = DefaultCondition.UNCONDITIONALLY, defaultCheckpoint = Checkpoint.USER_INTERFACE)
-    @StringField(maxLength = 200, regex = "([a-zA-Z_$][a-zA-Z\\d_$]*\\.)*[a-zA-Z_$][a-zA-Z\\d_$]*", validator = "fcssValidator")
+    @StringField(maxLength = 200, regex = "([a-zA-Z_$][a-zA-Z\\d_$]*\\.)*[a-zA-Z_$][a-zA-Z\\d_$]*", validator = ClaseFabricador.FCSS_VALIDATOR)
     public StringProperty nombreClaseFabricador;
 
     @PropertyField(create = Kleenean.FALSE, update = Kleenean.FALSE, table = Kleenean.TRUE)
     public BooleanProperty esConjuntoEspecial;
+
+    @SegmentProperty
+    @EntityReferenceSearch(searchType = SearchType.LIST, listStyle = ListStyle.CHARACTER_KEY_AND_NAME, displayMode = DisplayMode.WRITING)
+    @ForeignKey(onDelete = OnDeleteAction.NONE, onUpdate = OnUpdateAction.NONE)
+    @ManyToOne(view = MasterDetailView.TABLE_AND_DETAIL)
+    @PropertyField(create = Kleenean.TRUE, update = Kleenean.TRUE, required = Kleenean.TRUE, table = Kleenean.TRUE, report = Kleenean.TRUE, overlay = Kleenean.TRUE)
+    public GrupoUsuario grupo;
 
     @Override
     protected void settleAttributes() {
@@ -115,6 +119,9 @@ public class ConjuntoSegmento extends AbstractPersistentEntity {
         /**/
         esConjuntoEspecial.setInitialValue(false);
         esConjuntoEspecial.setDefaultValue(false);
+        /**/
+//      grupo.setInitialValue(esConjuntoEspecial.then(grupo.USUARIOS_ESPECIALES).otherwise(grupo.USUARIOS_ORDINARIOS));
+//      grupo.setDefaultValue(esConjuntoEspecial.then(grupo.USUARIOS_ESPECIALES).otherwise(grupo.USUARIOS_ORDINARIOS));
         /**/
         // <editor-fold defaultstate="collapsed" desc="localization of ConjuntoSegmento's properties">
         /**/
@@ -163,6 +170,15 @@ public class ConjuntoSegmento extends AbstractPersistentEntity {
         esConjuntoEspecial.setLocalizedLabel(ENGLISH, "special set");
         esConjuntoEspecial.setLocalizedLabel(SPANISH, "conjunto especial");
         /**/
+        grupo.setLocalizedLabel(ENGLISH, "user group");
+        grupo.setLocalizedLabel(SPANISH, "grupo de usuarios");
+        grupo.setLocalizedShortLabel(ENGLISH, "group");
+        grupo.setLocalizedShortLabel(SPANISH, "grupo");
+        grupo.setLocalizedDescription(ENGLISH, "group to which this set belongs");
+        grupo.setLocalizedDescription(SPANISH, "grupo al que pertenece este conjunto");
+        grupo.setLocalizedTooltip(ENGLISH, "code of the group to which this set belongs");
+        grupo.setLocalizedTooltip(SPANISH, "código del grupo al que pertenece este conjunto");
+        /**/
         // </editor-fold>
     }
 
@@ -180,7 +196,7 @@ public class ConjuntoSegmento extends AbstractPersistentEntity {
         /**/
         modificables = not(esConjuntoEspecial);
         /**/
-        ordinarios = modificables.and(claseFabricador.isNull());
+        ordinarios = modificables.and(claseFabricador.isNull().or(claseFabricador.elemental));
         /**/
         check101 = claseRecurso.esClaseRecursoSegmento.isTrue();
         /**/
@@ -200,10 +216,10 @@ public class ConjuntoSegmento extends AbstractPersistentEntity {
         ordinarios.setLocalizedDescription(SPANISH, "el conjunto no es un conjunto de configuración básica del sistema "
             + "y sus elementos son especificados explícitamente");
         ordinarios.setLocalizedErrorMessage(ENGLISH, "the set is a basic configuration set "
-            + "or its elements are determined by a factory class; "
+            + "or its elements are determined by a factory class that does not uses elements; "
             + "it cannot be modified or deleted, and its elements cannot be explicitly specified");
         ordinarios.setLocalizedErrorMessage(SPANISH, "el conjunto es un conjunto de configuración básica del sistema "
-            + "o sus elementos son determinados por una clase de fabricador; "
+            + "o sus elementos son determinados por una clase de fabricador que no usa elementos; "
             + "no se permite modificarlo ni eliminarlo, y sus elementos no pueden ser especificados explícitamente");
         /**/
         check101.setLocalizedLabel(ENGLISH, "verify resource class");
@@ -258,7 +274,6 @@ public class ConjuntoSegmento extends AbstractPersistentEntity {
         }
 
         @InstanceReference
-//      @Allocation(maxDepth = 1, maxRound = 0)
         protected ConjuntoSegmento conjunto;
 
         @ParameterField(required = Kleenean.TRUE)

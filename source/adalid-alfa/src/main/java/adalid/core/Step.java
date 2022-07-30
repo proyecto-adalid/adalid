@@ -101,10 +101,9 @@ public class Step extends AbstractArtifact {
         }
     }
     /**/
-    char _renderingFilter;
     // </editor-fold>
-
-    /* commented on 21/03/2021
+/**/
+ /* commented on 21/03/2021
     private Field getStepFieldField() {
         String errmsg = "failed to get field \"_stepField\" declared at " + getClass();
         try {
@@ -187,9 +186,8 @@ public class Step extends AbstractArtifact {
         return s4;
     }
     /**/
-    char _finaliseFields;
     // </editor-fold>
-
+/**/
     // <editor-fold defaultstate="collapsed" desc="finaliseStepFieldArray">
     /* commented on 21/03/2021
     private void finaliseStepFieldArray() {
@@ -219,9 +217,8 @@ public class Step extends AbstractArtifact {
         _stepFields.put(key, stepField);
     }
     /**/
-    char _finaliseStepFieldArray;
     // </editor-fold>
-
+/**/
     /**
      * El método newStepField se utiliza para agregar colecciones a un grupo. Los grupos generan pasos (steps) en las vistas (páginas) de registro
      * detallado de la entidad. Los grupos pueden estar integrados por una o más colecciones. Una misma colección no puede estar en más de un grupo.
@@ -325,9 +322,8 @@ public class Step extends AbstractArtifact {
         return string;
     }
     /**/
-    char _toString;
     // </editor-fold>
-
+/**/
     // <editor-fold defaultstate="collapsed" desc="isValidStepFor">
     /*
     public boolean isValidStepFor(PersistentEntity entity) {
@@ -354,7 +350,6 @@ public class Step extends AbstractArtifact {
     }
 
     /**/
-    char _isValidStepFor;
     // </editor-fold>
-
+/**/
 }

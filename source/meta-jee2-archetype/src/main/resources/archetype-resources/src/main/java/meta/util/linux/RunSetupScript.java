@@ -9,6 +9,8 @@
  */
 package ${package}.meta.util.linux;
 
+import adalid.util.*;
+
 /**
  * RunSetupScript muestra el diálogo para buscar y seleccionar un script (archivo .sh) de instalación y ejecuta el script seleccionado.
  * <p>
@@ -18,6 +20,7 @@ package ${package}.meta.util.linux;
  *
  * @author ADALID meta-jee2-archetype
  */
+@RunnableClass(false)
 public class RunSetupScript extends adalid.util.io.SysCmdRunner {
 
     /**

@@ -398,6 +398,14 @@ public class Writer {
         return subject;
     }
 
+    ProjectWriter getProjectWriter() {
+        return subject instanceof ProjectWriter ? (ProjectWriter) subject : null;
+    }
+
+    SubjectProject getSubjectProject() {
+        return subject instanceof SubjectProject ? (SubjectProject) subject : null;
+    }
+
     /**
      * @return the subject key
      */
@@ -485,6 +493,11 @@ public class Writer {
         if (isInvalidBootstrapping()) {
             return false;
         }
+        ProjectWriter projectWriter = getProjectWriter();
+        if (projectWriter != null && !projectWriter.beforeWriting()) {
+            logger.error("generation aborted due to previous errors");
+            return false;
+        }
         File platformPropertiesFile;
         String platformPropertiesFileName = platform + PROPERTIES_SUFFIX;
         for (File bootstrappingPlatformsFolder : bootstrappingPlatformsFolders) {
@@ -551,8 +564,8 @@ public class Writer {
         logger.trace(PROJECT_OBJECT_MODEL + "=" + pom.getClass().getName());
         logger.trace(projectName + ".version=" + projectVersion);
         logger.trace(projectName + ".version.requirement=" + projectVersionRequirement);
-        if (subject instanceof SubjectProject) {
-            SubjectProject project = (SubjectProject) subject;
+        SubjectProject project = getSubjectProject();
+        if (project != null) {
             Object versionEnumeration = project.getVersionEnumeration();
             if (versionEnumeration != null) {
                 String thisVersionCode = "V" + projectMajor + "R" + projectMinor;
@@ -1196,19 +1209,17 @@ public class Writer {
         logger.info(VC_ROOT_PATH + "=" + path);
         logger.info(VC_USER_PATH + "=" + USER_DIR);
         //
-        String baseName = subject instanceof SubjectProject ? ((SubjectProject) subject).getBaseFolderName() : null;
-        Level basePathLevel = Level.INFO;
+        SubjectProject project = getSubjectProject();
+        String baseName = project == null ? null : project.getBaseFolderName();
         if (StringUtils.isBlank(baseName)) {
             baseName = subject.getClass().getSimpleName() + "." + StrUtils.getIdentifier(subjectKey);
-//          basePathLevel = Level.WARN;
-//          warnings++;
         }
         File base = new File(bootstrappingRootFolder, baseName);
         String basePath = base.getPath();
         context.put(VC_BASE_NAME, baseName);
         context.put(VC_BASE_PATH, StringEscapeUtils.escapeJava(basePath));
         context.put(VC_BASE_SLASHED_PATH, path.replace(FILE_SEPARATOR, SLASH));
-        logger.log(basePathLevel, VC_BASE_PATH + "=" + basePath);
+        logger.log(Level.INFO, VC_BASE_PATH + "=" + basePath);
         //
         return context;
     }

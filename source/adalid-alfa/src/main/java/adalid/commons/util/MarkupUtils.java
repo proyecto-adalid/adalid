@@ -603,9 +603,8 @@ public class MarkupUtils {
     }
 
     /**/
-    char _e379f8688fc74d07bb8fb6477ce0411c;
     // </editor-fold>
-
+/**/
     /**
      * Returns <code>string</code> removing the pseudo-tags.
      *

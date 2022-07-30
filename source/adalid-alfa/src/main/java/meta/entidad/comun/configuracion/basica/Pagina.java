@@ -84,31 +84,26 @@ public class Pagina extends AbstractPersistentEntity {
     @ManyToOne(navigability = Navigability.UNIDIRECTIONAL, view = MasterDetailView.NONE)
     @ColumnField(nullable = Kleenean.FALSE)
     @PropertyField(hidden = Kleenean.TRUE)
-    @Allocation(maxDepth = 1, maxRound = 0)
     public Aplicacion aplicacion;
 
     @ForeignKey(onDelete = OnDeleteAction.NONE, onUpdate = OnUpdateAction.NONE)
     @ManyToOne(navigability = Navigability.UNIDIRECTIONAL, view = MasterDetailView.NONE)
     @PropertyField(update = Kleenean.FALSE)
-    @Allocation(maxDepth = 1, maxRound = 0)
     public TipoPagina tipoPagina;
 
     @ForeignKey(onDelete = OnDeleteAction.NONE, onUpdate = OnUpdateAction.NONE)
     @ManyToOne(navigability = Navigability.UNIDIRECTIONAL, view = MasterDetailView.NONE)
     @PropertyField(update = Kleenean.FALSE)
-    @Allocation(maxDepth = 1, maxRound = 0)
     public Dominio dominio;
 
     @ForeignKey(onDelete = OnDeleteAction.NONE, onUpdate = OnUpdateAction.NONE)
     @ManyToOne(navigability = Navigability.UNIDIRECTIONAL, view = MasterDetailView.NONE)
     @PropertyField(update = Kleenean.FALSE)
-    @Allocation(maxDepth = 1, maxRound = 0)
     public Dominio dominioMaestro;
 
     @ForeignKey(onDelete = OnDeleteAction.NONE, onUpdate = OnUpdateAction.CASCADE)
     @ManyToOne(navigability = Navigability.UNIDIRECTIONAL, view = MasterDetailView.NONE)
     @PropertyField(update = Kleenean.FALSE)
-    @Allocation(maxDepth = 1, maxRound = 0)
     public Parametro parametro;
 
     @Override

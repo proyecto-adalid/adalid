@@ -48,7 +48,6 @@ public class TareaUsuarioCorreo extends AbstractPersistentEntity {
     @VersionProperty
     public LongProperty version;
 
-    @Allocation(maxDepth = 1, maxRound = 0)
     @ColumnField(nullable = Kleenean.FALSE)
     @ForeignKey(onDelete = OnDeleteAction.NONE, onUpdate = OnUpdateAction.NONE)
     @OneToOne(navigability = Navigability.UNIDIRECTIONAL, detailView = Kleenean.TRUE)
@@ -59,7 +58,6 @@ public class TareaUsuarioCorreo extends AbstractPersistentEntity {
     @PropertyField(hidden = Kleenean.TRUE, defaultCheckpoint = Checkpoint.USER_INTERFACE)
     public LongProperty tarea;
 
-    @Allocation(maxDepth = 1, maxRound = 0)
     @ColumnField(nullable = Kleenean.TRUE)
     @ForeignKey(onDelete = OnDeleteAction.NONE, onUpdate = OnUpdateAction.NONE)
     @ManyToOne(navigability = Navigability.UNIDIRECTIONAL, view = MasterDetailView.NONE)

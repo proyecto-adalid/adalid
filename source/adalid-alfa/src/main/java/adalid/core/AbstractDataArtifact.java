@@ -30,6 +30,7 @@ import java.sql.Date;
 import java.sql.Time;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
@@ -39,6 +40,8 @@ import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+
+import static adalid.core.WHR.*;
 
 /**
  * @author Jorge Campins
@@ -52,6 +55,8 @@ public abstract class AbstractDataArtifact extends AbstractArtifact implements A
     private static final Logger logger = Logger.getLogger(DataArtifact.class);
 
     private static final String EOL = "\n";
+
+    private static final int L = LARGE_SIZE, M = MEDIUM_SIZE, S = SMALL_SIZE;
 
     public static final String CONVERTER_REGEX = "^[a-zA-Z]\\w*$";
 
@@ -380,6 +385,11 @@ public abstract class AbstractDataArtifact extends AbstractArtifact implements A
     /**
      *
      */
+    private Boolean _loremIpsum;
+
+    /**
+     *
+     */
     private int _dataGenSeriesStart = 1;
 
     /**
@@ -425,12 +435,32 @@ public abstract class AbstractDataArtifact extends AbstractArtifact implements A
     /**
      *
      */
-    private Object _dataGenMin;
+    private String _dataGenMin;
 
     /**
      *
      */
-    private Object _dataGenMax;
+    private String _dataGenMax;
+
+    /**
+     *
+     */
+    private TemporalAddend _dataGenMinTemporalAddend;
+
+    /**
+     *
+     */
+    private TemporalAddend _dataGenMaxTemporalAddend;
+
+    /**
+     *
+     */
+    private Object _dataGenMinValue;
+
+    /**
+     *
+     */
+    private Object _dataGenMaxValue;
 
     /**
      *
@@ -943,7 +973,7 @@ public abstract class AbstractDataArtifact extends AbstractArtifact implements A
     @Override
     public boolean isCreateField() {
         return !isHiddenField() && !isPrimaryKeyProperty() && !isSequenceProperty() && !isVersionProperty() && !isBinaryData()
-            && (_calculable ? !isFileReferenceField() : _insertable) && BitUtils.valueOf(_createField, implicitCreateField());
+            && (_calculable ? !isFileReferenceFieldWithoutBlob() : _insertable) && BitUtils.valueOf(_createField, implicitCreateField());
     }
 
     private boolean implicitCreateField() {
@@ -965,7 +995,7 @@ public abstract class AbstractDataArtifact extends AbstractArtifact implements A
     @Override
     public boolean isUpdateField() {
         return !isHiddenField() && !isPrimaryKeyProperty() && !isSequenceProperty() && !isVersionProperty() && !isBinaryData()
-            && (_calculable ? !isFileReferenceField() : _updateable) && BitUtils.valueOf(_updateField, implicitUpdateField());
+            && (_calculable ? !isFileReferenceFieldWithoutBlob() : _updateable) && BitUtils.valueOf(_updateField, implicitUpdateField());
     }
 
     private boolean implicitUpdateField() {
@@ -1166,7 +1196,9 @@ public abstract class AbstractDataArtifact extends AbstractArtifact implements A
      */
     @Override
     public boolean isHeadingField() {
-        return !isHiddenField() && !isUndisplayableBinaryData() && !restrictedReadingAccess() && BitUtils.valueOf(_headingField, implicitHeadingField());
+        // since 06/06/2022 unrestrictedReadingField instead of !restrictedReadingAccess()
+        return !isHiddenField() && !isUndisplayableBinaryData() && !isCharacterLargeObject() && !isVariantStringField() && unrestrictedReadingField()
+            && !_password && BitUtils.valueOf(_headingField, implicitHeadingField());
     }
 
     private boolean implicitHeadingField() {
@@ -1190,7 +1222,8 @@ public abstract class AbstractDataArtifact extends AbstractArtifact implements A
      */
     @Override
     public boolean isOverlayField() {
-        return !isHiddenField() && !isUndisplayableBinaryData() && unrestrictedReadingField() && BitUtils.valueOf(_overlayField, implicitOverlayField());
+        return !isHiddenField() && !isUndisplayableBinaryData() && !isCharacterLargeObject() && !isVariantStringField() && unrestrictedReadingField()
+            && !_password && BitUtils.valueOf(_overlayField, implicitOverlayField());
     }
 
     private boolean implicitOverlayField() {
@@ -1201,7 +1234,7 @@ public abstract class AbstractDataArtifact extends AbstractArtifact implements A
         if (isBusinessKeyProperty() || isNameProperty()) {
             return false;
         }
-        return isImageProperty()
+        return isImplicitOverlayImageProperty()
             || isDiscriminatorProperty()
             || isStateProperty()
             || isInactiveIndicatorProperty()
@@ -1209,6 +1242,10 @@ public abstract class AbstractDataArtifact extends AbstractArtifact implements A
             || isCharacterKeyProperty()
             || isNumericKeyProperty()
             || isCodelessNamelessEntityUniqueKeyProperty();
+    }
+
+    protected boolean isImplicitOverlayImageProperty() {
+        return isImageProperty();
     }
 
     private boolean isCodelessNamelessEntityUniqueKeyProperty() {
@@ -1651,6 +1688,17 @@ public abstract class AbstractDataArtifact extends AbstractArtifact implements A
     @Override
     public boolean isFileReferenceField() {
         return _annotatedWithFileReference;
+    }
+
+    private boolean isFileReferenceFieldWithoutBlob() {
+        if (isFileReferenceField()) {
+            if (isStringData()) {
+                StringData data = (StringData) this;
+                Property blobProperty = data.getBlobProperty();
+                return blobProperty == null || blobProperty.isCalculable() || blobProperty.isCalculatedProperty();
+            }
+        }
+        return false;
     }
 
     /**
@@ -2182,6 +2230,19 @@ public abstract class AbstractDataArtifact extends AbstractArtifact implements A
         return _dataGenType;
     }
 
+//  @Override
+    public boolean isDataGenTypeSpecified() {
+        return !DataGenType.UNSPECIFIED.equals(_dataGenType);
+    }
+
+    /**
+     * @return the character Lorem Ipsum indicator
+     */
+//  @Override
+    public Boolean isLoremIpsum() {
+        return _loremIpsum;
+    }
+
     /**
      * @return the series start
      */
@@ -2220,6 +2281,21 @@ public abstract class AbstractDataArtifact extends AbstractArtifact implements A
 //  @Override
     public String getDataGenFunction() {
         return _dataGenFunction;
+    }
+
+    /**
+     * Sets the data generation user-defined function
+     *
+     * @param function the data generation user-defined function to set
+     */
+//  @Override
+    public void setDataGenFunction(String function) {
+        String f = StringUtils.trimToNull(function);
+        if (f != null) {
+            _dataGenFunction = f.equalsIgnoreCase("null") ? null : f;
+        } else if (isDataGenTypeSpecified()) {
+            _dataGenFunction = null;
+        }
     }
 
     /**
@@ -2266,16 +2342,48 @@ public abstract class AbstractDataArtifact extends AbstractArtifact implements A
      * @return the data min
      */
 //  @Override
-    public Object getDataGenMin() {
+    public String getDataGenMin() {
         return _dataGenMin;
+    }
+
+    /**
+     * @return the data min temporal addend
+     */
+//  @Override
+    public TemporalAddend getDataGenMinTemporalAddend() {
+        return _dataGenMinTemporalAddend;
+    }
+
+    /**
+     * @return the data min value
+     */
+//  @Override
+    public Object getDataGenMinValue() {
+        return _dataGenMinValue;
     }
 
     /**
      * @return the data max
      */
 //  @Override
-    public Object getDataGenMax() {
+    public String getDataGenMax() {
         return _dataGenMax;
+    }
+
+    /**
+     * @return the data max temporal addend
+     */
+//  @Override
+    public TemporalAddend getDataGenMaxTemporalAddend() {
+        return _dataGenMaxTemporalAddend;
+    }
+
+    /**
+     * @return the data max value
+     */
+//  @Override
+    public Object getDataGenMaxValue() {
+        return _dataGenMaxValue;
     }
 
     /**
@@ -3009,6 +3117,9 @@ public abstract class AbstractDataArtifact extends AbstractArtifact implements A
                 _annotatedWithImageProperty = true;
                 BinaryData data = (BinaryData) this;
                 ImageProperty annotation = field.getAnnotation(ImageProperty.class);
+                /**/
+                // <editor-fold defaultstate="collapsed" desc="until 06/06/2022">
+                /*
                 int displayWidth = specified(annotation.displayWidth(), data.getDisplayWidth());
                 int displayHeight = specified(annotation.displayHeight(), data.getDisplayHeight());
                 boolean resizable = annotation.resizable().toBoolean(data.isResizable());
@@ -3038,12 +3149,40 @@ public abstract class AbstractDataArtifact extends AbstractArtifact implements A
                     displayWidth = displayHeight;
                     resizable = true;
                 } else if (displayHeight == 0) {
-                    displayHeight = displayWidth;
+                    displayHeight = displayWidth > Constants.MAX_DISPLAY_HEIGHT ? Constants.MAX_DISPLAY_HEIGHT : displayWidth;
                     resizable = true;
                 }
                 data.setDisplayWidth(displayWidth);
                 data.setDisplayHeight(displayHeight);
                 data.setResizable(resizable);
+                /**/
+                // </editor-fold>
+                /**/
+                AvatarShape avatarShape = specified(AvatarShape.NONE.name(), annotation.avatarShape(), data.getAvatarShape());
+                AvatarDefault avatarDefault = specified(AvatarDefault.NONE.name(), annotation.avatarDefault(), data.getAvatarDefault());
+                int avatarWidth = greaterThanZero(annotation.avatarWidth(), data.getAvatarWidth());
+                int avatarHeight = greaterThanZero(annotation.avatarHeight(), data.getAvatarHeight());
+                /**/
+                int[] displayWidth = Arrays.copyOf(annotation.displayWidth(), COMPONENT_DISPLAY_SIZE.length);
+                int[] displayHeight = Arrays.copyOf(annotation.displayHeight(), COMPONENT_DISPLAY_SIZE.length);
+                boolean resizable = annotation.resizable().toBoolean(data.isResizable());
+                /**/
+                WHR whrL = new WHR(fieldName, log, L, displayWidth[L], displayHeight[L], MIN_IMG_W, MIN_IMG_H, DEF_IMG_W[L], DEF_IMG_H[L]);
+                WHR whrM = new WHR(fieldName, log, M, displayWidth[M], displayHeight[M], MIN_IMG_W, MIN_IMG_H, DEF_IMG_W[M], DEF_IMG_H[M]);
+                WHR whrS = new WHR(fieldName, log, S, displayWidth[S], displayHeight[S], MIN_IMG_W, MIN_IMG_H, DEF_IMG_W[S], DEF_IMG_H[S]);
+                /**/
+                data.setAvatarShape(avatarShape);
+                data.setAvatarDefault(avatarDefault);
+                data.setAvatarWidth(avatarWidth);
+                data.setAvatarHeight(avatarHeight);
+                data.setLargeDisplayWidth(whrL.displayWidth);
+                data.setLargeDisplayHeight(whrL.displayHeight);
+                data.setMediumDisplayWidth(whrM.displayWidth);
+                data.setMediumDisplayHeight(whrM.displayHeight);
+                data.setSmallDisplayWidth(whrS.displayWidth);
+                data.setSmallDisplayHeight(whrS.displayHeight);
+                data.setResizable(resizable || whrL.resizable || whrM.resizable || whrS.resizable);
+                /**/
             } else if (log) {
                 XS1.logDuplicateAnnotation(field, annotationClass, previous);
             }
@@ -3085,6 +3224,7 @@ public abstract class AbstractDataArtifact extends AbstractArtifact implements A
                 String[] sourceURLs = null;
                 String searchURL = null;
                 Pattern pattern = data.getPattern();
+                boolean encoding = annotation.encoding().toBoolean(data.isEncodingEnabled());
                 if (UrlType.EXTERNAL.equals(urlType)) {
                     sourceURLs = specified(annotation.sourceURLs(), data.getSourceURLs());
                     searchURL = specified(annotation.searchURL(), data.getSearchURL());
@@ -3098,6 +3238,7 @@ public abstract class AbstractDataArtifact extends AbstractArtifact implements A
                 data.setSourceURLs(sourceURLs);
                 data.setSearchURL(searchURL);
                 data.setPattern(pattern);
+                data.setEncodingEnabled(encoding);
             } else if (log) {
                 XS1.logDuplicateAnnotation(field, annotationClass, previous);
             }
@@ -3182,6 +3323,25 @@ public abstract class AbstractDataArtifact extends AbstractArtifact implements A
                 if (previous == null) {
                     _annotatedWithSegmentProperty = true;
                     _segmentEntityClass = annotation.entityClass(); // since 20210218
+                    if (field.isAnnotationPresent(PrimaryKey.class)) { // since 20220715
+                        Class<?> declaringClass = field.getDeclaringClass();
+                        if (_segmentEntityClass.equals(declaringClass)) {
+                            // properly set
+                        } else if (_segmentEntityClass.equals(Entity.class)) {
+                            _segmentEntityClass = declaringClass;
+                        } else {
+                            if (log) {
+                                String message = getDeclaringEntity() + " is not assignable from " + _segmentEntityClass;
+                                XS1.logFieldAnnotationErrorMessage(field, annotationClass, message);
+                                String declaringClassSimpleName = declaringClass.getSimpleName();
+                                String hint = "remove element entityClass from the SegmentProperty annotation of "
+                                    + declaringClassSimpleName + "." + field.getName() + "; "
+                                    + "alternatively, set it to either Entity.class or " + declaringClassSimpleName + ".class";
+                                TLC.getProject().getParser().info(hint);
+                            }
+                            _segmentEntityClass = declaringClass;
+                        }
+                    }
                 } else if (log) {
                     XS1.logDuplicateAnnotation(field, annotationClass, previous);
                 }
@@ -3285,16 +3445,19 @@ public abstract class AbstractDataArtifact extends AbstractArtifact implements A
             if (isStringData()) {
                 StringData data = (StringData) this;
                 data.setMaxLength(Project.getDefaultCharacterKeyMaxLength());
+                data.setDataGenFunction("util.string_codigo_entidad");
             }
         }
         if (isNameProperty()) {
             _nullable = false;
             StringData data = (StringData) this;
             data.setMaxLength(Project.getDefaultNamePropertyMaxLength());
+            data.setDataGenFunction("util.string_nombre_entidad");
         }
         if (isDescriptionProperty()) {
             StringData data = (StringData) this;
             data.setMaxLength(Project.getDefaultDescriptionPropertyMaxLength());
+            data.setDataGenFunction("util.string_descripcion_entidad");
         }
         if (isUrlProperty()) {
             StringData data = (StringData) this;
@@ -3702,7 +3865,7 @@ public abstract class AbstractDataArtifact extends AbstractArtifact implements A
                     logger.error("max length of " + fieldName + " exceeds the defined string field limit (" + projectMaximumStringFieldMaxLength + ")");
                     Project.increaseParserErrorCount();
                 }
-            } else if (maxLength > projectMaximumStringIndexMaxLength && (isUnique() || isIndexed())) {
+            } else if ((maxLength == 0 || maxLength > projectMaximumStringIndexMaxLength) && (isUnique() || isIndexed())) {
                 maxLength = projectMaximumStringIndexMaxLength;
                 if (log) {
                     logger.error("max length of " + fieldName + " exceeds the defined string index limit (" + projectMaximumStringIndexMaxLength + ")");
@@ -3791,8 +3954,10 @@ public abstract class AbstractDataArtifact extends AbstractArtifact implements A
             return Project.getDefaultStringIndexMaxLength();
         } else if (maxLength == Project.DESCRIPTION_PROPERTY_MAX_LENGTH) {
             return Project.getDefaultDescriptionPropertyMaxLength();
-        } else if (maxLength == Project.URL_PROPERTY_MAX_LENGTH || field.isAnnotationPresent(EmbeddedDocument.class) || field.isAnnotationPresent(UniformResourceLocator.class)) {
+        } else if (maxLength == Project.URL_PROPERTY_MAX_LENGTH || field.isAnnotationPresent(UniformResourceLocator.class)) {
             return Project.getDefaultUrlPropertyMaxLength();
+        } else if (maxLength == Project.EMBEDDED_DOCUMENT_MAX_LENGTH || field.isAnnotationPresent(EmbeddedDocument.class)) {
+            return Project.getDefaultEmbeddedDocumentMaxLength();
         } else if (maxLength == Project.FILE_REFERENCE_MAX_LENGTH || field.isAnnotationPresent(FileReference.class)) {
             return Project.getDefaultFileReferenceMaxLength();
         } else if (maxLength == Project.STRING_FIELD_MAX_LENGTH) {
@@ -4266,8 +4431,19 @@ public abstract class AbstractDataArtifact extends AbstractArtifact implements A
             String[] sourceURLs = specified(annotation.sourceURLs(), data.getEmbeddedDocumentURLs());
             EmbeddedDocumentType sourceType = specified(annotation.sourceType(), data.getEmbeddedDocumentType());
             EmbeddedDocumentStyle style = specified(annotation.style(), data.getEmbeddedDocumentStyle());
+            /**/
+            // <editor-fold defaultstate="collapsed" desc="until 06/06/2022">
+            /*
             int displayWidth = specified(annotation.displayWidth(), data.getDisplayWidth());
             int displayHeight = specified(annotation.displayHeight(), data.getDisplayHeight());
+            boolean resizable = annotation.resizable().toBoolean(data.isResizable());
+            /**/
+            // </editor-fold>
+            /**/
+            int[] displayWidth = Arrays.copyOf(annotation.displayWidth(), COMPONENT_DISPLAY_SIZE.length);
+            int[] displayHeight = Arrays.copyOf(annotation.displayHeight(), COMPONENT_DISPLAY_SIZE.length);
+            boolean resizable = annotation.resizable().toBoolean(data.isResizable());
+            /**/
             Boolean frameBorder = annotation.frameBorder().toBoolean(data.getFrameBorder());
             Boolean encryptedMedia = annotation.encryptedMedia().toBoolean(data.getEncryptedMedia());
             Boolean accelerometer = annotation.accelerometer().toBoolean(data.getAccelerometer());
@@ -4275,6 +4451,13 @@ public abstract class AbstractDataArtifact extends AbstractArtifact implements A
             Boolean gyroscope = annotation.gyroscope().toBoolean(data.getGyroscope());
             Boolean pictureInPicture = annotation.pictureInPicture().toBoolean(data.getPictureInPicture());
             Boolean fullScreen = annotation.fullScreen().toBoolean(data.getFullScreen());
+            EmbeddedDocumentLoading loading = annotation.loading();
+            EmbeddedDocumentPolicy referrerPolicy = annotation.referrerPolicy();
+            EmbeddedDocumentSandbox sandbox = annotation.sandbox();
+            boolean encoding = annotation.encoding().toBoolean(data.isEncodingEnabled());
+            /**/
+            // <editor-fold defaultstate="collapsed" desc="until 06/06/2022">
+            /*
             if (displayWidth < 0) {
                 displayWidth = 0;
             } else if (displayWidth < 1 || displayWidth > Constants.MAX_DISPLAY_WIDTH) {
@@ -4296,17 +4479,42 @@ public abstract class AbstractDataArtifact extends AbstractArtifact implements A
             if (displayWidth == 0 && displayHeight == 0) {
                 displayWidth = Constants.DEFAULT_DOCUMENT_WIDTH;
                 displayHeight = Constants.DEFAULT_DOCUMENT_HEIGHT;
+                resizable = true;
             } else if (displayWidth == 0) {
                 displayWidth = displayHeight;
+                resizable = true;
             } else if (displayHeight == 0) {
-                displayHeight = displayWidth;
+                displayHeight = displayWidth > Constants.MAX_DISPLAY_HEIGHT ? Constants.MAX_DISPLAY_HEIGHT : displayWidth;
+                resizable = true;
             }
+            /**/
+            // </editor-fold>
+            /**/
             data.setSearchURL(searchURL); // before setEmbeddedDocumentURLs to allow that method to set a default value for searchURL
             data.setEmbeddedDocumentURLs(sourceURLs);
             data.setEmbeddedDocumentType(sourceType);
             data.setEmbeddedDocumentStyle(style);
+            /**/
+            // <editor-fold defaultstate="collapsed" desc="until 06/06/2022">
+            /*
             data.setDisplayWidth(displayWidth);
             data.setDisplayHeight(displayHeight);
+            data.setResizable(resizable);
+            /**/
+            // </editor-fold>
+            /**/
+            WHR whrL = new WHR(fieldName, log, L, displayWidth[L], displayHeight[L], MIN_DOC_W, MIN_DOC_H, DEF_DOC_W[L], DEF_DOC_H[L]);
+            WHR whrM = new WHR(fieldName, log, M, displayWidth[M], displayHeight[M], MIN_DOC_W, MIN_DOC_H, DEF_DOC_W[M], DEF_DOC_H[M]);
+            WHR whrS = new WHR(fieldName, log, S, displayWidth[S], displayHeight[S], MIN_DOC_W, MIN_DOC_H, DEF_DOC_W[S], DEF_DOC_H[S]);
+            /**/
+            data.setLargeDisplayWidth(whrL.displayWidth);
+            data.setLargeDisplayHeight(whrL.displayHeight);
+            data.setMediumDisplayWidth(whrM.displayWidth);
+            data.setMediumDisplayHeight(whrM.displayHeight);
+            data.setSmallDisplayWidth(whrS.displayWidth);
+            data.setSmallDisplayHeight(whrS.displayHeight);
+            data.setResizable(resizable || whrL.resizable || whrM.resizable || whrS.resizable);
+            /**/
             data.setFrameBorder(frameBorder);
             data.setEncryptedMedia(encryptedMedia);
             data.setAccelerometer(accelerometer);
@@ -4314,6 +4522,10 @@ public abstract class AbstractDataArtifact extends AbstractArtifact implements A
             data.setGyroscope(gyroscope);
             data.setPictureInPicture(pictureInPicture);
             data.setFullScreen(fullScreen);
+            data.setLoading(loading);
+            data.setReferrerPolicy(referrerPolicy);
+            data.setSandbox(sandbox);
+            data.setEncodingEnabled(encoding);
         }
     }
 
@@ -4564,6 +4776,9 @@ public abstract class AbstractDataArtifact extends AbstractArtifact implements A
             _annotatedWithGraphicImage = true;
             BinaryData data = (BinaryData) this;
             GraphicImage annotation = field.getAnnotation(GraphicImage.class);
+            /**/
+            // <editor-fold defaultstate="collapsed" desc="until 06/06/2022">
+            /*
             int displayWidth = specified(annotation.displayWidth(), data.getDisplayWidth());
             int displayHeight = specified(annotation.displayHeight(), data.getDisplayHeight());
             boolean resizable = annotation.resizable().toBoolean(data.isResizable());
@@ -4593,12 +4808,31 @@ public abstract class AbstractDataArtifact extends AbstractArtifact implements A
                 displayWidth = displayHeight;
                 resizable = true;
             } else if (displayHeight == 0) {
-                displayHeight = displayWidth;
+                displayHeight = displayWidth > Constants.MAX_DISPLAY_HEIGHT ? Constants.MAX_DISPLAY_HEIGHT : displayWidth;
                 resizable = true;
             }
             data.setDisplayWidth(displayWidth);
             data.setDisplayHeight(displayHeight);
             data.setResizable(resizable);
+            /**/
+            // </editor-fold>
+            /**/
+            int[] displayWidth = Arrays.copyOf(annotation.displayWidth(), COMPONENT_DISPLAY_SIZE.length);
+            int[] displayHeight = Arrays.copyOf(annotation.displayHeight(), COMPONENT_DISPLAY_SIZE.length);
+            boolean resizable = annotation.resizable().toBoolean(data.isResizable());
+            /**/
+            WHR whrL = new WHR(fieldName, log, L, displayWidth[L], displayHeight[L], MIN_IMG_W, MIN_IMG_H, DEF_IMG_W[L], DEF_IMG_H[L]);
+            WHR whrM = new WHR(fieldName, log, M, displayWidth[M], displayHeight[M], MIN_IMG_W, MIN_IMG_H, DEF_IMG_W[M], DEF_IMG_H[M]);
+            WHR whrS = new WHR(fieldName, log, S, displayWidth[S], displayHeight[S], MIN_IMG_W, MIN_IMG_H, DEF_IMG_W[S], DEF_IMG_H[S]);
+            /**/
+            data.setLargeDisplayWidth(whrL.displayWidth);
+            data.setLargeDisplayHeight(whrL.displayHeight);
+            data.setMediumDisplayWidth(whrM.displayWidth);
+            data.setMediumDisplayHeight(whrM.displayHeight);
+            data.setSmallDisplayWidth(whrS.displayWidth);
+            data.setSmallDisplayHeight(whrS.displayHeight);
+            data.setResizable(resizable || whrL.resizable || whrM.resizable || whrS.resizable);
+            /**/
         }
     }
 
@@ -4674,6 +4908,7 @@ public abstract class AbstractDataArtifact extends AbstractArtifact implements A
             String[] sourceURLs = null;
             String searchURL = null;
             Pattern pattern = data.getPattern();
+            boolean encoding = annotation.encoding().toBoolean(data.isEncodingEnabled());
             if (UrlType.EXTERNAL.equals(urlType)) {
                 sourceURLs = specified(annotation.sourceURLs(), data.getSourceURLs());
                 searchURL = specified(annotation.searchURL(), data.getSearchURL());
@@ -4687,6 +4922,7 @@ public abstract class AbstractDataArtifact extends AbstractArtifact implements A
             data.setSourceURLs(sourceURLs);
             data.setSearchURL(searchURL);
             data.setPattern(pattern);
+            data.setEncodingEnabled(encoding);
         }
     }
 
@@ -4995,7 +5231,7 @@ public abstract class AbstractDataArtifact extends AbstractArtifact implements A
             BooleanDataGen annotation = field.getAnnotation(BooleanDataGen.class);
             _annotatedWithDataGen = true;
             _dataGenType = annotation.type();
-            _dataGenFunction = StringUtils.trimToNull(annotation.function());
+            setDataGenFunction(annotation.function());
             _dataGenNullable = Math.min(100, Math.max(0, annotation.nullable()));
             _dataGenTrueable = Math.min(100, Math.max(0, annotation.trueable()));
             if (_dataGenNullable + _dataGenTrueable > 100) {
@@ -5015,6 +5251,7 @@ public abstract class AbstractDataArtifact extends AbstractArtifact implements A
             CharacterDataGen annotation = field.getAnnotation(CharacterDataGen.class);
             _annotatedWithDataGen = true;
             _dataGenType = annotation.type();
+            _loremIpsum = annotation.loremIpsum().toBoolean();
             _dataGenSeriesStart = Math.min(Constants.MAX_SERIES_START, Math.max(1, annotation.start()));
             _dataGenSeriesStop = Math.min(Constants.MAX_SERIES_STOP, Math.max(1, annotation.stop()));
             _dataGenSeriesStep = Math.min(Constants.MAX_SERIES_STEP, Math.max(1, annotation.step()));
@@ -5024,7 +5261,7 @@ public abstract class AbstractDataArtifact extends AbstractArtifact implements A
                 logger.error(message);
                 Project.increaseParserErrorCount();
             }
-            _dataGenFunction = StringUtils.trimToNull(annotation.function());
+            setDataGenFunction(annotation.function());
             _dataGenNullable = Math.min(100, Math.max(0, annotation.nullable()));
             _dataGenPattern = StringUtils.trimToNull(annotation.pattern());
             _dataGenPrefix = StrUtils.ltrimToNull(annotation.prefix());
@@ -5054,10 +5291,12 @@ public abstract class AbstractDataArtifact extends AbstractArtifact implements A
                 logger.error(message);
                 Project.increaseParserErrorCount();
             }
-            _dataGenFunction = StringUtils.trimToNull(annotation.function());
+            setDataGenFunction(annotation.function());
             _dataGenNullable = Math.min(100, Math.max(0, annotation.nullable()));
-            _dataGenMin = someIntegerValue(field, annotation.min());
-            _dataGenMax = someIntegerValue(field, annotation.max());
+            _dataGenMin = StringUtils.trimToNull(annotation.min());
+            _dataGenMax = StringUtils.trimToNull(annotation.max());
+            _dataGenMinValue = someIntegerValue(field, _dataGenMin);
+            _dataGenMaxValue = someIntegerValue(field, _dataGenMax);
             _dataGenNumericAction = annotation.action();
             _dataGenFactor = someBigDecimalValue(field, annotation.factor());
         }
@@ -5083,10 +5322,14 @@ public abstract class AbstractDataArtifact extends AbstractArtifact implements A
                 logger.error(message);
                 Project.increaseParserErrorCount();
             }
-            _dataGenFunction = StringUtils.trimToNull(annotation.function());
+            setDataGenFunction(annotation.function());
             _dataGenNullable = Math.min(100, Math.max(0, annotation.nullable()));
-            _dataGenMin = someTemporalValue(field, annotation.min());
-            _dataGenMax = someTemporalValue(field, annotation.max());
+            _dataGenMin = StringUtils.trimToNull(annotation.min());
+            _dataGenMax = StringUtils.trimToNull(annotation.max());
+            _dataGenMinTemporalAddend = someTemporalAddend(_dataGenMin);
+            _dataGenMaxTemporalAddend = someTemporalAddend(_dataGenMax);
+            _dataGenMinValue = someTemporalValue(field, _dataGenMin);
+            _dataGenMaxValue = someTemporalValue(field, _dataGenMax);
             _dataGenTemporalInterval = annotation.interval();
         }
     }
@@ -5117,6 +5360,25 @@ public abstract class AbstractDataArtifact extends AbstractArtifact implements A
         return null;
     }
 
+    private TemporalAddend someTemporalAddend(String string) {
+        if (StringUtils.isBlank(string)) {
+            return null;
+        }
+        if (this instanceof DateData) {
+            TemporalAddend addend = someDateTemporalAddend(string);
+            return addend.isBadValue() ? null : addend;
+        }
+        if (this instanceof TimeData) {
+            TemporalAddend addend = someTimeTemporalAddend(string);
+            return addend.isBadValue() ? null : addend;
+        }
+        if (this instanceof TimestampData) {
+            TemporalAddend addend = someTimestampTemporalAddend(string);
+            return addend.isBadValue() ? null : addend;
+        }
+        return null;
+    }
+
     private java.util.Date someTemporalValue(Field field, String string) {
         if (StringUtils.isBlank(string)) {
             return null;
@@ -5139,12 +5401,7 @@ public abstract class AbstractDataArtifact extends AbstractArtifact implements A
         if (StringUtils.isBlank(string)) {
             return null;
         }
-        TemporalAddend addend = TemporalAddend.temporalAddendValueOf(string,
-            TemporalAddend.DATE_UNITS,
-            TemporalAddend.DAYS,
-            TemporalAddend.MIN_INT_VALUE,
-            TemporalAddend.MAX_INT_VALUE
-        );
+        TemporalAddend addend = someDateTemporalAddend(string);
         if (addend == null) {
             try {
                 return Date.valueOf(string);
@@ -5166,12 +5423,7 @@ public abstract class AbstractDataArtifact extends AbstractArtifact implements A
         if (StringUtils.isBlank(string)) {
             return null;
         }
-        TemporalAddend addend = TemporalAddend.temporalAddendValueOf(string,
-            TemporalAddend.TIME_UNITS,
-            TemporalAddend.HOURS,
-            TemporalAddend.MIN_INT_VALUE,
-            TemporalAddend.MAX_INT_VALUE
-        );
+        TemporalAddend addend = someTimeTemporalAddend(string);
         if (addend == null) {
             try {
                 return Time.valueOf(string);
@@ -5193,12 +5445,7 @@ public abstract class AbstractDataArtifact extends AbstractArtifact implements A
         if (StringUtils.isBlank(string)) {
             return null;
         }
-        TemporalAddend addend = TemporalAddend.temporalAddendValueOf(string,
-            TemporalAddend.DATE_TIME_UNITS,
-            TemporalAddend.DAYS,
-            TemporalAddend.MIN_INT_VALUE,
-            TemporalAddend.MAX_INT_VALUE
-        );
+        TemporalAddend addend = someTimestampTemporalAddend(string);
         if (addend == null) {
             try {
                 return Timestamp.valueOf(string);
@@ -5212,6 +5459,33 @@ public abstract class AbstractDataArtifact extends AbstractArtifact implements A
             return null;
         }
         return TimeUtils.addTimestamp(currentTimestamp, Math.toIntExact(addend.getQuantity()), addend.getUnitCode());
+    }
+
+    private TemporalAddend someDateTemporalAddend(String string) {
+        return TemporalAddend.temporalAddendValueOf(string,
+            TemporalAddend.DATE_UNITS,
+            TemporalAddend.DAYS,
+            TemporalAddend.MIN_INT_VALUE,
+            TemporalAddend.MAX_INT_VALUE
+        );
+    }
+
+    private TemporalAddend someTimeTemporalAddend(String string) {
+        return TemporalAddend.temporalAddendValueOf(string,
+            TemporalAddend.TIME_UNITS,
+            TemporalAddend.HOURS,
+            TemporalAddend.MIN_INT_VALUE,
+            TemporalAddend.MAX_INT_VALUE
+        );
+    }
+
+    private TemporalAddend someTimestampTemporalAddend(String string) {
+        return TemporalAddend.temporalAddendValueOf(string,
+            TemporalAddend.DATE_TIME_UNITS,
+            TemporalAddend.DAYS,
+            TemporalAddend.MIN_INT_VALUE,
+            TemporalAddend.MAX_INT_VALUE
+        );
     }
 
     private void logInvalidDataExpression(Field field, String string, Exception e) {
@@ -7353,10 +7627,14 @@ public abstract class AbstractDataArtifact extends AbstractArtifact implements A
         } else if (this instanceof CharacterData) {
             return 48; // 50/1000
         } else if (this instanceof StringData) {
+            StringData data = (StringData) this;
+            EncodingType encoding = data.getEncodingType();
+            if (encoding != null && !encoding.equals(EncodingType.UNSPECIFIED)) {
+                return 0;
+            }
             if (isVariantStringField()) {
                 return 120; // 125/1000
             }
-            StringData data = (StringData) this;
             Integer maxLength = data.getMaxLength();
             if (maxLength == null) {
                 return 384; // 400/1000

@@ -39,6 +39,18 @@ public class PaqueteProcesamientoAuditoria extends PaqueteProcesamientoBase {
         // </editor-fold>
     }
 
+    // <editor-fold defaultstate="collapsed" desc="print">
+    @Override
+    public void print() {
+        super.print();
+        System.out.println(ArchivoAdjunto);
+        System.out.println(RastroFuncion);
+        System.out.println(RastroFuncionPar);
+        System.out.println(RastroInforme);
+        System.out.println(RastroProceso);
+    }
+    // </editor-fold>
+
     ArchivoAdjunto ArchivoAdjunto;
 
     RastroFuncion RastroFuncion;

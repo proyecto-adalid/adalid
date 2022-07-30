@@ -12,8 +12,14 @@
  */
 package adalid.util.sql;
 
+import adalid.commons.util.*;
 import adalid.commons.velocity.*;
 import java.sql.SQLException;
+import java.util.Collection;
+import java.util.LinkedHashSet;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeMap;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
@@ -41,11 +47,15 @@ public class SqlWriter extends SqlReader {
 
     private String _projectAlias;
 
-    private static String PROJECT_ALIAS_PATTERN = "^[a-z][a-z0-9]*$";
-
     public String getProjectAlias() {
         return _projectAlias == null ? defaultProjectAlias() : _projectAlias;
     }
+
+    public String getProjectShortAlias() {
+        return _projectAlias == null ? defaultProjectShortAlias() : _projectAlias;
+    }
+
+    private static final String PROJECT_ALIAS_PATTERN = "^[a-z][a-z0-9]*$";
 
     public void setProjectAlias(String alias) {
         if (StringUtils.isBlank(alias)) {
@@ -59,9 +69,16 @@ public class SqlWriter extends SqlReader {
         }
     }
 
-    private String defaultProjectAlias() {
+    private String defaultProjectShortAlias() {
         boolean oracle = StringUtils.equalsIgnoreCase(_dbms, "oracle");
         return (oracle ? _schema : _database).toLowerCase();
+    }
+
+    private String defaultProjectAlias() {
+        final String MAVEN = "1", POSTGRESQL = "0", ORACLE = "1", GLASSFISH = "1", WILDFLY = "2";
+        boolean oracle = StringUtils.equalsIgnoreCase(_dbms, "oracle");
+        return defaultProjectShortAlias() + MAVEN + (oracle ? ORACLE : POSTGRESQL)
+            + (StringUtils.containsIgnoreCase(getProjectPlatform(), "glassfish") ? GLASSFISH : WILDFLY);
     }
 
     private boolean checkProjectAlias() {
@@ -78,6 +95,23 @@ public class SqlWriter extends SqlReader {
         } else {
             return true;
         }
+    }
+
+    private String _projectPlatform;
+
+    public String getProjectPlatform() {
+        return _projectPlatform == null ? defaultProjectPlatform() : _projectPlatform;
+    }
+
+    /* TODO: enable this setter
+    public void setProjectPlatform(String platform) {
+        _projectPlatform = platform;
+    }
+
+    /**/
+    private String defaultProjectPlatform() {
+        final String[] array = {"PLATAFORMA", "MAVEN", _dbms.toUpperCase(), "WILDFLY"};
+        return StringUtils.join(array, '_');
     }
 
     private boolean _createAndDropDefaults;
@@ -98,7 +132,7 @@ public class SqlWriter extends SqlReader {
 
     @Override
     public String getTargetMetajavaPackage() {
-        return getDefaultPackage() + "." + getProjectAlias();
+        return getDefaultPackage() + "." + getProjectShortAlias();
     }
 
     private String _targetMetaProjectsPackage;
@@ -119,6 +153,92 @@ public class SqlWriter extends SqlReader {
 
     public void setTargetMetaEntitiesPackage(String packageName) {
         _targetMetaEntitiesPackage = packageName;
+    }
+
+    private static final String COLLISION_SUFFIX = "1d3c5";
+
+    public String getCollisionSuffix() {
+        return COLLISION_SUFFIX;
+    }
+
+    public Set<String> getJavaKeywords() {
+        return JavaUtils.getJavaKeywordSet();
+    }
+
+    public int getColumnNameError(String tabname, String colname) {
+        if (StringUtils.isBlank(tabname)) {
+            logger.error("missing table name");
+            return -1;
+        } else if (StringUtils.isBlank(colname)) {
+            logger.error("missing column name");
+            return -1;
+        } else if (colname.length() < 2) {
+            logger.error(tabname + "." + colname + " must be renamed; " + colname + " is too short an artifact name");
+            return 1;
+        } else if (!colname.matches("^[a-zA-Z]\\w*$")) {
+            logger.error(tabname + "." + colname + " must be renamed; " + colname + " is an invalid artifact name");
+            return 2;
+        } else if (colname.matches("^[a-z][A-Z].*$")) {
+            logger.error(tabname + "." + colname + " must be renamed; " + colname + " is an invalid artifact name (begins with [a-z][A-Z])");
+            return 3;
+        } else if (colname.matches("^[A-Z][A-Z]+[a-z].*$")) {
+            logger.error(tabname + "." + colname + " must be renamed; " + colname + " is an invalid artifact name (begins with [A-Z][A-Z]+[a-z])");
+            return 4;
+        }
+        return 0;
+    }
+
+    private int _maxTablePrefixLength;
+
+    public int isMaxTablePrefixLength() {
+        return _maxTablePrefixLength;
+    }
+
+    public void setMaxTablePrefixLength(int prefixLength) {
+        _maxTablePrefixLength = prefixLength;
+    }
+
+    private final Map<String, Set<SqlTable>> _modules = new TreeMap<>();
+
+    public Set<String> getModules() {
+        if (_modules.isEmpty()) {
+            fillModules();
+        }
+        return _modules.keySet();
+    }
+
+    private static final String PREFIJO_MODULO = "Modulo";
+
+    private static final String MODULO_UNO = "Modulo1";
+
+    private void fillModules() {
+        Set<SqlTable> set;
+        String prefix;
+        String module = MODULO_UNO;
+        Map<String, SqlTable> tables = getTablesMap();
+        Set<String> tableNames = tables.keySet();
+        for (String name : tableNames) {
+            if (_maxTablePrefixLength > 0) {
+                prefix = StringUtils.substringBefore(name, "_").toUpperCase();
+                module = prefix.length() > _maxTablePrefixLength ? MODULO_UNO : PREFIJO_MODULO + prefix;
+            }
+            if (_modules.containsKey(module)) {
+                set = _modules.get(module);
+            } else {
+                set = new LinkedHashSet<>();
+                _modules.put(module, set);
+            }
+            SqlTable table = tables.get(name);
+            set.add(table);
+        }
+    }
+
+    public Collection<SqlTable> getTables(String module) {
+        return _modules.get(module);
+    }
+
+    public String getModuleID(String module) {
+        return StringUtils.substringAfter(module, PREFIJO_MODULO);
     }
 
     public boolean write() {

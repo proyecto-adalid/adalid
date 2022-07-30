@@ -39,6 +39,7 @@ import meta.entidad.comun.configuracion.basica.TipoValor;
 @EntityDetailView(enabled = Kleenean.TRUE)
 @EntityTreeView(enabled = Kleenean.FALSE)
 @EntityConsoleView(enabled = Kleenean.FALSE)
+@EntityReferenceDisplay(style = EntityReferenceStyle.NAME_AND_CHARACTER_KEY)
 public class FuncionParametro extends meta.entidad.comun.configuracion.basica.FuncionParametro {
 
     // <editor-fold defaultstate="collapsed" desc="class constructors">
@@ -50,7 +51,6 @@ public class FuncionParametro extends meta.entidad.comun.configuracion.basica.Fu
     @ForeignKey(onDelete = OnDeleteAction.NONE, onUpdate = OnUpdateAction.NONE)
     @ManyToOne(navigability = Navigability.UNIDIRECTIONAL, view = MasterDetailView.NONE)
     @ColumnField(nullable = Kleenean.FALSE)
-    @Allocation(maxDepth = 1, maxRound = 0)
     public TipoDatoPar tipoDatoPar;
 
     @PropertyField(hidden = Kleenean.TRUE)
@@ -92,6 +92,9 @@ public class FuncionParametro extends meta.entidad.comun.configuracion.basica.Fu
     public BooleanProperty esParametroVinculado;
 
     @ColumnField(nullable = Kleenean.FALSE)
+    public BooleanProperty esPassword;
+
+    @ColumnField(nullable = Kleenean.FALSE)
     @PropertyField(table = Kleenean.FALSE)
     public IntegerProperty indice;
 
@@ -99,58 +102,49 @@ public class FuncionParametro extends meta.entidad.comun.configuracion.basica.Fu
     @ManyToOne(navigability = Navigability.BIDIRECTIONAL, view = MasterDetailView.TABLE_AND_DETAIL)
     @ColumnField(nullable = Kleenean.FALSE)
     @PropertyField(table = Kleenean.FALSE)
-    @Allocation(maxDepth = 1, maxRound = 0)
     public Funcion funcion;
 
     @ForeignKey(onDelete = OnDeleteAction.NONE, onUpdate = OnUpdateAction.CASCADE)
     @ManyToOne(navigability = Navigability.UNIDIRECTIONAL, view = MasterDetailView.NONE)
     @ColumnField(nullable = Kleenean.FALSE)
     @PropertyField(table = Kleenean.FALSE)
-    @Allocation(maxDepth = 1, maxRound = 0)
     public Parametro parametro;
 
     @ForeignKey(onDelete = OnDeleteAction.NONE, onUpdate = OnUpdateAction.NONE)
     @ManyToOne(navigability = Navigability.UNIDIRECTIONAL, view = MasterDetailView.NONE)
     @ColumnField(nullable = Kleenean.FALSE)
     @PropertyField(table = Kleenean.FALSE)
-    @Allocation(maxDepth = 1, maxRound = 0)
     public TipoParametro tipoParametro;
 
     @ForeignKey(onDelete = OnDeleteAction.NONE, onUpdate = OnUpdateAction.NONE)
     @ManyToOne(navigability = Navigability.UNIDIRECTIONAL, view = MasterDetailView.NONE)
-    @Allocation(maxDepth = 1, maxRound = 0)
     @PropertyField(hidden = Kleenean.TRUE)
     public TipoComparacion tipoComparacion;
 
     @ForeignKey(onDelete = OnDeleteAction.NONE, onUpdate = OnUpdateAction.NONE)
     @ManyToOne(navigability = Navigability.UNIDIRECTIONAL, view = MasterDetailView.NONE)
     @ColumnField(nullable = Kleenean.FALSE)
-    @Allocation(maxDepth = 1, maxRound = 0)
     public TipoValor tipoValor;
 
     @ForeignKey(onDelete = OnDeleteAction.NONE, onUpdate = OnUpdateAction.NONE)
     @ManyToOne(navigability = Navigability.UNIDIRECTIONAL, view = MasterDetailView.NONE)
     @ColumnField(nullable = Kleenean.FALSE)
     @PropertyField(table = Kleenean.FALSE)
-    @Allocation(maxDepth = 1, maxRound = 0)
     public RangoAgregacion rangoAgregacion;
 
     @ForeignKey(onDelete = OnDeleteAction.NONE, onUpdate = OnUpdateAction.NONE)
     @ManyToOne(navigability = Navigability.UNIDIRECTIONAL, view = MasterDetailView.NONE)
     @ColumnField(nullable = Kleenean.FALSE)
     @PropertyField(table = Kleenean.FALSE)
-    @Allocation(maxDepth = 1, maxRound = 0)
     public RangoComparacion rangoComparacion;
 
     @ForeignKey(onDelete = OnDeleteAction.NONE, onUpdate = OnUpdateAction.NONE)
     @ManyToOne(navigability = Navigability.UNIDIRECTIONAL, view = MasterDetailView.NONE)
-    @Allocation(maxDepth = 1, maxRound = 0)
     public Funcion funcionReferencia;
 
     @ForeignKey(onDelete = OnDeleteAction.NONE, onUpdate = OnUpdateAction.NONE)
     @ManyToOne(navigability = Navigability.UNIDIRECTIONAL, view = MasterDetailView.NONE)
     @PropertyField(table = Kleenean.TRUE)
-    @Allocation(maxDepth = 1, maxRound = 0)
     public ClaseRecurso claseRecursoValor;
 
     @Override
@@ -169,6 +163,8 @@ public class FuncionParametro extends meta.entidad.comun.configuracion.basica.Fu
         esParametroHeredado.setDefaultValue(false);
         esParametroVinculado.setInitialValue(false);
         esParametroVinculado.setDefaultValue(false);
+        esPassword.setInitialValue(false);
+        esPassword.setDefaultValue(false);
         indice.setInitialValue(0);
         indice.setDefaultValue(0);
         tipoValor.setInitialValue(tipoValor.CONTINUO);
@@ -225,6 +221,9 @@ public class FuncionParametro extends meta.entidad.comun.configuracion.basica.Fu
         esParametroVinculado.setLocalizedLabel(SPANISH, "parámetro vinculado");
         esParametroVinculado.setLocalizedShortLabel(ENGLISH, "linked");
         esParametroVinculado.setLocalizedShortLabel(SPANISH, "vinculado");
+        /**/
+        esPassword.setLocalizedLabel(ENGLISH, "password");
+        esPassword.setLocalizedLabel(SPANISH, "contraseña");
         /**/
         indice.setLocalizedLabel(ENGLISH, "index");
         indice.setLocalizedLabel(SPANISH, "índice");
@@ -287,7 +286,7 @@ public class FuncionParametro extends meta.entidad.comun.configuracion.basica.Fu
         tab110.newTabField(funcion, parametro, tipoParametro, tipoDatoPar, claseRecursoValor, funcionReferencia);
         /**/
         tab120.newTabField(claseJavaFuncionParametro, idListaValor, idClaseObjetoValor, valorMinimo, valorMaximo, valorOmision);
-        tab120.newTabField(criterioBusqueda, accesoRestringido, esParametroSinRastro, esParametroSegmento, esParametroHeredado, esParametroVinculado);
+        tab120.newTabField(criterioBusqueda, accesoRestringido, esParametroSinRastro, esParametroSegmento, esParametroHeredado, esParametroVinculado, esPassword);
         tab120.newTabField(indice, tipoComparacion, tipoValor, rangoAgregacion, rangoComparacion);
         /**/
         // <editor-fold defaultstate="collapsed" desc="localization of Funcion's tabs">

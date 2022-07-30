@@ -9,11 +9,14 @@
  */
 package ${package}.meta.util.windows;
 
+import adalid.util.*;
+
 /**
  * RunZipRelease sirve para ejecutar el script release.bat, el cual sirve para generar el zip de instalación.
  *
  * @author ADALID meta-jee2-archetype
  */
+@RunnableClass
 public class RunZipRelease extends adalid.util.io.SysCmdRunner {
 
     /**

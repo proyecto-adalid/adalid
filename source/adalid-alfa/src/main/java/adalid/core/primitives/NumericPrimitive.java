@@ -705,8 +705,8 @@ public abstract class NumericPrimitive extends Primitive implements Intervalized
      * @return the data min
      */
     @Override
-    public Object getDataGenMin() {
-        Object dataGenMin = super.getDataGenMin();
+    public Object getDataGenMinValue() {
+        Object dataGenMin = super.getDataGenMinValue();
         if (dataGenMin != null) {
             return dataGenMin;
         }
@@ -721,8 +721,8 @@ public abstract class NumericPrimitive extends Primitive implements Intervalized
      * @return the data max
      */
     @Override
-    public Object getDataGenMax() {
-        Object dataGenMax = super.getDataGenMax();
+    public Object getDataGenMaxValue() {
+        Object dataGenMax = super.getDataGenMaxValue();
         if (dataGenMax != null) {
             return dataGenMax;
         }

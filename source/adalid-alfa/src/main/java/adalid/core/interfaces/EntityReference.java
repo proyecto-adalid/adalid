@@ -44,6 +44,12 @@ public interface EntityReference extends Entity, Parameter, Property {
     boolean isMasterDetailViewMenuOptionEnabled();
 
     /**
+     * @param display the display that is opened by the menu option
+     * @return the master/detail view menu option enabled indicator
+     */
+    boolean isMasterDetailViewMenuOptionEnabled(Display display);
+
+    /**
      * @return the fetch type
      */
     FetchType getFetchType();

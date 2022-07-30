@@ -169,9 +169,8 @@ public class Key extends AbstractArtifact {
         return s4;
     }
     /**/
-    char _finaliseFields;
     // </editor-fold>
-
+/**/
     // <editor-fold defaultstate="collapsed" desc="finaliseKeyFieldArray">
     /* commented on 21/03/2021
     private void finaliseKeyFieldArray() {
@@ -209,9 +208,8 @@ public class Key extends AbstractArtifact {
         _keyFieldsLastKey = key;
     }
     /**/
-    char _finaliseKeyFieldArray;
     // </editor-fold>
-
+/**/
     /**
      * El método newKeyField se utiliza para agregar propiedades a la clave. Las claves pueden estar integradas por una o más propiedades, y para cada
      * propiedad se puede establecer el orden en el índice correspondiente. La posición relativa de cada propiedad en el índice está determinado por
@@ -286,9 +284,8 @@ public class Key extends AbstractArtifact {
         return string;
     }
     /**/
-    char _toString;
     // </editor-fold>
-
+/**/
     public boolean isValidKeyFor(PersistentEntity entity) {
         if (_containsNullProperties) {
             return false;

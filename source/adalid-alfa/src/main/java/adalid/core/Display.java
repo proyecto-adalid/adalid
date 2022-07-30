@@ -89,7 +89,7 @@ public abstract class Display extends AbstractArtifact implements Comparable<Dis
 
     // <editor-fold defaultstate="collapsed" desc="field getters and setters">
     public boolean isMenuOptionEnabled() {
-        return _reference == null || _reference.isMasterDetailViewMenuOptionEnabled();
+        return _reference == null || _reference.isMasterDetailViewMenuOptionEnabled(this);
     }
 
     /**
@@ -635,20 +635,28 @@ public abstract class Display extends AbstractArtifact implements Comparable<Dis
 
     public List<Entity> getOverlayEntitiesList() {
         if (_entity != null) {
-            Map<String, Entity> map = _entity.getOverlayEntitiesMap();
-            List<? extends DisplayField> rootMasterHeadingFields = getRootMasterHeadingFields();
-            if (_master != null && rootMasterHeadingFields != null) {
-                Property property;
-                Entity entity;
-                for (DisplayField field : rootMasterHeadingFields) {
-                    property = field.getProperty();
-                    if (property != null && property.isHeadingField() && property.isOverlayableEntityReference()) {
-                        entity = (Entity) property;
-                        map.put(entity.getRoot().getName(), entity);
+            if (DisplayFormat.TREE.equals(_displayFormat)) {
+                if (_entity.isOverlayableEntity()) {
+                    List<Entity> list = new ArrayList<>();
+                    list.add(_entity);
+                    return list;
+                }
+            } else {
+                Map<String, Entity> map = _entity.getOverlayEntitiesMap();
+                List<? extends DisplayField> rootMasterHeadingFields = getRootMasterHeadingFields();
+                if (_master != null && rootMasterHeadingFields != null) {
+                    Property property;
+                    Entity entity;
+                    for (DisplayField field : rootMasterHeadingFields) {
+                        property = field.getProperty();
+                        if (property != null && property.isHeadingField() && property.isOverlayableEntityReference()) {
+                            entity = (Entity) property;
+                            map.put(entity.getRoot().getName(), entity);
+                        }
                     }
                 }
+                return new ArrayList<>(map.values());
             }
-            return new ArrayList<>(map.values());
         }
         return new ArrayList<>();
     }

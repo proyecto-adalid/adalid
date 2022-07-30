@@ -7,10 +7,12 @@
  * Este programa se distribuye con la esperanza de que pueda ser util, pero SIN NINGUNA GARANTIA;
  * vea la licencia "GNU General Public License" para obtener mas informacion.
  */
-package ${package}.meta.util.netbeans;
+package ${package}.meta.util.config;
+
+import adalid.util.*;
 
 /**
- * CopyProjectFiles sirve para copiar archivos de configuración de NetBeans del directorio de ejemplos al directorio raíz del proyecto.
+ * CopyNetBeansFiles sirve para copiar archivos de configuración de NetBeans del directorio de ejemplos al directorio raíz del proyecto.
  *
  * Los archivos del directorio src/main/resources/configuration/NetBeans son ejemplos de archivos de configuración de NetBeans. Puede copiarlos al
  * directorio raíz del proyecto y modificar las copias si fuese necesario.
@@ -29,7 +31,8 @@ package ${package}.meta.util.netbeans;
  *
  * @author ADALID meta-jee2-archetype
  */
-public class CopyProjectFiles extends adalid.util.netbeans.CopyProjectFiles {
+@RunnableClass(false)
+public class CopyNetBeansFiles extends adalid.util.meta.config.CopyNetBeansFiles {
 
     public static void main(String[] args) {
         copy();

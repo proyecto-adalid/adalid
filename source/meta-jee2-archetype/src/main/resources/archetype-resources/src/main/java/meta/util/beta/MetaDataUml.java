@@ -9,6 +9,8 @@
  */
 package ${package}.meta.util.beta;
 
+import adalid.util.*;
+
 /**
  * MetaDataUml genera los diagramas UML de actividad, clase y estado de su aplicación utilizando la plataforma meta-data-uml.
  * <p>
@@ -29,6 +31,7 @@ package ${package}.meta.util.beta;
  *
  * @author ADALID meta-jee2-archetype
  */
+@RunnableClass
 public class MetaDataUml extends adalid.util.Utility {
 
     /**

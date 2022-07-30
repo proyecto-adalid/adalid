@@ -9,6 +9,8 @@
  */
 package ${package}.meta;
 
+import adalid.util.*;
+
 /**
  * Runner sirve para buscar, seleccionar y ejecutar un proyecto maestro o una clase utilitaria.
  * <p>
@@ -18,6 +20,7 @@ package ${package}.meta;
  *
  * @author ADALID meta-jee2-archetype
  */
+@RunnableClass(false)
 class Runner extends adalid.util.Runner {
 
     public static void main(String[] args) {

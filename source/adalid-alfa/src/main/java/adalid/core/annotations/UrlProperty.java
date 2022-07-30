@@ -79,4 +79,23 @@ public @interface UrlProperty {
      */
     String searchURL() default TrustedSites.GOOGLE;
 
+    /**
+     * encoding indica si se debe codificar, o no, el valor de la propiedad para almacenarlo en la base de datos. Su valor es uno de los elementos de
+     * la enumeración Kleenean. Seleccione TRUE para codificar el valor; en caso contrario, seleccione FALSE. Alternativamente, omita el elemento o
+     * seleccione UNSPECIFIED para utilizar el valor predeterminado del atributo. El valor predeterminado del atributo es FALSE.
+     * <p>
+     * <b>Advertencias</b>
+     * <ul>
+     * <li>La codificación limita significativamente el uso de la propiedad en consultas e informes.</li>
+     * <li>El algoritmo de codificación utilizado es Base64, el cual no es un algoritmo de cifrado, se decodifica fácilmente y, por lo tanto, no debe
+     * utilizarse como un método de cifrado seguro.</li>
+     * <li>La longitud del valor codificado es un tercio mayor que la longitud del valor original; si, por ejemplo, la longitud máxima de la propiedad
+     * se establece en 2000, entonces la propiedad solo puede contener valores de hasta 1500 caracteres.</li>
+     * </ul><p>
+     *
+     * @return encoding
+     * @see <a href="https://docs.oracle.com/javase/8/docs/api/java/util/Base64.html">Class Base64</a>
+     */
+    Kleenean encoding() default Kleenean.UNSPECIFIED;
+
 }

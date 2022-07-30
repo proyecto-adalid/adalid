@@ -374,6 +374,10 @@ class XS1 {
     }
 
     static Object initialiseField(Object declaringObject, Field declaringField) {
+        return initialiseField(declaringObject, declaringField, true);
+    }
+
+    private static Object initialiseField(Object declaringObject, Field declaringField, boolean casting) {
         if (declaringObject == null || declaringField == null) {
             return null;
         }
@@ -400,13 +404,38 @@ class XS1 {
         }
         String errmsg = "failed to create a new instance of field " + declaringField + " at " + declaringObject;
         try {
-            CastingField castingFieldAnnotation = getCastingFieldAnnotation(declaringField, fieldType);
+            CastingField castingFieldAnnotation = casting ? getCastingFieldAnnotation(declaringField, fieldType) : null;
             if (castingFieldAnnotation != null) {
                 String name = castingFieldAnnotation.value();
                 Field field = getFieldToBeCasted(true, fieldName, name, declaringClass, fieldType);
                 if (field != null) {
                     errmsg = "failed to set casting field " + declaringField + " at " + declaringObject;
                     instance = field.get(declaringObject);
+                    if (instance instanceof Artifact) {
+                        Artifact castedArtifact = (Artifact) instance;
+                        Class<? extends Object> castedArtifactClass = castedArtifact.getClass();
+                        if (fieldType.isAssignableFrom(castedArtifactClass)) {
+                            // can return instance
+                        } else {
+                            instance = null;
+                            if (castedArtifactClass.isAssignableFrom(fieldType)) {
+                                Object castingInstance = initialiseField(declaringObject, declaringField, false);
+                                if (castingInstance instanceof AbstractArtifact) {
+                                    Field castedArtifactDeclaringField = castedArtifact.getDeclaringField();
+                                    Artifact castedArtifactDeclaringArtifact = castedArtifact.getDeclaringArtifact();
+                                    // do not declare here; it will be declared at the corresponding finalise method
+                                    AbstractArtifact castingArtifact = (AbstractArtifact) castingInstance;
+                                    castingArtifact.setName(castedArtifact.getName());
+                                    castingArtifact.setDeclaringArtifact(castedArtifactDeclaringArtifact);
+                                    castingArtifact.setDeclaringField(castedArtifactDeclaringField);
+                                    /**/
+                                    castedArtifactDeclaringField.set(castedArtifactDeclaringArtifact, castingArtifact);
+                                    instance = castingArtifact;
+                                    /**/
+                                }
+                            }
+                        }
+                    }
                 }
             } else if (memberClass && enclosingClass != null && enclosingClass.isAssignableFrom(declaringClass)) {
                 if (Operation.class.isAssignableFrom(fieldType)) {

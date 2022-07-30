@@ -1182,7 +1182,28 @@ public class EntityCollection extends AbstractArtifact implements AnnotatableArt
         boolean log = depth() == 0;
         String fullName = getFullName();
         Entity declaringEntity = getDeclaringEntity();
+        // since 04/07/2022
+        Field declaringField = getDeclaringField();
+        if (declaringField == null) {
+            String message = "no declaring field defined for " + fullName;
+            logger.fatal(message);
+            Project.increaseParserErrorCount();
+            return false;
+        }
+        Class<?> declaringFieldClass = declaringField.getDeclaringClass();
+        Entity declaringFieldDeclaringEntity = TLC.getProject().getEntity(declaringFieldClass);
+        if (declaringFieldDeclaringEntity == null) {
+            String message = "no declaring entity defined for " + declaringField;
+            logger.fatal(message);
+            Project.increaseParserErrorCount();
+            return false;
+        }
+        if (!declaringFieldDeclaringEntity.equals(declaringEntity)) {
+            declaringEntity = declaringFieldDeclaringEntity;
+        }
+        /**/
         _sourceEntity = declaringEntity;
+        /* until 04/07/2000
         if (_sourceEntity == null) {
 //          if (log) {
             String message = "no source entity defined for " + fullName;
@@ -1191,6 +1212,7 @@ public class EntityCollection extends AbstractArtifact implements AnnotatableArt
 //          }
             return false;
         }
+        /**/
         _targetEntity = _targetEntityClass == null || _targetEntityClass == void.class ? null : TLC.getProject().getEntity(_targetEntityClass);
         if (_targetEntity == null) {
 //          if (log) {

@@ -9,6 +9,8 @@
  */
 package ${package}.meta.util.linux;
 
+import adalid.util.*;
+
 /**
  * RunZipRelease sirve para ejecutar el script release.sh, el cual sirve para generar el zip de instalación.
  * <p>
@@ -18,6 +20,7 @@ package ${package}.meta.util.linux;
  *
  * @author ADALID meta-jee2-archetype
  */
+@RunnableClass(false)
 public class RunZipRelease extends adalid.util.io.SysCmdRunner {
 
     /**

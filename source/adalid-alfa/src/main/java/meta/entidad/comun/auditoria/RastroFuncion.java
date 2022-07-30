@@ -16,6 +16,7 @@ import adalid.core.*;
 import adalid.core.annotations.*;
 import adalid.core.enums.*;
 import adalid.core.interfaces.*;
+import adalid.core.page.format.*;
 import adalid.core.parameters.*;
 import adalid.core.properties.*;
 import java.lang.reflect.Field;
@@ -57,7 +58,6 @@ public class RastroFuncion extends AbstractPersistentEntity {
 
     @OwnerProperty
     @SegmentProperty
-//->@Allocation(maxDepth = 2, maxRound = 1)
     @ColumnField(nullable = Kleenean.TRUE)
     @ForeignKey(onDelete = OnDeleteAction.NONE, onUpdate = OnUpdateAction.NONE)
     @ManyToOne(navigability = Navigability.UNIDIRECTIONAL, view = MasterDetailView.NONE)
@@ -368,11 +368,17 @@ public class RastroFuncion extends AbstractPersistentEntity {
     @Override
     protected void settleViews() {
         super.settleViews();
+        /**/
+        rastros.setPageFormatClass(DefaultPageFormat.class);
+        /**/
         ViewField vf;
+        final int controlGroupReportElementsWidth = 720;
         /**/
-        rastros.newControlField(codigoUsuario);
+        vf = rastros.newControlField(codigoUsuario);
+        vf.setPixels(controlGroupReportElementsWidth);
         /**/
-        rastros.newHeadingField(nombreUsuario, codigoUsuario);
+        vf = rastros.newHeadingField(nombreUsuario, codigoUsuario);
+        vf.setPixels(controlGroupReportElementsWidth);
         /**/
         vf = rastros.newDetailField(fechaHoraEjecucion, SortOption.ASC);
         vf.setPixels(125);
@@ -391,6 +397,7 @@ public class RastroFuncion extends AbstractPersistentEntity {
         /**/
         vf = rastros.newDetailField(condicionEjeFun.codigo);
         vf.setPixels(105);
+        /**/
         // <editor-fold defaultstate="collapsed" desc="localization of RastroFuncion's views">
         rastros.setLocalizedLabel(ENGLISH, "Function Trails");
         rastros.setLocalizedLabel(SPANISH, "Rastros de Función");
@@ -476,6 +483,13 @@ public class RastroFuncion extends AbstractPersistentEntity {
         @Override
         protected void settleParameters() {
             super.settleParameters();
+            /**/
+            desde.setMinValue("2001-01-01");
+            desde.setMaxValue(SpecialTemporalValue.CURRENT_TIMESTAMP);
+            /**/
+            hasta.setMinValue(desde);
+            hasta.setMaxValue(SpecialTemporalValue.CURRENT_TIMESTAMP);
+            /**/
             // <editor-fold defaultstate="collapsed" desc="localization of ExportarArchivoRastros's parameters">
             desde.setLocalizedLabel(ENGLISH, "from");
             desde.setLocalizedLabel(SPANISH, "desde");
@@ -535,6 +549,13 @@ public class RastroFuncion extends AbstractPersistentEntity {
         @Override
         protected void settleParameters() {
             super.settleParameters();
+            /**/
+            desde.setMinValue("2001-01-01");
+            desde.setMaxValue(SpecialTemporalValue.CURRENT_TIMESTAMP);
+            /**/
+            hasta.setMinValue(desde);
+            hasta.setMaxValue(SpecialTemporalValue.CURRENT_TIMESTAMP);
+            /**/
             // <editor-fold defaultstate="collapsed" desc="localization of EmitirInformeRastros's parameters">
             desde.setLocalizedLabel(ENGLISH, "from");
             desde.setLocalizedLabel(SPANISH, "desde");

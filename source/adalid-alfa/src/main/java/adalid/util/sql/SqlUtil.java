@@ -117,7 +117,7 @@ public class SqlUtil {
         final String title = "Choose";
         final int type = JOptionPane.QUESTION_MESSAGE;
 //      final Icon icon = null;
-        final Object[] values = {"oracle", "postgresql"};
+        final Object[] values = {"postgresql", "oracle"};
         final Object initialValue = values[0];
         logger.info(title + " " + message + " " + Arrays.toString(values));
         Object value = JOptionPane.showInputDialog(null, message, title, type, null, values, initialValue);

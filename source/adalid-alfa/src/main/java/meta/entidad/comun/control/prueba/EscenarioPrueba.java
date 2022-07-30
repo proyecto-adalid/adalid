@@ -44,6 +44,14 @@ public class EscenarioPrueba extends PersistentEntityBase {
     // </editor-fold>
 
     @Override
+    protected void addAllocationStrings() {
+        super.addAllocationStrings();
+        super.addAllocationStrings(
+            "caso.propietario"
+        );
+    }
+
+    @Override
     protected void settleAttributes() {
         super.settleAttributes();
 //      setSchema(ProyectoBase.getEsquemaEntidadesComunes());
@@ -114,7 +122,6 @@ public class EscenarioPrueba extends PersistentEntityBase {
     @PropertyField(create = Kleenean.TRUE, update = Kleenean.TRUE, table = Kleenean.TRUE, report = Kleenean.TRUE)
     public TipoResultadoPrueba tipoResultado;
 
-    @Allocation(maxDepth = 2, maxRound = 0)
     @ColumnField(nullable = Kleenean.FALSE)
     @ForeignKey(onDelete = OnDeleteAction.NONE, onUpdate = OnUpdateAction.NONE)
     @ManyToOne(navigability = Navigability.UNIDIRECTIONAL, view = MasterDetailView.TABLE_AND_DETAIL)
@@ -222,7 +229,6 @@ public class EscenarioPrueba extends PersistentEntityBase {
     public class Cargar extends ProcessOperation {
 
         @InstanceReference
-//      @Allocation(maxDepth = 1, maxRound = 0)
         protected EscenarioPrueba escenario;
 
         @FileReference

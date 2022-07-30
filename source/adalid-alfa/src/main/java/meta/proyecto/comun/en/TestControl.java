@@ -56,6 +56,37 @@ public class TestControl extends Project {
         // </editor-fold>
     }
 
+    // <editor-fold defaultstate="collapsed" desc="print">
+    @Override
+    public void print() {
+        super.print();
+        System.out.println(x010);
+        System.out.println(x030);
+        System.out.println(x080);
+        System.out.println(x08030);
+        System.out.println(x0803010);
+        System.out.println(x08040);
+        System.out.println(x0804010);
+        System.out.println(x08050);
+        System.out.println(x0805010);
+        System.out.println(x05010);
+        System.out.println(x050);
+        System.out.println(x03010);
+        System.out.println(x04010);
+        System.out.println(x020);
+        System.out.println(x0501010);
+        System.out.println(x01020);
+        System.out.println(x01010);
+        System.out.println(x040);
+        System.out.println(TipoDocumentoPrueba);
+        System.out.println(TipoPiezaPrueba);
+        System.out.println(TipoResultadoPrueba);
+        System.out.println(consulta);
+        System.out.println(procesamiento);
+        System.out.println(registro);
+    }
+    // </editor-fold>
+
     AmbientePrueba x010;
 
     CasoPrueba x030;

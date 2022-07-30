@@ -94,6 +94,8 @@ public abstract class AbstractOrderedPairX extends AbstractExpression implements
                 case X_IMPLIES_Y:
                     setDataType(Boolean.class);
                     break;
+                case ASCII:
+                case DIACRITICLESS_ASCII:
                 case CONCAT:
                 case FORMAT:
                 case LEFT:

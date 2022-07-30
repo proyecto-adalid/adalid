@@ -203,7 +203,6 @@ public class EjecucionPrueba extends PersistentEntityBase {
     public class Cargar extends ProcessOperation {
 
         @InstanceReference
-//      @Allocation(maxDepth = 1, maxRound = 0)
         protected EjecucionPrueba ejecucion;
 
         @FileReference
@@ -245,7 +244,6 @@ public class EjecucionPrueba extends PersistentEntityBase {
     public class AsignarResponsable extends ProcessOperation {
 
         @InstanceReference
-//      @Allocation(maxDepth = 1, maxRound = 0)
         protected EjecucionPrueba ejecucion;
 
         @ParameterField(required = Kleenean.TRUE, linkedField = "responsable")

@@ -86,7 +86,7 @@ public @interface ManyToOne {
      * menu especifica si las vistas (páginas) Maestro/Detalle generadas deben ser accesibles desde el menú de contexto de la entidad. Su valor es uno
      * de los elementos de la enumeración Kleenean. Seleccione TRUE si las vistas deben ser accesibles; en caso contrario, seleccione FALSE.
      * Alternativamente, omita el elemento o seleccione UNSPECIFIED para utilizar el valor predeterminado del atributo. El valor predeterminado del
-     * atributo es FALSE si la referencia posee una colección con agregaciones; de lo contrario, TRUE.
+     * atributo es FALSE para vistas de Lectura y Escritura, si la referencia posee una colección con agregaciones; en los demás casos, TRUE.
      *
      * @return menu
      */

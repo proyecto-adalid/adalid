@@ -16,6 +16,7 @@ import adalid.core.*;
 import adalid.core.annotations.*;
 import adalid.core.enums.*;
 import adalid.core.interfaces.*;
+import adalid.core.page.format.*;
 import adalid.core.parameters.*;
 import adalid.core.properties.*;
 import java.lang.reflect.Field;
@@ -40,11 +41,25 @@ import meta.entidad.comun.control.acceso.Usuario;
 @EntityTriggers(afterValue = Kleenean.TRUE)
 public class RastroFuncionPar extends AbstractPersistentEntity {
 
+    private static final String CONVERTIDOR_VALOR = "convertidorValorRastroFuncionPar";
+
     // <editor-fold defaultstate="collapsed" desc="class constructors">
     public RastroFuncionPar(Artifact declaringArtifact, Field declaringField) {
         super(declaringArtifact, declaringField);
     }
     // </editor-fold>
+
+    @Override
+    protected void addAllocationStrings() {
+        super.addAllocationStrings();
+        super.addAllocationStrings(
+            "rastroFuncion.usuario",
+            "rastroFuncion.funcion",
+            "rastroFuncion.tipoFuncion",
+            "rastroFuncion.recursoValor",
+            "rastroFuncion.condicionEjeFun"
+        );
+    }
 
     @PrimaryKey
     public LongProperty id;
@@ -53,7 +68,6 @@ public class RastroFuncionPar extends AbstractPersistentEntity {
     @ManyToOne(navigability = Navigability.BIDIRECTIONAL, view = MasterDetailView.TABLE_AND_DETAIL)
     @ColumnField(nullable = Kleenean.FALSE)
     @PropertyField(table = Kleenean.TRUE, report = Kleenean.TRUE)
-    @Allocation(maxDepth = 2, maxRound = 0)
     public RastroFuncion rastroFuncion;
 
 //  20171213: remove foreign-key referring to Parametro
@@ -70,7 +84,7 @@ public class RastroFuncionPar extends AbstractPersistentEntity {
     public StringProperty nombreParametro;
 
     @PropertyField(sequence = 110, table = Kleenean.FALSE, report = Kleenean.FALSE, export = Kleenean.FALSE)
-    @StringField(converter = "convertidorValorRastroFuncionPar", maxLength = 0)
+    @StringField(converter = CONVERTIDOR_VALOR, maxLength = 0)
     public StringProperty valorParametro;
 
     @PropertyField(sequence = 120, table = Kleenean.FALSE, report = Kleenean.FALSE, export = Kleenean.FALSE)
@@ -80,11 +94,11 @@ public class RastroFuncionPar extends AbstractPersistentEntity {
     public StringProperty nombreRecursoParametro;
 
     @PropertyField(sequence = 100, table = Kleenean.TRUE, report = Kleenean.FALSE, export = Kleenean.FALSE)
-    @StringField(converter = "convertidorValorRastroFuncionPar", maxLength = 0)
+    @StringField(converter = CONVERTIDOR_VALOR, maxLength = 0)
     public StringProperty valorAparenteParametro;
 
     @PropertyField(sequence = 110, table = Kleenean.FALSE, report = Kleenean.FALSE, export = Kleenean.FALSE)
-    @StringField(converter = "convertidorValorRastroFuncionPar", maxLength = 0)
+    @StringField(converter = CONVERTIDOR_VALOR, maxLength = 0)
     public StringProperty valorAnterior;
 
     @PropertyField(sequence = 120, table = Kleenean.FALSE, report = Kleenean.FALSE, export = Kleenean.FALSE)
@@ -94,7 +108,7 @@ public class RastroFuncionPar extends AbstractPersistentEntity {
     public StringProperty nombreRecursoAnterior;
 
     @PropertyField(sequence = 100, table = Kleenean.TRUE, report = Kleenean.FALSE, export = Kleenean.FALSE)
-    @StringField(converter = "convertidorValorRastroFuncionPar", maxLength = 0)
+    @StringField(converter = CONVERTIDOR_VALOR, maxLength = 0)
     public StringProperty valorAparenteAnterior;
 
     @ColumnField(nullable = Kleenean.FALSE)
@@ -286,25 +300,37 @@ public class RastroFuncionPar extends AbstractPersistentEntity {
     @Override
     protected void settleViews() {
         super.settleViews();
+        /**/
+        rastrosConParametros.setPageFormatClass(DefaultPageFormat.class);
+        /**/
         ViewField vf;
+        final int controlGroupReportElementsWidth = 720;
         /**/
         rastrosConParametros.newControlField(rastroFuncion);
         /**/
-        rastrosConParametros.newHeadingField(rastroFuncion.fechaHoraEjecucion, rastroFuncion);
+        vf = rastrosConParametros.newHeadingField(rastroFuncion.fechaHoraEjecucion, rastroFuncion);
+        vf.setPixels(controlGroupReportElementsWidth);
         /**/
-        rastrosConParametros.newHeadingField(rastroFuncion.codigoUsuario, rastroFuncion);
+        vf = rastrosConParametros.newHeadingField(rastroFuncion.codigoUsuario, rastroFuncion);
+        vf.setPixels(controlGroupReportElementsWidth);
         /**/
-        rastrosConParametros.newHeadingField(rastroFuncion.nombreUsuario, rastroFuncion);
+        vf = rastrosConParametros.newHeadingField(rastroFuncion.nombreUsuario, rastroFuncion);
+        vf.setPixels(controlGroupReportElementsWidth);
         /**/
-        rastrosConParametros.newHeadingField(rastroFuncion.codigoFuncion, rastroFuncion);
+        vf = rastrosConParametros.newHeadingField(rastroFuncion.codigoFuncion, rastroFuncion);
+        vf.setPixels(controlGroupReportElementsWidth);
         /**/
-        rastrosConParametros.newHeadingField(rastroFuncion.nombreFuncion, rastroFuncion);
+        vf = rastrosConParametros.newHeadingField(rastroFuncion.nombreFuncion, rastroFuncion);
+        vf.setPixels(controlGroupReportElementsWidth);
         /**/
-        rastrosConParametros.newHeadingField(rastroFuncion.codigoRecurso, rastroFuncion);
+        vf = rastrosConParametros.newHeadingField(rastroFuncion.codigoRecurso, rastroFuncion);
+        vf.setPixels(controlGroupReportElementsWidth);
         /**/
-        rastrosConParametros.newHeadingField(rastroFuncion.nombreRecurso, rastroFuncion);
+        vf = rastrosConParametros.newHeadingField(rastroFuncion.nombreRecurso, rastroFuncion);
+        vf.setPixels(controlGroupReportElementsWidth);
         /**/
-        rastrosConParametros.newHeadingField(rastroFuncion.condicionEjeFun.codigo, rastroFuncion);
+        vf = rastrosConParametros.newHeadingField(rastroFuncion.condicionEjeFun.codigo, rastroFuncion);
+        vf.setPixels(controlGroupReportElementsWidth);
         /**/
         vf = rastrosConParametros.newDetailField(id, SortOption.ASC);
         vf.setPixels(0);
@@ -320,6 +346,7 @@ public class RastroFuncionPar extends AbstractPersistentEntity {
         /**/
         vf = rastrosConParametros.newDetailField(diferenteValor);
         vf.setPixels(60);
+        /**/
         // <editor-fold defaultstate="collapsed" desc="localization of RastroFuncionPar's views">
         rastrosConParametros.setLocalizedLabel(ENGLISH, "Function Trail Parameters");
         rastrosConParametros.setLocalizedLabel(SPANISH, "Rastros de Parámetros de Función");
@@ -438,6 +465,13 @@ public class RastroFuncionPar extends AbstractPersistentEntity {
         @Override
         protected void settleParameters() {
             super.settleParameters();
+            /**/
+            desde.setMinValue("2001-01-01");
+            desde.setMaxValue(SpecialTemporalValue.CURRENT_TIMESTAMP);
+            /**/
+            hasta.setMinValue(desde);
+            hasta.setMaxValue(SpecialTemporalValue.CURRENT_TIMESTAMP);
+            /**/
             // <editor-fold defaultstate="collapsed" desc="localization of ExportarArchivoRastrosConParametros's parameters">
             desde.setLocalizedDescription(ENGLISH, "date and time of the function execution");
             desde.setLocalizedDescription(SPANISH, "fecha y hora de la ejecución de la función");
@@ -513,6 +547,13 @@ public class RastroFuncionPar extends AbstractPersistentEntity {
         @Override
         protected void settleParameters() {
             super.settleParameters();
+            /**/
+            desde.setMinValue("2001-01-01");
+            desde.setMaxValue(SpecialTemporalValue.CURRENT_TIMESTAMP);
+            /**/
+            hasta.setMinValue(desde);
+            hasta.setMaxValue(SpecialTemporalValue.CURRENT_TIMESTAMP);
+            /**/
             // <editor-fold defaultstate="collapsed" desc="localization of EmitirInformeRastrosConParametros's parameters">
             desde.setLocalizedDescription(ENGLISH, "date and time of the function execution");
             desde.setLocalizedDescription(SPANISH, "fecha y hora de la ejecución de la función");

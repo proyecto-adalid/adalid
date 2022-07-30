@@ -75,6 +75,8 @@ public abstract class ProcessOperation extends Operation {
 
     private boolean _builtIn;
 
+    private boolean _treeStructureModifier;
+
     private int _jobPriority;
 
     private boolean _bplCodeGenEnabled = true;
@@ -281,6 +283,13 @@ public abstract class ProcessOperation extends Operation {
      */
     public boolean isBuiltIn() {
         return _builtIn;
+    }
+
+    /**
+     * @return the tree structure modifier indicator
+     */
+    public boolean isTreeStructureModifier() {
+        return _treeStructureModifier;
     }
 
     /**
@@ -716,6 +725,7 @@ public abstract class ProcessOperation extends Operation {
                 /**/
                 _automaticAssumption = annotation.automaticAssumption();
                 _builtIn = annotation.builtIn();
+                _treeStructureModifier = annotation.treeStructureModifier();
                 _jobPriority = Math.max(0, annotation.priority());
                 _bplCodeGenEnabled = annotation.bpl().toBoolean(_bplCodeGenEnabled);
                 _sqlCodeGenEnabled = annotation.sql().toBoolean(_sqlCodeGenEnabled);

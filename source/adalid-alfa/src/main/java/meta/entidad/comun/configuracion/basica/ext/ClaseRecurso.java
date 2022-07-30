@@ -34,6 +34,7 @@ import meta.entidad.comun.configuracion.basica.TipoRecurso;
 @EntityDetailView(enabled = Kleenean.TRUE)
 @EntityTreeView(enabled = Kleenean.FALSE)
 @EntityConsoleView(enabled = Kleenean.FALSE)
+@EntityReferenceDisplay(style = EntityReferenceStyle.NAME_AND_CHARACTER_KEY)
 public class ClaseRecurso extends meta.entidad.comun.configuracion.basica.ClaseRecurso {
 
     // <editor-fold defaultstate="collapsed" desc="class constructors">
@@ -45,18 +46,15 @@ public class ClaseRecurso extends meta.entidad.comun.configuracion.basica.ClaseR
     @ForeignKey(onDelete = OnDeleteAction.NONE, onUpdate = OnUpdateAction.NONE)
     @ManyToOne(navigability = Navigability.UNIDIRECTIONAL, view = MasterDetailView.NONE)
     @ColumnField(nullable = Kleenean.FALSE)
-    @Allocation(maxDepth = 1, maxRound = 0)
     public TipoClaseRecurso tipoClaseRecurso;
 
     @ForeignKey(onDelete = OnDeleteAction.NONE, onUpdate = OnUpdateAction.NONE)
     @ManyToOne(navigability = Navigability.UNIDIRECTIONAL, view = MasterDetailView.NONE)
     @ColumnField(nullable = Kleenean.FALSE)
-    @Allocation(maxDepth = 1, maxRound = 0)
     public TipoRecurso tipoRecurso;
 
     @ForeignKey(onDelete = OnDeleteAction.NONE, onUpdate = OnUpdateAction.NONE)
     @ManyToOne(navigability = Navigability.UNIDIRECTIONAL, view = MasterDetailView.NONE)
-    @Allocation(maxDepth = 1, maxRound = 0)
     public Funcion funcionSeleccion;
 
     @StringField(maxLength = 200)
@@ -70,17 +68,14 @@ public class ClaseRecurso extends meta.entidad.comun.configuracion.basica.ClaseR
 
     @ForeignKey(onDelete = OnDeleteAction.NONE, onUpdate = OnUpdateAction.NONE)
     @ManyToOne(navigability = Navigability.UNIDIRECTIONAL, view = MasterDetailView.NONE)
-    @Allocation(maxDepth = 1, maxRound = 0)
     public ClaseRecurso claseRecursoMaestro;
 
     @ForeignKey(onDelete = OnDeleteAction.NONE, onUpdate = OnUpdateAction.NONE)
     @ManyToOne(navigability = Navigability.UNIDIRECTIONAL, view = MasterDetailView.NONE)
-    @Allocation(maxDepth = 1, maxRound = 0)
     public ClaseRecurso claseRecursoSegmento;
 
     @ForeignKey(onDelete = OnDeleteAction.NONE, onUpdate = OnUpdateAction.NONE)
     @ManyToOne(navigability = Navigability.UNIDIRECTIONAL, view = MasterDetailView.NONE)
-    @Allocation(maxDepth = 1, maxRound = 0)
     public ClaseRecurso claseRecursoBase;
 
     @Override

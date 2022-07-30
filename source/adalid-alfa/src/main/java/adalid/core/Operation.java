@@ -14,6 +14,7 @@ package adalid.core;
 
 import adalid.commons.util.*;
 import adalid.core.annotations.*;
+import adalid.core.data.types.*;
 import adalid.core.enums.*;
 import adalid.core.exceptions.*;
 import adalid.core.expressions.*;
@@ -23,7 +24,13 @@ import adalid.core.wrappers.*;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Set;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Level;
@@ -1450,6 +1457,12 @@ public abstract class Operation extends AbstractArtifact implements Comparable<O
     }
     // </editor-fold>
 
+    // <editor-fold defaultstate="collapsed" desc="Special Converters and Validators">
+    protected static final String GOOGLE_MAPS_EMBED_CONVERTER = "convertidorGoogleMapsEmbed";
+
+    protected static final String PHONE_NUMBER_VALIDATOR = "phoneNumberValidator";
+    // </editor-fold>
+
     // <editor-fold defaultstate="collapsed" desc="Special Fields">
     protected static final String EMAIL_REGEX = Constants.EMAIL_REGEX;
 
@@ -1461,30 +1474,60 @@ public abstract class Operation extends AbstractArtifact implements Comparable<O
 
     protected static final SpecialEntityValue CURRENT_USER = SpecialEntityValue.CURRENT_USER;
 
+    protected static final BooleanScalarX NULL_BOOLEAN = XB.NULL_BOOLEAN;
+
     protected static final BooleanScalarX TRUTH = XB.TRUTH;
 
     protected static final BooleanScalarX UNTRUTH = XB.UNTRUTH;
+
+    protected static final CharacterScalarX NULL_STRING = XB.NULL_STRING;
+
+    protected static final CharacterScalarX EMPTY_STRING = XB.EMPTY_STRING;
 
     protected static final CharacterScalarX EMPTY = XB.EMPTY;
 
     protected static final CharacterScalarX CURRENT_USER_CODE = XB.CURRENT_USER_CODE;
 
+    protected static final NumericScalarX NULL_NUMBER = XB.NULL_NUMBER;
+
     protected static final NumericScalarX CURRENT_USER_ID = XB.CURRENT_USER_ID;
+
+    protected static final TemporalScalarX NULL_TEMPORAL = XB.NULL_TEMPORAL;
 
     protected static final TemporalScalarX CURRENT_DATE = XB.CURRENT_DATE;
 
     protected static final TemporalScalarX CURRENT_TIME = XB.CURRENT_TIME;
 
     protected static final TemporalScalarX CURRENT_TIMESTAMP = XB.CURRENT_TIMESTAMP;
+
+    protected static final java.sql.Date EPOCH_DATE = DateData.EPOCH;
+
+    protected static final java.sql.Time EPOCH_TIME = TimeData.EPOCH;
+
+    protected static final java.sql.Timestamp EPOCH_TIMESTAMP = TimestampData.EPOCH;
+
+    protected static final EntityScalarX NULL_ENTITY = XB.NULL_ENTITY;
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Special Expressions">
+    protected static BooleanScalarX nullBoolean() {
+        return NULL_BOOLEAN;
+    }
+
     protected static BooleanScalarX truth() {
         return TRUTH;
     }
 
     protected static BooleanScalarX untruth() {
         return UNTRUTH;
+    }
+
+    protected static CharacterScalarX nullString() {
+        return NULL_STRING;
+    }
+
+    protected static CharacterScalarX emptyString() {
+        return EMPTY_STRING;
     }
 
     protected static CharacterScalarX empty() {
@@ -1495,8 +1538,16 @@ public abstract class Operation extends AbstractArtifact implements Comparable<O
         return CURRENT_USER_CODE;
     }
 
+    protected static NumericScalarX nullNumber() {
+        return NULL_NUMBER;
+    }
+
     protected static NumericScalarX currentUserId() {
         return CURRENT_USER_ID;
+    }
+
+    protected static TemporalScalarX nullTemporal() {
+        return NULL_TEMPORAL;
     }
 
     protected static TemporalScalarX currentDate() {
@@ -1509,6 +1560,10 @@ public abstract class Operation extends AbstractArtifact implements Comparable<O
 
     protected static TemporalScalarX currentTimestamp() {
         return CURRENT_TIMESTAMP;
+    }
+
+    protected static EntityScalarX nullEntity() {
+        return NULL_ENTITY;
     }
     // </editor-fold>
 
@@ -1583,6 +1638,23 @@ public abstract class Operation extends AbstractArtifact implements Comparable<O
 
     protected static CharacterExpression concat(Expression x, Expression y) {
         return XB.Character.OrderedPair.concat(charStringOf(x), charStringOf(y));
+    }
+
+    protected static CharacterExpression concat(Expression x, Expression y, Expression... extraOperands) {
+        CharacterExpression cx = charStringOf(x);
+        CharacterExpression cy = charStringOf(y);
+        if (extraOperands != null && extraOperands.length > 0) {
+            List<CharacterExpression> cz = new ArrayList<>();
+            for (Expression extraOperand : extraOperands) {
+                if (extraOperand != null) {
+                    cz.add(charStringOf(extraOperand));
+                }
+            }
+            if (!cz.isEmpty()) {
+                return XB.Character.DataAggregate.concat(cx, cy, cz.toArray(CharacterExpression[]::new));
+            }
+        }
+        return XB.Character.OrderedPair.concat(cx, cy);
     }
 
     protected static CharacterExpression charStringOf(Object x) {

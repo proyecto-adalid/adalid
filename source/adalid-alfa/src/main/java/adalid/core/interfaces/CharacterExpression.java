@@ -880,6 +880,25 @@ public interface CharacterExpression extends Expression {
     CharacterOrderedPairX min(Expression y);
 
     /**
+     * El método <b>ascii</b> contruye una expresión que genera el valor de esta expresión, sustituyendo los caracteres que no están incluídos en el
+     * código de caracteres ASCII con el valor del operando Y.
+     *
+     * @param y operando Y
+     * @return expresión que retorna el valor de la expresión con solo caracteres ASCII.
+     */
+    CharacterOrderedPairX ascii(String y);
+
+    /**
+     * El método <b>diacriticlessAscii</b> contruye una expresión que genera el valor de esta expresión, sustituyendo primero los caracteres con
+     * acento, diéresis o tilde con el correspondiente caracter sin acento, diéresis o tilde; y luego sustituyendo el resto de los caracteres que no
+     * están incluídos en el código de caracteres ASCII con el valor del operando Y.
+     *
+     * @param y operando Y
+     * @return expresión que retorna el valor de la expresión con solo caracteres ASCII.
+     */
+    CharacterOrderedPairX diacriticlessAscii(String y);
+
+    /**
      * El método <b>concat</b> contruye una expresión que genera la concatenación de esta expresión (operando X) con el String que recibe como
      * argumento (operando Y).
      *
@@ -1045,6 +1064,31 @@ public interface CharacterExpression extends Expression {
      * @return expresión que retorna el valor de la expresión o el valor nulo.
      */
     CharacterScalarX nullWhenDefault();
+
+    /**
+     * El método <b>ascii</b> contruye una expresión que genera el valor de esta expresión, sustituyendo los caracteres que no están incluídos en el
+     * código de caracteres ASCII con un guión bajo.
+     *
+     * @return expresión que retorna el valor de la expresión con solo caracteres ASCII.
+     */
+    CharacterScalarX ascii();
+
+    /**
+     * El método <b>diacriticless</b> contruye una expresión que genera el valor de esta expresión, sustituyendo los caracteres con acento, diéresis o
+     * tilde con el correspondiente caracter sin acento, diéresis o tilde.
+     *
+     * @return expresión que retorna el valor de la expresión con caracteres sin acento, diéresis o tilde.
+     */
+    CharacterScalarX diacriticless();
+
+    /**
+     * El método <b>diacriticlessAscii</b> contruye una expresión que genera el valor de esta expresión, sustituyendo primero los caracteres con
+     * acento, diéresis o tilde con el correspondiente caracter sin acento, diéresis o tilde; y luego sustituyendo el resto de los caracteres que no
+     * están incluídos en el código de caracteres ASCII con un guión bajo.
+     *
+     * @return expresión que retorna el valor de la expresión con solo caracteres ASCII.
+     */
+    CharacterScalarX diacriticlessAscii();
 
     /**
      * El método <b>lower</b> contruye una expresión que genera el valor de esta expresión en minúsculas.

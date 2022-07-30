@@ -43,6 +43,14 @@ public class ParteAmbientePrueba extends PersistentEntityBase {
     // </editor-fold>
 
     @Override
+    protected void addAllocationStrings() {
+        super.addAllocationStrings();
+        super.addAllocationStrings(
+            "pieza.tipo"
+        );
+    }
+
+    @Override
     protected void settleAttributes() {
         super.settleAttributes();
 //      setSchema(ProyectoBase.getEsquemaEntidadesComunes());
@@ -70,7 +78,6 @@ public class ParteAmbientePrueba extends PersistentEntityBase {
     @PropertyField(create = Kleenean.TRUE, update = Kleenean.TRUE, table = Kleenean.TRUE, report = Kleenean.TRUE)
     public AmbientePrueba ambiente;
 
-    @Allocation(maxDepth = 2, maxRound = 0)
     @ColumnField(nullable = Kleenean.FALSE)
     @ForeignKey(onDelete = OnDeleteAction.NONE, onUpdate = OnUpdateAction.NONE)
     @ManyToOne(navigability = Navigability.UNIDIRECTIONAL, view = MasterDetailView.NONE)

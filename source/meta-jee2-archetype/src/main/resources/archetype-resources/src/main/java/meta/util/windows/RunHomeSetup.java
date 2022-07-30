@@ -9,11 +9,14 @@
  */
 package ${package}.meta.util.windows;
 
+import adalid.util.*;
+
 /**
  * RunHomeSetup sirve para ejecutar el script home-setup.bat, el cual sirve para inicializar el directorio HOME.
  *
  * @author ADALID meta-jee2-archetype
  */
+@RunnableClass
 public class RunHomeSetup extends adalid.util.io.SysCmdRunner {
 
     /**

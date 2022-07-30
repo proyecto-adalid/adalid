@@ -15,6 +15,7 @@ package adalid.core;
 import adalid.commons.*;
 import adalid.commons.bundles.*;
 import adalid.commons.enums.*;
+import adalid.commons.interfaces.*;
 import adalid.commons.properties.*;
 import adalid.commons.util.*;
 import adalid.commons.velocity.*;
@@ -47,7 +48,7 @@ import static adalid.core.enums.RoleType.*;
 /**
  * @author Jorge Campins
  */
-public abstract class Project extends AbstractArtifact implements ProjectBuilder, Comparable<Project> {
+public abstract class Project extends AbstractArtifact implements ProjectBuilder, ProjectWriter, Comparable<Project> {
 
     // <editor-fold defaultstate="collapsed" desc="static fields">
     private static final Logger logger = Logger.getLogger(Project.class);
@@ -114,9 +115,11 @@ public abstract class Project extends AbstractArtifact implements ProjectBuilder
 
     private static int _defaultDescriptionPropertyMaxLength = Constants.DEFAULT_DESCRIPTION_PROPERTY_MAX_LENGTH;
 
-    private static int _defaultFileReferenceMaxLength = Constants.DEFAULT_FILE_REFERENCE_MAX_LENGTH;
-
     private static int _defaultUrlPropertyMaxLength = Constants.DEFAULT_URL_PROPERTY_MAX_LENGTH;
+
+    private static int _defaultEmbeddedDocumentMaxLength = Constants.DEFAULT_EMBEDDED_DOCUMENT_MAX_LENGTH;
+
+    private static int _defaultFileReferenceMaxLength = Constants.DEFAULT_FILE_REFERENCE_MAX_LENGTH;
 
     public static final int STRING_FIELD_MAX_LENGTH = -1000032767;
 
@@ -131,6 +134,8 @@ public abstract class Project extends AbstractArtifact implements ProjectBuilder
     public static final int FILE_REFERENCE_MAX_LENGTH = -1000002001;
 
     public static final int URL_PROPERTY_MAX_LENGTH = -1000002002;
+
+    public static final int EMBEDDED_DOCUMENT_MAX_LENGTH = -1000002003;
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="static fields public getters and setters">
@@ -346,13 +351,14 @@ public abstract class Project extends AbstractArtifact implements ProjectBuilder
      * El método setDefaultCharacterKeyMaxLength se utiliza para establecer la cantidad predeterminada de caracteres de propiedades StringProperty que
      * son la clave de negocio de la entidad y, por lo tanto, indexadas y con longitud limitada.
      *
-     * @param maxLength cantidad de caracteres. Su valor debe ser un número entero entre 1 y la cantidad máxima de caracteres de propiedades
+     * @param maxLength cantidad de caracteres. Su valor debe ser un número entero entre 30 y la cantidad máxima de caracteres de propiedades
      * StringProperty que son indexadas, que por omisión es 1.596 y puede ser establecida mediante el método setMaximumStringIndexMaxLength. El valor
      * predeterminado es 30.
      */
     public static void setDefaultCharacterKeyMaxLength(int maxLength) {
+        int min = Constants.DEFAULT_CHARACTER_KEY_MAX_LENGTH; // 30
         int max = getMaximumStringIndexMaxLength();
-        _defaultCharacterKeyMaxLength = maxLength < 1 ? 1 : maxLength > max ? max : maxLength;
+        _defaultCharacterKeyMaxLength = maxLength < min ? min : maxLength > max ? max : maxLength;
         if (_defaultCharacterKeyMaxLength != maxLength) {
             _defaultCharacterKeyMaxLength = Constants.DEFAULT_CHARACTER_KEY_MAX_LENGTH;
             logger.warn(maxLength + " is outside the valid range of defaultCharacterKeyMaxLength; it was set to " + _defaultCharacterKeyMaxLength);
@@ -371,13 +377,14 @@ public abstract class Project extends AbstractArtifact implements ProjectBuilder
      * El método setDefaultCharacterKeyMaxLength se utiliza para establecer la cantidad predeterminada de caracteres de propiedades StringProperty que
      * son la propiedad nombre de la entidad y, por lo tanto, indexadas y con longitud limitada.
      *
-     * @param maxLength cantidad de caracteres. Su valor debe ser un número entero entre 1 y la cantidad máxima de caracteres de propiedades
+     * @param maxLength cantidad de caracteres. Su valor debe ser un número entero entre 100 y la cantidad máxima de caracteres de propiedades
      * StringProperty que son indexadas, que por omisión es 1.596 y puede ser establecida mediante el método setMaximumStringIndexMaxLength. El valor
      * predeterminado es 100.
      */
     public static void setDefaultNamePropertyMaxLength(int maxLength) {
+        int min = Constants.DEFAULT_NAME_PROPERTY_MAX_LENGTH; // 100
         int max = getMaximumStringIndexMaxLength();
-        _defaultNamePropertyMaxLength = maxLength < 1 ? 1 : maxLength > max ? max : maxLength;
+        _defaultNamePropertyMaxLength = maxLength < min ? min : maxLength > max ? max : maxLength;
         if (_defaultNamePropertyMaxLength != maxLength) {
             _defaultNamePropertyMaxLength = Constants.DEFAULT_NAME_PROPERTY_MAX_LENGTH;
             logger.warn(maxLength + " is outside the valid range of defaultNamePropertyMaxLength; it was set to " + _defaultNamePropertyMaxLength);
@@ -457,6 +464,31 @@ public abstract class Project extends AbstractArtifact implements ProjectBuilder
         if (_defaultUrlPropertyMaxLength != maxLength) {
             _defaultUrlPropertyMaxLength = Constants.DEFAULT_URL_PROPERTY_MAX_LENGTH;
             logger.warn(maxLength + " is outside the valid range of defaultUrlPropertyMaxLength; it was set to " + _defaultUrlPropertyMaxLength);
+        }
+    }
+
+    /**
+     * @return the default embedded document max length in characters
+     */
+    public static int getDefaultEmbeddedDocumentMaxLength() {
+        int max = getMaximumStringFieldMaxLength();
+        return _defaultEmbeddedDocumentMaxLength > max ? max : _defaultEmbeddedDocumentMaxLength;
+    }
+
+    /**
+     * El método setDefaultEmbeddedDocumentMaxLength se utiliza para establecer la cantidad predeterminada de caracteres de propiedades StringProperty
+     * que contienen la definición de un documento incrustado.
+     *
+     * @param maxLength cantidad de caracteres. Su valor debe ser un número entero entre 1 y la cantidad máxima de caracteres de propiedades
+     * StringProperty con longitud limitada, que por omisión es 32.767 y puede ser establecida mediante el método setMaximumStringFieldMaxLength. El
+     * valor predeterminado es 2.000.
+     */
+    public static void setDefaultEmbeddedDocumentMaxLength(int maxLength) {
+        int max = getMaximumStringFieldMaxLength();
+        _defaultEmbeddedDocumentMaxLength = maxLength < 1 ? 1 : maxLength > max ? max : maxLength;
+        if (_defaultEmbeddedDocumentMaxLength != maxLength) {
+            _defaultEmbeddedDocumentMaxLength = Constants.DEFAULT_EMBEDDED_DOCUMENT_MAX_LENGTH;
+            logger.warn(maxLength + " is outside the valid range of defaultEmbeddedDocumentMaxLength; it was set to " + _defaultEmbeddedDocumentMaxLength);
         }
     }
 
@@ -1053,6 +1085,8 @@ public abstract class Project extends AbstractArtifact implements ProjectBuilder
     private String _helpDocument = "";
 
     private String _helpFileName = "";
+
+    private MenuType _moduleMenuType = MenuType.UNSPECIFIED;
 
     private RoleType[] _moduleRoleTypes = new RoleType[]{REGISTRAR, PROCESSOR, READER, CONFIGURATOR, MANAGER};
 
@@ -1833,6 +1867,13 @@ public abstract class Project extends AbstractArtifact implements ProjectBuilder
     }
 
     /**
+     * @return the module's menu type
+     */
+    public MenuType getModuleMenuType() {
+        return _moduleMenuType;
+    }
+
+    /**
      * @return the module's role types
      */
     public RoleType[] getModuleRoleTypes() {
@@ -2440,6 +2481,7 @@ public abstract class Project extends AbstractArtifact implements ProjectBuilder
                 _roleModule = annotation.role().toBoolean(_roleModule);
                 _foreignModule = annotation.foreign().toBoolean(_foreignModule);
                 _privateModule = annotation.privacy().toBoolean(_privateModule);
+                _moduleMenuType = annotation.menuType();
                 _moduleRoleTypes = annotation.roleTypes();
                 String document = annotation.helpDocument();
                 if (StringUtils.isNotBlank(document)) {
@@ -2464,6 +2506,7 @@ public abstract class Project extends AbstractArtifact implements ProjectBuilder
             _roleModule = annotation.role().toBoolean(_roleModule);
             _foreignModule = annotation.foreign().toBoolean(_foreignModule);
             _privateModule = annotation.privacy().toBoolean(_privateModule);
+            _moduleMenuType = annotation.menuType();
             _moduleRoleTypes = annotation.roleTypes();
             String document = annotation.helpDocument();
             if (StringUtils.isNotBlank(document)) {
@@ -2651,6 +2694,11 @@ public abstract class Project extends AbstractArtifact implements ProjectBuilder
         boolean ok = b1 && b2;
         printSummary(ok);
         return ok;
+    }
+
+    @Override
+    public boolean beforeWriting() {
+        return true;
     }
 
     protected boolean afterWriting(boolean ok) {
@@ -3133,9 +3181,8 @@ public abstract class Project extends AbstractArtifact implements ProjectBuilder
         return that.getDataClass().isAssignableFrom(thiz.getDataClass());
     }
     /**/
-    char superEntity;
     // </editor-fold>
-
+/**/
     private boolean mainReference(EntityReference thatReference) {
         return thatReference != null && thatReference.isMainRelationship();
     }
@@ -3264,6 +3311,12 @@ public abstract class Project extends AbstractArtifact implements ProjectBuilder
             return thisName.compareTo(thatName);
         }
         return 0;
+    }
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="print">
+    public void print() {
+        System.out.println(this);
     }
     // </editor-fold>
 
@@ -4084,6 +4137,10 @@ public abstract class Project extends AbstractArtifact implements ProjectBuilder
         }
 
         /**/
+        void info(Object message) {
+            logger.info(message);
+        }
+
         void warn(Object message) {
             logger.warn(message);
             warnings++;
@@ -4115,6 +4172,7 @@ public abstract class Project extends AbstractArtifact implements ProjectBuilder
         /**
          * @see XS1
          */
+        /*
         void alert(int depth, int round, String path, Class<?> type, String name, String method, String remarks) {
             String tipo = type == null ? "" : type.getSimpleName();
             String note = tipo + "[" + name + "]" + "." + method;
@@ -4122,6 +4180,7 @@ public abstract class Project extends AbstractArtifact implements ProjectBuilder
             alerts++;
         }
 
+        /**/
         private void track(Level level, int depth, int round, String path, String note, String remarks) {
             if (LogUtils.foul(logger, level)) {
                 return;

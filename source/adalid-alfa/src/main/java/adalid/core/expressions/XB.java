@@ -1239,6 +1239,14 @@ public class XB {
                 return x == null || y == null ? null : new CharacterOrderedPairX(x, OrderedPairOp.MINIMUM, y);
             }
 
+            public CharacterOrderedPairX ascii(CharacterExpression x, String y) {
+                return x == null ? null : new CharacterOrderedPairX(x, OrderedPairOp.ASCII, y);
+            }
+
+            public CharacterOrderedPairX diacriticlessAscii(CharacterExpression x, String y) {
+                return x == null ? null : new CharacterOrderedPairX(x, OrderedPairOp.DIACRITICLESS_ASCII, y);
+            }
+
             public CharacterOrderedPairX concat(CharacterExpression x, String y) {
                 return x == null || y == null ? null : new CharacterOrderedPairX(x, OrderedPairOp.CONCAT, y);
             }
@@ -1379,6 +1387,18 @@ public class XB {
 
             public CharacterScalarX nullWhenDefault(CharacterExpression x) {
                 return x == null ? null : new CharacterScalarX(ScalarOp.NULL_WHEN_DEFAULT, x);
+            }
+
+            public CharacterScalarX ascii(CharacterExpression x) {
+                return x == null ? null : new CharacterScalarX(ScalarOp.ASCII, x);
+            }
+
+            public CharacterScalarX diacriticless(CharacterExpression x) {
+                return x == null ? null : new CharacterScalarX(ScalarOp.DIACRITICLESS, x);
+            }
+
+            public CharacterScalarX diacriticlessAscii(CharacterExpression x) {
+                return x == null ? null : new CharacterScalarX(ScalarOp.DIACRITICLESS_ASCII, x);
             }
 
             public CharacterScalarX lower(CharacterExpression x) {
@@ -2912,30 +2932,54 @@ public class XB {
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Special Fields">
+    public static final BooleanScalarX NULL_BOOLEAN = new BooleanScalarX(null, SpecialBooleanValue.NULL);
+
     public static final BooleanScalarX TRUTH = new BooleanScalarX(null, SpecialBooleanValue.TRUE);
 
     public static final BooleanScalarX UNTRUTH = new BooleanScalarX(null, SpecialBooleanValue.FALSE);
+
+    public static final CharacterScalarX NULL_STRING = new CharacterScalarX(null, SpecialCharacterValue.NULL);
+
+    public static final CharacterScalarX EMPTY_STRING = new CharacterScalarX(null, SpecialCharacterValue.EMPTY);
 
     public static final CharacterScalarX EMPTY = new CharacterScalarX(null, SpecialCharacterValue.EMPTY);
 
     public static final CharacterScalarX CURRENT_USER_CODE = new CharacterScalarX(null, SpecialCharacterValue.CURRENT_USER_CODE);
 
+    public static final NumericScalarX NULL_NUMBER = new NumericScalarX(null, SpecialNumericValue.NULL);
+
     public static final NumericScalarX CURRENT_USER_ID = new NumericScalarX(null, SpecialNumericValue.CURRENT_USER_ID);
+
+    public static final TemporalScalarX NULL_TEMPORAL = new TemporalScalarX(null, SpecialTemporalValue.NULL);
 
     public static final TemporalScalarX CURRENT_DATE = new TemporalScalarX(null, SpecialTemporalValue.CURRENT_DATE);
 
     public static final TemporalScalarX CURRENT_TIME = new TemporalScalarX(null, SpecialTemporalValue.CURRENT_TIME);
 
     public static final TemporalScalarX CURRENT_TIMESTAMP = new TemporalScalarX(null, SpecialTemporalValue.CURRENT_TIMESTAMP);
+
+    public static final EntityScalarX NULL_ENTITY = new EntityScalarX(null, SpecialEntityValue.NULL);
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Special Expressions">
+    public static BooleanScalarX nullBoolean() {
+        return NULL_BOOLEAN;
+    }
+
     public static BooleanScalarX truth() {
         return TRUTH;
     }
 
     public static BooleanScalarX untruth() {
         return UNTRUTH;
+    }
+
+    public static CharacterScalarX nullString() {
+        return NULL_STRING;
+    }
+
+    public static CharacterScalarX emptyString() {
+        return EMPTY_STRING;
     }
 
     public static CharacterScalarX empty() {
@@ -2946,8 +2990,16 @@ public class XB {
         return CURRENT_USER_CODE;
     }
 
+    public static NumericScalarX nullNumber() {
+        return NULL_NUMBER;
+    }
+
     public static NumericScalarX currentUserId() {
         return CURRENT_USER_ID;
+    }
+
+    public static TemporalScalarX nullTemporal() {
+        return NULL_TEMPORAL;
     }
 
     public static TemporalScalarX currentDate() {
@@ -2960,6 +3012,10 @@ public class XB {
 
     public static TemporalScalarX currentTimestamp() {
         return CURRENT_TIMESTAMP;
+    }
+
+    public static EntityScalarX nullEntity() {
+        return NULL_ENTITY;
     }
     // </editor-fold>
 

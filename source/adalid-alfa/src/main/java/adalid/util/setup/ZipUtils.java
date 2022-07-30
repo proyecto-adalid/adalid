@@ -12,13 +12,20 @@
  */
 package adalid.util.setup;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
+import java.util.zip.DataFormatException;
+import java.util.zip.Deflater;
+import java.util.zip.Inflater;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
+import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
 
@@ -30,6 +37,68 @@ import org.apache.commons.lang.StringUtils;
  * @author Jorge Campins
  */
 public class ZipUtils {
+
+    private static final Charset CHARSET = StandardCharsets.UTF_8;
+
+    private static final int BUFFER_SIZE = 1024;
+
+    public static byte[] deflate(String string) throws IOException {
+        return StringUtils.isBlank(string) ? null : deflate(string.getBytes(CHARSET));
+    }
+
+    public static byte[] deflate(byte[] inputBytes) throws IOException {
+        if (inputBytes == null || inputBytes.length == 0) {
+            return null;
+        }
+        // Compress the bytes
+        Deflater deflater = new Deflater();
+        deflater.setInput(inputBytes);
+        deflater.finish();
+        int outputLength = 0;
+        byte[] outputBytes;
+        byte[] outputBuffer = new byte[BUFFER_SIZE];
+        try ( ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
+            while (!deflater.finished()) {
+                int n = deflater.deflate(outputBuffer);
+                outputLength += n;
+//              System.out.println("deflated + " + n + " = " + outputLength);
+                outputStream.write(outputBuffer, 0, n);
+            }
+            outputBytes = outputStream.toByteArray();
+        }
+        deflater.end();
+        // return a new array of the appropriate size
+        return ArrayUtils.subarray(outputBytes, 0, outputLength);
+    }
+
+    public static String inflateToString(byte[] inputBytes) throws DataFormatException, IOException {
+        byte[] outputBytes = inflate(inputBytes);
+        return outputBytes == null || outputBytes.length == 0 ? null : new String(outputBytes, 0, outputBytes.length, CHARSET);
+    }
+
+    public static byte[] inflate(byte[] inputBytes) throws DataFormatException, IOException {
+        if (inputBytes == null || inputBytes.length == 0) {
+            return null;
+        }
+        // Decompress the bytes
+        Inflater inflater = new Inflater();
+        inflater.setInput(inputBytes);
+        int outputLength = 0;
+        byte[] outputBytes;
+        byte[] outputBuffer = new byte[BUFFER_SIZE];
+        try ( ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
+            while (!inflater.finished()) {
+                int n = inflater.inflate(outputBuffer);
+                outputLength += n;
+//              System.out.println("inflated + " + n + " = " + outputLength);
+                outputStream.write(outputBuffer, 0, n);
+            }
+            outputBytes = outputStream.toByteArray();
+        }
+        inflater.end();
+        // return a new array of the appropriate size
+        return ArrayUtils.subarray(outputBytes, 0, outputLength);
+    }
 
     public static boolean zipFile(String pathName) throws IOException {
         if (StringUtils.isNotBlank(pathName)) {
@@ -114,7 +183,7 @@ public class ZipUtils {
             } else {
                 try ( FileInputStream fis = new FileInputStream(file)) {
                     zipOut.putNextEntry(new ZipEntry(filePath));
-                    byte[] bytes = new byte[1024];
+                    byte[] bytes = new byte[BUFFER_SIZE];
                     int length;
                     while ((length = fis.read(bytes)) >= 0) {
                         zipOut.write(bytes, 0, length);
@@ -135,7 +204,7 @@ public class ZipUtils {
         if (StringUtils.isNotBlank(zipPathName)) {
             File zip = new File(zipPathName);
             if (zip.isFile() && zip.canRead() && !zip.isHidden()) {
-                byte[] buffer = new byte[1024];
+                byte[] buffer = new byte[BUFFER_SIZE];
                 File dir = newFile(dirPathName, zipPathName, ".dir");
                 try ( ZipInputStream zipIn = new ZipInputStream(new FileInputStream(zipPathName))) {
                     ZipEntry zipEntry = zipIn.getNextEntry();

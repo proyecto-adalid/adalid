@@ -64,19 +64,16 @@ public class DominioParametro extends AbstractPersistentEntity {
     @ForeignKey(onDelete = OnDeleteAction.CASCADE, onUpdate = OnUpdateAction.CASCADE)
     @ManyToOne(navigability = Navigability.BIDIRECTIONAL, view = MasterDetailView.NONE)
     @ColumnField(nullable = Kleenean.FALSE)
-    @Allocation(maxDepth = 1, maxRound = 0)
     public Dominio dominio;
 
     @ForeignKey(onDelete = OnDeleteAction.NONE, onUpdate = OnUpdateAction.CASCADE)
     @ManyToOne(navigability = Navigability.UNIDIRECTIONAL, view = MasterDetailView.NONE)
     @ColumnField(nullable = Kleenean.FALSE)
-    @Allocation(maxDepth = 1, maxRound = 0)
     public Parametro parametro;
 
     @ForeignKey(onDelete = OnDeleteAction.NONE, onUpdate = OnUpdateAction.NONE)
     @ManyToOne(navigability = Navigability.UNIDIRECTIONAL, view = MasterDetailView.NONE)
     @ColumnField(nullable = Kleenean.FALSE)
-    @Allocation(maxDepth = 1, maxRound = 0)
     public TipoParametroDom tipoParametroDom;
 
     protected Key uk_dominio_parametro_0001;

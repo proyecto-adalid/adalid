@@ -1,0 +1,12 @@
+#set($dollar = '$')
+#set($pound = '#')
+#set($backslash = '\')
+${pound}nb-configuration.xml
+${pound}nbactions.xml
+${pound}src/main/resources/log4j.properties
+${pound}src/main/resources/private.properties
+/**/log4j.appender.rolling.*
+/backups/
+/src/main/resources/dictionary/ProjectBuilder.properties
+/src/test/
+/target/

@@ -29,25 +29,64 @@ import java.lang.annotation.Target;
 public @interface ImageProperty {
 
     /**
-     * displayWidth específica el número de pixeles de ancho de la imagen en la vista. Especifique un número entero entre 0 y 3.840. Alternativamente,
-     * omita el elemento para utilizar el valor predeterminado del atributo. El valor predeterminado del atributo es 96. Si el valor especificado es
-     * mayor que 3.840, su valor será 3.840; si es menor o igual a 0, será el valor especificado para el elemento displayHeight; y si el valor de
-     * displayHeight también es menor o igual a 0, entonces las vistas no muestran la imagen.
+     * avatarShape especifica la forma de la imagen cuando se utiliza como avatar. Su valor es uno de los elementos de la enumeración AvatarShape.
+     * Seleccione CIRCLE o RECTANGLE para mostrar una imagen circular o rectangular, respectivamente. Alternativamente, omita el elemento o seleccione
+     * NONE para no utilizar la imagen como avatar. El valor predeterminado del atributo es NONE.
+     *
+     * @return avatarShape
+     */
+    AvatarShape avatarShape() default AvatarShape.NONE;
+
+    /**
+     * avatarDefault especifica el avatar de las instancias que no tienen imagen. Este elemento es relevante solo si el valor especificado, o
+     * determinado, para el elemento avatarShape es distinto de NONE. Su valor es uno de los elementos de la enumeración AvatarDefault. Seleccione
+     * COMPANY, PERSON, USER o UNKNOWN para mostrar el avatar predeterminado de compañía, persona, usuario o desconocido, respectivamente. Seleccione
+     * UNSEEN para mostrar una imagen invisible, que ocupe el mismo espacio que ocuparía un avatar. Alternativamente, omita el elemento o seleccione
+     * NONE para no mostrar el avatar en las instancias que no tienen imagen. El valor predeterminado del atributo es NONE.
+     *
+     * @return avatarShape
+     */
+    AvatarDefault avatarDefault() default AvatarDefault.NONE;
+
+    /**
+     * avatarWidth específica el número de pixeles de ancho de la imagen en la vista, cuando se utiliza como avatar. Este elemento es relevante solo
+     * si el valor especificado, o determinado, para el elemento avatarShape es distinto de NONE. Especifique un número entero entre 24 y 96.
+     * Alternativamente, omita el elemento para utilizar el valor predeterminado del atributo. El valor predeterminado del atributo es 36.
+     *
+     * @return avatarWidth
+     */
+    int avatarWidth() default 0;
+
+    /**
+     * avatarHeight específica el número de pixeles de alto de la imagen en la vista, cuando se utiliza como avatar. Este elemento es relevante solo
+     * si el valor especificado, o determinado, para el elemento avatarShape es distinto de NONE. Especifique un número entero entre 24 y 96.
+     * Alternativamente, omita el elemento para utilizar el valor predeterminado del atributo. El valor predeterminado del atributo es 36.
+     *
+     * @return avatarHeight
+     */
+    int avatarHeight() default 0;
+
+    /**
+     * displayWidth específica un trío de números de pixeles de ancho de la imagen en la vista, correspondientes a tamaño grande, mediano y pequeño,
+     * respectivamente. Especifique números enteros entre 24 y 1.920. Alternativamente, omita el elemento para utilizar el valor predeterminado del
+     * atributo. El valor predeterminado del atributo es el trío (288, 192, 96}. Si alguno de los valores especificados es mayor que 1.920, su valor
+     * será 1.920; si es menor o igual a 0, será el valor del correspondiente tamaño en el trío displayHeight; pero si ese valor es menor o igual a 0,
+     * será el valor del correspondiente tamaño en el trío predeterminado.
      *
      * @return displayWidth
      */
-    int displayWidth() default -1; // Constants.DEFAULT_IMAGE_WIDTH;
+    int[] displayWidth() default {0, 0, 0};
 
     /**
-     * displayHeight específica el número de pixeles de alto de la imagen en la vista. Especifique un número entero entre 0 y 2.160. Alternativamente,
-     * omita el elemento para utilizar el valor predeterminado del atributo. El valor predeterminado del atributo es 96. Si el valor especificado es
-     * mayor que 2.160, su valor será 2.160; si es menor o igual a 0, será el valor especificado para el elemento displayWidth; si el valor de
-     * displayWidth es mayor que 2.160, será 2.160; y si el valor de displayWidth también es menor o igual a 0, entonces las vistas no muestran la
-     * imagen.
+     * displayHeight específica un trío de números de pixeles de alto de la imagen en la vista, correspondientes a tamaño grande, mediano y pequeño,
+     * respectivamente. Especifique un número entero entre 24 y 1.080. Alternativamente, omita el elemento para utilizar el valor predeterminado del
+     * atributo. El valor predeterminado del atributo es el trío (288, 192, 96}. Si alguno de los valores especificados es mayor que 1.080, su valor
+     * será 1.080; si es menor o igual a 0, será el valor del correspondiente tamaño en el trío displayWidth; pero si ese valor es mayor que 1.080,
+     * será 1.080, y si es menor o igual a 0, será el valor del correspondiente tamaño en el trío predeterminado.
      *
      * @return displayHeight
      */
-    int displayHeight() default -1; // Constants.DEFAULT_IMAGE_HEIGHT;
+    int[] displayHeight() default {0, 0, 0};
 
     /**
      * resizable indica si el ancho de la imagen se debe ajustar de manera dinámica y proporcional en función de las dimensiones reales de la imagen y

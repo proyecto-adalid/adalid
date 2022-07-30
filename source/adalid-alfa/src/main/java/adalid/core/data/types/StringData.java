@@ -12,6 +12,7 @@
  */
 package adalid.core.data.types;
 
+import adalid.commons.util.*;
 import adalid.core.*;
 import adalid.core.enums.*;
 import adalid.core.expressions.*;
@@ -75,6 +76,10 @@ public class StringData extends CharacterPrimitive {
 
     private String _searchURL;
 
+    private String _fileDownloadStartFunction, _fileDownloadStopFunction;
+
+    private String[] _fileViewerDialogReturnUpdate;
+
     private boolean _fileUploadAutoStart = false;
 
     private int _fileUploadFileLimit = 1;
@@ -125,9 +130,29 @@ public class StringData extends CharacterPrimitive {
 
     private EmbeddedDocumentStyle _embeddedDocumentStyle = EmbeddedDocumentStyle.UNSPECIFIED;
 
+    // <editor-fold defaultstate="collapsed" desc="until 06/06/2022">
+    /*
     private int _displayWidth = -1; // Constants.DEFAULT_DOCUMENT_WIDTH;
 
     private int _displayHeight = -1; // Constants.DEFAULT_DOCUMENT_HEIGHT;
+    /**/
+    // </editor-fold>
+/**/
+    // <editor-fold defaultstate="collapsed" desc="since 06/06/2022">
+    private int _largeDisplayWidth = Constants.DEFAULT_LARGE_IMAGE_WIDTH;
+
+    private int _largeDisplayHeight = Constants.DEFAULT_LARGE_IMAGE_HEIGHT;
+
+    private int _mediumDisplayWidth = Constants.DEFAULT_MEDIUM_IMAGE_WIDTH;
+
+    private int _mediumDisplayHeight = Constants.DEFAULT_MEDIUM_IMAGE_HEIGHT;
+
+    private int _smallDisplayWidth = Constants.DEFAULT_SMALL_IMAGE_WIDTH;
+
+    private int _smallDisplayHeight = Constants.DEFAULT_SMALL_IMAGE_HEIGHT;
+    // </editor-fold>
+
+    private boolean _resizable = true;
 
     private Boolean _frameBorder;
 
@@ -142,6 +167,96 @@ public class StringData extends CharacterPrimitive {
     private Boolean _pictureInPicture;
 
     private Boolean _fullScreen;
+
+    private EmbeddedDocumentLoading _loading = EmbeddedDocumentLoading.UNSPECIFIED;
+
+    private EmbeddedDocumentPolicy _referrerPolicy = EmbeddedDocumentPolicy.UNSPECIFIED;
+
+    private EmbeddedDocumentSandbox _sandbox = EmbeddedDocumentSandbox.UNSPECIFIED;
+
+    private boolean _encodingEnabled = false;
+
+    private EncodingType _encodingType = EncodingType.UNSPECIFIED;
+
+    @Override
+    public String getDataGenFunction() {
+        String dataGenFunction = super.getDataGenFunction();
+        return dataGenFunction == null ? implicitDataGenFunction() : dataGenFunction;
+    }
+
+    private String implicitDataGenFunction() {
+        Object defaultValue = getDefaultValue();
+        return defaultValue == null ? null : implicitDataGenFunction(defaultValue);
+    }
+
+    private String implicitDataGenFunction(Object defaultValue) {
+        final String string_codigo_usuario = "util.string_codigo_usuario";
+        if (SpecialCharacterValue.CURRENT_USER_CODE.equals(defaultValue)) {
+            return string_codigo_usuario;
+        }
+        if (defaultValue instanceof ScalarX) {
+            ScalarX scalarX = (ScalarX) defaultValue;
+            if (scalarX.getOperator() == null && SpecialCharacterValue.CURRENT_USER_CODE.equals(scalarX.getOperand())) {
+                return string_codigo_usuario;
+            }
+        }
+        return null;
+    }
+
+    @Override
+    public boolean isSearchField() {
+        return !isEncodingEnabled() && super.isSearchField();
+    }
+
+    @Override
+    public boolean isFilterField() {
+        return !isEncodingEnabled() && super.isFilterField();
+    }
+
+    @Override
+    public boolean isSortField() {
+        return !isEncodingEnabled() && super.isSortField();
+    }
+
+    @Override
+    public boolean isReportField() {
+        return !isEncodingEnabled() && super.isReportField();
+    }
+
+    @Override
+    public boolean isExportField() {
+        return !isEncodingEnabled() && super.isExportField();
+    }
+
+    @Override
+    public Boolean isLoremIpsum() {
+        Boolean loremIpsum = super.isLoremIpsum();
+        return loremIpsum == null ? implicitLoremIpsum() : loremIpsum;
+    }
+
+    private boolean implicitLoremIpsum() {
+        return !(isDataGenTypeSpecified()
+            || IntUtils.valueOf(getMaxLength(), 30) < 30
+            || getDefaultValue() != null
+            || isUnique()
+            || isEmbeddedDocumentField()
+            || isFileReferenceField()
+            || isNameProperty()
+            || isPassword()
+            || isUniformResourceLocatorField()
+            || isUrlProperty()
+            || isVariantStringField());
+    }
+
+    public boolean isResizableString() {
+        return !(isUnique()
+            || isEmbeddedDocumentField()
+            || isFileReferenceField()
+            || isPassword()
+            || isUniformResourceLocatorField()
+            || isUrlProperty()
+            || isVariantStringField());
+    }
 
     /**
      * @return the minLength
@@ -427,6 +542,10 @@ public class StringData extends CharacterPrimitive {
         _sourceURLs = urls;
     }
 
+    private boolean sourceURLsEquals(String string) {
+        return _sourceURLs != null && _sourceURLs.length == 1 && _sourceURLs[0].equals(string);
+    }
+
     /**
      * @return the URL of the website to search for the value
      */
@@ -440,6 +559,111 @@ public class StringData extends CharacterPrimitive {
     public void setSearchURL(String searchURL) {
         XS2.checkAccess();
         _searchURL = searchURL;
+    }
+
+    /**
+     * @return the inline frame indicator of embedded maps
+     */
+    public boolean isGoogleMapsEmbedInlineFrame() {
+        return EmbeddedDocumentType.IFRAME.equals(_embeddedDocumentType)
+            // TrustedSites.GOOGLE_MAPS.equals(_searchURL)
+            && sourceURLsEquals(TrustedSites.EMBED_MAPS);
+    }
+
+    /**
+     * @return the encoding-enabled indicator
+     */
+    public boolean isEncodingEnabled() {
+        return _encodingEnabled;
+    }
+
+    /**
+     * El método setEncodingEnabled se utiliza para habilitar la codificación del valor de la propiedad para almacenarlo en la base de datos.
+     * <p>
+     * <b>Advertencias</b>
+     * <ul>
+     * <li>La codificación limita significativamente el uso de la propiedad en consultas e informes.</li>
+     * <li>El algoritmo de codificación utilizado es Base64, el cual no es un algoritmo de cifrado, se decodifica fácilmente y, por lo tanto, no debe
+     * utilizarse como un método de cifrado seguro.</li>
+     * <li>La longitud del valor codificado es un tercio mayor que la longitud del valor original; si, por ejemplo, la longitud máxima de la propiedad
+     * se establece en 2000, entonces la propiedad solo puede contener valores de hasta 1500 caracteres.</li>
+     * </ul><p>
+     * @param encoding true para habilitar la codificación
+     * @see <a href="https://docs.oracle.com/javase/8/docs/api/java/util/Base64.html">Class Base64</a>
+     */
+    public void setEncodingEnabled(boolean encoding) {
+        XS2.checkAccess();
+        _encodingEnabled = encoding;
+    }
+
+    /**
+     * @return the encoding type
+     */
+    public EncodingType getEncodingType() {
+        return !_encodingEnabled ? EncodingType.UNSPECIFIED
+            : isEmbeddedDocumentField() ? EncodingType.BASIC
+                : isFileReferenceField() ? EncodingType.FILENAME
+                    : isUniformResourceLocatorField() || isUrlProperty() ? EncodingType.URL
+                        : _encodingType;
+    }
+
+    /**
+     * El método setEncodingType se utiliza para establecer el tipo de codificación del valor de la propiedad para almacenarlo en la base de datos. El
+     * algoritmo de codificación utilizado es Base64. Su valor es uno de los elementos de la enumeración EncodingType.
+     * <p>
+     * Seleccione:
+     * <ul>
+     * <li>BASIC, para utilizar el "Alfabeto Base64" como se especifica en la Tabla 1 de RFC 4648 y RFC 2045 para la operación de codificación y
+     * decodificación. El codificador no agrega ningún carácter de avance de línea (separador de línea). El decodificador rechaza los datos que
+     * contienen caracteres fuera del alfabeto base64.</li>
+     * <li>FILENAME o URL, para utilizar el "Alfabeto Base64 seguro para URL y nombre de archivo" como se especifica en la Tabla 2 de RFC 4648 para la
+     * codificación y decodificación. El codificador no agrega ningún carácter de avance de línea (separador de línea). El decodificador rechaza los
+     * datos que contienen caracteres fuera del alfabeto base64.</li>
+     * <li>MIME, para utilizar el "Alfabeto Base64" como se especifica en la Tabla 1 de RFC 2045 para la operación de codificación y decodificación.
+     * La salida codificada debe representarse en líneas de no más de 76 caracteres cada una y utiliza un retorno de carro '\r' seguido inmediatamente
+     * por un salto de línea '\n' como separador de línea. No se agrega ningún separador de línea al final de la salida codificada. Todos los
+     * separadores de línea u otros caracteres que no se encuentran en la tabla alfabética base64 se ignoran en la operación de decodificación.</li>
+     * </ul><p>
+     * Alternativamente, seleccione UNSPECIFIED para utilizar el valor predeterminado. El valor predeteminado es:
+     * <ul>
+     * <li>BASIC, para propiedades que contienen una definición de documento incrustado (anotadas con @EmbeddedDocument)</li>
+     * <li>FILENAME, para propiedades que contienen una referencias a un archivo cargado en el servidor (anotadas con @FileReference)</li>
+     * <li>URL, para propiedades que contienen una URL (anotadas con @UniformResourceLocator o @UrlProperty)</li>
+     * <li>UNSPECIFIED, para las demás propiedades</li>
+     * </ul><p>
+     * @param encoding tipo de codificación
+     * @see <a href="https://docs.oracle.com/javase/8/docs/api/java/util/Base64.html">Class Base64</a>
+     */
+    public void setEncodingType(EncodingType encoding) {
+        XS2.checkAccess();
+        _encodingType = encoding == null ? EncodingType.UNSPECIFIED : encoding;
+    }
+
+    public String getFileDownloadStartFunction() {
+        return _fileDownloadStartFunction;
+    }
+
+    public void setFileDownloadStartFunction(String function) {
+        XS2.checkAccess();
+        _fileDownloadStartFunction = function;
+    }
+
+    public String getFileDownloadStopFunction() {
+        return _fileDownloadStopFunction;
+    }
+
+    public void setFileDownloadStopFunction(String function) {
+        XS2.checkAccess();
+        _fileDownloadStopFunction = function;
+    }
+
+    public String getFileViewerDialogReturnUpdate() {
+        return _fileViewerDialogReturnUpdate == null ? null : StringUtils.join(_fileViewerDialogReturnUpdate, ' ');
+    }
+
+    public void setFileViewerDialogReturnUpdate(String... update) {
+        XS2.checkAccess();
+        _fileViewerDialogReturnUpdate = update == null || update.length == 0 ? null : update;
     }
 
     /**
@@ -913,6 +1137,8 @@ public class StringData extends CharacterPrimitive {
         _embeddedDocumentStyle = style == null ? EmbeddedDocumentStyle.UNSPECIFIED : style;
     }
 
+    // <editor-fold defaultstate="collapsed" desc="until 06/06/2022">
+    /*
     public int getDisplayWidth() {
         return _displayWidth;
     }
@@ -929,6 +1155,73 @@ public class StringData extends CharacterPrimitive {
     public void setDisplayHeight(int height) {
         XS2.checkAccess();
         _displayHeight = height;
+    }
+    /**/
+    // </editor-fold>
+/**/
+    // <editor-fold defaultstate="collapsed" desc="since 06/06/2022">
+    public int getLargeDisplayWidth() {
+        return _largeDisplayWidth;
+    }
+
+    public void setLargeDisplayWidth(int width) {
+        XS2.checkAccess();
+        _largeDisplayWidth = width;
+    }
+
+    public int getLargeDisplayHeight() {
+        return _largeDisplayHeight;
+    }
+
+    public void setLargeDisplayHeight(int height) {
+        XS2.checkAccess();
+        _largeDisplayHeight = height;
+    }
+
+    public int getMediumDisplayWidth() {
+        return _mediumDisplayWidth;
+    }
+
+    public void setMediumDisplayWidth(int width) {
+        XS2.checkAccess();
+        _mediumDisplayWidth = width;
+    }
+
+    public int getMediumDisplayHeight() {
+        return _mediumDisplayHeight;
+    }
+
+    public void setMediumDisplayHeight(int height) {
+        XS2.checkAccess();
+        _mediumDisplayHeight = height;
+    }
+
+    public int getSmallDisplayWidth() {
+        return _smallDisplayWidth;
+    }
+
+    public void setSmallDisplayWidth(int width) {
+        XS2.checkAccess();
+        _smallDisplayWidth = width;
+    }
+
+    public int getSmallDisplayHeight() {
+        return _smallDisplayHeight;
+    }
+
+    public void setSmallDisplayHeight(int height) {
+        XS2.checkAccess();
+        _smallDisplayHeight = height;
+    }
+    // </editor-fold>
+
+    public boolean isResizable() {
+        return _resizable;
+    }
+
+    public void setResizable(boolean resizable) {
+        XS2.checkAccess();
+        _resizable = resizable;
     }
 
     public Boolean getFrameBorder() {
@@ -994,8 +1287,35 @@ public class StringData extends CharacterPrimitive {
         _fullScreen = allow;
     }
 
+    public EmbeddedDocumentLoading getLoading() {
+        return _loading;
+    }
+
+    public void setLoading(EmbeddedDocumentLoading loading) {
+        XS2.checkAccess();
+        _loading = loading == null ? EmbeddedDocumentLoading.UNSPECIFIED : loading;
+    }
+
+    public EmbeddedDocumentPolicy getReferrerPolicy() {
+        return _referrerPolicy;
+    }
+
+    public void setReferrerPolicy(EmbeddedDocumentPolicy referrerPolicy) {
+        XS2.checkAccess();
+        _referrerPolicy = referrerPolicy == null ? EmbeddedDocumentPolicy.UNSPECIFIED : referrerPolicy;
+    }
+
+    public EmbeddedDocumentSandbox getSandbox() {
+        return _sandbox;
+    }
+
+    public void setSandbox(EmbeddedDocumentSandbox sandbox) {
+        XS2.checkAccess();
+        _sandbox = sandbox == null ? EmbeddedDocumentSandbox.UNSPECIFIED : sandbox;
+    }
+
     public CharacterOrderedPairX toZeroPaddedString() {
-        int l = _maxLength == null ? 0 : _maxLength;
+        int l = IntUtils.valueOf(_maxLength, 0); // _maxLength == null ? 0 : _maxLength;
         return toZeroPaddedString(l);
     }
 

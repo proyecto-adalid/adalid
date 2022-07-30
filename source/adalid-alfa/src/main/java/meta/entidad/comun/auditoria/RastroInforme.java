@@ -76,7 +76,6 @@ public class RastroInforme extends AbstractPersistentEntity {
 
     @OwnerProperty
     @SegmentProperty
-//->@Allocation(maxDepth = 2, maxRound = 1)
     @ColumnField(nullable = Kleenean.TRUE)
     @ForeignKey(onDelete = OnDeleteAction.NONE, onUpdate = OnUpdateAction.NONE)
     @ManyToOne(navigability = Navigability.UNIDIRECTIONAL, view = MasterDetailView.NONE)
@@ -209,13 +208,13 @@ public class RastroInforme extends AbstractPersistentEntity {
     @ColumnField(nullable = Kleenean.TRUE)
     @ForeignKey(onDelete = OnDeleteAction.NONE, onUpdate = OnUpdateAction.NONE)
     @ManyToOne(navigability = Navigability.UNIDIRECTIONAL, view = MasterDetailView.NONE)
-    @PropertyField(sequence = 200, table = Kleenean.TRUE, search = Kleenean.TRUE, report = Kleenean.TRUE, overlay = Kleenean.TRUE)
+    @PropertyField(sequence = 200, table = Kleenean.FALSE, search = Kleenean.FALSE, report = Kleenean.FALSE, overlay = Kleenean.TRUE)
     public TipoGrafico tipoGrafico;
 
     @ColumnField(nullable = Kleenean.TRUE)
     @ForeignKey(onDelete = OnDeleteAction.NONE, onUpdate = OnUpdateAction.NONE)
     @ManyToOne(navigability = Navigability.UNIDIRECTIONAL, view = MasterDetailView.NONE)
-    @PropertyField(sequence = 200, table = Kleenean.TRUE, search = Kleenean.TRUE, report = Kleenean.TRUE, overlay = Kleenean.TRUE)
+    @PropertyField(sequence = 200, table = Kleenean.FALSE, search = Kleenean.FALSE, report = Kleenean.FALSE, overlay = Kleenean.TRUE)
     public SubtipoGrafico subtipoGrafico;
 
     @ColumnField(nullable = Kleenean.TRUE)
@@ -235,8 +234,16 @@ public class RastroInforme extends AbstractPersistentEntity {
     @StringField(maxLength = 100)
     public StringProperty nombreRemitente;
 
+    @ColumnField(nullable = Kleenean.FALSE)
+    @PropertyField(sequence = 210)
+    public BooleanProperty leido;
+
+    @ColumnField(nullable = Kleenean.FALSE)
+    @PropertyField(sequence = 210)
+    public BooleanProperty descargado;
+
     @ColumnField(nullable = Kleenean.FALSE, indexed = Kleenean.FALSE)
-    @PropertyField(sequence = 200, table = Kleenean.TRUE, search = Kleenean.TRUE, report = Kleenean.TRUE, overlay = Kleenean.TRUE)
+    @PropertyField(sequence = 200, table = Kleenean.TRUE, search = Kleenean.FALSE, report = Kleenean.TRUE, overlay = Kleenean.TRUE)
     public BooleanProperty personal;
 
     @Override
@@ -269,6 +276,15 @@ public class RastroInforme extends AbstractPersistentEntity {
         /**/
         descripcionFuncion.setCalculableValueExpression(funcion.descripcionFuncion);
         /**/
+        nombreArchivo.setFileDownloadStopFunction("hideDialogoMostrarStatusDownloadPlusRefresh");
+        nombreArchivo.setFileViewerDialogReturnUpdate("mainForm", "northForm");
+        /**/
+        leido.setInitialValue(false);
+        leido.setDefaultValue(false);
+        /**/
+        descargado.setInitialValue(false);
+        descargado.setDefaultValue(false);
+        /**/
         personal.setInitialValue(false);
         personal.setDefaultValue(false);
         /**/
@@ -298,6 +314,12 @@ public class RastroInforme extends AbstractPersistentEntity {
         /**/
         subtipoGrafico.setLocalizedLabel(ENGLISH, "subtype");
         subtipoGrafico.setLocalizedLabel(SPANISH, "subtipo");
+        /**/
+        leido.setLocalizedLabel(ENGLISH, "read");
+        leido.setLocalizedLabel(SPANISH, "leído");
+        /**/
+        descargado.setLocalizedLabel(ENGLISH, "downloaded");
+        descargado.setLocalizedLabel(SPANISH, "descargado");
         /**/
         personal.setLocalizedTooltip(ENGLISH, "user-defined report");
         personal.setLocalizedTooltip(SPANISH, "informe definido por el usuario");
@@ -431,6 +453,7 @@ public class RastroInforme extends AbstractPersistentEntity {
         super.settleTabs();
         tab1.newTabField(id, fechaHoraInicioEjecucion, fechaHoraFinEjecucion, nombreInforme, nombreArchivo, // 4
             formatoInforme, tipoInforme, tipoGrafico, subtipoGrafico, personal, // 5
+            leido, descargado,
             usuario, codigoUsuario, nombreUsuario, remitente, codigoRemitente, nombreRemitente, condicionEjeFun, descripcionError // 8
         );
         tab2.newTabField(funcion, codigoFuncion, nombreFuncion, descripcionFuncion, paginaFuncion, tipoFuncion, // 5
@@ -447,6 +470,195 @@ public class RastroInforme extends AbstractPersistentEntity {
         // </editor-fold>
     }
 
+    protected Segment pendiente, pendienteActual;
+
+    @Override
+    protected void settleExpressions() {
+        super.settleExpressions();
+        /**/
+        pendiente = not(leido.or(descargado));
+        pendienteActual = pendiente.and(codigoUsuario.isEqualTo(CURRENT_USER_CODE));
+        /**/
+        pendiente.setLocalizedCollectionLabel(ENGLISH, "all reports not read or downloaded by their owner user");
+        pendiente.setLocalizedCollectionLabel(SPANISH, "todos los informes no leídos ni descargados por su usuario propietario");
+        pendiente.setLocalizedCollectionShortLabel(ENGLISH, "Reports not read nor downloaded");
+        pendiente.setLocalizedCollectionShortLabel(SPANISH, "Informes no leídos ni descargados");
+        pendiente.setLocalizedDescription(ENGLISH, "the report has not been read or downloaded by its owner user");
+        pendiente.setLocalizedDescription(SPANISH, "el informe no ha sido leído ni descargado por su usuario propietario");
+        pendiente.setLocalizedErrorMessage(ENGLISH, "the report has already been read or downloaded by its owner user");
+        pendiente.setLocalizedErrorMessage(SPANISH, "el informe ya fue leído o descargado por su usuario propietario");
+        /**/
+        pendienteActual.setLocalizedCollectionLabel(ENGLISH, "all your reports not read nor downloaded by you");
+        pendienteActual.setLocalizedCollectionLabel(SPANISH, "todos sus informes no leídos ni descargados por usted");
+        pendienteActual.setLocalizedCollectionShortLabel(ENGLISH, "My unread and undownloaded reports");
+        pendienteActual.setLocalizedCollectionShortLabel(SPANISH, "Mis informes no leídos ni descargados");
+        pendienteActual.setLocalizedDescription(ENGLISH, "the report has not been read or downloaded by the current user");
+        pendienteActual.setLocalizedDescription(SPANISH, "el informe no ha sido leído ni descargado por el usuario actual");
+        pendienteActual.setLocalizedErrorMessage(ENGLISH, "the report has already been read or downloaded by you");
+        pendienteActual.setLocalizedErrorMessage(SPANISH, "el informe ya fue leído o descargado por usted");
+        /**/
+    }
+
+    @Override
+    protected void settleFilters() {
+        super.settleFilters();
+        /**/
+        addSelectSegment(pendienteActual, false);
+        addSelectSegment(pendiente, false);
+        /**/
+    }
+
+    protected MarcarComoLeido marcarComoLeido;
+
+    @OperationClass(access = OperationAccess.RESTRICTED)
+    public class MarcarComoLeido extends ProcessOperation {
+
+        @InstanceReference
+        protected RastroInforme informe;
+
+        @Override
+        protected void settleAttributes() {
+            super.settleAttributes();
+            /**/
+            // <editor-fold defaultstate="collapsed" desc="localization of MarcarComoLeido's attributes">
+            /**/
+            setLocalizedLabel(ENGLISH, "mark as read");
+            setLocalizedLabel(SPANISH, "marcar como leído");
+            /**/
+            setLocalizedDescription(ENGLISH, "mark report as read");
+            setLocalizedDescription(SPANISH, "marcar informe como leído");
+            /**/
+            setLocalizedSuccessMessage(ENGLISH, "the report was marked as read");
+            setLocalizedSuccessMessage(SPANISH, "el informe fue marcado como leído");
+            /**/
+            // </editor-fold>
+            /**/
+        }
+
+        @Override
+        protected void settleParameters() {
+            super.settleParameters();
+            /**/
+            informe.leido.setCurrentValue(true);
+            /**/
+            // <editor-fold defaultstate="collapsed" desc="localization of MarcarComoLeido's parameters">
+            /**/
+            informe.setLocalizedLabel(ENGLISH, "report");
+            informe.setLocalizedLabel(SPANISH, "informe");
+            /**/
+            // </editor-fold>
+            /**/
+        }
+
+        Check check101, check102, check103;
+
+        @Override
+        protected void settleExpressions() {
+            super.settleExpressions();
+            /**/
+            check101 = informe.condicionEjeFun.isEqualTo(informe.condicionEjeFun.EJECUTADO_SIN_ERRORES);
+            check102 = informe.codigoUsuario.isEqualTo(CURRENT_USER_CODE);
+            check103 = not(informe.leido.or(informe.descargado));
+            /**/
+            // <editor-fold defaultstate="collapsed" desc="localization of MarcarComoLeido's expressions">
+            /**/
+            check101.setLocalizedDescription(ENGLISH, "the report has finished without errors");
+            check101.setLocalizedDescription(SPANISH, "el informe ha terminado sin errores");
+            check101.setLocalizedErrorMessage(ENGLISH, "it is not allowed to send copies of reports that have not finished without errors");
+            check101.setLocalizedErrorMessage(SPANISH, "no está permitido enviar copias de informes que no hayan terminado sin errores");
+            /**/
+            check102.setLocalizedDescription(ENGLISH, "the report belongs to the current user");
+            check102.setLocalizedDescription(SPANISH, "el informe le pertenece al usuario actual");
+            check102.setLocalizedErrorMessage(ENGLISH, "the report does not belong to your user");
+            check102.setLocalizedErrorMessage(SPANISH, "el informe no le pertenece a su usuario");
+            /**/
+            check103.setLocalizedDescription(ENGLISH, "the report has not been read nor downloaded");
+            check103.setLocalizedDescription(SPANISH, "el informe no ha sido leído ni descargado");
+            check103.setLocalizedErrorMessage(ENGLISH, "the report has been read or downloaded");
+            check103.setLocalizedErrorMessage(SPANISH, "el informe ya fue leído o descargado");
+            /**/
+            // </editor-fold>
+            /**/
+        }
+
+    }
+
+    protected MarcarComoNoLeido marcarComoNoLeido;
+
+    @OperationClass(access = OperationAccess.RESTRICTED)
+    public class MarcarComoNoLeido extends ProcessOperation {
+
+        @InstanceReference
+        protected RastroInforme informe;
+
+        @Override
+        protected void settleAttributes() {
+            super.settleAttributes();
+            /**/
+            // <editor-fold defaultstate="collapsed" desc="localization of MarcarComoNoLeido's attributes">
+            /**/
+            setLocalizedLabel(ENGLISH, "mark as unread and undownloaded");
+            setLocalizedLabel(SPANISH, "marcar como no leído ni descargado");
+            /**/
+            setLocalizedDescription(ENGLISH, "mark report as unread and undownloaded");
+            setLocalizedDescription(SPANISH, "marcar informe como no leído ni descargado");
+            /**/
+            setLocalizedSuccessMessage(ENGLISH, "the report was marked as unread and undownloaded");
+            setLocalizedSuccessMessage(SPANISH, "el informe fue marcado como no leído ni descargado");
+            /**/
+            // </editor-fold>
+            /**/
+        }
+
+        @Override
+        protected void settleParameters() {
+            super.settleParameters();
+            /**/
+            informe.leido.setCurrentValue(false);
+            informe.descargado.setCurrentValue(false);
+            /**/
+            // <editor-fold defaultstate="collapsed" desc="localization of MarcarComoNoLeido's parameters">
+            /**/
+            informe.setLocalizedLabel(ENGLISH, "report");
+            informe.setLocalizedLabel(SPANISH, "informe");
+            /**/
+            // </editor-fold>
+            /**/
+        }
+
+        Check check101, check102, check103;
+
+        @Override
+        protected void settleExpressions() {
+            super.settleExpressions();
+            /**/
+            check101 = informe.condicionEjeFun.isEqualTo(informe.condicionEjeFun.EJECUTADO_SIN_ERRORES);
+            check102 = informe.codigoUsuario.isEqualTo(CURRENT_USER_CODE);
+            check103 = informe.leido.or(informe.descargado);
+            /**/
+            // <editor-fold defaultstate="collapsed" desc="localization of MarcarComoNoLeido's expressions">
+            /**/
+            check101.setLocalizedDescription(ENGLISH, "the report has finished without errors");
+            check101.setLocalizedDescription(SPANISH, "el informe ha terminado sin errores");
+            check101.setLocalizedErrorMessage(ENGLISH, "it is not allowed to send copies of reports that have not finished without errors");
+            check101.setLocalizedErrorMessage(SPANISH, "no está permitido enviar copias de informes que no hayan terminado sin errores");
+            /**/
+            check102.setLocalizedDescription(ENGLISH, "the report belongs to the current user");
+            check102.setLocalizedDescription(SPANISH, "el informe le pertenece al usuario actual");
+            check102.setLocalizedErrorMessage(ENGLISH, "the report does not belong to your user");
+            check102.setLocalizedErrorMessage(SPANISH, "el informe no le pertenece a su usuario");
+            /**/
+            check103.setLocalizedDescription(ENGLISH, "the report has been read or downloaded");
+            check103.setLocalizedDescription(SPANISH, "el informe ya fue leído o descargado");
+            check103.setLocalizedErrorMessage(ENGLISH, "the report has not been read nor downloaded");
+            check103.setLocalizedErrorMessage(SPANISH, "el informe no ha sido leído ni descargado");
+            /**/
+            // </editor-fold>
+            /**/
+        }
+
+    }
+
     protected EnviarCopia enviarCopia;
 
     @OperationClass(access = OperationAccess.PROTECTED)
@@ -455,6 +667,7 @@ public class RastroInforme extends AbstractPersistentEntity {
         @Override
         protected void settleAttributes() {
             super.settleAttributes();
+            /**/
             // <editor-fold defaultstate="collapsed" desc="localization of EnviarCopia's attributes">
             /**/
             setLocalizedLabel(ENGLISH, "send a copy");
@@ -467,20 +680,20 @@ public class RastroInforme extends AbstractPersistentEntity {
             setLocalizedSuccessMessage(SPANISH, "se envió una copia del informe al destinatario especificado");
             /**/
             // </editor-fold>
+            /**/
         }
 
         @InstanceReference
-//      @EntityReferenceSearch(searchType = SearchType.LIST)
-        @Filter(segment = Kleenean.TRUE)
         protected RastroInforme informe;
 
         @ParameterField(required = Kleenean.TRUE)
-        @EntityReferenceSearch(searchType = SearchType.LIST, listStyle = ListStyle.CHARACTER_KEY_AND_NAME)
+        @EntityReferenceConversionValidation(restrictedAccess = Kleenean.FALSE)
         protected Usuario destinatario;
 
         @Override
         protected void settleParameters() {
             super.settleParameters();
+            /**/
             // <editor-fold defaultstate="collapsed" desc="localization of EnviarCopia's parameters">
             /**/
             informe.setLocalizedLabel(ENGLISH, "report");
@@ -499,31 +712,46 @@ public class RastroInforme extends AbstractPersistentEntity {
             destinatario.codigoUsuario.setLocalizedShortLabel(SPANISH, "destinatario");
             /**/
             // </editor-fold>
+            /**/
         }
 
-        protected Check check102;
+        protected Check check101, check201, check202;
 
         @Override
         protected void settleExpressions() {
             super.settleExpressions();
             /**/
-            check102 = destinatario.esUsuarioEspecial.isFalse();
+            check101 = informe.condicionEjeFun.isEqualTo(informe.condicionEjeFun.EJECUTADO_SIN_ERRORES);
+            /**/
+            check201 = destinatario.esUsuarioEspecial.isFalse();
+            check202 = destinatario.id.isNotEqualTo(CURRENT_USER_ID);
             /**/
             // <editor-fold defaultstate="collapsed" desc="localization of EnviarCopia's expressions">
             /**/
-            check102.setLocalizedDescription(ENGLISH, "the recipient is not a special user");
-            check102.setLocalizedDescription(SPANISH, "el destinatario no es un usuario especial");
-            check102.setLocalizedErrorMessage(ENGLISH, "it is not allowed to send copies of reports to special users");
-            check102.setLocalizedErrorMessage(SPANISH, "no está permitido enviar copias de informes a usuarios especiales");
+            check101.setLocalizedDescription(ENGLISH, "the report has finished without errors");
+            check101.setLocalizedDescription(SPANISH, "el informe ha terminado sin errores");
+            check101.setLocalizedErrorMessage(ENGLISH, "it is not allowed to send copies of reports that have not finished without errors");
+            check101.setLocalizedErrorMessage(SPANISH, "no está permitido enviar copias de informes que no hayan terminado sin errores");
+            /**/
+            check201.setLocalizedDescription(ENGLISH, "the recipient is not a special user");
+            check201.setLocalizedDescription(SPANISH, "el destinatario no es un usuario especial");
+            check201.setLocalizedErrorMessage(ENGLISH, "it is not allowed to send copies of reports to special users");
+            check201.setLocalizedErrorMessage(SPANISH, "no está permitido enviar copias de informes a usuarios especiales");
+            /**/
+            check202.setLocalizedDescription(ENGLISH, "the recipient is not the current user");
+            check202.setLocalizedDescription(SPANISH, "el destinatario no es el usuario actual");
+            check202.setLocalizedErrorMessage(ENGLISH, "it is not allowed to send copies of reports to yourself");
+            check202.setLocalizedErrorMessage(SPANISH, "no está permitido enviarse copias de informes a uno mismo");
             /**/
             // </editor-fold>
+            /**/
         }
 
         @Override
         protected void settleFilters() {
             super.settleFilters();
             /**/
-            destinatario.setSearchQueryFilter(check102);
+            destinatario.setSearchQueryFilter(and(check201, check202));
             /**/
         }
 

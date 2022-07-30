@@ -501,6 +501,16 @@ public class CharacterX extends VariantX implements CharacterExpression {
     }
 
     @Override
+    public CharacterOrderedPairX ascii(String y) {
+        return XB.Character.OrderedPair.ascii(this, y);
+    }
+
+    @Override
+    public CharacterOrderedPairX diacriticlessAscii(String y) {
+        return XB.Character.OrderedPair.diacriticlessAscii(this, y);
+    }
+
+    @Override
     public CharacterOrderedPairX concat(String y) {
         return XB.Character.OrderedPair.concat(this, y);
     }
@@ -588,6 +598,21 @@ public class CharacterX extends VariantX implements CharacterExpression {
     @Override
     public CharacterScalarX nullWhenDefault() {
         return XB.Character.Scalar.nullWhenDefault(this);
+    }
+
+    @Override
+    public CharacterScalarX ascii() {
+        return XB.Character.Scalar.ascii(this);
+    }
+
+    @Override
+    public CharacterScalarX diacriticless() {
+        return XB.Character.Scalar.diacriticless(this);
+    }
+
+    @Override
+    public CharacterScalarX diacriticlessAscii() {
+        return XB.Character.Scalar.diacriticlessAscii(this);
     }
 
     @Override

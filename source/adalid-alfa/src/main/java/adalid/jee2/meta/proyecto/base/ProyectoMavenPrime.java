@@ -40,13 +40,13 @@ public abstract class ProyectoMavenPrime extends ProyectoMaven {
 
     protected static final String VERSION_PRIMEFACES = PRIMEFACES_VERSION;
 
-    protected static final String DEFAULT_THEME = PrimeFacesThemes.HOT_SNEAKS;
-
-    protected static final String DEFAULT_THEME_VERSION = "[1.0.10,)";
+    protected static final String DEFAULT_THEME = PrimeFacesThemes.SAGA;
 
     protected static final String DEFAULT_THEME_GROUP_ID = "org.primefaces.themes";
-
-    protected static final String DEFAULT_ALL_THEMES_ARTIFACT_ID = "all-themes";
+//
+//  protected static final String DEFAULT_ALL_THEMES_ARTIFACT_ID = "all-themes";
+//
+//  protected static final String DEFAULT_ALL_THEMES_VERSION = "1.0.10";
 
     private String _theme;
 
@@ -74,25 +74,61 @@ public abstract class ProyectoMavenPrime extends ProyectoMaven {
     protected void loadPrivateProperties(Level level, ExtendedProperties properties) {
         super.loadPrivateProperties(level, properties);
         if (_themeSwitchingEnabled == null) {
-            setThemeSwitchingEnabled(BitUtils.valueOf(properties.getString(PRIMEFACES_THEME_SWITCHING_ENABLED)));
-            logger.log(level, PRIMEFACES_THEME_SWITCHING_ENABLED + "=" + _themeSwitchingEnabled);
+            String s = properties.getString(PRIMEFACES_THEME_SWITCHING_ENABLED);
+            if (s != null) {
+                setThemeSwitchingEnabled(BitUtils.valueOf(s));
+                logger.log(level, PRIMEFACES_THEME_SWITCHING_ENABLED + "=" + isThemeSwitchingEnabled());
+            }
         }
         if (_theme == null) {
-            setTheme(properties.getString(PRIMEFACES_THEME));
-            logger.log(level, PRIMEFACES_THEME + "=" + getTheme());
+            String s = properties.getString(PRIMEFACES_THEME);
+            if (s != null) {
+                setTheme(s);
+                logger.log(level, PRIMEFACES_THEME + "=" + getTheme());
+            }
         }
         if (_themeGroupId == null) {
-            setThemeGroupId(properties.getString(PRIMEFACES_THEME_GROUP_ID));
-            logger.log(level, PRIMEFACES_THEME_GROUP_ID + "=" + getThemeGroupId());
+            String s = properties.getString(PRIMEFACES_THEME_GROUP_ID);
+            if (s != null) {
+                setThemeGroupId(s);
+                logger.log(level, PRIMEFACES_THEME_GROUP_ID + "=" + getThemeGroupId());
+            }
         }
         if (_themeArtifactId == null) {
-            setThemeArtifactId(properties.getString(PRIMEFACES_THEME_ARTIFACT_ID));
-            logger.log(level, PRIMEFACES_THEME_ARTIFACT_ID + "=" + getThemeArtifactId());
+            String s = properties.getString(PRIMEFACES_THEME_ARTIFACT_ID);
+            if (s != null) {
+                setThemeArtifactId(s);
+                logger.log(level, PRIMEFACES_THEME_ARTIFACT_ID + "=" + getThemeArtifactId());
+            }
         }
         if (_themeVersion == null) {
-            setThemeVersion(properties.getString(PRIMEFACES_THEME_VERSION));
-            logger.log(level, PRIMEFACES_THEME_VERSION + "=" + getThemeVersion());
+            String s = properties.getString(PRIMEFACES_THEME_VERSION);
+            if (s != null) {
+                setThemeVersion(s);
+                logger.log(level, PRIMEFACES_THEME_VERSION + "=" + getThemeVersion());
+            }
         }
+    }
+
+    /**
+     * Returns {@code true} if PrimeFaces all-themes jar contains the specified theme.
+     *
+     * @param theme theme whose presence is to be tested
+     * @return {@code true} if PrimeFaces all-themes jar contains the specified theme
+     */
+    public boolean allThemesContains(String theme) {
+        return PrimeFacesThemes.allThemesContains(theme);
+    }
+
+    /**
+     * Returns {@code true} if PrimeFaces jar of the specified major version (from 11 onwards) contains the specified theme.
+     *
+     * @param version PrimeFaces major version, from 11 onwards
+     * @param theme theme whose presence is to be tested
+     * @return {@code true} if PrimeFaces jar of the specified major version (from 11 onwards) contains the specified theme
+     */
+    public boolean primefacesJarContains(String version, String theme) {
+        return PrimeFacesThemes.primefacesJarContains(version, theme);
     }
 
     /**
@@ -104,7 +140,7 @@ public abstract class ProyectoMavenPrime extends ProyectoMaven {
 
     /**
      * El método setTheme se utiliza para especificar el nombre del tema de interfaz gráfica del proyecto generado. El valor predeterminado de esta
-     * propiedad es <b>hot-sneaks</b> (campo HOT_SNEAKS de la clase PrimeFacesThemes).
+     * propiedad es <b>saga</b> (campo SAGA de la clase PrimeFacesThemes).
      *
      * @param theme nombre del tema de interfaz gráfica del proyecto generado; si el proyecto generado permite cambiar el tema, este será el nombre
      * del tema inicial. Puede utilizar como argumento los campos definidos en la clase PrimeFacesThemes.
@@ -185,9 +221,7 @@ public abstract class ProyectoMavenPrime extends ProyectoMaven {
     }
 
     /**
-     * El método setThemeArtifactId se utiliza para especificar el nombre del artefacto Maven del tema de interfaz gráfica del proyecto generado. Si
-     * el proyecto generado permite cambiar el tema, el valor predeterminado de esta propiedad es <b>all-themes</b>; en caso contrario, el valor
-     * predeterminado es el nombre del tema (vea el método setTheme).
+     * El método setThemeArtifactId se utiliza para especificar el nombre del artefacto Maven del tema de interfaz gráfica del proyecto generado.
      *
      * @param artifactId nombre del artefacto Maven del tema de la interfaz gráfica del proyecto generado.
      */
@@ -196,7 +230,7 @@ public abstract class ProyectoMavenPrime extends ProyectoMaven {
     }
 
     protected String getDefaultThemeArtifactId() {
-        return isThemeSwitchingEnabled() ? DEFAULT_ALL_THEMES_ARTIFACT_ID : getTheme();
+        return null; // isThemeSwitchingEnabled() ? DEFAULT_ALL_THEMES_ARTIFACT_ID : getTheme();
     }
 
     /**
@@ -207,8 +241,7 @@ public abstract class ProyectoMavenPrime extends ProyectoMaven {
     }
 
     /**
-     * El método setThemeVersion se utiliza para especificar la versión del artefacto Maven del tema de interfaz gráfica del proyecto generado. El
-     * valor predeterminado de esta propiedad es <b>[1.0.10,)</b> (versión 1.0.10 en adelante).
+     * El método setThemeVersion se utiliza para especificar la versión del artefacto Maven del tema de interfaz gráfica del proyecto generado.
      *
      * @param version versión del artefacto Maven del tema de la interfaz gráfica del proyecto generado.
      */
@@ -217,19 +250,19 @@ public abstract class ProyectoMavenPrime extends ProyectoMaven {
     }
 
     protected String getDefaultThemeVersion() {
-        return DEFAULT_THEME_VERSION;
+        return null; // DEFAULT_ALL_THEMES_VERSION;
     }
 
     /**
      * @return true if the theme switching is enabled; false otherwise
      */
     public boolean isThemeSwitchingEnabled() {
-        return BitUtils.valueOf(_themeSwitchingEnabled);
+        return _themeSwitchingEnabled == null || BitUtils.valueOf(_themeSwitchingEnabled);
     }
 
     /**
      * El método setThemeSwitchingEnabled se utiliza para especificar si el proyecto generado permite, o no, cambiar el tema de la interfaz gráfica.
-     * El valor predeterminado de esta propiedad es <b>false</b> (no permite cambiar el tema).
+     * El valor predeterminado de esta propiedad es <b>true</b> (permite cambiar el tema).
      *
      * @param enabled true, si el proyecto generado permite cambiar el tema de la interfaz gráfica; de lo contrario false.
      */

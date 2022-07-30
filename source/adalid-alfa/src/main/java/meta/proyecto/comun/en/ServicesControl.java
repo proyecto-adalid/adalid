@@ -33,8 +33,23 @@ public class ServicesControl extends Project {
         // </editor-fold>
     }
 
+    // <editor-fold defaultstate="collapsed" desc="print">
+    @Override
+    public void print() {
+        super.print();
+        System.out.println(FiltroFuncion);
+        System.out.println(FiltroFuncionPar);
+        System.out.println(VistaFuncion);
+        System.out.println(VistaFuncionCol);
+    }
+    // </editor-fold>
+
     FiltroFuncion FiltroFuncion;
 
+    FiltroFuncionPar FiltroFuncionPar;
+
     VistaFuncion VistaFuncion;
+
+    VistaFuncionCol VistaFuncionCol;
 
 }

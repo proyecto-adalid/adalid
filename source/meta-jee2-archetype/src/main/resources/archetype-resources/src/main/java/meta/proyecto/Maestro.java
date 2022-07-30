@@ -24,9 +24,9 @@ public abstract class Maestro extends ProyectoPrime {
     protected void settleAttributes() {
         super.settleAttributes();
         /**/
-        setDefaultLabel("Gestión de Recursos Empresariales");
-        setDefaultShortDescription("Gestión de Recursos Empresariales");
-        setDefaultDescription(""
+        setLocalizedLabel(SPANISH, "Gestión de Recursos Empresariales");
+        setLocalizedShortDescription(SPANISH, "Gestión de Recursos Empresariales");
+        setLocalizedDescription(SPANISH, ""
             + "Gestión de Recursos Empresariales es un sistema de planificación de recursos empresariales o ERP, por las siglas en inglés de "
             + "Enterprise Resource Planning; es un sistema de información gerencial que integra y maneja muchos de los aspectos asociados con las "
             + "operaciones de producción y distribución de compañías en la producción de bienes y/o servicios. "
@@ -41,6 +41,26 @@ public abstract class Maestro extends ProyectoPrime {
             + "");
         /**/
     }
+
+    // <editor-fold defaultstate="collapsed" desc="print">
+    @Override
+    public void print() {
+        System.out.println(mod1);
+        System.out.println(mod2);
+        System.out.println(mod3);
+        System.out.println(mod4);
+        System.out.println(mod5);
+        System.out.println(mod6);
+        System.out.println(mod7);
+        System.out.println(mod8);
+        System.out.println(mod9);
+        System.out.println(modx1);
+        System.out.println(modx2);
+        System.out.println(modx3);
+        System.out.println(modx4);
+        System.out.println(modx5);
+    }
+    // </editor-fold>
 
     @ProjectModule(menu = Kleenean.TRUE, role = Kleenean.TRUE)
     Modulo1 mod1;

@@ -44,6 +44,18 @@ public class PasoRutina extends AbstractPersistentEntity {
     // </editor-fold>
 
     @Override
+    protected void addAllocationStrings() {
+        super.addAllocationStrings();
+        super.addAllocationStrings(
+            "funcion.tipoFuncion",
+            "funcion.rango",
+            "para.rutina",
+            "variable.rutina",
+            "variable.claseRecurso"
+        );
+    }
+
+    @Override
     protected void settleAttributes() {
         super.settleAttributes();
         setOrderBy(rutina, numero, id);
@@ -74,11 +86,9 @@ public class PasoRutina extends AbstractPersistentEntity {
     @VersionProperty
     public LongProperty version;
 
-    @Allocation(maxDepth = 2, maxRound = 0)
     @ForeignKey(onDelete = OnDeleteAction.CASCADE, onUpdate = OnUpdateAction.CASCADE)
     @ManyToOne(main = Kleenean.TRUE, navigability = Navigability.BIDIRECTIONAL, view = MasterDetailView.TABLE_AND_DETAIL)
     @ColumnField(nullable = Kleenean.FALSE)
-    @Filter(owner = Kleenean.FALSE, segment = Kleenean.FALSE)
     public RutinaUsuario rutina;
 
     @ColumnField(nullable = Kleenean.FALSE)
@@ -91,7 +101,6 @@ public class PasoRutina extends AbstractPersistentEntity {
     @StringField(maxLength = 0)
     public StringProperty descripcion;
 
-    @Allocation(maxDepth = 2, maxRound = 0)
     @ColumnField(nullable = Kleenean.TRUE)
 //  20171213: remove foreign-key referring to Funcion
 //  @ForeignKey(onDelete = OnDeleteAction.NONE, onUpdate = OnUpdateAction.NONE)
@@ -100,7 +109,6 @@ public class PasoRutina extends AbstractPersistentEntity {
     @PropertyField(create = Kleenean.TRUE, table = Kleenean.TRUE, required = Kleenean.TRUE) // required while subroutines are not implemented
     public Funcion funcion;
 
-    @Allocation(maxDepth = 2, maxRound = 0)
     @ColumnField(nullable = Kleenean.TRUE)
     @ForeignKey(onDelete = OnDeleteAction.NONE, onUpdate = OnUpdateAction.NONE)
     @ManyToOne(navigability = Navigability.UNIDIRECTIONAL, view = MasterDetailView.NONE)
@@ -144,7 +152,6 @@ public class PasoRutina extends AbstractPersistentEntity {
     @PropertyField(hidden = Kleenean.TRUE)
     public BooleanProperty coleccion;
 
-    @Allocation(maxDepth = 2, maxRound = 0)
     @ColumnField(nullable = Kleenean.TRUE)
     @ForeignKey(onDelete = OnDeleteAction.NONE, onUpdate = OnUpdateAction.NONE)
     @ManyToOne(navigability = Navigability.UNIDIRECTIONAL, view = MasterDetailView.NONE)
@@ -153,7 +160,6 @@ public class PasoRutina extends AbstractPersistentEntity {
     @EntityReferenceSearch(searchType = SearchType.LIST, listStyle = ListStyle.NAME)
     public VariableRutina para;
 
-    @Allocation(maxDepth = 2, maxRound = 0)
     @ColumnField(nullable = Kleenean.TRUE)
     @ForeignKey(onDelete = OnDeleteAction.NONE, onUpdate = OnUpdateAction.NONE)
     @ManyToOne(navigability = Navigability.UNIDIRECTIONAL, view = MasterDetailView.NONE)

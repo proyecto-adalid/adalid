@@ -58,21 +58,18 @@ public class TransicionTareaUsuario extends TransicionAbstracta {
     @PropertyField(table = Kleenean.TRUE, report = Kleenean.TRUE, search = Kleenean.TRUE)
     public CondicionTarea condicionFinal;
 
-    @Allocation(maxDepth = 1, maxRound = 0)
     @ColumnField(calculable = Kleenean.TRUE)
 //  @ForeignKey(onDelete = OnDeleteAction.NONE, onUpdate = OnUpdateAction.NONE)
     @ManyToOne(navigability = Navigability.UNIDIRECTIONAL, view = MasterDetailView.NONE)
     @PropertyField(table = Kleenean.TRUE, detail = Kleenean.FALSE, report = Kleenean.FALSE, search = Kleenean.TRUE)
     public Usuario responsable;
 
-    @Allocation(maxDepth = 1, maxRound = 0)
     @ColumnField(nullable = Kleenean.TRUE)
     @ForeignKey(onDelete = OnDeleteAction.NONE, onUpdate = OnUpdateAction.NONE)
     @ManyToOne(navigability = Navigability.UNIDIRECTIONAL, view = MasterDetailView.NONE)
     @PropertyField(table = Kleenean.FALSE, report = Kleenean.TRUE, search = Kleenean.TRUE)
     public Usuario responsableInicial;
 
-    @Allocation(maxDepth = 1, maxRound = 0)
     @ColumnField(nullable = Kleenean.TRUE)
     @ForeignKey(onDelete = OnDeleteAction.NONE, onUpdate = OnUpdateAction.NONE)
     @ManyToOne(navigability = Navigability.UNIDIRECTIONAL, view = MasterDetailView.NONE)

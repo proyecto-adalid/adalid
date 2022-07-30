@@ -22,6 +22,10 @@ import java.util.Locale;
  */
 public interface BooleanExpression extends Expression {
 
+    boolean isLogicalTautology();
+
+    void setLogicalTautology(boolean tautology);
+
     /**
      * El método <b>isNull</b> contruye una expresión lógica que genera la comparación de esta expresión con el valor nulo. La comparación resulta en
      * verdadero si el valor de la expresión es nulo.

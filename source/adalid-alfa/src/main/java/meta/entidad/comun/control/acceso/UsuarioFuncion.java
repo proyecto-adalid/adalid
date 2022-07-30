@@ -44,6 +44,12 @@ public class UsuarioFuncion extends AbstractPersistentEntity {
     // </editor-fold>
 
     @Override
+    protected void addAllocationStrings() {
+        super.addAllocationStrings();
+        super.addAllocationStrings("usuario.grupo");
+    }
+
+    @Override
     protected void settleAttributes() {
         super.settleAttributes();
 //      setSchema(ProyectoBase.getEsquemaEntidadesComunes());
@@ -70,7 +76,7 @@ public class UsuarioFuncion extends AbstractPersistentEntity {
     @VersionProperty
     public LongProperty version;
 
-    @ManyToOne(navigability = Navigability.UNIDIRECTIONAL, view = MasterDetailView.TABLE)
+    @ManyToOne(navigability = Navigability.UNIDIRECTIONAL, view = MasterDetailView.NONE)
     @ColumnField(nullable = Kleenean.FALSE)
     @PropertyField(table = Kleenean.TRUE, report = Kleenean.TRUE)
     public Usuario usuario;
@@ -148,6 +154,12 @@ public class UsuarioFuncion extends AbstractPersistentEntity {
         /**/
         // </editor-fold>
         /**/
+    }
+
+    @Override
+    protected void settleLinks() {
+        super.settleLinks();
+        linkForeignSegmentProperty(usuario.grupo);
     }
 
 }

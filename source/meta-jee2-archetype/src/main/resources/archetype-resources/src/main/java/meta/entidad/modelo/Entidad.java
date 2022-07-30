@@ -25,11 +25,6 @@ import java.lang.reflect.Field;
 @EntityDataGen
 public class Entidad extends AbstractPersistentEntity {
 
-    @Deprecated()
-    private Entidad() {
-        this(null, null);
-    }
-
     public Entidad(Artifact declaringArtifact, Field declaringField) {
         super(declaringArtifact, declaringField);
     }

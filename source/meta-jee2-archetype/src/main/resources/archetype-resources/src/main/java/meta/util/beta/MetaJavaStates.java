@@ -9,6 +9,8 @@
  */
 package ${package}.meta.util.beta;
 
+import adalid.util.*;
+
 /**
  * MetaJavaStates genera meta-java de máquinas de estado de su aplicación utilizando la plataforma meta-java-states.
  * <p>
@@ -30,6 +32,7 @@ package ${package}.meta.util.beta;
  *
  * @author ADALID meta-jee2-archetype
  */
+@RunnableClass
 public class MetaJavaStates extends adalid.util.Utility {
 
     /**

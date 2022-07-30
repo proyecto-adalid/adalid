@@ -2,4 +2,4 @@ Manifest-Version: 1.0
 OpenIDE-Module: adalid.code.templates
 OpenIDE-Module-Layer: adalid/code/templates/layer.xml
 OpenIDE-Module-Localizing-Bundle: adalid/code/templates/Bundle.properties
-OpenIDE-Module-Specification-Version: 4.4.0
+OpenIDE-Module-Specification-Version: 4.5.0

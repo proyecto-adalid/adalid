@@ -17,6 +17,8 @@ import adalid.commons.properties.*;
 import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.net.URLDecoder;
+import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -105,6 +107,108 @@ public class StrUtils {
         } catch (NoSuchAlgorithmException | CloneNotSupportedException | UnsupportedEncodingException ex) {
             return credentials;
         }
+    }
+
+    public static String separateLines(String string, int maxLineLength) {
+        return separateLines(string, maxLineLength, "\n");
+    }
+
+    public static String separateLines(String string, int maxLineLength, String separator) {
+        return separateLines(string, maxLineLength, separator, false);
+    }
+
+    public static String separateLines(String string, int maxLineLength, String separator, boolean separatorLine) {
+        List<String> list = StrUtils.split(string, maxLineLength, separator, separatorLine);
+        String sep = splitSeparator(separator);
+        String str = StringUtils.join(list, sep);
+        boolean ls = linesSeparator(separator, separatorLine);
+        return !ls ? str : StringUtils.replace(str, sep + sep + sep, sep + sep);
+    }
+
+    public static List<String> split(String string) {
+        return split(string, 80);
+    }
+
+    public static List<String> split(String string, int max) {
+        return split(string, max, null);
+    }
+
+    public static List<String> split(String string, int max, String separator) {
+        return split(string, max, separator, false);
+    }
+
+    public static List<String> split(String string, int max, String separator, boolean separatorLine) {
+        return split(string, max, separator, separatorLine, null);
+    }
+
+    /**
+     * split a text into a list of lines.
+     *
+     * @param string the text to split.
+     * @param max the maximum line length.
+     * @param separator the paragraph separator string.
+     * @param separatorLine if true, the paragraph separator is added as a line between paragraphs.
+     * @param prefix the new line prefix
+     * @return the list of split.
+     */
+    public static List<String> split(String string, int max, String separator, boolean separatorLine, String prefix) {
+        List<String> strings = new ArrayList<>();
+        String str = StringUtils.trimToNull(string);
+        if (str != null) {
+            int maxLineLength, lineLength, wordLength, lastParagraph;
+            String line, paragraph;
+            String[] words, paragraphs;
+//          String sep = StringUtils.trimToNull(separator);
+            String sep = splitSeparator(separator);
+            String nlp = prefix == null ? "" : prefix;
+//          boolean ls = sep != null && separatorLine;
+            boolean ls = linesSeparator(separator, separatorLine);
+//          paragraphs = sep == null ? new String[]{str} : StringUtils.splitByWholeSeparator(str, separator);
+            paragraphs = separator == null ? new String[]{str} : StringUtils.splitByWholeSeparator(str, separator);
+            lastParagraph = paragraphs.length - 1;
+            for (int i = 0; i < paragraphs.length; i++) {
+//              paragraph = paragraphs[i].trim();
+                paragraph = paragraphs[i].replaceAll(" +$", ""); // remove spaces at the end of the paragraph
+                if (max > 0) {
+                    maxLineLength = max;
+                    if (paragraph.length() > maxLineLength) {
+                        line = "";
+                        words = StringUtils.split(paragraph);
+                        for (String word : words) {
+                            lineLength = line.length();
+                            wordLength = word.length() + 1;
+                            if (lineLength == 0) {
+                                line = word;
+                            } else if (lineLength + wordLength > maxLineLength) {
+                                strings.add(line);
+                                maxLineLength = max - nlp.length();
+                                line = nlp + word;
+                            } else {
+                                line += " " + word;
+                            }
+                        }
+                        strings.add(line);
+                    } else {
+                        strings.add(paragraph);
+                    }
+                } else {
+                    strings.add(paragraph);
+                }
+                if (ls && i < lastParagraph) {
+                    strings.add(sep);
+                }
+            }
+        }
+        return strings;
+    }
+
+    private static boolean linesSeparator(String separator, boolean separatorLine) {
+        String sep = splitSeparator(separator);
+        return separatorLine && sep != null && !sep.isEmpty();
+    }
+
+    private static String splitSeparator(String separator) {
+        return separator == null ? null : separator.replaceAll(" +", ""); // remove spaces
     }
 
     public static String ltrim(String s) {
@@ -1121,8 +1225,7 @@ public class StrUtils {
         if (string == null) {
             return null;
         }
-        String dless = diacriticlessAscii(string);
-        byte[] bytes = dless.getBytes();
+        byte[] bytes = diacriticlessAscii(string).getBytes();
         String ascii = new String(bytes, StandardCharsets.US_ASCII);
         return ascii;
     }
@@ -1131,13 +1234,31 @@ public class StrUtils {
         if (string == null) {
             return null;
         }
-        try {
-            byte[] bytes = StringUtils.trimToEmpty(string).getBytes();
-            return new String(bytes, "UTF-8");
-        } catch (UnsupportedEncodingException ex) {
-            logger.fatal(ThrowableUtils.getString(ex), ex);
+        byte[] bytes = StringUtils.trimToEmpty(string).getBytes();
+        String utf_8 = new String(bytes, StandardCharsets.UTF_8);
+        return utf_8;
+    }
+
+    public static String encode(String string) {
+        if (string == null) {
+            return null;
         }
-        return null;
+        try {
+            return URLEncoder.encode(string, StandardCharsets.UTF_8.toString());
+        } catch (UnsupportedEncodingException e) {
+            return string;
+        }
+    }
+
+    public static String decode(String string) {
+        if (string == null) {
+            return null;
+        }
+        try {
+            return URLDecoder.decode(string, StandardCharsets.UTF_8.toString());
+        } catch (UnsupportedEncodingException e) {
+            return string;
+        }
     }
 
     public static String getCamelCase(String string) {
@@ -1606,13 +1727,13 @@ public class StrUtils {
 
     public static String disclose(String argument, String delimiter) {
         return argument == null ? null
-            : isDelimited(argument, delimiter) ? argument.substring(1, argument.length() - 1)
+            : isDelimited(argument, delimiter) ? argument.substring(delimiter.length(), argument.length() - delimiter.length())
             : argument;
     }
 
     public static String disclose(String argument, String open, String close) {
         return argument == null ? null
-            : isDelimited(argument, open, close) ? argument.substring(1, argument.length() - 1)
+            : isDelimited(argument, open, close) ? argument.substring(open.length(), argument.length() - close.length())
             : argument;
     }
 

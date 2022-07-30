@@ -28,25 +28,26 @@ import java.lang.annotation.Target;
 public @interface GraphicImage {
 
     /**
-     * displayWidth específica el número de pixeles de ancho de la imagen en la vista. Especifique un número entero entre 0 y 3.840. Alternativamente,
-     * omita el elemento para utilizar el valor predeterminado del atributo. El valor predeterminado del atributo es 96. Si el valor especificado es
-     * mayor que 3.840, su valor será 3.840; si es menor o igual a 0, será el valor especificado para el elemento displayHeight; y si el valor de
-     * displayHeight también es menor o igual a 0, entonces las vistas no muestran la imagen.
+     * displayWidth específica un trío de números de pixeles de ancho de la imagen en la vista, correspondientes a tamaño grande, mediano y pequeño,
+     * respectivamente. Especifique números enteros entre 24 y 1.920. Alternativamente, omita el elemento para utilizar el valor predeterminado del
+     * atributo. El valor predeterminado del atributo es el trío (288, 192, 96}. Si alguno de los valores especificados es mayor que 1.920, su valor
+     * será 1.920; si es menor o igual a 0, será el valor del correspondiente tamaño en el trío displayHeight; pero si ese valor es menor o igual a 0,
+     * será el valor del correspondiente tamaño en el trío predeterminado.
      *
      * @return displayWidth
      */
-    int displayWidth() default 0; // Constants.DEFAULT_IMAGE_WIDTH;
+    int[] displayWidth() default {0, 0, 0};
 
     /**
-     * displayHeight específica el número de pixeles de alto de la imagen en la vista. Especifique un número entero entre 0 y 2.160. Alternativamente,
-     * omita el elemento para utilizar el valor predeterminado del atributo. El valor predeterminado del atributo es 96. Si el valor especificado es
-     * mayor que 2.160, su valor será 2.160; si es menor o igual a 0, será el valor especificado para el elemento displayWidth; si el valor de
-     * displayWidth es mayor que 2.160, será 2.160; y si el valor de displayWidth también es menor o igual a 0, entonces las vistas no muestran la
-     * imagen.
+     * displayHeight específica un trío de números de pixeles de alto de la imagen en la vista, correspondientes a tamaño grande, mediano y pequeño,
+     * respectivamente. Especifique un número entero entre 24 y 1.080. Alternativamente, omita el elemento para utilizar el valor predeterminado del
+     * atributo. El valor predeterminado del atributo es el trío (288, 192, 96}. Si alguno de los valores especificados es mayor que 1.080, su valor
+     * será 1.080; si es menor o igual a 0, será el valor del correspondiente tamaño en el trío displayWidth; pero si ese valor es mayor que 1.080,
+     * será 1.080, y si es menor o igual a 0, será el valor del correspondiente tamaño en el trío predeterminado.
      *
      * @return displayHeight
      */
-    int displayHeight() default 0; // Constants.DEFAULT_IMAGE_HEIGHT;
+    int[] displayHeight() default {0, 0, 0};
 
     /**
      * resizable indica si el ancho de la imagen se debe ajustar de manera dinámica y proporcional en función de las dimensiones reales de la imagen y

@@ -54,7 +54,6 @@ public class DocumentoPruebaX6 extends DocumentoPrueba {
         // </editor-fold>
     }
 
-//->@Allocation(maxDepth = 3, maxRound = 0)
     @ColumnField(nullable = Kleenean.FALSE)
     @ForeignKey(onDelete = OnDeleteAction.NONE, onUpdate = OnUpdateAction.NONE)
     @ManyToOne(navigability = Navigability.UNIDIRECTIONAL, view = MasterDetailView.TABLE_AND_DETAIL)

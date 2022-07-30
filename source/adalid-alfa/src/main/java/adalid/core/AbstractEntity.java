@@ -34,7 +34,19 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Comparator;
+import java.util.EnumSet;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
+import java.util.TreeSet;
 import org.apache.commons.collections.ExtendedProperties;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
@@ -1165,6 +1177,16 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
     /**
      * annotated with EntityReferenceDisplay
      */
+    private boolean _referenceAvatar = true;
+
+    /**
+     * annotated with EntityReferenceConversionValidation
+     */
+    private boolean _restrictedAccessEntityReference = true;
+
+    /**
+     * annotated with EntityReferenceDisplay
+     */
     private EntityReferenceStyle _referenceStyle = EntityReferenceStyle.UNSPECIFIED;
 
     /**
@@ -1778,6 +1800,16 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
     @Override
     public List<EntityCollection> getEntityCollectionsList() {
         return _atlas.getEntityCollectionsList();
+    }
+
+    public List<EntityCollection> getThisEntityCollectionsList() {
+        List<EntityCollection> list = new ArrayList<>();
+        for (EntityCollection entityCollection : _atlas.getEntityCollectionsList()) {
+            if (!entityCollection.isInherited()) {
+                list.add(entityCollection);
+            }
+        }
+        return list;
     }
 
     @Override
@@ -2522,6 +2554,16 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
     @Override
     public Class<?> getSegmentEntityClass() { // since 20210218
         return _segmentProperty == null ? null : _segmentProperty instanceof Entity ? _segmentProperty.getDataType() : _segmentProperty.getSegmentEntityClass();
+    }
+
+    @Override
+    public boolean isSegmentEqualToOwner() { // since 24/07/2022
+        return _segmentProperty != null && _segmentProperty.equals(_ownerProperty);
+    }
+
+    @Override
+    public boolean isSegmentEqualToPrimaryKey() { // since 24/07/2022
+        return _segmentProperty != null && _segmentProperty.equals(_primaryKeyProperty);
     }
 
     /**
@@ -3565,7 +3607,10 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
      */
     @Override
     public boolean isTreeViewEnabled() {
+        /* until 13/07/2022
         return _treeViewEnabled && _parentProperty != null && _ownerProperty == null && _segmentProperty == null && isGuiCodeGenEnabled();
+        /**/
+        return _treeViewEnabled && _parentProperty != null && isGuiCodeGenEnabled();
     }
 
     /**
@@ -4014,6 +4059,61 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
     }
 
     /**
+     * @return the reference avatar indicator
+     */
+    public boolean isReferenceAvatar() {
+        return _referenceAvatar;
+    }
+
+    public void setReferenceAvatar(boolean avatar) {
+        XS1.checkAccess();
+        _referenceAvatar = avatar;
+    }
+
+    /**
+     * @return the reference avatar availability
+     */
+    public boolean isReferenceWithAvatar() {
+        return _referenceAvatar && isEntityWithAvatar();
+    }
+
+    /**
+     * @return the entity avatar availability
+     */
+    public boolean isEntityWithAvatar() {
+        BinaryProperty imageProperty = getImageProperty();
+        AvatarShape avatarShape = imageProperty == null ? null : imageProperty.getAvatarShape();
+        return !(avatarShape == null || avatarShape.equals(AvatarShape.NONE));
+    }
+
+    /**
+     * @return the restricted access entity reference indicator
+     */
+    public boolean isRestrictedAccessEntityReference() {
+        return _restrictedAccessEntityReference;
+    }
+
+    /**
+     * @return the restricted access entity reference search list indicator
+     */
+    public boolean isRestrictedAccessEntityReferenceSearchList() { // since 24/07/2022
+        SearchType searchType = getSearchType(); // displays (pages) should always add the necessary access control criteria
+        return _restrictedAccessEntityReference && (SearchType.LIST.equals(searchType) || SearchType.RADIO.equals(searchType));
+    }
+
+    /**
+     * El método setRestrictedAccessEntityReference se utiliza para establecer si la referencia (propiedad o parámetro que hace referencia a otra
+     * entidad) es una referencia con o sin acceso restringido por las reglas de control de acceso. El valor predeterminado del atributo es true, es
+     * decir, con acceso restringido.
+     *
+     * @param restricted true para que sea una referencia con acceso restringido; o false, para que sea una referencia sin acceso restringido.
+     */
+    public void setRestrictedAccessEntityReference(boolean restricted) {
+        XS1.checkAccess();
+        _restrictedAccessEntityReference = restricted;
+    }
+
+    /**
      * @return the reference style
      */
     @Override
@@ -4051,7 +4151,7 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
                     return codeAndOrNameStyle(code, name, defaultStyle);
             }
         }
-        return isEnumerationEntity() ? codeAndOrNameStyle(code, name, defaultStyle) : nameAndOrCodeStyle(code, name, defaultStyle);
+        return isEnumerationEntity() ? codeAndOrNameStyle(code, name, defaultStyle) : nameOrCodeStyle(code, name, defaultStyle);
     }
 
     private EntityReferenceStyle nameOrCodeStyle(Property code, Property name, EntityReferenceStyle defaultStyle) {
@@ -4254,16 +4354,29 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
         if (exp != null) {
             return _searchQueryFilter == null ? exp : exp.and(_searchQueryFilter);
         }
+        // required by query-builder.vm
         if (_searchQueryFilter == null && !isHiddenField()) {
+            BooleanExpression isNotNull = isNotNull();
+            isNotNull.setLogicalTautology(true);
+            /* until 30/06/2022
             if (isFilterInactiveIndicatorProperty() || isFilterOwnerProperty() || isFilterSegmentProperty()) {
-                return isNotNull();
+                return isNotNull;
             }
+            /**/
             if (QuickAddingFilter.MISSING.equals(_quickAddingFilter)) {
-                return isNotNull();
+                return isNotNull;
             }
             if (isSegmentProperty() && !isReadOnly()) {
-                return isNotNull();
+                return isNotNull;
             }
+            // since 24/07/2022
+            if (isRestrictedAccessEntityReferenceSearchList()) {
+                Entity root = getRoot();
+                if (root.getOwnerProperty() != null || root.getSegmentProperty() != null) {
+                    return isNotNull;
+                }
+            }
+            /**/
         }
         return _searchQueryFilter;
     }
@@ -5542,23 +5655,33 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
      * @return the filter inactive indicator property
      */
     public boolean isFilterInactiveIndicatorProperty() {
+        /* until 29/06/2022
         return _filterInactiveIndicatorProperty && getInactiveIndicatorProperty() != null && filterable();
+        /**/
+        return _filterInactiveIndicatorProperty;
     }
 
     /**
      * @return the filter owner property
      */
     public boolean isFilterOwnerProperty() {
+        /* until 29/06/2022
         return _filterOwnerProperty && getOwnerProperty() != null && filterable();
+        /**/
+        return _filterOwnerProperty;
     }
 
     /**
      * @return the filter segment property
      */
     public boolean isFilterSegmentProperty() {
+        /* until 29/06/2022
         return _filterSegmentProperty && getSegmentProperty() != null && filterable();
+        /**/
+        return _filterSegmentProperty;
     }
 
+    /* until 29/06/2022
     private boolean filterable() {
         if (isHiddenField()) {
             return false;
@@ -5568,7 +5691,7 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
                 return false;
             }
             Entity root = getDeclaringEntityRoot();
-            return root.isInsertEnabled() || root.isUpdateEnabled();
+            return root.isInsertEnabled() || root.isUpdateEnabled(); // Why?
         }
         return isParameter();
     }
@@ -5695,6 +5818,16 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
     @Override
     public boolean isMasterDetailViewMenuOptionEnabled() {
         return _masterDetailViewMenuOptionEnabled.toBoolean(aggregateless());
+    }
+
+    /**
+     * @param display the display that is opened by the menu option
+     * @return the master/detail view menu option enabled indicator
+     */
+    @Override
+    public boolean isMasterDetailViewMenuOptionEnabled(Display display) {
+        boolean unspecified = display == null ? aggregateless() : !DisplayMode.WRITING.equals(display.getDisplayMode()) || aggregateless();
+        return _masterDetailViewMenuOptionEnabled.toBoolean(unspecified);
     }
 
     private boolean aggregateless() {
@@ -7867,6 +8000,7 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
             checkTabs();
             checkViews();
             checkAggregates();
+            checkImageProperty();
             if (_warningsEnabled) {
                 if (_triggersWarningsEnabled) {
                     checkTriggers();
@@ -8600,6 +8734,7 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
                 logger.warn(message);
                 Project.increaseParserWarningCount();
             }
+            /* until 13/07/2022
             if (_ownerProperty != null) {
                 String message = getName() + " tree view will not be enabled because this entity has an owner property";
                 logger.warn(message);
@@ -8610,7 +8745,9 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
                 logger.warn(message);
                 Project.increaseParserWarningCount();
             }
+            /**/
         }
+        /* until 06/07/2022
         if (isTreeViewEnabled()) {
             if (_selectRowsLimit != 0) {
                 String message = getName() + " tree view will ignore the select rows limit set for this entity";
@@ -8618,6 +8755,7 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
                 Project.increaseParserWarningCount();
             }
         }
+        /**/
     }
 
     private void checkVisibleFields() {
@@ -8655,6 +8793,16 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
             msg1 = name + " does not have any visible required properties";
             logger.warn(msg1);
             Project.increaseParserWarningCount();
+        }
+    }
+
+    private void checkImageProperty() {
+        if (_imageProperty != null) {
+            if (PropertyAccess.RESTRICTED_READING.equals(_imageProperty.getPropertyAccess())) {
+                String message = _imageProperty.getFullName() + " cannot be the image property of the entity due to its restricted read access";
+                logger.error(message);
+                Project.increaseParserErrorCount();
+            }
         }
     }
 
@@ -8772,7 +8920,7 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
 
     // <editor-fold defaultstate="collapsed" desc="annotate">
     @Override
-    void initializeAnnotations() {
+    protected void initializeAnnotations() {
         super.initializeAnnotations();
         /**/
         _serializableField = coalesce(_serializableField, Project.getDefaultPropertyFieldSerializable());
@@ -8803,6 +8951,7 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
             annotateEntityCodeGen(type);
             annotateEntityDocGen(type);
             annotateEntityJsonCustomization(type);
+            annotateEntityReferenceConversionValidation(type);
             annotateEntityReferenceDisplay(type);
             annotateEntityReferenceSearch(type);
         }
@@ -8813,6 +8962,7 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
         super.annotate(field);
         if (field != null) {
             if (isEntityReference()) {
+                annotateEntityReferenceConversionValidation(field);
                 annotateEntityReferenceDataGen(field);
                 annotateEntityReferenceDisplay(field);
                 annotateEntityReferenceSearch(field);
@@ -8842,6 +8992,7 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
         valid.add(EntityExportOperation.class);
         valid.add(EntityInsertOperation.class);
         valid.add(EntityJsonCustomization.class);
+        valid.add(EntityReferenceConversionValidation.class);
         valid.add(EntityReferenceDisplay.class);
         valid.add(EntityReferenceSearch.class);
         valid.add(EntityReportOperation.class);
@@ -8858,11 +9009,12 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
     }
 
     @Override
-//  @SuppressWarnings("deprecation")
+    @SuppressWarnings("deprecation")
     protected List<Class<? extends Annotation>> getValidFieldAnnotations() {
         List<Class<? extends Annotation>> valid = super.getValidFieldAnnotations();
         valid.add(Allocation.class);
         if (isParameter()) {
+            valid.add(EntityReferenceConversionValidation.class);
             valid.add(EntityReferenceDisplay.class);
             valid.add(EntityReferenceSearch.class);
             valid.add(Filter.class);
@@ -8873,6 +9025,7 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
             valid.add(BaseField.class);
             valid.add(CastingField.class);
             valid.add(ColumnField.class);
+            valid.add(EntityReferenceConversionValidation.class);
             valid.add(EntityReferenceDataGen.class);
             valid.add(EntityReferenceDisplay.class);
             valid.add(EntityReferenceSearch.class);
@@ -9405,11 +9558,29 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
         }
     }
 
+    private void annotateEntityReferenceConversionValidation(Class<?> type) {
+        Class<?> annotatedClass = XS1.getAnnotatedClass(type, EntityReferenceConversionValidation.class);
+        if (annotatedClass != null) {
+            EntityReferenceConversionValidation annotation = annotatedClass.getAnnotation(EntityReferenceConversionValidation.class);
+            if (annotation != null) {
+                _restrictedAccessEntityReference = annotation.restrictedAccess().toBoolean(_restrictedAccessEntityReference);
+            }
+        }
+    }
+
+    private void annotateEntityReferenceConversionValidation(Field field) {
+        EntityReferenceConversionValidation annotation = field.getAnnotation(EntityReferenceConversionValidation.class);
+        if (annotation != null) {
+            _restrictedAccessEntityReference = annotation.restrictedAccess().toBoolean(_restrictedAccessEntityReference);
+        }
+    }
+
     private void annotateEntityReferenceDisplay(Class<?> type) {
         Class<?> annotatedClass = XS1.getAnnotatedClass(type, EntityReferenceDisplay.class);
         if (annotatedClass != null) {
             EntityReferenceDisplay annotation = annotatedClass.getAnnotation(EntityReferenceDisplay.class);
             if (annotation != null) {
+                _referenceAvatar = annotation.avatar().toBoolean(_referenceAvatar);
                 _referenceStyle = annotation.style();
                 _referenceFilterBy = annotation.filter();
                 _referenceSortBy = annotation.sort();
@@ -9422,6 +9593,7 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
         _annotatedWithEntityReferenceDisplay = field.isAnnotationPresent(EntityReferenceDisplay.class);
         if (_annotatedWithEntityReferenceDisplay) {
             EntityReferenceDisplay annotation = field.getAnnotation(EntityReferenceDisplay.class);
+            _referenceAvatar = annotation.avatar().toBoolean(_referenceAvatar);
             _referenceStyle = annotation.style();
             _referenceFilterBy = annotation.filter();
             _referenceSortBy = annotation.sort();
@@ -9453,6 +9625,7 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
         }
     }
 
+    @SuppressWarnings("deprecation")
     private void annotateFilter(Field field) {
         _annotatedWithFilter = field.isAnnotationPresent(Filter.class);
         if (_annotatedWithFilter) {
@@ -9778,6 +9951,12 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
     private boolean extendsEntityCollector() {
         Entity base = getBaseRoot();
         return base != null && base.isEntityCollector();
+    }
+
+    @Override
+    public boolean isOverlayableEntity() {
+        List<Property> list = getRoot().getOverlayPropertiesList();
+        return list != null && !list.isEmpty();
     }
 
     @Override
@@ -10187,6 +10366,76 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
     }
     // </editor-fold>
 
+    // <editor-fold defaultstate="collapsed" desc="Special Converters and Validators">
+    protected static final String GOOGLE_MAPS_EMBED_CONVERTER = "convertidorGoogleMapsEmbed";
+
+    protected static final String PHONE_NUMBER_VALIDATOR = "phoneNumberValidator";
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="Special Converters and Validators">
+    protected static final String GOOGLE_MAPS_EMBED_ENGLISH_SHORT_DESCRIPTION = ""
+        + "Map provided by Google. "
+        + "";
+
+    protected static final String GOOGLE_MAPS_EMBED_SPANISH_SHORT_DESCRIPTION = ""
+        + "Mapa provisto por Google. "
+        + "";
+
+    protected static final String GOOGLE_MAPS_EMBED_ENGLISH_TOOLTIP = ""
+        + "To insert a map, write the name of the place, its address or geographic coordinates. "
+        + "You can also click the Search button of this field to open Google Maps and search for the place. "
+        + "If the place is marked on the map, click on its name or its mark to open the side panel with its information. "
+        + "If the address is in that panel, click the \"Copy address\" icon and return to this page to paste it. "
+        + "If the place is not marked, or if the address is not in the panel, right-click the point on the map where the place is located; "
+        + "in the context menu click on the coordinates to copy them to the clipboard and return to this page to paste them. "
+        + "Alternatively, on the map you want to insert, click the menu in the upper left corner; "
+        + "select the option \"Share or embed map\" and then click \"Embed a map\"; "
+        + "finally click \"COPY HTML\" to copy the code and return to this page to paste it. "
+        + "";
+
+    protected static final String GOOGLE_MAPS_EMBED_SPANISH_TOOLTIP = ""
+        + "Para insertar un mapa, escriba el nombre del lugar, su dirección o coordenadas geográficas. "
+        + "También puede hacer clic en el botón Buscar de este campo para abrir Google Maps y buscar el lugar. "
+        + "Si el lugar está señalado en el mapa, haga clic en su nombre o su señal para abrir el panel lateral con su información. "
+        + "Si en ese panel está la dirección; haga clic en el icono \"Copiar la dirección\" y regrese a esta página para pegarla. "
+        + "Si el lugar no está señalado, o si la dirección no está en el panel, haga clic con el botón derecho en el punto del mapa donde se encuentra el lugar; "
+        + "en el menú de contexto haga clic en las coordenadas para copiarlas al portapapeles y regrese a esta página para pegarlas. "
+        + "Alternativamente, en el mapa que desea insertar, haga clic en el menú que está en la esquina superior izquierda; "
+        + "seleccione la opción \"Compartir o insertar el mapa\" y luego haga clic en \"Insertar un mapa\"; "
+        + "finalmente haga clic en \"COPIAR HTML\" para copiar el código y regrese a esta página para pegarlo. "
+        + "";
+
+    protected static final String GOOGLE_MAPS_EMBED_ENGLISH_DESCRIPTION = ""
+        + "Map provided by Google. "
+        + "To insert a map, write the name of the place, its address or its geographical coordinates. "
+        + "You can also search for the place on Google Maps and then paste its address or coordinates into this field. "
+        + "To open Google Maps, click the Search button of this field. "
+        + "In Google Maps, find the place whose map you want to insert. "
+        + "If the place is marked on the map, click on its name or its mark to open the side panel with the place information. "
+        + "In that panel you will usually find the address; click the \"Copy address\" icon and return to this page to paste it. "
+        + "If the place is not marked, or if the address is not in the panel, right-click the point on the map where the place is located; "
+        + "in the context menu click on the coordinates to copy them to the clipboard and return to this page to paste them. "
+        + "Alternatively, on the map you want to insert, click the menu in the upper left corner; "
+        + "select the option \"Share or embed map\" and then click \"Embed a map\"; "
+        + "finally click \"COPY HTML\" to copy the code and return to this page to paste it. "
+        + "";
+
+    protected static final String GOOGLE_MAPS_EMBED_SPANISH_DESCRIPTION = ""
+        + "Mapa provisto por Google. "
+        + "Para insertar un mapa, escriba el nombre del lugar, su dirección o sus coordenadas geográficas. "
+        + "También puede buscar el lugar en Google Maps y luego pegar su dirección o sus coordenadas en este campo. "
+        + "Para abrir Google Maps, haga clic en el botón Buscar de este campo. "
+        + "En Google Maps, busque el lugar cuyo mapa desea insertar. "
+        + "Si el lugar está señalado en el mapa, haga clic en su nombre o su señal para abrir el panel lateral con la información del lugar. "
+        + "En ese panel generalmente se encuentra la dirección; haga clic en el icono \"Copiar la dirección\" y regrese a esta página para pegarla. "
+        + "Si el lugar no está señalado, o si la dirección no está en el panel, haga clic con el botón derecho en el punto del mapa donde se encuentra el lugar; "
+        + "en el menú de contexto haga clic en las coordenadas para copiarlas al portapapeles y regrese a esta página para pegarlas. "
+        + "Alternativamente, en el mapa que desea insertar, haga clic en el menú que está en la esquina superior izquierda; "
+        + "seleccione la opción \"Compartir o insertar el mapa\" y luego haga clic en \"Insertar un mapa\"; "
+        + "finalmente haga clic en \"COPIAR HTML\" para copiar el código y regrese a esta página para pegarlo. "
+        + "";
+    // </editor-fold>
+
     // <editor-fold defaultstate="collapsed" desc="Special Fields">
     protected static final String EMAIL_REGEX = Constants.EMAIL_REGEX;
 
@@ -10198,30 +10447,60 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
 
     protected static final SpecialEntityValue CURRENT_USER = SpecialEntityValue.CURRENT_USER;
 
+    protected static final BooleanScalarX NULL_BOOLEAN = XB.NULL_BOOLEAN;
+
     protected static final BooleanScalarX TRUTH = XB.TRUTH;
 
     protected static final BooleanScalarX UNTRUTH = XB.UNTRUTH;
+
+    protected static final CharacterScalarX NULL_STRING = XB.NULL_STRING;
+
+    protected static final CharacterScalarX EMPTY_STRING = XB.EMPTY_STRING;
 
     protected static final CharacterScalarX EMPTY = XB.EMPTY;
 
     protected static final CharacterScalarX CURRENT_USER_CODE = XB.CURRENT_USER_CODE;
 
+    protected static final NumericScalarX NULL_NUMBER = XB.NULL_NUMBER;
+
     protected static final NumericScalarX CURRENT_USER_ID = XB.CURRENT_USER_ID;
+
+    protected static final TemporalScalarX NULL_TEMPORAL = XB.NULL_TEMPORAL;
 
     protected static final TemporalScalarX CURRENT_DATE = XB.CURRENT_DATE;
 
     protected static final TemporalScalarX CURRENT_TIME = XB.CURRENT_TIME;
 
     protected static final TemporalScalarX CURRENT_TIMESTAMP = XB.CURRENT_TIMESTAMP;
+
+    protected static final java.sql.Date EPOCH_DATE = DateData.EPOCH;
+
+    protected static final java.sql.Time EPOCH_TIME = TimeData.EPOCH;
+
+    protected static final java.sql.Timestamp EPOCH_TIMESTAMP = TimestampData.EPOCH;
+
+    protected static final EntityScalarX NULL_ENTITY = XB.NULL_ENTITY;
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Special Expressions">
+    protected static BooleanScalarX nullBoolean() {
+        return NULL_BOOLEAN;
+    }
+
     protected static BooleanScalarX truth() {
         return TRUTH;
     }
 
     protected static BooleanScalarX untruth() {
         return UNTRUTH;
+    }
+
+    protected static CharacterScalarX nullString() {
+        return NULL_STRING;
+    }
+
+    protected static CharacterScalarX emptyString() {
+        return EMPTY_STRING;
     }
 
     protected static CharacterScalarX empty() {
@@ -10232,8 +10511,16 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
         return CURRENT_USER_CODE;
     }
 
+    protected static NumericScalarX nullNumber() {
+        return NULL_NUMBER;
+    }
+
     protected static NumericScalarX currentUserId() {
         return CURRENT_USER_ID;
+    }
+
+    protected static TemporalScalarX nullTemporal() {
+        return NULL_TEMPORAL;
     }
 
     protected static TemporalScalarX currentDate() {
@@ -10246,6 +10533,10 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
 
     protected static TemporalScalarX currentTimestamp() {
         return CURRENT_TIMESTAMP;
+    }
+
+    protected static EntityScalarX nullEntity() {
+        return NULL_ENTITY;
     }
     // </editor-fold>
 
@@ -10288,7 +10579,11 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
 
     protected static final String GOOGLE_MAPS = TrustedSites.GOOGLE_MAPS;
 
+    protected static final String GOOGLE_MAPS_LINK = TrustedSites.GOOGLE_MAPS_LINK;
+
     protected static final String YOUTUBE = TrustedSites.YOUTUBE;
+
+    protected static final String YOUTUBE_LINK = TrustedSites.YOUTUBE_LINK;
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Supplementary Expressions">
@@ -10346,6 +10641,23 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
 
     protected static CharacterExpression concat(Expression x, Expression y) {
         return XB.Character.OrderedPair.concat(charStringOf(x), charStringOf(y));
+    }
+
+    protected static CharacterExpression concat(Expression x, Expression y, Expression... extraOperands) {
+        CharacterExpression cx = charStringOf(x);
+        CharacterExpression cy = charStringOf(y);
+        if (extraOperands != null && extraOperands.length > 0) {
+            List<CharacterExpression> cz = new ArrayList<>();
+            for (Expression extraOperand : extraOperands) {
+                if (extraOperand != null) {
+                    cz.add(charStringOf(extraOperand));
+                }
+            }
+            if (!cz.isEmpty()) {
+                return XB.Character.DataAggregate.concat(cx, cy, cz.toArray(CharacterExpression[]::new));
+            }
+        }
+        return XB.Character.OrderedPair.concat(cx, cy);
     }
 
     protected static CharacterExpression charStringOf(Object x) {

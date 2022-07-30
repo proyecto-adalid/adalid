@@ -10,6 +10,9 @@
 *.war
 *.zip
 
+/source/adalid-alfa/.classpath
+/source/adalid-alfa/.project
+/source/adalid-alfa/.settings/
 /source/adalid-alfa/src/test/
 /source/adalid-alfa/target/
 

@@ -36,6 +36,16 @@ public class PaqueteRegistroControlRutinas extends PaqueteRegistroBase {
         // </editor-fold>
     }
 
+    // <editor-fold defaultstate="collapsed" desc="print">
+    @Override
+    public void print() {
+        super.print();
+        System.out.println(PasoRutina);
+        System.out.println(RutinaUsuario);
+        System.out.println(VariableRutina);
+    }
+    // </editor-fold>
+
     PasoRutina PasoRutina;
 
     RutinaUsuario RutinaUsuario;

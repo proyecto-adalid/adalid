@@ -41,6 +41,16 @@ public class PaqueteConsultaVista extends PaqueteConsultaBase {
         // </editor-fold>
     }
 
+    // <editor-fold defaultstate="collapsed" desc="print">
+    @Override
+    public void print() {
+        super.print();
+        System.out.println(tipoAgregacion);
+        System.out.println(vistaFuncion);
+        System.out.println(vistaFuncionCol);
+    }
+    // </editor-fold>
+
     TipoAgregacion tipoAgregacion;
 
     VistaFuncion vistaFuncion;

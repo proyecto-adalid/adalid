@@ -69,9 +69,8 @@ public class FileDownloader extends Utility {
         "https://www.dropbox.com/sh/fwr81f73wjy1ybi/AAChePmVCL-vDFe2heL8iJPJa?dl=1"
     };
     /**/
-    char _b1a45de066e946c8afd6386d74cc0eb4;
     // </editor-fold>
-
+/**/
     private static final String DROPBOX_LINK = "https://www.dropbox.com/sh/fwr81f73wjy1ybi/AAChePmVCL-vDFe2heL8iJPJa?dl=1";
 
     public static void main(String[] args) {

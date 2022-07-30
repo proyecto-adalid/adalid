@@ -40,6 +40,10 @@ public abstract class BundleAbstracto {
 
     abstract Map<Locale, Locale> locales();
 
+    abstract Set<String> warnings();
+
+    abstract Set<String> errors();
+
     private final String baseName;
 
     BundleAbstracto(boolean load) {
@@ -76,7 +80,7 @@ public abstract class BundleAbstracto {
                     loc2 = supportedLocales[j];
                     set2 = bundleKeys().get(loc2);
                     if (!set2.equals(set1)) {
-                        logger.warn("the keySet of " + baseName + "." + loc2 + " is not equal to the keySet of " + baseName + "." + loc1);
+                        warn("the keySet of " + baseName + "." + loc2 + " is not equal to the keySet of " + baseName + "." + loc1);
                     }
                 }
             }
@@ -89,10 +93,20 @@ public abstract class BundleAbstracto {
             bundles().put(locale, bundle);
             return bundle;
         } catch (Exception ex) {
-            logger.error(ex.getClass().getSimpleName() + "@" + baseName + "." + locale);
-            logger.error(ThrowableUtils.getString(ex));
+            error(ex.getClass().getSimpleName() + "@" + baseName + "." + locale);
+            error(ThrowableUtils.getString(ex));
         }
         return null;
+    }
+
+    private void warn(String message) {
+//      logger.warn(message);
+        warnings().add(message);
+    }
+
+    private void error(String message) {
+//      logger.error(message);
+        errors().add(message);
     }
 
     private void putBundleKeys(Locale locale) {
@@ -182,6 +196,14 @@ public abstract class BundleAbstracto {
 
     private Locale getLocalePlus(Locale locale) {
         return locale == null ? null : locales().get(locale);
+    }
+
+    public Set<String> getWarnings() {
+        return warnings();
+    }
+
+    public Set<String> getErrors() {
+        return errors();
     }
 
 }

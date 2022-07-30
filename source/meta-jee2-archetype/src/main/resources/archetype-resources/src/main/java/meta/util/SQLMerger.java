@@ -9,6 +9,8 @@
  */
 package ${package}.meta.util;
 
+import adalid.util.*;
+
 /**
  * SQLMerger genera los archivos utilizados por el método alternativo para la migración de datos. Para obtener información sobre este método, consulte
  * el apéndice "Creación de la base de datos de aplicaciones jee2", de la "Guía de Meta-Programación" del Proyecto Adalid, Plataforma jee2.
@@ -43,6 +45,7 @@ package ${package}.meta.util;
  *
  * @author ADALID meta-jee2-archetype
  */
+@RunnableClass(false)
 public class SQLMerger extends adalid.util.sql.jee2.SQLMerger {
 
     public static void main(String[] args) {

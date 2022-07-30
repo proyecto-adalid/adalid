@@ -34,6 +34,8 @@ import java.lang.reflect.Field;
 @EntityConsoleView(enabled = Kleenean.FALSE)
 public class ClaseFabricador extends AbstractPersistentEnumerationEntity {
 
+    public static final String FCSS_VALIDATOR = "fcssValidator";
+
     // <editor-fold defaultstate="collapsed" desc="class constructors">
     public ClaseFabricador(Artifact declaringArtifact, Field declaringField) {
         super(declaringArtifact, declaringField);
@@ -55,7 +57,12 @@ public class ClaseFabricador extends AbstractPersistentEnumerationEntity {
     @StringField(maxLength = 200)
     public StringProperty nombreClaseFabricador;
 
+    @ColumnField(nullable = Kleenean.FALSE)
+    public BooleanProperty elemental;
+
     public Instance C01, C02, C03, C04, C05, C06;
+
+    public Instance C0A, C0B, C0C, C0D, C0E, C0F, C0G;
 
     @Override
     protected void settleAttributes() {
@@ -76,6 +83,10 @@ public class ClaseFabricador extends AbstractPersistentEnumerationEntity {
     @Override
     protected void settleProperties() {
         super.settleProperties();
+        /**/
+        elemental.setInitialValue(false);
+        elemental.setDefaultValue(false);
+        /**/
         // <editor-fold defaultstate="collapsed" desc="localization of ClaseFabricador's properties">
         /**/
         numero.setLocalizedLabel(ENGLISH, "factory class number");
@@ -112,6 +123,14 @@ public class ClaseFabricador extends AbstractPersistentEnumerationEntity {
         setInstanceFields(C05, "usuario", "UsuariosUsuarioActual");
         setInstanceFields(C06, "usuario", "UsuariosUsuarioOperacionesCalendarizadas");
         /**/
+        setInstanceFields(C0A, "grupo_usuario", "GrupoDelUsuarioActual");
+        setInstanceFields(C0B, "grupo_usuario", "GrupoDelUsuarioActualConSusSubgrupos");
+        setInstanceFields(C0C, "grupo_usuario", "GrupoDelUsuarioActualConSusSubgruposDirectos");
+        setInstanceFields(C0D, "grupo_usuario", "SubgruposDelGrupoDelUsuarioActual");
+        setInstanceFields(C0E, "grupo_usuario", "SubgruposDirectosDelGrupoDelUsuarioActual");
+        setInstanceFields(C0F, "grupo_usuario", "GruposDelConjuntoConSusSubgrupos", true);
+        setInstanceFields(C0G, "grupo_usuario", "GruposDelConjuntoConSusSubgruposDirectos", true);
+        /**/
     }
 
     private static final String PAQUETE = "project_root_package_name.lib.core.control";
@@ -119,9 +138,14 @@ public class ClaseFabricador extends AbstractPersistentEnumerationEntity {
     private static final String PREFIJO = "FabricadorConjunto";
 
     private void setInstanceFields(Instance clase, String tabla, String conjunto) {
+        setInstanceFields(clase, tabla, conjunto, false);
+    }
+
+    private void setInstanceFields(Instance clase, String tabla, String conjunto, boolean elementado) {
         clase.newInstanceField(codigo, PREFIJO + conjunto);
         clase.newInstanceField(codigoClaseRecurso, tabla);
         clase.newInstanceField(nombreClaseFabricador, PAQUETE + "." + PREFIJO + conjunto);
+        clase.newInstanceField(elemental, elementado);
     }
 
 }

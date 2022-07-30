@@ -291,10 +291,10 @@ public abstract class AbstractArtifact implements Artifact, Wrappable {
             logger.error(getFullName() + " must be renamed; " + name + " is an invalid artifact name");
             Project.increaseParserErrorCount();
         } else if (name.matches("^[a-z][A-Z].*$")) {
-            logger.error(getFullName() + " must be renamed; " + name + " is an invalid artifact name ([a-z][A-Z]...)");
+            logger.error(getFullName() + " must be renamed; " + name + " is an invalid artifact name (begins with [a-z][A-Z])");
             Project.increaseParserErrorCount();
         } else if (name.matches("^[A-Z][A-Z]+[a-z].*$")) {
-            logger.error(getFullName() + " must be renamed; " + name + " is an invalid artifact name ([A-Z][A-Z]+[a-z]...)");
+            logger.error(getFullName() + " must be renamed; " + name + " is an invalid artifact name (begins with [A-Z][A-Z]+[a-z])");
             Project.increaseParserErrorCount();
         } else {
             return true;
@@ -1863,13 +1863,26 @@ public abstract class AbstractArtifact implements Artifact, Wrappable {
         return null;
     }
 
+    protected int greaterThanZero(int... values) {
+        return values == null || values.length == 0 ? 0 : gt0(values);
+    }
+
+    private int gt0(int... values) {
+        for (int i : values) {
+            if (i > 0) {
+                return i;
+            }
+        }
+        return 0;
+    }
+
     private static final String UNSPECIFIED = "UNSPECIFIED";
 
     protected <E extends Enum> E specified(E... enums) {
         return specified(UNSPECIFIED, enums);
     }
 
-    private <E extends Enum> E specified(String unspecified, E... values) {
+    protected <E extends Enum> E specified(String unspecified, E... values) {
         E e = null;
         if (values != null && values.length > 0) {
             String u = StringUtils.defaultIfBlank(unspecified, UNSPECIFIED);

@@ -35,6 +35,7 @@ import meta.entidad.comun.configuracion.basica.TipoRastroFun;
 @EntityDetailView(enabled = Kleenean.TRUE)
 @EntityTreeView(enabled = Kleenean.FALSE)
 @EntityConsoleView(enabled = Kleenean.FALSE)
+@EntityReferenceDisplay(style = EntityReferenceStyle.NAME_AND_CHARACTER_KEY)
 public class Funcion extends meta.entidad.comun.configuracion.basica.Funcion {
 
     // <editor-fold defaultstate="collapsed" desc="class constructors">
@@ -46,23 +47,19 @@ public class Funcion extends meta.entidad.comun.configuracion.basica.Funcion {
     @ForeignKey(onDelete = OnDeleteAction.NONE, onUpdate = OnUpdateAction.NONE)
     @ManyToOne(navigability = Navigability.UNIDIRECTIONAL, view = MasterDetailView.NONE)
     @ColumnField(nullable = Kleenean.FALSE)
-    @Allocation(maxDepth = 1, maxRound = 0)
     public TipoFuncion tipoFuncion;
 
     @ForeignKey(onDelete = OnDeleteAction.NONE, onUpdate = OnUpdateAction.NONE)
     @ManyToOne(navigability = Navigability.UNIDIRECTIONAL, view = MasterDetailView.NONE)
     @ColumnField(nullable = Kleenean.FALSE)
-    @Allocation(maxDepth = 1, maxRound = 0)
     public TipoRastroFun tipoRastroFun;
 
     @ForeignKey(onDelete = OnDeleteAction.NONE, onUpdate = OnUpdateAction.NONE)
     @ManyToOne(navigability = Navigability.UNIDIRECTIONAL, view = MasterDetailView.NONE)
     @ColumnField(nullable = Kleenean.FALSE)
     @PropertyField(hidden = Kleenean.TRUE)
-    @Allocation(maxDepth = 1, maxRound = 0)
     public Dominio dominio;
 
-    @Allocation(maxDepth = 1, maxRound = 0)
     @ColumnField(calculable = Kleenean.TRUE)
 //  @ForeignKey(onDelete = OnDeleteAction.NONE, onUpdate = OnUpdateAction.NONE)
     @ManyToOne(navigability = Navigability.UNIDIRECTIONAL, view = MasterDetailView.NONE)
@@ -72,12 +69,10 @@ public class Funcion extends meta.entidad.comun.configuracion.basica.Funcion {
     @ForeignKey(onDelete = OnDeleteAction.NONE, onUpdate = OnUpdateAction.NONE)
     @ManyToOne(navigability = Navigability.UNIDIRECTIONAL, view = MasterDetailView.NONE)
     @ColumnField(nullable = Kleenean.TRUE)
-    @Allocation(maxDepth = 1, maxRound = 0)
     public ClaseRecurso rango;
 
     @ForeignKey(onDelete = OnDeleteAction.NONE, onUpdate = OnUpdateAction.CASCADE)
     @ManyToOne(navigability = Navigability.UNIDIRECTIONAL, view = MasterDetailView.NONE)
-    @Allocation(maxDepth = 1, maxRound = 0)
     public GrupoProceso grupoProceso;
 
     @ColumnField(nullable = Kleenean.TRUE)

@@ -470,7 +470,7 @@ public abstract class AbstractSqlProgrammer extends AbstractProgrammer implement
         if (obj == null) {
             return null;
         } else if (obj instanceof String) {
-            return obj.toString().replace(SQM$, SQM$ + SQM$);
+            return escapeQuotes(obj.toString());
         } else if (obj instanceof Date) {
             return TimeUtils.jdbcDateString(obj);
         } else if (obj instanceof Time) {
@@ -502,7 +502,7 @@ public abstract class AbstractSqlProgrammer extends AbstractProgrammer implement
     // </editor-fold>
 
     public String escapeQuotes(String string) {
-        return StringUtils.replace(string, "'", "''");
+        return StringUtils.replace(string, SQM$, SQM$ + SQM$);
     }
 
     /**

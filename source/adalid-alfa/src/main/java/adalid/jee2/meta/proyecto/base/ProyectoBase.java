@@ -26,6 +26,7 @@ import adalid.core.primitives.*;
 import adalid.core.programmers.*;
 import adalid.core.sql.*;
 import adalid.jee2.ProjectObjectModel;
+import adalid.jee2.bundles.*;
 import adalid.jee2.features.*;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -44,11 +45,14 @@ import meta.entidad.comun.operacion.basica.CondicionTarea;
 import meta.proyecto.comun.EntidadesBasicas;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
 
 /**
  * @author Jorge Campins
  */
 public class ProyectoBase extends Project implements SubjectProject, SpecialEntityPack {
+
+    private static final Logger logger = Logger.getLogger(ProyectoBase.class);
 
     private static final String BASE_NAME = ProyectoBase.class.getName();
 
@@ -58,6 +62,8 @@ public class ProyectoBase extends Project implements SubjectProject, SpecialEnti
     private static final String PAGE_MAIN_FORM_ID = "mainForm";
 
     private static final String PAGE_NORTH_FORM_ID = "northForm";
+
+    private static final String PAGE_SOUTH_FORM_ID = "southForm";
 
     private static final String PAGE_DATA_TABLE_ID = "dataTable";
 
@@ -91,6 +97,10 @@ public class ProyectoBase extends Project implements SubjectProject, SpecialEnti
 
     public String getPageNorthFormID() {
         return PAGE_NORTH_FORM_ID;
+    }
+
+    public String getPageSouthFormID() {
+        return PAGE_SOUTH_FORM_ID;
     }
 
     public String getPageDataTableID() {
@@ -436,6 +446,35 @@ public class ProyectoBase extends Project implements SubjectProject, SpecialEnti
 
     public ProyectoBase() {
         super();
+    }
+
+    @Override
+    public boolean beforeWriting() {
+        boolean beforeWriting = super.beforeWriting();
+        boolean checkBundles = checkBundles();
+        return beforeWriting && checkBundles;
+    }
+
+    private boolean checkBundles() {
+        boolean b1 = checkBundle(new BundleMensajes());
+        boolean b2 = checkBundle(new BundleWebui());
+        return b1 && b2;
+    }
+
+    private boolean checkBundle(BundleAbstracto bundle) {
+        int warnings = 0;
+        for (String warning : bundle.getWarnings()) {
+            logger.warn(warning);
+            warnings++;
+        }
+        int errors = 0;
+        for (String error : bundle.getErrors()) {
+            logger.error(error);
+            errors++;
+        }
+        increaseWriterWarnings(warnings);
+        increaseWriterErrors(errors);
+        return errors == 0;
     }
 
     @Override
@@ -1002,6 +1041,13 @@ public class ProyectoBase extends Project implements SubjectProject, SpecialEnti
     public void setDatabaseLockingMechanism(DatabaseLockingMechanism databaseLockingMechanism) {
         _databaseLockingMechanism = databaseLockingMechanism;
     }
+
+    // <editor-fold defaultstate="collapsed" desc="print">
+    @Override
+    public void print() {
+        System.out.println(entidadesBasicas);
+    }
+    // </editor-fold>
 
     protected String getDefaultBaseFolderName() {
         return getAlias();

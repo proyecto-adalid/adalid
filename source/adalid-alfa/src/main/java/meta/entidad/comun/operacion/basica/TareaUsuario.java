@@ -57,14 +57,12 @@ public class TareaUsuario extends AbstractPersistentEntity {
 
     @OwnerProperty
     @SegmentProperty
-//->@Allocation(maxDepth = 2, maxRound = 1)
     @ColumnField(nullable = Kleenean.FALSE)
     @ForeignKey(onDelete = OnDeleteAction.NONE, onUpdate = OnUpdateAction.NONE)
     @ManyToOne(navigability = Navigability.UNIDIRECTIONAL, view = MasterDetailView.NONE)
     @PropertyField(table = Kleenean.TRUE, report = Kleenean.TRUE, search = Kleenean.TRUE, heading = Kleenean.TRUE, overlay = Kleenean.TRUE) //, defaultCheckpoint = Checkpoint.USER_INTERFACE)
     public Usuario destinatario;
 
-    @Allocation(maxDepth = 1, maxRound = 0)
     @ColumnField(nullable = Kleenean.FALSE)
 //  20171213: remove foreign-key referring to Funcion
 //  @ForeignKey(onDelete = OnDeleteAction.NONE, onUpdate = OnUpdateAction.NONE)
@@ -95,7 +93,6 @@ public class TareaUsuario extends AbstractPersistentEntity {
     @StringField(maxLength = 100)
     public StringProperty nombreClaseRecursoValor;
 
-    @Allocation(maxDepth = 1, maxRound = 0)
     @ColumnField(nullable = Kleenean.TRUE)
     @ManyToOne(navigability = Navigability.UNIDIRECTIONAL, view = MasterDetailView.NONE)
     @PropertyField(hidden = Kleenean.TRUE)
@@ -120,26 +117,22 @@ public class TareaUsuario extends AbstractPersistentEntity {
     @PropertyField(create = Kleenean.FALSE, update = Kleenean.FALSE, table = Kleenean.TRUE, report = Kleenean.FALSE, search = Kleenean.FALSE, headertextless = Kleenean.TRUE)
     public StringProperty paginaRecurso;
 
-    @Allocation(maxDepth = 1, maxRound = 0)
     @ColumnField(nullable = Kleenean.TRUE)
     @ForeignKey(onDelete = OnDeleteAction.NONE, onUpdate = OnUpdateAction.NONE)
     @ManyToOne(navigability = Navigability.UNIDIRECTIONAL, view = MasterDetailView.NONE)
     public Usuario responsable;
 
-    @Allocation(maxDepth = 1, maxRound = 0)
     @ColumnField(nullable = Kleenean.TRUE)
     @ForeignKey(onDelete = OnDeleteAction.NONE, onUpdate = OnUpdateAction.NONE)
     @ManyToOne(navigability = Navigability.UNIDIRECTIONAL, view = MasterDetailView.NONE)
     public Usuario supervisor;
 
-    @Allocation(maxDepth = 1, maxRound = 0)
     @ColumnField(nullable = Kleenean.TRUE)
     @ForeignKey(onDelete = OnDeleteAction.NONE, onUpdate = OnUpdateAction.NONE)
     @ManyToOne(navigability = Navigability.UNIDIRECTIONAL, view = MasterDetailView.NONE)
     public Usuario finalizador;
 
     @StateProperty
-    @Allocation(maxDepth = 1, maxRound = 0)
     @ColumnField(nullable = Kleenean.FALSE)
     @ForeignKey(onDelete = OnDeleteAction.NONE, onUpdate = OnUpdateAction.NONE)
     @ManyToOne(navigability = Navigability.UNIDIRECTIONAL, view = MasterDetailView.NONE)
@@ -595,7 +588,6 @@ public class TareaUsuario extends AbstractPersistentEntity {
     public class Asumir extends ProcessOperation {
 
         @InstanceReference
-//      @Allocation(maxDepth = 1, maxRound = 0)
         protected TareaUsuario tarea;
 
         @Override
@@ -648,7 +640,6 @@ public class TareaUsuario extends AbstractPersistentEntity {
     public class Abandonar extends ProcessOperation {
 
         @InstanceReference
-//      @Allocation(maxDepth = 1, maxRound = 0)
         protected TareaUsuario tarea;
 
         @Override
@@ -701,7 +692,6 @@ public class TareaUsuario extends AbstractPersistentEntity {
     public class Asignar extends ProcessOperation {
 
         @InstanceReference
-//      @Allocation(maxDepth = 1, maxRound = 0)
         protected TareaUsuario tarea;
 
         @Override
@@ -754,7 +744,6 @@ public class TareaUsuario extends AbstractPersistentEntity {
     public class Relevar extends ProcessOperation {
 
         @InstanceReference
-//      @Allocation(maxDepth = 1, maxRound = 0)
         protected TareaUsuario tarea;
 
         @Override
@@ -807,7 +796,6 @@ public class TareaUsuario extends AbstractPersistentEntity {
     public class Cancelar extends ProcessOperation {
 
         @InstanceReference
-//      @Allocation(maxDepth = 1, maxRound = 0)
         protected TareaUsuario tarea;
 
         @Override

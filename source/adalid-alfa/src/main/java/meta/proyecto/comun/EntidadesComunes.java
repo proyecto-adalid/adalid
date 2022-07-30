@@ -61,6 +61,7 @@ import meta.entidad.comun.configuracion.basica.VersionAdalid;
 import meta.entidad.comun.control.acceso.ClaseFabricador;
 import meta.entidad.comun.control.acceso.ConjuntoSegmento;
 import meta.entidad.comun.control.acceso.ElementoSegmento;
+import meta.entidad.comun.control.acceso.GrupoUsuario;
 import meta.entidad.comun.control.acceso.PaginaEspecial;
 import meta.entidad.comun.control.acceso.Rol;
 import meta.entidad.comun.control.acceso.RolFiltroFuncion;
@@ -202,6 +203,107 @@ public class EntidadesComunes extends Project implements SpecialEntityPack {
     }
     // </editor-fold>
 
+    // <editor-fold defaultstate="collapsed" desc="print">
+    @Override
+    public void print() {
+        super.print();
+        System.out.println(AccionArchivoCargado);
+        System.out.println(AmbientePrueba);
+        System.out.println(Aplicacion);
+        System.out.println(ArchivoAdjunto);
+        System.out.println(AtributoAplicacion);
+        System.out.println(CasoPrueba);
+        System.out.println(ClaseJava);
+        System.out.println(ClaseRecurso);
+        System.out.println(ClaseFabricador);
+        System.out.println(CondicionEjeFun);
+        System.out.println(CondicionTarea);
+        System.out.println(ConjuntoSegmento);
+        System.out.println(DocumentoPrueba);
+        System.out.println(DocumentoPruebaX1);
+        System.out.println(DocumentoPruebaX2);
+        System.out.println(DocumentoPruebaX3);
+        System.out.println(DocumentoPruebaX4);
+        System.out.println(DocumentoPruebaX5);
+        System.out.println(DocumentoPruebaX6);
+        System.out.println(Dominio);
+        System.out.println(DominioParametro);
+        System.out.println(EjecucionLineaPrueba);
+        System.out.println(EjecucionPrueba);
+        System.out.println(ElementoSegmento);
+        System.out.println(EscenarioPrueba);
+        System.out.println(FiltroFuncion);
+        System.out.println(FiltroFuncionPar);
+        System.out.println(Funcion);
+        System.out.println(FuncionParametro);
+        System.out.println(GrupoProceso);
+        System.out.println(GrupoUsuario);
+        System.out.println(LineaPrueba);
+        System.out.println(MensajeAplicacion);
+        System.out.println(ModuloAplicacion);
+//      System.out.println(NivelOpcionMenu);
+//      System.out.println(OpcionMenu);
+        System.out.println(OperadorCom);
+        System.out.println(Pagina);
+        System.out.println(PaginaEspecial);
+        System.out.println(PaginaInicio);
+        System.out.println(PaginaUsuario);
+        System.out.println(PaquetePrueba);
+        System.out.println(Parametro);
+        System.out.println(ParametroLineaPrueba);
+        System.out.println(ParteAmbientePrueba);
+        System.out.println(PiezaAmbientePrueba);
+        System.out.println(ProgramaPrueba);
+        System.out.println(RangoAgregacion);
+        System.out.println(RangoComparacion);
+        System.out.println(RastroFuncion);
+        System.out.println(RastroFuncionPar);
+        System.out.println(RastroInforme);
+        System.out.println(RastroProceso);
+        System.out.println(RecursoValor);
+        System.out.println(Rol);
+        System.out.println(RolFiltroFuncion);
+        System.out.println(RolFuncion);
+        System.out.println(RolFuncionPar);
+        System.out.println(RolPagina);
+        System.out.println(RolUsuario);
+        System.out.println(RolVistaFuncion);
+        System.out.println(Segmento);
+        System.out.println(SeveridadMensaje);
+        System.out.println(SubtipoGrafico);
+        System.out.println(TareaUsuario);
+        System.out.println(TareaUsuarioCorreo);
+        System.out.println(TareaVirtual);
+        System.out.println(TipoAgregacion);
+        System.out.println(TipoClaseRecurso);
+        System.out.println(TipoComparacion);
+        System.out.println(TipoDatoPar);
+        System.out.println(TipoDocumentoPrueba);
+        System.out.println(TipoDominio);
+        System.out.println(TipoFuncion);
+        System.out.println(TipoGrafico);
+        System.out.println(TipoInforme);
+        System.out.println(TipoNodo);
+        System.out.println(TipoPagina);
+        System.out.println(TipoParametro);
+        System.out.println(TipoParametroDom);
+        System.out.println(TipoPiezaPrueba);
+        System.out.println(TipoRastroFun);
+        System.out.println(TipoRecurso);
+        System.out.println(TipoResultadoPrueba);
+        System.out.println(TipoRol);
+        System.out.println(TipoValor);
+        System.out.println(TransicionTareaUsuario);
+        System.out.println(Usuario);
+        System.out.println(UsuarioFuncion);
+        System.out.println(UsuarioModulo);
+        System.out.println(UsuarioSegmento);
+        System.out.println(VersionAdalid);
+        System.out.println(VistaFuncion);
+        System.out.println(VistaFuncionPar);
+    }
+    // </editor-fold>
+
     AccionArchivoCargado AccionArchivoCargado;
 
     AmbientePrueba AmbientePrueba;
@@ -261,6 +363,8 @@ public class EntidadesComunes extends Project implements SpecialEntityPack {
     FuncionParametro FuncionParametro;
 
     GrupoProceso GrupoProceso;
+
+    GrupoUsuario GrupoUsuario;
 
     LineaPrueba LineaPrueba;
 

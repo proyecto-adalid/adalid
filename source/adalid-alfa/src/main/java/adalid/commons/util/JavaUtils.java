@@ -15,6 +15,8 @@ package adalid.commons.util;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
@@ -29,7 +31,70 @@ public class JavaUtils {
 
     private static final Logger logger = Logger.getLogger(JavaUtils.class);
 
-    public static Set<String> getCanonicalNames(Set<Class<?>> types) {
+    // <editor-fold defaultstate="collapsed" desc="keywords">
+    private static final String[] KEYWORDS = {
+        "abstract",
+        "assert",
+        "boolean",
+        "break",
+        "byte",
+        "case",
+        "catch",
+        "char",
+        "class",
+        "const",
+        "continue",
+        "default",
+        "do",
+        "double",
+        "else",
+        "enum",
+        "extends",
+        "final",
+        "finally",
+        "float",
+        "for",
+        "goto",
+        "if",
+        "implements",
+        "import",
+        "instanceof",
+        "int",
+        "interface",
+        "long",
+        "native",
+        "new",
+        "package",
+        "private",
+        "protected",
+        "public",
+        "return",
+        "short",
+        "static",
+        "strictfp",
+        "super",
+        "switch",
+        "synchronized",
+        "this",
+        "throw",
+        "throws",
+        "transient",
+        "try",
+        "void",
+        "volatile",
+        "while"
+    };
+    // </editor-fold>
+
+    public static String[] getJavaKeywordArray() {
+        return KEYWORDS;
+    }
+
+    public static Set<String> getJavaKeywordSet() {
+        return new TreeSet<>(Arrays.asList(KEYWORDS));
+    }
+
+    public static Set<String> getCanonicalNames(Collection<Class<?>> types) {
         Set<String> names = new TreeSet<>();
         for (Class<?> type : types) {
             names.add(type.getCanonicalName());

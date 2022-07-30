@@ -49,7 +49,7 @@ public class Usuario extends AbstractPersistentEntity {
     public LongProperty version;
 
     @BusinessKey
-    @PropertyField(update = Kleenean.FALSE)
+    @PropertyField(update = Kleenean.FALSE, overlay = Kleenean.FALSE)
     @StringField(maxLength = 36) // A UUID is made up of hex digits along with 4 hyphens, which make its length equal to 36 characters
     public StringProperty codigoUsuario;
 
@@ -60,11 +60,19 @@ public class Usuario extends AbstractPersistentEntity {
     @StringField(maxLength = 128)
     public StringProperty passwordUsuario;
 
+    @ImageProperty(displayWidth = {144, 96, 72}, displayHeight = {192, 128, 96}, avatarShape = AvatarShape.CIRCLE, avatarDefault = AvatarDefault.USER)
+    @PropertyField(table = Kleenean.TRUE, overlay = Kleenean.TRUE)
+    public BinaryProperty octetos;
+
+    @FileReference(types = MimeType.IMAGE, storage = UploadStorageOption.ROW, blobField = "octetos", max = 131072)
+    @PropertyField(create = Kleenean.TRUE, update = Kleenean.TRUE, table = Kleenean.FALSE, report = Kleenean.FALSE)
+    public StringProperty archivo;
+
     @StringField(maxLength = 100, regex = EMAIL_REGEX)
-    @PropertyField(create = Kleenean.TRUE, table = Kleenean.FALSE, report = Kleenean.FALSE)
+    @PropertyField(create = Kleenean.TRUE, overlay = Kleenean.TRUE, table = Kleenean.FALSE, report = Kleenean.FALSE)
     public StringProperty correoElectronico;
 
-    @StringField(maxLength = 20, regex = PHONE_REGEX, validator = "phoneNumberValidator")
+    @StringField(maxLength = 20, regex = PHONE_REGEX, validator = PHONE_NUMBER_VALIDATOR)
     @PropertyField(create = Kleenean.TRUE, table = Kleenean.FALSE, report = Kleenean.FALSE)
     public StringProperty numeroTelefonoMovil;
 
@@ -97,6 +105,13 @@ public class Usuario extends AbstractPersistentEntity {
     @PropertyField(create = Kleenean.FALSE, update = Kleenean.FALSE)
     public TimestampProperty fechaHoraRegistro;
 
+    @SegmentProperty
+    @EntityReferenceSearch(searchType = SearchType.LIST, listStyle = ListStyle.CHARACTER_KEY_AND_NAME, displayMode = DisplayMode.WRITING)
+    @ForeignKey(onDelete = OnDeleteAction.NONE, onUpdate = OnUpdateAction.NONE)
+    @ManyToOne(view = MasterDetailView.TABLE_AND_DETAIL)
+    @PropertyField(create = Kleenean.TRUE, update = Kleenean.TRUE, required = Kleenean.TRUE, table = Kleenean.TRUE, report = Kleenean.TRUE, overlay = Kleenean.TRUE)
+    public GrupoUsuario grupo;
+
     @Override
     protected void settleAttributes() {
         super.settleAttributes();
@@ -127,6 +142,9 @@ public class Usuario extends AbstractPersistentEntity {
         esUsuarioAutomatico.setInitialValue(false);
         esUsuarioAutomatico.setDefaultValue(false);
         /**/
+//      grupo.setInitialValue(esUsuarioEspecial.then(grupo.USUARIOS_ESPECIALES).otherwise(grupo.USUARIOS_ORDINARIOS));
+//      grupo.setDefaultValue(esUsuarioEspecial.then(grupo.USUARIOS_ESPECIALES).otherwise(grupo.USUARIOS_ORDINARIOS));
+        /**/
         // <editor-fold defaultstate="collapsed" desc="localization of Usuario's properties">
         /**/
         codigoUsuario.setLocalizedLabel(ENGLISH, "user code");
@@ -143,6 +161,16 @@ public class Usuario extends AbstractPersistentEntity {
         passwordUsuario.setLocalizedLabel(SPANISH, "password usuario");
         passwordUsuario.setLocalizedShortLabel(ENGLISH, "password");
         passwordUsuario.setLocalizedShortLabel(SPANISH, "contraseña");
+        /**/
+        octetos.setLocalizedLabel(ENGLISH, "portrait");
+        octetos.setLocalizedLabel(SPANISH, "retrato");
+        octetos.setLocalizedTooltip(ENGLISH, "user portrait");
+        octetos.setLocalizedTooltip(SPANISH, "retrato del usuario");
+        /**/
+        archivo.setLocalizedLabel(ENGLISH, "portrait");
+        archivo.setLocalizedLabel(SPANISH, "retrato");
+        archivo.setLocalizedTooltip(ENGLISH, "user portrait");
+        archivo.setLocalizedTooltip(SPANISH, "retrato del usuario");
         /**/
         correoElectronico.setLocalizedLabel(ENGLISH, "e-mail");
         correoElectronico.setLocalizedLabel(SPANISH, "correo electrónico");
@@ -221,6 +249,15 @@ public class Usuario extends AbstractPersistentEntity {
         fechaHoraRegistro.setLocalizedShortLabel(SPANISH, "fecha/hora registro");
         fechaHoraRegistro.setLocalizedDescription(ENGLISH, "automatic registration timestamp");
         fechaHoraRegistro.setLocalizedDescription(SPANISH, "fecha/hora de registro automático");
+        /**/
+        grupo.setLocalizedLabel(ENGLISH, "user group");
+        grupo.setLocalizedLabel(SPANISH, "grupo de usuarios");
+        grupo.setLocalizedShortLabel(ENGLISH, "group");
+        grupo.setLocalizedShortLabel(SPANISH, "grupo");
+        grupo.setLocalizedDescription(ENGLISH, "group to which this user belongs");
+        grupo.setLocalizedDescription(SPANISH, "grupo al que pertenece este usuario");
+        grupo.setLocalizedTooltip(ENGLISH, "code of the group to which this user belongs");
+        grupo.setLocalizedTooltip(SPANISH, "código del grupo al que pertenece este usuario");
         /**/
         // </editor-fold>
     }
@@ -307,7 +344,6 @@ public class Usuario extends AbstractPersistentEntity {
         // </editor-fold>
     }
 
-    /**/
     protected Segment usuariosEspeciales, usuariosOrdinarios;
 
     @Override
@@ -330,6 +366,12 @@ public class Usuario extends AbstractPersistentEntity {
         usuariosOrdinarios.setLocalizedErrorMessage(SPANISH, "el usuario es un usuario especial");
         /**/
         // </editor-fold>
+    }
+
+    @Override
+    protected void settleFilters() {
+        super.settleFilters();
+        archivo.setRenderingFilter(UNTRUTH, true);
     }
 
 }

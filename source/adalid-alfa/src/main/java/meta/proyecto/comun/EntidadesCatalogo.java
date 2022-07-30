@@ -36,6 +36,24 @@ public class EntidadesCatalogo extends Project {
         // </editor-fold>
     }
 
+    // <editor-fold defaultstate="collapsed" desc="print">
+    @Override
+    public void print() {
+        super.print();
+        System.out.println(Aplicacion);
+        System.out.println(AtributoAplicacion);
+        System.out.println(ClaseRecurso);
+        System.out.println(Dominio);
+        System.out.println(DominioParametro);
+        System.out.println(Funcion);
+        System.out.println(FuncionParametro);
+        System.out.println(GrupoProceso);
+//      System.out.println(OpcionMenu);
+        System.out.println(Pagina);
+        System.out.println(Parametro);
+    }
+    // </editor-fold>
+
     Aplicacion Aplicacion;
 
     AtributoAplicacion AtributoAplicacion;

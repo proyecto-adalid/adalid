@@ -30,6 +30,14 @@ public class DocumentoPruebaX5 extends DocumentoPrueba {
     // </editor-fold>
 
     @Override
+    protected void addAllocationStrings() {
+        super.addAllocationStrings();
+        super.addAllocationStrings(
+            "ejecucionPrograma.responsable"
+        );
+    }
+
+    @Override
     protected void settleAttributes() {
         super.settleAttributes();
 //      setSchema(ProyectoBase.getEsquemaEntidadesComunes());
@@ -45,7 +53,6 @@ public class DocumentoPruebaX5 extends DocumentoPrueba {
         // </editor-fold>
     }
 
-    @Allocation(maxDepth = 2, maxRound = 0)
     @ColumnField(nullable = Kleenean.FALSE)
     @ForeignKey(onDelete = OnDeleteAction.NONE, onUpdate = OnUpdateAction.NONE)
     @ManyToOne(navigability = Navigability.UNIDIRECTIONAL, view = MasterDetailView.TABLE_AND_DETAIL)

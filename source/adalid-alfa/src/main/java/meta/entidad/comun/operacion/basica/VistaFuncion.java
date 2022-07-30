@@ -66,14 +66,12 @@ public class VistaFuncion extends AbstractPersistentEntity {
 //  @ForeignKey(onDelete = OnDeleteAction.NONE, onUpdate = OnUpdateAction.NONE)
     @ManyToOne(navigability = Navigability.BIDIRECTIONAL, view = MasterDetailView.TABLE_AND_DETAIL)
     @ColumnField(nullable = Kleenean.FALSE)
-//->@Allocation(maxDepth = 2, maxRound = 0)
     public Funcion funcion;
 
     @OwnerProperty
     @ForeignKey(onDelete = OnDeleteAction.CASCADE, onUpdate = OnUpdateAction.CASCADE)
     @ManyToOne(navigability = Navigability.UNIDIRECTIONAL, view = MasterDetailView.NONE)
     @ColumnField(nullable = Kleenean.TRUE)
-    @Allocation(maxDepth = 1, maxRound = 0)
     @PropertyField(create = Kleenean.FALSE, update = Kleenean.FALSE, search = Kleenean.TRUE, table = Kleenean.TRUE, report = Kleenean.TRUE, defaultCondition = DefaultCondition.IF_NULL_ON_INSERT, defaultCheckpoint = Checkpoint.USER_INTERFACE)
     public Usuario propietario;
 
@@ -590,6 +588,7 @@ public class VistaFuncion extends AbstractPersistentEntity {
         @Override
         protected void settleAttributes() {
             super.settleAttributes();
+            /**/
             // <editor-fold defaultstate="collapsed" desc="localization of EnviarCopia's attributes">
             /**/
             setLocalizedLabel(ENGLISH, "send a copy");
@@ -602,20 +601,20 @@ public class VistaFuncion extends AbstractPersistentEntity {
             setLocalizedSuccessMessage(SPANISH, "se envió una copia de la vista al destinatario especificado");
             /**/
             // </editor-fold>
+            /**/
         }
 
         @InstanceReference
-        @EntityReferenceSearch(searchType = SearchType.LIST, listStyle = ListStyle.NAME)
-//      @Filter(owner = Kleenean.TRUE)
         protected VistaFuncion vista;
 
         @ParameterField(required = Kleenean.TRUE)
-        @EntityReferenceSearch(searchType = SearchType.LIST, listStyle = ListStyle.CHARACTER_KEY_AND_NAME)
+        @EntityReferenceConversionValidation(restrictedAccess = Kleenean.FALSE)
         protected Usuario destinatario;
 
         @Override
         protected void settleParameters() {
             super.settleParameters();
+            /**/
             // <editor-fold defaultstate="collapsed" desc="localization of EnviarCopia's parameters">
             /**/
             vista.setLocalizedLabel(ENGLISH, "view");
@@ -634,17 +633,20 @@ public class VistaFuncion extends AbstractPersistentEntity {
             destinatario.codigoUsuario.setLocalizedShortLabel(SPANISH, "destinatario");
             /**/
             // </editor-fold>
+            /**/
         }
 
-        protected Check check101, check102;
+        protected Check check101, check102, check201, check202;
 
         @Override
         protected void settleExpressions() {
             super.settleExpressions();
             /**/
-            check101 = vista.propietario.id.isEqualTo(CURRENT_USER_ID).and(vista.publica.isFalse());
+            check101 = vista.publica.isFalse();
+            check102 = vista.propietario.id.isEqualTo(CURRENT_USER_ID);
             /**/
-            check102 = destinatario.esUsuarioEspecial.isFalse();
+            check201 = destinatario.esUsuarioEspecial.isFalse();
+            check202 = destinatario.id.isNotEqualTo(CURRENT_USER_ID);
             /**/
             // <editor-fold defaultstate="collapsed" desc="localization of EnviarCopia's expressions">
             /**/
@@ -653,20 +655,30 @@ public class VistaFuncion extends AbstractPersistentEntity {
             check101.setLocalizedErrorMessage(ENGLISH, "it is not allowed to send copies of public views");
             check101.setLocalizedErrorMessage(SPANISH, "no está permitido enviar copias de vistas públicas");
             /**/
-            check102.setLocalizedDescription(ENGLISH, "the recipient is not a special user");
-            check102.setLocalizedDescription(SPANISH, "el destinatario no es un usuario especial");
-            check102.setLocalizedErrorMessage(ENGLISH, "it is not allowed to send copies of views to special users");
-            check102.setLocalizedErrorMessage(SPANISH, "no está permitido enviar copias de vistas a usuarios especiales");
+            check102.setLocalizedDescription(ENGLISH, "the view belongs to the current user");
+            check102.setLocalizedDescription(SPANISH, "la vista le pertenece al usuario actual");
+            check102.setLocalizedErrorMessage(ENGLISH, "it is not allowed to send copies of views that do not belong to you");
+            check102.setLocalizedErrorMessage(SPANISH, "no está permitido enviar copias de vistas que no le pertenecen");
+            /**/
+            check201.setLocalizedDescription(ENGLISH, "the recipient is not a special user");
+            check201.setLocalizedDescription(SPANISH, "el destinatario no es un usuario especial");
+            check201.setLocalizedErrorMessage(ENGLISH, "it is not allowed to send copies of views to special users");
+            check201.setLocalizedErrorMessage(SPANISH, "no está permitido enviar copias de vistas a usuarios especiales");
+            /**/
+            check202.setLocalizedDescription(ENGLISH, "the recipient is not the current user");
+            check202.setLocalizedDescription(SPANISH, "el destinatario no es el usuario actual");
+            check202.setLocalizedErrorMessage(ENGLISH, "it is not allowed to send copies of views to yourself");
+            check202.setLocalizedErrorMessage(SPANISH, "no está permitido enviarse copias de vistas a uno mismo");
             /**/
             // </editor-fold>
+            /**/
         }
 
         @Override
         protected void settleFilters() {
             super.settleFilters();
             /**/
-            vista.setSearchQueryFilter(check101);
-            destinatario.setSearchQueryFilter(destinatario.esUsuarioEspecial.isFalse());
+            destinatario.setSearchQueryFilter(and(check201, check202));
             /**/
         }
 
@@ -680,6 +692,7 @@ public class VistaFuncion extends AbstractPersistentEntity {
         @Override
         protected void settleAttributes() {
             super.settleAttributes();
+            /**/
             // <editor-fold defaultstate="collapsed" desc="localization of Publicar's attributes">
             /**/
             setLocalizedLabel(ENGLISH, "publish");
@@ -692,11 +705,10 @@ public class VistaFuncion extends AbstractPersistentEntity {
             setLocalizedSuccessMessage(SPANISH, "la vista se publicó con éxito");
             /**/
             // </editor-fold>
+            /**/
         }
 
         @InstanceReference
-        @EntityReferenceSearch(searchType = SearchType.LIST, listStyle = ListStyle.NAME)
-//      @Filter(owner = Kleenean.TRUE)
         protected VistaFuncion vista;
 
         @Override
@@ -712,15 +724,17 @@ public class VistaFuncion extends AbstractPersistentEntity {
             vista.setLocalizedLabel(SPANISH, "vista");
             /**/
             // </editor-fold>
+            /**/
         }
 
-        protected Check check101;
+        protected Check check101, check102;
 
         @Override
         protected void settleExpressions() {
             super.settleExpressions();
             /**/
-            check101 = vista.propietario.id.isEqualTo(CURRENT_USER_ID).and(vista.publica.isFalse());
+            check101 = vista.publica.isFalse();
+            check102 = vista.propietario.id.isEqualTo(CURRENT_USER_ID);
             /**/
             // <editor-fold defaultstate="collapsed" desc="localization of Publicar's expressions">
             /**/
@@ -729,14 +743,12 @@ public class VistaFuncion extends AbstractPersistentEntity {
             check101.setLocalizedErrorMessage(ENGLISH, "the view is already public");
             check101.setLocalizedErrorMessage(SPANISH, "la vista ya es pública");
             /**/
-            // </editor-fold>
-        }
-
-        @Override
-        protected void settleFilters() {
-            super.settleFilters();
+            check102.setLocalizedDescription(ENGLISH, "the view belongs to the current user");
+            check102.setLocalizedDescription(SPANISH, "la vista le pertenece al usuario actual");
+            check102.setLocalizedErrorMessage(ENGLISH, "it is not allowed to publish views that do not belong to you");
+            check102.setLocalizedErrorMessage(SPANISH, "no está permitido publicar vistas que no le pertenecen");
             /**/
-            vista.setSearchQueryFilter(check101);
+            // </editor-fold>
             /**/
         }
 
@@ -750,6 +762,7 @@ public class VistaFuncion extends AbstractPersistentEntity {
         @Override
         protected void settleAttributes() {
             super.settleAttributes();
+            /**/
             // <editor-fold defaultstate="collapsed" desc="localization of Privatizar's attributes">
             /**/
             setLocalizedLabel(ENGLISH, "privatize");
@@ -762,10 +775,10 @@ public class VistaFuncion extends AbstractPersistentEntity {
             setLocalizedSuccessMessage(SPANISH, "la vista se privatizó con éxito");
             /**/
             // </editor-fold>
+            /**/
         }
 
         @InstanceReference
-//      @EntityReferenceSearch(searchType = SearchType.LIST, listStyle = ListStyle.NAME)
         protected VistaFuncion vista;
 
         @Override
@@ -781,6 +794,7 @@ public class VistaFuncion extends AbstractPersistentEntity {
             vista.setLocalizedLabel(SPANISH, "vista");
             /**/
             // </editor-fold>
+            /**/
         }
 
         protected Check check101;
@@ -799,13 +813,6 @@ public class VistaFuncion extends AbstractPersistentEntity {
             check101.setLocalizedErrorMessage(SPANISH, "la vista ya es privada");
             /**/
             // </editor-fold>
-        }
-
-        @Override
-        protected void settleFilters() {
-            super.settleFilters();
-            /**/
-            vista.setSearchQueryFilter(check101);
             /**/
         }
 

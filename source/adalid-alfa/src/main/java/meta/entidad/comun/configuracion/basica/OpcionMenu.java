@@ -82,17 +82,14 @@ public class OpcionMenu extends AbstractPersistentEntity {
     @ForeignKey(onDelete = OnDeleteAction.NONE, onUpdate = OnUpdateAction.NONE)
     @ManyToOne(navigability = Navigability.UNIDIRECTIONAL, view = MasterDetailView.NONE)
     @PropertyField(table = Kleenean.TRUE)
-    @Allocation(maxDepth = 1, maxRound = 0)
     public OpcionMenu opcionMenuSuperior;
 
     @ForeignKey(onDelete = OnDeleteAction.NONE, onUpdate = OnUpdateAction.NONE)
     @ManyToOne(navigability = Navigability.UNIDIRECTIONAL, view = MasterDetailView.NONE)
-    @Allocation(maxDepth = 1, maxRound = 0)
     public TipoNodo tipoNodo;
 
     @ForeignKey(onDelete = OnDeleteAction.NONE, onUpdate = OnUpdateAction.NONE)
     @ManyToOne(navigability = Navigability.UNIDIRECTIONAL, view = MasterDetailView.NONE)
-    @Allocation(maxDepth = 1, maxRound = 0)
     public NivelOpcionMenu nivelOpcionMenu;
 
     @Override
@@ -185,7 +182,6 @@ public class OpcionMenu extends AbstractPersistentEntity {
     public class Desactivar extends ProcessOperation {
 
         @InstanceReference
-//      @Allocation(maxDepth = 1, maxRound = 0)
         protected OpcionMenu opcionMenu;
 
         /**
@@ -227,7 +223,6 @@ public class OpcionMenu extends AbstractPersistentEntity {
     public class Reactivar extends ProcessOperation {
 
         @InstanceReference
-//      @Allocation(maxDepth = 1, maxRound = 0)
         protected OpcionMenu opcionMenu;
 
         /**

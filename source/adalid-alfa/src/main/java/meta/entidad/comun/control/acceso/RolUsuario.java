@@ -40,6 +40,12 @@ public class RolUsuario extends AbstractPersistentEntity {
     }
     // </editor-fold>
 
+    @Override
+    protected void addAllocationStrings() {
+        super.addAllocationStrings();
+        super.addAllocationStrings("rol.grupo");
+    }
+
     @PrimaryKey
     public LongProperty id;
 
@@ -50,14 +56,12 @@ public class RolUsuario extends AbstractPersistentEntity {
     @ManyToOne(navigability = Navigability.BIDIRECTIONAL, view = MasterDetailView.TABLE, quickAdding = QuickAddingFilter.MISSING)
     @ColumnField(nullable = Kleenean.FALSE)
     @PropertyField(required = Kleenean.TRUE, table = Kleenean.TRUE, report = Kleenean.TRUE)
-//->@Allocation(maxDepth = 2, maxRound = 0)
     public Rol rol;
 
     @ForeignKey(onDelete = OnDeleteAction.CASCADE, onUpdate = OnUpdateAction.CASCADE)
     @ManyToOne(navigability = Navigability.BIDIRECTIONAL, view = MasterDetailView.TABLE, quickAdding = QuickAddingFilter.MISSING)
     @ColumnField(nullable = Kleenean.FALSE)
     @PropertyField(required = Kleenean.TRUE, table = Kleenean.TRUE, report = Kleenean.TRUE)
-//->@Allocation(maxDepth = 2, maxRound = 1)
     public Usuario usuario;
 
     @Override
@@ -92,6 +96,12 @@ public class RolUsuario extends AbstractPersistentEntity {
         usuario.setLocalizedLabel(ENGLISH, "user");
         usuario.setLocalizedLabel(SPANISH, "usuario");
         // </editor-fold>
+    }
+
+    @Override
+    protected void settleLinks() {
+        super.settleLinks();
+        linkForeignSegmentProperty(rol.grupo);
     }
 
     protected Key uk_rol_usuario_0001;

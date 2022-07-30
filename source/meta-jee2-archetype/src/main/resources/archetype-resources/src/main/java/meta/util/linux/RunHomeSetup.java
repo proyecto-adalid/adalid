@@ -9,6 +9,8 @@
  */
 package ${package}.meta.util.linux;
 
+import adalid.util.*;
+
 /**
  * RunHomeSetup sirve para ejecutar el script home-setup.sh, el cual sirve para inicializar el directorio HOME.
  * <p>
@@ -18,6 +20,7 @@ package ${package}.meta.util.linux;
  *
  * @author ADALID meta-jee2-archetype
  */
+@RunnableClass(false)
 public class RunHomeSetup extends adalid.util.io.SysCmdRunner {
 
     /**

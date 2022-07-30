@@ -18,6 +18,7 @@ import adalid.core.enums.*;
 import adalid.core.interfaces.*;
 import adalid.core.properties.*;
 import java.lang.reflect.Field;
+import meta.entidad.comun.configuracion.basica.Funcion;
 import meta.entidad.comun.operacion.basica.VistaFuncion;
 
 /**
@@ -35,6 +36,16 @@ import meta.entidad.comun.operacion.basica.VistaFuncion;
 @EntityConsoleView(enabled = Kleenean.FALSE)
 public class RolVistaFuncion extends AbstractPersistentEntity {
 
+    @Override
+    protected void addAllocationStrings() {
+        super.addAllocationStrings();
+        super.addAllocationStrings(
+            "rol.grupo",
+            "vistaFuncion.funcion",
+            "vistaFuncion.propietario"
+        );
+    }
+
     // <editor-fold defaultstate="collapsed" desc="class constructors">
     public RolVistaFuncion(Artifact declaringArtifact, Field declaringField) {
         super(declaringArtifact, declaringField);
@@ -51,16 +62,23 @@ public class RolVistaFuncion extends AbstractPersistentEntity {
     @ManyToOne(navigability = Navigability.BIDIRECTIONAL, view = MasterDetailView.TABLE)
     @ColumnField(nullable = Kleenean.FALSE)
     @PropertyField(required = Kleenean.TRUE, table = Kleenean.TRUE, report = Kleenean.TRUE)
-    @Allocation(maxDepth = 1, maxRound = 0)
     public Rol rol;
 
     @ForeignKey(onDelete = OnDeleteAction.CASCADE, onUpdate = OnUpdateAction.CASCADE)
     @ManyToOne(navigability = Navigability.UNIDIRECTIONAL, view = MasterDetailView.NONE, quickAdding = QuickAddingFilter.MISSING)
     @ColumnField(nullable = Kleenean.FALSE)
     @PropertyField(required = Kleenean.TRUE, table = Kleenean.TRUE, report = Kleenean.TRUE)
-//->@Allocation(maxDepth = 2, maxRound = 0)
-    @Filter(owner = Kleenean.FALSE, segment = Kleenean.FALSE)
     public VistaFuncion vistaFuncion;
+
+    @ColumnField(calculable = Kleenean.TRUE)
+    @ManyToOne(view = MasterDetailView.NONE)
+    @PropertyField(table = Kleenean.TRUE, report = Kleenean.TRUE)
+    public Funcion funcion;
+
+    @ColumnField(calculable = Kleenean.TRUE)
+    @ManyToOne(view = MasterDetailView.NONE)
+    @PropertyField(table = Kleenean.TRUE, report = Kleenean.TRUE)
+    public Usuario propietario;
 
     @Override
     protected void settleAttributes() {
@@ -88,7 +106,24 @@ public class RolVistaFuncion extends AbstractPersistentEntity {
         /**/
         vistaFuncion.setLocalizedLabel(ENGLISH, "views");
         vistaFuncion.setLocalizedLabel(SPANISH, "vista");
+        /**/
+        funcion.setLocalizedLabel(ENGLISH, "function of the view");
+        funcion.setLocalizedLabel(SPANISH, "función de la vista");
+        funcion.setLocalizedShortLabel(ENGLISH, "function");
+        funcion.setLocalizedShortLabel(SPANISH, "función");
+        /**/
+        propietario.setLocalizedLabel(ENGLISH, "owner of the view");
+        propietario.setLocalizedLabel(SPANISH, "propietario de la vista");
+        propietario.setLocalizedShortLabel(ENGLISH, "owner");
+        propietario.setLocalizedShortLabel(SPANISH, "propietario");
+        /**/
         // </editor-fold>
+    }
+
+    @Override
+    protected void settleLinks() {
+        super.settleLinks();
+        linkForeignSegmentProperty(rol.grupo);
     }
 
     protected Key uk_rol_vista_funcion_0001;
@@ -98,6 +133,13 @@ public class RolVistaFuncion extends AbstractPersistentEntity {
         super.settleKeys();
         uk_rol_vista_funcion_0001.setUnique(true);
         uk_rol_vista_funcion_0001.newKeyField(rol, vistaFuncion);
+    }
+
+    @Override
+    protected void settleExpressions() {
+        super.settleExpressions();
+        funcion.setCalculableValueEntityReference(vistaFuncion.funcion);
+        propietario.setCalculableValueEntityReference(vistaFuncion.propietario);
     }
 
     @Override

@@ -150,7 +150,6 @@ public class ProgramaPrueba extends PersistentEntityBase {
     public class Cargar extends ProcessOperation {
 
         @InstanceReference
-//      @Allocation(maxDepth = 1, maxRound = 0)
         protected ProgramaPrueba programa;
 
         @FileReference

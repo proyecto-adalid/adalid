@@ -43,6 +43,16 @@ public class RolFuncionPar extends AbstractPersistentEntity {
     }
     // </editor-fold>
 
+    @Override
+    protected void addAllocationStrings() {
+        super.addAllocationStrings();
+        super.addAllocationStrings(
+            "rolFuncion.rol.grupo",
+            "rolFuncion.funcion",
+            "funcionParametro.funcion"
+        );
+    }
+
     @PrimaryKey
     public LongProperty id;
 
@@ -52,18 +62,15 @@ public class RolFuncionPar extends AbstractPersistentEntity {
     @ForeignKey(onDelete = OnDeleteAction.CASCADE, onUpdate = OnUpdateAction.CASCADE)
     @ManyToOne(navigability = Navigability.BIDIRECTIONAL, view = MasterDetailView.TABLE)
     @ColumnField(nullable = Kleenean.FALSE)
-    @Allocation(maxDepth = 2, maxRound = 0)
     @PropertyField(table = Kleenean.FALSE)
     public RolFuncion rolFuncion;
 
-    @Allocation(maxDepth = 1, maxRound = 0)
     @ColumnField(calculable = Kleenean.TRUE)
 //  @ForeignKey(onDelete = OnDeleteAction.NONE, onUpdate = OnUpdateAction.NONE)
     @ManyToOne(navigability = Navigability.UNIDIRECTIONAL, view = MasterDetailView.NONE)
     @PropertyField(table = Kleenean.TRUE, report = Kleenean.TRUE, export = Kleenean.TRUE)
     public Rol rol;
 
-    @Allocation(maxDepth = 1, maxRound = 0)
     @ColumnField(calculable = Kleenean.TRUE)
 //  20171213: remove foreign-key referring to Funcion
 //  @ForeignKey(onDelete = OnDeleteAction.NONE, onUpdate = OnUpdateAction.NONE)
@@ -75,10 +82,9 @@ public class RolFuncionPar extends AbstractPersistentEntity {
 //  @ForeignKey(onDelete = OnDeleteAction.NONE, onUpdate = OnUpdateAction.NONE)
     @ManyToOne(navigability = Navigability.UNIDIRECTIONAL, view = MasterDetailView.NONE, quickAdding = QuickAddingFilter.MISSING)
     @ColumnField(nullable = Kleenean.FALSE)
-    @EntityReferenceDisplay(style = EntityReferenceStyle.NAME_AND_CHARACTER_KEY)
+    @EntityReferenceDisplay(style = EntityReferenceStyle.NAME)
     @EntityReferenceSearch(searchType = SearchType.LIST, listStyle = ListStyle.NAME)
-    @PropertyField(required = Kleenean.TRUE, table = Kleenean.TRUE, report = Kleenean.TRUE)
-    @Allocation(maxDepth = 2, maxRound = 0)
+    @PropertyField(required = Kleenean.TRUE, table = Kleenean.TRUE, report = Kleenean.TRUE, access = PropertyAccess.RESTRICTED_WRITING)
     public FuncionParametro funcionParametro;
 
     @Override
@@ -115,6 +121,7 @@ public class RolFuncionPar extends AbstractPersistentEntity {
     @Override
     protected void settleLinks() {
         super.settleLinks();
+        linkForeignSegmentProperty(rolFuncion.rol.grupo);
         linkForeignQueryProperty(rolFuncion.rol.codigoRol, rolFuncion.rol.nombreRol);
         linkForeignQueryProperty(rolFuncion.funcion.codigoFuncion, rolFuncion.funcion.nombreFuncion);
         rol.linkCalculableValueEntityReference(rolFuncion.rol);

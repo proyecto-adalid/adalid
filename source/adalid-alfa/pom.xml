@@ -6,7 +6,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.proyecto-adalid</groupId>
     <artifactId>adalid-alfa</artifactId>
-    <version>4.4.0</version><!--adalid-->
+    <version>4.5.0</version><!--adalid-->
     <packaging>jar</packaging>
     <name>adalid-alfa</name>
     <description>Adalid Alfa Library</description>
@@ -113,7 +113,7 @@
         <dependency>
             <groupId>net.sourceforge.plantuml</groupId>
             <artifactId>plantuml</artifactId>
-            <version>8059</version>
+            <version>1.2022.5</version>
         </dependency>
         <!--
         <dependency>

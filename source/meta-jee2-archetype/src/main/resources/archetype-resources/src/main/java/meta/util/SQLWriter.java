@@ -9,6 +9,8 @@
  */
 package ${package}.meta.util;
 
+import adalid.util.*;
+
 /**
  * SQLWriter genera meta-java de entidades a partir de las tablas de una base de datos. Para obtener información al respecto, consulte el apéndice
  * "Generación de meta-java a partir de una base de datos", de la "Guía de Meta-Programación" del Proyecto Adalid, Plataforma jee2.
@@ -53,6 +55,7 @@ package ${package}.meta.util;
  *
  * @author ADALID meta-jee2-archetype
  */
+@RunnableClass
 public class SQLWriter extends adalid.util.sql.jee2.SQLWriter {
 
     public static void main(String[] args) {

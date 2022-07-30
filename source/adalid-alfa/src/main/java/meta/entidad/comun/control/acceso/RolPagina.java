@@ -18,7 +18,9 @@ import adalid.core.enums.*;
 import adalid.core.interfaces.*;
 import adalid.core.properties.*;
 import java.lang.reflect.Field;
+import meta.entidad.comun.configuracion.basica.Dominio;
 import meta.entidad.comun.configuracion.basica.Pagina;
+import meta.entidad.comun.configuracion.basica.TipoPagina;
 
 /**
  * @author Jorge Campins
@@ -41,6 +43,18 @@ public class RolPagina extends AbstractPersistentEntity {
     }
     // </editor-fold>
 
+    @Override
+    protected void addAllocationStrings() {
+        super.addAllocationStrings();
+        super.addAllocationStrings(
+            "rol.grupo",
+            "pagina.tipoPagina",
+            "pagina.dominio",
+            "pagina.dominioMaestro",
+            "pagina.parametro"
+        );
+    }
+
     @PrimaryKey
     public LongProperty id;
 
@@ -51,7 +65,6 @@ public class RolPagina extends AbstractPersistentEntity {
     @ManyToOne(navigability = Navigability.BIDIRECTIONAL, view = MasterDetailView.TABLE)
     @ColumnField(nullable = Kleenean.FALSE)
     @PropertyField(required = Kleenean.TRUE, table = Kleenean.TRUE, report = Kleenean.TRUE)
-    @Allocation(maxDepth = 1, maxRound = 0)
     public Rol rol;
 
 //  20171213: remove foreign-key referring to Pagina
@@ -59,8 +72,17 @@ public class RolPagina extends AbstractPersistentEntity {
     @ManyToOne(navigability = Navigability.UNIDIRECTIONAL, view = MasterDetailView.NONE, quickAdding = QuickAddingFilter.MISSING)
     @ColumnField(nullable = Kleenean.FALSE)
     @PropertyField(required = Kleenean.TRUE, table = Kleenean.TRUE, report = Kleenean.TRUE)
-    @Allocation(maxDepth = 2, maxRound = 0)
     public Pagina pagina;
+
+    @ColumnField(calculable = Kleenean.TRUE)
+    @ManyToOne(view = MasterDetailView.NONE)
+    @PropertyField(table = Kleenean.TRUE, report = Kleenean.TRUE)
+    public TipoPagina tipoPagina;
+
+    @ColumnField(calculable = Kleenean.TRUE)
+    @ManyToOne(view = MasterDetailView.NONE)
+    @PropertyField(table = Kleenean.TRUE, report = Kleenean.TRUE)
+    public Dominio dominio;
 
     @Override
     protected void settleAttributes() {
@@ -91,6 +113,12 @@ public class RolPagina extends AbstractPersistentEntity {
         // </editor-fold>
     }
 
+    @Override
+    protected void settleLinks() {
+        super.settleLinks();
+        linkForeignSegmentProperty(rol.grupo);
+    }
+
     protected Key uk_rol_pagina_0001;
 
     @Override
@@ -112,7 +140,10 @@ public class RolPagina extends AbstractPersistentEntity {
             pagina.dominioMaestro.isNull(),
             pagina.parametro.isNull()
         );
-
+        /**/
+        tipoPagina.setCalculableValueEntityReference(pagina.tipoPagina);
+        dominio.setCalculableValueEntityReference(pagina.dominio);
+        /**/
         // <editor-fold defaultstate="collapsed" desc="localization of RolPagina's expressions">
         check101.setLocalizedLabel(ENGLISH, "check page");
         check101.setLocalizedLabel(SPANISH, "chequear página");

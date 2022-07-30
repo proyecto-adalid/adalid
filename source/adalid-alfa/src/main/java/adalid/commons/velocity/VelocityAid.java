@@ -12,6 +12,7 @@
  */
 package adalid.commons.velocity;
 
+import adalid.commons.util.*;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -93,6 +94,10 @@ public class VelocityAid {
     private static final String TAB = StringUtils.repeat(" ", 4);
 
     private static final String EMPTY = "";
+
+    private static final String BOELE = "#{";
+
+    private static final String EOELE = "}";
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="character-string constants">
@@ -324,6 +329,14 @@ public class VelocityAid {
         return AST;
     }
     // </editor-fold>
+
+    public static String discloseELE(String string) {
+        return StrUtils.disclose(string, BOELE, EOELE);
+    }
+
+    public static String encloseELE(String string) {
+        return StrUtils.enclose(string, BOELE, EOELE);
+    }
 
     public static String echo(String string) {
         return "";

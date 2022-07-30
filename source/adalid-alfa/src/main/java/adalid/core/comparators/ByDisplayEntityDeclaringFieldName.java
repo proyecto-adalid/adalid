@@ -35,7 +35,7 @@ public class ByDisplayEntityDeclaringFieldName implements Comparator<Display> {
     private ByDisplayEntityDeclaringFieldName(Project module) {
         if (module != null) {
             String fieldType, fieldName;
-            for (Field field : XS2.getFields(module.getClass())) {
+            for (Field field : XS2.getFields(module.getClass(), Project.class)) {
                 if (Entity.class.isAssignableFrom(field.getType())) {
                     fieldType = field.getType().getSimpleName();
                     fieldName = field.getName();

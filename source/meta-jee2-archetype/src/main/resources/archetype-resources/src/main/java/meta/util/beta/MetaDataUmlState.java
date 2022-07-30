@@ -9,6 +9,8 @@
  */
 package ${package}.meta.util.beta;
 
+import adalid.util.*;
+
 /**
  * MetaDataUmlState genera los diagramas de estado UML de su aplicación utilizando la plataforma meta-data-uml-state.
  * <p>
@@ -28,6 +30,7 @@ package ${package}.meta.util.beta;
  *
  * @author ADALID meta-jee2-archetype
  */
+@RunnableClass
 public class MetaDataUmlState extends adalid.util.Utility {
 
     /**

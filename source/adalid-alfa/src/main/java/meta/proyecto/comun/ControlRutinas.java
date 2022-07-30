@@ -43,6 +43,19 @@ public class ControlRutinas extends Project {
         return super.isMenuModule() && !TLC.getProject().getUserFlows().isEmpty();
     }
 
+    // <editor-fold defaultstate="collapsed" desc="print">
+    @Override
+    public void print() {
+        super.print();
+        System.out.println(x010);
+        System.out.println(x01010);
+        System.out.println(x01020);
+        System.out.println(consulta);
+        System.out.println(procesamiento);
+        System.out.println(registro);
+    }
+    // </editor-fold>
+
     RutinaUsuario x010;
 
     VariableRutina x01010;

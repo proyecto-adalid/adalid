@@ -6,7 +6,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.proyecto-adalid.meta</groupId>
     <artifactId>meta-jee2-archetype</artifactId>
-    <version>4.4.0</version><!--adalid-->
+    <version>4.5.0</version><!--adalid-->
     <packaging>maven-archetype</packaging>
     <name>meta-jee2-archetype</name>
     <description>Adalid platform JEE2 meta-project archetype</description>
@@ -29,9 +29,9 @@
     </developers>
 
     <scm>
-        <connection>scm:git:git@github.com:proyecto-adalid/adalid.git</connection>
-        <developerConnection>scm:git:git@github.com:proyecto-adalid/adalid.git</developerConnection>
-        <url>git@github.com:proyecto-adalid/adalid.git</url>
+        <connection>scm:git:https://github.com/proyecto-adalid/adalid.git</connection>
+        <developerConnection>scm:git:https://github.com/proyecto-adalid/adalid.git</developerConnection>
+        <url>https://github.com/proyecto-adalid/adalid</url>
     </scm>
 
     <distributionManagement>

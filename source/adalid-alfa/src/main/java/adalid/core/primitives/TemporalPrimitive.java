@@ -21,7 +21,6 @@ import adalid.core.sql.*;
 import java.sql.Date;
 import java.sql.Time;
 import java.sql.Timestamp;
-import java.util.Calendar;
 import java.util.LinkedHashMap;
 import java.util.Locale;
 import java.util.Map;
@@ -31,17 +30,8 @@ import java.util.Map;
  */
 public abstract class TemporalPrimitive extends Primitive implements IntervalizedArtifact, TemporalExpression {
 
-    private static final Calendar calendar = Calendar.getInstance();
-
     public static long getEpochInMillis() {
-        calendar.set(Calendar.YEAR, 1970);
-        calendar.set(Calendar.MONTH, Calendar.JANUARY);
-        calendar.set(Calendar.DAY_OF_MONTH, 1);
-        calendar.set(Calendar.HOUR_OF_DAY, 0);
-        calendar.set(Calendar.MINUTE, 0);
-        calendar.set(Calendar.SECOND, 0);
-        calendar.set(Calendar.MILLISECOND, 0);
-        return calendar.getTimeInMillis();
+        return TimeUtils.epochMillis();
     }
 
     /*

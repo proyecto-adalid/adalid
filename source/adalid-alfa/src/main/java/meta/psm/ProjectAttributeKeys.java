@@ -226,6 +226,11 @@ public class ProjectAttributeKeys {
     public static final String HELP_WINDOW_WIDTH_KEY = "help_window_width_key";
 
     /**
+     * Número máximo de elementos por nivel de menús escalonados. El valor mínimo es 5. El valor máximo es 20. El valor por omisión es 20.
+     */
+    public static final String TIERED_MENU_MAX_ITEMS_PER_TIER = "tiered_menu_max_items_per_tier";
+
+    /**
      * Número de minutos que se debe especificar como tiempo de espera (valor del elemento session-timeout) al generar el descriptor de despliegue
      * (web.xml) del módulo alias-web de la aplicación, donde alias es el alias del proyecto generado. El valor predeterminado es 30.
      */

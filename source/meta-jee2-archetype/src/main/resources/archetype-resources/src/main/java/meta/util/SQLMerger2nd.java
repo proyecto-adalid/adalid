@@ -9,6 +9,8 @@
  */
 package ${package}.meta.util;
 
+import adalid.util.*;
+
 /**
  * SQLMerger2nd genera los archivos utilizados por el método para la actualización incremental de la base de datos. Para obtener información sobre
  * este método, consulte el apéndice "Creación de la base de datos de aplicaciones jee2", de la "Guía de Meta-Programación" del Proyecto Adalid,
@@ -44,6 +46,7 @@ package ${package}.meta.util;
  *
  * @author ADALID meta-jee2-archetype
  */
+@RunnableClass
 public class SQLMerger2nd extends adalid.util.sql.jee2.SQLMerger2nd {
 
     public static void main(String[] args) {

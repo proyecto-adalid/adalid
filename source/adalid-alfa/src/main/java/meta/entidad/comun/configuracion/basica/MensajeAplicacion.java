@@ -105,7 +105,7 @@ public class MensajeAplicacion extends AbstractPersistentEntity {
     public StringProperty codigo;
 
     @NameProperty
-    @StringField(maxLength = 100)
+    @StringField(maxLength = 180)
     public StringProperty codigoMensaje;
 
     @ColumnField(nullable = Kleenean.FALSE)

@@ -41,6 +41,18 @@ public class PaqueteConsultaTarea extends PaqueteConsultaBase {
         // </editor-fold>
     }
 
+    // <editor-fold defaultstate="collapsed" desc="print">
+    @Override
+    public void print() {
+        super.print();
+        System.out.println(condicionTarea);
+        System.out.println(tareaUsuario);
+        System.out.println(tareaUsuarioCorreo);
+        System.out.println(tareaVirtual);
+        System.out.println(TransicionTareaUsuario);
+    }
+    // </editor-fold>
+
     CondicionTarea condicionTarea;
 
     TareaUsuario tareaUsuario;

@@ -31,6 +31,7 @@ import meta.entidad.comun.configuracion.basica.TipoDominio;
 @EntityDetailView(enabled = Kleenean.FALSE)
 @EntityTreeView(enabled = Kleenean.FALSE)
 @EntityConsoleView(enabled = Kleenean.FALSE)
+@EntityReferenceDisplay(style = EntityReferenceStyle.NAME_AND_CHARACTER_KEY)
 public class Dominio extends meta.entidad.comun.configuracion.basica.Dominio {
 
     // <editor-fold defaultstate="collapsed" desc="class constructors">
@@ -42,23 +43,19 @@ public class Dominio extends meta.entidad.comun.configuracion.basica.Dominio {
     @ForeignKey(onDelete = OnDeleteAction.NONE, onUpdate = OnUpdateAction.CASCADE)
     @ManyToOne(navigability = Navigability.UNIDIRECTIONAL, view = MasterDetailView.NONE)
     @ColumnField(nullable = Kleenean.FALSE)
-    @Allocation(maxDepth = 1, maxRound = 0)
     public TipoDominio tipoDominio;
 
     @ForeignKey(onDelete = OnDeleteAction.NONE, onUpdate = OnUpdateAction.NONE)
     @ManyToOne(navigability = Navigability.UNIDIRECTIONAL, view = MasterDetailView.NONE)
     @ColumnField(nullable = Kleenean.FALSE)
-    @Allocation(maxDepth = 1, maxRound = 0)
     public ClaseRecurso claseRecurso;
 
     @ForeignKey(onDelete = OnDeleteAction.NONE, onUpdate = OnUpdateAction.NONE)
     @ManyToOne(navigability = Navigability.UNIDIRECTIONAL, view = MasterDetailView.NONE)
-    @Allocation(maxDepth = 1, maxRound = 0)
     public Funcion funcionSeleccion;
 
     @ForeignKey(onDelete = OnDeleteAction.NONE, onUpdate = OnUpdateAction.NONE)
     @ManyToOne(navigability = Navigability.UNIDIRECTIONAL, view = MasterDetailView.NONE)
-    @Allocation(maxDepth = 1, maxRound = 0)
     public Dominio dominioSegmento;
 
     @Override

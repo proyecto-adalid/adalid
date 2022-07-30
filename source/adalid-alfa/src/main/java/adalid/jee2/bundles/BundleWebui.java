@@ -13,6 +13,7 @@
 package adalid.jee2.bundles;
 
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -31,6 +32,10 @@ public class BundleWebui extends BundleAbstracto {
     private static final Map<Locale, List<String>> bundleRows = new LinkedHashMap<>();
 
     private static final Map<Locale, Locale> locales = new LinkedHashMap<>();
+
+    private static final Set<String> warnings = new LinkedHashSet<>();
+
+    private static final Set<String> errors = new LinkedHashSet<>();
 
     private static boolean load = true;
 
@@ -57,6 +62,16 @@ public class BundleWebui extends BundleAbstracto {
     @Override
     Map<Locale, Locale> locales() {
         return locales;
+    }
+
+    @Override
+    Set<String> warnings() {
+        return warnings;
+    }
+
+    @Override
+    Set<String> errors() {
+        return errors;
     }
 
 }

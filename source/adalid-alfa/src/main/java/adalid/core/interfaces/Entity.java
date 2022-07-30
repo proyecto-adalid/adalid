@@ -639,6 +639,11 @@ public interface Entity extends Comparable<Entity>, DataArtifact, EntityReferenc
     boolean isEntityCollector();
 
     /**
+     * @return true if is a overlayable entity; otherwise false
+     */
+    boolean isOverlayableEntity();
+
+    /**
      * @return true if is a overlayable entity reference; otherwise false
      */
     boolean isOverlayableEntityReference();
@@ -662,6 +667,16 @@ public interface Entity extends Comparable<Entity>, DataArtifact, EntityReferenc
      * @return the invariant entity indicator
      */
     boolean isInvariantEntity();
+
+    /**
+     * @return true if the segment property and the owner property are the same property
+     */
+    boolean isSegmentEqualToOwner();
+
+    /**
+     * @return true if the segment property and the primary key property are the same property
+     */
+    boolean isSegmentEqualToPrimaryKey();
 
     /**
      * @return the resource yype

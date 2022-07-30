@@ -54,6 +54,34 @@ public class PaqueteConsultaControlPruebas extends PaqueteConsultaBase {
         // </editor-fold>
     }
 
+    // <editor-fold defaultstate="collapsed" desc="print">
+    @Override
+    public void print() {
+        super.print();
+        System.out.println(ambientePrueba);
+        System.out.println(casoPrueba);
+        System.out.println(documentoPrueba);
+        System.out.println(documentoPruebaX1);
+        System.out.println(documentoPruebaX2);
+        System.out.println(documentoPruebaX3);
+        System.out.println(documentoPruebaX4);
+        System.out.println(documentoPruebaX5);
+        System.out.println(documentoPruebaX6);
+        System.out.println(ejecucionLineaPrueba);
+        System.out.println(ejecucionPrueba);
+        System.out.println(escenarioPrueba);
+        System.out.println(lineaPrueba);
+        System.out.println(paquetePrueba);
+        System.out.println(parametroLineaPrueba);
+        System.out.println(parteAmbientePrueba);
+        System.out.println(piezaAmbientePrueba);
+        System.out.println(programaPrueba);
+        System.out.println(tipoDocumentoPrueba);
+        System.out.println(tipoPiezaPrueba);
+        System.out.println(tipoResultadoPrueba);
+    }
+    // </editor-fold>
+
     AmbientePrueba ambientePrueba;
 
     CasoPrueba casoPrueba;

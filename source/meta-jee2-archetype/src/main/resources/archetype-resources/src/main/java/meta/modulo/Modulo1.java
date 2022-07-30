@@ -18,8 +18,8 @@ public class Modulo1 extends adalid.core.Project {
     protected void settleAttributes() {
         super.settleAttributes();
         /**/
-        setDefaultLabel("Módulo 1");
-        setDefaultDescription("Módulo 1");
+        setLocalizedLabel(SPANISH, "Módulo 1");
+        setLocalizedDescription(SPANISH, "Módulo 1");
         /**/
         setLocalizedLabel(ENGLISH, "Module 1");
         setLocalizedDescription(ENGLISH, "Module 1");

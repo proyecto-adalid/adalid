@@ -50,6 +50,17 @@ public class RastroProceso extends AbstractPersistentEntity {
     }
     // </editor-fold>
 
+    @Override
+    protected void addAllocationStrings() {
+        super.addAllocationStrings();
+        /*
+        super.addAllocationStrings(
+            "condicionEjeFun.severidadMensaje",
+            "condicionEjeTem.severidadMensaje"
+        );
+        /**/
+    }
+
     @PrimaryKey
     @PropertyField(hidden = Kleenean.FALSE, detail = Kleenean.TRUE, heading = Kleenean.TRUE)
     public LongProperty id;
@@ -161,7 +172,6 @@ public class RastroProceso extends AbstractPersistentEntity {
 
     private static final String BORPPSX1 = "/resources/snippets/base/entity/RastroProceso/botonOpenRastroProcesoPorSuperiorX1";
 
-    @Allocation(maxDepth = 2, maxRound = 1)
     @ForeignKey(onDelete = OnDeleteAction.NONE, onUpdate = OnUpdateAction.NONE)
     @ManyToOne(navigability = Navigability.UNIDIRECTIONAL, view = MasterDetailView.NONE)
     @ColumnField(nullable = Kleenean.FALSE)
@@ -202,7 +212,6 @@ public class RastroProceso extends AbstractPersistentEntity {
 //  @QueryMapping(mapKeyProperties = Kleenean.FALSE)
     public RastroProceso superior;
 
-    @Allocation(maxDepth = 2, maxRound = 1)
     @ColumnField(nullable = Kleenean.FALSE)
     @ForeignKey(onDelete = OnDeleteAction.NONE, onUpdate = OnUpdateAction.NONE)
     @ManyToOne(navigability = Navigability.UNIDIRECTIONAL, view = MasterDetailView.NONE)

@@ -41,13 +41,22 @@ public class ElementoSegmento extends AbstractPersistentEntity {
     }
     // </editor-fold>
 
+    @Override
+    protected void addAllocationStrings() {
+        super.addAllocationStrings();
+        super.addAllocationStrings(
+            "conjuntoSegmento.grupo",
+            "conjuntoSegmento.claseRecurso",
+            "conjuntoSegmento.claseFabricador"
+        );
+    }
+
     @PrimaryKey
     public LongProperty id;
 
     @VersionProperty
     public LongProperty version;
 
-    @Allocation(maxDepth = 2, maxRound = 0)
     @ForeignKey(onDelete = OnDeleteAction.CASCADE, onUpdate = OnUpdateAction.NONE)
     @ManyToOne(navigability = Navigability.BIDIRECTIONAL, view = MasterDetailView.TABLE)
     @ColumnField(nullable = Kleenean.FALSE)
@@ -140,6 +149,7 @@ public class ElementoSegmento extends AbstractPersistentEntity {
     @Override
     protected void settleLinks() {
         super.settleLinks();
+        linkForeignSegmentProperty(conjuntoSegmento.grupo);
     }
 
     protected Key uk_elemento_segmento_0001;

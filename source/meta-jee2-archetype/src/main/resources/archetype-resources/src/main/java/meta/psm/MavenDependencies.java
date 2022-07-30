@@ -18,8 +18,6 @@ public class MavenDependencies {
 
     public static PrimeFaces PrimeFaces;
 
-    static MavenDependencies instance = new MavenDependencies();
-
     private MavenDependencies() {
         PrimeFaces = new PrimeFaces();
     }

@@ -1,8 +1,14 @@
 /*
- * Este programa es software libre; usted puede redistribuirlo y/o modificarlo bajo los terminos
- * de la licencia "GNU General Public License" publicada por la Fundacion "Free Software Foundation".
- * Este programa se distribuye con la esperanza de que pueda ser util, pero SIN NINGUNA GARANTIA;
- * vea la licencia "GNU General Public License" para obtener mas informacion.
+ * Copyright 2017 Jorge Campins y David Uzcategui
+ *
+ * Este archivo forma parte de Adalid.
+ *
+ * Adalid es software libre; usted puede redistribuirlo y/o modificarlo bajo los terminos de la
+ * licencia "GNU General Public License" publicada por la Fundacion "Free Software Foundation".
+ * Adalid se distribuye con la esperanza de que pueda ser util, pero SIN NINGUNA GARANTIA; sin
+ * siquiera las garantias implicitas de COMERCIALIZACION e IDONEIDAD PARA UN PROPOSITO PARTICULAR.
+ *
+ * Para mas detalles vea la licencia "GNU General Public License" en http://www.gnu.org/licenses
  */
 package adalid.util;
 
@@ -47,15 +53,27 @@ public class Runner extends Utility {
         }
         /**/
         Set<Class<?>> masters = JavaUtils.getTypes(prefix, MasterProject.class);
-        set.addAll(JavaUtils.getCanonicalNames(masters));
+        set.addAll(JavaUtils.getCanonicalNames(ColUtils.filter(masters, (Object o) -> runnableProject(o))));
         /**/
         Set<Class<?>> utilities = JavaUtils.getSubTypes(prefix, Utility.class);
-        set.addAll(JavaUtils.getCanonicalNames(utilities));
+        set.addAll(JavaUtils.getCanonicalNames(ColUtils.filter(utilities, (Object o) -> runnableUtility(o))));
         /**/
         Collection<String> names = set.isEmpty() ? null : ColUtils.filter(set, (Object o) -> fairName(o, prefix, exclude, runner));
         if (names != null && !names.isEmpty()) {
             execute(showInputDialog(names));
         }
+    }
+
+    private static boolean runnableProject(Object o) {
+        Class<?> c = o instanceof Class ? (Class<?>) o : null;
+        MasterProject a = c == null ? null : c.getAnnotation(MasterProject.class);
+        return a != null && a.runnable();
+    }
+
+    private static boolean runnableUtility(Object o) {
+        Class<?> c = o instanceof Class ? (Class<?>) o : null;
+        RunnableClass a = c == null ? null : c.getAnnotation(RunnableClass.class);
+        return a != null && a.value();
     }
 
     private static boolean fairName(Object o, String prefix, String infix, String runner) {
@@ -75,6 +93,8 @@ public class Runner extends Utility {
         return value == null ? null : value.toString();
     }
 
+    private static final String LAST_EXECUTED = "${lastExecutedProject}";
+
     private static final String EXECUTE_MESSAGE = "\n\n¿Desea ejecutar la clase?";
 
     private static final String EXECUTE_TITLE = "Ejecutar ";
@@ -86,11 +106,15 @@ public class Runner extends Utility {
         String string = getString(name);
         if (string == null) {
             logger.info("execute=" + name);
+        } else if (string.contains(LAST_EXECUTED)) {
+            String lastExecutedProjectAlias = getLastExecutedProjectAlias();
+            String lastExecutedProjectClassName = getLastExecutedProjectClassName();
+            string = string.replace(LAST_EXECUTED, lastExecutedProjectAlias + " (" + lastExecutedProjectClassName + ")");
         }
         boolean execute = string == null || showConfirmDialog(split(string) + EXECUTE_MESSAGE, EXECUTE_TITLE + name);
         if (execute) {
             try {
-                Class<? extends ProjectBuilder> clazz = (Class<? extends ProjectBuilder>) Class.forName(name);
+                Class<?> clazz = (Class<?>) Class.forName(name);
                 Method method = clazz.getMethod("main", String[].class);
                 String[] args = null;
                 method.invoke(null, (Object) args);
@@ -111,8 +135,7 @@ public class Runner extends Utility {
     }
 
     private static String split(String string) {
-        int middle = string.indexOf(' ', string.length() / 2);
-        return middle < 0 ? string : string.substring(0, middle) + '\n' + string.substring(middle + 1);
+        return StrUtils.separateLines(string, 70, "\n", true);
     }
 
 }

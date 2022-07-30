@@ -78,6 +78,16 @@ public class ControlTareas extends Project {
         // </editor-fold>
     }
 
+    // <editor-fold defaultstate="collapsed" desc="print">
+    @Override
+    public void print() {
+        super.print();
+        System.out.println(x010);
+        System.out.println(x01010);
+        System.out.println(x01020);
+    }
+    // </editor-fold>
+
     TareaUsuario x010;
 
     TareaUsuarioCorreo x01010;

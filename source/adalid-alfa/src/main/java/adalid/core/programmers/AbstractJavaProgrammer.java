@@ -27,10 +27,8 @@ import java.sql.Date;
 import java.sql.Time;
 import java.sql.Timestamp;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
-import java.util.TreeSet;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
@@ -52,61 +50,10 @@ public abstract class AbstractJavaProgrammer extends AbstractProgrammer implemen
 
     protected static final String SEP$ = COM$;
 
-    protected static final String[] KEYWORDS = {
-        "abstract",
-        "assert",
-        "boolean",
-        "break",
-        "byte",
-        "case",
-        "catch",
-        "char",
-        "class",
-        "const",
-        "continue",
-        "default",
-        "do",
-        "double",
-        "else",
-        "enum",
-        "extends",
-        "final",
-        "finally",
-        "float",
-        "for",
-        "goto",
-        "if",
-        "implements",
-        "import",
-        "instanceof",
-        "int",
-        "interface",
-        "long",
-        "native",
-        "new",
-        "package",
-        "private",
-        "protected",
-        "public",
-        "return",
-        "short",
-        "static",
-        "strictfp",
-        "super",
-        "switch",
-        "synchronized",
-        "this",
-        "throw",
-        "throws",
-        "transient",
-        "try",
-        "void",
-        "volatile",
-        "while"
-    };
+    protected static final String[] KEYWORDS = JavaUtils.getJavaKeywordArray();
 
     public static Set<String> getJavaKeywords() {
-        return new TreeSet<>(Arrays.asList(KEYWORDS));
+        return JavaUtils.getJavaKeywordSet();
     }
     // </editor-fold>
 
@@ -1091,6 +1038,8 @@ public abstract class AbstractJavaProgrammer extends AbstractProgrammer implemen
             case XOR:
             case XNOR:
             case X_IMPLIES_Y:
+            case ASCII:
+            case DIACRITICLESS_ASCII:
             case CONCAT:
             case FORMAT:
             case LEFT:
@@ -1173,6 +1122,9 @@ public abstract class AbstractJavaProgrammer extends AbstractProgrammer implemen
             case TO_BIG_INTEGER:
             case TO_BIG_DECIMAL:
             case NOT:
+            case ASCII:
+            case DIACRITICLESS:
+            case DIACRITICLESS_ASCII:
             case LOWER:
             case UPPER:
             case CAPITALIZE:

@@ -37,6 +37,7 @@ public class ProyectoJava2 extends ProyectoJava1 {
         "FuncionParametro",
         "RastroFuncion",
         "RastroFuncionPar",
+        "RastroInforme",
         "RastroProceso",
         "TareaUsuario",
         "VistaFuncionCol"
@@ -97,6 +98,8 @@ public class ProyectoJava2 extends ProyectoJava1 {
         addAttribute(ProjectAttributeKeys.INLINE_HELP_RENDERING, true);
         addAttribute(ProjectAttributeKeys.PARTIAL_STATE_SAVING, true);
 //      addAttribute(ProjectAttributeKeys.SESSION_TIMEOUT, 30);
+        addAttribute("primefaces_messages_escape", false);
+        addAttribute("primefaces_inline_help_escape", false);
         /**/
         Entity entity;
         Map<String, Entity> entitiesMap = getEntitiesMap();

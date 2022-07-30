@@ -45,6 +45,16 @@ public class LineaPrueba extends PersistentEntityBase {
     // </editor-fold>
 
     @Override
+    protected void addAllocationStrings() {
+        super.addAllocationStrings();
+        super.addAllocationStrings(
+            "programa.caso",
+            "programa.propietario",
+            "escenario.caso"
+        );
+    }
+
+    @Override
     protected void settleAttributes() {
         super.settleAttributes();
 //      setSchema(ProyectoBase.getEsquemaEntidadesComunes());
@@ -69,14 +79,12 @@ public class LineaPrueba extends PersistentEntityBase {
     @PropertyField(create = Kleenean.TRUE)
     public IntegerProperty numero;
 
-    @Allocation(maxDepth = 2, maxRound = 0)
     @ColumnField(nullable = Kleenean.FALSE)
     @ForeignKey(onDelete = OnDeleteAction.NONE, onUpdate = OnUpdateAction.NONE)
     @ManyToOne(navigability = Navigability.UNIDIRECTIONAL, view = MasterDetailView.TABLE_AND_DETAIL)
     @PropertyField(create = Kleenean.TRUE, update = Kleenean.FALSE, table = Kleenean.TRUE, report = Kleenean.TRUE)
     public ProgramaPrueba programa;
 
-    @Allocation(maxDepth = 2, maxRound = 0)
     @ForeignKey(onDelete = OnDeleteAction.NONE, onUpdate = OnUpdateAction.NONE)
     @ManyToOne(navigability = Navigability.UNIDIRECTIONAL, view = MasterDetailView.NONE)
     @PropertyField(create = Kleenean.TRUE, table = Kleenean.TRUE, report = Kleenean.TRUE)
@@ -219,7 +227,6 @@ public class LineaPrueba extends PersistentEntityBase {
     public class Cargar extends ProcessOperation {
 
         @InstanceReference
-//      @Allocation(maxDepth = 1, maxRound = 0)
         protected LineaPrueba linea;
 
         @FileReference

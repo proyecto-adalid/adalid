@@ -67,6 +67,50 @@ public class ConfiguracionBasica extends Project {
         // </editor-fold>
     }
 
+    // <editor-fold defaultstate="collapsed" desc="print">
+    @Override
+    public void print() {
+        super.print();
+        System.out.println(AccionArchivoCargado);
+        System.out.println(Aplicacion);
+        System.out.println(AtributoAplicacion);
+        System.out.println(ClaseJava);
+        System.out.println(ClaseRecurso);
+        System.out.println(CondicionEjeFun);
+        System.out.println(Dominio);
+        System.out.println(DominioParametro);
+        System.out.println(Funcion);
+        System.out.println(FuncionParametro);
+        System.out.println(GrupoProceso);
+        System.out.println(MensajeAplicacion);
+        System.out.println(ModuloAplicacion);
+//      System.out.println(NivelOpcionMenu);
+//      System.out.println(OpcionMenu);
+        System.out.println(Pagina);
+        System.out.println(PaginaInicio);
+        System.out.println(Parametro);
+        System.out.println(RangoAgregacion);
+        System.out.println(RangoComparacion);
+        System.out.println(SeveridadMensaje);
+        System.out.println(SubtipoGrafico);
+        System.out.println(TipoClaseRecurso);
+        System.out.println(TipoComparacion);
+        System.out.println(TipoDatoPar);
+        System.out.println(TipoDominio);
+        System.out.println(TipoFuncion);
+        System.out.println(TipoGrafico);
+        System.out.println(TipoInforme);
+        System.out.println(TipoNodo);
+        System.out.println(TipoPagina);
+        System.out.println(TipoParametro);
+        System.out.println(TipoParametroDom);
+        System.out.println(TipoRastroFun);
+        System.out.println(TipoRecurso);
+        System.out.println(TipoValor);
+        System.out.println(VersionAdalid);
+    }
+    // </editor-fold>
+
     AccionArchivoCargado AccionArchivoCargado;
 
     Aplicacion Aplicacion;

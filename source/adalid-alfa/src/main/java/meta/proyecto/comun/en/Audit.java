@@ -57,6 +57,21 @@ public class Audit extends Project {
         // </editor-fold>
     }
 
+    // <editor-fold defaultstate="collapsed" desc="print">
+    @Override
+    public void print() {
+        super.print();
+        System.out.println(ArchivoAdjunto);
+        System.out.println(RastroFuncion);
+        System.out.println(RastroFuncionPar);
+        System.out.println(RastroInforme);
+        System.out.println(RastroProceso);
+        System.out.println(GrupoProceso);
+        System.out.println(consulta);
+        System.out.println(procesamiento);
+    }
+    // </editor-fold>
+
     ArchivoAdjunto ArchivoAdjunto;
 
     RastroFuncion RastroFuncion;

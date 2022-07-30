@@ -9,6 +9,8 @@
  */
 package ${package}.meta.util.linux;
 
+import adalid.util.*;
+
 /**
  * RunSomeScript sirve para buscar, seleccionar y ejecutar un script (archivo .sh).
  * <p>
@@ -18,6 +20,7 @@ package ${package}.meta.util.linux;
  *
  * @author ADALID meta-jee2-archetype
  */
+@RunnableClass(false)
 public class RunSomeScript extends adalid.util.io.SysCmdRunner {
 
     /**

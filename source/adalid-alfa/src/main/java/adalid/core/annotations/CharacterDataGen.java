@@ -40,6 +40,8 @@ public @interface CharacterDataGen {
      */
     DataGenType type() default DataGenType.UNSPECIFIED;
 
+    Kleenean loremIpsum() default Kleenean.UNSPECIFIED;
+
     /**
      * start especifica el primer número de la serie. Debe ser un número entero del 1 al 2.000.000.000, y tiene que ser menor que el valor
      * especificado, o determinado, para el elemento stop. El valor predeterminado es 1.

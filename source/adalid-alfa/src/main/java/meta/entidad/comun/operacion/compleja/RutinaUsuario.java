@@ -43,6 +43,14 @@ public class RutinaUsuario extends AbstractPersistentEntity {
     // </editor-fold>
 
     @Override
+    protected void addAllocationStrings() {
+        super.addAllocationStrings();
+        super.addAllocationStrings(
+            "variable.rutina"
+        );
+    }
+
+    @Override
     protected void settleAttributes() {
         super.settleAttributes();
         setOrderBy(nombre);
@@ -84,7 +92,6 @@ public class RutinaUsuario extends AbstractPersistentEntity {
     @StringField(maxLength = 0)
     public StringProperty descripcion;
 
-    @Allocation(maxDepth = 2, maxRound = 1)
     @ColumnField(nullable = Kleenean.TRUE)
     @ForeignKey(onDelete = OnDeleteAction.NONE, onUpdate = OnUpdateAction.NONE)
     @ManyToOne(navigability = Navigability.UNIDIRECTIONAL, view = MasterDetailView.NONE)

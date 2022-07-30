@@ -29,13 +29,24 @@ import java.lang.annotation.Target;
 public @interface EntityReferenceDisplay {
 
     /**
+     * avatar indica si la imagen de la entidad se debe utilizar como avatar, o no, en las vistas (páginas) que muestran el valor de la referencia.
+     * Este elemento es relevante solo si la entidad tiene avatar, es decir, una propiedad imagen cuyo atributo avatarShape (valor especificado, o
+     * determinado, para el elemento avatarShape de la anotación ImageProperty) sea distinto de NONE. Su valor es uno de los elementos de la
+     * enumeración Kleenean. Seleccione TRUE para utilizar la imagen como avatar; en caso contrario, seleccione FALSE. Alternativamente, omita el
+     * elemento o seleccione UNSPECIFIED para utilizar el valor predeterminado del atributo. El valor predeterminado del atributo es TRUE.
+     *
+     * @return avatar
+     */
+    Kleenean avatar() default Kleenean.UNSPECIFIED; // Kleenean.TRUE;
+
+    /**
      * style especifica la forma en que las vistas (páginas) muestran el valor de la referencia. Su valor es uno de los elementos de la enumeración
      * EntityReferenceStyle. Seleccione CHARACTER_KEY, NAME, CHARACTER_KEY_AND_NAME o NAME_AND_CHARACTER_KEY para que la vista muestre la clave
      * alfanumérica (o de negocio), el nombre, la clave alfanumérica y el nombre, o el nombre y la clave alfanumérica, respectivamente.
      * Alternativamente, omita el elemento o seleccione UNSPECIFIED para utilizar el valor predeterminado del atributo. El valor predeterminado del
-     * atributo es CHARACTER_KEY_AND_NAME. Si se selecciona alguna de las opciones que incluyen NAME, y la entidad referenciada no tiene nombre, la
-     * página mostrará la clave alfanumérica en su lugar. Si se selecciona alguna de las opciones que incluyen CHARACTER_KEY, y la entidad
-     * referenciada no tiene clave alfanumérica, la página mostrará la clave primaria en su lugar.
+     * atributo es NAME. Si el valor es alguna de las opciones que incluyen NAME, y la entidad referenciada no tiene nombre, la página mostrará la
+     * clave alfanumérica en su lugar. Si el valor es alguna de las opciones que incluyen CHARACTER_KEY, y la entidad referenciada no tiene clave
+     * alfanumérica, la página mostrará la clave primaria en su lugar.
      *
      * @return listStyle
      */

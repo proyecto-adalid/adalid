@@ -45,6 +45,26 @@ public class OperacionBasica extends Project {
         // </editor-fold>
     }
 
+    // <editor-fold defaultstate="collapsed" desc="print">
+    @Override
+    public void print() {
+        super.print();
+        System.out.println(CondicionTarea);
+        System.out.println(FiltroFuncion);
+        System.out.println(FiltroFuncionPar);
+        System.out.println(OperadorCom);
+        System.out.println(Favoritos);
+        System.out.println(RecursoValor);
+        System.out.println(TareaUsuario);
+        System.out.println(TareaUsuarioCorreo);
+        System.out.println(TareaVirtual);
+        System.out.println(TipoAgregacion);
+        System.out.println(TransicionTareaUsuario);
+        System.out.println(VistaFuncion);
+        System.out.println(VistaFuncionPar);
+    }
+    // </editor-fold>
+
     CondicionTarea CondicionTarea;
 
     FiltroFuncion FiltroFuncion;

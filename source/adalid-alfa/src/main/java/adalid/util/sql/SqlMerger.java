@@ -124,6 +124,8 @@ public class SqlMerger extends SqlUtil {
         _initialised = _initialised && oldUser(_argIndex++, _args);
         _initialised = _initialised && oldPassword(_argIndex++, _args);
         _initialised = _initialised && oldDatabase(_argIndex++, _args);
+        _initialised = _initialised && projectAlias(_argIndex++, _args);
+
     }
 
     // <editor-fold defaultstate="collapsed" desc="args">
@@ -189,6 +191,21 @@ public class SqlMerger extends SqlUtil {
             return true;
         }
         logInvalidArgument(old() + " schema", _oldSchema);
+        logSyntaxError();
+        return false;
+    }
+
+    private boolean projectAlias(int i, String[] args) {
+        String alias = arg(i, args);
+        if (StringUtils.isBlank(alias)) {
+            return true; // optional argument
+        }
+        setProjectAlias(alias);
+        if (alias.equals(_projectAlias)) {
+            logValidArgument("project alias", alias);
+            return true;
+        }
+        logInvalidArgument("project alias", alias);
         logSyntaxError();
         return false;
     }

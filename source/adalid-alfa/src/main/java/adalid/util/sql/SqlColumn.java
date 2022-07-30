@@ -34,6 +34,8 @@ public class SqlColumn extends SqlArtifact {
 
     private int _scale;
 
+    private boolean _collision;
+
     private boolean _updatable;
 
     private boolean _nullable;
@@ -163,6 +165,20 @@ public class SqlColumn extends SqlArtifact {
      */
     void setScale(int scale) {
         _scale = scale;
+    }
+
+    /**
+     * @return the collision indicator
+     */
+    public boolean isCollision() {
+        return _collision;
+    }
+
+    /**
+     * @param collision the problematic indicator to set
+     */
+    void setCollision(boolean collision) {
+        _collision = collision;
     }
 
     /**

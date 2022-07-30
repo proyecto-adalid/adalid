@@ -24,6 +24,7 @@ import java.sql.Blob;
 import java.sql.Date;
 import java.sql.Time;
 import java.sql.Timestamp;
+import java.text.MessageFormat;
 
 import static adalid.core.programmers.AbstractProgrammer.format;
 
@@ -166,6 +167,60 @@ public class PostgreSqlProgrammer extends AbstractSqlProgrammer {
         } else {
             return super.getDelimitedString(obj);
         }
+    }
+
+    /* para strings TemporalAddend */
+    private static final String TEMPORAL_ADDEND_PATTERN = "{0} {1} INTERVAL ''{2} {3}''";
+
+    @Override
+    public String getDelimitedString(TemporalAddend addend) {
+        if (addend == null || addend.isBadValue()) {
+            return null;
+        }
+        String base, word;
+        int quantity = addend.getQuantity();
+        int absolute = Math.abs(quantity);
+        char sign = quantity < 0 ? '-' : '+';
+        char unit = addend.getUnitCode();
+        switch (unit) {
+            case 'A':
+            case 'Y':
+                base = "current_date";
+                word = "years";
+                break;
+            case 'M':
+                base = "current_date";
+                word = "months";
+                break;
+            case 'D':
+                base = "current_date";
+                word = "days";
+                break;
+            case 'h':
+//              base = "current_time";
+//              base = "localtime";
+//              base = "current_timestamp";
+                base = "localtimestamp";
+                word = "hours";
+                break;
+            case 'm':
+//              base = "current_time";
+//              base = "localtime";
+//              base = "current_timestamp";
+                base = "localtimestamp";
+                word = "minutes";
+                break;
+            case 's':
+//              base = "current_time";
+//              base = "localtime";
+//              base = "current_timestamp";
+                base = "localtimestamp";
+                word = "seconds";
+                break;
+            default:
+                return null;
+        }
+        return quantity == 0 ? base : StrUtils.encloseSqlExpression(MessageFormat.format(TEMPORAL_ADDEND_PATTERN, base, sign, absolute + "", word));
     }
 
     /**
@@ -486,6 +541,16 @@ public class PostgreSqlProgrammer extends AbstractSqlProgrammer {
                 arg1 = StrUtils.discloseSqlExpression(arg1);
                 pattern = "not({0}) or {1}";
                 break;
+            case ASCII:
+                arg1 = StrUtils.discloseSqlExpression(arg1);
+                arg2 = StrUtils.discloseSqlExpression(arg2);
+                pattern = "ascii_string({0}, {1})";
+                break;
+            case DIACRITICLESS_ASCII:
+                arg1 = StrUtils.discloseSqlExpression(arg1);
+                arg2 = StrUtils.discloseSqlExpression(arg2);
+                pattern = "diacriticless_ascii({0}, {1})";
+                break;
             case CONCAT:
                 pattern = "{0} || {1}";
                 break;
@@ -690,6 +755,18 @@ public class PostgreSqlProgrammer extends AbstractSqlProgrammer {
             case NOT:
                 arg1 = StrUtils.discloseSqlExpression(arg1);
                 pattern = "not({0})";
+                break;
+            case ASCII:
+                arg1 = StrUtils.discloseSqlExpression(arg1);
+                pattern = "ascii_string({0})";
+                break;
+            case DIACRITICLESS:
+                arg1 = StrUtils.discloseSqlExpression(arg1);
+                pattern = "diacriticless({0})";
+                break;
+            case DIACRITICLESS_ASCII:
+                arg1 = StrUtils.discloseSqlExpression(arg1);
+                pattern = "diacriticless_ascii({0})";
                 break;
             case LOWER:
                 arg1 = StrUtils.discloseSqlExpression(arg1);

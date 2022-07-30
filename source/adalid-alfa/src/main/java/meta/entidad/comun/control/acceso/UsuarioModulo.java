@@ -42,6 +42,12 @@ public class UsuarioModulo extends AbstractPersistentEntity {
     // </editor-fold>
 
     @Override
+    protected void addAllocationStrings() {
+        super.addAllocationStrings();
+        super.addAllocationStrings("usuario.grupo");
+    }
+
+    @Override
     protected void settleAttributes() {
         super.settleAttributes();
 //      setSchema(ProyectoBase.getEsquemaEntidadesComunes());
@@ -49,7 +55,7 @@ public class UsuarioModulo extends AbstractPersistentEntity {
         // <editor-fold defaultstate="collapsed" desc="localization of UsuarioModulo's attributes">
         /**/
         setLocalizedLabel(ENGLISH, "user/module association");
-        setLocalizedLabel(SPANISH, "asociación usuario/módulo");
+        setLocalizedLabel(SPANISH, "asociación Usuario/Módulo");
         setLocalizedCollectionLabel(ENGLISH, "User/Module Associations");
         setLocalizedCollectionLabel(SPANISH, "Asociaciones Usuario/Módulo");
         /**/
@@ -95,6 +101,12 @@ public class UsuarioModulo extends AbstractPersistentEntity {
         /**/
         // </editor-fold>
         /**/
+    }
+
+    @Override
+    protected void settleLinks() {
+        super.settleLinks();
+        linkForeignSegmentProperty(usuario.grupo);
     }
 
     protected Key uk_usuario_modulo_0001;

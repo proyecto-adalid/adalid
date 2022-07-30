@@ -12,6 +12,7 @@
  */
 package adalid.util.sql;
 
+import adalid.commons.util.*;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedHashMap;
@@ -46,6 +47,8 @@ public class SqlTable extends SqlArtifact {
     private boolean _independent;
 
     private boolean _loaded;
+
+    private boolean _primaryKeyCollision, _businessKeyCollision, _versionPropertyCollision;
 
     private String _resourceType;
 
@@ -490,6 +493,72 @@ public class SqlTable extends SqlArtifact {
                 }
             }
         }
+        checkColumnNameCollisions();
+    }
+
+    private void checkColumnNameCollisions() {
+        final String pattern = "column {0}.{1} has the same name as the default {2} of entity {3}";
+        final String tabname = getQualifiedName();
+        final String nttname = getCapitalizedJavaName();
+        String colname, text;
+        if (_primaryKey == null) {
+            // a table w/o primary key would be later rejected by IsFairTable predicate
+            text = "table " + getQualifiedName() + " does not have a primary key";
+            logger.warn(SqlUtil.highlight(text));
+            if (isEnumeration()) {
+                // Toda enumeración debe tener una clave primaria de tipo IntegerProperty.
+                // Si no está definida en la base de datos, se define automáticamente con el nombre "numero".
+                colname = "numero";
+            } else {
+                // Toda entidad estándar debe tener una clave primaria de tipo LongProperty.
+                // Si no está definida en la base de datos, se define automáticamente con el nombre "id".
+                colname = "id";
+            }
+            text = StrUtils.getStringParametrizado(pattern, tabname, colname, "primary key", nttname);
+            _primaryKeyCollision = columnNameCollision(colname, text);
+        }
+        /**/
+        if (_businessKey == null) {
+            if (isEnumeration()) {
+                // Toda enumeración debe tener una clave de negocio de tipo String.
+                // Si no está definida en la base de datos, se define automáticamente con el nombre "codigo".
+                colname = "codigo";
+                text = StrUtils.getStringParametrizado(pattern, tabname, colname, "business key", nttname);
+                _businessKeyCollision = columnNameCollision(colname, text);
+            }
+        }
+        SqlColumn versionProperty = getVersionProperty();
+        if (versionProperty == null) {
+            if (isUpdatableEnumeration() || !isEnumeration()) {
+                // Toda entidad estándar debe tener una propiedad versión de tipo LongProperty.
+                // Si no está definida en la base de datos, se define automáticamente con el nombre "version".
+                colname = "version";
+                text = StrUtils.getStringParametrizado(pattern, tabname, colname, "version property", nttname);
+                _versionPropertyCollision = columnNameCollision(colname, text);
+            }
+        }
+    }
+
+    private boolean columnNameCollision(String name, String text) {
+        SqlColumn column = _columns.get(name);
+        if (column != null) {
+            column.setCollision(true);
+            logger.error(SqlUtil.highlight(text));
+            return true;
+        }
+        return false;
+    }
+
+    public boolean isPrimaryKeyCollision() {
+        return _primaryKeyCollision;
+    }
+
+    public boolean isBusinessKeyCollision() {
+        return _businessKeyCollision;
+    }
+
+    public boolean isVersionPropertyCollision() {
+        return _versionPropertyCollision;
     }
 
     private boolean warnSameName(SqlColumn column) {
@@ -631,7 +700,8 @@ public class SqlTable extends SqlArtifact {
     }
 
     public SqlTable getSuperTable() {
-        return _primaryKey == null ? null : _primaryKey.getForeignTable();
+        SqlTable superTable = _primaryKey == null ? null : _primaryKey.getForeignTable();
+        return superTable == this ? null : superTable;
     }
 
     public String getQualifiedName() {

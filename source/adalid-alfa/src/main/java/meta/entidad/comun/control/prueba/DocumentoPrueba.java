@@ -126,7 +126,6 @@ public class DocumentoPrueba extends PersistentEntityBase {
         }
 
         @InstanceReference
-//      @Allocation(maxDepth = 1, maxRound = 0)
         protected DocumentoPrueba documento;
 
         @FileReference

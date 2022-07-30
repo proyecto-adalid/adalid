@@ -26,6 +26,7 @@ import java.sql.Blob;
 import java.sql.Date;
 import java.sql.Time;
 import java.sql.Timestamp;
+import java.text.MessageFormat;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
@@ -267,7 +268,7 @@ public class OracleProgrammer extends AbstractSqlProgrammer {
         if (obj == null) {
             return null;
         } else if (obj instanceof String) {
-            return obj.toString().replace(SQM$, SQM$ + SQM$);
+            return escapeQuotes(obj.toString());
         } else if (obj instanceof Date) {
             return TimeUtils.jdbcDateString(obj);
         } else if (obj instanceof Time) {
@@ -299,6 +300,73 @@ public class OracleProgrammer extends AbstractSqlProgrammer {
         } else {
             return super.getDelimitedString(obj);
         }
+    }
+
+    /* para strings TemporalAddend */
+    private static final String YM_INTERVAL_ADDEND_PATTERN = "{0} {1} TO_YMINTERVAL(''{2}-{3}'')";
+
+    /* para strings TemporalAddend */
+    private static final String DS_INTERVAL_ADDEND_PATTERN = "{0} {1} TO_DSINTERVAL(''{2} {3}:{4}:{5}'')";
+
+    @Override
+    public String getDelimitedString(TemporalAddend addend) {
+        if (addend == null || addend.isBadValue()) {
+            return null;
+        }
+        String base;
+        int anys = 0, months = 0, days = 0, hours = 0, minutes = 0, seconds = 0;
+        int remainder;
+        int quantity = addend.getQuantity();
+        int absolute = Math.abs(quantity);
+        char sign = quantity < 0 ? '-' : '+';
+        char unit = addend.getUnitCode();
+        boolean b = false;
+        switch (unit) {
+            case 'A':
+            case 'Y':
+                base = "CURRENT_DATE";
+                anys = absolute;
+                b = true;
+                break;
+            case 'M':
+                base = "CURRENT_DATE";
+                anys = absolute / 12;
+                months = absolute % 12;
+                b = true;
+                break;
+            case 'D':
+                base = "CURRENT_DATE";
+                days = absolute;
+                break;
+            case 'h':
+                base = "LOCALTIMESTAMP";
+                days = absolute / 24;
+                hours = absolute % 24;
+                break;
+            case 'm':
+                base = "LOCALTIMESTAMP";
+                days = absolute / (24 * 60);
+                remainder = absolute % (24 * 60);
+                hours = remainder / 60;
+                minutes = remainder % 60;
+                break;
+            case 's':
+                base = "LOCALTIMESTAMP";
+                days = absolute / (24 * 60 * 60);
+                remainder = absolute % (24 * 60 * 60);
+                hours = remainder / (60 * 60);
+                remainder = remainder % (60 * 60);
+                minutes = remainder / 60;
+                seconds = remainder % 60;
+                break;
+            default:
+                return null;
+        }
+        String string = absolute == 0 ? base
+            : b ? MessageFormat.format(YM_INTERVAL_ADDEND_PATTERN, base, sign, anys + "", months)
+                : MessageFormat.format(DS_INTERVAL_ADDEND_PATTERN, base, sign, days + "", hours, minutes, seconds);
+        /**/
+        return absolute == 0 ? string : StrUtils.encloseSqlExpression(string);
     }
 
     /**
@@ -672,6 +740,16 @@ public class OracleProgrammer extends AbstractSqlProgrammer {
                 arg1 = StrUtils.discloseSqlExpression(arg1);
                 pattern = "not({0}) or {1}";
                 break;
+            case ASCII:
+                arg1 = StrUtils.discloseSqlExpression(arg1);
+                arg2 = StrUtils.discloseSqlExpression(arg2);
+                pattern = "util_ascii_string_2({0}, {1})";
+                break;
+            case DIACRITICLESS_ASCII:
+                arg1 = StrUtils.discloseSqlExpression(arg1);
+                arg2 = StrUtils.discloseSqlExpression(arg2);
+                pattern = "util_diacriticless_ascii_2({0}, {1})";
+                break;
             case CONCAT:
                 pattern = "{0} || {1}";
                 break;
@@ -880,6 +958,18 @@ public class OracleProgrammer extends AbstractSqlProgrammer {
                 arg1 = StrUtils.discloseSqlExpression(arg1);
                 is_true = operand instanceof Primitive ? primitiveIsTruePattern() : expressionIsTruePattern();
                 pattern = "not(" + is_true + ")";
+                break;
+            case ASCII:
+                arg1 = StrUtils.discloseSqlExpression(arg1);
+                pattern = "util_ascii_string_1({0})";
+                break;
+            case DIACRITICLESS:
+                arg1 = StrUtils.discloseSqlExpression(arg1);
+                pattern = "util_diacriticless({0})";
+                break;
+            case DIACRITICLESS_ASCII:
+                arg1 = StrUtils.discloseSqlExpression(arg1);
+                pattern = "util_diacriticless_ascii_1({0})";
                 break;
             case LOWER:
                 arg1 = StrUtils.discloseSqlExpression(arg1);

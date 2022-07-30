@@ -247,6 +247,20 @@ public @interface ProcessOperationClass {
     boolean builtIn() default false;
 
     /**
+     * treeStructureModifier especifica si la operación modifica la propiedad padre de la entidad y, por lo tanto, su estructura de árbol.
+     * <p>
+     * Una estructura de árbol es una caracterización física de un objeto y sus componentes que por su configuración se asemeja o recuerda a un árbol,
+     * en el sentido de que sus ramificaciones tienden a converger en un origen o raíz. Se utiliza comúnmente para representar gráficamente la
+     * naturaleza jerárquica de una estructura..
+     * <p>
+     * Este elemento solo aplica si la entidad es jerárquica, es decir, tiene una relación de varios-a-uno con ella misma y la propiedad que establece
+     * tal relación ha sido designada como propiedad padre (vea Anotación ParentProperty). El valor predeterminado de este atributo es false.
+     *
+     * @return treeStructureModifier
+     */
+    boolean treeStructureModifier() default false;
+
+    /**
      * priority especifica la prioridad de las tareas de esta clase de procesos. Debe ser un número entero, mayor o igual que cero. El valor
      * predeterminado de este atributo es 0 (la mínima prioridad).
      *

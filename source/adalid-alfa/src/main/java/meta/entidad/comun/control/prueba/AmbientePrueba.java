@@ -106,7 +106,6 @@ public class AmbientePrueba extends PersistentEntityBase {
     public class DesignarActual extends ProcessOperation {
 
         @InstanceReference
-//      @Allocation(maxDepth = 1, maxRound = 0)
         protected AmbientePrueba ambiente;
 
         @Override

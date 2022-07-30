@@ -116,6 +116,10 @@ public class ArchivoAdjunto extends AbstractPersistentEntity {
     public BinaryProperty octetos;
 
     @ColumnField(nullable = Kleenean.FALSE)
+    @PropertyField(table = Kleenean.FALSE, report = Kleenean.TRUE, search = Kleenean.TRUE, overlay = Kleenean.TRUE)
+    public IntegerProperty referencias;
+
+    @ColumnField(nullable = Kleenean.FALSE)
 //  @PropertyField(table = Kleenean.TRUE, report = Kleenean.FALSE, search = Kleenean.TRUE)
     @PropertyField(hidden = Kleenean.TRUE)
     public BooleanProperty eliminable;
@@ -133,6 +137,15 @@ public class ArchivoAdjunto extends AbstractPersistentEntity {
         return octetos;
     }
 
+    /**
+     * BLOB property getter (for velocity templates)
+     *
+     * @return the references property
+     */
+    public IntegerProperty getReferencesProperty() {
+        return referencias;
+    }
+
     @Override
     protected void settleProperties() {
         super.settleProperties();
@@ -142,6 +155,9 @@ public class ArchivoAdjunto extends AbstractPersistentEntity {
         /**/
         fechaHoraCarga.setInitialValue(SpecialTemporalValue.CURRENT_TIMESTAMP);
         fechaHoraCarga.setDefaultValue(SpecialTemporalValue.CURRENT_TIMESTAMP);
+        /**/
+        referencias.setInitialValue(0);
+        referencias.setDefaultValue(0);
         /**/
 //      eliminable=not(tipo_carga is null or tipo_carga = 'FILA');
         eliminable.setInitialValue(false);
@@ -214,6 +230,9 @@ public class ArchivoAdjunto extends AbstractPersistentEntity {
         octetos.setLocalizedLabel(ENGLISH, "bytes");
         octetos.setLocalizedLabel(SPANISH, "octetos");
         /**/
+        referencias.setLocalizedLabel(ENGLISH, "references");
+        referencias.setLocalizedLabel(SPANISH, "referencias");
+        /**/
         eliminable.setLocalizedDescription(ENGLISH, "indicator that shows whether or not the file can be deleted from the web server's file system");
         eliminable.setLocalizedDescription(SPANISH, "indicador que muestra si el archivo puede, o no, ser eliminado del sistema de archivos del servidor web");
         eliminable.setLocalizedLabel(ENGLISH, "removable");
@@ -236,7 +255,7 @@ public class ArchivoAdjunto extends AbstractPersistentEntity {
     protected EliminarTotalmente eliminarTotalmente;
 
     // <editor-fold defaultstate="collapsed" desc="Operations">
-    @OperationClass(access = OperationAccess.PROTECTED, confirmation = Kleenean.TRUE)
+    @OperationClass(access = OperationAccess.PRIVATE, confirmation = Kleenean.TRUE)
     @ProcessOperationClass(builtIn = true)
     public class EliminarArchivoServidorWeb extends ProcessOperation {
 
@@ -264,7 +283,6 @@ public class ArchivoAdjunto extends AbstractPersistentEntity {
         }
 
         @InstanceReference
-        @Filter(owner = Kleenean.FALSE, segment = Kleenean.FALSE)
         protected ArchivoAdjunto archivoAdjunto;
 
         @Override
@@ -311,7 +329,6 @@ public class ArchivoAdjunto extends AbstractPersistentEntity {
         }
 
         @InstanceReference
-        @Filter(owner = Kleenean.FALSE, segment = Kleenean.FALSE)
         protected ArchivoAdjunto archivoAdjunto;
 
         @Override
@@ -340,7 +357,7 @@ public class ArchivoAdjunto extends AbstractPersistentEntity {
 
     }
 
-    @OperationClass(access = OperationAccess.PROTECTED, confirmation = Kleenean.TRUE)
+    @OperationClass(access = OperationAccess.PRIVATE, confirmation = Kleenean.TRUE)
     @ProcessOperationClass(builtIn = true)
     public class EliminarTotalmente extends ProcessOperation {
 
@@ -364,7 +381,6 @@ public class ArchivoAdjunto extends AbstractPersistentEntity {
         }
 
         @InstanceReference
-        @Filter(owner = Kleenean.FALSE, segment = Kleenean.FALSE)
         protected ArchivoAdjunto archivoAdjunto;
 
         @Override
@@ -379,17 +395,27 @@ public class ArchivoAdjunto extends AbstractPersistentEntity {
             // </editor-fold>
         }
 
-        protected Check check101;
+        protected Check check101, check102;
 
         @Override
         protected void settleExpressions() {
             super.settleExpressions();
-            check101 = or(archivoAdjunto.eliminable, archivoAdjunto.octetos.isNotNull());
+            /**/
+            check101 = archivoAdjunto.referencias.isEqualTo(0);
+            check102 = or(archivoAdjunto.eliminable, archivoAdjunto.octetos.isNotNull());
+            /**/
             // <editor-fold defaultstate="collapsed" desc="localization of EliminarTotalmente's expressions">
-            check101.setLocalizedDescription(ENGLISH, "the file is removable");
-            check101.setLocalizedDescription(SPANISH, "el archivo es eliminable");
-            check101.setLocalizedErrorMessage(ENGLISH, "the file cannot be deleted from the web server's file system and is not stored in the database");
-            check101.setLocalizedErrorMessage(SPANISH, "el archivo no se puede eliminar del sistema de archivos del servidor web y no se encuentra almacenado en la base de datos");
+            /**/
+            check101.setLocalizedDescription(ENGLISH, "the file is not being referenced");
+            check101.setLocalizedDescription(SPANISH, "el archivo no está siendo referenciado");
+            check101.setLocalizedErrorMessage(ENGLISH, "the file cannot be deleted because it is being referenced");
+            check101.setLocalizedErrorMessage(SPANISH, "el archivo no se puede eliminar porque está siendo referenciado");
+            /**/
+            check102.setLocalizedDescription(ENGLISH, "the file is removable");
+            check102.setLocalizedDescription(SPANISH, "el archivo es eliminable");
+            check102.setLocalizedErrorMessage(ENGLISH, "the file cannot be deleted from the web server's file system and is not stored in the database");
+            check102.setLocalizedErrorMessage(SPANISH, "el archivo no se puede eliminar del sistema de archivos del servidor web y no se encuentra almacenado en la base de datos");
+            /**/
             // </editor-fold>
         }
 

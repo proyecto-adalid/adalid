@@ -101,4 +101,11 @@ public @interface MasterProject {
      */
     String helpFileAutoType() default ""; // Constants.DEFAULT_HELP_FILE_TYPE;
 
+    /**
+     * runnable se utiliza para designar un proyecto maestro como ejecutable por la clase Runner.
+     *
+     * @return runnable
+     */
+    boolean runnable() default true;
+
 }

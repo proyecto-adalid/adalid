@@ -9,11 +9,14 @@
  */
 package ${package}.meta.util.windows;
 
+import adalid.util.*;
+
 /**
  * RunSomeScript sirve para buscar, seleccionar y ejecutar un script (archivo .bat).
  *
  * @author ADALID meta-jee2-archetype
  */
+@RunnableClass
 public class RunSomeScript extends adalid.util.io.SysCmdRunner {
 
     /**

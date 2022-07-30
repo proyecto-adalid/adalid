@@ -44,9 +44,8 @@ public class Instance extends AbstractArtifact {
     private static final String EOL = "\n";
 
     /**/
-    char _42094348d9564aa8b41c93376c1d9d59;
     // </editor-fold>
-
+/**/
     private int _index;
 
     private final List<InstanceField> _instanceFieldsList = new ArrayList<>();
@@ -58,9 +57,8 @@ public class Instance extends AbstractArtifact {
     private InstanceField[] _instanceField;
 
     /**/
-    char _53bc6a6973ff44faaeb83995d4f526c6;
     // </editor-fold>
-
+/**/
     /**
      * @return the instance fields
      */
@@ -90,9 +88,8 @@ public class Instance extends AbstractArtifact {
     }
 
     /**/
-    char _06f51ddc8c6949a689e549bac65ce4b6;
     // </editor-fold>
-
+/**/
     public Class<?> getInstanceKeyType() {
         /**/
         // <editor-fold defaultstate="collapsed" desc="until 01/04/2022">
@@ -288,9 +285,8 @@ public class Instance extends AbstractArtifact {
     }
 
     /**/
-    char _e33f54a3703341eead53fdc48bc8a450;
     // </editor-fold>
-
+/**/
     private Instance getInstanceAtRoot() {
         Entity declaringEntity = getDeclaringEntity();
         if (declaringEntity != null) {
@@ -405,9 +401,8 @@ public class Instance extends AbstractArtifact {
         return s4;
     }
     /**/
-    char _a36d63ed6a334afaaa68686f06fabd5e;
     // </editor-fold>
-
+/**/
     // <editor-fold defaultstate="collapsed" desc="finaliseInstanceFieldArray">
     /* commented on 21/03/2021
     private void finaliseInstanceFieldArray() {
@@ -435,9 +430,8 @@ public class Instance extends AbstractArtifact {
         _instanceFields.put(key, instanceField);
     }
     /**/
-    char _61329205e927487882a1505d1bd4a786;
     // </editor-fold>
-
+/**/
     private void finaliseInstanceMissingFields() {
         Entity declaringEntity = getDeclaringEntity();
         if (declaringEntity instanceof PersistentEntity) {
@@ -763,9 +757,8 @@ public class Instance extends AbstractArtifact {
         return string;
     }
     /**/
-    char _30588dae2abf40e2b2fdbefab508e34b;
     // </editor-fold>
-
+/**/
     // <editor-fold defaultstate="collapsed" desc="annotate">
     /**
      * annotated with InstanceDataGen

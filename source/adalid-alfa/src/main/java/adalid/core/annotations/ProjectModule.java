@@ -70,6 +70,16 @@ public @interface ProjectModule {
     Kleenean privacy() default Kleenean.UNSPECIFIED; // FALSE
 
     /**
+     * menuType especifica el tipo de vistas (páginas) que se deben incluir en el menú del módulo. Este elemento es relevante solo si el valor
+     * especificado, o determinado, para el elemento menu es TRUE. Su valor es uno de los elementos de la enumeración MenuType. Especifique INQUIRY,
+     * PROCESSING o REGISTRATION para incluir solamente vistas de Consulta, Procesamiento o Registro, respectivamente. Alternativamente, omita el
+     * elemento o seleccione UNSPECIFIED para incluir vistas de cualquier tipo.
+     *
+     * @return menuType
+     */
+    MenuType menuType() default MenuType.UNSPECIFIED;
+
+    /**
      * roleTypes especifica los tipos de rol que se deben generar para el módulo. Este elemento es relevante solo si el valor especificado, o
      * determinado, para el elemento role es TRUE. Su valor es una lista de elementos de la enumeración RoleType. Incluya REGISTRAR, PROCESSOR,
      * READER, CONFIGURATOR y/o MANAGER para generar roles de tipo REGISTRADOR, PROCESADOR, LECTOR, CONFIGURADOR y/o GESTOR, respectivamente.

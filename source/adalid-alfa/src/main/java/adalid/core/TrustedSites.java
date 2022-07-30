@@ -29,6 +29,10 @@ public class TrustedSites {
 
     public static final String GOOGLE_MAPS = "https://www.google.com/maps";
 
+    public static final String GOOGLE_MAPS_LINK = "https://goo.gl/maps";
+
     public static final String YOUTUBE = "https://www.youtube.com";
+
+    public static final String YOUTUBE_LINK = "https://youtu.be";
 
 }

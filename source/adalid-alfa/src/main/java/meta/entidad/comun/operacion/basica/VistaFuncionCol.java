@@ -46,6 +46,8 @@ public class VistaFuncionCol extends AbstractPersistentEntity {
     protected void addAllocationStrings() {
         super.addAllocationStrings();
         super.addAllocationStrings(
+            "vista.funcion",
+            "vista.propietario",
             "columna.funcion",
             "columna.parametro.tipoParametroDom",
             "columna.rangoAgregacion",
@@ -87,16 +89,13 @@ public class VistaFuncionCol extends AbstractPersistentEntity {
     @ForeignKey(onDelete = OnDeleteAction.NONE, onUpdate = OnUpdateAction.NONE)
     @ManyToOne(navigability = Navigability.BIDIRECTIONAL, view = MasterDetailView.TABLE_AND_DETAIL)
     @ColumnField(nullable = Kleenean.FALSE)
-    @Allocation(maxDepth = 2, maxRound = 0)
-    @Filter(owner = Kleenean.FALSE, segment = Kleenean.FALSE)
     public VistaFuncion vista;
 
-//->@Allocation(maxDepth = 3, maxRound = 0)
 //  20171213: remove foreign-key referring to FuncionParametro
 //  @ForeignKey(onDelete = OnDeleteAction.NONE, onUpdate = OnUpdateAction.NONE)
     @ManyToOne(navigability = Navigability.UNIDIRECTIONAL, view = MasterDetailView.NONE, quickAdding = QuickAddingFilter.MISSING)
     @ColumnField(nullable = Kleenean.FALSE)
-    @EntityReferenceDisplay(style = EntityReferenceStyle.NAME_AND_CHARACTER_KEY)
+    @EntityReferenceDisplay(style = EntityReferenceStyle.NAME)
     @EntityReferenceSearch(searchType = SearchType.LIST, listStyle = ListStyle.NAME)
     @PropertyField(required = Kleenean.TRUE, table = Kleenean.TRUE, create = Kleenean.TRUE, update = Kleenean.FALSE)
     public FuncionParametro columna;
@@ -127,7 +126,6 @@ public class VistaFuncionCol extends AbstractPersistentEntity {
     /**
      * many-to-one entity reference property field
      */
-    @Allocation(maxDepth = 1, maxRound = 0)
     @ForeignKey(onDelete = OnDeleteAction.NONE, onUpdate = OnUpdateAction.NONE)
     @ManyToOne(navigability = Navigability.UNIDIRECTIONAL, view = MasterDetailView.NONE)
     @PropertyField(required = Kleenean.FALSE, table = Kleenean.TRUE, create = Kleenean.TRUE)
@@ -136,7 +134,6 @@ public class VistaFuncionCol extends AbstractPersistentEntity {
     /**
      * many-to-one entity reference property field
      */
-//->@Allocation(maxDepth = 3, maxRound = 3)
     @ForeignKey(onDelete = OnDeleteAction.NONE, onUpdate = OnUpdateAction.NONE)
     @ManyToOne(navigability = Navigability.UNIDIRECTIONAL, view = MasterDetailView.NONE)
     @EntityReferenceDisplay(style = EntityReferenceStyle.NAME)

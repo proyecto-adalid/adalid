@@ -75,8 +75,14 @@ public class Rol extends AbstractPersistentEntity {
     @ForeignKey(onDelete = OnDeleteAction.NONE, onUpdate = OnUpdateAction.NONE)
     @ManyToOne(navigability = Navigability.UNIDIRECTIONAL, view = MasterDetailView.NONE)
     @PropertyField(create = Kleenean.FALSE, update = Kleenean.FALSE, table = Kleenean.TRUE, report = Kleenean.TRUE)
-    @Allocation(maxDepth = 1, maxRound = 0)
     public TipoRol tipoRol;
+
+    @SegmentProperty
+    @EntityReferenceSearch(searchType = SearchType.LIST, listStyle = ListStyle.CHARACTER_KEY_AND_NAME, displayMode = DisplayMode.WRITING)
+    @ForeignKey(onDelete = OnDeleteAction.NONE, onUpdate = OnUpdateAction.NONE)
+    @ManyToOne(view = MasterDetailView.TABLE_AND_DETAIL)
+    @PropertyField(create = Kleenean.TRUE, update = Kleenean.TRUE, required = Kleenean.TRUE, table = Kleenean.TRUE, report = Kleenean.TRUE, overlay = Kleenean.TRUE)
+    public GrupoUsuario grupo;
 
     @Override
     protected void settleAttributes() {
@@ -103,6 +109,9 @@ public class Rol extends AbstractPersistentEntity {
         /**/
         esRolInactivo.setInitialValue(false);
         esRolInactivo.setDefaultValue(false);
+        /**/
+//      grupo.setInitialValue(esRolEspecial.then(grupo.USUARIOS_ESPECIALES).otherwise(grupo.USUARIOS_ORDINARIOS));
+//      grupo.setDefaultValue(esRolEspecial.then(grupo.USUARIOS_ESPECIALES).otherwise(grupo.USUARIOS_ORDINARIOS));
         /**/
         // <editor-fold defaultstate="collapsed" desc="localization of Rol's properties">
         /**/
@@ -142,6 +151,15 @@ public class Rol extends AbstractPersistentEntity {
         tipoRol.setLocalizedLabel(SPANISH, "tipo de rol");
         tipoRol.setLocalizedShortLabel(ENGLISH, "type");
         tipoRol.setLocalizedShortLabel(SPANISH, "tipo");
+        /**/
+        grupo.setLocalizedLabel(ENGLISH, "user group");
+        grupo.setLocalizedLabel(SPANISH, "grupo de usuarios");
+        grupo.setLocalizedShortLabel(ENGLISH, "group");
+        grupo.setLocalizedShortLabel(SPANISH, "grupo");
+        grupo.setLocalizedDescription(ENGLISH, "group to which this role belongs");
+        grupo.setLocalizedDescription(SPANISH, "grupo al que pertenece este rol");
+        grupo.setLocalizedTooltip(ENGLISH, "code of the group to which this role belongs");
+        grupo.setLocalizedTooltip(SPANISH, "código del grupo al que pertenece este rol");
         /**/
         // </editor-fold>
     }
@@ -375,7 +393,6 @@ public class Rol extends AbstractPersistentEntity {
         }
 
         @InstanceReference
-//      @Allocation(maxDepth = 1, maxRound = 0)
         protected Rol rol;
 
         @ParameterField(required = Kleenean.TRUE)
@@ -433,7 +450,6 @@ public class Rol extends AbstractPersistentEntity {
         }
 
         @InstanceReference
-//      @Allocation(maxDepth = 1, maxRound = 0)
         protected Rol rol;
 
         @Override
@@ -472,7 +488,6 @@ public class Rol extends AbstractPersistentEntity {
         }
 
         @InstanceReference
-//      @Allocation(maxDepth = 1, maxRound = 0)
         protected Rol rol;
 
         @Override
@@ -510,11 +525,9 @@ public class Rol extends AbstractPersistentEntity {
         }
 
         @InstanceReference
-//      @Allocation(maxDepth = 1, maxRound = 0)
         protected Rol rol;
 
         @ParameterField(required = Kleenean.TRUE)
-//      @Allocation(maxDepth = 1, maxRound = 0)
         protected ConjuntoSegmento conjuntoSegmento;
 
         @ParameterField(required = Kleenean.TRUE)
@@ -589,7 +602,6 @@ public class Rol extends AbstractPersistentEntity {
         }
 
         @InstanceReference
-//      @Allocation(maxDepth = 1, maxRound = 0)
         protected Rol rol;
 
         @Override
@@ -644,7 +656,6 @@ public class Rol extends AbstractPersistentEntity {
         }
 
         @InstanceReference
-//      @Allocation(maxDepth = 1, maxRound = 0)
         protected Rol rol;
 
         @Override
@@ -680,7 +691,6 @@ public class Rol extends AbstractPersistentEntity {
         }
 
         @InstanceReference
-//      @Allocation(maxDepth = 1, maxRound = 0)
         protected Rol rol;
 
         @Override
@@ -716,7 +726,6 @@ public class Rol extends AbstractPersistentEntity {
         }
 
         @InstanceReference
-//      @Allocation(maxDepth = 1, maxRound = 0)
         protected Rol rol;
 
         @Override

@@ -53,7 +53,6 @@ public class PaginaUsuario extends AbstractPersistentEntity {
     @ManyToOne(navigability = Navigability.UNIDIRECTIONAL, view = MasterDetailView.NONE)
     @ColumnField(nullable = Kleenean.FALSE)
     @PropertyField(table = Kleenean.TRUE, detail = Kleenean.TRUE, report = Kleenean.TRUE, export = Kleenean.TRUE)
-    @Allocation(maxDepth = 1, maxRound = 0)
     public Pagina pagina;
 
     @OwnerProperty
@@ -61,7 +60,6 @@ public class PaginaUsuario extends AbstractPersistentEntity {
     @ManyToOne(navigability = Navigability.UNIDIRECTIONAL, view = MasterDetailView.NONE)
     @ColumnField(nullable = Kleenean.FALSE)
     @PropertyField(table = Kleenean.TRUE, detail = Kleenean.TRUE, report = Kleenean.TRUE, export = Kleenean.TRUE) //, defaultCheckpoint = Checkpoint.USER_INTERFACE)
-    @Allocation(maxDepth = 1, maxRound = 0)
     public Usuario usuario;
 
     protected Key uk_pagina_usuario_0001;

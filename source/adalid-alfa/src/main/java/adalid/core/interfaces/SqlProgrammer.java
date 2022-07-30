@@ -35,6 +35,8 @@ public interface SqlProgrammer extends Programmer {
 
     String getDelimitedString(Object obj);
 
+    String getDelimitedString(TemporalAddend addend);
+
     String getSqlIdentifier(String string);
 
     String getSqlIdentifier(String prefix, String string, String suffix);

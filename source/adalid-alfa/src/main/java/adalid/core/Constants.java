@@ -53,15 +53,17 @@ public class Constants {
 
     public static final int DEFAULT_DESCRIPTION_PROPERTY_MAX_LENGTH = 2000;
 
-    public static final int DEFAULT_FILE_REFERENCE_MAX_LENGTH = 2000;
-
     public static final int DEFAULT_URL_PROPERTY_MAX_LENGTH = 2000;
+
+    public static final int DEFAULT_EMBEDDED_DOCUMENT_MAX_LENGTH = 2000;
+
+    public static final int DEFAULT_FILE_REFERENCE_MAX_LENGTH = 2000;
 
     public static final int DEFAULT_STRING_FIELD_MAX_LENGTH = 2000;
 
     public static final int DEFAULT_STRING_INDEX_MAX_LENGTH = 1596; // AL32UTF8 max key length: Oracle ~1596(6398b); PostgreSQL ~680?(2730b)
 
-    public static final int DEFAULT_MAX_INPUT_FILE_SIZE = 1000000;
+    public static final int DEFAULT_MAX_INPUT_FILE_SIZE = 100000; // 1000000; until 23/05/2022
 
     public static final int DEFAULT_NUMERIC_DIVISOR = 100;
 
@@ -73,13 +75,29 @@ public class Constants {
 
     public static final int DEFAULT_YEAR_RANGE = 5;
 
-    public static final int DEFAULT_DOCUMENT_HEIGHT = 270;
+    public static final int DEFAULT_LARGE_DOCUMENT_WIDTH = 640;
 
-    public static final int DEFAULT_DOCUMENT_WIDTH = 480;
+    public static final int DEFAULT_LARGE_DOCUMENT_HEIGHT = 360;
 
-    public static final int DEFAULT_IMAGE_HEIGHT = 96;
+    public static final int DEFAULT_LARGE_IMAGE_WIDTH = 288;
 
-    public static final int DEFAULT_IMAGE_WIDTH = 96;
+    public static final int DEFAULT_LARGE_IMAGE_HEIGHT = 288;
+
+    public static final int DEFAULT_MEDIUM_DOCUMENT_WIDTH = 480;
+
+    public static final int DEFAULT_MEDIUM_DOCUMENT_HEIGHT = 270;
+
+    public static final int DEFAULT_MEDIUM_IMAGE_WIDTH = 192;
+
+    public static final int DEFAULT_MEDIUM_IMAGE_HEIGHT = 192;
+
+    public static final int DEFAULT_SMALL_DOCUMENT_WIDTH = 320;
+
+    public static final int DEFAULT_SMALL_DOCUMENT_HEIGHT = 180;
+
+    public static final int DEFAULT_SMALL_IMAGE_WIDTH = 96;
+
+    public static final int DEFAULT_SMALL_IMAGE_HEIGHT = 96;
 
     public static final int MAX_DECIMAL_PRECISION = 60; // Long scale: Decillion, Short scale: Novemdecillion (USA & Canada)
 
@@ -97,9 +115,9 @@ public class Constants {
 
     public static final int MAX_YEAR_RANGE = 100;
 
-    public static final int MAX_DISPLAY_HEIGHT = 2160;
+    public static final int MAX_DISPLAY_WIDTH = 1920; // 3840;
 
-    public static final int MAX_DISPLAY_WIDTH = 3840;
+    public static final int MAX_DISPLAY_HEIGHT = 1080; // 2160;
 
     public static final int MAX_UPLOAD_FILE_LIMIT = 100;
 

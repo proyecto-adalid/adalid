@@ -38,7 +38,7 @@ import meta.entidad.comun.control.acceso.UsuarioModulo;
 @EntityDeleteOperation(enabled = Kleenean.TRUE)
 @EntityTableView(enabled = Kleenean.TRUE, inserts = Kleenean.FALSE, updates = Kleenean.TRUE)
 @EntityDetailView(enabled = Kleenean.TRUE)
-@EntityTreeView(enabled = Kleenean.FALSE)
+@EntityTreeView(enabled = Kleenean.TRUE)
 @EntityConsoleView(enabled = Kleenean.TRUE)
 @EntityTriggers(afterValue = Kleenean.TRUE)
 public class Usuario extends meta.entidad.comun.control.acceso.Usuario {
@@ -49,42 +49,54 @@ public class Usuario extends meta.entidad.comun.control.acceso.Usuario {
     }
     // </editor-fold>
 
-    @Allocation(maxDepth = 1, maxRound = 0)
+    @Override
+    protected void addAllocationStrings() {
+        super.addAllocationStrings();
+        /*
+        super.addAllocationStrings(
+            "paginaMenu.tipoPagina",
+            "paginaMenu.dominioMaestro",
+            "paginaMenu.parametro"
+        );
+        /**/
+    }
+
+    @ParentProperty
     @ForeignKey(onDelete = OnDeleteAction.NONE, onUpdate = OnUpdateAction.NONE)
     @ManyToOne(navigability = Navigability.UNIDIRECTIONAL, view = MasterDetailView.NONE)
-    @PropertyField(create = Kleenean.FALSE, update = Kleenean.FALSE, table = Kleenean.TRUE, report = Kleenean.TRUE, overlay = Kleenean.TRUE)
+    @PropertyField(create = Kleenean.FALSE, update = Kleenean.FALSE, table = Kleenean.TRUE, report = Kleenean.TRUE, overlay = Kleenean.TRUE,
+        defaultCheckpoint = Checkpoint.USER_INTERFACE, defaultCondition = DefaultCondition.IF_NULL_ON_INSERT)
     public Usuario usuarioSupervisor;
 
-    @ImageProperty
-    @PropertyField(table = Kleenean.TRUE)
-    public BinaryProperty octetos;
-
-    @FileReference
+    @ColumnField(nullable = Kleenean.FALSE)
     @PropertyField(hidden = Kleenean.TRUE)
-    public StringProperty archivo;
+    public IntegerProperty nuevasTareas;
 
     @ColumnField(nullable = Kleenean.FALSE)
-//  @NumericField(symbol = "?", symbolPosition = SymbolPosition.SUFFIX)
+    @PropertyField(hidden = Kleenean.TRUE)
+    public IntegerProperty nuevosInformes;
+
+    @ColumnField(nullable = Kleenean.FALSE)
+    @PropertyField(hidden = Kleenean.TRUE)
+    public IntegerProperty nuevosProcesos;
+
+    @ColumnField(nullable = Kleenean.FALSE)
     @PropertyField(create = Kleenean.TRUE)
     public IntegerProperty limiteArchivoDetalle;
 
     @ColumnField(nullable = Kleenean.FALSE)
-//  @NumericField(symbol = "?", symbolPosition = SymbolPosition.SUFFIX)
     @PropertyField(create = Kleenean.TRUE)
     public IntegerProperty limiteArchivoResumen;
 
     @ColumnField(nullable = Kleenean.FALSE)
-//  @NumericField(symbol = "?", symbolPosition = SymbolPosition.SUFFIX)
     @PropertyField(create = Kleenean.TRUE)
     public IntegerProperty limiteInformeDetalle;
 
     @ColumnField(nullable = Kleenean.FALSE)
-//  @NumericField(symbol = "?", symbolPosition = SymbolPosition.SUFFIX)
     @PropertyField(create = Kleenean.TRUE)
     public IntegerProperty limiteInformeResumen;
 
     @ColumnField(nullable = Kleenean.FALSE)
-//  @NumericField(symbol = "?", symbolPosition = SymbolPosition.SUFFIX)
     @PropertyField(create = Kleenean.TRUE)
     public IntegerProperty limiteInformeGrafico;
 
@@ -116,21 +128,18 @@ public class Usuario extends meta.entidad.comun.control.acceso.Usuario {
     @PropertyField(create = Kleenean.TRUE)
     public TipoRestriccionFormatos restriccionFormatos;
 
-    @Allocation(maxDepth = 1, maxRound = 0)
     @ColumnField(nullable = Kleenean.TRUE)
     @ForeignKey(onDelete = OnDeleteAction.NONE, onUpdate = OnUpdateAction.NONE)
     @ManyToOne(navigability = Navigability.UNIDIRECTIONAL, view = MasterDetailView.NONE)
     @PropertyField(create = Kleenean.TRUE, update = Kleenean.TRUE)
     public PaginaInicio paginaInicio;
 
-    @Allocation(maxDepth = 2, maxRound = 0)
     @ColumnField(nullable = Kleenean.TRUE)
 //  @ForeignKey(onDelete = OnDeleteAction.NONE, onUpdate = OnUpdateAction.NONE)
     @ManyToOne(navigability = Navigability.UNIDIRECTIONAL, view = MasterDetailView.NONE)
     @PropertyField(create = Kleenean.TRUE, update = Kleenean.TRUE)
     public Pagina paginaMenu;
 
-    @Allocation(maxDepth = 1, maxRound = 0)
     @ColumnField(nullable = Kleenean.TRUE)
     @ForeignKey(onDelete = OnDeleteAction.NONE, onUpdate = OnUpdateAction.NONE)
     @ManyToOne(navigability = Navigability.UNIDIRECTIONAL, view = MasterDetailView.NONE)
@@ -183,18 +192,15 @@ public class Usuario extends meta.entidad.comun.control.acceso.Usuario {
     protected void settleProperties() {
         super.settleProperties();
         /**/
-        esSuperUsuario.setInitialValue(false);
-        esSuperUsuario.setDefaultValue(false);
-        esSuperAuditor.setInitialValue(false);
-        esSuperAuditor.setDefaultValue(false);
-        esUsuarioEspecial.setInitialValue(false);
-        esUsuarioEspecial.setDefaultValue(false);
-        esUsuarioInactivo.setInitialValue(false);
-        esUsuarioInactivo.setDefaultValue(false);
-        esUsuarioModificado.setInitialValue(false);
-        esUsuarioModificado.setDefaultValue(false);
-        esUsuarioAutomatico.setInitialValue(false);
-        esUsuarioAutomatico.setDefaultValue(false);
+        usuarioSupervisor.setInitialValue(SpecialEntityValue.CURRENT_USER);
+        usuarioSupervisor.setDefaultValue(SpecialEntityValue.CURRENT_USER);
+        /**/
+        nuevasTareas.setInitialValue(0);
+        nuevasTareas.setDefaultValue(0);
+        nuevosInformes.setInitialValue(0);
+        nuevosInformes.setDefaultValue(0);
+        nuevosProcesos.setInitialValue(0);
+        nuevosProcesos.setDefaultValue(0);
         /**/
         limiteArchivoDetalle.setInitialValue(10000);
         limiteArchivoDetalle.setDefaultValue(10000);
@@ -216,8 +222,8 @@ public class Usuario extends meta.entidad.comun.control.acceso.Usuario {
         limiteInformeGrafico.setDefaultValue(10000);
         limiteInformeGrafico.setMinValue(0);
         limiteInformeGrafico.setMaxValue(1000000);
-        menusRegistrados.setInitialValue(false);
-        menusRegistrados.setDefaultValue(false);
+        menusRegistrados.setInitialValue(true);
+        menusRegistrados.setDefaultValue(true);
         menusRestringidos.setInitialValue(false);
         menusRestringidos.setDefaultValue(false);
         operadoresRestringidos.setInitialValue(false);
@@ -244,6 +250,13 @@ public class Usuario extends meta.entidad.comun.control.acceso.Usuario {
         /**/
         // <editor-fold defaultstate="collapsed" desc="localization of Usuario's properties">
         /**/
+        nuevasTareas.setLocalizedLabel(ENGLISH, "new tasks");
+        nuevasTareas.setLocalizedLabel(SPANISH, "nuevas tareas");
+        nuevosInformes.setLocalizedLabel(ENGLISH, "new reports");
+        nuevosInformes.setLocalizedLabel(SPANISH, "nuevas informes");
+        nuevosProcesos.setLocalizedLabel(ENGLISH, "new processes");
+        nuevosProcesos.setLocalizedLabel(SPANISH, "nuevas procesos");
+        /**/
         usuarioSupervisor.setLocalizedLabel(ENGLISH, "supervisor");
         usuarioSupervisor.setLocalizedLabel(SPANISH, "usuario supervisor");
         usuarioSupervisor.setLocalizedShortLabel(ENGLISH, "supervisor");
@@ -252,16 +265,6 @@ public class Usuario extends meta.entidad.comun.control.acceso.Usuario {
         usuarioSupervisor.setLocalizedDescription(SPANISH, "usuario que supervisa a este usuario");
         usuarioSupervisor.setLocalizedTooltip(ENGLISH, "supervisor code");
         usuarioSupervisor.setLocalizedTooltip(SPANISH, "código del usuario supervisor");
-        /**/
-        octetos.setLocalizedLabel(ENGLISH, "portrait");
-        octetos.setLocalizedLabel(SPANISH, "retrato");
-        octetos.setLocalizedTooltip(ENGLISH, "user portrait");
-        octetos.setLocalizedTooltip(SPANISH, "retrato del usuario");
-        /**/
-        archivo.setLocalizedLabel(ENGLISH, "file");
-        archivo.setLocalizedLabel(SPANISH, "archivo");
-        archivo.setLocalizedTooltip(ENGLISH, "user file");
-        archivo.setLocalizedTooltip(SPANISH, "archivo del usuario");
         /**/
         limiteArchivoDetalle.setLocalizedLabel(ENGLISH, "detailed file limit");
         limiteArchivoDetalle.setLocalizedLabel(SPANISH, "limite archivo detalle");
@@ -418,6 +421,7 @@ public class Usuario extends meta.entidad.comun.control.acceso.Usuario {
     protected void settleCollections() {
         super.settleCollections();
         /**/
+        EntityCollectionAggregate modulos_count = modulos.addCount(menusRegistrados.then(1).otherwise(0));
         modulos.setCascadeType(CascadeType.PERSIST, CascadeType.MERGE);
         /**/
         roles.setCascadeType(CascadeType.PERSIST, CascadeType.MERGE);
@@ -430,6 +434,11 @@ public class Usuario extends meta.entidad.comun.control.acceso.Usuario {
         modulos.setLocalizedShortLabel(SPANISH, "módulos");
         modulos.setLocalizedDescription(ENGLISH, "user module collection");
         modulos.setLocalizedDescription(SPANISH, "colección de módulos del usuario");
+        /**/
+        modulos_count.setLocalizedMinimumValueTag(ENGLISH, "the user's module list must contain at least one module "
+            + "if the user has access only to the menus of the registered modules");
+        modulos_count.setLocalizedMinimumValueTag(SPANISH, "la lista de módulos del usuario debe contener al menos un módulo "
+            + "si el usuario tiene acceso solo a los menús de los módulos registrados");
         /**/
         roles.setLocalizedLabel(ENGLISH, "user roles");
         roles.setLocalizedLabel(SPANISH, "roles del usuario");
@@ -447,7 +456,7 @@ public class Usuario extends meta.entidad.comun.control.acceso.Usuario {
     protected void settleSteps() {
         super.settleSteps();
         /**/
-        step10.newStepField(codigoUsuario, nombreUsuario, correoElectronico, numeroTelefonoMovil);
+        step10.newStepField(codigoUsuario, nombreUsuario, archivo, correoElectronico, numeroTelefonoMovil, grupo);
         /**/
         step20.newStepField(paginaInicio, paginaMenu, otraPagina, temaInterfaz, filasPorPagina, ayudaPorCampos, confirmarAlDescartar, confirmarAlFinalizar);
         /**/
@@ -503,7 +512,7 @@ public class Usuario extends meta.entidad.comun.control.acceso.Usuario {
         tab10.copy(step10, false); // false para una copia superficial, excluyendo los campos del paso.
         tab10.newTabField(octetos, archivo, correoElectronico, numeroTelefonoMovil);
         tab10.newTabField(esSuperUsuario, esSuperAuditor, esUsuarioEspecial, esUsuarioInactivo, esUsuarioAutomatico);
-        tab10.newTabField(fechaHoraRegistro, usuarioSupervisor);
+        tab10.newTabField(grupo, usuarioSupervisor, fechaHoraRegistro);
         /**/
         tab20.copy(step20);
         /**/
@@ -529,6 +538,10 @@ public class Usuario extends meta.entidad.comun.control.acceso.Usuario {
 
     protected Segment filtroPaginaMenu, filtroOtraPagina;
 
+    /*
+    protected Check check100;
+
+    /**/
     protected Check check101, check102, check111, check112;
 
     protected State eliminable, modificable, desactivable, reactivable, supervisorAnulable, supervisorAsignable;
@@ -569,6 +582,8 @@ public class Usuario extends meta.entidad.comun.control.acceso.Usuario {
         filtroPaginaMenu = paginaMenu.opcionMenu.isTrue();
         /**/
         filtroOtraPagina = otraPagina.inactiva.isFalse();
+        /*
+        check100 = esUsuarioEspecial.xnor(grupo.isEqualTo(grupo.USUARIOS_ESPECIALES));
         /**/
         check101 = conPaginaMenu.implies(paginaMenu.isNotNull());
         check102 = conPaginaMenu.and(paginaMenu.isNotNull()).implies(filtroPaginaMenu);
@@ -657,6 +672,11 @@ public class Usuario extends meta.entidad.comun.control.acceso.Usuario {
         conOtraPagina.setLocalizedDescription(SPANISH, "página de inicio es \"Otra página\"");
         conOtraPagina.setLocalizedErrorMessage(ENGLISH, "landing page is not \"Other page\"");
         conOtraPagina.setLocalizedErrorMessage(SPANISH, "página de inicio no es \"Otra página\"");
+        /*
+        check100.setLocalizedDescription(ENGLISH, "group must be \"Special Users\" if and only if it is a special user");
+        check100.setLocalizedDescription(SPANISH, "grupo debe ser \"Usuarios Especiales\" si y solo si es un usuario especial");
+        check100.setLocalizedErrorMessage(ENGLISH, "group must be \"Special Users\" if and only if it is a special user");
+        check100.setLocalizedErrorMessage(SPANISH, "grupo debe ser \"Usuarios Especiales\" si y solo si es un usuario especial");
         /**/
         check101.setLocalizedDescription(ENGLISH, "menu page must be specified if landing page is \"Menu page\"");
         check101.setLocalizedDescription(SPANISH, "página del menú se debe especificar si página de inicio es \"Página del menú\"");
@@ -797,7 +817,7 @@ public class Usuario extends meta.entidad.comun.control.acceso.Usuario {
         setDeleteFilter(eliminable);
         /*
         paginaInicio.setRemoveInstanceArray(paginaInicio.OTRA_PAGINA);
-        **/
+        /**/
         paginaMenu.setModifyingFilter(conPaginaMenu);
         paginaMenu.setRenderingFilter(conPaginaMenu, true);
         paginaMenu.setRequiringFilter(conPaginaMenu);
@@ -821,6 +841,20 @@ public class Usuario extends meta.entidad.comun.control.acceso.Usuario {
         otraPagina.setLocalizedRequiringFilterTag(SPANISH, "sí " + b("página de inicio") + " es \"Otra página\"");
         /**/
         // </editor-fold>
+    }
+
+    @Override
+    protected void settleInstances() {
+        super.settleInstances();
+        /*
+        ADMINISTRADOR.newInstanceField(grupo, grupo.USUARIOS_ESPECIALES);
+        AUDITOR.newInstanceField(grupo, grupo.USUARIOS_ESPECIALES);
+        OPERADOR.newInstanceField(grupo, grupo.USUARIOS_ESPECIALES);
+        /**/
+        ADMINISTRADOR.newInstanceField(menusRegistrados, false);
+        AUDITOR.newInstanceField(menusRegistrados, false);
+        OPERADOR.newInstanceField(menusRegistrados, false);
+        /**/
     }
 
     protected Agregar agregar;
@@ -902,7 +936,6 @@ public class Usuario extends meta.entidad.comun.control.acceso.Usuario {
     public class EliminarRoles extends ProcessOperation {
 
         @InstanceReference
-//      @Allocation(maxDepth = 1, maxRound = 0)
         protected meta.entidad.comun.control.acceso.Usuario usuario;
 
         @Override
@@ -950,7 +983,6 @@ public class Usuario extends meta.entidad.comun.control.acceso.Usuario {
         }
 
         @InstanceReference
-//      @Allocation(maxDepth = 1, maxRound = 0)
         protected meta.entidad.comun.control.acceso.Usuario usuario;
 
         @ParameterField(required = Kleenean.TRUE)
@@ -1008,7 +1040,6 @@ public class Usuario extends meta.entidad.comun.control.acceso.Usuario {
         }
 
         @InstanceReference
-//      @Allocation(maxDepth = 1, maxRound = 0)
         protected Usuario usuario;
 
         @Override
@@ -1043,7 +1074,6 @@ public class Usuario extends meta.entidad.comun.control.acceso.Usuario {
         }
 
         @InstanceReference
-//      @Allocation(maxDepth = 1, maxRound = 0)
         protected Usuario usuario;
 
         @Override
@@ -1078,7 +1108,6 @@ public class Usuario extends meta.entidad.comun.control.acceso.Usuario {
         }
 
         @InstanceReference
-//      @Allocation(maxDepth = 1, maxRound = 0)
         protected Usuario usuario;
 
         @Override
@@ -1113,7 +1142,6 @@ public class Usuario extends meta.entidad.comun.control.acceso.Usuario {
         }
 
         @InstanceReference
-//      @Allocation(maxDepth = 1, maxRound = 0)
         protected Usuario usuario;
 
         @Override
@@ -1148,7 +1176,6 @@ public class Usuario extends meta.entidad.comun.control.acceso.Usuario {
         }
 
         @InstanceReference
-//      @Allocation(maxDepth = 1, maxRound = 0)
         protected Usuario usuario;
 
         @Override
@@ -1183,7 +1210,6 @@ public class Usuario extends meta.entidad.comun.control.acceso.Usuario {
         }
 
         @InstanceReference
-//      @Allocation(maxDepth = 1, maxRound = 0)
         protected Usuario usuario;
 
         @Override
@@ -1225,7 +1251,6 @@ public class Usuario extends meta.entidad.comun.control.acceso.Usuario {
         }
 
         @InstanceReference
-//      @Allocation(maxDepth = 1, maxRound = 0)
         protected meta.entidad.comun.control.acceso.Usuario usuario;
 
         @Override
@@ -1260,7 +1285,6 @@ public class Usuario extends meta.entidad.comun.control.acceso.Usuario {
         }
 
         @InstanceReference
-//      @Allocation(maxDepth = 1, maxRound = 0)
         protected meta.entidad.comun.control.acceso.Usuario usuario;
 
         @ParameterField(auditable = Kleenean.FALSE, password = Kleenean.TRUE, required = Kleenean.TRUE)
@@ -1319,11 +1343,9 @@ public class Usuario extends meta.entidad.comun.control.acceso.Usuario {
         }
 
         @InstanceReference
-//      @Allocation(maxDepth = 1, maxRound = 0)
         protected Usuario usuario;
 
         @ParameterField(required = Kleenean.TRUE)
-//      @Allocation(maxDepth = 1, maxRound = 0)
         protected meta.entidad.comun.control.acceso.Usuario supervisor;
 
         @Override
@@ -1348,7 +1370,7 @@ public class Usuario extends meta.entidad.comun.control.acceso.Usuario {
 
     }
 
-    @ProcessOperationClass(builtIn = true)
+    @ProcessOperationClass(builtIn = true, treeStructureModifier = true)
     public class AnularSupervisor extends ProcessOperation {
 
         @Override
@@ -1365,7 +1387,6 @@ public class Usuario extends meta.entidad.comun.control.acceso.Usuario {
         }
 
         @InstanceReference
-//      @Allocation(maxDepth = 1, maxRound = 0)
         protected Usuario usuario;
 
         @Override
@@ -1399,11 +1420,9 @@ public class Usuario extends meta.entidad.comun.control.acceso.Usuario {
         }
 
         @InstanceReference
-//      @Allocation(maxDepth = 1, maxRound = 0)
         protected Usuario usuario;
 
         @ParameterField(required = Kleenean.TRUE)
-//      @Allocation(maxDepth = 1, maxRound = 0)
         protected PaginaInicio paginaInicio;
 
         @ParameterField
@@ -1599,7 +1618,6 @@ public class Usuario extends meta.entidad.comun.control.acceso.Usuario {
         }
 
         @InstanceReference
-//      @Allocation(maxDepth = 1, maxRound = 0)
         protected meta.entidad.comun.control.acceso.Usuario usuario;
 
         @ParameterField(auditable = Kleenean.FALSE, password = Kleenean.TRUE, required = Kleenean.TRUE)
@@ -1668,7 +1686,6 @@ public class Usuario extends meta.entidad.comun.control.acceso.Usuario {
         }
 
         @InstanceReference
-//      @Allocation(maxDepth = 1, maxRound = 0)
         protected meta.entidad.comun.control.acceso.Usuario usuario;
 
         @FileReference(max = 100000000)
@@ -1709,10 +1726,9 @@ public class Usuario extends meta.entidad.comun.control.acceso.Usuario {
         }
 
         @InstanceReference
-//      @Allocation(maxDepth = 1, maxRound = 0)
         protected meta.entidad.comun.control.acceso.Usuario usuario;
 
-        @FileReference(max = 500000, types = MimeType.IMAGE, storage = UploadStorageOption.ROW, blobField = "octetos")
+        @FileReference(types = MimeType.IMAGE, storage = UploadStorageOption.ROW, blobField = "octetos")
         @ParameterField(required = Kleenean.TRUE)
         protected StringParameter retrato;
 
@@ -1729,8 +1745,8 @@ public class Usuario extends meta.entidad.comun.control.acceso.Usuario {
             /**/
             retrato.setLocalizedLabel(ENGLISH, "portrait");
             retrato.setLocalizedLabel(SPANISH, "retrato");
-            retrato.setLocalizedDescription(ENGLISH, "The portrait must be a graphic file with a maximum size of 500 KB");
-            retrato.setLocalizedDescription(SPANISH, "El retrato debe ser un archivo gráfico con un tamaño máximo de 500 KB");
+            retrato.setLocalizedDescription(ENGLISH, "The portrait must be a graphic file with a maximum size of 128 KB");
+            retrato.setLocalizedDescription(SPANISH, "El retrato debe ser un archivo gráfico con un tamaño máximo de 128 KB");
             // </editor-fold>
         }
 
@@ -1752,7 +1768,6 @@ public class Usuario extends meta.entidad.comun.control.acceso.Usuario {
         }
 
         @InstanceReference
-//      @Allocation(maxDepth = 1, maxRound = 0)
         protected meta.entidad.comun.control.acceso.Usuario usuario;
 
         @Override
@@ -1786,7 +1801,6 @@ public class Usuario extends meta.entidad.comun.control.acceso.Usuario {
         }
 
         @InstanceReference
-//      @Allocation(maxDepth = 1, maxRound = 0)
         protected meta.entidad.comun.control.acceso.Usuario usuario;
 
         @Override

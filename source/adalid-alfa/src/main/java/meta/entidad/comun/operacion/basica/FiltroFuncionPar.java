@@ -42,6 +42,18 @@ public class FiltroFuncionPar extends AbstractPersistentEntity {
     }
     // </editor-fold>
 
+    @Override
+    protected void addAllocationStrings() {
+        super.addAllocationStrings();
+        super.addAllocationStrings(
+            "filtroFuncion.usuario",
+            "filtroFuncion.funcion",
+            "funcionParametro.claseRecursoValor",
+            "funcionParametro.funcion", // "funcionParametro.tipoValor",
+            "funcionParametro.rangoComparacion"
+        );
+    }
+
     @PrimaryKey
     public LongProperty id;
 
@@ -51,25 +63,21 @@ public class FiltroFuncionPar extends AbstractPersistentEntity {
     @ForeignKey(onDelete = OnDeleteAction.CASCADE, onUpdate = OnUpdateAction.CASCADE)
     @ManyToOne(navigability = Navigability.BIDIRECTIONAL, view = MasterDetailView.TABLE_AND_DETAIL)
     @ColumnField(nullable = Kleenean.FALSE)
-    @Allocation(maxDepth = 2, maxRound = 0)
-    @Filter(owner = Kleenean.FALSE, segment = Kleenean.FALSE)
     public FiltroFuncion filtroFuncion;
 
 //  20171213: remove foreign-key referring to FuncionParametro
 //  @ForeignKey(onDelete = OnDeleteAction.NONE, onUpdate = OnUpdateAction.NONE)
     @ManyToOne(navigability = Navigability.UNIDIRECTIONAL, view = MasterDetailView.NONE, quickAdding = QuickAddingFilter.ANY)
     @ColumnField(nullable = Kleenean.FALSE)
-    @EntityReferenceDisplay(style = EntityReferenceStyle.NAME_AND_CHARACTER_KEY)
+    @EntityReferenceDisplay(style = EntityReferenceStyle.NAME)
     @EntityReferenceSearch(searchType = SearchType.LIST, listStyle = ListStyle.NAME)
     @PropertyField(required = Kleenean.TRUE, table = Kleenean.TRUE, detail = Kleenean.TRUE, report = Kleenean.TRUE, export = Kleenean.TRUE)
-    @Allocation(maxDepth = 2, maxRound = 0)
     public FuncionParametro funcionParametro;
 
     @ForeignKey(onDelete = OnDeleteAction.NONE, onUpdate = OnUpdateAction.NONE)
     @ManyToOne(navigability = Navigability.UNIDIRECTIONAL, view = MasterDetailView.NONE)
     @ColumnField(nullable = Kleenean.FALSE)
     @PropertyField(required = Kleenean.TRUE, table = Kleenean.TRUE, detail = Kleenean.TRUE, report = Kleenean.TRUE, export = Kleenean.TRUE)
-    @Allocation(maxDepth = 1, maxRound = 0)
     public OperadorCom operadorCom;
 
     /*
@@ -91,7 +99,6 @@ public class FiltroFuncionPar extends AbstractPersistentEntity {
     @ManyToOne(navigability = Navigability.UNIDIRECTIONAL, view = MasterDetailView.NONE)
 //  @PropertyField(table = Kleenean.TRUE, detail = Kleenean.TRUE, create = Kleenean.TRUE, update = Kleenean.TRUE, required = Kleenean.TRUE, search = Kleenean.FALSE, filter = Kleenean.FALSE, sort = Kleenean.FALSE)
     @PropertyField(hidden = Kleenean.TRUE)
-    @Allocation(maxDepth = 1, maxRound = 0)
     public RecursoValor recursoValor;
 
     @PropertyField(hidden = Kleenean.TRUE)

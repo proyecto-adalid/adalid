@@ -18,6 +18,7 @@ import adalid.core.enums.*;
 import adalid.core.interfaces.*;
 import adalid.core.properties.*;
 import java.lang.reflect.Field;
+import meta.entidad.comun.configuracion.basica.Funcion;
 import meta.entidad.comun.operacion.basica.FiltroFuncion;
 
 /**
@@ -35,6 +36,16 @@ import meta.entidad.comun.operacion.basica.FiltroFuncion;
 @EntityConsoleView(enabled = Kleenean.FALSE)
 public class RolFiltroFuncion extends AbstractPersistentEntity {
 
+    @Override
+    protected void addAllocationStrings() {
+        super.addAllocationStrings();
+        super.addAllocationStrings(
+            "rol.grupo",
+            "filtroFuncion.funcion",
+            "filtroFuncion.usuario"
+        );
+    }
+
     // <editor-fold defaultstate="collapsed" desc="class constructors">
     public RolFiltroFuncion(Artifact declaringArtifact, Field declaringField) {
         super(declaringArtifact, declaringField);
@@ -51,16 +62,23 @@ public class RolFiltroFuncion extends AbstractPersistentEntity {
     @ManyToOne(navigability = Navigability.BIDIRECTIONAL, view = MasterDetailView.TABLE)
     @ColumnField(nullable = Kleenean.FALSE)
     @PropertyField(required = Kleenean.TRUE, table = Kleenean.TRUE, report = Kleenean.TRUE)
-    @Allocation(maxDepth = 1, maxRound = 0)
     public Rol rol;
 
     @ForeignKey(onDelete = OnDeleteAction.CASCADE, onUpdate = OnUpdateAction.CASCADE)
     @ManyToOne(navigability = Navigability.UNIDIRECTIONAL, view = MasterDetailView.NONE, quickAdding = QuickAddingFilter.MISSING)
     @ColumnField(nullable = Kleenean.FALSE)
     @PropertyField(required = Kleenean.TRUE, table = Kleenean.TRUE, report = Kleenean.TRUE)
-//->@Allocation(maxDepth = 2, maxRound = 0)
-    @Filter(owner = Kleenean.FALSE, segment = Kleenean.FALSE)
     public FiltroFuncion filtroFuncion;
+
+    @ColumnField(calculable = Kleenean.TRUE)
+    @ManyToOne(view = MasterDetailView.NONE)
+    @PropertyField(table = Kleenean.TRUE, report = Kleenean.TRUE)
+    public Funcion funcion;
+
+    @ColumnField(calculable = Kleenean.TRUE)
+    @ManyToOne(view = MasterDetailView.NONE)
+    @PropertyField(table = Kleenean.TRUE, report = Kleenean.TRUE)
+    public Usuario propietario;
 
     @Override
     protected void settleAttributes() {
@@ -90,7 +108,24 @@ public class RolFiltroFuncion extends AbstractPersistentEntity {
         filtroFuncion.setLocalizedLabel(SPANISH, "filtro de búsqueda");
         filtroFuncion.setLocalizedShortLabel(ENGLISH, "filter");
         filtroFuncion.setLocalizedShortLabel(SPANISH, "filtro");
+        /**/
+        funcion.setLocalizedLabel(ENGLISH, "function of the filter");
+        funcion.setLocalizedLabel(SPANISH, "función del filtro");
+        funcion.setLocalizedShortLabel(ENGLISH, "function");
+        funcion.setLocalizedShortLabel(SPANISH, "función");
+        /**/
+        propietario.setLocalizedLabel(ENGLISH, "owner of the filter");
+        propietario.setLocalizedLabel(SPANISH, "propietario del filtro");
+        propietario.setLocalizedShortLabel(ENGLISH, "owner");
+        propietario.setLocalizedShortLabel(SPANISH, "propietario");
+        /**/
         // </editor-fold>
+    }
+
+    @Override
+    protected void settleLinks() {
+        super.settleLinks();
+        linkForeignSegmentProperty(rol.grupo);
     }
 
     protected Key uk_rol_filtro_funcion_0001;
@@ -100,6 +135,13 @@ public class RolFiltroFuncion extends AbstractPersistentEntity {
         super.settleKeys();
         uk_rol_filtro_funcion_0001.setUnique(true);
         uk_rol_filtro_funcion_0001.newKeyField(rol, filtroFuncion);
+    }
+
+    @Override
+    protected void settleExpressions() {
+        super.settleExpressions();
+        funcion.setCalculableValueEntityReference(filtroFuncion.funcion);
+        propietario.setCalculableValueEntityReference(filtroFuncion.usuario);
     }
 
     @Override

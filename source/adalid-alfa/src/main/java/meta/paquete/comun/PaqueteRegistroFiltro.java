@@ -43,6 +43,16 @@ public class PaqueteRegistroFiltro extends PaqueteRegistroBase {
         // </editor-fold>
     }
 
+    // <editor-fold defaultstate="collapsed" desc="print">
+    @Override
+    public void print() {
+        super.print();
+        System.out.println(filtroFuncion);
+        System.out.println(filtroFuncionPar);
+        System.out.println(operadorCom);
+    }
+    // </editor-fold>
+
     FiltroFuncion filtroFuncion;
 
     FiltroFuncionPar filtroFuncionPar;

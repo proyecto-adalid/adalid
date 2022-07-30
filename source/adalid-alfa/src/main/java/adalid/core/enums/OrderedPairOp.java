@@ -58,7 +58,7 @@ public enum OrderedPairOp implements Operator {
      */
     X_IMPLIES_Y,
     /* operadores para expresiones alfanuméricas */
-    CONCAT, FORMAT, LEFT, RIGHT, SUBSTR,
+    ASCII, DIACRITICLESS_ASCII, CONCAT, FORMAT, LEFT, RIGHT, SUBSTR,
     /* operadores para expresiones alfanuméricas y numéricas */
     TO_ZERO_PADDED_STRING,
     /* operadores para expresiones numéricas */

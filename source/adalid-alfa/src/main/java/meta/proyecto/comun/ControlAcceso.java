@@ -16,6 +16,7 @@ import adalid.core.*;
 import meta.entidad.comun.control.acceso.ClaseFabricador;
 import meta.entidad.comun.control.acceso.ConjuntoSegmento;
 import meta.entidad.comun.control.acceso.ElementoSegmento;
+import meta.entidad.comun.control.acceso.GrupoUsuario;
 import meta.entidad.comun.control.acceso.PaginaEspecial;
 import meta.entidad.comun.control.acceso.Rol;
 import meta.entidad.comun.control.acceso.RolFiltroFuncion;
@@ -102,11 +103,41 @@ public class ControlAcceso extends Project {
         // </editor-fold>
     }
 
+    // <editor-fold defaultstate="collapsed" desc="print">
+    @Override
+    public void print() {
+        super.print();
+        System.out.println(ClaseFabricador);
+        System.out.println(ConjuntoSegmento);
+        System.out.println(ElementoSegmento);
+        System.out.println(PaginaEspecial);
+        System.out.println(Rol);
+        System.out.println(RolFiltroFuncion);
+        System.out.println(RolFuncion);
+        System.out.println(RolFuncionPar);
+        System.out.println(RolPagina);
+        System.out.println(RolUsuario);
+        System.out.println(RolVistaFuncion);
+        System.out.println(Segmento);
+        System.out.println(TipoRol);
+        System.out.println(Usuario);
+        System.out.println(UsuarioFuncion);
+        System.out.println(UsuarioModulo);
+        System.out.println(UsuarioSegmento);
+        System.out.println(UsuarioX1);
+        System.out.println(consulta);
+        System.out.println(procesamiento);
+        System.out.println(registro);
+    }
+    // </editor-fold>
+
     ClaseFabricador ClaseFabricador;
 
     ConjuntoSegmento ConjuntoSegmento;
 
     ElementoSegmento ElementoSegmento;
+
+    GrupoUsuario UsuarioX1;
 
     PaginaEspecial PaginaEspecial;
 

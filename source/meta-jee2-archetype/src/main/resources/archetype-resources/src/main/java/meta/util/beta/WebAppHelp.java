@@ -9,6 +9,8 @@
  */
 package ${package}.meta.util.beta;
 
+import adalid.util.*;
+
 /**
  * WebAppHelp genera los archivos de ayuda en-línea de su aplicación utilizando la plataforma webapp-help.
  * <p>
@@ -36,6 +38,7 @@ package ${package}.meta.util.beta;
  *
  * @author ADALID meta-jee2-archetype
  */
+@RunnableClass
 public class WebAppHelp extends adalid.util.Utility {
 
     /**

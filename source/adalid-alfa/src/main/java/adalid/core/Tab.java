@@ -176,9 +176,8 @@ public class Tab extends AbstractArtifact {
         return s4;
     }
     /**/
-    char _finaliseFields;
     // </editor-fold>
-
+/**/
     // <editor-fold defaultstate="collapsed" desc="finaliseTabFieldArray">
     /* commented on 21/03/2021
     private void finaliseTabFieldArray() {
@@ -208,9 +207,8 @@ public class Tab extends AbstractArtifact {
         _tabFields.put(key, tabField);
     }
     /**/
-    char _finaliseTabFieldArray;
     // </editor-fold>
-
+/**/
     /**
      * El método newTabField se utiliza para agregar colecciones a un grupo. Los grupos generan pestañas (tabs) en las vistas (páginas) de consulta y
      * registro detallado de la entidad. Los grupos pueden estar integrados por una o más colecciones. Una misma colección puede estar en más de un
@@ -355,9 +353,8 @@ public class Tab extends AbstractArtifact {
         return string;
     }
     /**/
-    char _toString;
     // </editor-fold>
-
+/**/
     // <editor-fold defaultstate="collapsed" desc="isValidTabFor">
     /*
     public boolean isValidTabFor(PersistentEntity entity) {
@@ -384,7 +381,6 @@ public class Tab extends AbstractArtifact {
     }
 
     /**/
-    char _isValidTabFor;
     // </editor-fold>
-
+/**/
 }

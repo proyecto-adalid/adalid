@@ -58,7 +58,7 @@ public class TipoRestriccionFormatos extends AbstractPersistentEnumerationEntity
     protected void settleAttributes() {
         super.settleAttributes();
 //      setSchema(ProyectoBase.getEsquemaEntidadesComunes());
-        // <editor-fold defaultstate="collapsed" desc="localization of TipoAccesoRecurso's attributes">
+        // <editor-fold defaultstate="collapsed" desc="localization of TipoRestriccionFormatos's attributes">
         setLocalizedLabel(ENGLISH, "resource access type");
         setLocalizedLabel(SPANISH, "tipo de acceso a recursos");
         setLocalizedShortLabel(ENGLISH, "access type");
@@ -73,7 +73,7 @@ public class TipoRestriccionFormatos extends AbstractPersistentEnumerationEntity
     @Override
     protected void settleProperties() {
         super.settleProperties();
-        // <editor-fold defaultstate="collapsed" desc="localization of TipoAccesoRecurso's properties">
+        // <editor-fold defaultstate="collapsed" desc="localization of TipoRestriccionFormatos's properties">
         /**/
         numero.setLocalizedLabel(ENGLISH, "resource access type number");
         numero.setLocalizedLabel(SPANISH, "número del tipo de acceso");
@@ -91,7 +91,7 @@ public class TipoRestriccionFormatos extends AbstractPersistentEnumerationEntity
     @Override
     protected void settleInstances() {
         super.settleInstances();
-        // <editor-fold defaultstate="collapsed" desc="localization of TipoAccesoRecurso's instances">
+        // <editor-fold defaultstate="collapsed" desc="localization of TipoRestriccionFormatos's instances">
         /**/
         NADA.newInstanceField(codigo, "No restrictions", ENGLISH);
         NADA.newInstanceField(codigo, "Sin restricción", SPANISH);

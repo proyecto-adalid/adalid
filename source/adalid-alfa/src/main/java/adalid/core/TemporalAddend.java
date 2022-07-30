@@ -116,7 +116,7 @@ public class TemporalAddend implements Comparable {
             return null;
         }
         try {
-            Long number = Long.valueOf(chopped);
+            Integer number = Integer.valueOf(chopped);
             return new TemporalAddend(number, unit, min, max);
         } catch (NumberFormatException e) {
             return null;
@@ -168,7 +168,7 @@ public class TemporalAddend implements Comparable {
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="instance fields">
-    private final long quantity;
+    private final int quantity;
 
     private final char unitCode;
 
@@ -179,11 +179,11 @@ public class TemporalAddend implements Comparable {
     private final boolean badValue;
     // </editor-fold>
 
-    private TemporalAddend(long quantity, char unitCode) {
+    private TemporalAddend(int quantity, char unitCode) {
         this(quantity, unitCode, null, null);
     }
 
-    private TemporalAddend(long quantity, char unitCode, TemporalAddend minValue, TemporalAddend maxValue) {
+    private TemporalAddend(int quantity, char unitCode, TemporalAddend minValue, TemporalAddend maxValue) {
         this.quantity = quantity;
         this.unitCode = unitCode;
         this.minValue = minValue;
@@ -194,7 +194,7 @@ public class TemporalAddend implements Comparable {
     /**
      * @return the number
      */
-    public long getQuantity() {
+    public int getQuantity() {
         return quantity;
     }
 

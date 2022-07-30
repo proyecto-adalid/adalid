@@ -60,6 +60,11 @@ public abstract class AbstractExpression extends AbstractArtifact implements Nar
      */
     private final List<ExpressionUsage> _verifiedUsages = new ArrayList<>();
 
+    /**
+     *
+     */
+    private boolean _logicalTautology;
+
     public List<Operation> getInitialStateBusinessOperationsList() {
         List<Operation> list = new ArrayList<>();
         if (this instanceof State) {
@@ -207,6 +212,18 @@ public abstract class AbstractExpression extends AbstractArtifact implements Nar
     @Override
     public List<ExpressionUsage> getVerifiedUsages() {
         return _verifiedUsages;
+    }
+
+//  @Override
+    public boolean isLogicalTautology() {
+        return _logicalTautology;
+    }
+
+//  @Override
+    public void setLogicalTautology(boolean tautology) {
+        if (this instanceof BooleanExpression) {
+            _logicalTautology = tautology;
+        }
     }
 
     /**

@@ -88,18 +88,12 @@ public class Maestro102 extends Maestro {
 //      putEnvironmentVariable(POSTGRESQL_DRIVER_VERSION, "42.2.18");
 //
 //      putEnvironmentVariable(VERSION_POSTGRESQL, "14");
-//      putEnvironmentVariable(VERSION_WILDFLY, "26.1.0.Final");
-        putEnvironmentVariable(VERSION_JAVA, "11.0.13");
-//      putEnvironmentVariable(VERSION_PRIMEFACES, "7.0");
+//      putEnvironmentVariable(VERSION_WILDFLY, "26.1.1.Final");
+//      putEnvironmentVariable(VERSION_JAVA, "11.0.15");
+//      putEnvironmentVariable(VERSION_PRIMEFACES, "11.0.0");
 //      putEnvironmentVariable(VERSION_THIRD_PARTY_DIR, "4.0");
 //      loadPrivateProperties(LoggingLevel.INFO);
-//      setTheme(PrimeFacesThemes.HOT_SNEAKS);
-//      setThemeDialogWidthSubtrahend(32);
-//      setThemeDialogHeightSubtrahend(40);
-//      setThemeDialogPosition(DialogPosition.CENTER);
-//      setThemeGroupId("org.primefaces.themes");
-//      setThemeArtifactId("all-themes");
-//      setThemeVersion("1.0.10");
+//      setTheme(PrimeFacesThemes.SAGA);
 //      setThemeSwitchingEnabled(true);
 //      setInternetAccessAllowed(true);
 //      setWebServicesEnabled(true);

@@ -42,6 +42,15 @@ public class PaqueteProcesamientoFiltro extends PaqueteProcesamientoBase {
         // </editor-fold>
     }
 
+    // <editor-fold defaultstate="collapsed" desc="print">
+    @Override
+    public void print() {
+        super.print();
+        System.out.println(filtroFuncion);
+        System.out.println(filtroFuncionPar);
+    }
+    // </editor-fold>
+
     FiltroFuncion filtroFuncion;
 
     FiltroFuncionPar filtroFuncionPar;

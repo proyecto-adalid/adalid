@@ -21,14 +21,18 @@ public class IsFairTable implements Predicate {
 
     @Override
     public boolean evaluate(Object object) {
+        /* until 13/07/2022
         if (object instanceof SqlTable) {
             SqlTable table = (SqlTable) object;
 //          return table.isEnumeration() ? isFairEnumerationTable(table) : isFairTable(table);
             return table.getPrimaryKey() != null;
         }
         return false;
+        /**/
+        return object instanceof SqlTable;
     }
 
+    /*
     boolean isFairEnumerationTable(SqlTable table) {
         return table.getPrimaryKey() != null
             && table.getPrimaryKey().getType().equals("integer")
@@ -43,4 +47,5 @@ public class IsFairTable implements Predicate {
 //          && table.getVersion().getType().equals("long");
     }
 
+    /**/
 }

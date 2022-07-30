@@ -163,6 +163,9 @@ public abstract class AbstractScalarX extends AbstractExpression implements Scal
                 case NOT:
                     setDataType(Boolean.class);
                     break;
+                case ASCII:
+                case DIACRITICLESS:
+                case DIACRITICLESS_ASCII:
                 case LOWER:
                 case UPPER:
                 case CAPITALIZE:
