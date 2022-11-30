@@ -45,32 +45,37 @@ public class BundleMensajes extends BundleAbstracto {
     }
 
     @Override
-    Map<Locale, ResourceBundle> bundles() {
+    protected Locale[] getSupportedLocales() {
+        return adalid.commons.bundles.Bundle.getSupportedLocales();
+    }
+
+    @Override
+    protected Map<Locale, ResourceBundle> bundles() {
         return bundles;
     }
 
     @Override
-    Map<Locale, Set<String>> bundleKeys() {
+    protected Map<Locale, Set<String>> bundleKeys() {
         return bundleKeys;
     }
 
     @Override
-    Map<Locale, List<String>> bundleRows() {
+    protected Map<Locale, List<String>> bundleRows() {
         return bundleRows;
     }
 
     @Override
-    Map<Locale, Locale> locales() {
+    protected Map<Locale, Locale> locales() {
         return locales;
     }
 
     @Override
-    Set<String> warnings() {
+    protected Set<String> warnings() {
         return warnings;
     }
 
     @Override
-    Set<String> errors() {
+    protected Set<String> errors() {
         return errors;
     }
 

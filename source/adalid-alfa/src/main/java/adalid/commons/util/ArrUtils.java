@@ -36,10 +36,10 @@ public class ArrUtils {
 
     @SuppressWarnings("unchecked")
     public static <T> T[] addAll(T[] array1, T... array2) {
-        if (array1 == null) {
+        if (array1 == null || array1.length == 0) {
             return clone(array2);
         }
-        if (array2 == null) {
+        if (array2 == null || array2.length == 0) {
             return clone(array1);
         }
         Class<?> type1 = array1.getClass().getComponentType();

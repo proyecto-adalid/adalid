@@ -15,6 +15,7 @@ package adalid.util.sql;
 import adalid.commons.util.*;
 import adalid.commons.velocity.*;
 import java.io.File;
+import java.sql.Clob;
 import java.sql.Date;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -669,55 +670,55 @@ public class SqlReader extends SqlUtil {
     // <editor-fold defaultstate="collapsed" desc="SqlAid">
     protected abstract class SqlAid {
 
-        abstract boolean createDefaults() throws SQLException;
+        protected abstract boolean createDefaults() throws SQLException;
 
-        abstract boolean dropDefaults() throws SQLException;
+        protected abstract boolean dropDefaults() throws SQLException;
 
-        PreparedStatementWrapper getSelectTablesStatement() {
+        protected PreparedStatementWrapper getSelectTablesStatement() {
             String template = getTemplateName("tables");
             return getSelectStatement(template);
         }
 
-        PreparedStatementWrapper getSelectColumnsStatement() {
+        protected PreparedStatementWrapper getSelectColumnsStatement() {
             String template = getTemplateName("columns");
             return getSelectStatement(template);
         }
 
-        PreparedStatementWrapper getSelectIndexesStatement() {
+        protected PreparedStatementWrapper getSelectIndexesStatement() {
             String template = getTemplateName("indexes");
             return getSelectStatement(template);
         }
 
-        PreparedStatementWrapper getSelectTabsStatement() {
+        protected PreparedStatementWrapper getSelectTabsStatement() {
             String template = getTemplateName("tabs");
             return getSelectStatement(template);
         }
 
-        PreparedStatementWrapper getSelectRoutinesStatement() {
+        protected PreparedStatementWrapper getSelectRoutinesStatement() {
             String template = getTemplateName("routines");
             return getSelectStatement(template);
         }
 
-        abstract PreparedStatementWrapper getSelectRowsStatement(SqlTable sqlTable);
+        protected abstract PreparedStatementWrapper getSelectRowsStatement(SqlTable sqlTable);
 
-        PreparedStatementWrapper getSelectUpdatableColumnsStatement() {
+        protected PreparedStatementWrapper getSelectUpdatableColumnsStatement() {
             String template = getTemplateName("updatable-columns");
             return getSelectStatement(template);
         }
 
-        PreparedStatementWrapper getSelectStatement(String template) {
+        protected PreparedStatementWrapper getSelectStatement(String template) {
             VelocityContext context = new VelocityContext();
             return getSelectStatement(template, context);
         }
 
-        PreparedStatementWrapper getSelectStatement(String template, SqlTable sqlTable) {
+        protected PreparedStatementWrapper getSelectStatement(String template, SqlTable sqlTable) {
             VelocityContext context = new VelocityContext();
             String name = sqlTable.getName();
             context.put("table", name);
             return getSelectStatement(template, context);
         }
 
-        PreparedStatementWrapper getSelectStatement(String template, VelocityContext context) {
+        protected PreparedStatementWrapper getSelectStatement(String template, VelocityContext context) {
             context.put("database", _database);
             context.put("schema", _schema);
             String templatePath;
@@ -741,68 +742,68 @@ public class SqlReader extends SqlUtil {
             return null;
         }
 
-        PreparedStatementWrapper prepareSelectStatement(String statement) {
+        protected PreparedStatementWrapper prepareSelectStatement(String statement) {
             return new PreparedStatementWrapper(statement);
         }
 
-        String getTemplateName(String type) {
+        protected String getTemplateName(String type) {
             return _selectTemplatesPath + "/" + _dbms + "/select-" + type + ".vm";
         }
 
-        String getSqlTableName(ResultSet resultSet) throws SQLException {
+        protected String getSqlTableName(ResultSet resultSet) throws SQLException {
             return resultSet.getString(1);
         }
 
-        SqlTable getSqlTable(ResultSet resultSet) throws SQLException {
+        protected SqlTable getSqlTable(ResultSet resultSet) throws SQLException {
             SqlTable sqlTable = new SqlTable(SqlReader.this);
             sqlTable.setName(resultSet.getString(1));
             return sqlTable;
         }
 
-        String getSqlColumnName(ResultSet resultSet) throws SQLException {
+        protected String getSqlColumnName(ResultSet resultSet) throws SQLException {
             return resultSet.getString(1);
         }
 
-        SqlColumn getSqlColumn(ResultSet resultSet, SqlTable sqlTable) throws SQLException {
+        protected SqlColumn getSqlColumn(ResultSet resultSet, SqlTable sqlTable) throws SQLException {
             SqlColumn sqlColumn = new SqlColumn(sqlTable);
             sqlColumn.setName(resultSet.getString(1));
             return sqlColumn;
         }
 
-        String getSqlIndexName(ResultSet resultSet) throws SQLException {
+        protected String getSqlIndexName(ResultSet resultSet) throws SQLException {
             return resultSet.getString(1);
         }
 
-        SqlIndex getSqlIndex(ResultSet resultSet, SqlTable sqlTable) throws SQLException {
+        protected SqlIndex getSqlIndex(ResultSet resultSet, SqlTable sqlTable) throws SQLException {
             SqlIndex sqlIndex = new SqlIndex(sqlTable);
             sqlIndex.setName(resultSet.getString(1));
             return sqlIndex;
         }
 
-        SqlIndex getSqlIndex(ResultSet resultSet, SqlIndex sqlIndex) throws SQLException {
+        protected SqlIndex getSqlIndex(ResultSet resultSet, SqlIndex sqlIndex) throws SQLException {
             return sqlIndex;
         }
 
-        String getSqlTabName(ResultSet resultSet) throws SQLException {
+        protected String getSqlTabName(ResultSet resultSet) throws SQLException {
             return resultSet.getString(1);
         }
 
-        SqlTab getSqlTab(ResultSet resultSet, SqlTable sqlTable) throws SQLException {
+        protected SqlTab getSqlTab(ResultSet resultSet, SqlTable sqlTable) throws SQLException {
             SqlTab sqlTab = new SqlTab(sqlTable);
             sqlTab.setName(resultSet.getString(1));
             return sqlTab;
         }
 
-        SqlTab getSqlTab(ResultSet resultSet, SqlTab sqlTab) throws SQLException {
+        protected SqlTab getSqlTab(ResultSet resultSet, SqlTab sqlTab) throws SQLException {
             return sqlTab;
         }
 
-        String getSqlRowName(ResultSet resultSet, SqlTable sqlTable) throws SQLException {
+        protected String getSqlRowName(ResultSet resultSet, SqlTable sqlTable) throws SQLException {
             int position = sqlTable.getBusinessKey().getPosition();
             return resultSet.getString(position);
         }
 
-        SqlRow getSqlRow(ResultSet resultSet, SqlTable sqlTable) throws SQLException {
+        protected SqlRow getSqlRow(ResultSet resultSet, SqlTable sqlTable) throws SQLException {
             int position = sqlTable.getBusinessKey().getPosition();
             String name = resultSet.getString(position);
             SqlRow sqlRow = new SqlRow(sqlTable);
@@ -827,6 +828,9 @@ public class SqlReader extends SqlUtil {
                     case "float":
                     case "double":
                         object = resultSet.getObject(sqlColumn.getPosition());
+                        break;
+                    case "clob":
+                        object = resultSet.getClob(sqlColumn.getPosition());
                         break;
                     case "date":
                         object = resultSet.getDate(sqlColumn.getPosition());
@@ -853,21 +857,21 @@ public class SqlReader extends SqlUtil {
             return sqlRow;
         }
 
-        String getSqlRoutineName(ResultSet resultSet) throws SQLException {
+        protected String getSqlRoutineName(ResultSet resultSet) throws SQLException {
             return resultSet.getString(1);
         }
 
-        SqlRoutine getSqlRoutine(ResultSet resultSet, SqlTable sqlTable) throws SQLException {
+        protected SqlRoutine getSqlRoutine(ResultSet resultSet, SqlTable sqlTable) throws SQLException {
             SqlRoutine sqlRoutine = new SqlRoutine(sqlTable);
             sqlRoutine.setName(resultSet.getString(1));
             return sqlRoutine;
         }
 
-        SqlRoutine getSqlRoutine(ResultSet resultSet, SqlRoutine sqlRoutine) throws SQLException {
+        protected SqlRoutine getSqlRoutine(ResultSet resultSet, SqlRoutine sqlRoutine) throws SQLException {
             return sqlRoutine;
         }
 
-        void finalize(SqlTable sqlTable) {
+        protected void finalize(SqlTable sqlTable) {
             for (SqlColumn sqlColumn : sqlTable.getColumns()) {
                 finalizeColumn(sqlColumn);
             }
@@ -883,7 +887,7 @@ public class SqlReader extends SqlUtil {
             }
         }
 
-        void finalizeColumn(SqlColumn sqlColumn) {
+        protected void finalizeColumn(SqlColumn sqlColumn) {
             String foreignTableName = sqlColumn.getForeignTableName();
             if (foreignTableName != null && _tables.containsKey(foreignTableName)) {
                 sqlColumn.setForeignTable(_tables.get(foreignTableName));
@@ -892,28 +896,28 @@ public class SqlReader extends SqlUtil {
             sqlColumn.setDefault(stringValueOf(sqlColumn, sqlColumn.getDefault()));
         }
 
-        void finalizeRowValue(SqlRowValue sqlRowValue) {
+        protected void finalizeRowValue(SqlRowValue sqlRowValue) {
             sqlRowValue.setValue(stringValueOf(sqlRowValue.getColumn(), sqlRowValue.getValue()));
             sqlRowValue.setLiteral(literalOf(sqlRowValue.getObject()));
         }
 
-        void finalizeParameter(SqlRoutineParameter sqlRoutineParameter) {
+        protected void finalizeParameter(SqlRoutineParameter sqlRoutineParameter) {
             sqlRoutineParameter.setDefault(stringValueOf(sqlRoutineParameter, sqlRoutineParameter.getDefault()));
         }
 
-        int intValueOf(Object object) {
+        protected int intValueOf(Object object) {
 //          return object instanceof Integer ? (Integer) object : 0;
             return IntUtils.valueOf(NumUtils.newInteger(object));
         }
 
-        boolean booleanValueOf(Object object) {
+        protected boolean booleanValueOf(Object object) {
 //          return object instanceof Boolean ? (Boolean) object : false;
             return BitUtils.valueOf(object);
         }
 
-        abstract String literalOf(Object obj);
+        protected abstract String literalOf(Object obj);
 
-        String stringValueOf(SqlColumn sqlColumn, String string) {
+        protected String stringValueOf(SqlColumn sqlColumn, String string) {
             String ctype = sqlColumn.getType();
             String value = StringUtils.trimToNull(string);
             return value == null ? null
@@ -925,7 +929,7 @@ public class SqlReader extends SqlUtil {
                 : value;
         }
 
-        String stringValueOf(SqlRoutineParameter sqlRoutineParameter, String string) {
+        protected String stringValueOf(SqlRoutineParameter sqlRoutineParameter, String string) {
             String ctype = sqlRoutineParameter.getType();
             SqlColumn namesake = sqlRoutineParameter.getNamesakeColumn();
             String value = StringUtils.trimToNull(string);
@@ -938,7 +942,7 @@ public class SqlReader extends SqlUtil {
                 : value;
         }
 
-        String instanceValueOf(SqlColumn sqlColumn, String string) {
+        protected String instanceValueOf(SqlColumn sqlColumn, String string) {
             String value = StringUtils.trimToNull(string);
             if (value != null) {
                 SqlTable foreignTable = sqlColumn.getForeignTable();
@@ -965,19 +969,19 @@ public class SqlReader extends SqlUtil {
     class OracleAid extends SqlAid {
 
         @Override
-        boolean createDefaults() throws SQLException {
+        protected boolean createDefaults() throws SQLException {
             String statement = "call " + _schema + "." + "create_defaults()";
             return executeStatement(statement);
         }
 
         @Override
-        boolean dropDefaults() throws SQLException {
+        protected boolean dropDefaults() throws SQLException {
             String statement = "call " + _schema + "." + "drop_defaults()";
             return executeStatement(statement);
         }
 
         @Override
-        PreparedStatementWrapper getSelectRowsStatement(SqlTable sqlTable) {
+        protected PreparedStatementWrapper getSelectRowsStatement(SqlTable sqlTable) {
             String name = sqlTable.getName();
             String pk = sqlTable.getPrimaryKey().getName();
             String sql = "select * from " + _schema + "." + name + " where ROWNUM<=" + ROW_LIMIT + " order by " + pk;
@@ -986,7 +990,7 @@ public class SqlReader extends SqlUtil {
         }
 
         @Override
-        SqlTable getSqlTable(ResultSet resultSet) throws SQLException {
+        protected SqlTable getSqlTable(ResultSet resultSet) throws SQLException {
             String table_name = resultSet.getString(1);
             String default_label = resultSet.getString(2);
             String default_collection_label = resultSet.getString(3);
@@ -1011,7 +1015,7 @@ public class SqlReader extends SqlUtil {
         }
 
         @Override
-        SqlColumn getSqlColumn(ResultSet resultSet, SqlTable sqlTable) throws SQLException {
+        protected SqlColumn getSqlColumn(ResultSet resultSet, SqlTable sqlTable) throws SQLException {
             String table_name = sqlTable.getName();
             String column_name = resultSet.getString(1);
             int ordinal_position = intValueOf(resultSet.getObject(2));
@@ -1028,10 +1032,12 @@ public class SqlReader extends SqlUtil {
             boolean is_unique_key = booleanValueOf(resultSet.getObject(11));
             boolean is_booleanish = booleanValueOf(resultSet.getObject(12));
             String foreign_table_name = StringUtils.trimToNull(resultSet.getString(13));
+            String default_label = resultSet.getString(14);
             /**/
             SqlColumn sqlColumn = new SqlColumn(sqlTable);
             sqlColumn.setName(column_name);
             sqlColumn.setPosition(ordinal_position);
+            sqlColumn.setDefaultLabel(default_label);
             // <editor-fold defaultstate="collapsed" desc="switch(data_type)...">
             data_type = data_type.replaceAll("\\(.*\\)", "");
             sqlColumn.setSqlDataType(data_type);
@@ -1166,7 +1172,7 @@ public class SqlReader extends SqlUtil {
         }
 
         @Override
-        String literalOf(Object obj) {
+        protected String literalOf(Object obj) {
             String string = unquotedLiteralOf(obj);
             if (string == null) {
                 return "null";
@@ -1183,9 +1189,11 @@ public class SqlReader extends SqlUtil {
             }
         }
 
-        String unquotedLiteralOf(Object obj) {
+        protected String unquotedLiteralOf(Object obj) {
             if (obj == null) {
                 return null;
+            } else if (obj instanceof Clob) {
+                return StrUtils.getSubString((Clob) obj);
             } else if (obj instanceof Date) {
                 return TimeUtils.jdbcDateString(obj);
             } else if (obj instanceof Time) {
@@ -1197,7 +1205,7 @@ public class SqlReader extends SqlUtil {
             }
         }
 
-        String stringValueOf(String string) {
+        protected String stringValueOf(String string) {
             String trimmed = StringUtils.trimToNull(string);
             if (trimmed == null) {
                 return null;
@@ -1220,14 +1228,14 @@ public class SqlReader extends SqlUtil {
         }
 
         @Override
-        String stringValueOf(SqlColumn sqlColumn, String string) {
+        protected String stringValueOf(SqlColumn sqlColumn, String string) {
             String trimmed = sqlColumn.isForeign() ? null : StringUtils.trimToNull(string);
             String value = trimmed == null ? null : stringValueOf(trimmed.toLowerCase(), sqlColumn.getTrueType());
             return value == null ? super.stringValueOf(sqlColumn, string) : value;
         }
 
         @Override
-        SqlIndex getSqlIndex(ResultSet resultSet, SqlTable sqlTable) throws SQLException {
+        protected SqlIndex getSqlIndex(ResultSet resultSet, SqlTable sqlTable) throws SQLException {
             String index_name = resultSet.getString(1);
             boolean is_unique = booleanValueOf(resultSet.getObject(2));
             /**/
@@ -1238,7 +1246,7 @@ public class SqlReader extends SqlUtil {
         }
 
         @Override
-        SqlIndex getSqlIndex(ResultSet resultSet, SqlIndex sqlIndex) throws SQLException {
+        protected SqlIndex getSqlIndex(ResultSet resultSet, SqlIndex sqlIndex) throws SQLException {
             int ordinal_position = intValueOf(resultSet.getObject(3));
             String column_name = resultSet.getString(4);
             String column_option = resultSet.getString(5);
@@ -1252,7 +1260,7 @@ public class SqlReader extends SqlUtil {
         }
 
         @Override
-        SqlTab getSqlTab(ResultSet resultSet, SqlTable sqlTable) throws SQLException {
+        protected SqlTab getSqlTab(ResultSet resultSet, SqlTable sqlTable) throws SQLException {
             String tab_name = resultSet.getString(1);
             String default_label = resultSet.getString(2);
             /**/
@@ -1263,7 +1271,7 @@ public class SqlReader extends SqlUtil {
         }
 
         @Override
-        SqlTab getSqlTab(ResultSet resultSet, SqlTab sqlTab) throws SQLException {
+        protected SqlTab getSqlTab(ResultSet resultSet, SqlTab sqlTab) throws SQLException {
             String column_name = resultSet.getString(3);
             /**/
             SqlTabColumn sqlTabColumn = new SqlTabColumn(sqlTab, sqlTab.getTable().getSqlColumn(column_name));
@@ -1273,7 +1281,7 @@ public class SqlReader extends SqlUtil {
         }
 
         @Override
-        SqlRoutine getSqlRoutine(ResultSet resultSet, SqlTable sqlTable) throws SQLException {
+        protected SqlRoutine getSqlRoutine(ResultSet resultSet, SqlTable sqlTable) throws SQLException {
             String routine_name = resultSet.getString(1);
             String routine_type = resultSet.getString(2);
             /**/
@@ -1284,7 +1292,7 @@ public class SqlReader extends SqlUtil {
         }
 
         @Override
-        SqlRoutine getSqlRoutine(ResultSet resultSet, SqlRoutine sqlRoutine) throws SQLException {
+        protected SqlRoutine getSqlRoutine(ResultSet resultSet, SqlRoutine sqlRoutine) throws SQLException {
             String parameter_name = resultSet.getString(3);
             if (StringUtils.isBlank(parameter_name)) {
                 return sqlRoutine;
@@ -1307,7 +1315,11 @@ public class SqlReader extends SqlUtil {
                 case "char":
                 case "character":
                 case "character varying":
+                case "nchar":
+                case "nvarchar":
+                case "nvarchar2":
                 case "varchar":
+                case "varchar2":
                 case "text":
                     sqlRoutineParameter.setType("string");
                     break;
@@ -1369,13 +1381,13 @@ public class SqlReader extends SqlUtil {
         }
 
         @Override
-        String stringValueOf(SqlRoutineParameter sqlRoutineParameter, String string) {
+        protected String stringValueOf(SqlRoutineParameter sqlRoutineParameter, String string) {
             String trimmed = sqlRoutineParameter.isForeign() ? null : StringUtils.trimToNull(string);
             String value = trimmed == null ? null : stringValueOf(trimmed.toLowerCase(), sqlRoutineParameter.getTrueType());
             return value == null ? super.stringValueOf(sqlRoutineParameter, string) : value;
         }
 
-        String stringValueOf(String string, String type) {
+        protected String stringValueOf(String string, String type) {
             return string == null || type == null ? null
                 : string.equals("current_date") ? "SpecialTemporalValue.CURRENT_DATE"
                 : string.equals("current_time") ? "SpecialTemporalValue.CURRENT_TIME"
@@ -1402,19 +1414,19 @@ public class SqlReader extends SqlUtil {
     class PostgreSqlAid extends SqlAid {
 
         @Override
-        boolean createDefaults() throws SQLException {
+        protected boolean createDefaults() throws SQLException {
             String statement = "select " + _schema + "." + "create_defaults()" + ";";
             return executeStatement(statement);
         }
 
         @Override
-        boolean dropDefaults() throws SQLException {
+        protected boolean dropDefaults() throws SQLException {
             String statement = "select " + _schema + "." + "drop_defaults()" + ";";
             return executeStatement(statement);
         }
 
         @Override
-        PreparedStatementWrapper getSelectRowsStatement(SqlTable sqlTable) {
+        protected PreparedStatementWrapper getSelectRowsStatement(SqlTable sqlTable) {
             String name = sqlTable.getName();
             String pk = sqlTable.getPrimaryKey().getName();
             String sql = "select * from " + _schema + "." + name + " order by " + pk + " limit " + ROW_LIMIT;
@@ -1423,7 +1435,7 @@ public class SqlReader extends SqlUtil {
         }
 
         @Override
-        SqlTable getSqlTable(ResultSet resultSet) throws SQLException {
+        protected SqlTable getSqlTable(ResultSet resultSet) throws SQLException {
             String table_name = resultSet.getString(1);
             String default_label = resultSet.getString(2);
             String default_collection_label = resultSet.getString(3);
@@ -1448,7 +1460,7 @@ public class SqlReader extends SqlUtil {
         }
 
         @Override
-        SqlColumn getSqlColumn(ResultSet resultSet, SqlTable sqlTable) throws SQLException {
+        protected SqlColumn getSqlColumn(ResultSet resultSet, SqlTable sqlTable) throws SQLException {
             String table_name = sqlTable.getName();
             String column_name = resultSet.getString(1);
             int ordinal_position = intValueOf(resultSet.getObject(2));
@@ -1465,10 +1477,12 @@ public class SqlReader extends SqlUtil {
             boolean is_unique_key = booleanValueOf(resultSet.getObject(11));
             boolean is_booleanish = booleanValueOf(resultSet.getObject(12));
             String foreign_table_name = StringUtils.trimToNull(resultSet.getString(13));
+            String default_label = resultSet.getString(14);
             /**/
             SqlColumn sqlColumn = new SqlColumn(sqlTable);
             sqlColumn.setName(column_name);
             sqlColumn.setPosition(ordinal_position);
+            sqlColumn.setDefaultLabel(default_label);
             // <editor-fold defaultstate="collapsed" desc="switch(data_type)...">
             data_type = data_type.replaceAll("\\(.*\\)", "");
             sqlColumn.setSqlDataType(data_type);
@@ -1577,7 +1591,7 @@ public class SqlReader extends SqlUtil {
         }
 
         @Override
-        String literalOf(Object obj) {
+        protected String literalOf(Object obj) {
             String string = unquotedLiteralOf(obj);
             if (string == null) {
                 return "null";
@@ -1596,9 +1610,11 @@ public class SqlReader extends SqlUtil {
             }
         }
 
-        String unquotedLiteralOf(Object obj) {
+        protected String unquotedLiteralOf(Object obj) {
             if (obj == null) {
                 return null;
+            } else if (obj instanceof Clob) {
+                return StrUtils.getSubString((Clob) obj);
             } else if (obj instanceof Date) {
                 return TimeUtils.jdbcDateString(obj);
             } else if (obj instanceof Time) {
@@ -1610,7 +1626,7 @@ public class SqlReader extends SqlUtil {
             }
         }
 
-        String stringValueOf(String string) {
+        protected String stringValueOf(String string) {
             String trimmed = StringUtils.trimToNull(string);
             if (trimmed == null) {
                 return null;
@@ -1632,14 +1648,14 @@ public class SqlReader extends SqlUtil {
         }
 
         @Override
-        String stringValueOf(SqlColumn sqlColumn, String string) {
+        protected String stringValueOf(SqlColumn sqlColumn, String string) {
             String trimmed = sqlColumn.isForeign() ? null : StringUtils.trimToNull(string);
             String value = trimmed == null ? null : stringValueOf(trimmed.toLowerCase(), sqlColumn.getTrueType());
             return value == null ? super.stringValueOf(sqlColumn, string) : value;
         }
 
         @Override
-        SqlIndex getSqlIndex(ResultSet resultSet, SqlTable sqlTable) throws SQLException {
+        protected SqlIndex getSqlIndex(ResultSet resultSet, SqlTable sqlTable) throws SQLException {
             String index_name = resultSet.getString(1);
             boolean is_unique = booleanValueOf(resultSet.getObject(2));
             /**/
@@ -1650,7 +1666,7 @@ public class SqlReader extends SqlUtil {
         }
 
         @Override
-        SqlIndex getSqlIndex(ResultSet resultSet, SqlIndex sqlIndex) throws SQLException {
+        protected SqlIndex getSqlIndex(ResultSet resultSet, SqlIndex sqlIndex) throws SQLException {
             int ordinal_position = intValueOf(resultSet.getObject(3));
             String column_name = resultSet.getString(4);
             String column_option = resultSet.getString(5);
@@ -1664,7 +1680,7 @@ public class SqlReader extends SqlUtil {
         }
 
         @Override
-        SqlTab getSqlTab(ResultSet resultSet, SqlTable sqlTable) throws SQLException {
+        protected SqlTab getSqlTab(ResultSet resultSet, SqlTable sqlTable) throws SQLException {
             String tab_name = resultSet.getString(1);
             String default_label = resultSet.getString(2);
             /**/
@@ -1675,7 +1691,7 @@ public class SqlReader extends SqlUtil {
         }
 
         @Override
-        SqlTab getSqlTab(ResultSet resultSet, SqlTab sqlTab) throws SQLException {
+        protected SqlTab getSqlTab(ResultSet resultSet, SqlTab sqlTab) throws SQLException {
             String column_name = resultSet.getString(3);
             /**/
             SqlTabColumn sqlTabColumn = new SqlTabColumn(sqlTab, sqlTab.getTable().getSqlColumn(column_name));
@@ -1685,7 +1701,7 @@ public class SqlReader extends SqlUtil {
         }
 
         @Override
-        SqlRoutine getSqlRoutine(ResultSet resultSet, SqlTable sqlTable) throws SQLException {
+        protected SqlRoutine getSqlRoutine(ResultSet resultSet, SqlTable sqlTable) throws SQLException {
             String routine_name = resultSet.getString(1);
 //          String routine_type = resultSet.getString(2);
             /**/
@@ -1695,7 +1711,7 @@ public class SqlReader extends SqlUtil {
         }
 
         @Override
-        SqlRoutine getSqlRoutine(ResultSet resultSet, SqlRoutine sqlRoutine) throws SQLException {
+        protected SqlRoutine getSqlRoutine(ResultSet resultSet, SqlRoutine sqlRoutine) throws SQLException {
             String parameter_name = resultSet.getString(3);
             if (StringUtils.isBlank(parameter_name)) {
                 return sqlRoutine;
@@ -1773,13 +1789,13 @@ public class SqlReader extends SqlUtil {
         }
 
         @Override
-        String stringValueOf(SqlRoutineParameter sqlRoutineParameter, String string) {
+        protected String stringValueOf(SqlRoutineParameter sqlRoutineParameter, String string) {
             String trimmed = sqlRoutineParameter.isForeign() ? null : StringUtils.trimToNull(string);
             String value = trimmed == null ? null : stringValueOf(trimmed.toLowerCase(), sqlRoutineParameter.getTrueType());
             return value == null ? super.stringValueOf(sqlRoutineParameter, string) : value;
         }
 
-        String stringValueOf(String string, String type) {
+        protected String stringValueOf(String string, String type) {
             return string == null || type == null ? null
                 : string.equals("current_date") ? "SpecialTemporalValue.CURRENT_DATE"
                 : string.equals("current_time") ? "SpecialTemporalValue.CURRENT_TIME"

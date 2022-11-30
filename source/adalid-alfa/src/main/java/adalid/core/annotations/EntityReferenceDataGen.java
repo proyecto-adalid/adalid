@@ -30,8 +30,7 @@ public @interface EntityReferenceDataGen {
     /**
      * type especifica el método para generar datos para la propiedad. Su valor es uno de los elementos de la enumeración DataGenType. Seleccione
      * DEFAULT para generar el valor por omisión de la propiedad (para dar un valor por omisión a una propiedad se utiliza el método setDefaultValue).
-     * Seleccione SERIES para generar un valor en serie. Seleccione RANDOM para generar un valor aleatorio. Alternativamente, omita el elemento o
-     * seleccione UNSPECIFIED para utilizar el valor predeterminado del atributo. El valor predeterminado del atributo es RANDOM.
+     * Seleccione SERIES para generar un valor en serie. Seleccione RANDOM para generar un valor aleatorio.
      *
      * @return type
      */
@@ -39,7 +38,7 @@ public @interface EntityReferenceDataGen {
 
     /**
      * nullable especifica el porcentaje de valores nulos que se generarán. Este elemento es relevante solo si el valor especificado, o determinado,
-     * para el elemento type es RANDOM. El valor de nullable debe ser un número entero del 0 al 100. El valor predeterminado es 0. Si el valor de
+     * para el elemento type es RANDOM. El valor de nullable debe ser un número entero del 0 al 100. El valor predeterminado es 10. Si el valor de
      * nullable es 100, solo se generarán valores nulos.
      *
      * @return nullable

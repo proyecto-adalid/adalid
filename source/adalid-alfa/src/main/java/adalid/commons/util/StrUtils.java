@@ -22,6 +22,8 @@ import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.sql.Clob;
+import java.sql.SQLException;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -61,6 +63,8 @@ public class StrUtils {
     private static final boolean SQL_ID_WARN = BitUtils.valueOf(bootstrapping.getString("sql.identifier.warn", "false"));
 
     public static final String VALID_CHARS = "abcdefghijklmnopqrstuvwxyz_1234567890";
+
+    public static final int MAX_STRING_LENGTH = 32767;
 
     /**
      * Digest password or other credentials and convert the result to a corresponding hex string.
@@ -504,11 +508,25 @@ public class StrUtils {
     public static String getString(Object obj) {
         if (obj == null) {
             return null;
+        } else if (obj instanceof Clob) {
+            return getSubString((Clob) obj);
         } else if (obj instanceof java.util.Date) {
             return TimeUtils.defaultString((java.util.Date) obj);
         } else {
             return obj.toString();
         }
+    }
+
+    public static String getSubString(Clob clob) {
+        try {
+            long length = clob.length();
+            if (length > MAX_STRING_LENGTH) {
+                return null;
+            }
+            return clob.getSubString(1, (int) length);
+        } catch (SQLException ex) {
+        }
+        return null;
     }
 
     public static String getStringDelimitado(Object obj) {
@@ -1033,6 +1051,18 @@ public class StrUtils {
         return fileName == null ? null : mavenVersionPattern.matcher(fileName).matches() ? fileName : DEFAULT_VERSION;
     }
 
+    private static final Pattern oracleVersionPattern = Pattern.compile("^\\d+[a-z]$");
+
+    public static String getOracleVersionNumber(String string) {
+        String version = StringUtils.isBlank(string) ? null : string.trim().toLowerCase();
+        if (version != null && oracleVersionPattern.matcher(version).matches()) {
+            char c = version.charAt(version.length() - 1);
+            int cn = c - 'a' + 1;
+            return version.replace(c, '.') + cn;
+        }
+        return version;
+    }
+
     public static String getFileName(String string) {
         return getFileName(string, null);
     }
@@ -1052,6 +1082,15 @@ public class StrUtils {
         String dhxless = dhxless(string, sep, invalidCharactersRegex, severalSeparatorsRegex);
         String trimmed = dhxless.replaceAll(prefixSeparators, "").replaceAll(suffixSeparators, "");
         return trimmed;
+    }
+
+    public static String getPageName(String url) {
+        if (StringUtils.isBlank(url)) {
+            return null;
+        }
+        String str1 = StringUtils.substringAfterLast("/" + url.trim(), "/");
+        String str2 = StringUtils.substringBefore(str1, ".");
+        return str2;
     }
 
     private static String dhxless(String string, String separator, String... expressions) {

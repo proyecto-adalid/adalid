@@ -1069,6 +1069,11 @@ public interface Entity extends Comparable<Entity>, DataArtifact, EntityReferenc
     ListStyle getListStyle();
 
     /**
+     * @return the search display format
+     */
+    SearchDisplayFormat getSearchDisplayFormat();
+
+    /**
      * @return the search display mode
      */
     DisplayMode getSearchDisplayMode();

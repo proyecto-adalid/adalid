@@ -89,6 +89,12 @@ public class CondicionTarea extends AbstractPersistentEnumerationEntity {
     @Override
     protected void settleInstances() {
         super.settleInstances();
+        /**/
+        ASIGNADA.setCustomTag(InstanceTag.LIGHT_GREEN.setPillShaped(true));
+        DISPONIBLE.setCustomTag(InstanceTag.BLUE.setPillShaped(true));
+        EJECUTADA.setCustomTag(InstanceTag.GREEN.setPillShaped(true));
+        CANCELADA.setCustomTag(InstanceTag.YELLOW.setPillShaped(true));
+        /**/
         // <editor-fold defaultstate="collapsed" desc="localization of CondicionTarea's instances">
         ASIGNADA.newInstanceField(codigo, "Assigned", ENGLISH);
         ASIGNADA.newInstanceField(codigo, "Asignada", SPANISH);

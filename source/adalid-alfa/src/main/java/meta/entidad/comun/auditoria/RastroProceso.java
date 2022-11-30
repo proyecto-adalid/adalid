@@ -252,21 +252,27 @@ public class RastroProceso extends AbstractPersistentEntity {
     public IntegerProperty transacciones;
 
     @ColumnField(nullable = Kleenean.FALSE)
-    @PropertyField(search = Kleenean.TRUE)
+    public BooleanProperty leido;
+
+    @ColumnField(nullable = Kleenean.FALSE)
+    public BooleanProperty descargado;
+
+    @ColumnField(nullable = Kleenean.FALSE)
+//  @PropertyField(search = Kleenean.TRUE)
     public BooleanProperty procesoAsincrono;
 
     @ColumnField(nullable = Kleenean.FALSE)
-    @PropertyField(search = Kleenean.TRUE)
+//  @PropertyField(search = Kleenean.TRUE)
     public BooleanProperty procesoNativo;
 
     @ColumnField(nullable = Kleenean.FALSE)
-    @PropertyField(search = Kleenean.TRUE)
+//  @PropertyField(search = Kleenean.TRUE)
     public BooleanProperty procesoWeb;
 
     private static final String BORPPSX2 = "/resources/snippets/base/entity/RastroProceso/botonOpenRastroProcesoPorSuperiorX2";
 
     @ColumnField(nullable = Kleenean.FALSE)
-    @PropertyField(search = Kleenean.TRUE, readingDetailSnippet = BORPPSX2)
+    @PropertyField(readingDetailSnippet = BORPPSX2)
     public IntegerProperty subprocesos;
 
     @ColumnField(nullable = Kleenean.FALSE)
@@ -358,6 +364,15 @@ public class RastroProceso extends AbstractPersistentEntity {
         /**/
         transacciones.setInitialValue(0);
         transacciones.setDefaultValue(0);
+        /**/
+        nombreArchivo.setFileDownloadStopFunction("hideDialogoMostrarStatusDownloadPlusRefresh");
+        nombreArchivo.setFileViewerDialogReturnUpdate("mainForm", "northForm", "@(.xs-bar-updatable-component)");
+        /**/
+        leido.setInitialValue(false);
+        leido.setDefaultValue(false);
+        /**/
+        descargado.setInitialValue(false);
+        descargado.setDefaultValue(false);
         /**/
         procesoAsincrono.setInitialValue(false);
         procesoAsincrono.setDefaultValue(false);
@@ -531,6 +546,12 @@ public class RastroProceso extends AbstractPersistentEntity {
         transacciones.setLocalizedLabel(ENGLISH, "transaction count");
         transacciones.setLocalizedLabel(SPANISH, "cantidad de transacciones");
         /**/
+        leido.setLocalizedLabel(ENGLISH, "read");
+        leido.setLocalizedLabel(SPANISH, "leído");
+        /**/
+        descargado.setLocalizedLabel(ENGLISH, "downloaded");
+        descargado.setLocalizedLabel(SPANISH, "descargado");
+        /**/
         procesoAsincrono.setLocalizedLabel(ENGLISH, "asynchronous process");
         procesoAsincrono.setLocalizedLabel(SPANISH, "proceso asíncrono");
         /**/
@@ -580,6 +601,7 @@ public class RastroProceso extends AbstractPersistentEntity {
         super.settleTabs();
         /**/
         tab110.newTabField(id, superior, fechaHoraInicioEjecucion, fechaHoraFinEjecucion,
+            leido, descargado,
             usuario, codigoUsuario, nombreUsuario,
             funcion, codigoFuncion, nombreFuncion, descripcionFuncion, paginaFuncion,
             idClaseRecursoValor, codigoClaseRecursoValor, nombreClaseRecursoValor, recursoValor,
@@ -606,11 +628,21 @@ public class RastroProceso extends AbstractPersistentEntity {
         // </editor-fold>
     }
 
+    Segment finalizado, pendiente, pendienteActual;
+
     Segment sinSuperior, conSuperior, sinSubprocesos, conSubprocesos;
 
     @Override
     protected void settleExpressions() {
         super.settleExpressions();
+        /**/
+        finalizado = condicionEjeFun.isIn(
+            condicionEjeFun.EJECUTADO_SIN_ERRORES,
+            condicionEjeFun.EJECUTADO_CON_ERRORES,
+            condicionEjeFun.EJECUCION_CANCELADA
+        );
+        pendiente = and(procesoAsincrono, superior.isNull(), finalizado, not(leido), not(descargado));
+        pendienteActual = pendiente.and(codigoUsuario.isEqualTo(CURRENT_USER_CODE));
         /**/
         sinSuperior = superior.isNull();
         conSuperior = superior.isNotNull();
@@ -619,6 +651,24 @@ public class RastroProceso extends AbstractPersistentEntity {
         conSubprocesos = subprocesos.isGreaterThan(0);
         /**/
         // <editor-fold defaultstate="collapsed" desc="localization of RastroProceso's expressions">
+        /**/
+        pendiente.setLocalizedCollectionLabel(ENGLISH, "all processes not read or downloaded by their owner user");
+        pendiente.setLocalizedCollectionLabel(SPANISH, "todos los procesos no leídos ni descargados por su usuario propietario");
+        pendiente.setLocalizedCollectionShortLabel(ENGLISH, "Processes not read nor downloaded");
+        pendiente.setLocalizedCollectionShortLabel(SPANISH, "Procesos no leídos ni descargados");
+        pendiente.setLocalizedDescription(ENGLISH, "the process has not been read or downloaded by its owner user");
+        pendiente.setLocalizedDescription(SPANISH, "el proceso no ha sido leído ni descargado por su usuario propietario");
+        pendiente.setLocalizedErrorMessage(ENGLISH, "the process has already been read or downloaded by its owner user");
+        pendiente.setLocalizedErrorMessage(SPANISH, "el proceso ya fue leído o descargado por su usuario propietario");
+        /**/
+        pendienteActual.setLocalizedCollectionLabel(ENGLISH, "all your processes not read nor downloaded by you");
+        pendienteActual.setLocalizedCollectionLabel(SPANISH, "todos sus procesos no leídos ni descargados por usted");
+        pendienteActual.setLocalizedCollectionShortLabel(ENGLISH, "My unread and undownloaded processes");
+        pendienteActual.setLocalizedCollectionShortLabel(SPANISH, "Mis procesos no leídos ni descargados");
+        pendienteActual.setLocalizedDescription(ENGLISH, "the process has not been read or downloaded by the current user");
+        pendienteActual.setLocalizedDescription(SPANISH, "el proceso no ha sido leído ni descargado por el usuario actual");
+        pendienteActual.setLocalizedErrorMessage(ENGLISH, "the process has already been read or downloaded by you");
+        pendienteActual.setLocalizedErrorMessage(SPANISH, "el proceso ya fue leído o descargado por usted");
         /**/
         sinSuperior.setLocalizedCollectionLabel(ENGLISH, "audit trails of main processes (processes without parent process)");
         sinSuperior.setLocalizedCollectionLabel(SPANISH, "rastros de auditoría de procesos principales (procesos sin proceso superior)");
@@ -665,11 +715,197 @@ public class RastroProceso extends AbstractPersistentEntity {
         /**/
         setMasterDetailFilter(superior.conSubprocesos);
         /**/
+        addSelectSegment(pendienteActual, false);
+        addSelectSegment(pendiente, false);
+        /**/
 //      addSelectSegment(sinSuperior, true); // no, porque hay páginas de rastros/superior
         addSelectSegment(sinSuperior, conSuperior, sinSubprocesos, conSubprocesos);
         /**/
         tab130.setRenderingFilter(conSubprocesos);
         /**/
+    }
+
+    protected MarcarComoLeido marcarComoLeido;
+
+    @OperationClass(access = OperationAccess.RESTRICTED)
+    public class MarcarComoLeido extends ProcessOperation {
+
+        @InstanceReference
+        protected RastroProceso proceso;
+
+        @Override
+        protected void settleAttributes() {
+            super.settleAttributes();
+            /**/
+            // <editor-fold defaultstate="collapsed" desc="localization of MarcarComoLeido's attributes">
+            /**/
+            setLocalizedLabel(ENGLISH, "mark as read");
+            setLocalizedLabel(SPANISH, "marcar como leído");
+            /**/
+            setLocalizedDescription(ENGLISH, "mark process as read");
+            setLocalizedDescription(SPANISH, "marcar proceso como leído");
+            /**/
+            setLocalizedSuccessMessage(ENGLISH, "the process was marked as read");
+            setLocalizedSuccessMessage(SPANISH, "el proceso fue marcado como leído");
+            /**/
+            // </editor-fold>
+            /**/
+        }
+
+        @Override
+        protected void settleParameters() {
+            super.settleParameters();
+            /**/
+            proceso.leido.setCurrentValue(true);
+            /**/
+            // <editor-fold defaultstate="collapsed" desc="localization of MarcarComoLeido's parameters">
+            /**/
+            proceso.setLocalizedLabel(ENGLISH, "process");
+            proceso.setLocalizedLabel(SPANISH, "proceso");
+            /**/
+            // </editor-fold>
+            /**/
+        }
+
+        Check check101, check102, check103, check104, check105;
+
+        @Override
+        protected void settleExpressions() {
+            super.settleExpressions();
+            /**/
+            check101 = proceso.condicionEjeFun.isIn(
+                proceso.condicionEjeFun.EJECUTADO_SIN_ERRORES,
+                proceso.condicionEjeFun.EJECUTADO_CON_ERRORES,
+                proceso.condicionEjeFun.EJECUCION_CANCELADA
+            );
+            check102 = proceso.codigoUsuario.isEqualTo(CURRENT_USER_CODE);
+            check103 = not(proceso.leido.or(proceso.descargado));
+            check104 = proceso.procesoAsincrono.isTrue();
+            check105 = proceso.superior.isNull();
+            /**/
+            // <editor-fold defaultstate="collapsed" desc="localization of MarcarComoLeido's expressions">
+            /**/
+            check101.setLocalizedDescription(ENGLISH, "the process has finished");
+            check101.setLocalizedDescription(SPANISH, "el proceso ha terminado");
+            check101.setLocalizedErrorMessage(ENGLISH, "it is not allowed to mark as read those processes that have not finished");
+            check101.setLocalizedErrorMessage(SPANISH, "no se permite marcar como leídos aquellos procesos que no hayan finalizado");
+            /**/
+            check102.setLocalizedDescription(ENGLISH, "the process belongs to the current user");
+            check102.setLocalizedDescription(SPANISH, "el proceso le pertenece al usuario actual");
+            check102.setLocalizedErrorMessage(ENGLISH, "the process does not belong to your user");
+            check102.setLocalizedErrorMessage(SPANISH, "el proceso no le pertenece a su usuario");
+            /**/
+            check103.setLocalizedDescription(ENGLISH, "the process has not been read nor downloaded");
+            check103.setLocalizedDescription(SPANISH, "el proceso no ha sido leído ni descargado");
+            check103.setLocalizedErrorMessage(ENGLISH, "the process has been read or downloaded");
+            check103.setLocalizedErrorMessage(SPANISH, "el proceso ya fue leído o descargado");
+            /**/
+            check104.setLocalizedDescription(ENGLISH, "the process is asynchronous");
+            check104.setLocalizedDescription(SPANISH, "el proceso es asíncrono");
+            check104.setLocalizedErrorMessage(ENGLISH, "the process is synchronous");
+            check104.setLocalizedErrorMessage(SPANISH, "el proceso es sincronizado");
+            /**/
+            check105.setLocalizedDescription(ENGLISH, "the process is not a subprocess");
+            check105.setLocalizedDescription(SPANISH, "el proceso no es un subproceso");
+            check105.setLocalizedErrorMessage(ENGLISH, "the process is a subprocess");
+            check105.setLocalizedErrorMessage(SPANISH, "el proceso es un subproceso");
+            /**/
+            // </editor-fold>
+            /**/
+        }
+
+    }
+
+    protected MarcarComoNoLeido marcarComoNoLeido;
+
+    @OperationClass(access = OperationAccess.RESTRICTED)
+    public class MarcarComoNoLeido extends ProcessOperation {
+
+        @InstanceReference
+        protected RastroProceso proceso;
+
+        @Override
+        protected void settleAttributes() {
+            super.settleAttributes();
+            /**/
+            // <editor-fold defaultstate="collapsed" desc="localization of MarcarComoNoLeido's attributes">
+            /**/
+            setLocalizedLabel(ENGLISH, "mark as unread and undownloaded");
+            setLocalizedLabel(SPANISH, "marcar como no leído");
+            /**/
+            setLocalizedDescription(ENGLISH, "mark process as unread and undownloaded");
+            setLocalizedDescription(SPANISH, "marcar proceso como no leído");
+            /**/
+            setLocalizedSuccessMessage(ENGLISH, "the process was marked as unread and undownloaded");
+            setLocalizedSuccessMessage(SPANISH, "el proceso fue marcado como no leído");
+            /**/
+            // </editor-fold>
+            /**/
+        }
+
+        @Override
+        protected void settleParameters() {
+            super.settleParameters();
+            /**/
+            proceso.leido.setCurrentValue(false);
+            proceso.descargado.setCurrentValue(false);
+            /**/
+            // <editor-fold defaultstate="collapsed" desc="localization of MarcarComoNoLeido's parameters">
+            /**/
+            proceso.setLocalizedLabel(ENGLISH, "process");
+            proceso.setLocalizedLabel(SPANISH, "proceso");
+            /**/
+            // </editor-fold>
+            /**/
+        }
+
+        Check check101, check102, check103, check104, check105;
+
+        @Override
+        protected void settleExpressions() {
+            super.settleExpressions();
+            /**/
+            check101 = proceso.condicionEjeFun.isIn(
+                proceso.condicionEjeFun.EJECUTADO_SIN_ERRORES,
+                proceso.condicionEjeFun.EJECUTADO_CON_ERRORES,
+                proceso.condicionEjeFun.EJECUCION_CANCELADA
+            );
+            check102 = proceso.codigoUsuario.isEqualTo(CURRENT_USER_CODE);
+            check103 = proceso.leido.or(proceso.descargado);
+            check104 = proceso.procesoAsincrono.isTrue();
+            check105 = proceso.superior.isNull();
+            /**/
+            // <editor-fold defaultstate="collapsed" desc="localization of MarcarComoNoLeido's expressions">
+            /**/
+            check101.setLocalizedDescription(ENGLISH, "the process has finished");
+            check101.setLocalizedDescription(SPANISH, "el proceso ha terminado");
+            check101.setLocalizedErrorMessage(ENGLISH, "it is not allowed to mark as unread those processes that have not finished");
+            check101.setLocalizedErrorMessage(SPANISH, "no se permite marcar como no leídos aquellos procesos que no hayan finalizado");
+            /**/
+            check102.setLocalizedDescription(ENGLISH, "the process belongs to the current user");
+            check102.setLocalizedDescription(SPANISH, "el proceso le pertenece al usuario actual");
+            check102.setLocalizedErrorMessage(ENGLISH, "the process does not belong to your user");
+            check102.setLocalizedErrorMessage(SPANISH, "el proceso no le pertenece a su usuario");
+            /**/
+            check103.setLocalizedDescription(ENGLISH, "the process has been read or downloaded");
+            check103.setLocalizedDescription(SPANISH, "el proceso ya fue leído o descargado");
+            check103.setLocalizedErrorMessage(ENGLISH, "the process has not been read nor downloaded");
+            check103.setLocalizedErrorMessage(SPANISH, "el proceso no ha sido leído ni descargado");
+            /**/
+            check104.setLocalizedDescription(ENGLISH, "the process is asynchronous");
+            check104.setLocalizedDescription(SPANISH, "el proceso es asíncrono");
+            check104.setLocalizedErrorMessage(ENGLISH, "the process is synchronous");
+            check104.setLocalizedErrorMessage(SPANISH, "el proceso es sincronizado");
+            /**/
+            check105.setLocalizedDescription(ENGLISH, "the process is not a subprocess");
+            check105.setLocalizedDescription(SPANISH, "el proceso no es un subproceso");
+            check105.setLocalizedErrorMessage(ENGLISH, "the process is a subprocess");
+            check105.setLocalizedErrorMessage(SPANISH, "el proceso es un subproceso");
+            /**/
+            // </editor-fold>
+            /**/
+        }
+
     }
 
 }

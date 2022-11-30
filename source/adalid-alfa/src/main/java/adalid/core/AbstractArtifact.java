@@ -635,7 +635,6 @@ public abstract class AbstractArtifact implements Artifact, Wrappable {
         if (artifact instanceof AbstractArtifact) {
             if (artifact != this) {
                 AbstractArtifact that = (AbstractArtifact) artifact;
-                /**/
                 _localizedLabel.clear();
                 _localizedLabel.putAll(that._localizedLabel);
                 _localizedShortLabel.clear();
@@ -1627,6 +1626,18 @@ public abstract class AbstractArtifact implements Artifact, Wrappable {
 
     protected boolean isFontAwesomeClass(String name) {
         return name != null && name.matches(Constants.FONT_AWESOME_CLASS_REGEX);
+    }
+
+    protected String xs(String name) {
+        return fairUnicodeSymbolName(name);
+    }
+
+    String fairUnicodeSymbolName(String name) {
+        return isUnicodeSymbolClass(name) ? name.trim().replaceAll(" +", " ") : name;
+    }
+
+    protected boolean isUnicodeSymbolClass(String name) {
+        return name != null && name.matches(Constants.UNICODE_SYMBOL_CLASS_REGEX);
     }
 
     protected boolean isValidEmbeddedDocument(String document) {

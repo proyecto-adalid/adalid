@@ -108,6 +108,11 @@ public class ArchivoAdjunto extends AbstractPersistentEntity {
     @StringField(maxLength = 100)
     public StringProperty tipoContenido;
 
+    @ColumnField(nullable = Kleenean.TRUE)
+    @PropertyField(table = Kleenean.FALSE)
+    @StringField(maxLength = 100)
+    public StringProperty conjuntoCaracteres;
+
     @ColumnField(nullable = Kleenean.FALSE)
     @PropertyField(table = Kleenean.TRUE, report = Kleenean.TRUE, search = Kleenean.TRUE, overlay = Kleenean.TRUE)
     public LongProperty longitud;
@@ -219,6 +224,11 @@ public class ArchivoAdjunto extends AbstractPersistentEntity {
         tipoContenido.setLocalizedDescription(SPANISH, "tipo MIME (Multipurpose Internet Mail Extensions) que corresponde al contenido del archivo");
         tipoContenido.setLocalizedLabel(ENGLISH, "content type");
         tipoContenido.setLocalizedLabel(SPANISH, "tipo contenido");
+        /**/
+        conjuntoCaracteres.setLocalizedDescription(ENGLISH, "character set used for file encoding; only applies to text files");
+        conjuntoCaracteres.setLocalizedDescription(SPANISH, "conjunto de caracteres utilizado para la codificación del archivo; solo aplica a archivos de texto");
+        conjuntoCaracteres.setLocalizedLabel(ENGLISH, "character set");
+        conjuntoCaracteres.setLocalizedLabel(SPANISH, "conjunto de caracteres");
         /**/
         longitud.setLocalizedDescription(ENGLISH, "file size, in bytes");
         longitud.setLocalizedDescription(SPANISH, "tamaño del archivo, en bytes");

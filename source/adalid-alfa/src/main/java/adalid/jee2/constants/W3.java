@@ -15,7 +15,8 @@ package adalid.jee2.constants;
 /**
  * CSS Classes of W3.CSS
  *
- * @see <a href="https://www.w3schools.com/w3css/">https://www.w3schools.com/w3css/</a>
+ * @see <a href="https://www.w3schools.com/w3css/">W3.CSS Tutorial</a>
+ *
  * @author Jorge Campins
  */
 public class W3 {

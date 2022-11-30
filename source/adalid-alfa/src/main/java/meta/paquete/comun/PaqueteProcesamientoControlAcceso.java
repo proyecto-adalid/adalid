@@ -21,6 +21,7 @@ import meta.entidad.comun.control.acceso.RolFiltroFuncion;
 import meta.entidad.comun.control.acceso.RolFuncion;
 import meta.entidad.comun.control.acceso.RolFuncionPar;
 import meta.entidad.comun.control.acceso.RolPagina;
+import meta.entidad.comun.control.acceso.RolPaginaEspecial;
 import meta.entidad.comun.control.acceso.RolUsuario;
 import meta.entidad.comun.control.acceso.RolVistaFuncion;
 import meta.entidad.comun.control.acceso.Segmento;
@@ -63,6 +64,7 @@ public class PaqueteProcesamientoControlAcceso extends PaqueteProcesamientoBase 
         System.out.println(RolFuncion);
         System.out.println(RolFuncionPar);
         System.out.println(RolPagina);
+        System.out.println(RolPaginaEspecial);
         System.out.println(RolUsuario);
         System.out.println(RolVistaFuncion);
         System.out.println(Segmento);
@@ -91,6 +93,8 @@ public class PaqueteProcesamientoControlAcceso extends PaqueteProcesamientoBase 
     RolFuncionPar RolFuncionPar;
 
     RolPagina RolPagina;
+
+    RolPaginaEspecial RolPaginaEspecial;
 
     RolUsuario RolUsuario;
 

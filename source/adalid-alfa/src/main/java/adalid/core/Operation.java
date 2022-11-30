@@ -14,6 +14,7 @@ package adalid.core;
 
 import adalid.commons.util.*;
 import adalid.core.annotations.*;
+import adalid.core.comparators.*;
 import adalid.core.data.types.*;
 import adalid.core.enums.*;
 import adalid.core.exceptions.*;
@@ -25,6 +26,7 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -666,10 +668,6 @@ public abstract class Operation extends AbstractArtifact implements Comparable<O
         return _confirmationRequired;
     }
 
-    void setConfirmationRequired(boolean required) {
-        _confirmationRequired = required;
-    }
-
     /**
      * @return the complex operation indicator
      */
@@ -868,10 +866,6 @@ public abstract class Operation extends AbstractArtifact implements Comparable<O
         initialise(true);
     }
 
-    void initialise() {
-        initialise(false);
-    }
-
     private void initialise(boolean b) {
         track("initialise", b);
         if (_initialised) {
@@ -961,18 +955,6 @@ public abstract class Operation extends AbstractArtifact implements Comparable<O
         }
     }
 
-    void prepare() {
-        /*
-        if (_prepared) {
-            logger.warn(getFullName() + " already prepared! ");
-            Project.increaseParserWarningCount();
-            return;
-        }
-        _prepared = true;
-        prepareFields(); // TODO: check all annotations using field lists, etc.
-        /**/
-    }
-
     void settle() {
         if (_settled) {
             return;
@@ -1027,6 +1009,7 @@ public abstract class Operation extends AbstractArtifact implements Comparable<O
             finaliseFields();
             checkExpressions();
             checkTransitions();
+            setParametersDisplaySortKey();
         }
         return ok;
     }
@@ -1149,8 +1132,7 @@ public abstract class Operation extends AbstractArtifact implements Comparable<O
         }
     }
     /**/
-    char prepareFields;
-
+//
     // <editor-fold defaultstate="collapsed" desc="prepareParameter">
     /*
     private void prepareParameter(Field field, Parameter parameter) {
@@ -1175,9 +1157,8 @@ public abstract class Operation extends AbstractArtifact implements Comparable<O
         }
     }
     /**/
-    char prepareParameter;
     // </editor-fold>
-
+//
     // <editor-fold defaultstate="collapsed" desc="prepareExpression">
     /*
     private void prepareExpression(Field field, Expression expression) {
@@ -1195,9 +1176,8 @@ public abstract class Operation extends AbstractArtifact implements Comparable<O
     }
     // </editor-fold>
     /**/
-    char prepareExpression;
     // </editor-fold>
-
+//
     // <editor-fold defaultstate="collapsed" desc="finaliseFields">
     private void finaliseFields() {
         String name;
@@ -1314,6 +1294,71 @@ public abstract class Operation extends AbstractArtifact implements Comparable<O
             }
             if (parameter != null) {
                 parameter.finish();
+            }
+        }
+    }
+
+    /**
+     * anchor-linked parameters indicator
+     */
+    private boolean _containsAnchorLinkedParameters;
+
+    /**
+     * @return the contains anchor-linked parameters indicator
+     */
+    public boolean containsAnchorLinkedParameters() {
+        return _containsAnchorLinkedParameters;
+    }
+
+    /**
+     * @return the parameters list sorted by display sort key
+     */
+    public List<Parameter> getParametersListByDisplaySortKey() {
+        List<Parameter> list = getParametersList();
+        Comparator<Parameter> comparator = new ByParameterDisplaySortKey();
+        list = (List<Parameter>) ColUtils.sort(list, comparator);
+        return list;
+    }
+
+    private void setParametersDisplaySortKey() {
+        List<Parameter> list = getParametersList();
+        Comparator<Parameter> comparator = new ByParameterSequence();
+        list = (List<Parameter>) ColUtils.sort(list, comparator);
+        int i = 0;
+        for (Parameter parameter : list) {
+            parameter.setDisplaySortKey(String.format("%04d", i++));
+        }
+        for (Parameter parameter : list) {
+            if (parameter.getAnchorParameter() == null) {
+                setChildrenDisplaySortKey(parameter, list);
+            } else if (!parameter.isHiddenField()) {
+                boolean unlinked = AnchorType.UNLINKED.equals(parameter.getAnchorType());
+                if (!unlinked) {
+                    _containsAnchorLinkedParameters = true;
+                }
+            }
+        }
+        /*
+        if (!list.isEmpty()) {
+            System.out.println(getFullName());
+            for (Parameter parameter : list) {
+                System.out.println("\t" + parameter.getDisplaySortKey() + "\t" + parameter.getName());
+            }
+            System.out.println();
+        }
+        /**/
+    }
+
+    private void setChildrenDisplaySortKey(Parameter parent, List<Parameter> list) {
+        int i = 0;
+        for (Parameter child : list) {
+            if (child.getAnchorParameter() == parent) {
+                boolean unlinked = AnchorType.UNLINKED.equals(child.getAnchorType());
+                if (!unlinked && !child.isHiddenField()) {
+                    parent.setAnchoringLinkedParameters(true);
+                }
+                child.setDisplaySortKey(parent.getDisplaySortKey() + (unlinked ? '/' : '-') + String.format("%02d", i++));
+                setChildrenDisplaySortKey(child, list); // como '/' es mayor que '-' las UNLINKED quedan después de las enlazadas
             }
         }
     }
@@ -1461,12 +1506,16 @@ public abstract class Operation extends AbstractArtifact implements Comparable<O
     protected static final String GOOGLE_MAPS_EMBED_CONVERTER = "convertidorGoogleMapsEmbed";
 
     protected static final String PHONE_NUMBER_VALIDATOR = "phoneNumberValidator";
+
+    protected static final String LOCAL_PHONE_NUMBER_VALIDATOR = "localPhoneNumberValidator";
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Special Fields">
     protected static final String EMAIL_REGEX = Constants.EMAIL_REGEX;
 
     protected static final String PHONE_REGEX = Constants.PHONE_REGEX;
+
+    protected static final String LOCAL_PHONE_REGEX = Constants.LOCAL_PHONE_REGEX;
 
     protected static final String URL_REGEX = Constants.URL_REGEX;
 
@@ -1485,6 +1534,8 @@ public abstract class Operation extends AbstractArtifact implements Comparable<O
     protected static final CharacterScalarX EMPTY_STRING = XB.EMPTY_STRING;
 
     protected static final CharacterScalarX EMPTY = XB.EMPTY;
+
+    protected static final CharacterScalarX SPACE = XB.SPACE;
 
     protected static final CharacterScalarX CURRENT_USER_CODE = XB.CURRENT_USER_CODE;
 
@@ -1507,6 +1558,118 @@ public abstract class Operation extends AbstractArtifact implements Comparable<O
     protected static final java.sql.Timestamp EPOCH_TIMESTAMP = TimestampData.EPOCH;
 
     protected static final EntityScalarX NULL_ENTITY = XB.NULL_ENTITY;
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="Special Fields">
+    protected static final String EMAIL_REGEX_ENGLISH_DESCRIPTION = ""
+        + "an e-mail address must start with a user name, followed by an @ sign and a domain name; "
+        + "for example: john.doe@gmail.com"
+        + "";
+
+    protected static final String EMAIL_REGEX_SPANISH_DESCRIPTION = ""
+        + "una dirección de correo electrónico debe comenzar con un nombre de usuario, seguido de un signo @ y un nombre de dominio; "
+        + "por ejemplo: juan.bimba@gmail.com"
+        + "";
+
+    protected static final String EMAIL_REGEX_ENGLISH_ERROR_MESSAGE = ""
+        + "the e-mail address does not meet the required pattern; "
+        + "it must start with a user name, followed by an @ sign and a domain name."
+        + "";
+
+    protected static final String EMAIL_REGEX_SPANISH_ERROR_MESSAGE = ""
+        + "la dirección de correo electrónico no cumple con el patrón requerido; "
+        + "debe comenzar con un nombre de usuario, seguido de un signo @ y un nombre de dominio."
+        + "";
+
+    protected static final String PHONE_REGEX_ENGLISH_DESCRIPTION = ""
+        + "this is an international phone number; "
+        + "it must start with a country code, "
+        + "followed by a global subscriber number or an area code and a subscriber number; "
+        + "for example: +58 4121234567, +58-412-1234567"
+        + "";
+
+    protected static final String PHONE_REGEX_SPANISH_DESCRIPTION = ""
+        + "este es un número de teléfono internacional; "
+        + "debe comenzar con un código de país, "
+        + "seguido de un número de suscriptor global o un código de área y un número de suscriptor; "
+        + "por ejemplo: +58 4121234567, +58-412-1234567"
+        + "";
+
+    protected static final String PHONE_REGEX_ENGLISH_ERROR_MESSAGE = ""
+        + "the phone number does not meet the required pattern; "
+        + "it must start with a country code, i.e. a plus sign and a group of 1 to 3 digits, "
+        + "followed by a global subscriber number, i.e. a group of 7 to 14 digits; "
+        + "country code and global subscriber number must be separated by a single white space or hyphen; "
+        + "global subscriber number can be divided into area code, a group of 1 to 4 digits, and subscriber number, a group of 6 to 10 digits; "
+        + "the area code and subscriber number must be separated by a single blank space or hyphen; "
+        + "whatever their distribution among the groups, the total number of digits must be between 8 and 15."
+        + "";
+
+    protected static final String PHONE_REGEX_SPANISH_ERROR_MESSAGE = ""
+        + "el número de teléfono no cumple con el patrón requerido; "
+        + "éste debe comenzar con un código de país, es decir, un signo más y un grupo de 1 hasta 3 dígitos, "
+        + "seguido de un número de suscriptor global, es decir, un grupo de 7 hasta 14 dígitos; "
+        + "el código de país y el número de suscriptor global deben estar separados por un solo espacio en blanco o guión; "
+        + "el número de suscriptor global se puede dividir en código de área, un grupo de 1 hasta 4 dígitos, y número de suscriptor, un grupo de 6 a 10 dígitos; "
+        + "el código de área y el número de suscriptor deben estar separados por un solo espacio en blanco o guión; "
+        + "cualquiera que sea su distribución entre los grupos, el número total de dígitos debe estar entre 8 y 15."
+        + "";
+
+    protected static final String LOCAL_PHONE_REGEX_ENGLISH_DESCRIPTION = ""
+        + "this is a local phone number; "
+        + "it must be a global subscriber number or an area code and a subscriber number; "
+        + "for example: 4121234567, 412-1234567"
+        + "";
+
+    protected static final String LOCAL_PHONE_REGEX_SPANISH_DESCRIPTION = ""
+        + "este es un número de teléfono local; "
+        + "debe ser un número de suscriptor global o un código de área y un número de suscriptor; "
+        + "por ejemplo: 4121234567, 412-1234567"
+        + "";
+
+    protected static final String LOCAL_PHONE_REGEX_ENGLISH_ERROR_MESSAGE = ""
+        + "the phone number does not meet the required pattern; "
+        + "it must be a global subscriber number, i.e. a group of 7 to 14 digits; "
+        + "or it can be divided into area code, a group of 1 to 4 digits, and subscriber number, a group of 6 to 10 digits; "
+        + "the area code and subscriber number must be separated by a single blank space or hyphen; "
+        + "whatever their distribution among the groups, the total number of digits must be between 7 and 14."
+        + "";
+
+    protected static final String LOCAL_PHONE_REGEX_SPANISH_ERROR_MESSAGE = ""
+        + "el número de teléfono no cumple con el patrón requerido; "
+        + "éste debe ser un número de suscriptor global, es decir, un grupo de 7 hasta 14 dígitos; "
+        + "o se puede dividir en código de área, un grupo de 1 hasta 4 dígitos, y número de suscriptor, un grupo de 6 a 10 dígitos; "
+        + "el código de área y el número de suscriptor deben estar separados por un solo espacio en blanco o guión; "
+        + "cualquiera que sea su distribución entre los grupos, el número total de dígitos debe estar entre 7 y 14."
+        + "";
+
+    protected static final String URL_REGEX_ENGLISH_DESCRIPTION = ""
+        + "this is a website URL, i.e. the location of a specific website, page, or file on the Internet; "
+        + "it must start with a protocol (usually http:// or https://), followed by / and a domain name; "
+        + "optionally, after the domain name, the URL can include a \"path\", "
+        + "to direct the browser to a specific page on the website; "
+        + "for example: https://en.wikipedia.org/wiki/URL"
+        + "";
+
+    protected static final String URL_REGEX_SPANISH_DESCRIPTION = ""
+        + "esta es una URL de un sitio web, es decir, la ubicación de un sitio web, página o archivo específico en Internet; "
+        + "debe comenzar con un protocolo (generalmente http:// o https://), seguido de / y un nombre de dominio; "
+        + "opcionalmente, después del nombre de dominio, la URL puede incluir una \"ruta\", "
+        + "para dirigir al navegador a una página específica en el sitio web; "
+        + "por ejemplo: https://es.wikipedia.org/wiki/Localizador_de_recursos_uniforme"
+        + "";
+
+    protected static final String URL_REGEX_ENGLISH_ERROR_MESSAGE = ""
+        + "the URL does not meet the required pattern; "
+        + "it must start with a protocol, followed by / and a domain name; "
+        + "optionally, after the domain name, the URL can include a \"path\"."
+        + "";
+
+    protected static final String URL_REGEX_SPANISH_ERROR_MESSAGE = ""
+        + "la URL no cumple con el patrón requerido; "
+        + "debe comenzar con un protocolo, seguido de / y un nombre de dominio; "
+        + "opcionalmente, después del nombre de dominio, la URL puede incluir una \"ruta\"."
+        + "";
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Special Expressions">

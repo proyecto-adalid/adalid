@@ -89,6 +89,7 @@ public class RolPagina extends AbstractPersistentEntity {
         super.settleAttributes();
 //      setSchema(ProyectoBase.getEsquemaEntidadesComunes());
         // <editor-fold defaultstate="collapsed" desc="localization of RolPagina's attributes">
+        /**/
         setLocalizedLabel(ENGLISH, "role/page association");
         setLocalizedLabel(SPANISH, "asociación Rol/Página");
         setLocalizedCollectionLabel(ENGLISH, "Role/Page Associations");
@@ -98,6 +99,7 @@ public class RolPagina extends AbstractPersistentEntity {
         setLocalizedCollectionLabel(SPANISH, rol, "Favoritos por Rol");
         setLocalizedCollectionShortLabel(ENGLISH, rol, "Favorites");
         setLocalizedCollectionShortLabel(SPANISH, rol, "Favoritos");
+        /**/
         // </editor-fold>
     }
 
@@ -105,18 +107,22 @@ public class RolPagina extends AbstractPersistentEntity {
     protected void settleProperties() {
         super.settleProperties();
         // <editor-fold defaultstate="collapsed" desc="localization of RolPagina's properties">
+        /**/
         rol.setLocalizedLabel(ENGLISH, "role");
         rol.setLocalizedLabel(SPANISH, "rol");
         /**/
         pagina.setLocalizedLabel(ENGLISH, "page");
         pagina.setLocalizedLabel(SPANISH, "página");
+        /**/
         // </editor-fold>
     }
 
     @Override
     protected void settleLinks() {
         super.settleLinks();
+        /**/
         linkForeignSegmentProperty(rol.grupo);
+        /**/
     }
 
     protected Key uk_rol_pagina_0001;
@@ -124,8 +130,10 @@ public class RolPagina extends AbstractPersistentEntity {
     @Override
     protected void settleKeys() {
         super.settleKeys();
+        /**/
         uk_rol_pagina_0001.setUnique(true);
         uk_rol_pagina_0001.newKeyField(rol, pagina);
+        /**/
     }
 
     protected Check check101;
@@ -133,6 +141,7 @@ public class RolPagina extends AbstractPersistentEntity {
     @Override
     protected void settleExpressions() {
         super.settleExpressions();
+        /**/
         check101 = and(pagina.esEspecial.isFalse(),
             pagina.tipoPagina.isNotEqualTo(pagina.tipoPagina.DETALLE),
             pagina.tipoPagina.isNotEqualTo(pagina.tipoPagina.CONSULTA_DETALLE),
@@ -145,19 +154,23 @@ public class RolPagina extends AbstractPersistentEntity {
         dominio.setCalculableValueEntityReference(pagina.dominio);
         /**/
         // <editor-fold defaultstate="collapsed" desc="localization of RolPagina's expressions">
+        /**/
         check101.setLocalizedLabel(ENGLISH, "check page");
         check101.setLocalizedLabel(SPANISH, "chequear página");
         check101.setLocalizedDescription(ENGLISH, "the page should not be a special or detail or master/detail page");
         check101.setLocalizedDescription(SPANISH, "la página no debe ser una página especial, ni de detalle, ni de maestro/detalle");
         check101.setLocalizedErrorMessage(ENGLISH, "the page is a special or detail or master/detail page");
         check101.setLocalizedErrorMessage(SPANISH, "la página es una página especial, o de detalle, o de maestro/detalle");
+        /**/
         // </editor-fold>
     }
 
     @Override
     protected void settleFilters() {
         super.settleFilters();
+        /**/
         pagina.setSearchQueryFilter(check101);
+        /**/
     }
 
 }

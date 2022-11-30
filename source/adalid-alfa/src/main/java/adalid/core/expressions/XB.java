@@ -35,7 +35,9 @@ public class XB {
 
     public static AnyTypeExpressionBuilder AnyType;
 
-    static XB instance = new XB();
+    static {
+        new XB();
+    }
 
     private XB() {
         Entity = new EntityExpressionBuilder();
@@ -2944,6 +2946,8 @@ public class XB {
 
     public static final CharacterScalarX EMPTY = new CharacterScalarX(null, SpecialCharacterValue.EMPTY);
 
+    public static final CharacterScalarX SPACE = new CharacterScalarX(null, " ");
+
     public static final CharacterScalarX CURRENT_USER_CODE = new CharacterScalarX(null, SpecialCharacterValue.CURRENT_USER_CODE);
 
     public static final NumericScalarX NULL_NUMBER = new NumericScalarX(null, SpecialNumericValue.NULL);
@@ -2957,6 +2961,8 @@ public class XB {
     public static final TemporalScalarX CURRENT_TIME = new TemporalScalarX(null, SpecialTemporalValue.CURRENT_TIME);
 
     public static final TemporalScalarX CURRENT_TIMESTAMP = new TemporalScalarX(null, SpecialTemporalValue.CURRENT_TIMESTAMP);
+
+    public static final EntityScalarX CURRENT_USER = new EntityScalarX(null, SpecialEntityValue.CURRENT_USER);
 
     public static final EntityScalarX NULL_ENTITY = new EntityScalarX(null, SpecialEntityValue.NULL);
     // </editor-fold>
@@ -3012,6 +3018,21 @@ public class XB {
 
     public static TemporalScalarX currentTimestamp() {
         return CURRENT_TIMESTAMP;
+    }
+
+    public static EntityScalarX currentUser() {
+        return CURRENT_USER;
+    }
+
+    public static EntityScalarX currentUser(Class<? extends Entity> userEntityClass) {
+        return userEntityClass == null ? CURRENT_USER : new EntityScalarX(null, SpecialEntityValue.CURRENT_USER) {
+
+            @Override
+            public Class<?> getDataType() {
+                return userEntityClass;
+            }
+
+        };
     }
 
     public static EntityScalarX nullEntity() {

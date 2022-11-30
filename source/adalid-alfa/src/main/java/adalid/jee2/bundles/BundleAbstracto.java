@@ -15,6 +15,8 @@ package adalid.jee2.bundles;
 import adalid.commons.bundles.*;
 import adalid.commons.properties.*;
 import adalid.commons.util.*;
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -22,6 +24,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.Set;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
@@ -31,6 +34,14 @@ import org.apache.log4j.Logger;
 public abstract class BundleAbstracto {
 
     private static final Logger logger = Logger.getLogger(BundleAbstracto.class);
+
+    private static final String FILE_SEP = System.getProperty("file.separator");
+
+    private static final String USER_DIR = System.getProperty("user.dir");
+
+    private static final String TEMP_DIR = USER_DIR + FILE_SEP + "resources" + FILE_SEP + "velocity" + FILE_SEP + "templates" + FILE_SEP + "zymurgy";
+
+    abstract Locale[] getSupportedLocales();
 
     abstract Map<Locale, ResourceBundle> bundles();
 
@@ -56,7 +67,7 @@ public abstract class BundleAbstracto {
     private void load() {
         ResourceBundle bundle, bundlePlus;
         Locale localePlus;
-        Locale[] supportedLocales = Bundle.getSupportedLocales();
+        Locale[] supportedLocales = getSupportedLocales();
         for (Locale locale : supportedLocales) {
             bundle = putBundle(locale);
             if (bundle != null) {
@@ -117,7 +128,7 @@ public abstract class BundleAbstracto {
         if (localePlus != null) {
             addLocaleKeys(keys, localePlus);
         }
-        logger.info("bundle " + baseName + "." + locale + " loaded (" + keys.size() + " keys)");
+//      logger.info("bundle " + baseName + "." + locale + " loaded (" + keys.size() + " keys)");
     }
 
     private void addLocaleKeys(Set<String> keys, Locale locale) {
@@ -135,7 +146,7 @@ public abstract class BundleAbstracto {
         if (localePlus != null) {
             addLocaleRows(rows, localePlus);
         }
-        logger.info("bundle " + baseName + "." + locale + " loaded (" + rows.size() + " rows)");
+//      logger.info("bundle " + baseName + "." + locale + " loaded (" + rows.size() + " rows)");
     }
 
     private void addLocaleRows(List<String> rows, Locale locale) {
@@ -165,6 +176,36 @@ public abstract class BundleAbstracto {
     public List<String> getRows(Locale locale) {
         ResourceBundle bundle = getBundle(locale);
         return bundle == null ? null : bundleRows().get(locale);
+    }
+
+    public File getRowsTemplate() {
+        return getRowsTemplate(Bundle.getLocale());
+    }
+
+    public File getRowsTemplate(Locale locale) {
+        File dir = new File(TEMP_DIR);
+        File template = new File(dir, StrUtils.getRandomString());
+        List<String> rows = getRows(locale);
+        try {
+            FileUtils.forceMkdir(dir);
+            FileUtils.writeLines(template, rows);
+            return template;
+        } catch (IOException ex) {
+            return null;
+        }
+    }
+
+    public String getTemplatePath(File template) {
+        if (template == null) {
+            return null;
+        }
+        String path = template.getPath();
+        String relativePath = StringUtils.substringAfter(path, FILE_SEP + "velocity" + FILE_SEP);
+        return relativePath.replace(FILE_SEP, "/");
+    }
+
+    public boolean deleteQuietly(File template) {
+        return template != null && FileUtils.deleteQuietly(template);
     }
 
     public String getString(String key) {

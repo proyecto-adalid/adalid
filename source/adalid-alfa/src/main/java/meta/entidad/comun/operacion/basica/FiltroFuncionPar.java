@@ -29,7 +29,7 @@ import meta.entidad.comun.configuracion.basica.ext.FuncionParametro;
 @EntityInsertOperation(enabled = Kleenean.TRUE)
 @EntityUpdateOperation(enabled = Kleenean.TRUE)
 @EntityDeleteOperation(enabled = Kleenean.TRUE)
-@EntityTableView(enabled = Kleenean.FALSE)
+@EntityTableView(enabled = Kleenean.FALSE, rowsLimit = 100, rows = 100, writingViewWesternToolbarSnippet = "/resources/snippets/base/entity/FiltroFuncionPar/botonOpenMasterUpdateDialog")
 @EntityDetailView(enabled = Kleenean.FALSE)
 @EntityTreeView(enabled = Kleenean.FALSE)
 @EntityConsoleView(enabled = Kleenean.FALSE)

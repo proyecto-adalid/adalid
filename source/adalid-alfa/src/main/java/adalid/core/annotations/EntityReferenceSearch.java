@@ -61,6 +61,16 @@ public @interface EntityReferenceSearch {
     int radioColumns() default 0;
 
     /**
+     * displayFormat especifica el tipo de vista (página) que se utiliza para la búsqueda y selección. Este elemento es relevante solo cuando se busca
+     * y selecciona mediante una vista (página). Su valor es uno de los elementos de la enumeración SearchDisplayFormat. Seleccione TABLE o TREE para
+     * utilizar una vista (página) de presentación tabular o jerárquica (árbol), respectivamente. Alternativamente, omita el elemento o seleccione
+     * UNSPECIFIED para utilizar el valor predeterminado del atributo. El valor predeterminado del atributo es TABLE.
+     *
+     * @return displayFormat
+     */
+    SearchDisplayFormat displayFormat() default SearchDisplayFormat.UNSPECIFIED;
+
+    /**
      * displayMode especifica el tipo de vista (página) que se utiliza para la búsqueda y selección. Este elemento es relevante solo cuando se busca y
      * selecciona mediante una vista (página). Su valor es uno de los elementos de la enumeración DisplayMode. Seleccione READING o WRITING para
      * utilizar una vista (página) de solo consulta o una vista (página) de registro, respectivamente. Alternativamente, omita el elemento o

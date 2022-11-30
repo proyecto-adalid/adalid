@@ -17,6 +17,6 @@ package adalid.core.enums;
  */
 public enum BooleanDisplayType {
 
-    UNSPECIFIED, DROPDOWN, CHECKBOX
+    UNSPECIFIED, DROPDOWN, CHECKBOX, TOGGLE
 
 }

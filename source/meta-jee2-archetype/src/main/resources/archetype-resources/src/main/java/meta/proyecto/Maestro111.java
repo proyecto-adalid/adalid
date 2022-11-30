@@ -83,14 +83,16 @@ public class Maestro111 extends Maestro {
 //      putEnvironmentVariable(CONTENT_ROOT_DIR_LINUX, "/opt/content-root");
 //      putEnvironmentVariable(CONTENT_ROOT_DIR_WINDOWS, "%SystemDrive%/content-root");
 //
-//      putEnvironmentVariable(ORACLE_DRIVER_ID, "ojdbc8");
-//      putEnvironmentVariable(ORACLE_DRIVER_JAR, "ojdbc8.jar");
-//      putEnvironmentVariable(ORACLE_DRIVER_VERSION, "18.3.0.0");
+        putEnvironmentVariable(ORACLE_DRIVER_ID, "ojdbc8");
+        putEnvironmentVariable(ORACLE_DRIVER_JAR, "ojdbc8.jar");
+        putEnvironmentVariable(ORACLE_DRIVER_VERSION, "21.7.0.0");
 //      putEnvironmentVariable(ORACLE_SERVICE, "XEPDB1");
-//      putEnvironmentVariable(VERSION_ORACLE, "18.4.0");
+//      putEnvironmentVariable(VERSION_ORACLE, "21c");
 //      putEnvironmentVariable(VERSION_GLASSFISH, "5.1.0");
-        putEnvironmentVariable(VERSION_JAVA, "1.8.0_321");
+        putEnvironmentVariable(VERSION_JAVA, "1.8.0_333");
 //      putEnvironmentVariable(VERSION_PRIMEFACES, "11.0.0");
+//      putEnvironmentVariable(VERSION_PRIMEFACES_EXTENSIONS, "11.0.0");
+//      putEnvironmentVariable(VERSION_GOOGLE_GSON, "2.9.0");
 //      putEnvironmentVariable(VERSION_THIRD_PARTY_DIR, "4.0");
 //      loadPrivateProperties(LoggingLevel.INFO);
 //      setTheme(PrimeFacesThemes.SAGA);
@@ -120,7 +122,7 @@ public class Maestro111 extends Maestro {
 //      setVersion("1.0.0");
 //      taskNotifierSchedule.minute = "*/15";
 //      addProjectDependency(dependencia adicional, tipo del módulo al que se debe agregar la dependencia adicional);
-//      por ejemplo: addProjectDependency(MavenDependencies.PrimeFaces.serenity(), ProjectModuleType.WEB);
+//      por ejemplo: addProjectDependency(MavenDependencies.PrimeFaces.omega(), ProjectModuleType.WEB);
     }
 
     @Override
@@ -148,8 +150,8 @@ public class Maestro111 extends Maestro {
 //      addAttribute(ProjectAttributeKeys.DISABLE_BPL_IMPL_GENERATION, true);
 //      addAttribute(ProjectAttributeKeys.DISABLE_PAGE_ASSISTANT_GENERATION, true);
 //      addAttribute(ProjectAttributeKeys.FACELETS_REFRESH_PERIOD, -1);
-//      addAttribute(ProjectAttributeKeys.HCB_RENDERING, true);
 //      addAttribute(ProjectAttributeKeys.HELP_WINDOW_WIDTH_KEY, 3);
+//      addAttribute(ProjectAttributeKeys.HCB_RENDERING, true);
 //      addAttribute(ProjectAttributeKeys.HLB_RENDERING, true);
 //      addAttribute(ProjectAttributeKeys.HRB_RENDERING, true);
 //      addAttribute(ProjectAttributeKeys.HTML_SANITIZER_VERSION, "20200713.1");

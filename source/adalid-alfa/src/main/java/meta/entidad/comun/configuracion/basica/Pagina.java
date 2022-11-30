@@ -65,19 +65,19 @@ public class Pagina extends AbstractPersistentEntity {
     public StringProperty urlPagina;
 
     @ColumnField(nullable = Kleenean.FALSE)
-    @PropertyField(update = Kleenean.FALSE)
+    @PropertyField(update = Kleenean.FALSE, table = Kleenean.TRUE, report = Kleenean.TRUE)
     public BooleanProperty esPublica;
 
     @ColumnField(nullable = Kleenean.FALSE)
-    @PropertyField(update = Kleenean.FALSE)
+    @PropertyField(update = Kleenean.FALSE, table = Kleenean.TRUE, report = Kleenean.TRUE)
     public BooleanProperty esEspecial;
 
     @ColumnField(nullable = Kleenean.FALSE)
-    @PropertyField(update = Kleenean.FALSE)
+    @PropertyField(update = Kleenean.FALSE, table = Kleenean.TRUE, report = Kleenean.TRUE)
     public BooleanProperty opcionMenu;
 
     @EmbeddedDocument(sourceURLs = EMBED_YOUTUBE, style = EmbeddedDocumentStyle.POPUP, frameBorder = Kleenean.FALSE, fullScreen = Kleenean.TRUE)
-    @PropertyField(table = Kleenean.TRUE)
+    @PropertyField(update = Kleenean.TRUE)
     public StringProperty tutorial;
 
     @ForeignKey(onDelete = OnDeleteAction.CASCADE, onUpdate = OnUpdateAction.CASCADE)
@@ -88,7 +88,7 @@ public class Pagina extends AbstractPersistentEntity {
 
     @ForeignKey(onDelete = OnDeleteAction.NONE, onUpdate = OnUpdateAction.NONE)
     @ManyToOne(navigability = Navigability.UNIDIRECTIONAL, view = MasterDetailView.NONE)
-    @PropertyField(update = Kleenean.FALSE)
+    @PropertyField(update = Kleenean.FALSE, table = Kleenean.TRUE, report = Kleenean.TRUE)
     public TipoPagina tipoPagina;
 
     @ForeignKey(onDelete = OnDeleteAction.NONE, onUpdate = OnUpdateAction.NONE)
@@ -165,8 +165,10 @@ public class Pagina extends AbstractPersistentEntity {
         opcionMenu.setLocalizedLabel(ENGLISH, "menu option");
         opcionMenu.setLocalizedLabel(SPANISH, "opción de menú");
         /**/
-        tutorial.setLocalizedLabel(ENGLISH, "tutorial");
-        tutorial.setLocalizedLabel(SPANISH, "tutorial");
+        tutorial.setLocalizedLabel(ENGLISH, "page tutorial");
+        tutorial.setLocalizedLabel(SPANISH, "tutorial de la página");
+        tutorial.setLocalizedShortLabel(ENGLISH, "tutorial");
+        tutorial.setLocalizedShortLabel(SPANISH, "tutorial");
         /**/
         aplicacion.setLocalizedLabel(ENGLISH, "application");
         aplicacion.setLocalizedLabel(SPANISH, "aplicación");

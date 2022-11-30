@@ -15,9 +15,11 @@ package meta.entidad.comun.control.acceso.ext;
 import adalid.core.*;
 import adalid.core.annotations.*;
 import adalid.core.enums.*;
+import adalid.core.expressions.XB;
 import adalid.core.interfaces.*;
 import adalid.core.parameters.*;
 import adalid.core.properties.*;
+import adalid.core.sql.NativeQuery;
 import java.lang.reflect.Field;
 import meta.entidad.comun.configuracion.basica.Pagina;
 import meta.entidad.comun.configuracion.basica.PaginaInicio;
@@ -141,7 +143,7 @@ public class Usuario extends meta.entidad.comun.control.acceso.Usuario {
     public Pagina paginaMenu;
 
     @ColumnField(nullable = Kleenean.TRUE)
-    @ForeignKey(onDelete = OnDeleteAction.NONE, onUpdate = OnUpdateAction.NONE)
+//  @ForeignKey(onDelete = OnDeleteAction.NONE, onUpdate = OnUpdateAction.NONE)
     @ManyToOne(navigability = Navigability.UNIDIRECTIONAL, view = MasterDetailView.NONE)
     @PropertyField(create = Kleenean.TRUE, update = Kleenean.TRUE)
     public PaginaEspecial otraPagina;
@@ -150,6 +152,11 @@ public class Usuario extends meta.entidad.comun.control.acceso.Usuario {
     @PropertyField(create = Kleenean.FALSE, update = Kleenean.FALSE)
     @StringField(maxLength = 100)
     public StringProperty temaInterfaz;
+
+    @ColumnField(nullable = Kleenean.TRUE)
+    @PropertyField(hidden = Kleenean.TRUE)
+    @StringField(maxLength = Project.STRING_FIELD_MAX_LENGTH)
+    public StringProperty preferenciasInterfaz;
 
     @ColumnField(nullable = Kleenean.TRUE)
     @PropertyField(create = Kleenean.FALSE, update = Kleenean.FALSE)
@@ -387,9 +394,16 @@ public class Usuario extends meta.entidad.comun.control.acceso.Usuario {
         /**/
         otraPagina.setLocalizedLabel(ENGLISH, "other page");
         otraPagina.setLocalizedLabel(SPANISH, "otra página");
-        otraPagina.setLocalizedDescription(ENGLISH, "special page to be used as home page; must be specified if landing page is \"Other page\"");
-        otraPagina.setLocalizedDescription(SPANISH, "página especial que se ha de utilizar como página de inicio; "
-            + "se debe especificar si página de inicio es \"Otra página\"");
+        otraPagina.setLocalizedDescription(ENGLISH, ""
+            + "special page to be used as landing page"
+            + "; it must be specified if landing page is \"Other page\""
+            + " and such option is only available if there is at least one special page defined"
+            + "");
+        otraPagina.setLocalizedDescription(SPANISH, ""
+            + "página especial que se ha de utilizar como página de inicio"
+            + "; se debe especificar si página de inicio es \"Otra página\""
+            + " y dicha opción solo está disponible si hay al menos una página especial definida"
+            + "");
         /**/
         temaInterfaz.setLocalizedLabel(ENGLISH, "user interface theme");
         temaInterfaz.setLocalizedLabel(SPANISH, "tema de la interfaz");
@@ -532,7 +546,7 @@ public class Usuario extends meta.entidad.comun.control.acceso.Usuario {
 
     protected Segment usuariosActivos, usuariosInactivos;
 
-    protected Segment conSupervisor, sinSupervisor;
+    protected Segment conSupervisor, sinSupervisor, misSupervisados;
 
     protected Segment conPaginaMenu, conOtraPagina;
 
@@ -565,6 +579,7 @@ public class Usuario extends meta.entidad.comun.control.acceso.Usuario {
         usuariosInactivos = esUsuarioInactivo.isTrue();
         conSupervisor = usuarioSupervisor.isNotNull();
         sinSupervisor = usuarioSupervisor.isNull();
+        misSupervisados = usuarioSupervisor.isNotNull().and(usuarioSupervisor.id.isEqualTo(CURRENT_USER_ID));
         /**/
         conPaginaMenu = paginaInicio.isEqualTo(paginaInicio.PAGINA_MENU);
         conOtraPagina = paginaInicio.isEqualTo(paginaInicio.OTRA_PAGINA);
@@ -657,6 +672,11 @@ public class Usuario extends meta.entidad.comun.control.acceso.Usuario {
         sinSupervisor.setLocalizedDescription(SPANISH, "el usuario no tiene supervisor");
         sinSupervisor.setLocalizedErrorMessage(ENGLISH, "the user has a supervisor");
         sinSupervisor.setLocalizedErrorMessage(SPANISH, "el usuario tiene supervisor");
+        /**/
+        misSupervisados.setLocalizedCollectionLabel(ENGLISH, "users directly supervised by the current user");
+        misSupervisados.setLocalizedCollectionLabel(SPANISH, "usuarios supervisados directamente por el usuario actual");
+        misSupervisados.setLocalizedCollectionShortLabel(ENGLISH, "My supervisees");
+        misSupervisados.setLocalizedCollectionShortLabel(SPANISH, "Mis supervisados");
         /**/
         usuariosInactivos.setLocalizedDescription(ENGLISH, "the user is an inactive user");
         usuariosInactivos.setLocalizedDescription(SPANISH, "el usuario es un usuario inactivo");
@@ -809,25 +829,33 @@ public class Usuario extends meta.entidad.comun.control.acceso.Usuario {
         // </editor-fold>
     }
 
+    private static final NativeQuery select_pagina_especial = NativeQuery.of("select 1 from pagina_especial");
+
+    private static final BooleanExpression existe_pagina_especial = XB.AnyType.Comparison.exists(select_pagina_especial);
+
     @Override
     protected void settleFilters() {
         super.settleFilters();
         /**/
         setUpdateFilter(modificable);
         setDeleteFilter(eliminable);
+        /**/
+        addSelectSegment(misSupervisados);
         /*
         paginaInicio.setRemoveInstanceArray(paginaInicio.OTRA_PAGINA);
         /**/
+        paginaInicio.setSearchQueryFilter(paginaInicio.isEqualTo(paginaInicio.OTRA_PAGINA).implies(existe_pagina_especial));
+        /**/
         paginaMenu.setModifyingFilter(conPaginaMenu);
-        paginaMenu.setRenderingFilter(conPaginaMenu, true);
+        paginaMenu.setRenderingFilter(conPaginaMenu);
         paginaMenu.setRequiringFilter(conPaginaMenu);
-//      paginaMenu.setNullifyingFilter(not(conPaginaMenu));
+        paginaMenu.setNullifyingFilter(not(conPaginaMenu));
         paginaMenu.setSearchQueryFilter(filtroPaginaMenu);
         /**/
         otraPagina.setModifyingFilter(conOtraPagina);
-        otraPagina.setRenderingFilter(conOtraPagina, true);
+        otraPagina.setRenderingFilter(conOtraPagina);
         otraPagina.setRequiringFilter(conOtraPagina);
-//      otraPagina.setNullifyingFilter(not(conOtraPagina));
+        otraPagina.setNullifyingFilter(not(conOtraPagina));
         otraPagina.setSearchQueryFilter(filtroOtraPagina);
         /**/
         modulos.setRenderingFilter(menusRegistrados);
@@ -841,6 +869,7 @@ public class Usuario extends meta.entidad.comun.control.acceso.Usuario {
         otraPagina.setLocalizedRequiringFilterTag(SPANISH, "sí " + b("página de inicio") + " es \"Otra página\"");
         /**/
         // </editor-fold>
+        /**/
     }
 
     @Override
@@ -884,6 +913,8 @@ public class Usuario extends meta.entidad.comun.control.acceso.Usuario {
     protected Sincronizar sincronizar;
 
     protected CambiarConfiguracion cambiarConfiguracion;
+
+    protected CambiarPreferencias cambiarPreferencias;
 
     protected CambiarPassword cambiarPassword;
 
@@ -1598,6 +1629,54 @@ public class Usuario extends meta.entidad.comun.control.acceso.Usuario {
             otraPagina.setRequiringFilter(conOtraPagina);
 //          otraPagina.setNullifyingFilter(not(conOtraPagina));
             otraPagina.setSearchQueryFilter(filtroOtraPagina);
+        }
+
+    }
+
+    @OperationClass(access = OperationAccess.PRIVATE)
+    @ProcessOperationClass(builtIn = true)
+    public class CambiarPreferencias extends ProcessOperation {
+
+        @Override
+        protected void settleAttributes() {
+            super.settleAttributes();
+            // <editor-fold defaultstate="collapsed" desc="localization of CambiarPreferencias's attributes">
+            setLocalizedLabel(ENGLISH, "change preferences");
+            setLocalizedLabel(SPANISH, "cambiar preferencias");
+            setLocalizedSuccessMessage(ENGLISH, "user preferences successfully updated");
+            setLocalizedSuccessMessage(SPANISH, "preferencias del usuario actualizadas con éxito");
+            // </editor-fold>
+        }
+
+        @InstanceReference
+        protected Usuario usuario;
+
+        @ParameterField
+        protected StringParameter tema;
+
+        @ParameterField
+        protected StringParameter preferencias;
+
+        @Override
+        protected void settleParameters() {
+            super.settleParameters();
+            /**/
+            // <editor-fold defaultstate="collapsed" desc="localization of CambiarPreferencias's parameters">
+            /**/
+            usuario.setLocalizedLabel(ENGLISH, "user");
+            usuario.setLocalizedLabel(SPANISH, "usuario");
+            usuario.setLocalizedDescription(ENGLISH, "Code of the user whose preferences you want to change; "
+                + "it is a required field and has no default value");
+            usuario.setLocalizedDescription(SPANISH, "Código del usuario cuyas preferencias desea cambiar; "
+                + "es un dato obligatorio y no tiene valor por omisión");
+            /**/
+            tema.setLocalizedLabel(ENGLISH, "theme");
+            tema.setLocalizedLabel(SPANISH, "tema");
+            /**/
+            preferencias.setLocalizedLabel(ENGLISH, "preferences");
+            preferencias.setLocalizedLabel(SPANISH, "preferencias");
+            /**/
+            // </editor-fold>
         }
 
     }

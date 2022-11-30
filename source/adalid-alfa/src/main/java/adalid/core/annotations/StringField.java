@@ -44,15 +44,15 @@ public @interface StringField {
     int minLength() default -1;
 
     /**
-     * mask especifica la plantilla de la máscara para capturar los valores de la propiedad o parámetro. La plantilla de la máscara puede tener los
-     * siguientes caracteres, que tienen un significado especial:
+     * mask especifica la plantilla de la máscara para capturar los valores de la propiedad o parámetro. La plantilla puede tener los siguientes
+     * caracteres, que tienen un significado especial:
      * <ul>
      * <li><b>9</b>: Representa un solo dígito, de <b>0</b> a <b>9</b>.</li>
      * <li><b>a</b>: Representa un solo carácter alfabético, de <b>A</b> a <b>Z</b> o de <b>a</b> a <b>z</b>.</li>
      * <li><b>*</b>: Representa un solo carácter alfanumérico, de <b>0</b> a <b>9</b>, de <b>A</b> a <b>Z</b> o de <b>a</b> a <b>z</b>.</li>
-     * <li><b>?</b>: Marca el inicio de la parte opcional de la máscara; cualquier cosa después del signo de interrogación será opcional.</li>
      * </ul>
-     * Por ejemplo, la plantilla "(999) 999-9999" serviría para capturar números telefónicos.
+     * La plantilla puede tener una parte opcional; esa parte se debe colocar entre corchetes. Por ejemplo, la plantilla "(999) 999-9999[ x9999]"
+     * serviría para capturar números telefónicos, con un número opcional de extensión.
      *
      * @return mask
      */

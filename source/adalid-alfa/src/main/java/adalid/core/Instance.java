@@ -48,6 +48,26 @@ public class Instance extends AbstractArtifact {
 /**/
     private int _index;
 
+    private InstanceTag _customTag;
+
+    /**
+     * @return la etiqueta personalizada de la instancia
+     */
+    public InstanceTag getCustomTag() {
+        return _customTag;
+    }
+
+    /**
+     * El método setCustomTag se utiliza para establecer la etiqueta personalizada de la instancia. La etiqueta determina el color del fondo, el color
+     * del texto y el tipo de conversión del texto que se utiliza al mostrar el valor de la instancia en las vistas (páginas) de consulta y registro.
+     *
+     * @param tag un objeto de la clase InstanceTag. Utilice cualquiera de las etiquetas predefinidas como campos estáticos de InstanceTag o construya
+     * su propia etiqueta con alguno de los métodos estáticos <code>InstanceTag.of</code>.
+     */
+    public void setCustomTag(InstanceTag tag) {
+        _customTag = tag;
+    }
+
     private final List<InstanceField> _instanceFieldsList = new ArrayList<>();
 
     // <editor-fold defaultstate="collapsed" desc="until 21/03/2021">
@@ -195,6 +215,11 @@ public class Instance extends AbstractArtifact {
         /**/
         Entity declaringEntity = getDeclaringEntity();
         Property property = declaringEntity == null ? null : declaringEntity.getNameProperty();
+        return declaringEntity == null ? null : property == null ? descriptionValueOf(declaringEntity) : getInstanceFieldValue(property.getName());
+    }
+
+    private Object descriptionValueOf(Entity declaringEntity) {
+        Property property = declaringEntity.getDescriptionProperty();
         return property == null ? null : getInstanceFieldValue(property.getName());
     }
 

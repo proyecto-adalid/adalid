@@ -15,10 +15,39 @@ package adalid.jee2.constants;
 /**
  * CSS Classes of Font Awesome Icons
  *
- * @see <a href="https://fontawesome.com/v4.7.0/cheatsheet/">https://fontawesome.com/v4.7.0/cheatsheet/</a>
+ * @see <a href="https://fontawesome.com/v4.7.0/cheatsheet/">Font Awesome Cheatsheet</a>
+ *
  * @author Jorge Campins
  */
 public class FA {
+
+    public static final String ARROW_CIRCLE_DOWN = " fa fa-arrow-circle-down ";
+
+    public static final String ARROW_CIRCLE_LEFT = " fa fa-arrow-circle-left ";
+
+    public static final String ARROW_CIRCLE_RIGHT = " fa fa-arrow-circle-right ";
+
+    public static final String ARROW_CIRCLE_UP = " fa fa-arrow-circle-up ";
+
+    public static final String ARROW_CIRCLE_O_DOWN = " fa fa-arrow-circle-o-down ";
+
+    public static final String ARROW_CIRCLE_O_LEFT = " fa fa-arrow-circle-o-left ";
+
+    public static final String ARROW_CIRCLE_O_RIGHT = " fa fa-arrow-circle-o-right ";
+
+    public static final String ARROW_CIRCLE_O_UP = " fa fa-arrow-circle-o-up ";
+
+    public static final String ARROW_DOWN = " fa fa-arrow-down ";
+
+    public static final String ARROW_LEFT = " fa fa-arrow-left ";
+
+    public static final String ARROW_RIGHT = " fa fa-arrow-right ";
+
+    public static final String ARROW_UP = " fa fa-arrow-up ";
+
+    public static final String MINUS = " fa fa-minus ";
+
+    public static final String PLUS = " fa fa-plus ";
 
     public static final String GEAR = " fa fa-gear ";
 

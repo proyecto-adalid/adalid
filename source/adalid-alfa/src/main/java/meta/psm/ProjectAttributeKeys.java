@@ -27,13 +27,19 @@ public class ProjectAttributeKeys {
     public static final String CUSTOM_LAYOUT = "custom_layout";
 
     /**
-     * true si la interfaz gráfica de la aplicación generada debe utilizar casillas de verificación en lugar de listas desplegables para propiedades y
-     * parámetros de tipo Boolean que no permiten valores nulos; de lo contrario false. El valor predeterminado es true.
+     * true si la interfaz gráfica de la aplicación generada puede utilizar interruptores de palanca en lugar de listas desplegables para propiedades
+     * y parámetros de tipo Boolean que no permiten valores nulos; de lo contrario false. El valor predeterminado es true.
+     */
+    public static final String TOGGLE_SWITCHES_ALLOWED = "toggle_switches_allowed";
+
+    /**
+     * true si la interfaz gráfica de la aplicación generada puede utilizar casillas de verificación en lugar de listas desplegables para propiedades
+     * y parámetros de tipo Boolean que no permiten valores nulos; de lo contrario false. El valor predeterminado es true.
      */
     public static final String CHECK_BOXES_ALLOWED = "check_boxes_allowed";
 
     /**
-     * true si la interfaz gráfica de la aplicación generada debe utilizar componentes de entrada especializados en lugar de cuadros de texto para
+     * true si la interfaz gráfica de la aplicación generada puede utilizar componentes de entrada especializados en lugar de cuadros de texto para
      * propiedades y parámetros de tipos numéricos; de lo contrario false. El valor predeterminado es true.
      */
     public static final String NUMERIC_BOXES_ALLOWED = "numeric_boxes_allowed";
@@ -101,6 +107,11 @@ public class ProjectAttributeKeys {
      * por omisión es true.
      */
     public static final String HTTP_BASIC_AUTHENTICATION_FOR_WEB_API = "http_basic_authentication_for_web_api";
+
+    /**
+     * Nombre de la página inicial predeterminada de la interfaz gráfica de la aplicación generada. El valor predeterminado es Menu
+     */
+    public static final String INITIAL_PAGE_NAME = "initial_page_name";
 
     /**
      * Ruta relativa de la página inicial predeterminada de la interfaz gráfica de la aplicación generada. El valor predeterminado es

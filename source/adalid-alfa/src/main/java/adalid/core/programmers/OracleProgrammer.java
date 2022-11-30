@@ -177,12 +177,13 @@ public class OracleProgrammer extends AbstractSqlProgrammer {
                 if (project != null) {
                     String version = project.getEnvironmentVariable(ORACLE_VERSION);
                     if (StringUtils.isNotBlank(version)) {
-                        logger.info(ORACLE_VERSION + "=" + version);
+                        version = dottedVersionNumber(version);
                         version += ".0.0";
                         int major = IntUtils.valueOf(StringUtils.substringBefore(version, "."), 0);
                         if (major > 0) {
                             int minor = IntUtils.valueOf(StringUtils.substringBetween(version, "."), 0);
                             maxIdentifierLength = major < 12 || (major == 12 && minor < 2) ? 30 : 128;
+                            logger.info(ORACLE_VERSION + ".max.identifier.length=" + maxIdentifierLength);
                             return maxIdentifierLength;
                         }
                     }
@@ -191,6 +192,17 @@ public class OracleProgrammer extends AbstractSqlProgrammer {
             }
         }
         return maxIdentifierLength;
+    }
+
+    private String dottedVersionNumber(String version) {
+        String v1 = version.trim().toLowerCase();
+        logger.info(ORACLE_VERSION + "=" + v1);
+        String v2 = StrUtils.getOracleVersionNumber(v1);
+        if (v1.equals(v2)) {
+            return v1;
+        }
+        logger.info(ORACLE_VERSION + "=" + v2);
+        return v2;
     }
 
     @Override
@@ -1094,7 +1106,9 @@ public class OracleProgrammer extends AbstractSqlProgrammer {
             if (property instanceof CalculableProperty) {
                 Object calculableValue = ((CalculableProperty) property).getCalculableValue();
                 if (calculableValue instanceof BooleanExpression) {
-                    return format(getCaseWhenThenElsePattern(), expression, getTrue(), getFalse());
+                    if (!(calculableValue instanceof BooleanPrimitive)) {
+                        return format(getCaseWhenThenElsePattern(), expression, getTrue(), getFalse());
+                    }
                 }
             }
         }

@@ -45,7 +45,7 @@ public @interface EntityDetailView {
      *
      * @return heading
      */
-    Kleenean heading() default Kleenean.UNSPECIFIED; // FALSE
+    Kleenean heading() default Kleenean.UNSPECIFIED; // TRUE
 
     /**
      * menu especifica el tipo de vistas (páginas) generadas que deben ser accesibles desde el menú principal de la aplicación. Su valor es uno de los
@@ -58,6 +58,16 @@ public @interface EntityDetailView {
      * @return menu
      */
     ViewMenuOption menu() default ViewMenuOption.NONE;
+
+    /**
+     * inserting indica si la opción de menú generada para la vista de registro debe, o no, abrir la página en modo de inserción. Su valor es uno de
+     * los elementos de la enumeración Kleenean. este elemento solo es relevante si el valor del elemento menu es ALL o WRITING. Seleccione TRUE para
+     * abrir la página en modo de inserción; en caso contrario, seleccione FALSE. Alternativamente, omita el elemento o seleccione UNSPECIFIED para
+     * utilizar el valor predeterminado del atributo. El valor predeterminado del atributo es FALSE.
+     *
+     * @return inserting
+     */
+    Kleenean inserting() default Kleenean.UNSPECIFIED; // FALSE
 
     /**
      * helpDocument especifica el documento incrustado de ayuda de las vistas (páginas) de consulta y/o registro detallado de la entidad.

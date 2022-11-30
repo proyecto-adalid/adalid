@@ -78,8 +78,8 @@ public @interface TemporalDataGen {
 
     /**
      * min especifica el mínimo valor generado. Este elemento es relevante solo si el valor especificado, o determinado, para el elemento type es
-     * RANDOM o SERIES. Puede ser un valor constante, acorde con el tipo de dato. El formato de una constante de tipo Date es yyyy mm dd. El formato
-     * de una constante de tipo Time es hh:mm:ss. El formato de una constante de tipo Timestamp es yyyy mm dd hh:mm:ss. También puede ser una
+     * RANDOM o SERIES. Puede ser un valor constante, acorde con el tipo de dato. El formato de una constante de tipo Date es yyyy-mm-dd. El formato
+     * de una constante de tipo Time es hh:mm:ss. El formato de una constante de tipo Timestamp es yyyy-mm-dd hh:mm:ss. También puede ser una
      * expresión para calcular un valor relativo a la fecha y hora de ejecución. Escriba un número entero, positivo o negativo, seguido de una letra
      * que identifique el intervalo de tiempo al cual desea sumar el número. La letra D mayúscula corresponde a día; la M mayúscula, a mes; la Y
      * mayúscula, a año; la h minúscula, a hora; la m minúscula, a minuto; y la s minúscula, a segundo. El valor predeterminado para las propiedades
@@ -92,8 +92,8 @@ public @interface TemporalDataGen {
 
     /**
      * max especifica el máximo valor generado. Este elemento es relevante solo si el valor especificado, o determinado, para el elemento type es
-     * RANDOM o SERIES. Puede ser un valor constante, acorde con el tipo de dato. El formato de una constante de tipo Date es yyyy mm dd. El formato
-     * de una constante de tipo Time es hh:mm:ss. El formato de una constante de tipo Timestamp es yyyy mm dd hh:mm:ss. También puede ser una
+     * RANDOM o SERIES. Puede ser un valor constante, acorde con el tipo de dato. El formato de una constante de tipo Date es yyyy-mm-dd. El formato
+     * de una constante de tipo Time es hh:mm:ss. El formato de una constante de tipo Timestamp es yyyy-mm-dd hh:mm:ss. También puede ser una
      * expresión para calcular un valor relativo a la fecha y hora de ejecución. Escriba un número entero, positivo o negativo, seguido de una letra
      * que identifique el intervalo de tiempo al cual desea sumar el número. La letra D mayúscula corresponde a día; la M mayúscula, a mes; la Y
      * mayúscula, a año; la h minúscula, a hora; la m minúscula, a minuto; y la s minúscula, a segundo. El valor predeterminado para las propiedades

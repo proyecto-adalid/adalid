@@ -505,6 +505,30 @@ public abstract class AbstractSqlProgrammer extends AbstractProgrammer implement
         return StringUtils.replace(string, SQM$, SQM$ + SQM$);
     }
 
+    private static final String current_user_column_regex = "(?i)\\b" + "current_user" + "\\w+\\(\\)";
+
+    public String nullifyCurrentUserColumns(String string) {
+        String select_regex = "(?is)^" + getSelect() + "\\b.*$";
+        if (string != null && string.matches(select_regex)) {
+            String into_regex = "(?i)\\b" + getInto() + "\\b";
+            String from_regex = "(?i)\\b" + getFrom() + "\\b";
+            String[] into = string.split(into_regex);
+            String[] from = string.split(from_regex);
+            int into0len = into[0].length();
+            int from0len = from[0].length();
+            if (into0len < from0len) {
+                int index = into0len - 1;
+                String replaced = into[0].substring(0, index).replaceAll(current_user_column_regex, getNull());
+                return replaced + string.substring(index);
+            } else if (from0len < into0len) {
+                int index = from0len - 1;
+                String replaced = from[0].substring(0, index).replaceAll(current_user_column_regex, getNull());
+                return replaced + string.substring(index);
+            }
+        }
+        return string;
+    }
+
     /**
      * @param string string
      * @return the SQL identifier for string

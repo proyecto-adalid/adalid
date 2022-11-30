@@ -22,6 +22,8 @@ public class SqlColumn extends SqlArtifact {
 
     private int _position;
 
+    private String _defaultLabel;
+
     private String _type;
 
     private String _sqlDataType;
@@ -81,6 +83,20 @@ public class SqlColumn extends SqlArtifact {
      */
     void setPosition(int position) {
         _position = position;
+    }
+
+    /**
+     * @return the default label
+     */
+    public String getDefaultLabel() {
+        return _defaultLabel;
+    }
+
+    /**
+     * @param defaultLabel the default label to set
+     */
+    void setDefaultLabel(String defaultLabel) {
+        _defaultLabel = defaultLabel;
     }
 
     /**

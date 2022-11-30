@@ -64,7 +64,8 @@ public class ConjuntoSegmento extends AbstractPersistentEntity {
 //  @ForeignKey(onDelete = OnDeleteAction.NONE, onUpdate = OnUpdateAction.NONE)
     @ManyToOne(navigability = Navigability.UNIDIRECTIONAL, view = MasterDetailView.NONE)
     @ColumnField(nullable = Kleenean.FALSE)
-    @PropertyField(heading = Kleenean.TRUE)
+    @PropertyField(heading = Kleenean.TRUE, update = Kleenean.FALSE)
+    @EntityReferenceSearch(searchType = SearchType.LIST, listStyle = ListStyle.CHARACTER_KEY)
     public ClaseRecurso claseRecurso;
 
     @ForeignKey(onDelete = OnDeleteAction.CASCADE, onUpdate = OnUpdateAction.CASCADE)
@@ -75,6 +76,7 @@ public class ConjuntoSegmento extends AbstractPersistentEntity {
     @ForeignKey(onDelete = OnDeleteAction.NONE, onUpdate = OnUpdateAction.NONE)
     @ManyToOne(navigability = Navigability.UNIDIRECTIONAL, view = MasterDetailView.NONE)
     @PropertyField(create = Kleenean.TRUE)
+    @EntityReferenceSearch(searchType = SearchType.LIST, listStyle = ListStyle.CHARACTER_KEY)
     public ClaseFabricador claseFabricador;
 
     @PropertyField(hidden = Kleenean.TRUE, defaultCondition = DefaultCondition.UNCONDITIONALLY, defaultCheckpoint = Checkpoint.USER_INTERFACE)
@@ -88,14 +90,16 @@ public class ConjuntoSegmento extends AbstractPersistentEntity {
     @EntityReferenceSearch(searchType = SearchType.LIST, listStyle = ListStyle.CHARACTER_KEY_AND_NAME, displayMode = DisplayMode.WRITING)
     @ForeignKey(onDelete = OnDeleteAction.NONE, onUpdate = OnUpdateAction.NONE)
     @ManyToOne(view = MasterDetailView.TABLE_AND_DETAIL)
-    @PropertyField(create = Kleenean.TRUE, update = Kleenean.TRUE, required = Kleenean.TRUE, table = Kleenean.TRUE, report = Kleenean.TRUE, overlay = Kleenean.TRUE)
+    @PropertyField(create = Kleenean.TRUE, update = Kleenean.TRUE, required = Kleenean.TRUE, table = Kleenean.TRUE, report = Kleenean.TRUE, heading = Kleenean.TRUE, overlay = Kleenean.TRUE)
     public GrupoUsuario grupo;
 
     @Override
     protected void settleAttributes() {
         super.settleAttributes();
-//      setOrderBy(codigoConjuntoSegmento);
 //      setSchema(ProyectoBase.getEsquemaEntidadesComunes());
+        /**/
+        setOrderBy(codigoConjuntoSegmento);
+        /**/
         // <editor-fold defaultstate="collapsed" desc="localization of ConjuntoSegmento's attributes">
         setLocalizedLabel(ENGLISH, "segment set");
         setLocalizedLabel(SPANISH, "conjunto de segmentos");

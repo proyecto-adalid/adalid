@@ -67,10 +67,18 @@ public @interface ParameterField {
     Kleenean hidden() default Kleenean.UNSPECIFIED; // FALSE
 
     /**
-     * linkedField especifica el nombre de la propiedad que corresponde a este parámetro. Este elemento es relevante solo para parámetros de
-     * operaciones para generar archivos e informes con consulta dinámica (vea Anotación ExportOperationClass y Anotación ReportOperationClass). El
-     * nombre SQL de esta propiedad (vea Método setSqlName) es utilizado como nombre de columna para agregar la correspondiente comparación a la
-     * cláusula WHERE de la operación, a menos que también se especifique el elemento linkedColumn de esta misma anotación.
+     * linkedField especifica el nombre de la propiedad que corresponde a este parámetro. En operaciones que extiendan la clase ProcessOperation, y
+     * estén decoradas con la Anotación ConstructionOperationClass, la función SQL generada inserta una instancia de la entidad especificada mediante
+     * el elemento type de ConstructionOperationClass, asignando el valor suministrado para cada parámetro a su propiedad enlazada; por lo tanto, es
+     * este caso, la propiedad enlazada debe ser una propiedad de la entidad especificada mediante el elemento type. En operaciones de instancia que
+     * extiendan la clase ProcessOperation, y no estén decoradas con la anotación ConstructionOperationClass, la función SQL generada actualiza la
+     * instancia identificada por el valor del parámetro de instancia de la operación (parámetro decorado con la Anotación InstanceReference),
+     * asignando el valor suministrado para cada parámetro a su propiedad enlazada; por lo tanto, es este caso, la propiedad enlazada debe ser una
+     * propiedad de la entidad a la que pertenece la operación. En parámetros de operaciones para generar archivos e informes con consulta dinámica
+     * (vea Anotación ExportOperationClass y Anotación ReportOperationClass), el nombre SQL de la propiedad enlazada (vea Método setSqlName) es
+     * utilizado como nombre de columna para agregar la correspondiente comparación a la cláusula WHERE de la operación, a menos que también se
+     * especifique el elemento linkedColumn de esta misma anotación; por lo tanto, es este caso, la propiedad enlazada debe ser una propiedad de la
+     * entidad a la que pertenece la operación.
      *
      * @return linkedField
      */
@@ -106,6 +114,25 @@ public @interface ParameterField {
      * @return snippet
      */
     String snippet() default "";
+
+    /**
+     * anchor especifica el nombre de otro parámetro a continuación de la cual se muestra este parámetro en las vistas (páginas) de procesamiento.
+     *
+     * @return anchor
+     */
+    String anchor() default "";
+
+    /**
+     * anchorType especifica el tipo de anclaje del parámetro. Este elemento es relevante solo si el parámetro está anclado a otro parámetro, usando
+     * el elemento anchor. Su valor es uno de los elementos de la enumeración AnchorType. Seleccione UNLINKED para mostrar el parámetro como un
+     * elemento contiguo pero independiente de su parámetro ancla. Seleccione BLOCK para mostrar el parámetro conjuntamente con su parámetro ancla,
+     * como un elemento de bloque, comenzando en una nueva línea y ocupando todo el ancho disponible. Seleccione INLINE para mostrar el parámetro
+     * conjuntamente con su parámetro ancla, como un elemento en línea. Alternativamente, omita el elemento para utilizar el valor predeterminado del
+     * atributo. El valor predeterminado del atributo es UNLINKED.
+     *
+     * @return anchorType
+     */
+    AnchorType anchorType() default AnchorType.UNLINKED;
 
     /**
      * sequence específica el número de secuencia o posición relativa en la que se muestra el parámetro en las vistas (páginas) de ejecución de

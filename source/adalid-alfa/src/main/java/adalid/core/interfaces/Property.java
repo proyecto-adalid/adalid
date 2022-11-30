@@ -16,6 +16,7 @@ import adalid.core.*;
 import adalid.core.enums.*;
 import java.lang.reflect.Field;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 /**
@@ -192,6 +193,85 @@ public interface Property extends DataArtifact, ValuedArtifact {
      * @return the anchor property
      */
     Property getAnchorProperty();
+
+    /**
+     * @return the anchor type
+     */
+    AnchorType getAnchorType();
+
+    /**
+     * @return the anchoring linked detail fields indicator
+     */
+    boolean isAnchoringLinkedDetailFields();
+
+    /**
+     * Sets the anchoring linked detail fields indicator
+     *
+     * @param b the anchoring detail fields indicator to set
+     */
+    void setAnchoringLinkedDetailFields(boolean b);
+
+    /**
+     * @return the default anchor label
+     */
+    String getDefaultAnchorLabel();
+
+    /**
+     * El método setDefaultAnchorLabel se utiliza para establecer la etiqueta del grupo de propiedades ancladas a la propiedad que se almacena en el
+     * archivo de recursos por defecto. En caso de que el archivo de recursos para el idioma seleccionado por el usuario no esté disponible, la
+     * interfaz de la aplicación utiliza el archivo de recursos por defecto para obtener el valor de la etiqueta.
+     *
+     * @param defaultAnchorLabel sustantivo singular, preferiblemente sin complementos, que se usa como etiqueta del grupo de propiedades ancladas
+     */
+    void setDefaultAnchorLabel(String defaultAnchorLabel);
+
+    /**
+     * @param locale locale
+     * @return the localized anchor label
+     */
+    String getLocalizedAnchorLabel(Locale locale);
+
+    /**
+     * El método setLocalizedAnchorLabel se utiliza para establecer la etiqueta del grupo de propiedades ancladas a la propiedad que se almacena en el
+     * archivo de recursos de configuración regional. En caso de que el archivo de recursos para el idioma seleccionado por el usuario no esté
+     * disponible, la interfaz de la aplicación utiliza el archivo de recursos por defecto para obtener el valor de la etiqueta.
+     *
+     * @param locale configuración regional
+     * @param localizedAnchorLabel sustantivo singular, preferiblemente sin complementos, que se usa como etiqueta del grupo de propiedades ancladas
+     */
+    void setLocalizedAnchorLabel(Locale locale, String localizedAnchorLabel);
+
+    /**
+     * @return the default anchoring label
+     */
+    String getDefaultAnchoredLabel();
+
+    /**
+     * El método setDefaultAnchoredLabel se utiliza para establecer la etiqueta de la propiedad dentro del grupo de propiedades ancladas que se
+     * almacena en el archivo de recursos por defecto. En caso de que el archivo de recursos para el idioma seleccionado por el usuario no esté
+     * disponible, la interfaz de la aplicación utiliza el archivo de recursos por defecto para obtener el valor de la etiqueta.
+     *
+     * @param defaultAnchoredLabel sustantivo singular, preferiblemente sin complementos, que se usa como etiqueta dentro del grupo de propiedades
+     * ancladas
+     */
+    void setDefaultAnchoredLabel(String defaultAnchoredLabel);
+
+    /**
+     * @param locale locale
+     * @return the localized anchoring label
+     */
+    String getLocalizedAnchoredLabel(Locale locale);
+
+    /**
+     * El método setLocalizedAnchoredLabel se utiliza para establecer la etiqueta de la propiedad dentro del grupo de propiedades ancladas que se
+     * almacena en el archivo de recursos de configuración regional. En caso de que el archivo de recursos para el idioma seleccionado por el usuario
+     * no esté disponible, la interfaz de la aplicación utiliza el archivo de recursos por defecto para obtener el valor de la etiqueta.
+     *
+     * @param locale configuración regional
+     * @param localizedAnchoredLabel sustantivo singular, preferiblemente sin complementos, que se usa como etiqueta dentro del grupo de propiedades
+     * ancladas
+     */
+    void setLocalizedAnchoredLabel(Locale locale, String localizedAnchoredLabel);
 
     /**
      * @return the sequence number

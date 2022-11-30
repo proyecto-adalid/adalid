@@ -87,10 +87,12 @@ public class Maestro102 extends Maestro {
 //      putEnvironmentVariable(POSTGRESQL_DRIVER_JAR, "postgresql-42.2.18.jar");
 //      putEnvironmentVariable(POSTGRESQL_DRIVER_VERSION, "42.2.18");
 //
-//      putEnvironmentVariable(VERSION_POSTGRESQL, "14");
-//      putEnvironmentVariable(VERSION_WILDFLY, "26.1.1.Final");
-//      putEnvironmentVariable(VERSION_JAVA, "11.0.15");
+//      putEnvironmentVariable(VERSION_POSTGRESQL, "15");
+//      putEnvironmentVariable(VERSION_WILDFLY, "26.1.2.Final");
+//      putEnvironmentVariable(VERSION_JAVA, "11.0.16.1");
 //      putEnvironmentVariable(VERSION_PRIMEFACES, "11.0.0");
+//      putEnvironmentVariable(VERSION_PRIMEFACES_EXTENSIONS, "11.0.0");
+//      putEnvironmentVariable(VERSION_GOOGLE_GSON, "2.9.0");
 //      putEnvironmentVariable(VERSION_THIRD_PARTY_DIR, "4.0");
 //      loadPrivateProperties(LoggingLevel.INFO);
 //      setTheme(PrimeFacesThemes.SAGA);
@@ -120,7 +122,7 @@ public class Maestro102 extends Maestro {
 //      setVersion("1.0.0");
 //      taskNotifierSchedule.minute = "*/15";
 //      addProjectDependency(dependencia adicional, tipo del módulo al que se debe agregar la dependencia adicional);
-//      por ejemplo: addProjectDependency(MavenDependencies.PrimeFaces.serenity(), ProjectModuleType.WEB);
+//      por ejemplo: addProjectDependency(MavenDependencies.PrimeFaces.omega(), ProjectModuleType.WEB);
     }
 
     @Override
@@ -148,8 +150,8 @@ public class Maestro102 extends Maestro {
 //      addAttribute(ProjectAttributeKeys.DISABLE_BPL_IMPL_GENERATION, true);
 //      addAttribute(ProjectAttributeKeys.DISABLE_PAGE_ASSISTANT_GENERATION, true);
 //      addAttribute(ProjectAttributeKeys.FACELETS_REFRESH_PERIOD, -1);
-//      addAttribute(ProjectAttributeKeys.HCB_RENDERING, true);
 //      addAttribute(ProjectAttributeKeys.HELP_WINDOW_WIDTH_KEY, 3);
+//      addAttribute(ProjectAttributeKeys.HCB_RENDERING, true);
 //      addAttribute(ProjectAttributeKeys.HLB_RENDERING, true);
 //      addAttribute(ProjectAttributeKeys.HRB_RENDERING, true);
 //      addAttribute(ProjectAttributeKeys.HTML_SANITIZER_VERSION, "20200713.1");

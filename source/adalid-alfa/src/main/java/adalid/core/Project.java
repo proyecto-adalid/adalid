@@ -1818,6 +1818,29 @@ public abstract class Project extends AbstractArtifact implements ProjectBuilder
     }
 
     /**
+     *
+     */
+    private BooleanDisplayType _defaultBooleanDisplayType = BooleanDisplayType.TOGGLE;
+
+    /**
+     * @return the default boolean display type
+     */
+    public BooleanDisplayType getDefaultBooleanDisplayType() {
+        return _defaultBooleanDisplayType;
+    }
+
+    /**
+     * El método setDefaultRequiredBooleanDisplayType se utiliza para establecer el tipo predeterminado de componente que se utiliza para mostrar el
+     * valor de propiedades Boolean que no permiten valores nulos en las vistas (páginas) de consulta y registro, y de parámetros Boolean requeridos
+     * en las vistas (páginas) de ejecución de operaciones de negocio.
+     *
+     * @param type tipo de componente Boolean
+     */
+    public void setDefaultBooleanDisplayType(BooleanDisplayType type) {
+        _defaultBooleanDisplayType = type == null ? BooleanDisplayType.DROPDOWN : type;
+    }
+
+    /**
      * @return the MasterProject annotation indicator
      */
     public boolean isAnnotatedWithMaster() {

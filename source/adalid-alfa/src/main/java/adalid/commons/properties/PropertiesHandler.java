@@ -36,6 +36,7 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.regex.Pattern;
 import org.apache.commons.collections.ExtendedProperties;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
@@ -650,6 +651,11 @@ public class PropertiesHandler {
         File file;
         ArrayList<File> files = new ArrayList<>();
         file = new File(USER_VELOCITY_RESOURCES_DIR);
+        try {
+            FileUtils.forceMkdir(file);
+        } catch (IOException ex) {
+            logger.fatal(ThrowableUtils.getString(ex), ex);
+        }
         if (FilUtils.isVisibleDirectory(file)) {
             files.add(file);
         }

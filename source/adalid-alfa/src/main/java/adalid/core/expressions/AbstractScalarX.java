@@ -139,7 +139,7 @@ public abstract class AbstractScalarX extends AbstractExpression implements Scal
     }
     //</editor-fold>
 
-    static ScalarX coalesceDataType(ScalarX... scalarX) {
+    protected static ScalarX coalesceDataType(ScalarX... scalarX) {
         if (scalarX != null) {
             for (ScalarX sx : scalarX) {
                 if (sx != null && sx.getDataType() != null) {

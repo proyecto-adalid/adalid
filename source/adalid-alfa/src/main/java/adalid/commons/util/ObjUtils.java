@@ -591,7 +591,7 @@ public class ObjUtils {
             return null;
         }
         BigDecimal divisor = BigDecimal.valueOf(count);
-        return dividend.divide(divisor, RoundingMode.HALF_UP);
+        return dividend.divide(divisor, 60, RoundingMode.HALF_UP); // scale 60 since 18/08/2022
     }
     // </editor-fold>
 
@@ -633,7 +633,7 @@ public class ObjUtils {
     public static BigDecimal xDividedIntoY(Object x, Object y) {
         BigDecimal bx = NumUtils.numberToBigDecimal(x);
         BigDecimal by = NumUtils.numberToBigDecimal(y);
-        return bx == null || by == null || by.compareTo(BigDecimal.ZERO) == 0 ? null : bx.divide(by, RoundingMode.HALF_UP);
+        return bx == null || by == null || by.compareTo(BigDecimal.ZERO) == 0 ? null : bx.divide(by, 60, RoundingMode.HALF_UP); // scale 60 since 18/08/2022
     }
 
     public static BigDecimal xRaisedToTheY(Object x, Object y) {
@@ -796,7 +796,7 @@ public class ObjUtils {
 
     public static BigDecimal reciprocal(Object o) {
         BigDecimal pdq = NumUtils.numberToBigDecimal(o);
-        return pdq == null || pdq.compareTo(BigDecimal.ZERO) == 0 ? null : BigDecimal.ONE.divide(pdq, RoundingMode.HALF_UP);
+        return pdq == null || pdq.compareTo(BigDecimal.ZERO) == 0 ? null : BigDecimal.ONE.divide(pdq, 60, RoundingMode.HALF_UP); // scale 60 since 18/08/2022
     }
     // </editor-fold>
 

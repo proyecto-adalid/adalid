@@ -26,7 +26,22 @@ import org.apache.commons.lang.StringUtils;
  */
 public class SmallFile {
 
-    static final Charset[] STANDARD_CHARSETS = new Charset[]{
+    /**
+     * https://www.i18nqa.com/debug/table-iso8859-1-vs-windows-1252.html
+     *
+     * ISO-8859-1 (also called Latin-1) is identical to Windows-1252 (also called CP1252) except for the code points 128-159 (0x80-0x9F). ISO-8859-1
+     * assigns several control codes in this range. Windows-1252 has several characters, punctuation, arithmetic and business symbols assigned to
+     * these code points.
+     *
+     * Mislabeling text encoded in Windows-1252 as ISO-8859-1 and then converting from ISO-8859-1 to Unicode or other encodings causes the characters
+     * in the range 128-159 to be lost. They are converted as if they were control codes and typically display as white space, a specialized question
+     * mark, or a square showing the 4 hex digits of the code point. Using an ISO-8859-1 font that does not have the correct glyphs for the
+     * Windows-1252 characters will cause the characters to be displayed incorrectly.
+     */
+    public static final Charset WINDOWS_CHARSET = Charset.forName("windows-1252");
+
+    /*
+    public static final Charset[] STANDARD_CHARSETS = new Charset[]{
         StandardCharsets.US_ASCII,
         StandardCharsets.ISO_8859_1,
         StandardCharsets.UTF_8,
@@ -35,13 +50,10 @@ public class SmallFile {
         StandardCharsets.UTF_16
     };
 
-    static final Charset WINDOWS_CHARSET = Charset.forName("windows-1252");
-
-    static final Charset[] DEFAULT_CHARSETS = new Charset[]{
-        StandardCharsets.US_ASCII,
+    /**/
+    public static final Charset[] DEFAULT_CHARSETS = new Charset[]{
         StandardCharsets.UTF_8,
-        WINDOWS_CHARSET,
-        StandardCharsets.ISO_8859_1
+        WINDOWS_CHARSET
     };
 
     public SmallFile(String path) {

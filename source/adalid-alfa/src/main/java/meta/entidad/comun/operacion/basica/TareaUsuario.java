@@ -17,8 +17,8 @@ import adalid.core.annotations.*;
 import adalid.core.enums.*;
 import adalid.core.interfaces.*;
 import adalid.core.properties.*;
-import adalid.jee2.constants.*;
 import java.lang.reflect.Field;
+import meta.entidad.comun.auditoria.RastroProceso;
 import meta.entidad.comun.configuracion.basica.Funcion;
 import meta.entidad.comun.control.acceso.Usuario;
 
@@ -44,6 +44,16 @@ public class TareaUsuario extends AbstractPersistentEntity {
         super(declaringArtifact, declaringField);
     }
     // </editor-fold>
+
+    @Override
+    protected void addAllocationStrings() {
+        super.addAllocationStrings();
+        /*
+        super.addAllocationStrings(
+            "rastroProceso.condicionEjeFun"
+        );
+        /**/
+    }
 
     @PrimaryKey
     public LongProperty id;
@@ -139,6 +149,22 @@ public class TareaUsuario extends AbstractPersistentEntity {
     @PropertyField(table = Kleenean.TRUE, report = Kleenean.TRUE, search = Kleenean.TRUE, heading = Kleenean.TRUE, overlay = Kleenean.TRUE)
     public CondicionTarea condicion;
 
+    /*
+    @ColumnField(calculable = Kleenean.TRUE)
+//  @ForeignKey(onDelete = OnDeleteAction.NONE, onUpdate = OnUpdateAction.NONE)
+    @ManyToOne(navigability = Navigability.UNIDIRECTIONAL, view = MasterDetailView.NONE)
+    @PropertyField(table = Kleenean.FALSE, report = Kleenean.FALSE)
+    public CondicionEjeFun condicionEjeFun;
+
+    /**/
+    @ColumnField(nullable = Kleenean.TRUE)
+//  do not add a foreign-key referring to RastroProceso
+//  @ForeignKey(onDelete = OnDeleteAction.NONE, onUpdate = OnUpdateAction.NONE)
+    @ManyToOne(navigability = Navigability.UNIDIRECTIONAL, view = MasterDetailView.NONE)
+    @PropertyField(table = Kleenean.FALSE, report = Kleenean.FALSE)
+//  @QueryMapping(mapKeyProperties = Kleenean.FALSE)
+    public RastroProceso rastroProceso;
+
     @UserProperty
     @ColumnField(nullable = Kleenean.TRUE)
     @ForeignKey(onDelete = OnDeleteAction.NONE, onUpdate = OnUpdateAction.NONE)
@@ -200,6 +226,9 @@ public class TareaUsuario extends AbstractPersistentEntity {
         /**/
         condicion.setInitialValue(condicion.DISPONIBLE);
         condicion.setDefaultValue(condicion.DISPONIBLE);
+        /*
+        condicionEjeFun.setCalculableValueEntityReference(rastroProceso.condicionEjeFun);
+        RastroUtils.setGraphicImageExpressions(condicionEjeFun);
         /**/
         fechaHoraCondicion.setInitialValue(SpecialTemporalValue.CURRENT_TIMESTAMP);
         fechaHoraCondicion.setDefaultValue(SpecialTemporalValue.CURRENT_TIMESTAMP);
@@ -306,6 +335,20 @@ public class TareaUsuario extends AbstractPersistentEntity {
         /**/
         condicion.setLocalizedLabel(ENGLISH, "condition");
         condicion.setLocalizedLabel(SPANISH, "condición");
+        /*
+        condicionEjeFun.setLocalizedDescription(ENGLISH, "condition of the execution of the business process corresponding to the task");
+        condicionEjeFun.setLocalizedDescription(SPANISH, "condición de la ejecución del proceso de negocio correspondiente a la tarea");
+        condicionEjeFun.setLocalizedLabel(ENGLISH, "process execution condition");
+        condicionEjeFun.setLocalizedLabel(SPANISH, "condición de ejecución del proceso");
+        condicionEjeFun.setLocalizedShortLabel(ENGLISH, "process condition");
+        condicionEjeFun.setLocalizedShortLabel(SPANISH, "condición del proceso");
+        /**/
+        rastroProceso.setLocalizedDescription(ENGLISH, "audit trail of the execution of the business process corresponding to the task");
+        rastroProceso.setLocalizedDescription(SPANISH, "rastro de auditoría de la ejecución del proceso de negocio correspondiente a la tarea");
+        rastroProceso.setLocalizedLabel(ENGLISH, "process execution audit trail");
+        rastroProceso.setLocalizedLabel(SPANISH, "rastro de ejecución del proceso");
+        rastroProceso.setLocalizedShortLabel(ENGLISH, "process audit trail");
+        rastroProceso.setLocalizedShortLabel(SPANISH, "rastro del proceso");
         /**/
         usuarioCondicion.setLocalizedLabel(ENGLISH, "transition user");
         usuarioCondicion.setLocalizedLabel(SPANISH, "usuario transición");
@@ -368,6 +411,7 @@ public class TareaUsuario extends AbstractPersistentEntity {
     }
 
     void setGraphicImageExpressions() {
+        /*
         final String NULL = fa(FA.NULL_VALUE + FA.WITH_FIXED_WIDTH + CSS.STATUS_NULL_VALUE_IMAGE);
         final String fa11 = fa(FA.GEAR + FA.WITH_SIZE_LG + FA.WITH_SPIN + CSS.STATUS_THEME_COLOR);
         final String fa12 = fa(FA.TIMES + FA.WITH_SIZE_LG + CSS.STATUS_THEME_COLOR);
@@ -385,8 +429,9 @@ public class TareaUsuario extends AbstractPersistentEntity {
                     otherwise(c21.then(fa21).
                         otherwise(c22.then(fa22).
                             otherwise(fa99)))));
-        /**/
+        /++/
         condicion.setGraphicImageFontAwesomeClassNameExpression(expression);
+        /**/
     }
 
     @Override
@@ -412,12 +457,18 @@ public class TareaUsuario extends AbstractPersistentEntity {
         super.settleTabs();
         /**/
         descripcion.newTabField(funcion, descripcionFuncion, paginaFuncion, codigoClaseRecursoValor, nombreClaseRecursoValor, recursoValor, codigoRecursoValor, nombreRecursoValor, descripcionRecursoValor, paginaRecurso);
-        descripcion.newTabField(condicion, fechaHoraCondicion);
+        descripcion.newTabField(condicion);
+//      descripcion.newTabField(condicionEjeFun);
+        descripcion.newTabField(rastroProceso);
+        descripcion.newTabField(fechaHoraCondicion);
         descripcion.newTabField(fechaHoraLimite, prioridad);
         /**/
         participantes.newTabField(responsable, supervisor, finalizador);
         /**/
-        cronologia.newTabField(condicion, usuarioCondicion,
+        cronologia.newTabField(condicion);
+//      cronologia.newTabField(condicionEjeFun);
+        cronologia.newTabField(rastroProceso);
+        cronologia.newTabField(usuarioCondicion,
             fechaHoraCondicion, fechaHoraRegistro, fechaHoraAsignacion, fechaHoraAsuncion, fechaHoraRelevacion, fechaHoraAbandono, fechaHoraCancelacion, fechaHoraFinalizacion);
         /**/
         // <editor-fold defaultstate="collapsed" desc="localization of TareaUsuario's tabs">
@@ -546,6 +597,9 @@ public class TareaUsuario extends AbstractPersistentEntity {
         addSelectSegment(finalizada);
         addSelectSegment(propiedadUsuarioActual, pendienteUsuarioActual, responsabilidadUsuarioActual);
         setSelectFilter(responsable.isNullOrEqualTo(destinatario));
+        /**/
+        rastroProceso.setRenderingFilter(rastroProceso.isNotNull());
+        /**/
     }
 
     protected NotificarTareas notificarTareas;

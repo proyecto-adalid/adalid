@@ -304,14 +304,6 @@ public @interface PropertyField {
     String defaultFunction() default "";
 
     /**
-     * anchor especifica el nombre de otra propiedad a continuación de la cual se muestra esta propiedad en las vistas (páginas) de consulta y
-     * registro. Utilizando este atributo es posible ordenar las propiedades de manera jerárquica.
-     *
-     * @return anchor
-     */
-    String anchor() default "";
-
-    /**
      * readingTableSnippet especifica la ruta y el nombre del snippet de la propiedad en las vistas (páginas) de consulta de presentación tabular.
      *
      * Si utiliza la plataforma jee2, los snippets se deben agregar en el subdirectorio resources/snippets/custom-made del directorio src/main/webapp
@@ -358,6 +350,27 @@ public @interface PropertyField {
      * @return writingDetailSnippet
      */
     String writingDetailSnippet() default "";
+
+    /**
+     * anchor especifica el nombre de otra propiedad a continuación de la cual se muestra esta propiedad en las vistas (páginas) de consulta y
+     * registro.
+     *
+     * @return anchor
+     */
+    String anchor() default "";
+
+    /**
+     * anchorType especifica el tipo de anclaje de la propiedad. Este elemento es relevante solo si la propiedad está anclada a otra propiedad, usando
+     * el elemento anchor. Su valor es uno de los elementos de la enumeración AnchorType. Seleccione UNLINKED para mostrar la propiedad como un
+     * elemento contiguo pero independiente de su propiedad ancla. Seleccione BLOCK para mostrar la propiedad conjuntamente con su propiedad ancla,
+     * como un elemento de bloque, comenzando en una nueva línea y ocupando todo el ancho disponible. Seleccione INLINE para mostrar la propiedad
+     * conjuntamente con su propiedad ancla, como un elemento en línea. Seleccione INLINE_BLOCK para mostrar la propiedad como un elemento en línea,
+     * para la lectura; y como un elemento de bloque, para la escritura. Alternativamente, omita el elemento para utilizar el valor predeterminado del
+     * atributo. El valor predeterminado del atributo es UNLINKED.
+     *
+     * @return anchorType
+     */
+    AnchorType anchorType() default AnchorType.UNLINKED;
 
     /**
      * sequence específica el número de secuencia o posición relativa en la que se muestra la propiedad en las vistas (páginas) de consulta y

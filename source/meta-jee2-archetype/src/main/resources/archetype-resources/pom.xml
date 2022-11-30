@@ -43,12 +43,12 @@
         <dependency>
             <groupId>org.proyecto-adalid</groupId>
             <artifactId>adalid-alfa</artifactId>
-            <version>4.5.0</version><!--adalid-->
+            <version>4.6.0</version><!--adalid-->
         </dependency>
         <dependency>
             <groupId>com.oracle.database.jdbc</groupId>
-            <artifactId>ojdbc8</artifactId>
-            <version>18.3.0.0</version>
+            <artifactId>ojdbc11</artifactId>
+            <version>21.7.0.0</version>
             <scope>runtime</scope>
         </dependency>
         <dependency>

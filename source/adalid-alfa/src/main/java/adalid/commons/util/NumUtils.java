@@ -15,6 +15,7 @@ package adalid.commons.util;
 import adalid.commons.bundles.*;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.text.ParsePosition;
@@ -124,7 +125,7 @@ public class NumUtils {
     }
 
     public static Byte ceiling(Byte dividend, int divisor) {
-        if (dividend == null || divisor == 0 || dividend % divisor == 0) {
+        if (dividend == null || divisor == 0 || divisor == 1 || dividend % divisor == 0) {
             return dividend;
         }
         int factor = dividend / divisor + 1;
@@ -133,7 +134,7 @@ public class NumUtils {
     }
 
     public static Short ceiling(Short dividend, int divisor) {
-        if (dividend == null || divisor == 0 || dividend % divisor == 0) {
+        if (dividend == null || divisor == 0 || divisor == 1 || dividend % divisor == 0) {
             return dividend;
         }
         int factor = dividend / divisor + 1;
@@ -142,7 +143,7 @@ public class NumUtils {
     }
 
     public static Integer ceiling(Integer dividend, int divisor) {
-        if (dividend == null || divisor == 0 || dividend % divisor == 0) {
+        if (dividend == null || divisor == 0 || divisor == 1 || dividend % divisor == 0) {
             return dividend;
         }
         long factor = dividend / divisor + 1;
@@ -151,7 +152,7 @@ public class NumUtils {
     }
 
     public static Long ceiling(Long dividend, int divisor) {
-        if (dividend == null || divisor == 0 || dividend % divisor == 0) {
+        if (dividend == null || divisor == 0 || divisor == 1 || dividend % divisor == 0) {
             return dividend;
         }
         long factor = dividend / divisor + 1;
@@ -182,8 +183,11 @@ public class NumUtils {
     }
 
     public static BigInteger ceiling(BigInteger dividend, int divisor) {
+        if (dividend == null || divisor == 0 || divisor == 1) {
+            return dividend;
+        }
         BigInteger denominator = BigInteger.valueOf(divisor);
-        if (dividend == null || divisor == 0 || dividend.remainder(denominator).equals(BigInteger.ZERO)) {
+        if (dividend.remainder(denominator).equals(BigInteger.ZERO)) {
             return dividend;
         }
         BigInteger factor = dividend.divide(denominator).add(BigInteger.ONE);
@@ -192,8 +196,11 @@ public class NumUtils {
     }
 
     public static BigDecimal ceiling(BigDecimal dividend, int divisor) {
+        if (dividend == null || divisor == 0) {
+            return dividend;
+        }
         BigDecimal denominator = BigDecimal.valueOf(divisor);
-        if (dividend == null || divisor == 0 || dividend.remainder(denominator).compareTo(BigDecimal.ZERO) == 0) {
+        if (dividend.remainder(denominator).compareTo(BigDecimal.ZERO) == 0) {
             return dividend;
         }
         BigDecimal factor = dividend.divideToIntegralValue(denominator).add(BigDecimal.ONE);
@@ -217,7 +224,7 @@ public class NumUtils {
     }
 
     public static Byte floor(Byte dividend, int divisor) {
-        if (dividend == null || divisor == 0 || dividend % divisor == 0) {
+        if (dividend == null || divisor == 0 || divisor == 1 || dividend % divisor == 0) {
             return dividend;
         }
         int factor = dividend / divisor;
@@ -226,7 +233,7 @@ public class NumUtils {
     }
 
     public static Short floor(Short dividend, int divisor) {
-        if (dividend == null || divisor == 0 || dividend % divisor == 0) {
+        if (dividend == null || divisor == 0 || divisor == 1 || dividend % divisor == 0) {
             return dividend;
         }
         int factor = dividend / divisor;
@@ -235,7 +242,7 @@ public class NumUtils {
     }
 
     public static Integer floor(Integer dividend, int divisor) {
-        if (dividend == null || divisor == 0 || dividend % divisor == 0) {
+        if (dividend == null || divisor == 0 || divisor == 1 || dividend % divisor == 0) {
             return dividend;
         }
         long factor = dividend / divisor;
@@ -244,7 +251,7 @@ public class NumUtils {
     }
 
     public static Long floor(Long dividend, int divisor) {
-        if (dividend == null || divisor == 0 || dividend % divisor == 0) {
+        if (dividend == null || divisor == 0 || divisor == 1 || dividend % divisor == 0) {
             return dividend;
         }
         long factor = dividend / divisor;
@@ -275,8 +282,11 @@ public class NumUtils {
     }
 
     public static BigInteger floor(BigInteger dividend, int divisor) {
+        if (dividend == null || divisor == 0 || divisor == 1) {
+            return dividend;
+        }
         BigInteger denominator = BigInteger.valueOf(divisor);
-        if (dividend == null || divisor == 0 || dividend.remainder(denominator).equals(BigInteger.ZERO)) {
+        if (dividend.remainder(denominator).equals(BigInteger.ZERO)) {
             return dividend;
         }
         BigInteger factor = dividend.divide(denominator);
@@ -285,8 +295,11 @@ public class NumUtils {
     }
 
     public static BigDecimal floor(BigDecimal dividend, int divisor) {
+        if (dividend == null || divisor == 0) {
+            return dividend;
+        }
         BigDecimal denominator = BigDecimal.valueOf(divisor);
-        if (dividend == null || divisor == 0 || dividend.remainder(denominator).compareTo(BigDecimal.ZERO) == 0) {
+        if (dividend.remainder(denominator).compareTo(BigDecimal.ZERO) == 0) {
             return dividend;
         }
         BigDecimal factor = dividend.divideToIntegralValue(denominator);
@@ -310,75 +323,91 @@ public class NumUtils {
     }
 
     public static Byte round(Byte dividend, int divisor) {
-        if (dividend == null || divisor == 0) {
+        if (dividend == null || divisor == 0 || divisor == 1) {
             return dividend;
         }
         int remainder = dividend % divisor;
+        int threshold = divisor / 2;
         return remainder == 0 ? dividend
-            : remainder < divisor / 2 ? floor(dividend, divisor) : ceiling(dividend, divisor);
+            : remainder <= threshold ? floor(dividend, divisor) : ceiling(dividend, divisor);
     }
 
     public static Short round(Short dividend, int divisor) {
-        if (dividend == null || divisor == 0) {
+        if (dividend == null || divisor == 0 || divisor == 1) {
             return dividend;
         }
         int remainder = dividend % divisor;
+        int threshold = divisor / 2;
         return remainder == 0 ? dividend
-            : remainder < divisor / 2 ? floor(dividend, divisor) : ceiling(dividend, divisor);
+            : remainder <= threshold ? floor(dividend, divisor) : ceiling(dividend, divisor);
     }
 
     public static Integer round(Integer dividend, int divisor) {
-        if (dividend == null || divisor == 0) {
+        if (dividend == null || divisor == 0 || divisor == 1) {
             return dividend;
         }
         int remainder = dividend % divisor;
+        int threshold = divisor / 2;
         return remainder == 0 ? dividend
-            : remainder < divisor / 2 ? floor(dividend, divisor) : ceiling(dividend, divisor);
+            : remainder <= threshold ? floor(dividend, divisor) : ceiling(dividend, divisor);
     }
 
     public static Long round(Long dividend, int divisor) {
-        if (dividend == null || divisor == 0) {
+        if (dividend == null || divisor == 0 || divisor == 1) {
             return dividend;
         }
         long remainder = dividend % divisor;
+        long threshold = divisor / 2;
         return remainder == 0 ? dividend
-            : (int) remainder < divisor / 2 ? floor(dividend, divisor) : ceiling(dividend, divisor);
+            : remainder <= threshold ? floor(dividend, divisor) : ceiling(dividend, divisor);
     }
 
     public static Float round(Float dividend, int divisor) {
         if (dividend == null || divisor == 0) {
             return dividend;
         }
-        double remainder = dividend % divisor;
-        return remainder == 0 ? dividend
-            : (int) remainder < divisor / 2 ? floor(dividend, divisor) : ceiling(dividend, divisor);
+        double numerator = Math.rint((double) dividend);
+        double remainder = numerator % divisor;
+        float fp = (float) numerator;
+        if (remainder == 0) {
+            return fp;
+        }
+        long threshold = divisor / 2;
+        return (long) remainder <= threshold ? floor(fp, divisor) : ceiling(fp, divisor);
     }
 
     public static Double round(Double dividend, int divisor) {
         if (dividend == null || divisor == 0) {
             return dividend;
         }
-        double remainder = dividend % divisor;
-        return remainder == 0 ? dividend
-            : (int) remainder < divisor / 2 ? floor(dividend, divisor) : ceiling(dividend, divisor);
+        double numerator = Math.rint(dividend);
+        double remainder = numerator % divisor;
+        if (remainder == 0) {
+            return numerator;
+        }
+        long threshold = divisor / 2;
+        return (long) remainder <= threshold ? floor(numerator, divisor) : ceiling(numerator, divisor);
     }
 
     public static BigInteger round(BigInteger dividend, int divisor) {
-        if (dividend == null || divisor == 0) {
+        if (dividend == null || divisor == 0 || divisor == 1) {
             return dividend;
         }
         BigInteger remainder = dividend.remainder(BigInteger.valueOf(divisor));
+        long threshold = divisor / 2;
         return remainder.equals(BigInteger.ZERO) ? dividend
-            : remainder.intValue() < divisor / 2 ? floor(dividend, divisor) : ceiling(dividend, divisor);
+            : remainder.longValue() <= threshold ? floor(dividend, divisor) : ceiling(dividend, divisor);
     }
 
     public static BigDecimal round(BigDecimal dividend, int divisor) {
         if (dividend == null || divisor == 0) {
             return dividend;
         }
-        BigDecimal remainder = dividend.remainder(BigDecimal.valueOf(divisor));
-        return remainder.compareTo(BigDecimal.ZERO) == 0 ? dividend
-            : remainder.intValue() < divisor / 2 ? floor(dividend, divisor) : ceiling(dividend, divisor);
+        BigDecimal numerator = dividend.setScale(0, RoundingMode.HALF_UP).setScale(dividend.scale());
+        BigDecimal remainder = numerator.remainder(BigDecimal.valueOf(divisor));
+        long threshold = divisor / 2;
+        return remainder.compareTo(BigDecimal.ZERO) == 0 ? numerator
+            : remainder.longValue() <= threshold ? floor(numerator, divisor) : ceiling(numerator, divisor);
     }
     // </editor-fold>
 

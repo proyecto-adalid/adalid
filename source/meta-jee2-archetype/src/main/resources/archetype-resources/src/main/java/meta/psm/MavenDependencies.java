@@ -18,26 +18,45 @@ public class MavenDependencies {
 
     public static PrimeFaces PrimeFaces;
 
+    static {
+        new MavenDependencies();
+    }
+
     private MavenDependencies() {
         PrimeFaces = new PrimeFaces();
     }
 
     public class PrimeFaces {
 
-        public static final String ORG_PRIMEFACES_THEMES = "org.primefaces.themes";
+        private static final String groupId = "org.primefaces.themes";
 
-        public ProjectDependency serenity() {
-            return ProjectDependency.of(ORG_PRIMEFACES_THEMES, "serenity", "[1.0.2,)").
+        public ProjectDependency freya() {
+            return ProjectDependency.of(groupId, "freya", "4.0.0").
                 setScope(ProjectDependencyScope.RUNTIME);
         }
 
-        public ProjectDependency spark() {
-            return ProjectDependency.of(ORG_PRIMEFACES_THEMES, "spark", "[1.2,)").
+        public ProjectDependency mirage() {
+            return ProjectDependency.of(groupId, "mirage", "4.0.0").
+                setScope(ProjectDependencyScope.RUNTIME);
+        }
+
+        public ProjectDependency omega() {
+            return ProjectDependency.of(groupId, "omega", "5.0.0").
+                setScope(ProjectDependencyScope.RUNTIME);
+        }
+
+        public ProjectDependency prestige() {
+            return ProjectDependency.of(groupId, "prestige", "6.0.0").
+                setScope(ProjectDependencyScope.RUNTIME);
+        }
+
+        public ProjectDependency serenity() {
+            return ProjectDependency.of(groupId, "serenity", "5.0.0").
                 setScope(ProjectDependencyScope.RUNTIME);
         }
 
         public ProjectDependency ultima() {
-            return ProjectDependency.of(ORG_PRIMEFACES_THEMES, "ultima", "[1.0.4,)").
+            return ProjectDependency.of(groupId, "ultima", "5.0.0").
                 setScope(ProjectDependencyScope.RUNTIME);
         }
 

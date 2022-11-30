@@ -110,7 +110,19 @@ public abstract class AbstractPersistentEnumerationEntity extends AbstractPersis
                     }
                 }
             }
+            // tagging since 22/08/2022
+            _customTagging = true;
+            for (Instance instance : instances) {
+                _customTagging &= instance.getCustomTag() != null;
+            }
+            /**/
         }
+    }
+
+    private boolean _customTagging;
+
+    public boolean isCustomTagging() {
+        return _customTagging;
     }
 
     /**

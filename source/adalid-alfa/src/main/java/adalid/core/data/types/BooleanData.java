@@ -47,7 +47,7 @@ public class BooleanData extends BooleanPrimitive {
     public BooleanDisplayType getBooleanDisplayType() {
         if (BooleanDisplayType.UNSPECIFIED.equals(_booleanDisplayType)) {
             return (isParameter() && isRequiredParameter()) || (isProperty() && !isNullable())
-                ? BooleanDisplayType.CHECKBOX : BooleanDisplayType.DROPDOWN;
+                ? TLC.getProject().getDefaultBooleanDisplayType() : BooleanDisplayType.DROPDOWN;
         }
         return _booleanDisplayType;
     }

@@ -107,7 +107,7 @@ public class Constants {
 
     public static final int MAX_INTEGER_DIVISOR = 1000000;
 
-    public static final int MAX_STRING_LENGTH = 32767;
+    public static final int MAX_STRING_LENGTH = StrUtils.MAX_STRING_LENGTH;
 
     public static final int MAX_STRING_INDEX_LENGTH = 6384;
 
@@ -154,6 +154,11 @@ public class Constants {
     public static final String FONT_AWESOME_CLASS_REGEX = "^.*\\bfa[a-z]?(\\sfa[a-z]?\\-[a-z\\-]*)+.*$";
 
     /**
+     * Unicode symbol class regex
+     */
+    public static final String UNICODE_SYMBOL_CLASS_REGEX = "^.*\\bxs[a-z]?(\\sxs[a-z]?\\-[a-z\\-]*)+.*$";
+
+    /**
      * Java email validation using regex. https://howtodoinjava.com/regex/java-regex-validate-email-address/
      */
     public static final String EMAIL_REGEX = "^[\\w!#$%&’*+/=?`{|}~^-]+(?:\\.[\\w!#$%&’*+/=?`{|}~^-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,6}$";
@@ -164,6 +169,11 @@ public class Constants {
      * Regex : ^\+(?:[0-9]\\s?){6,14}[0-9]$
      */
     public static final String PHONE_REGEX = "^\\+(?:\\d{1,3})[-\\s](?:\\d{1,4})(?:[-\\s]?\\d{6,10})$";
+
+    /**
+     * Java phone number validation using regex.
+     */
+    public static final String LOCAL_PHONE_REGEX = "^(?:\\d{1,4})(?:[-\\s]?\\d{6,10})$";
 
     /**
      * The Perfect URL Regular Expression. http://urlregex.com/

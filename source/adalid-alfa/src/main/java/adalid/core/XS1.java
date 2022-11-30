@@ -727,6 +727,26 @@ class XS1 {
         }
     }
 
+    static Parameter getParameter(Field field, Object declaringObject) {
+        return getParameter(field, declaringObject, false);
+    }
+
+    static Parameter getParameter(Field field, Object declaringObject, boolean ignoreExceptions) {
+        try {
+            Object object = field.get(declaringObject);
+            return object instanceof Parameter ? (Parameter) object : null;
+        } catch (IllegalArgumentException | IllegalAccessException ex) {
+            if (ignoreExceptions) {
+                return null;
+            }
+            Throwable cause = ThrowableUtils.getCause(ex);
+            String message = ex.equals(cause) ? null : ex.getMessage();
+            logger.error(message, cause);
+            Project.increaseParserErrorCount();
+            return null;
+        }
+    }
+
     static View getView(Field field, Object declaringObject) {
         Object object = null;
         try {

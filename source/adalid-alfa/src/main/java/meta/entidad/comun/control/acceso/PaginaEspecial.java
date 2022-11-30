@@ -22,14 +22,14 @@ import java.lang.reflect.Field;
 /**
  * @author Jorge Campins
  */
-@EntityClass(catalog = Kleenean.FALSE, independent = Kleenean.TRUE, resourceType = ResourceType.CONFIGURATION, resourceGender = ResourceGender.FEMININE)
+@EntityClass(catalog = Kleenean.TRUE, independent = Kleenean.TRUE, resourceType = ResourceType.CONFIGURATION, resourceGender = ResourceGender.FEMININE)
 @EntityCodeGen(bws = Kleenean.FALSE, fws = Kleenean.FALSE)
 @EntitySelectOperation(enabled = Kleenean.TRUE, rowsLimit = 0)
-@EntityInsertOperation(enabled = Kleenean.TRUE)
-@EntityUpdateOperation(enabled = Kleenean.TRUE)
-@EntityDeleteOperation(enabled = Kleenean.TRUE)
+@EntityInsertOperation(enabled = Kleenean.FALSE)
+@EntityUpdateOperation(enabled = Kleenean.FALSE)
+@EntityDeleteOperation(enabled = Kleenean.FALSE)
 @EntityTableView(enabled = Kleenean.TRUE)
-@EntityDetailView(enabled = Kleenean.TRUE)
+@EntityDetailView(enabled = Kleenean.FALSE)
 @EntityTreeView(enabled = Kleenean.FALSE)
 @EntityConsoleView(enabled = Kleenean.FALSE)
 @EntityReferenceDisplay(style = EntityReferenceStyle.NAME)
@@ -75,24 +75,37 @@ public class PaginaEspecial extends AbstractPersistentEntity {
     public StringProperty uri;
 
     @ColumnField(nullable = Kleenean.FALSE)
-//  @PropertyField(create = Kleenean.TRUE, update = Kleenean.TRUE, table = Kleenean.TRUE, report = Kleenean.TRUE)
+//  @PropertyField(create = Kleenean.FALSE, update = Kleenean.FALSE, table = Kleenean.TRUE, report = Kleenean.TRUE)
     @PropertyField(hidden = Kleenean.TRUE)
     public BooleanProperty publica;
 
+    @ColumnField(nullable = Kleenean.FALSE)
+//  @PropertyField(create = Kleenean.FALSE, update = Kleenean.FALSE, table = Kleenean.TRUE, report = Kleenean.TRUE)
+    @PropertyField(hidden = Kleenean.TRUE)
+    public BooleanProperty opcionMenu;
+
     @InactiveIndicator
     @ColumnField(nullable = Kleenean.FALSE)
-    @PropertyField(create = Kleenean.FALSE, update = Kleenean.FALSE, table = Kleenean.TRUE, report = Kleenean.TRUE)
+    @PropertyField(create = Kleenean.FALSE, update = Kleenean.FALSE, table = Kleenean.TRUE, report = Kleenean.TRUE, overlay = Kleenean.FALSE)
     public BooleanProperty inactiva;
 
     @Override
     protected void settleProperties() {
         super.settleProperties();
+        /**/
         codigo.setDefaultValue(concat("@", id.toZeroPaddedString(19)));
+        /**/
         publica.setInitialValue(true);
         publica.setDefaultValue(true);
+        /**/
+        opcionMenu.setInitialValue(false);
+        opcionMenu.setDefaultValue(false);
+        /**/
         inactiva.setInitialValue(false);
         inactiva.setDefaultValue(false);
+        /**/
         // <editor-fold defaultstate="collapsed" desc="localization of PaginaEspecial's properties">
+        /**/
         codigo.setLocalizedLabel(ENGLISH, "special page code");
         codigo.setLocalizedLabel(SPANISH, "código de la página especial");
         codigo.setLocalizedShortLabel(ENGLISH, "code");
@@ -113,13 +126,23 @@ public class PaginaEspecial extends AbstractPersistentEntity {
         publica.setLocalizedDescription(ENGLISH, "public page indicator");
         publica.setLocalizedDescription(SPANISH, "indicador de página pública");
         /**/
+        opcionMenu.setLocalizedLabel(ENGLISH, "menu option");
+        opcionMenu.setLocalizedLabel(SPANISH, "opción de menú");
+        /**/
         inactiva.setLocalizedLabel(ENGLISH, "inactive special page");
         inactiva.setLocalizedLabel(SPANISH, "página especial inactiva");
         inactiva.setLocalizedShortLabel(ENGLISH, "inactive");
         inactiva.setLocalizedShortLabel(SPANISH, "inactiva");
         inactiva.setLocalizedDescription(ENGLISH, "inactive page indicator");
         inactiva.setLocalizedDescription(SPANISH, "indicador de página inactiva");
+        /**/
         // </editor-fold>
+    }
+
+    @Override
+    protected void settleFilters() {
+        super.settleFilters();
+        uri.setModifyingFilter(opcionMenu.isFalse());
     }
 
     protected Desactivar desactivar;

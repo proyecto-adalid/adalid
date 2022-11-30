@@ -12,7 +12,6 @@
  */
 package meta.entidad.comun.abstracta;
 
-import adalid.core.*;
 import adalid.core.annotations.*;
 import adalid.core.enums.*;
 import adalid.core.interfaces.*;
@@ -54,13 +53,13 @@ public abstract class TransicionAbstracta extends PersistentEntityBase {
     }
 
     @ColumnField(nullable = Kleenean.FALSE)
-    @PropertyField(sequence = 1010, table = Kleenean.TRUE, report = Kleenean.TRUE, search = Kleenean.TRUE)
+    @PropertyField(sequence = 1010, report = Kleenean.TRUE, search = Kleenean.TRUE, update = Kleenean.FALSE, table = Kleenean.TRUE)
     public TimestampProperty fechaHora;
 
     @UserProperty
     @ForeignKey(onDelete = OnDeleteAction.NONE, onUpdate = OnUpdateAction.NONE)
     @ManyToOne(navigability = Navigability.UNIDIRECTIONAL, view = MasterDetailView.NONE)
-    @PropertyField(sequence = 1020, table = Kleenean.FALSE, report = Kleenean.TRUE, search = Kleenean.TRUE)
+    @PropertyField(sequence = 1020, report = Kleenean.TRUE, search = Kleenean.TRUE, update = Kleenean.FALSE, table = Kleenean.FALSE)
     public Usuario usuario;
 
     @PropertyField(sequence = 1030)

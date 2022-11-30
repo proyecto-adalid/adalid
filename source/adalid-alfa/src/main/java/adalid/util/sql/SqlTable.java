@@ -19,6 +19,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
@@ -28,6 +29,10 @@ import org.apache.log4j.Logger;
 public class SqlTable extends SqlArtifact {
 
     private static final Logger logger = Logger.getLogger(SqlTable.class);
+
+    private static final String[] no_pk_table_names = {
+        "call_stack"
+    };
 
     // <editor-fold defaultstate="collapsed" desc="instance fields">
     private final SqlReader _reader;
@@ -503,8 +508,13 @@ public class SqlTable extends SqlArtifact {
         String colname, text;
         if (_primaryKey == null) {
             // a table w/o primary key would be later rejected by IsFairTable predicate
-            text = "table " + getQualifiedName() + " does not have a primary key";
-            logger.warn(SqlUtil.highlight(text));
+            if (ArrayUtils.contains(no_pk_table_names, tabname)) {
+                text = "table " + getQualifiedName() + " does not have a proper primary key";
+                logger.info(text);
+            } else {
+                text = "table " + getQualifiedName() + " does not have a primary key";
+                logger.warn(SqlUtil.highlight(text));
+            }
             if (isEnumeration()) {
                 // Toda enumeración debe tener una clave primaria de tipo IntegerProperty.
                 // Si no está definida en la base de datos, se define automáticamente con el nombre "numero".

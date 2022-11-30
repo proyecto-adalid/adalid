@@ -165,6 +165,20 @@ public class SqlWriter extends SqlReader {
         return JavaUtils.getJavaKeywordSet();
     }
 
+    public int getTableNameError(String tabname) {
+        if (StringUtils.isBlank(tabname)) {
+            logger.error("missing table name");
+            return -1;
+        } else if (tabname.length() < 2) {
+            logger.error(tabname + " must be renamed; " + tabname + " is too short an artifact name");
+            return 1;
+        } else if (!tabname.matches("^[A-Z][a-z]\\w*$")) {
+            logger.error(tabname + " must be renamed; " + tabname + " is an invalid artifact name (it does not begin with [A-Z][a-z])");
+            return 2;
+        }
+        return 0;
+    }
+
     public int getColumnNameError(String tabname, String colname) {
         if (StringUtils.isBlank(tabname)) {
             logger.error("missing table name");
@@ -176,13 +190,13 @@ public class SqlWriter extends SqlReader {
             logger.error(tabname + "." + colname + " must be renamed; " + colname + " is too short an artifact name");
             return 1;
         } else if (!colname.matches("^[a-zA-Z]\\w*$")) {
-            logger.error(tabname + "." + colname + " must be renamed; " + colname + " is an invalid artifact name");
+            logger.error(tabname + "." + colname + " must be renamed; " + colname + " is an invalid artifact name (it does not begin with [a-zA-Z])");
             return 2;
         } else if (colname.matches("^[a-z][A-Z].*$")) {
-            logger.error(tabname + "." + colname + " must be renamed; " + colname + " is an invalid artifact name (begins with [a-z][A-Z])");
+            logger.error(tabname + "." + colname + " must be renamed; " + colname + " is an invalid artifact name (it begins with [a-z][A-Z])");
             return 3;
         } else if (colname.matches("^[A-Z][A-Z]+[a-z].*$")) {
-            logger.error(tabname + "." + colname + " must be renamed; " + colname + " is an invalid artifact name (begins with [A-Z][A-Z]+[a-z])");
+            logger.error(tabname + "." + colname + " must be renamed; " + colname + " is an invalid artifact name (it begins with [A-Z][A-Z]+[a-z])");
             return 4;
         }
         return 0;

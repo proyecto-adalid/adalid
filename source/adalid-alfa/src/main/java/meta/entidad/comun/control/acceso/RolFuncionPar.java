@@ -31,7 +31,7 @@ import meta.entidad.comun.configuracion.basica.ext.FuncionParametro;
 @EntityUpdateOperation(enabled = Kleenean.TRUE)
 @EntityDeleteOperation(enabled = Kleenean.TRUE)
 @EntityReportOperation(enabled = Kleenean.FALSE)
-@EntityTableView(enabled = Kleenean.TRUE)
+@EntityTableView(enabled = Kleenean.TRUE, rowsLimit = 100, rows = 100)
 @EntityDetailView(enabled = Kleenean.FALSE)
 @EntityTreeView(enabled = Kleenean.FALSE)
 @EntityConsoleView(enabled = Kleenean.FALSE)

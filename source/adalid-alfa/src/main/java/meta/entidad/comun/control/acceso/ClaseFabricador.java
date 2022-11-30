@@ -12,12 +12,14 @@
  */
 package meta.entidad.comun.control.acceso;
 
+import adalid.commons.bundles.*;
 import adalid.core.*;
 import adalid.core.annotations.*;
 import adalid.core.enums.*;
 import adalid.core.interfaces.*;
 import adalid.core.properties.*;
 import java.lang.reflect.Field;
+import java.util.Locale;
 
 /**
  * @author Jorge Campins
@@ -57,12 +59,24 @@ public class ClaseFabricador extends AbstractPersistentEnumerationEntity {
     @StringField(maxLength = 200)
     public StringProperty nombreClaseFabricador;
 
+    @StringField(maxLength = 200)
+    public StringProperty codigoConjuntoSegmento;
+
+    @StringField(maxLength = 200)
+    public StringProperty nombreConjuntoSegmento;
+
+    @DescriptionProperty
+    @StringField(maxLength = 0)
+    public StringProperty descripcionConjuntoSegmento;
+
     @ColumnField(nullable = Kleenean.FALSE)
     public BooleanProperty elemental;
 
     public Instance C01, C02, C03, C04, C05, C06;
 
     public Instance C0A, C0B, C0C, C0D, C0E, C0F, C0G;
+
+    public Instance C07, C08;
 
     @Override
     protected void settleAttributes() {
@@ -109,6 +123,18 @@ public class ClaseFabricador extends AbstractPersistentEnumerationEntity {
         nombreClaseFabricador.setLocalizedShortLabel(ENGLISH, "factory class name");
         nombreClaseFabricador.setLocalizedShortLabel(SPANISH, "nombre clase fabricador");
         /**/
+        codigoConjuntoSegmento.setLocalizedLabel(ENGLISH, "segment set code");
+        codigoConjuntoSegmento.setLocalizedLabel(SPANISH, "código del conjunto de segmentos");
+        /**/
+        nombreConjuntoSegmento.setLocalizedLabel(ENGLISH, "segment set name");
+        nombreConjuntoSegmento.setLocalizedLabel(SPANISH, "nombre del conjunto de segmentos");
+        /**/
+        descripcionConjuntoSegmento.setLocalizedLabel(ENGLISH, "segment set description");
+        descripcionConjuntoSegmento.setLocalizedLabel(SPANISH, "descripción del conjunto de segmentos");
+        /**/
+        elemental.setLocalizedLabel(ENGLISH, "requires elements");
+        elemental.setLocalizedLabel(SPANISH, "requiere elementos");
+        /**/
         // </editor-fold>
     }
 
@@ -122,6 +148,8 @@ public class ClaseFabricador extends AbstractPersistentEnumerationEntity {
         setInstanceFields(C04, "usuario", "UsuariosSupervisadosDirectamenteSinIncluirSupervisor");
         setInstanceFields(C05, "usuario", "UsuariosUsuarioActual");
         setInstanceFields(C06, "usuario", "UsuariosUsuarioOperacionesCalendarizadas");
+        setInstanceFields(C07, "usuario", "UsuariosSupervisadosIndirectamente");
+        setInstanceFields(C08, "usuario", "UsuariosSupervisadosIndirectamenteSinIncluirSupervisor");
         /**/
         setInstanceFields(C0A, "grupo_usuario", "GrupoDelUsuarioActual");
         setInstanceFields(C0B, "grupo_usuario", "GrupoDelUsuarioActualConSusSubgrupos");
@@ -142,10 +170,22 @@ public class ClaseFabricador extends AbstractPersistentEnumerationEntity {
     }
 
     private void setInstanceFields(Instance clase, String tabla, String conjunto, boolean elementado) {
-        clase.newInstanceField(codigo, PREFIJO + conjunto);
+        String codigoClaseFabricador = PREFIJO + conjunto;
+        clase.newInstanceField(codigo, codigoClaseFabricador);
         clase.newInstanceField(codigoClaseRecurso, tabla);
-        clase.newInstanceField(nombreClaseFabricador, PAQUETE + "." + PREFIJO + conjunto);
+        clase.newInstanceField(nombreClaseFabricador, PAQUETE + "." + codigoClaseFabricador);
         clase.newInstanceField(elemental, elementado);
+        setInstanceFields(clase, codigoClaseFabricador, ENGLISH);
+        setInstanceFields(clase, codigoClaseFabricador, SPANISH);
+    }
+
+    private void setInstanceFields(Instance clase, String codigoClaseFabricador, Locale locale) {
+        String code = Bundle.getTrimmedToNullString(codigoClaseFabricador + ".code", locale);
+        String name = Bundle.getTrimmedToNullString(codigoClaseFabricador + ".name", locale);
+        String description = Bundle.getTrimmedToNullString(codigoClaseFabricador + ".description", locale);
+        clase.newInstanceField(codigoConjuntoSegmento, code, locale);
+        clase.newInstanceField(nombreConjuntoSegmento, name, locale);
+        clase.newInstanceField(descripcionConjuntoSegmento, description, locale);
     }
 
 }

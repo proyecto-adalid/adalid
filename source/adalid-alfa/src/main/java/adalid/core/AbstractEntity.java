@@ -942,6 +942,11 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
     /**
      *
      */
+    private ViewMenuOptionOpenAction _detailViewMenuOptionOpenAction = ViewMenuOptionOpenAction.DEFAULT;
+
+    /**
+     *
+     */
     private String _detailViewHelpDocument = "";
 
     /**
@@ -1213,6 +1218,11 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
      * annotated with EntityReferenceSearch
      */
     private int _radioColumns;
+
+    /**
+     * annotated with EntityReferenceSearch
+     */
+    private SearchDisplayFormat _searchDisplayFormat = SearchDisplayFormat.UNSPECIFIED;
 
     /**
      * annotated with EntityReferenceSearch
@@ -3438,6 +3448,14 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
     }
 
     /**
+     * @return the detail view menu option on-open action
+     */
+//  @Override
+    public ViewMenuOptionOpenAction getDetailViewMenuOptionOpenAction() {
+        return _detailViewMenuOptionOpenAction;
+    }
+
+    /**
      * @return the detail view help document
      */
     @Override
@@ -4335,6 +4353,14 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
      */
     public int getRadioColumns() {
         return _radioColumns;
+    }
+
+    /**
+     * @return the search display format
+     */
+    @Override
+    public SearchDisplayFormat getSearchDisplayFormat() {
+        return _searchDisplayFormat;
     }
 
     /**
@@ -7942,6 +7968,18 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
         /**/
     }
 
+    /**
+     * anchor-linked detail fields indicator
+     */
+    private boolean _containsAnchorLinkedDetailFields;
+
+    /**
+     * @return the contains anchor-linked detail fields indicator
+     */
+    public boolean containsAnchorLinkedDetailFields() {
+        return _containsAnchorLinkedDetailFields;
+    }
+
     private void setPropertiesDisplaySortKey() {
         if (_rootInstance) {
             List<Property> list = getPropertiesList();
@@ -7954,6 +7992,11 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
             for (Property property : list) {
                 if (property.getAnchorProperty() == null) {
                     setChildrenDisplaySortKey(property, list);
+                } else if (property.isDetailField()) {
+                    boolean unlinked = AnchorType.UNLINKED.equals(property.getAnchorType());
+                    if (!unlinked) {
+                        _containsAnchorLinkedDetailFields = true;
+                    }
                 }
             }
         }
@@ -7963,8 +8006,12 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
         int i = 0;
         for (Property child : list) {
             if (child.getAnchorProperty() == parent) {
-                child.setDisplaySortKey(parent.getDisplaySortKey() + "/" + String.format("%02d", i++));
-                setChildrenDisplaySortKey(child, list);
+                boolean unlinked = AnchorType.UNLINKED.equals(child.getAnchorType());
+                if (!unlinked && child.isDetailField()) {
+                    parent.setAnchoringLinkedDetailFields(true);
+                }
+                child.setDisplaySortKey(parent.getDisplaySortKey() + (unlinked ? '/' : '-') + String.format("%02d", i++));
+                setChildrenDisplaySortKey(child, list); // como '/' es mayor que '-' las UNLINKED quedan después de las enlazadas
             }
         }
     }
@@ -9331,6 +9378,7 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
                 _detailViewEnabled = annotation.enabled().toBoolean(_detailViewEnabled);
                 _detailViewWithMasterHeading = annotation.heading().toBoolean(_detailViewWithMasterHeading);
                 _detailViewMenuOption = annotation.menu();
+                _detailViewMenuOptionOpenAction = Kleenean.TRUE.equals(annotation.inserting()) ? ViewMenuOptionOpenAction.INSERT : ViewMenuOptionOpenAction.DEFAULT;
                 _annotatedWithEntityDetailView = true;
                 /**/
                 String document = annotation.helpDocument();
@@ -9608,6 +9656,7 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
                 _searchType = annotation.searchType();
                 _listStyle = annotation.listStyle();
                 _radioColumns = Math.min(10, Math.max(0, annotation.radioColumns()));
+                _searchDisplayFormat = annotation.displayFormat();
                 _searchDisplayMode = annotation.displayMode();
                 _annotatedWithEntityReferenceSearch = true;
             }
@@ -9621,6 +9670,7 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
             _searchType = annotation.searchType();
             _listStyle = annotation.listStyle();
             _radioColumns = Math.min(10, Math.max(0, annotation.radioColumns()));
+            _searchDisplayFormat = annotation.displayFormat();
             _searchDisplayMode = annotation.displayMode();
         }
     }
@@ -9791,20 +9841,20 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
         for (State state : states) {
             add = true;
             operationsLoop:
-            for (Operation operation : operations) {
-                transitions = operation.getTransitionsList();
-                for (Transition transition : transitions) {
-                    if (state.equals(transition.getY())) {
-                        if (state.equals(transition.getX())) {
-                            continue;
-                        }
-                        add = transition.getX() == null;
-                        if (add) {
-                            break operationsLoop;
+                for (Operation operation : operations) {
+                    transitions = operation.getTransitionsList();
+                    for (Transition transition : transitions) {
+                        if (state.equals(transition.getY())) {
+                            if (state.equals(transition.getX())) {
+                                continue;
+                            }
+                            add = transition.getX() == null;
+                            if (add) {
+                                break operationsLoop;
+                            }
                         }
                     }
                 }
-            }
             if (add) {
                 list.add(state);
             }
@@ -9821,20 +9871,20 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
         for (State state : states) {
             add = true;
             operationsLoop:
-            for (Operation operation : operations) {
-                transitions = operation.getTransitionsList();
-                for (Transition transition : transitions) {
-                    if (state.equals(transition.getX())) {
-                        if (state.equals(transition.getY())) {
-                            continue;
-                        }
-                        add = transition.getY() == null;
-                        if (add) {
-                            break operationsLoop;
+                for (Operation operation : operations) {
+                    transitions = operation.getTransitionsList();
+                    for (Transition transition : transitions) {
+                        if (state.equals(transition.getX())) {
+                            if (state.equals(transition.getY())) {
+                                continue;
+                            }
+                            add = transition.getY() == null;
+                            if (add) {
+                                break operationsLoop;
+                            }
                         }
                     }
                 }
-            }
             if (add) {
                 list.add(state);
             }
@@ -9851,18 +9901,18 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
         for (State state : states) {
             add = true;
             operationsLoop:
-            for (Operation operation : operations) {
-                transitions = operation.getTransitionsList();
-                for (Transition transition : transitions) {
-                    if (state.equals(transition.getY())) {
-                        if (state.equals(transition.getX())) {
-                            continue;
+                for (Operation operation : operations) {
+                    transitions = operation.getTransitionsList();
+                    for (Transition transition : transitions) {
+                        if (state.equals(transition.getY())) {
+                            if (state.equals(transition.getX())) {
+                                continue;
+                            }
+                            add = false;
+                            break operationsLoop;
                         }
-                        add = false;
-                        break operationsLoop;
                     }
                 }
-            }
             if (add) {
                 list.add(state);
             }
@@ -9879,18 +9929,18 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
         for (State state : states) {
             add = true;
             operationsLoop:
-            for (Operation operation : operations) {
-                transitions = operation.getTransitionsList();
-                for (Transition transition : transitions) {
-                    if (state.equals(transition.getX())) {
-                        if (state.equals(transition.getY())) {
-                            continue;
+                for (Operation operation : operations) {
+                    transitions = operation.getTransitionsList();
+                    for (Transition transition : transitions) {
+                        if (state.equals(transition.getX())) {
+                            if (state.equals(transition.getY())) {
+                                continue;
+                            }
+                            add = false;
+                            break operationsLoop;
                         }
-                        add = false;
-                        break operationsLoop;
                     }
                 }
-            }
             if (add) {
                 list.add(state);
             }
@@ -10370,6 +10420,8 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
     protected static final String GOOGLE_MAPS_EMBED_CONVERTER = "convertidorGoogleMapsEmbed";
 
     protected static final String PHONE_NUMBER_VALIDATOR = "phoneNumberValidator";
+
+    protected static final String LOCAL_PHONE_NUMBER_VALIDATOR = "localPhoneNumberValidator";
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Special Converters and Validators">
@@ -10441,6 +10493,8 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
 
     protected static final String PHONE_REGEX = Constants.PHONE_REGEX;
 
+    protected static final String LOCAL_PHONE_REGEX = Constants.LOCAL_PHONE_REGEX;
+
     protected static final String URL_REGEX = Constants.URL_REGEX;
 
     protected static final SpecialCharacterValue NO_IMAGE = SpecialCharacterValue.NULL;
@@ -10458,6 +10512,8 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
     protected static final CharacterScalarX EMPTY_STRING = XB.EMPTY_STRING;
 
     protected static final CharacterScalarX EMPTY = XB.EMPTY;
+
+    protected static final CharacterScalarX SPACE = XB.SPACE;
 
     protected static final CharacterScalarX CURRENT_USER_CODE = XB.CURRENT_USER_CODE;
 
@@ -10480,6 +10536,118 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
     protected static final java.sql.Timestamp EPOCH_TIMESTAMP = TimestampData.EPOCH;
 
     protected static final EntityScalarX NULL_ENTITY = XB.NULL_ENTITY;
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="Special Fields">
+    protected static final String EMAIL_REGEX_ENGLISH_DESCRIPTION = ""
+        + "an e-mail address must start with a user name, followed by an @ sign and a domain name; "
+        + "for example: john.doe@gmail.com"
+        + "";
+
+    protected static final String EMAIL_REGEX_SPANISH_DESCRIPTION = ""
+        + "una dirección de correo electrónico debe comenzar con un nombre de usuario, seguido de un signo @ y un nombre de dominio; "
+        + "por ejemplo: juan.bimba@gmail.com"
+        + "";
+
+    protected static final String EMAIL_REGEX_ENGLISH_ERROR_MESSAGE = ""
+        + "the e-mail address does not meet the required pattern; "
+        + "it must start with a user name, followed by an @ sign and a domain name."
+        + "";
+
+    protected static final String EMAIL_REGEX_SPANISH_ERROR_MESSAGE = ""
+        + "la dirección de correo electrónico no cumple con el patrón requerido; "
+        + "debe comenzar con un nombre de usuario, seguido de un signo @ y un nombre de dominio."
+        + "";
+
+    protected static final String PHONE_REGEX_ENGLISH_DESCRIPTION = ""
+        + "this is an international phone number; "
+        + "it must start with a country code, "
+        + "followed by a global subscriber number or an area code and a subscriber number; "
+        + "for example: +58 4121234567, +58-412-1234567"
+        + "";
+
+    protected static final String PHONE_REGEX_SPANISH_DESCRIPTION = ""
+        + "este es un número de teléfono internacional; "
+        + "debe comenzar con un código de país, "
+        + "seguido de un número de suscriptor global o un código de área y un número de suscriptor; "
+        + "por ejemplo: +58 4121234567, +58-412-1234567"
+        + "";
+
+    protected static final String PHONE_REGEX_ENGLISH_ERROR_MESSAGE = ""
+        + "the phone number does not meet the required pattern; "
+        + "it must start with a country code, i.e. a plus sign and a group of 1 to 3 digits, "
+        + "followed by a global subscriber number, i.e. a group of 7 to 14 digits; "
+        + "country code and global subscriber number must be separated by a single white space or hyphen; "
+        + "global subscriber number can be divided into area code, a group of 1 to 4 digits, and subscriber number, a group of 6 to 10 digits; "
+        + "the area code and subscriber number must be separated by a single blank space or hyphen; "
+        + "whatever their distribution among the groups, the total number of digits must be between 8 and 15."
+        + "";
+
+    protected static final String PHONE_REGEX_SPANISH_ERROR_MESSAGE = ""
+        + "el número de teléfono no cumple con el patrón requerido; "
+        + "éste debe comenzar con un código de país, es decir, un signo más y un grupo de 1 hasta 3 dígitos, "
+        + "seguido de un número de suscriptor global, es decir, un grupo de 7 hasta 14 dígitos; "
+        + "el código de país y el número de suscriptor global deben estar separados por un solo espacio en blanco o guión; "
+        + "el número de suscriptor global se puede dividir en código de área, un grupo de 1 hasta 4 dígitos, y número de suscriptor, un grupo de 6 a 10 dígitos; "
+        + "el código de área y el número de suscriptor deben estar separados por un solo espacio en blanco o guión; "
+        + "cualquiera que sea su distribución entre los grupos, el número total de dígitos debe estar entre 8 y 15."
+        + "";
+
+    protected static final String LOCAL_PHONE_REGEX_ENGLISH_DESCRIPTION = ""
+        + "this is a local phone number; "
+        + "it must be a global subscriber number or an area code and a subscriber number; "
+        + "for example: 4121234567, 412-1234567"
+        + "";
+
+    protected static final String LOCAL_PHONE_REGEX_SPANISH_DESCRIPTION = ""
+        + "este es un número de teléfono local; "
+        + "debe ser un número de suscriptor global o un código de área y un número de suscriptor; "
+        + "por ejemplo: 4121234567, 412-1234567"
+        + "";
+
+    protected static final String LOCAL_PHONE_REGEX_ENGLISH_ERROR_MESSAGE = ""
+        + "the phone number does not meet the required pattern; "
+        + "it must be a global subscriber number, i.e. a group of 7 to 14 digits; "
+        + "or it can be divided into area code, a group of 1 to 4 digits, and subscriber number, a group of 6 to 10 digits; "
+        + "the area code and subscriber number must be separated by a single blank space or hyphen; "
+        + "whatever their distribution among the groups, the total number of digits must be between 7 and 14."
+        + "";
+
+    protected static final String LOCAL_PHONE_REGEX_SPANISH_ERROR_MESSAGE = ""
+        + "el número de teléfono no cumple con el patrón requerido; "
+        + "éste debe ser un número de suscriptor global, es decir, un grupo de 7 hasta 14 dígitos; "
+        + "o se puede dividir en código de área, un grupo de 1 hasta 4 dígitos, y número de suscriptor, un grupo de 6 a 10 dígitos; "
+        + "el código de área y el número de suscriptor deben estar separados por un solo espacio en blanco o guión; "
+        + "cualquiera que sea su distribución entre los grupos, el número total de dígitos debe estar entre 7 y 14."
+        + "";
+
+    protected static final String URL_REGEX_ENGLISH_DESCRIPTION = ""
+        + "this is a website URL, i.e. the location of a specific website, page, or file on the Internet; "
+        + "it must start with a protocol (usually http:// or https://), followed by / and a domain name; "
+        + "optionally, after the domain name, the URL can include a \"path\", "
+        + "to direct the browser to a specific page on the website; "
+        + "for example: https://en.wikipedia.org/wiki/URL"
+        + "";
+
+    protected static final String URL_REGEX_SPANISH_DESCRIPTION = ""
+        + "esta es una URL de un sitio web, es decir, la ubicación de un sitio web, página o archivo específico en Internet; "
+        + "debe comenzar con un protocolo (generalmente http:// o https://), seguido de / y un nombre de dominio; "
+        + "opcionalmente, después del nombre de dominio, la URL puede incluir una \"ruta\", "
+        + "para dirigir al navegador a una página específica en el sitio web; "
+        + "por ejemplo: https://es.wikipedia.org/wiki/Localizador_de_recursos_uniforme"
+        + "";
+
+    protected static final String URL_REGEX_ENGLISH_ERROR_MESSAGE = ""
+        + "the URL does not meet the required pattern; "
+        + "it must start with a protocol, followed by / and a domain name; "
+        + "optionally, after the domain name, the URL can include a \"path\"."
+        + "";
+
+    protected static final String URL_REGEX_SPANISH_ERROR_MESSAGE = ""
+        + "la URL no cumple con el patrón requerido; "
+        + "debe comenzar con un protocolo, seguido de / y un nombre de dominio; "
+        + "opcionalmente, después del nombre de dominio, la URL puede incluir una \"ruta\"."
+        + "";
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Special Expressions">
@@ -10760,6 +10928,7 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
                 string += fee + tab + "searchType" + faa + _searchType + foo;
                 string += fee + tab + "listStyle" + faa + _listStyle + foo;
                 string += fee + tab + "radioColumns" + faa + _radioColumns + foo;
+                string += fee + tab + "searchDisplayFormat" + faa + _searchDisplayFormat + foo;
                 string += fee + tab + "searchDisplayMode" + faa + _searchDisplayMode + foo;
             }
         }

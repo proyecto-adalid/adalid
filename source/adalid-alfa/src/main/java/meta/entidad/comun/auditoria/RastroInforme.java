@@ -277,7 +277,7 @@ public class RastroInforme extends AbstractPersistentEntity {
         descripcionFuncion.setCalculableValueExpression(funcion.descripcionFuncion);
         /**/
         nombreArchivo.setFileDownloadStopFunction("hideDialogoMostrarStatusDownloadPlusRefresh");
-        nombreArchivo.setFileViewerDialogReturnUpdate("mainForm", "northForm");
+        nombreArchivo.setFileViewerDialogReturnUpdate("mainForm", "northForm", "@(.xs-bar-updatable-component)");
         /**/
         leido.setInitialValue(false);
         leido.setDefaultValue(false);
@@ -470,13 +470,18 @@ public class RastroInforme extends AbstractPersistentEntity {
         // </editor-fold>
     }
 
-    protected Segment pendiente, pendienteActual;
+    protected Segment finalizado, pendiente, pendienteActual;
 
     @Override
     protected void settleExpressions() {
         super.settleExpressions();
         /**/
-        pendiente = not(leido.or(descargado));
+        finalizado = condicionEjeFun.isIn(
+            condicionEjeFun.EJECUTADO_SIN_ERRORES,
+            condicionEjeFun.EJECUTADO_CON_ERRORES,
+            condicionEjeFun.EJECUCION_CANCELADA
+        );
+        pendiente = and(finalizado, not(leido), not(descargado));
         pendienteActual = pendiente.and(codigoUsuario.isEqualTo(CURRENT_USER_CODE));
         /**/
         pendiente.setLocalizedCollectionLabel(ENGLISH, "all reports not read or downloaded by their owner user");
@@ -556,16 +561,20 @@ public class RastroInforme extends AbstractPersistentEntity {
         protected void settleExpressions() {
             super.settleExpressions();
             /**/
-            check101 = informe.condicionEjeFun.isEqualTo(informe.condicionEjeFun.EJECUTADO_SIN_ERRORES);
+            check101 = informe.condicionEjeFun.isIn(
+                informe.condicionEjeFun.EJECUTADO_SIN_ERRORES,
+                informe.condicionEjeFun.EJECUTADO_CON_ERRORES,
+                informe.condicionEjeFun.EJECUCION_CANCELADA
+            );
             check102 = informe.codigoUsuario.isEqualTo(CURRENT_USER_CODE);
             check103 = not(informe.leido.or(informe.descargado));
             /**/
             // <editor-fold defaultstate="collapsed" desc="localization of MarcarComoLeido's expressions">
             /**/
-            check101.setLocalizedDescription(ENGLISH, "the report has finished without errors");
-            check101.setLocalizedDescription(SPANISH, "el informe ha terminado sin errores");
-            check101.setLocalizedErrorMessage(ENGLISH, "it is not allowed to send copies of reports that have not finished without errors");
-            check101.setLocalizedErrorMessage(SPANISH, "no está permitido enviar copias de informes que no hayan terminado sin errores");
+            check101.setLocalizedDescription(ENGLISH, "the report has finished");
+            check101.setLocalizedDescription(SPANISH, "el informe ha terminado");
+            check101.setLocalizedErrorMessage(ENGLISH, "it is not allowed to mark as read those reports that have not finished");
+            check101.setLocalizedErrorMessage(SPANISH, "no se permite marcar como leídos aquellos informes que no hayan finalizado");
             /**/
             check102.setLocalizedDescription(ENGLISH, "the report belongs to the current user");
             check102.setLocalizedDescription(SPANISH, "el informe le pertenece al usuario actual");
@@ -632,16 +641,20 @@ public class RastroInforme extends AbstractPersistentEntity {
         protected void settleExpressions() {
             super.settleExpressions();
             /**/
-            check101 = informe.condicionEjeFun.isEqualTo(informe.condicionEjeFun.EJECUTADO_SIN_ERRORES);
+            check101 = informe.condicionEjeFun.isIn(
+                informe.condicionEjeFun.EJECUTADO_SIN_ERRORES,
+                informe.condicionEjeFun.EJECUTADO_CON_ERRORES,
+                informe.condicionEjeFun.EJECUCION_CANCELADA
+            );
             check102 = informe.codigoUsuario.isEqualTo(CURRENT_USER_CODE);
             check103 = informe.leido.or(informe.descargado);
             /**/
             // <editor-fold defaultstate="collapsed" desc="localization of MarcarComoNoLeido's expressions">
             /**/
-            check101.setLocalizedDescription(ENGLISH, "the report has finished without errors");
-            check101.setLocalizedDescription(SPANISH, "el informe ha terminado sin errores");
-            check101.setLocalizedErrorMessage(ENGLISH, "it is not allowed to send copies of reports that have not finished without errors");
-            check101.setLocalizedErrorMessage(SPANISH, "no está permitido enviar copias de informes que no hayan terminado sin errores");
+            check101.setLocalizedDescription(ENGLISH, "the report has finished");
+            check101.setLocalizedDescription(SPANISH, "el informe ha terminado");
+            check101.setLocalizedErrorMessage(ENGLISH, "it is not allowed to mark as unread those reports that have not finished");
+            check101.setLocalizedErrorMessage(SPANISH, "no se permite marcar como no leídos aquellos informes que no hayan finalizado");
             /**/
             check102.setLocalizedDescription(ENGLISH, "the report belongs to the current user");
             check102.setLocalizedDescription(SPANISH, "el informe le pertenece al usuario actual");

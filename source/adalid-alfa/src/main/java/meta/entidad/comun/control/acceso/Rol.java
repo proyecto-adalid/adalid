@@ -81,7 +81,7 @@ public class Rol extends AbstractPersistentEntity {
     @EntityReferenceSearch(searchType = SearchType.LIST, listStyle = ListStyle.CHARACTER_KEY_AND_NAME, displayMode = DisplayMode.WRITING)
     @ForeignKey(onDelete = OnDeleteAction.NONE, onUpdate = OnUpdateAction.NONE)
     @ManyToOne(view = MasterDetailView.TABLE_AND_DETAIL)
-    @PropertyField(create = Kleenean.TRUE, update = Kleenean.TRUE, required = Kleenean.TRUE, table = Kleenean.TRUE, report = Kleenean.TRUE, overlay = Kleenean.TRUE)
+    @PropertyField(create = Kleenean.TRUE, update = Kleenean.TRUE, required = Kleenean.TRUE, table = Kleenean.TRUE, report = Kleenean.TRUE, heading = Kleenean.TRUE, overlay = Kleenean.TRUE)
     public GrupoUsuario grupo;
 
     @Override
@@ -382,9 +382,9 @@ public class Rol extends AbstractPersistentEntity {
             setLocalizedLabel(SPANISH, "copiar");
             /**/
             setLocalizedDescription(ENGLISH, "copy a role with another code and name; "
-                + "the copy includes filters, views, functions, and favorites of the original role, but not users");
+                + "the copy includes filters, views, functions, special pages and favorites of the original role, but not users");
             setLocalizedDescription(SPANISH, "copiar un rol con otro código y nombre; "
-                + "la copia incluye los filtros, vistas, funciones y favoritos asociados al rol original, pero no los usuarios");
+                + "la copia incluye los filtros, vistas, funciones, páginas especiales y favoritos asociados al rol original, pero no los usuarios");
             /**/
             setLocalizedSuccessMessage(ENGLISH, "the role was successfully copied");
             setLocalizedSuccessMessage(SPANISH, "el rol fue copiado con éxito");

@@ -35,7 +35,7 @@ import meta.entidad.comun.configuracion.basica.TipoValor;
 @EntityInsertOperation(enabled = Kleenean.FALSE)
 @EntityUpdateOperation(enabled = Kleenean.FALSE)
 @EntityDeleteOperation(enabled = Kleenean.FALSE)
-@EntityTableView(enabled = Kleenean.TRUE)
+@EntityTableView(enabled = Kleenean.TRUE, rowsLimit = 100, rows = 100)
 @EntityDetailView(enabled = Kleenean.TRUE)
 @EntityTreeView(enabled = Kleenean.FALSE)
 @EntityConsoleView(enabled = Kleenean.FALSE)
@@ -77,6 +77,9 @@ public class FuncionParametro extends meta.entidad.comun.configuracion.basica.Fu
     @ColumnField(nullable = Kleenean.FALSE)
     @PropertyField(table = Kleenean.TRUE)
     public BooleanProperty accesoRestringido;
+
+    @ColumnField(nullable = Kleenean.FALSE)
+    public BooleanProperty esParametroBusqueda;
 
     @ColumnField(nullable = Kleenean.FALSE)
     public BooleanProperty esParametroSinRastro;
@@ -155,6 +158,8 @@ public class FuncionParametro extends meta.entidad.comun.configuracion.basica.Fu
         criterioBusqueda.setDefaultValue(false);
         accesoRestringido.setInitialValue(false);
         accesoRestringido.setDefaultValue(false);
+        esParametroBusqueda.setInitialValue(false);
+        esParametroBusqueda.setDefaultValue(false);
         esParametroSinRastro.setInitialValue(false);
         esParametroSinRastro.setDefaultValue(false);
         esParametroSegmento.setInitialValue(false);
@@ -201,6 +206,11 @@ public class FuncionParametro extends meta.entidad.comun.configuracion.basica.Fu
         accesoRestringido.setLocalizedLabel(SPANISH, "acceso restringido");
         accesoRestringido.setLocalizedShortLabel(ENGLISH, "restricted");
         accesoRestringido.setLocalizedShortLabel(SPANISH, "restringido");
+        /**/
+        esParametroBusqueda.setLocalizedLabel(ENGLISH, "search parameter");
+        esParametroBusqueda.setLocalizedLabel(SPANISH, "parámetro de búsqueda");
+        esParametroBusqueda.setLocalizedShortLabel(ENGLISH, "search parameter");
+        esParametroBusqueda.setLocalizedShortLabel(SPANISH, "parámetro de búsqueda");
         /**/
         esParametroSinRastro.setLocalizedLabel(ENGLISH, "parameter without trail");
         esParametroSinRastro.setLocalizedLabel(SPANISH, "parámetro sin rastro");
@@ -286,7 +296,7 @@ public class FuncionParametro extends meta.entidad.comun.configuracion.basica.Fu
         tab110.newTabField(funcion, parametro, tipoParametro, tipoDatoPar, claseRecursoValor, funcionReferencia);
         /**/
         tab120.newTabField(claseJavaFuncionParametro, idListaValor, idClaseObjetoValor, valorMinimo, valorMaximo, valorOmision);
-        tab120.newTabField(criterioBusqueda, accesoRestringido, esParametroSinRastro, esParametroSegmento, esParametroHeredado, esParametroVinculado, esPassword);
+        tab120.newTabField(criterioBusqueda, accesoRestringido, esParametroBusqueda, esParametroSinRastro, esParametroSegmento, esParametroHeredado, esParametroVinculado, esPassword);
         tab120.newTabField(indice, tipoComparacion, tipoValor, rangoAgregacion, rangoComparacion);
         /**/
         // <editor-fold defaultstate="collapsed" desc="localization of Funcion's tabs">

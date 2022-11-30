@@ -220,6 +220,38 @@ public abstract class AbstractDataArtifact extends AbstractArtifact implements A
     /**
      *
      */
+    private Parameter _anchorParameter;
+
+    /**
+     *
+     */
+    private AnchorType _anchorType = AnchorType.UNLINKED;
+
+    /**
+     *
+     */
+    private boolean _anchoringLinkedDetailFields;
+
+    /**
+     *
+     */
+    private boolean _anchoringLinkedParameters;
+
+    /**
+     *
+     */
+//  private String _defaultAnchorLabel;
+    private final Map<Locale, String> _localizedAnchorLabel = new LinkedHashMap<>();
+
+    /**
+     *
+     */
+//  private String _defaultAnchoredLabel;
+    private final Map<Locale, String> _localizedAnchoredLabel = new LinkedHashMap<>();
+
+    /**
+     *
+     */
     private int _sequenceNumber;
 
     /**
@@ -355,7 +387,7 @@ public abstract class AbstractDataArtifact extends AbstractArtifact implements A
     /**
      *
      */
-    private boolean _graphicImageFontAwesomeClassNameExpression;
+    private boolean _graphicImageStyleClassNameExpression;
 
     /**
      *
@@ -916,7 +948,7 @@ public abstract class AbstractDataArtifact extends AbstractArtifact implements A
     /**
      * @return the required indicator
      */
-    Boolean isRequired() {
+    protected Boolean isRequired() {
         return isParameter() ? isRequiredParameter() : isProperty() ? isRequiredProperty() : coalesce(_required, false);
     }
 
@@ -1427,6 +1459,170 @@ public abstract class AbstractDataArtifact extends AbstractArtifact implements A
     }
 
     /**/
+    /**
+     * @return the anchor parameter
+     */
+    @Override
+    public Parameter getAnchorParameter() {
+        return _anchorParameter;
+    }
+
+    /**
+     * @return the anchor type
+     */
+    @Override
+    public AnchorType getAnchorType() {
+        return _anchorType;
+    }
+
+    /**
+     * @return the anchoring linked detail fields indicator
+     */
+    @Override
+    public boolean isAnchoringLinkedDetailFields() {
+        return _anchoringLinkedDetailFields;
+    }
+
+    /**
+     * Sets the anchoring linked detail fields indicator
+     *
+     * @param b the anchoring detail fields indicator to set
+     */
+    @Override
+    public void setAnchoringLinkedDetailFields(boolean b) {
+        _anchoringLinkedDetailFields = b;
+    }
+
+    /**
+     * @return the anchoring linked parameters indicator
+     */
+    @Override
+    public boolean isAnchoringLinkedParameters() {
+        return _anchoringLinkedParameters;
+    }
+
+    /**
+     * Sets the anchoring linked parameters indicator
+     *
+     * @param b the anchoring parameters indicator to set
+     */
+    @Override
+    public void setAnchoringLinkedParameters(boolean b) {
+        _anchoringLinkedParameters = b;
+    }
+
+    /**
+     * @return the default anchor label
+     */
+    @Override
+    public String getDefaultAnchorLabel() {
+        return getLocalizedAnchorLabel(null);
+    }
+
+    /**
+     * El método setDefaultAnchorLabel se utiliza para establecer la etiqueta del grupo de propiedades ancladas a la propiedad que se almacena en el
+     * archivo de recursos por defecto. En caso de que el archivo de recursos para el idioma seleccionado por el usuario no esté disponible, la
+     * interfaz de la aplicación utiliza el archivo de recursos por defecto para obtener el valor de la etiqueta.
+     *
+     * @param defaultAnchorLabel sustantivo singular, preferiblemente sin complementos, que se usa como etiqueta del grupo de propiedades ancladas
+     */
+    @Override
+    public void setDefaultAnchorLabel(String defaultAnchorLabel) {
+        setLocalizedAnchorLabel(null, defaultAnchorLabel);
+    }
+
+    /**
+     * @param locale the locale for the anchor label
+     * @return the localized anchor label
+     */
+    @Override
+    public String getLocalizedAnchorLabel(Locale locale) {
+        Locale l = localeReadingKey(locale);
+        return _localizedAnchorLabel.get(l);
+    }
+
+    /**
+     * El método setLocalizedAnchorLabel se utiliza para establecer la etiqueta del grupo de propiedades ancladas a la propiedad que se almacena en el
+     * archivo de recursos de configuración regional. En caso de que el archivo de recursos para el idioma seleccionado por el usuario no esté
+     * disponible, la interfaz de la aplicación utiliza el archivo de recursos por defecto para obtener el valor de la etiqueta.
+     *
+     * @param locale configuración regional
+     * @param localizedAnchorLabel sustantivo singular, preferiblemente sin complementos, que se usa como etiqueta del grupo de propiedades ancladas
+     */
+    @Override
+    public void setLocalizedAnchorLabel(Locale locale, String localizedAnchorLabel) {
+        Locale l = localeWritingKey(locale);
+        if (localizedAnchorLabel == null) {
+            _localizedAnchorLabel.remove(l);
+        } else {
+            _localizedAnchorLabel.put(l, localizedAnchorLabel);
+        }
+    }
+
+    /**
+     * @return the default anchored label
+     */
+    @Override
+    public String getDefaultAnchoredLabel() {
+        return getLocalizedAnchoredLabel(null);
+    }
+
+    /**
+     * El método setDefaultAnchoredLabel se utiliza para establecer la etiqueta de la propiedad dentro del grupo de propiedades ancladas que se
+     * almacena en el archivo de recursos por defecto. En caso de que el archivo de recursos para el idioma seleccionado por el usuario no esté
+     * disponible, la interfaz de la aplicación utiliza el archivo de recursos por defecto para obtener el valor de la etiqueta.
+     *
+     * @param defaultAnchoredLabel sustantivo singular, preferiblemente sin complementos, que se usa como etiqueta dentro del grupo de propiedades
+     * ancladas
+     */
+    @Override
+    public void setDefaultAnchoredLabel(String defaultAnchoredLabel) {
+        setLocalizedAnchoredLabel(null, defaultAnchoredLabel);
+    }
+
+    /**
+     * @param locale the locale for the anchored label
+     * @return the localized anchored label
+     */
+    @Override
+    public String getLocalizedAnchoredLabel(Locale locale) {
+        Locale l = localeReadingKey(locale);
+        return _localizedAnchoredLabel.get(l);
+    }
+
+    /**
+     * El método setLocalizedAnchoredLabel se utiliza para establecer la etiqueta de la propiedad dentro del grupo de propiedades ancladas que se
+     * almacena en el archivo de recursos de configuración regional. En caso de que el archivo de recursos para el idioma seleccionado por el usuario
+     * no esté disponible, la interfaz de la aplicación utiliza el archivo de recursos por defecto para obtener el valor de la etiqueta.
+     *
+     * @param locale configuración regional
+     * @param localizedAnchoredLabel sustantivo singular, preferiblemente sin complementos, que se usa como etiqueta dentro del grupo de propiedades
+     * ancladas
+     */
+    @Override
+    public void setLocalizedAnchoredLabel(Locale locale, String localizedAnchoredLabel) {
+        Locale l = localeWritingKey(locale);
+        if (localizedAnchoredLabel == null) {
+            _localizedAnchoredLabel.remove(l);
+        } else {
+            _localizedAnchoredLabel.put(l, localizedAnchoredLabel);
+        }
+    }
+
+    @Override
+    protected void copyLocalizedStrings(Artifact artifact) {
+        super.copyLocalizedStrings(artifact);
+        if (artifact instanceof AbstractDataArtifact) {
+            if (artifact != this) {
+                AbstractDataArtifact that = (AbstractDataArtifact) artifact;
+                _localizedAnchorLabel.clear();
+                _localizedAnchorLabel.putAll(that._localizedAnchorLabel);
+                _localizedAnchoredLabel.clear();
+                _localizedAnchoredLabel.putAll(that._localizedAnchoredLabel);
+            }
+        }
+    }
+
     /**
      * @return the sequence number
      */
@@ -1992,7 +2188,7 @@ public abstract class AbstractDataArtifact extends AbstractArtifact implements A
      * @param expression expresión que determina el nombre de la imagen asociada a la propiedad
      */
     public void setGraphicImageNameExpression(CharacterExpression expression) {
-        _graphicImageFontAwesomeClassNameExpression = false;
+        _graphicImageStyleClassNameExpression = false;
         setGraphicImageNameCharacterExpression(expression);
     }
 
@@ -2004,14 +2200,24 @@ public abstract class AbstractDataArtifact extends AbstractArtifact implements A
      * @param expression expresión que determina el nombre de la clase Font Awesome de la imagen asociada a la propiedad
      */
     public void setGraphicImageFontAwesomeClassNameExpression(CharacterExpression expression) {
-        _graphicImageFontAwesomeClassNameExpression = true;
+        setGraphicImageStyleClassNameExpression(expression);
+    }
+
+    /**
+     * El método setGraphicImageStyleClassNameExpression se utiliza para establecer la expresión que determina el nombre de la clase de estilo de la
+     * imagen asociada a la propiedad. La imagen de la propiedad se utiliza para resaltar su valor en las vistas (páginas) de consulta y registro.
+     *
+     * @param expression expresión que determina el nombre de la clase de estilo de la imagen asociada a la propiedad
+     */
+    public void setGraphicImageStyleClassNameExpression(CharacterExpression expression) {
+        _graphicImageStyleClassNameExpression = true;
         setGraphicImageNameCharacterExpression(expression);
     }
 
     private void setGraphicImageNameCharacterExpression(CharacterExpression expression) {
         String message = "failed to set graphic image name expression of " + getFullName();
         if (isParameter()) {
-            message += "; methods setGraphicImageNameExpression and setGraphicImageFontAwesomeClassNameExpression are not valid for parameters; setting ignored";
+            message += "; graphic image name expressions are not valid for parameters; setting ignored";
             logger.warn(message);
             Project.increaseParserWarningCount();
         } else if (expression == null) {
@@ -2029,7 +2235,14 @@ public abstract class AbstractDataArtifact extends AbstractArtifact implements A
      * @return true if the graphic image name expression returns a Font Awesome class name; false if it returns an actual image name
      */
     public boolean isGraphicImageFontAwesomeClassNameExpression() {
-        return _graphicImageFontAwesomeClassNameExpression;
+        return isGraphicImageStyleClassNameExpression();
+    }
+
+    /**
+     * @return true if the graphic image name expression returns a style class name; false if it returns an actual image name
+     */
+    public boolean isGraphicImageStyleClassNameExpression() {
+        return _graphicImageStyleClassNameExpression;
     }
 
     /**
@@ -4974,12 +5187,54 @@ public abstract class AbstractDataArtifact extends AbstractArtifact implements A
             _linkedFieldName = annotation.linkedField();
             _linkedColumnName = annotation.linkedColumn();
             _linkedColumnOperator = annotation.operator();
+            setAnchorParameter(annotation);
 //          _sequenceNumber = Math.max(0, annotation.sequence());
             _sequenceNumber = annotation.sequence();
             linkField(namesakable() ? getName() : _linkedFieldName);
             String fileName = annotation.snippet();
             if (StringUtils.isNotBlank(fileName)) {
                 setProcessingConsoleSnippetFileName(fileName);
+            }
+        }
+    }
+
+    private void setAnchorParameter(ParameterField annotation) {
+        String anchorFieldName = annotation.anchor();
+        if (StringUtils.isNotBlank(anchorFieldName)) {
+            boolean log = isLoggable();
+            if (anchorFieldName.equals(getName())) {
+                if (log) {
+                    String message = "no anchor defined for " + getFullName() + "; a parameter cannot be anchored to itself.";
+                    logger.warn(message);
+                    Project.increaseParserWarningCount();
+                }
+            } else {
+                _anchorFieldName = anchorFieldName;
+                Operation declaringOperation = getDeclaringOperation();
+                String[] strings = {declaringOperation.getName(), getName(), "anchorField"};
+                String role = StringUtils.join(strings, ".");
+                Class<?>[] validTypes = null;
+                Field anchorField = XS1.getField(log, role, anchorFieldName, declaringOperation.getClass(), Operation.class, validTypes);
+                if (anchorField == null) {
+                    if (log) {
+                        String message = "no anchor defined for " + getFullName() + "; it has an invalid anchor field name.";
+                        logger.warn(message);
+                        Project.increaseParserWarningCount();
+                    }
+                } else {
+                    _anchorField = anchorField;
+                    Parameter anchorParameter = XS1.getParameter(anchorField, declaringOperation);
+                    if (anchorParameter == null) {
+                        if (log) {
+                            String message = "no anchor defined for " + getFullName() + "; it has an invalid anchor parameter name.";
+                            logger.warn(message);
+                            Project.increaseParserWarningCount();
+                        }
+                    } else {
+                        _anchorParameter = anchorParameter;
+                        _anchorType = annotation.anchorType();
+                    }
+                }
             }
         }
     }
@@ -5055,7 +5310,9 @@ public abstract class AbstractDataArtifact extends AbstractArtifact implements A
             _defaultCondition = specified(annotation.defaultCondition(), _defaultCondition);
             _defaultCheckpoint = specified(annotation.defaultCheckpoint(), _defaultCheckpoint);
             _defaultFunction = StringUtils.defaultIfBlank(StringUtils.trimToNull(annotation.defaultFunction()), _defaultFunction);
-            setAnchorProperty(annotation.anchor());
+            setAnchorProperty(annotation);
+//          _sequenceNumber = Math.max(0, annotation.sequence());
+            _sequenceNumber = annotation.sequence();
             /**/
             fileName = annotation.readingTableSnippet();
             if (StringUtils.isNotBlank(fileName)) {
@@ -5073,15 +5330,14 @@ public abstract class AbstractDataArtifact extends AbstractArtifact implements A
             if (StringUtils.isNotBlank(fileName)) {
                 setWritingDetailSnippetFileName(fileName);
             }
-//          _sequenceNumber = Math.max(0, annotation.sequence());
-            _sequenceNumber = annotation.sequence();
         }
         if (log) {
             checkPropertyFieldElements();
         }
     }
 
-    private void setAnchorProperty(String anchorFieldName) {
+    private void setAnchorProperty(PropertyField annotation) {
+        String anchorFieldName = annotation.anchor();
         if (StringUtils.isNotBlank(anchorFieldName)) {
             boolean log = isLoggable();
             if (anchorFieldName.equals(getName())) {
@@ -5114,6 +5370,7 @@ public abstract class AbstractDataArtifact extends AbstractArtifact implements A
                         }
                     } else {
                         _anchorProperty = anchorProperty;
+                        _anchorType = annotation.anchorType();
                     }
                 }
             }
@@ -5366,15 +5623,15 @@ public abstract class AbstractDataArtifact extends AbstractArtifact implements A
         }
         if (this instanceof DateData) {
             TemporalAddend addend = someDateTemporalAddend(string);
-            return addend.isBadValue() ? null : addend;
+            return addend == null || addend.isBadValue() ? null : addend;
         }
         if (this instanceof TimeData) {
             TemporalAddend addend = someTimeTemporalAddend(string);
-            return addend.isBadValue() ? null : addend;
+            return addend == null || addend.isBadValue() ? null : addend;
         }
         if (this instanceof TimestampData) {
             TemporalAddend addend = someTimestampTemporalAddend(string);
-            return addend.isBadValue() ? null : addend;
+            return addend == null || addend.isBadValue() ? null : addend;
         }
         return null;
     }

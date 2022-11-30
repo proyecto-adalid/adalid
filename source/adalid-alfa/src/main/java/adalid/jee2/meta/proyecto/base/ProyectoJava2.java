@@ -100,6 +100,7 @@ public class ProyectoJava2 extends ProyectoJava1 {
 //      addAttribute(ProjectAttributeKeys.SESSION_TIMEOUT, 30);
         addAttribute("primefaces_messages_escape", false);
         addAttribute("primefaces_inline_help_escape", false);
+        addAttribute("check_mailer_bean_session_before_each_delivery", false);
         /**/
         Entity entity;
         Map<String, Entity> entitiesMap = getEntitiesMap();

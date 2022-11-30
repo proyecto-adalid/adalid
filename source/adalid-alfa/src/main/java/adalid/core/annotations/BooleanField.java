@@ -30,12 +30,12 @@ public @interface BooleanField {
     /**
      * displayType indica el tipo de componente que se utiliza para mostrar el valor de la propiedad en las vistas (páginas) de consulta y registro, o
      * del parámetro en las vistas (páginas) de ejecución de operaciones de negocio. Su valor es uno de los elementos de la enumeración
-     * BooleanDisplayType. Seleccione DROPDOWN o CHECKBOX para utilizar una lista desplegable o una casilla de verificación, respectivamente. La
-     * opción CHECKBOX solo aplica si la columna de la base de datos que corresponde a la propiedad no permite valores nulos (vea el elemento nullable
-     * de la Anotación ColumnField), o si el parámetro es requerido (vea el elemento required de la Anotación ParameterField). Alternativamente, omita
-     * el elemento o seleccione UNSPECIFIED para utilizar el valor predeterminado del atributo. El valor predeterminado del atributo es DROPDOWN si la
-     * columna de la base de datos que corresponde a la propiedad permite valores nulos,o si el parámetro no es requerido; y CHECKBOX si no los
-     * permite.
+     * BooleanDisplayType. Seleccione DROPDOWN, CHECKBOX o TOGGLE para utilizar una lista desplegable, una casilla de verificación o un interruptor de
+     * palanca, respectivamente. Las opciones CHECKBOX y TOGGLE solo aplican si la columna de la base de datos que corresponde a la propiedad no
+     * permite valores nulos (vea el elemento nullable de la Anotación ColumnField), o si el parámetro es requerido (vea el elemento required de la
+     * Anotación ParameterField). Alternativamente, omita el elemento o seleccione UNSPECIFIED para utilizar el valor predeterminado del atributo. El
+     * valor predeterminado del atributo es DROPDOWN si la columna de la base de datos que corresponde a la propiedad permite valores nulos, o si el
+     * parámetro no es requerido; en caso contrario, el valor establecido mediante el método setDefaultBooleanDisplayType del proyecto Maestro.
      *
      * @return displayType
      */

@@ -38,7 +38,15 @@ public abstract class ProyectoMavenPrime extends ProyectoMaven {
 
     protected static final String PRIMEFACES_VERSION = "primefaces.version";
 
+    protected static final String PRIMEFACES_EXTENSIONS_VERSION = "primefaces.extensions.version";
+
+    protected static final String GOOGLE_GSON_VERSION = "google.gson.version";
+
     protected static final String VERSION_PRIMEFACES = PRIMEFACES_VERSION;
+
+    protected static final String VERSION_PRIMEFACES_EXTENSIONS = PRIMEFACES_EXTENSIONS_VERSION;
+
+    protected static final String VERSION_GOOGLE_GSON = GOOGLE_GSON_VERSION;
 
     protected static final String DEFAULT_THEME = PrimeFacesThemes.SAGA;
 

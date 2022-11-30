@@ -340,7 +340,7 @@ public abstract class Display extends AbstractArtifact implements Comparable<Dis
     /**
      * @param displayType the display type to set
      */
-    void setDisplayType(DisplayType displayType) {
+    protected void setDisplayType(DisplayType displayType) {
         _displayType = displayType;
     }
 
@@ -438,9 +438,13 @@ public abstract class Display extends AbstractArtifact implements Comparable<Dis
                 List<? extends Display> displaysList = module.getDisplaysList();
                 Collections.sort(displaysList);
                 for (Display display : displaysList) {
+                    /* 07/11/2022 - allow a display to be its own child
                     if (equals(display) || unequals(_displayMode, display.getDisplayMode())) {
+                    /**/
+                    if (unequals(_displayMode, display.getDisplayMode())) {
                         continue;
                     }
+                    /**/
                     if (isMyChild(display)) {
                         _children.add(display);
                     }
@@ -470,11 +474,15 @@ public abstract class Display extends AbstractArtifact implements Comparable<Dis
         if (_collaterals == null) {
             _collaterals = new ArrayList<>();
             if (module != null && _entity != null && _master != null && _reference != null) {
+                List<Display> children = getChildren(); // since 01/11/2022
                 List<? extends Display> displaysList = module.getDisplaysList();
                 Collections.sort(displaysList);
                 for (Display display : displaysList) {
                     if (equals(display) || unequals(_displayMode, display.getDisplayMode())) {
                         continue;
+                    }
+                    if (children.contains(display)) {
+                        continue; // since 01/11/2022
                     }
                     if (isMyCollateral(display)) {
                         _collaterals.add(display);

@@ -12,6 +12,7 @@
  */
 package adalid.core.wrappers;
 
+import adalid.commons.util.*;
 import adalid.core.data.types.*;
 import adalid.core.enums.*;
 import adalid.core.interfaces.*;
@@ -28,6 +29,10 @@ public class DataArtifactWrapper extends ArtifactWrapper {
 
     private final DataArtifact _dataArtifact;
 
+    private final Property _propertyArtifact;
+
+    private final Parameter _parameterArtifact;
+
     private final StringData _stringDataArtifact;
 
     private final IntervalizedArtifact _intervalizedArtifact;
@@ -35,6 +40,8 @@ public class DataArtifactWrapper extends ArtifactWrapper {
     public DataArtifactWrapper(DataArtifact dataArtifact) {
         super(dataArtifact);
         _dataArtifact = dataArtifact;
+        _propertyArtifact = _dataArtifact == null ? null : _dataArtifact.isProperty() ? (Property) _dataArtifact : null;
+        _parameterArtifact = _dataArtifact == null ? null : _dataArtifact.isParameter() ? (Parameter) _dataArtifact : null;
         _stringDataArtifact = _dataArtifact instanceof StringData ? (StringData) _dataArtifact : null;
         _intervalizedArtifact = _dataArtifact instanceof IntervalizedArtifact ? (IntervalizedArtifact) _dataArtifact : null;
     }
@@ -42,6 +49,56 @@ public class DataArtifactWrapper extends ArtifactWrapper {
     @Override
     public DataArtifact getWrapped() {
         return _dataArtifact;
+    }
+
+    public String getBundleDefaultAnchorLabel() {
+        return getBundleValueString(getDefaultAnchorLabel());
+    }
+
+    public String getBundleValidDefaultAnchorLabel() {
+        return getBundleValueString(getValidDefaultAnchorLabel());
+    }
+
+    public String getValidDefaultAnchorLabel() {
+        return getValidDefaultAnchorLabel(true);
+    }
+
+    public String getValidDefaultAnchorLabel(boolean b) {
+        return StrUtils.coalesce(getDefaultAnchorLabel(), getValidDefaultShortLabel(b));
+    }
+
+    protected String getDefaultAnchorLabel() {
+        /*
+        Property p = _dataArtifact instanceof Property ? (Property) _dataArtifact : null;
+        return p == null ? null : p.getDefaultAnchorLabel();
+        /**/
+        return _propertyArtifact != null ? _propertyArtifact.getDefaultAnchorLabel()
+            : _parameterArtifact != null ? _parameterArtifact.getDefaultAnchorLabel() : null;
+    }
+
+    public String getBundleDefaultAnchoredLabel() {
+        return getBundleValueString(getDefaultAnchoredLabel());
+    }
+
+    public String getBundleValidDefaultAnchoredLabel() {
+        return getBundleValueString(getValidDefaultAnchoredLabel());
+    }
+
+    public String getValidDefaultAnchoredLabel() {
+        return getValidDefaultAnchoredLabel(true);
+    }
+
+    public String getValidDefaultAnchoredLabel(boolean b) {
+        return StrUtils.coalesce(getDefaultAnchoredLabel(), getValidDefaultShortLabel(b));
+    }
+
+    protected String getDefaultAnchoredLabel() {
+        /*
+        Property p = _dataArtifact instanceof Property ? (Property) _dataArtifact : null;
+        return p == null ? null : p.getDefaultAnchoredLabel();
+        /**/
+        return _propertyArtifact != null ? _propertyArtifact.getDefaultAnchoredLabel()
+            : _parameterArtifact != null ? _parameterArtifact.getDefaultAnchoredLabel() : null;
     }
 
     /**

@@ -26,13 +26,16 @@ import adalid.core.primitives.*;
 import adalid.core.programmers.*;
 import adalid.core.sql.*;
 import adalid.jee2.ProjectObjectModel;
+import adalid.jee2.SpecialPage;
 import adalid.jee2.bundles.*;
 import adalid.jee2.features.*;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.Set;
+import java.util.TreeMap;
 import java.util.TreeSet;
 import meta.entidad.comun.configuracion.basica.ClaseRecurso;
 import meta.entidad.comun.configuracion.basica.DominioParametro;
@@ -440,6 +443,22 @@ public class ProyectoBase extends Project implements SubjectProject, SpecialEnti
     }
     // </editor-fold>
 
+    // <editor-fold defaultstate="collapsed" desc="special pages">
+    private final Map<String, SpecialPage> _projectSpecialPages = new TreeMap<>();
+
+    public SpecialPage addSpecialPage(SpecialPage specialPage) {
+        return _projectSpecialPages.put(specialPage.getCode(), specialPage);
+    }
+
+    public Map<String, SpecialPage> getProjectSpecialPagesMap() {
+        return _projectSpecialPages;
+    }
+
+    public Collection<SpecialPage> getProjectSpecialPagesCollection() {
+        return _projectSpecialPages.values();
+    }
+    // </editor-fold>
+
     static {
         setLocale(SPANISH);
     }
@@ -456,9 +475,10 @@ public class ProyectoBase extends Project implements SubjectProject, SpecialEnti
     }
 
     private boolean checkBundles() {
+        boolean b0 = checkBundle(new BaseBundle());
         boolean b1 = checkBundle(new BundleMensajes());
         boolean b2 = checkBundle(new BundleWebui());
-        return b1 && b2;
+        return b0 && b1 && b2;
     }
 
     private boolean checkBundle(BundleAbstracto bundle) {
