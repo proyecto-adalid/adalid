@@ -213,8 +213,17 @@ public class TareaUsuario extends AbstractPersistentEntity {
         setLocalizedLabel(SPANISH, "tarea");
         setLocalizedCollectionLabel(ENGLISH, "Tasks");
         setLocalizedCollectionLabel(SPANISH, "Tareas");
-        setLocalizedDescription(ENGLISH, "task notification");
-        setLocalizedDescription(SPANISH, "notificación de tarea");
+        /**/
+        setLocalizedDescription(ENGLISH, "Each instance of " + b("Tasks") + " represents a "
+            + "task notification."
+            + "");
+        setLocalizedDescription(SPANISH, "Cada instancia de " + b("Tareas") + " representa una "
+            + "notificación de tarea."
+            + "");
+        /**/
+        setLocalizedShortDescription(ENGLISH, "task notification");
+        setLocalizedShortDescription(SPANISH, "notificación de tarea");
+        /**/
         // </editor-fold>
     }
 

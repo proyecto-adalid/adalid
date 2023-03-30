@@ -45,6 +45,16 @@ public class GrupoUsuario extends AbstractPersistentEntity {
         setLocalizedCollectionLabel(ENGLISH, "User Groups");
         setLocalizedCollectionLabel(SPANISH, "Grupos de Usuarios");
         /**/
+        setLocalizedDescription(ENGLISH, "Each instance of " + b("User Groups") + " represents an "
+            + "application user group."
+            + "");
+        setLocalizedDescription(SPANISH, "Cada instancia de " + b("Grupos de Usuarios") + " representa un "
+            + "grupo de usuarios de la aplicación."
+            + "");
+        /**/
+        setLocalizedShortDescription(ENGLISH, "application user group");
+        setLocalizedShortDescription(SPANISH, "grupo de usuarios de la aplicación");
+        /**/
         // </editor-fold>
         /**/
     }

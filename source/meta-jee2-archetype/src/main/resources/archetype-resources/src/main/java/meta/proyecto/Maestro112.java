@@ -130,6 +130,7 @@ public class Maestro112 extends Maestro {
         super.addDirectives();
 //      addFileExclusionPattern(expresión regular para evaluar el nombre de los archivos que se deben excluir);
 //      por ejemplo: addFileExclusionPattern("^.*/data-migration/base/insert-select-past-data-[${backslash}${backslash}d]{8}-[${backslash}${backslash}d]{4}${backslash}${backslash}.sql${dollar}");
+//      por ejemplo: addFileExclusionPattern("^.*/webapp/resources/help/base/special-component/barraBotonesAccion1.xhtml${dollar}");
 //      addFilePreservationPattern(expresión regular para evaluar el nombre de los archivos que se deben preservar);
 //      por ejemplo: addFilePreservationPattern("^.*/${backslash}${backslash}.gitignore${dollar}"); // preserva los archivos .gitignore
     }

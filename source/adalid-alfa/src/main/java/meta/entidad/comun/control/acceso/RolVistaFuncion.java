@@ -94,6 +94,17 @@ public class RolVistaFuncion extends AbstractPersistentEntity {
         setLocalizedCollectionLabel(SPANISH, rol, "Vistas por Rol");
         setLocalizedCollectionShortLabel(ENGLISH, rol, "Views");
         setLocalizedCollectionShortLabel(SPANISH, rol, "Vistas");
+        /**/
+        setLocalizedDescription(ENGLISH, "Each instance of " + b("Role/View Associations") + " represents a "
+            + "view associated with an application role."
+            + "");
+        setLocalizedDescription(SPANISH, "Cada instancia de " + b("Asociaciones Rol/Vista") + " representa una "
+            + "vista asociada con un rol de la aplicación."
+            + "");
+        /**/
+        setLocalizedShortDescription(ENGLISH, "view associated with an application role");
+        setLocalizedShortDescription(SPANISH, "vista asociada con un rol de la aplicación");
+        /**/
         // </editor-fold>
     }
 

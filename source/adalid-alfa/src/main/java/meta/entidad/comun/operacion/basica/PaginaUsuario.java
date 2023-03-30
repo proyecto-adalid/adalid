@@ -73,8 +73,17 @@ public class PaginaUsuario extends AbstractPersistentEntity {
         setLocalizedLabel(SPANISH, "favorito");
         setLocalizedCollectionLabel(ENGLISH, "Favorites");
         setLocalizedCollectionLabel(SPANISH, "Favoritos");
-        setLocalizedDescription(ENGLISH, "User's own app bookmarks");
-        setLocalizedDescription(SPANISH, "Marcadores de páginas de la aplicación propios del usuario");
+        /**/
+        setLocalizedDescription(ENGLISH, "Each instance of " + b("Favorites") + " represents a "
+            + "bookmark of a web page saved by the user."
+            + "");
+        setLocalizedDescription(SPANISH, "Cada instancia de " + b("Favoritos") + " representa un "
+            + "marcador de una página web de la aplicación guardado por al usuario."
+            + "");
+        /**/
+        setLocalizedShortDescription(ENGLISH, "bookmark of a web page saved by the user");
+        setLocalizedShortDescription(SPANISH, "marcador de una página web de la aplicación guardado por al usuario");
+        /**/
         // </editor-fold>
     }
 

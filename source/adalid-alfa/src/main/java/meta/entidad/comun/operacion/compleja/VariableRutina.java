@@ -65,14 +65,23 @@ public class VariableRutina extends AbstractPersistentEntity {
         setLocalizedCollectionLabel(SPANISH, "Variables de Rutina de Usuario");
         setLocalizedCollectionShortLabel(ENGLISH, "Variables");
         setLocalizedCollectionShortLabel(SPANISH, "Variables");
-        setLocalizedDescription(ENGLISH, ""
-            + "A user routine variable stores the result of executing one or more steps "
+        /**/
+        setLocalizedDescription(ENGLISH, "Each instance of " + b("User Routine Variables") + " represents a "
+            + "user routine variable that stores the result of executing one or more steps "
             + "in the path a user follows through your website interface to complete a task."
             + "");
-        setLocalizedDescription(SPANISH, ""
-            + "Una variable de una rutina de usuario almacena el resultado de la ejecución de uno o mas pasos "
+        setLocalizedDescription(SPANISH, "Cada instancia de " + b("Variables de Rutina de Usuario") + " representa una "
+            + "variable de una rutina de usuario que almacena el resultado de la ejecución de uno o mas pasos "
             + "en la ruta que sigue un usuario a través de la interfaz de su sitio web para completar una tarea."
             + "");
+        /**/
+        setLocalizedShortDescription(ENGLISH, "user routine variable that stores the result of executing one or more steps "
+            + "in the path a user follows through your website interface to complete a task"
+            + "");
+        setLocalizedShortDescription(SPANISH, "variable de una rutina de usuario que almacena el resultado de la ejecución de uno o mas pasos "
+            + "en la ruta que sigue un usuario a través de la interfaz de su sitio web para completar una tarea"
+            + "");
+        /**/
         // </editor-fold>
     }
 

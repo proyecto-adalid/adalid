@@ -94,7 +94,7 @@ public @interface UrlProperty {
      * </ul><p>
      *
      * @return encoding
-     * @see <a href="https://docs.oracle.com/javase/8/docs/api/java/util/Base64.html">Class Base64</a>
+     * @see <a href="https://docs.oracle.com/javase/8/docs/api/java/util/Base64.html">class Base64</a>
      */
     Kleenean encoding() default Kleenean.UNSPECIFIED;
 

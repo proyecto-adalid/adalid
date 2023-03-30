@@ -12,10 +12,12 @@
  */
 package adalid.core.interfaces;
 
+import java.io.Serializable;
+
 /**
  * @author Jorge Campins
  */
-public interface DataArtifact extends Nullable, TypedArtifact {
+public interface DataArtifact extends Nullable, Serializable, TypedArtifact {
 
     /**
      * @return the data class
@@ -26,6 +28,11 @@ public interface DataArtifact extends Nullable, TypedArtifact {
      * @return the segment entity class
      */
     Class<?> getSegmentEntityClass(); // since 20210218
+
+    /**
+     * @return the Serial Version UID of the data class
+     */
+    Long getSerialVersionUID(); // since 19/01/2023
 
     /**
      * @return true if is a Parameter; otherwise false

@@ -70,8 +70,17 @@ public class VistaFuncionCol extends AbstractPersistentEntity {
         setLocalizedCollectionLabel(SPANISH, "Columnas de Vista");
         setLocalizedCollectionShortLabel(ENGLISH, "Columns");
         setLocalizedCollectionShortLabel(SPANISH, "Columnas");
-        setLocalizedDescription(ENGLISH, "column of view defined by the end user");
-        setLocalizedDescription(SPANISH, "columna de vista definida por el usuario final");
+        /**/
+        setLocalizedDescription(ENGLISH, "Each instance of " + b("View Columns") + " represents a "
+            + "column of a view defined by the user."
+            + "");
+        setLocalizedDescription(SPANISH, "Cada instancia de " + b("Columnas de Vista") + " representa una "
+            + "columna de una vista definida por el usuario."
+            + "");
+        /**/
+        setLocalizedShortDescription(ENGLISH, "column of view defined by the user");
+        setLocalizedShortDescription(SPANISH, "columna de vista definida por el usuario");
+        /**/
         // </editor-fold>
     }
 

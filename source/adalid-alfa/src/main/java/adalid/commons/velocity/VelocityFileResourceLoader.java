@@ -100,20 +100,20 @@ public class VelocityFileResourceLoader extends org.apache.velocity.runtime.reso
             next = 0;
             int ch;
             search:
-            while (true) {
-                ch = in.read();
-                switch (ch) {
-                    case -1:
-                        eof = true;
-                        break search;
-                    case '\n':
-                        line += '\n';
-                        break search;
-                    default:
-                        line += (char) ch;
-                        break;
+                while (true) {
+                    ch = in.read();
+                    switch (ch) {
+                        case -1:
+                            eof = true;
+                            break search;
+                        case '\n':
+                            line += '\n';
+                            break search;
+                        default:
+                            line += (char) ch;
+                            break;
+                    }
                 }
-            }
             boolean startsWithDots = false;
             for (int i = 0; i < line.length(); i++) {
                 ch = (int) line.charAt(i);

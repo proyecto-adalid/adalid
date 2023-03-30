@@ -14,6 +14,7 @@ package adalid.commons.interfaces;
 
 /**
  * @author Jorge Campins
+ * @param <T> el tipo de la entidad del predicado
  */
 public interface Predicate<T> {
 

@@ -12,9 +12,11 @@
  */
 package meta.paquete.comun;
 
+import meta.entidad.comun.operacion.basica.CampoValorTemporal;
 import meta.entidad.comun.operacion.basica.FiltroFuncion;
 import meta.entidad.comun.operacion.basica.FiltroFuncionPar;
 import meta.entidad.comun.operacion.basica.OperadorCom;
+import meta.entidad.comun.operacion.basica.TipoValorCriterio;
 import meta.paquete.base.PaqueteRegistroBase;
 
 /**
@@ -47,16 +49,22 @@ public class PaqueteRegistroFiltro extends PaqueteRegistroBase {
     @Override
     public void print() {
         super.print();
+        System.out.println(campoValorTemporal);
         System.out.println(filtroFuncion);
         System.out.println(filtroFuncionPar);
         System.out.println(operadorCom);
+        System.out.println(tipoValorCriterio);
     }
     // </editor-fold>
+
+    CampoValorTemporal campoValorTemporal;
 
     FiltroFuncion filtroFuncion;
 
     FiltroFuncionPar filtroFuncionPar;
 
     OperadorCom operadorCom;
+
+    TipoValorCriterio tipoValorCriterio;
 
 }

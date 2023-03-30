@@ -1,5 +1,6 @@
 Manifest-Version: 1.0
+AutoUpdate-Show-In-Client: true
 OpenIDE-Module: adalid.code.templates
 OpenIDE-Module-Layer: adalid/code/templates/layer.xml
 OpenIDE-Module-Localizing-Bundle: adalid/code/templates/Bundle.properties
-OpenIDE-Module-Specification-Version: 4.6.0
+OpenIDE-Module-Specification-Version: 4.7.0

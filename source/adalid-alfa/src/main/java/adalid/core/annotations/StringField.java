@@ -76,6 +76,18 @@ public @interface StringField {
     String regex() default "";
 
     /**
+     * autoComplete especifica si los campos de entrada de la propiedad o parámetro deben tener habilitado, o no, el autocompletado. Cuando el usuario
+     * comienza a escribir en un campo que tiene habilitado el autocompletado, el navegador debe mostrar y permitir seleccionar alguno de los valores
+     * escritos anteriormente. El valor de autoComplete es uno de los elementos de la enumeración AutoComplete. Seleccione ON u OFF para habilitar o
+     * inhabilitar el autocompletado, respectivamente. Si la propiedad o parámetro es un password, puede utilizar NEW_PASSWORD en lugar de ON para
+     * que, además de valores escritos anteriormente, el navegador ofrezca a los usuarios contraseñas generadas automáticamente. Alternativamente,
+     * omita el elemento o seleccione UNSPECIFIED para utilizar el valor predeterminado del navegador.
+     *
+     * @return autoComplete
+     */
+    AutoComplete autoComplete() default AutoComplete.UNSPECIFIED;
+
+    /**
      * letterCase especifica la conversión que se debe realizar al almacenar valores de la propiedad o parámetro en la base de datos. Su valor es uno
      * de los elementos de la enumeración LetterCase. Seleccione LOWER, UPPER o CAPITALIZED para convertir todos los caracteres a minúsculas, todos a
      * mayúsculas, o para capitalizar (convertir el primer carácter de cada palabra a mayúscula y el resto a minúsculas), respectivamente.

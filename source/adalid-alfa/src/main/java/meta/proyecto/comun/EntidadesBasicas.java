@@ -26,6 +26,7 @@ import meta.entidad.comun.configuracion.basica.AtributoAplicacion;
 import meta.entidad.comun.configuracion.basica.ClaseJava;
 import meta.entidad.comun.configuracion.basica.CondicionEjeFun;
 import meta.entidad.comun.configuracion.basica.DominioParametro;
+import meta.entidad.comun.configuracion.basica.FormatoPaginaInforme;
 import meta.entidad.comun.configuracion.basica.GrupoProceso;
 import meta.entidad.comun.configuracion.basica.MensajeAplicacion;
 import meta.entidad.comun.configuracion.basica.ModuloAplicacion;
@@ -69,12 +70,15 @@ import meta.entidad.comun.control.acceso.RolPaginaEspecial;
 import meta.entidad.comun.control.acceso.RolUsuario;
 import meta.entidad.comun.control.acceso.RolVistaFuncion;
 import meta.entidad.comun.control.acceso.Segmento;
+import meta.entidad.comun.control.acceso.TipoRestriccionFormatos;
 import meta.entidad.comun.control.acceso.TipoRol;
 import meta.entidad.comun.control.acceso.UsuarioFuncion;
 import meta.entidad.comun.control.acceso.UsuarioModulo;
 import meta.entidad.comun.control.acceso.UsuarioSegmento;
 import meta.entidad.comun.control.acceso.ext.Usuario;
+import meta.entidad.comun.operacion.basica.CampoValorTemporal;
 import meta.entidad.comun.operacion.basica.CondicionTarea;
+import meta.entidad.comun.operacion.basica.DialogoDinamicoRemoto;
 import meta.entidad.comun.operacion.basica.FiltroFuncion;
 import meta.entidad.comun.operacion.basica.FiltroFuncionPar;
 import meta.entidad.comun.operacion.basica.OperadorCom;
@@ -84,6 +88,7 @@ import meta.entidad.comun.operacion.basica.TareaUsuario;
 import meta.entidad.comun.operacion.basica.TareaUsuarioCorreo;
 import meta.entidad.comun.operacion.basica.TareaVirtual;
 import meta.entidad.comun.operacion.basica.TipoAgregacion;
+import meta.entidad.comun.operacion.basica.TipoValorCriterio;
 import meta.entidad.comun.operacion.basica.TransicionTareaUsuario;
 import meta.entidad.comun.operacion.basica.VistaFuncion;
 import meta.entidad.comun.operacion.basica.VistaFuncionCol;
@@ -115,17 +120,20 @@ public class EntidadesBasicas extends Project {
         System.out.println(Aplicacion);
         System.out.println(ArchivoAdjunto);
         System.out.println(AtributoAplicacion);
+        System.out.println(CampoValorTemporal);
         System.out.println(ClaseJava);
         System.out.println(ClaseRecurso);
         System.out.println(ClaseFabricador);
         System.out.println(CondicionEjeFun);
         System.out.println(CondicionTarea);
         System.out.println(ConjuntoSegmento);
+        System.out.println(DialogoDinamicoRemoto);
         System.out.println(Dominio);
         System.out.println(DominioParametro);
         System.out.println(ElementoSegmento);
         System.out.println(FiltroFuncion);
         System.out.println(FiltroFuncionPar);
+        System.out.println(FormatoPaginaInforme);
         System.out.println(Funcion);
         System.out.println(FuncionParametro);
         System.out.println(GrupoProceso);
@@ -175,8 +183,10 @@ public class EntidadesBasicas extends Project {
         System.out.println(TipoParametroDom);
         System.out.println(TipoRastroFun);
         System.out.println(TipoRecurso);
+        System.out.println(TipoRestriccionFormatos);
         System.out.println(TipoRol);
         System.out.println(TipoValor);
+        System.out.println(TipoValorCriterio);
         System.out.println(TransicionTareaUsuario);
         System.out.println(Usuario);
         System.out.println(UsuarioFuncion);
@@ -196,6 +206,8 @@ public class EntidadesBasicas extends Project {
 
     AtributoAplicacion AtributoAplicacion;
 
+    CampoValorTemporal CampoValorTemporal;
+
     ClaseJava ClaseJava;
 
     ClaseRecurso ClaseRecurso;
@@ -208,6 +220,8 @@ public class EntidadesBasicas extends Project {
 
     ConjuntoSegmento ConjuntoSegmento;
 
+    DialogoDinamicoRemoto DialogoDinamicoRemoto;
+
     Dominio Dominio;
 
     DominioParametro DominioParametro;
@@ -217,6 +231,8 @@ public class EntidadesBasicas extends Project {
     FiltroFuncion FiltroFuncion;
 
     FiltroFuncionPar FiltroFuncionPar;
+
+    FormatoPaginaInforme FormatoPaginaInforme;
 
     Funcion Funcion;
 
@@ -316,9 +332,13 @@ public class EntidadesBasicas extends Project {
 
     TipoRecurso TipoRecurso;
 
+    TipoRestriccionFormatos TipoRestriccionFormatos;
+
     TipoRol TipoRol;
 
     TipoValor TipoValor;
+
+    TipoValorCriterio TipoValorCriterio;
 
     TransicionTareaUsuario TransicionTareaUsuario;
 

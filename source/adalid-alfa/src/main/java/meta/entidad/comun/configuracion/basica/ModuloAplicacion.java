@@ -88,14 +88,22 @@ public class ModuloAplicacion extends AbstractPersistentEntity {
         setOrderBy(codigoModulo);
 //      setSchema(ProyectoBase.getEsquemaEntidadesComunes());
         /**/
-        // <editor-fold defaultstate="collapsed" desc="localization of Pagina's attributes">
+        // <editor-fold defaultstate="collapsed" desc="localization of ModuloAplicacion's attributes">
         /**/
         setLocalizedLabel(ENGLISH, "module");
         setLocalizedLabel(SPANISH, "módulo");
         setLocalizedCollectionLabel(ENGLISH, "Modules");
         setLocalizedCollectionLabel(SPANISH, "Módulos");
-        setLocalizedDescription(ENGLISH, "application module");
-        setLocalizedDescription(SPANISH, "módulo de la aplicación");
+        /**/
+        setLocalizedDescription(ENGLISH, "Each instance of " + b("Modules") + " represents an "
+            + "application module."
+            + "");
+        setLocalizedDescription(SPANISH, "Cada instancia de " + b("Módulos") + " representa un "
+            + "módulo de la aplicación."
+            + "");
+        /**/
+        setLocalizedShortDescription(ENGLISH, "application module");
+        setLocalizedShortDescription(SPANISH, "módulo de la aplicación");
         /**/
         // </editor-fold>
         /**/
@@ -117,7 +125,7 @@ public class ModuloAplicacion extends AbstractPersistentEntity {
         entidadesPrivadas.setInitialValue(false);
         entidadesPrivadas.setDefaultValue(false);
         /**/
-        // <editor-fold defaultstate="collapsed" desc="localization of Pagina's properties">
+        // <editor-fold defaultstate="collapsed" desc="localization of ModuloAplicacion's properties">
         /**/
         codigoModulo.setLocalizedLabel(ENGLISH, "module code");
         codigoModulo.setLocalizedLabel(SPANISH, "código del módulo");

@@ -26,6 +26,7 @@ import org.apache.log4j.Logger;
  */
 public class Bundle {
 
+    // <editor-fold defaultstate="collapsed" desc="static fields">
     public static final Locale ENGLISH = Locale.ENGLISH;
 
     public static final Locale SPANISH = Locale.forLanguageTag("es");
@@ -46,33 +47,34 @@ public class Bundle {
 
     private static final String BASE_NAME = Bundle.class.getName();
 
-    private static final Locale defaultLocale = ENGLISH;
-
-    private static final Linguist defaultLinguist = SUPPORTING_LINGUISTS[indexOfLocale(defaultLocale)];
-
-    private static final ResourceBundle defaultResourceBundle = ResourceBundle.getBundle(BASE_NAME, defaultLocale);
-
-    private static final ResourceBundle specialResourceBundle = ResourceBundle.getBundle(BASE_NAME, Locale.forLanguageTag("adalid"));
-
     private static final ResourceBundle[] RESOURCE_BUNDLES = new ResourceBundle[]{
         ResourceBundle.getBundle(BASE_NAME, ENGLISH),
         ResourceBundle.getBundle(BASE_NAME, SPANISH)
     };
 
-    private static ResourceBundle resourceBundle;
+    private static final Locale defaultLocale = SUPPORTED_LOCALES[0];
+
+    private static final Linguist defaultLinguist = SUPPORTING_LINGUISTS[0];
+
+    private static final ResourceBundle defaultResourceBundle = RESOURCE_BUNDLES[0];
+
+    private static final ResourceBundle specialResourceBundle = ResourceBundle.getBundle(BASE_NAME, Locale.forLanguageTag("adalid"));
 
     private static Locale locale;
 
     private static Linguist linguist;
+
+    private static ResourceBundle resourceBundle;
+    // </editor-fold>
 
     static {
         initialise();
     }
 
     private static void initialise() {
-        resourceBundle = defaultResourceBundle;
         locale = defaultLocale;
         linguist = defaultLinguist;
+        resourceBundle = defaultResourceBundle;
     }
 
     public static Locale[] getSupportedLocales() {
@@ -85,10 +87,6 @@ public class Bundle {
 
     private static int indexOfLocale(Locale locale) {
         return locale == null ? ArrayUtils.INDEX_NOT_FOUND : ArrayUtils.indexOf(SUPPORTED_LOCALES, locale);
-    }
-
-    public static ResourceBundle getResourceBundle() {
-        return resourceBundle;
     }
 
     /**
@@ -110,9 +108,9 @@ public class Bundle {
         } else if (isSupportedLocale(newLocale)) {
             try {
                 logger.trace("Change of Locale (from \"" + locale + "\" to \"" + newLocale + "\")");
-                resourceBundle = ResourceBundle.getBundle(BASE_NAME, newLocale);
                 locale = newLocale;
-                linguist = SUPPORTING_LINGUISTS[indexOfLocale(newLocale)];
+                linguist = getLinguist(newLocale);
+                resourceBundle = getResourceBundle(newLocale);
             } catch (MissingResourceException e) {
                 logger.warn("Locale " + newLocale + " bundle missing; falling back to " + defaultLocale);
                 initialise();
@@ -169,6 +167,20 @@ public class Bundle {
         return linguist;
     }
 
+    public static Linguist getLinguist(Locale locale) {
+        int index = indexOfLocale(locale);
+        return index == ArrayUtils.INDEX_NOT_FOUND ? linguist : SUPPORTING_LINGUISTS[index];
+    }
+
+    public static ResourceBundle getResourceBundle() {
+        return resourceBundle;
+    }
+
+    public static ResourceBundle getResourceBundle(Locale locale) {
+        int index = indexOfLocale(locale);
+        return index == ArrayUtils.INDEX_NOT_FOUND ? resourceBundle : RESOURCE_BUNDLES[index];
+    }
+
     public static boolean getBoolean(String key) {
         String trimmed = getTrimmedToNullString(key);
         return BitUtils.valueOf(trimmed);
@@ -196,6 +208,8 @@ public class Bundle {
     }
 
     public static String getTrimmedToNullString(String key, Locale locale) {
+        // <editor-fold defaultstate="collapsed" desc="until 15/03/2023">
+        /*
         if (StringUtils.isBlank(key)) {
             return null;
         }
@@ -205,6 +219,9 @@ public class Bundle {
         }
         String string = getTrimmedToNullString(key, RESOURCE_BUNDLES[index]);
         return string;
+        /**/
+        // </editor-fold>
+        return StringUtils.isBlank(key) ? null : getTrimmedToNullString(key, getResourceBundle(locale));
     }
 
     private static String getTrimmedToNullString(String key, ResourceBundle rb) {
@@ -224,6 +241,8 @@ public class Bundle {
     }
 
     public static String getUntrimmedString(String key, Locale locale) {
+        // <editor-fold defaultstate="collapsed" desc="until 15/03/2023">
+        /*
         if (StringUtils.isBlank(key)) {
             return null;
         }
@@ -233,6 +252,9 @@ public class Bundle {
         }
         String string = getUntrimmedString(key, RESOURCE_BUNDLES[index]);
         return string;
+        /**/
+        // </editor-fold>
+        return StringUtils.isBlank(key) ? null : getUntrimmedString(key, getResourceBundle(locale));
     }
 
     private static String getUntrimmedString(String key, ResourceBundle rb) {

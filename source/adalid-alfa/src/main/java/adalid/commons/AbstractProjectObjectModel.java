@@ -92,11 +92,13 @@ public abstract class AbstractProjectObjectModel implements ProjectObjectModelRe
         return StringUtils.join(strings, ".");
     }
 
+    @Override
     public ArtifactVersion getArtifactVersion() {
         String projectVersion = getProjectVersion();
         return new DefaultArtifactVersion(projectVersion);
     }
 
+    @Override
     public void logProjectVersion() {
         String name = StringUtils.defaultIfBlank(getProjectName(), "?");
         String version = getProjectVersionNumber();

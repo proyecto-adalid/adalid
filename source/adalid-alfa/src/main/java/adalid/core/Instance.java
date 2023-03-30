@@ -109,7 +109,7 @@ public class Instance extends AbstractArtifact {
 
     /**/
     // </editor-fold>
-/**/
+//
     public Class<?> getInstanceKeyType() {
         /**/
         // <editor-fold defaultstate="collapsed" desc="until 01/04/2022">

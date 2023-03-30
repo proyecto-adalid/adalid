@@ -12,7 +12,6 @@
  */
 package meta.entidad.comun.control.prueba;
 
-import adalid.core.*;
 import adalid.core.annotations.*;
 import adalid.core.enums.*;
 import adalid.core.interfaces.*;

@@ -134,7 +134,9 @@ public abstract class AbstractJavaWebModule extends AbstractJavaModule implement
         Collection<Entity> validEntities = ColUtils.filter(entities, isPersistentEntityWithTable);
         validEntities = ColUtils.sort(validEntities, byEntityName);
         for (Entity entity : validEntities) {
-            put(entity);
+            if (entity.isGuiCodeGenEnabled()) { // entity.isApplicationDefaultLocation() doesn't work here
+                put(entity);
+            }
         }
     }
 
@@ -207,10 +209,12 @@ public abstract class AbstractJavaWebModule extends AbstractJavaModule implement
         List<Property> properties = entity.getReferencesList();
         for (Property property : properties) {
             reference = (EntityReference) property;
-            declaring = reference.getDeclaringEntity().getClass();
-            detail = declaring == null ? null : getEntity(declaring);
-            if (detail != null && (reference.isManyToOne() || reference.isOneToOne())) {
-                putMasterDetailPages(detail, reference, entity);
+            if (reference.isManyToOne() || reference.isOneToOne()) {
+                declaring = reference.getDeclaringEntity().getClass();
+                detail = declaring == null ? null : getEntity(declaring);
+                if (detail != null) {
+                    putMasterDetailPages(detail, reference, entity);
+                }
             }
         }
     }
@@ -256,45 +260,45 @@ public abstract class AbstractJavaWebModule extends AbstractJavaModule implement
     private boolean putConsolePages(Entity entity) {
         boolean put = false;
         if (entity.isConsoleViewEnabled() && !entity.getBusinessOperationsList().isEmpty()) {
-            put |= putPage(entity, null, null, DisplayMode.PROCESSING, DisplayFormat.CONSOLE);
+            put |= putPage(entity, DisplayMode.PROCESSING, DisplayFormat.CONSOLE);
         }
         return put;
     }
 
-    private boolean putMasterDetailPages(Entity entity, EntityReference reference, Entity master) {
+    private boolean putMasterDetailPages(Entity detail, EntityReference reference, Entity master) {
         boolean put = false;
-        if (entity.isGuiCodeGenEnabled() && master.isGuiCodeGenEnabled()) {
-            EntityViewType entityViewType = entity.getEntityViewType();
+        if (detail.isGuiCodeGenEnabled()) {
+            EntityViewType entityViewType = detail.getEntityViewType();
             if (EntityViewType.MASTER_DETAIL.equals(entityViewType) || EntityViewType.BOTH.equals(entityViewType)) {
                 if (reference.isOneToOne() && reference.isOneToOneDetailView()) {
-                    if (entity.isSelectEnabled()) {
-                        put |= putPage(entity, reference, master, DisplayMode.READING, DisplayFormat.DETAIL);
+                    if (detail.isSelectEnabled()) {
+                        put |= putPage(detail, reference, master, DisplayMode.READING, DisplayFormat.DETAIL);
                     }
-                    if (entity.isInsertEnabled() || entity.isUpdateEnabled() || entity.isDeleteEnabled()) {
-                        put |= putPage(entity, reference, master, DisplayMode.WRITING, DisplayFormat.DETAIL);
+                    if (detail.isInsertEnabled() || detail.isUpdateEnabled() || detail.isDeleteEnabled()) {
+                        put |= putPage(detail, reference, master, DisplayMode.WRITING, DisplayFormat.DETAIL);
                     }
                 }
                 if (reference.isManyToOne()) {
                     MasterDetailView masterDetailView = reference.getMasterDetailView();
-                    if (entity.isSelectEnabled()) {
+                    if (detail.isSelectEnabled()) {
                         switch (masterDetailView) {
                             case TABLE:
-                                put |= putPage(entity, reference, master, DisplayMode.READING, DisplayFormat.TABLE);
+                                put |= putPage(detail, reference, master, DisplayMode.READING, DisplayFormat.TABLE);
                                 break;
                             case TABLE_AND_DETAIL:
-                                put |= putPage(entity, reference, master, DisplayMode.READING, DisplayFormat.TABLE);
-                                put |= putPage(entity, reference, master, DisplayMode.READING, DisplayFormat.DETAIL);
+                                put |= putPage(detail, reference, master, DisplayMode.READING, DisplayFormat.TABLE);
+                                put |= putPage(detail, reference, master, DisplayMode.READING, DisplayFormat.DETAIL);
                                 break;
                         }
                     }
-                    if (entity.isInsertEnabled() || entity.isUpdateEnabled() || entity.isDeleteEnabled()) {
+                    if (detail.isInsertEnabled() || detail.isUpdateEnabled() || detail.isDeleteEnabled()) {
                         switch (masterDetailView) {
                             case TABLE:
-                                put |= putPage(entity, reference, master, DisplayMode.WRITING, DisplayFormat.TABLE);
+                                put |= putPage(detail, reference, master, DisplayMode.WRITING, DisplayFormat.TABLE);
                                 break;
                             case TABLE_AND_DETAIL:
-                                put |= putPage(entity, reference, master, DisplayMode.WRITING, DisplayFormat.TABLE);
-                                put |= putPage(entity, reference, master, DisplayMode.WRITING, DisplayFormat.DETAIL);
+                                put |= putPage(detail, reference, master, DisplayMode.WRITING, DisplayFormat.TABLE);
+                                put |= putPage(detail, reference, master, DisplayMode.WRITING, DisplayFormat.DETAIL);
                                 break;
                         }
                     }

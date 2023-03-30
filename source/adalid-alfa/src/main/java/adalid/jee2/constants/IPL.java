@@ -13,7 +13,7 @@
 package adalid.jee2.constants;
 
 /**
- * Initial Page Location (pre-defined landing page)
+ * Initial Page Location (pre-defined start page)
  *
  * @author Jorge Campins
  */

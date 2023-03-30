@@ -204,21 +204,6 @@ public class Funcion extends meta.entidad.comun.configuracion.basica.Funcion {
     }
 
     @Override
-    protected void settleAttributes() {
-        super.settleAttributes();
-        setOrderBy(codigoFuncion);
-//      setSchema(ProyectoBase.getEsquemaEntidadesComunes());
-        // <editor-fold defaultstate="collapsed" desc="localization of Funcion's attributes">
-        setLocalizedLabel(ENGLISH, "function");
-        setLocalizedLabel(SPANISH, "función");
-        setLocalizedCollectionLabel(ENGLISH, "Functions");
-        setLocalizedCollectionLabel(SPANISH, "Funciones");
-        setLocalizedDescription(ENGLISH, "application function (CRUD, business process, generation of files and reports, etc.)");
-        setLocalizedDescription(SPANISH, "función de la aplicación (CRUD, proceso de negocio, generación de archivos e informes, etc.)");
-        // </editor-fold>
-    }
-
-    @Override
     protected void settleProperties() {
         super.settleProperties();
         /**/

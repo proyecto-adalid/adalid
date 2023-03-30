@@ -53,8 +53,17 @@ public class ClaseJava extends AbstractPersistentEnumerationEntity {
         setLocalizedCollectionLabel(SPANISH, "Clases Java");
         setLocalizedCollectionShortLabel(ENGLISH, "Classes");
         setLocalizedCollectionShortLabel(SPANISH, "Clases");
-        setLocalizedDescription(ENGLISH, "Java class that encapsulates, hides, or wraps a data type");
-        setLocalizedDescription(SPANISH, "clase Java que encapsula, oculta o envuelve un tipo de datos");
+        /**/
+        setLocalizedDescription(ENGLISH, "Each instance of " + b("Java Classes") + " represents a "
+            + "Java class that encapsulates, hides, or wraps a data type."
+            + "");
+        setLocalizedDescription(SPANISH, "Cada instancia de " + b("Clases Java") + " representa una "
+            + "clase Java que encapsula, oculta o envuelve un tipo de datos."
+            + "");
+        /**/
+        setLocalizedShortDescription(ENGLISH, "Java class that encapsulates, hides, or wraps a data type");
+        setLocalizedShortDescription(SPANISH, "clase Java que encapsula, oculta o envuelve un tipo de datos");
+        /**/
         // </editor-fold>
     }
 
@@ -67,13 +76,18 @@ public class ClaseJava extends AbstractPersistentEnumerationEntity {
     @NameProperty
     public StringProperty nombre;
 
+    @ColumnField(nullable = Kleenean.FALSE)
+    public CharacterProperty letra;
+
     @Override
     protected void settleProperties() {
         super.settleProperties();
         /**/
         nombre.setDefaultValue(Object.class.getName());
+        letra.setDefaultValue("?"); // requerido por el upgrade
         /**/
         // <editor-fold defaultstate="collapsed" desc="localization of ClaseJava's properties">
+        /**/
         numero.setLocalizedLabel(ENGLISH, "java class number");
         numero.setLocalizedLabel(SPANISH, "número de la clase java");
         numero.setLocalizedShortLabel(ENGLISH, "number");
@@ -83,6 +97,7 @@ public class ClaseJava extends AbstractPersistentEnumerationEntity {
         codigo.setLocalizedLabel(SPANISH, "código de la clase java");
         codigo.setLocalizedShortLabel(ENGLISH, "code");
         codigo.setLocalizedShortLabel(SPANISH, "código");
+        /**/
         // </editor-fold>
     }
 
@@ -140,7 +155,27 @@ public class ClaseJava extends AbstractPersistentEnumerationEntity {
         JAVA_TIMESTAMP.newInstanceField(numero, ++i);
         JAVA_OBJECT.newInstanceField(numero, ++i);
         /**/
+        // ADVERTENCIA: las letras se usan para dar valor a la propiedad clases de la entidad CampoValorTemporal
+        /**/
+        JAVA_BIG_DECIMAL.newInstanceField(letra, "A");
+        JAVA_BIG_INTEGER.newInstanceField(letra, "B");
+        JAVA_BINARY.newInstanceField(letra, "C");
+        JAVA_BOOLEAN.newInstanceField(letra, "D");
+        JAVA_BYTE.newInstanceField(letra, "E");
+        JAVA_CHARACTER.newInstanceField(letra, "F");
+        JAVA_DATE.newInstanceField(letra, "G");
+        JAVA_DOUBLE.newInstanceField(letra, "H");
+        JAVA_FLOAT.newInstanceField(letra, "I");
+        JAVA_INTEGER.newInstanceField(letra, "J");
+        JAVA_LONG.newInstanceField(letra, "K");
+        JAVA_SHORT.newInstanceField(letra, "L");
+        JAVA_STRING.newInstanceField(letra, "M");
+        JAVA_TIME.newInstanceField(letra, "N");
+        JAVA_TIMESTAMP.newInstanceField(letra, "O");
+        JAVA_OBJECT.newInstanceField(letra, "P");
+        /**/
         // <editor-fold defaultstate="collapsed" desc="localization of ClaseJava's instances">
+        /**/
         JAVA_BIG_DECIMAL.newInstanceField(codigo, "BigDecimal", ENGLISH);
         JAVA_BIG_DECIMAL.newInstanceField(codigo, "BigDecimal", SPANISH);
         /**/
@@ -188,6 +223,7 @@ public class ClaseJava extends AbstractPersistentEnumerationEntity {
         /**/
         JAVA_OBJECT.newInstanceField(codigo, "Object", ENGLISH);
         JAVA_OBJECT.newInstanceField(codigo, "Object", SPANISH);
+        /**/
         // </editor-fold>
         /**/
         JAVA_BIG_DECIMAL.newInstanceField(nombre, java.math.BigDecimal.class.getName());

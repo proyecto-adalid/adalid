@@ -729,22 +729,46 @@ public abstract class AbstractPersistentEntity extends AbstractDatabaseEntity im
         }
         /*
          * InheritanceMapping annotation cannot be "inherited"
+         * unless the annotated class has the same simple name as the type parameter (since 09/02/2023)
          */
+        //
+        /* until 09/02/2023
         _annotatedWithInheritanceMapping = type.isAnnotationPresent(InheritanceMapping.class);
         if (_annotatedWithInheritanceMapping) {
             InheritanceMapping annotation = type.getAnnotation(InheritanceMapping.class);
             _inheritanceMappingStrategy = annotation.strategy();
+        }
+        /**/
+        Class<?> annotatedClass = XS1.getAnnotatedClass(type, InheritanceMapping.class);
+        if (annotatedClass != null && annotatedClass.getSimpleName().equals(type.getSimpleName())) {
+            InheritanceMapping annotation = annotatedClass.getAnnotation(InheritanceMapping.class);
+            if (annotation != null) {
+                _annotatedWithInheritanceMapping = true;
+                _inheritanceMappingStrategy = annotation.strategy();
+            }
         }
     }
 
     private void annotateDiscriminatorValue(Class<?> type) {
         /*
          * DiscriminatorValue annotation cannot be "inherited"
+         * unless the annotated class has the same simple name as the type parameter (since 09/02/2023)
          */
+        //
+        /* until 09/02/2023
         _annotatedWithDiscriminatorValue = type.isAnnotationPresent(DiscriminatorValue.class);
         if (_annotatedWithDiscriminatorValue) {
             DiscriminatorValue annotation = type.getAnnotation(DiscriminatorValue.class);
             _discriminatorValue = StringUtils.trimToNull(annotation.value());
+        }
+        /**/
+        Class<?> annotatedClass = XS1.getAnnotatedClass(type, DiscriminatorValue.class);
+        if (annotatedClass != null && annotatedClass.getSimpleName().equals(type.getSimpleName())) {
+            DiscriminatorValue annotation = annotatedClass.getAnnotation(DiscriminatorValue.class);
+            if (annotation != null) {
+                _annotatedWithDiscriminatorValue = true;
+                _discriminatorValue = StringUtils.trimToNull(annotation.value());
+            }
         }
     }
 
@@ -1134,7 +1158,7 @@ public abstract class AbstractPersistentEntity extends AbstractDatabaseEntity im
             field = instance.getDeclaringField();
             if (isJoinedTable()) {
                 clazz = field.getDeclaringClass();
-                if (!clazz.equals(type)) {
+                if (!clazz.getSimpleName().equals(type.getSimpleName())) { // comparison of simple names from 09/02/2023
                     continue;
                 }
             }
@@ -1151,7 +1175,7 @@ public abstract class AbstractPersistentEntity extends AbstractDatabaseEntity im
         for (Property property : getPropertiesList()) {
             field = property.getDeclaringField();
             clazz = field.getDeclaringClass();
-            if (clazz.equals(type)) {
+            if (clazz.getSimpleName().equals(type.getSimpleName())) { // comparison of simple names from 09/02/2023
                 list.add(property);
             }
         }
@@ -1169,7 +1193,7 @@ public abstract class AbstractPersistentEntity extends AbstractDatabaseEntity im
             } else {
                 field = property.getDeclaringField();
                 clazz = field.getDeclaringClass();
-                if (clazz.equals(type)) {
+                if (clazz.getSimpleName().equals(type.getSimpleName())) { // comparison of simple names from 09/02/2023
                     list.add(property);
                 }
             }
@@ -1191,7 +1215,7 @@ public abstract class AbstractPersistentEntity extends AbstractDatabaseEntity im
             for (Property property : entity.getPropertiesList()) {
                 field = property.getDeclaringField();
                 clazz = field.getDeclaringClass();
-                if (clazz.equals(type)) {
+                if (clazz.getSimpleName().equals(type.getSimpleName())) { // comparison of simple names from 09/02/2023
                     list.add(property);
                 }
             }
@@ -1665,7 +1689,7 @@ public abstract class AbstractPersistentEntity extends AbstractDatabaseEntity im
             } else {
                 field = property.getDeclaringField();
                 clazz = field.getDeclaringClass();
-                if (clazz.equals(type)) {
+                if (clazz.getSimpleName().equals(type.getSimpleName())) { // comparison of simple names from 09/02/2023
                     map.put(key, property);
                 }
             }

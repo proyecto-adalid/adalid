@@ -60,7 +60,7 @@ public class EntityCollection extends AbstractArtifact implements AnnotatableArt
     /**
      *
      */
-    private Class _targetEntityClass = void.class;
+    private Class<? extends Entity> _targetEntityClass = Entity.class;
 
     /**
      *
@@ -201,7 +201,7 @@ public class EntityCollection extends AbstractArtifact implements AnnotatableArt
      * @return the target entity class
      */
 //  @Override
-    public Class getTargetEntityClass() {
+    public Class<? extends Entity> getTargetEntityClass() {
         return _targetEntityClass;
     }
 
@@ -411,7 +411,7 @@ public class EntityCollection extends AbstractArtifact implements AnnotatableArt
      * @return the remove field indicator
      */
 //  @Override
-    boolean isRemoveField() {
+    protected boolean isRemoveField() {
         boolean cascade = isCascadeRemove();
         return (cascade && _removeField.toBoolean(cascade));
     }
@@ -423,7 +423,7 @@ public class EntityCollection extends AbstractArtifact implements AnnotatableArt
      *
      * @param remove true si la colección es requerida por la operación delete de las vistas (páginas) de registro; de lo contrario, false.
      */
-    void setRemoveField(boolean remove) {
+    protected void setRemoveField(boolean remove) {
         _removeField = Kleenean.valueOf(remove);
     }
 
@@ -613,7 +613,6 @@ public class EntityCollection extends AbstractArtifact implements AnnotatableArt
      */
 //  @Override
     public Display getDisplay(String pageDisplayMode) {
-        setDisplays();
         return StringUtils.equalsIgnoreCase(pageDisplayMode, "READING")
             ? getReadingDisplay()
             : getWritingDisplay();
@@ -625,7 +624,6 @@ public class EntityCollection extends AbstractArtifact implements AnnotatableArt
      */
 //  @Override
     public Display getTableDisplay(String pageDisplayMode) {
-        setDisplays();
         return StringUtils.equalsIgnoreCase(pageDisplayMode, "READING")
             ? getReadingTableDisplay()
             : getWritingTableDisplay();
@@ -637,7 +635,6 @@ public class EntityCollection extends AbstractArtifact implements AnnotatableArt
      */
 //  @Override
     public Display getDetailDisplay(String pageDisplayMode) {
-        setDisplays();
         return StringUtils.equalsIgnoreCase(pageDisplayMode, "READING")
             ? getReadingDetailDisplay()
             : getWritingDetailDisplay();
@@ -730,15 +727,15 @@ public class EntityCollection extends AbstractArtifact implements AnnotatableArt
                 EntityReference reference = (EntityReference) _mappedByProperty;
                 Project project = TLC.getProject();
                 if (project != null) {
-                    _readingTableDisplay = project.getReadingTableDisplayOf(_targetEntity, _sourceEntity, reference);
-                    _readingDetailDisplay = project.getReadingDetailDisplayOf(_targetEntity, _sourceEntity, reference);
+                    _readingTableDisplay = applicationDisplay(project.getReadingTableDisplayOf(_targetEntity, _sourceEntity, reference));
+                    _readingDetailDisplay = applicationDisplay(project.getReadingDetailDisplayOf(_targetEntity, _sourceEntity, reference));
                     if (DataEntryFormat.TABLE_OR_DETAIL.equals(_dataEntryFormat)) {
                         _readingDisplay = _readingTableDisplay == null ? _readingDetailDisplay : _readingTableDisplay;
                     } else {
                         _readingDisplay = _readingDetailDisplay == null ? _readingTableDisplay : _readingDetailDisplay;
                     }
-                    _writingTableDisplay = project.getWritingTableDisplayOf(_targetEntity, _sourceEntity, reference);
-                    _writingDetailDisplay = project.getWritingDetailDisplayOf(_targetEntity, _sourceEntity, reference);
+                    _writingTableDisplay = applicationDisplay(project.getWritingTableDisplayOf(_targetEntity, _sourceEntity, reference));
+                    _writingDetailDisplay = applicationDisplay(project.getWritingDetailDisplayOf(_targetEntity, _sourceEntity, reference));
                     if (DataEntryFormat.TABLE_OR_DETAIL.equals(_dataEntryFormat)) {
                         _writingDisplay = _writingTableDisplay == null ? _writingDetailDisplay : _writingTableDisplay;
                     } else {
@@ -765,22 +762,25 @@ public class EntityCollection extends AbstractArtifact implements AnnotatableArt
     }
 
     /**
-     * @param extension
+     * Retorna el objeto Display de la extensión de la entidad que corresponde a la página que se debe abrir en un diálogo.
+     *
+     * Se usa en la macro inicializarCollectionDataTableControllers de jee2/web/java/pages/blocks/archetype/pagina-consulta-con-coleccion.vm
+     *
+     * @param extension extension
      * @param pageDisplayMode page display mode (READING or WRITING)
      * @return the entity collection display
      */
 //  @Override
     public Display getExtensionDisplay(Entity extension, String pageDisplayMode) {
         Entity root = extension == null ? null : extension.getRoot();
-        Display display = root == null ? null
-            : StringUtils.equalsIgnoreCase(pageDisplayMode, "READING")
-            ? _extensionReadingDisplays.get(root)
-            : _extensionWritingDisplays.get(root);
-        /**/
-        return display != null ? display : extensionDisplay(root, pageDisplayMode);
+        return root == null ? null : extensionDisplay(root, pageDisplayMode);
     }
 
     private Display extensionDisplay(Entity extension, String pageDisplayMode) {
+        Map<Entity, Display> map = StringUtils.equalsIgnoreCase(pageDisplayMode, "READING") ? _extensionReadingDisplays : _extensionWritingDisplays;
+        if (map.containsKey(extension)) {
+            return map.get(extension);
+        }
         Display readingDisplay = null;
         Display writingDisplay = null;
         if (_sourceEntity != null && _targetEntity != null && _mappedByProperty instanceof EntityReference) {
@@ -807,12 +807,12 @@ public class EntityCollection extends AbstractArtifact implements AnnotatableArt
                             writingDisplay = project.getWritingTableDisplayOf(extension, _sourceEntity, reference);
                         }
                     }
-                    if (readingDisplay != null) {
-                        _extensionReadingDisplays.put(extension, readingDisplay);
-                    }
-                    if (writingDisplay != null) {
-                        _extensionWritingDisplays.put(extension, writingDisplay);
-                    }
+//                  if (readingDisplay != null) {
+                    _extensionReadingDisplays.put(extension, readingDisplay);
+//                  }
+//                  if (writingDisplay != null) {
+                    _extensionWritingDisplays.put(extension, writingDisplay);
+//                  }
                 }
             }
         }
@@ -827,6 +827,10 @@ public class EntityCollection extends AbstractArtifact implements AnnotatableArt
             }
         }
         return null;
+    }
+
+    private Display applicationDisplay(Display display) {
+        return display != null && display.isApplicationDefaultLocation() ? display : null;
     }
 
     /**
@@ -1213,7 +1217,7 @@ public class EntityCollection extends AbstractArtifact implements AnnotatableArt
             return false;
         }
         /**/
-        _targetEntity = _targetEntityClass == null || _targetEntityClass == void.class ? null : TLC.getProject().getEntity(_targetEntityClass);
+        _targetEntity = _targetEntityClass == null || _targetEntityClass == Entity.class ? null : TLC.getProject().getEntity(_targetEntityClass);
         if (_targetEntity == null) {
 //          if (log) {
             String message = "no target entity defined for " + fullName + "; it has an invalid target entity class.";

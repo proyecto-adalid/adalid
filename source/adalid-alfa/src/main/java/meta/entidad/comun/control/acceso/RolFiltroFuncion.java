@@ -94,6 +94,17 @@ public class RolFiltroFuncion extends AbstractPersistentEntity {
         setLocalizedCollectionLabel(SPANISH, rol, "Filtros por Rol");
         setLocalizedCollectionShortLabel(ENGLISH, rol, "Filters");
         setLocalizedCollectionShortLabel(SPANISH, rol, "Filtros");
+        /**/
+        setLocalizedDescription(ENGLISH, "Each instance of " + b("Role/Filter Associations") + " represents a "
+            + "filter associated with an application role."
+            + "");
+        setLocalizedDescription(SPANISH, "Cada instancia de " + b("Asociaciones Rol/Filtro") + " representa un "
+            + "filtro asociado con un rol de la aplicación."
+            + "");
+        /**/
+        setLocalizedShortDescription(ENGLISH, "filter associated with an application role");
+        setLocalizedShortDescription(SPANISH, "filtro asociado con un rol de la aplicación");
+        /**/
         // </editor-fold>
     }
 

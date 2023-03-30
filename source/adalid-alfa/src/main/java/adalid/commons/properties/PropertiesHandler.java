@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.nio.charset.Charset;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -68,6 +69,8 @@ public class PropertiesHandler {
 
     private static final ExtendedProperties bootstrapping;
 
+    private static final String PREFERRED_FILE_ENCODING_KEY = "preferred.file.encoding";
+
     private static final String ROOT_FOLDER_KEY = "root.folder";
 
     private static final String VELOCITY_FOLDER_KEY = "velocity.folder";
@@ -75,6 +78,8 @@ public class PropertiesHandler {
     private static final String VELOCITY_FILE_KEY = "velocity.properties.file";
 
     private static final String VELOCITY_SUP_FILE_KEY = "velocity.supplementary.properties.file";
+
+    private static final Charset preferred_file_encoding;
 
     private static final File root_folder, velocity_properties_file, velocity_supplementary_properties_file;
 
@@ -84,6 +89,7 @@ public class PropertiesHandler {
 
     static {
         bootstrapping = getBootstrappingProperties();
+        preferred_file_encoding = preferredFileEncoding();
         root_folder = rootFolder();
         velocity_properties_file = velocityPropertiesFile();
         velocity_supplementary_properties_file = velocitySupplementaryPropertiesFile();
@@ -95,6 +101,7 @@ public class PropertiesHandler {
 
     public static boolean missingBootstrappingProperties() {
         return bootstrapping == null || bootstrapping.isEmpty()
+            || preferred_file_encoding == null
             || root_folder == null
             || velocity_properties_file == null
             || velocity_supplementary_properties_file == null
@@ -339,7 +346,7 @@ public class PropertiesHandler {
         } else if (file.isFile()) {
             try {
                 logger.trace("loading " + filename);
-                try ( InputStream inStream = new FileInputStream(filename)) {
+                try (InputStream inStream = new FileInputStream(filename)) {
                     properties.load(inStream);
                 }
                 printProperties(properties);
@@ -365,7 +372,7 @@ public class PropertiesHandler {
         } else {
             try {
                 logger.trace("loading buffer " + Arrays.toString(buffer));
-                try ( InputStream inStream = new ByteArrayInputStream(buffer)) {
+                try (InputStream inStream = new ByteArrayInputStream(buffer)) {
                     properties.load(inStream);
                 }
                 printProperties(properties);
@@ -445,7 +452,7 @@ public class PropertiesHandler {
                     sortedProperties.putAll(properties);
                 }
                 logger.trace("storing " + filename);
-                try ( OutputStream outStream = new FileOutputStream(filename)) {
+                try (OutputStream outStream = new FileOutputStream(filename)) {
                     sortedProperties.store(outStream, comments, lineSeparator);
                 }
             } catch (IOException ex) {
@@ -493,7 +500,7 @@ public class PropertiesHandler {
     }
     /**/
     // </editor-fold>
-/**/
+//
     public static ExtendedProperties getExtendedProperties(String filename) {
         return getExtendedProperties(filename, Level.ERROR);
     }
@@ -534,7 +541,7 @@ public class PropertiesHandler {
         } else if (file.isFile()) {
             try {
                 logger.trace("loading " + filename);
-                try ( InputStream inStream = new FileInputStream(filename)) {
+                try (InputStream inStream = new FileInputStream(filename)) {
                     extendedProperties.load(inStream);
                 }
                 logger.log(goodFileLogLevel, "file " + filename + " loaded (" + extendedProperties.size() + " properties)");
@@ -557,7 +564,7 @@ public class PropertiesHandler {
         } else {
             try {
                 logger.trace("loading buffer " + Arrays.toString(buffer));
-                try ( InputStream inStream = new ByteArrayInputStream(buffer)) {
+                try (InputStream inStream = new ByteArrayInputStream(buffer)) {
                     extendedProperties.load(inStream);
                 }
                 printExtendedProperties(extendedProperties);
@@ -595,6 +602,10 @@ public class PropertiesHandler {
             s += c + "\"" + StringUtils.trimToEmpty(value) + "\"";
         }
         return "{" + StringUtils.removeStart(s, c) + "}";
+    }
+
+    private static Charset preferredFileEncoding() {
+        return getCharset(PREFERRED_FILE_ENCODING_KEY);
     }
 
     private static File rootFolder() {
@@ -697,6 +708,26 @@ public class PropertiesHandler {
         return files.toArray(ArrUtils.arrayOf(File.class));
     }
 
+    private static Charset getCharset(String key) {
+        return getCharset(key, Charset.defaultCharset());
+    }
+
+    private static Charset getCharset(String key, Charset defaultValue) {
+        Charset charset = defaultValue;
+        Level level = Level.DEBUG;
+        String charsetName = bootstrapping.getString(key);
+        if (StringUtils.isNotBlank(charsetName)) {
+            try {
+                charset = Charset.forName(charsetName);
+            } catch (Exception ex) {
+                logger.error(key + " " + ex);
+                level = Level.WARN;
+            }
+        }
+        logger.log(level, key + "=" + charset);
+        return charset;
+    }
+
     private static String getPath(String key) {
         String pathname = FilUtils.fixPath(bootstrapping.getString(key));
         return pathname;
@@ -756,6 +787,10 @@ public class PropertiesHandler {
             String message = MessageFormat.format(pattern, pathname, key, BOOTSTRAPPING_FILE_NAME);
             logger.error(message);
         }
+    }
+
+    public static Charset getPreferredFileEncoding() {
+        return preferred_file_encoding;
     }
 
     public static File getRootFolder() {

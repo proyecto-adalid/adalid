@@ -23,6 +23,7 @@ import adalid.core.enums.*;
 import adalid.core.exceptions.*;
 import adalid.core.expressions.*;
 import adalid.core.interfaces.*;
+import adalid.core.jee.JavaWebProject;
 import adalid.core.operations.*;
 import adalid.core.predicates.*;
 import adalid.core.primitives.*;
@@ -832,6 +833,21 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
     /**
      *
      */
+    private Boolean _foreignEntityClass;
+
+    /**
+     *
+     */
+    private Boolean _privateEntityClass;
+
+    /**
+     *
+     */
+    private Boolean _displayAvailable;
+
+    /**
+     *
+     */
     private boolean _linkOuterChildren = false;
 
     /**
@@ -1132,6 +1148,11 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
     /**
      *
      */
+    private boolean _dafCodeGenEnabled = Project.getDefaultEntityCodeGenDAF();
+
+    /**
+     *
+     */
     private boolean _fwsCodeGenEnabled = Project.getDefaultEntityCodeGenFWS(); // && !isEnumerationEntity();
 
     /**
@@ -1228,6 +1249,11 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
      * annotated with EntityReferenceSearch
      */
     private DisplayMode _searchDisplayMode = DisplayMode.UNSPECIFIED;
+
+    /**
+     * annotated with EntityViewLocation
+     */
+    private String _applicationOrigin, _applicationContextRoot, _applicationConsolePath, _applicationReadingPath, _applicationWritingPath;
 
     /**
      * search query filter
@@ -1472,6 +1498,11 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
      * annotated with EntityReferenceSearch
      */
     private boolean _annotatedWithEntityReferenceSearch;
+
+    /**
+     * annotated with EntityViewLocation
+     */
+    private boolean _annotatedWithEntityViewLocation;
 
     /**
      * annotated with Filter
@@ -2917,6 +2948,14 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
     }
 
     /**
+     * @param enabled the select enabled indicator to set
+     */
+    @Override
+    public void setSelectEnabled(boolean enabled) {
+        _selectEnabled = enabled;
+    }
+
+    /**
      * @return the select operation access mode
      */
     @Override
@@ -2958,6 +2997,14 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
     }
 
     /**
+     * @param enabled the insert enabled indicator to set
+     */
+    @Override
+    public void setInsertEnabled(boolean enabled) {
+        _insertEnabled = enabled;
+    }
+
+    /**
      * @return the insert confirmation required indicator
      */
     @Override
@@ -2987,6 +3034,14 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
     @Override
     public boolean isUpdateEnabled() {
         return _updateEnabled && !OperationAccess.PRIVATE.equals(_updateOperationAccess);
+    }
+
+    /**
+     * @param enabled the update enabled indicator to set
+     */
+    @Override
+    public void setUpdateEnabled(boolean enabled) {
+        _updateEnabled = enabled;
     }
 
     /**
@@ -3022,6 +3077,14 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
     }
 
     /**
+     * @param enabled the delete enabled indicator to set
+     */
+    @Override
+    public void setDeleteEnabled(boolean enabled) {
+        _deleteEnabled = enabled;
+    }
+
+    /**
      * @return the delete confirmation required indicator
      */
     @Override
@@ -3054,6 +3117,14 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
     }
 
     /**
+     * @param enabled the report enabled indicator to set
+     */
+    @Override
+    public void setReportEnabled(boolean enabled) {
+        _reportEnabled = enabled;
+    }
+
+    /**
      * @return the report rows limit
      */
     @Override
@@ -3078,6 +3149,14 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
     }
 
     /**
+     * @param enabled the export enabled indicator to set
+     */
+    @Override
+    public void setExportEnabled(boolean enabled) {
+        _exportEnabled = enabled;
+    }
+
+    /**
      * @return the export rows limit
      */
     @Override
@@ -3098,9 +3177,27 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
      */
     @Override
     public boolean isForeignEntityClass() {
+        if (_foreignEntityClass != null) {
+            return _foreignEntityClass;
+        }
         Project project = TLC.getProject();
         Set<Class<?>> foreignEntityClasses = project == null ? null : project.getForeignEntityClasses();
         return foreignEntityClasses != null && foreignEntityClasses.contains(getNamedClass());
+    }
+
+    /**
+     * El método setForeignEntityClass se utiliza para especificar si la entidad se debe agregar, o no, al conjunto de entidades foráneas de la
+     * aplicación. Las entidades foráneas son entidades cuyas correspondientes tablas no están definidas en la base de datos de la aplicación, sino en
+     * otra que tipicamente reside en un servidor diferente.
+     *
+     * El método setForeignEntityClass debe ejecutarse en el método settleAttributes de la entidad.
+     *
+     * @param foreignEntityClass true o false para agregar o no la entidad, respectivamente; null, para agregar la entidad solo si pertenece a un
+     * módulo de entidades foráneas (vea el elemento foreign de la Anotación ProjectModule)
+     */
+    @Override
+    public void setForeignEntityClass(Boolean foreignEntityClass) {
+        _foreignEntityClass = foreignEntityClass;
     }
 
     /**
@@ -3108,9 +3205,26 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
      */
     @Override
     public boolean isPrivateEntityClass() {
+        if (_privateEntityClass != null) {
+            return _privateEntityClass;
+        }
         Project project = TLC.getProject();
         Set<Class<?>> privateEntityClasses = project == null ? null : project.getPrivateEntityClasses();
         return privateEntityClasses != null && privateEntityClasses.contains(getNamedClass());
+    }
+
+    /**
+     * El método setPrivateEntityClass se utiliza para especificar si la entidad se debe agregar, o no, al conjunto de entidades privadas de la
+     * aplicación. Las entidades privadas son entidades para las que no se deben generar vistas.
+     *
+     * El método setPrivateEntityClass debe ejecutarse en el método settleAttributes de la entidad.
+     *
+     * @param privateEntityClass true o false para agregar o no la entidad, respectivamente; null, para agregar la entidad solo si pertenece a un
+     * módulo de entidades privadas (vea el elemento privacy de la Anotación ProjectModule)
+     */
+    @Override
+    public void setPrivateEntityClass(Boolean privateEntityClass) {
+        _privateEntityClass = privateEntityClass;
     }
 
     /**
@@ -3180,6 +3294,14 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
     @Override
     public boolean isTableViewEnabled() {
         return BitUtils.valueOf(_tableViewEnabled) && isGuiCodeGenEnabled();
+    }
+
+    /**
+     * @param enabled the table-view enabled indicator to set
+     */
+    @Override
+    public void setTableViewEnabled(boolean enabled) {
+        _tableViewEnabled = enabled;
     }
 
     /**
@@ -3432,6 +3554,14 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
     }
 
     /**
+     * @param enabled the detail-view enabled indicator to set
+     */
+    @Override
+    public void setDetailViewEnabled(boolean enabled) {
+        _detailViewEnabled = enabled;
+    }
+
+    /**
      * @return the detail-view-with-master-heading indicator
      */
 //  @Override
@@ -3632,6 +3762,14 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
     }
 
     /**
+     * @param enabled the tree-view enabled indicator to set
+     */
+    @Override
+    public void setTreeViewEnabled(boolean enabled) {
+        _treeViewEnabled = enabled;
+    }
+
+    /**
      * @return the tree view menu option
      */
 //  @Override
@@ -3810,6 +3948,14 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
     @Override
     public boolean isConsoleViewEnabled() {
         return _consoleViewEnabled && isGuiCodeGenEnabled();
+    }
+
+    /**
+     * @param enabled the console-view enabled indicator to set
+     */
+    @Override
+    public void setConsoleViewEnabled(boolean enabled) {
+        _consoleViewEnabled = enabled;
     }
 
     /**
@@ -3996,11 +4142,56 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
     }
 
     /**
+     * El método setBplCodeGenEnabled se utiliza para especificar si se debe, o no, generar código BPL (Business Process Logic) para la entidad.
+     *
+     * El método setBplCodeGenEnabled debe ejecutarse en el método settleAttributes de la entidad.
+     *
+     * @param enabled true o false para generar, o no, código BPL para la entidad
+     */
+    @Override
+    public void setBplCodeGenEnabled(boolean enabled) {
+        _bplCodeGenEnabled = enabled;
+    }
+
+    /**
      * @return the business web service code generation enabled indicator
      */
     @Override
     public boolean isBwsCodeGenEnabled() {
         return _bwsCodeGenEnabled;
+    }
+
+    /**
+     * El método setBwsCodeGenEnabled se utiliza para especificar si se debe, o no, generar código BWS (Business Web Service) para la entidad.
+     *
+     * El método setBwsCodeGenEnabled debe ejecutarse en el método settleAttributes de la entidad.
+     *
+     * @param enabled true o false para generar, o no, código BWS para la entidad
+     */
+    @Override
+    public void setBwsCodeGenEnabled(boolean enabled) {
+        _bwsCodeGenEnabled = enabled;
+    }
+
+    /**
+     * @return the data access facade code generation enabled indicator
+     */
+    @Override
+    public boolean isDafCodeGenEnabled() {
+        return _dafCodeGenEnabled;
+    }
+
+    /**
+     * El método setDafCodeGenEnabled se utiliza para especificar si se debe, o no, generar una fachada de acceso a datos (código DAF, por las siglas
+     * en inglés de Data Access Façade) para la entidad.
+     *
+     * El método setDafCodeGenEnabled debe ejecutarse en el método settleAttributes de la entidad.
+     *
+     * @param enabled true o false para generar, o no, código DAF para la entidad
+     */
+    @Override
+    public void setDafCodeGenEnabled(boolean enabled) {
+        _dafCodeGenEnabled = enabled;
     }
 
     /**
@@ -4012,6 +4203,18 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
     }
 
     /**
+     * El método setFwsCodeGenEnabled se utiliza para especificar si se debe, o no, generar código FWS (Façade Web Service) para la entidad.
+     *
+     * El método setFwsCodeGenEnabled debe ejecutarse en el método settleAttributes de la entidad.
+     *
+     * @param enabled true o false para generar, o no, código FWS para la entidad
+     */
+    @Override
+    public void setFwsCodeGenEnabled(boolean enabled) {
+        _fwsCodeGenEnabled = enabled;
+    }
+
+    /**
      * @return the GUI code generation enabled indicator
      */
     @Override
@@ -4020,11 +4223,35 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
     }
 
     /**
+     * El método setGuiCodeGenEnabled se utiliza para especificar si se debe, o no, generar código GUI (Graphical User Interface) para la entidad.
+     *
+     * El método setGuiCodeGenEnabled debe ejecutarse en el método settleAttributes de la entidad.
+     *
+     * @param enabled true o false para generar, o no, código GUI para la entidad
+     */
+    @Override
+    public void setGuiCodeGenEnabled(boolean enabled) {
+        _guiCodeGenEnabled = enabled;
+    }
+
+    /**
      * @return the SQL code generation enabled indicator
      */
     @Override
     public boolean isSqlCodeGenEnabled() {
         return _sqlCodeGenEnabled && !isForeignEntityClass();
+    }
+
+    /**
+     * El método setSqlCodeGenEnabled se utiliza para especificar si se debe, o no, generar código SQL para la entidad.
+     *
+     * El método setSqlCodeGenEnabled debe ejecutarse en el método settleAttributes de la entidad.
+     *
+     * @param enabled true o false para generar, o no, código SQL para la entidad
+     */
+    @Override
+    public void setSqlCodeGenEnabled(boolean enabled) {
+        _sqlCodeGenEnabled = enabled;
     }
 
     /**
@@ -4084,7 +4311,6 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
     }
 
     public void setReferenceAvatar(boolean avatar) {
-        XS1.checkAccess();
         _referenceAvatar = avatar;
     }
 
@@ -4127,8 +4353,14 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
      * @param restricted true para que sea una referencia con acceso restringido; o false, para que sea una referencia sin acceso restringido.
      */
     public void setRestrictedAccessEntityReference(boolean restricted) {
-        XS1.checkAccess();
         _restrictedAccessEntityReference = restricted;
+    }
+
+    /**
+     * @return the specified reference style
+     */
+    public EntityReferenceStyle getSpecifiedReferenceStyle() {
+        return _referenceStyle;
     }
 
     /**
@@ -4288,6 +4520,13 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
     }
 
     /**
+     * @return the specified list style
+     */
+    public ListStyle getSpecifiedListStyle() {
+        return _listStyle;
+    }
+
+    /**
      * @return the list style
      */
     @Override
@@ -4369,6 +4608,135 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
     @Override
     public DisplayMode getSearchDisplayMode() {
         return _searchDisplayMode;
+    }
+
+    @Override
+    public String getApplicationOrigin() {
+        return isSingleApplicationProject() ? null : _applicationOrigin;
+    }
+
+    /**
+     * El método setApplicationOrigin se utiliza para establecer el origen de la aplicación empresarial que contiene las vistas (páginas) de la
+     * entidad.
+     *
+     * Este atributo solo tiene efecto si el proyecto generado puede utilizar vistas (páginas) de otros proyectos. Utilice el método
+     * setMultiApplication del proyecto maestro para permitir el uso de vistas de otros proyectos.
+     *
+     * El método setApplicationOrigin debe ejecutarse en el método settleAttributes de la entidad.
+     *
+     * @param origin consta del protocolo, el nombre o dirección IP del servidor y el número de puerto. Por ejemplo, http://86.48.31.84:8080
+     */
+    @Override
+    public void setApplicationOrigin(String origin) {
+        _applicationOrigin = StringUtils.trimToNull(origin);
+    }
+
+    @Override
+    public String getApplicationContextRoot() {
+        return isSingleApplicationProject() ? null : _applicationContextRoot;
+    }
+
+    /**
+     * El método setApplicationContextRoot se utiliza para establecer la raíz de contexto del módulo Web de la aplicación empresarial que contiene las
+     * vistas (páginas) de la entidad.
+     *
+     * Este atributo solo tiene efecto si el proyecto generado puede utilizar vistas (páginas) de otros proyectos. Utilice el método
+     * setMultiApplication del proyecto maestro para permitir el uso de vistas de otros proyectos.
+     *
+     * El método setApplicationContextRoot debe ejecutarse en el método settleAttributes de la entidad.
+     *
+     * @param contextRoot raíz de contexto del módulo Web de la aplicación que contiene las vistas. Por ejemplo, <b>showcase102-web</b>
+     */
+    @Override
+    public void setApplicationContextRoot(String contextRoot) {
+        _applicationContextRoot = StringUtils.trimToNull(contextRoot);
+    }
+
+    @Override
+    public String getApplicationConsolePath() {
+        return _applicationConsolePath;
+    }
+
+    /**
+     * El método setApplicationConsolePath se utiliza para establecer la parte intermedia del path de las vistas (páginas) de procesamiento de la
+     * entidad.
+     *
+     * El método setApplicationConsolePath debe ejecutarse en el método settleAttributes de la entidad.
+     *
+     * @param consolePath parte intermedia del path de las vistas (páginas) de procesamiento de la entidad. Por ejemplo,
+     * <b>faces/views/base/crop/procesamiento</b>
+     */
+    @Override
+    public void setApplicationConsolePath(String consolePath) {
+        _applicationConsolePath = StringUtils.trimToNull(consolePath);
+    }
+
+    @Override
+    public String getApplicationReadingPath() {
+        return _applicationReadingPath;
+    }
+
+    /**
+     * El método setApplicationReadingPath se utiliza para establecer la parte intermedia del path de las vistas (páginas) de consulta de la entidad.
+     *
+     * El método setApplicationReadingPath debe ejecutarse en el método settleAttributes de la entidad.
+     *
+     * @param readingPath parte intermedia del path de las vistas (páginas) de consulta de la entidad. Por ejemplo,
+     * <b>faces/views/base/crop/consulta</b>
+     */
+    @Override
+    public void setApplicationReadingPath(String readingPath) {
+        _applicationReadingPath = StringUtils.trimToNull(readingPath);
+    }
+
+    @Override
+    public String getApplicationWritingPath() {
+        return _applicationWritingPath;
+    }
+
+    /**
+     * El método setApplicationWritingPath se utiliza para establecer la parte intermedia del path de las vistas (páginas) de registro de la entidad.
+     *
+     * El método setApplicationWritingPath debe ejecutarse en el método settleAttributes de la entidad.
+     *
+     * @param writingPath parte intermedia del path de las vistas (páginas) de registro de la entidad. Por ejemplo,
+     * <b>faces/views/base/crop/registro</b>
+     */
+    @Override
+    public void setApplicationWritingPath(String writingPath) {
+        _applicationWritingPath = StringUtils.trimToNull(writingPath);
+    }
+
+    @Override
+    public boolean isApplicationDefaultLocation() {
+        if (isGuiCodeGenEnabled()) {
+            if (isSingleApplicationProject()) {
+                return true;
+            }
+            String host = getApplicationOrigin();
+            String root = getApplicationContextRoot();
+            return StringUtils.isBlank(host) && (StringUtils.isBlank(root) || root.equals(getWebProjectName()));
+        }
+        return false;
+    }
+
+    private boolean isSingleApplicationProject() {
+        return !isMultiApplicationProject();
+    }
+
+    private boolean isMultiApplicationProject() {
+        JavaWebProject jwp = getJavaWebProject();
+        return jwp != null && jwp.isMultiApplication();
+    }
+
+    private String getWebProjectName() {
+        JavaWebProject jwp = getJavaWebProject();
+        return jwp == null ? null : jwp.getWebProjectName();
+    }
+
+    private JavaWebProject getJavaWebProject() {
+        Project project = TLC.getProject();
+        return project instanceof JavaWebProject ? (JavaWebProject) project : null;
     }
 
     /**
@@ -5873,7 +6241,6 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
      */
     @Override
     public void setMasterSequenceMasterField(boolean b) {
-        XS1.checkAccess();
         _masterSequenceMasterField = b;
     }
 
@@ -6250,6 +6617,35 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
     }
 
     /**
+     * @return true if the entity has at least one display
+     */
+    @Override
+    public boolean isDisplayAvailable() {
+        if (_displayAvailable != null) {
+            return _displayAvailable;
+        }
+        if (isGuiCodeGenEnabled()) {
+            Project project = TLC.getProject();
+            if (project != null) {
+                List<? extends Display> displays = project.getDisplaysList();
+                if (displays != null) {
+                    for (Display display : displays) {
+                        if (equals(display.getEntity())) {
+                            return true;
+                        }
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
+    @Override
+    public void setDisplayAvailable(Boolean displayAvailable) {
+        _displayAvailable = displayAvailable;
+    }
+
+    /**
      * @return true if the entity is master of at least one detail
      */
     @Override
@@ -6438,6 +6834,13 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
      */
     public boolean isAnnotatedWithEntityReferenceSearch() {
         return _annotatedWithEntityReferenceSearch;
+    }
+
+    /**
+     * @return the EntityViewLocation annotation indicator
+     */
+    public boolean isAnnotatedWithEntityViewLocation() {
+        return _annotatedWithEntityViewLocation;
     }
 
     /**
@@ -7158,6 +7561,13 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
             for (Locale locale : Bundle.getSupportedLocales()) {
                 setLocalizedDescription(locale, null);
                 setLocalizedShortDescription(locale, null);
+            }
+        } else { // since 16/03/2023
+            for (Locale locale : Bundle.getSupportedLocales()) {
+                String lsd = getLocalizedShortDescription(locale);
+                if (lsd != null) {
+                    setLocalizedDescription(locale, lsd);
+                }
             }
         }
     }
@@ -9001,6 +9411,7 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
             annotateEntityReferenceConversionValidation(type);
             annotateEntityReferenceDisplay(type);
             annotateEntityReferenceSearch(type);
+            annotateEntityViewLocation(type);
         }
     }
 
@@ -9047,6 +9458,7 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
         valid.add(EntityTableView.class);
         valid.add(EntityTreeView.class);
         valid.add(EntityUpdateOperation.class);
+        valid.add(EntityViewLocation.class);
         valid.add(EntityWarnings.class);
         if (isEnumerationEntity()) {
         } else {
@@ -9094,11 +9506,20 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
     private void annotateAbstractClass(Class<?> type) {
         /*
          * AbstractClass annotation cannot be "inherited"
+         * unless the annotated class has the same simple name as the type parameter (since 09/02/2023)
          */
+        //
+        /* until 09/02/2023
         boolean annotationPresent = type.isAnnotationPresent(AbstractClass.class);
         if (annotationPresent) {
             AbstractClass annotation = type.getAnnotation(AbstractClass.class);
             _annotatedWithAbstractClass = annotation.value();
+        }
+        /**/
+        Class<?> annotatedClass = XS1.getAnnotatedClass(type, AbstractClass.class);
+        if (annotatedClass != null && annotatedClass.getSimpleName().equals(type.getSimpleName())) {
+            AbstractClass annotation = annotatedClass.getAnnotation(AbstractClass.class);
+            _annotatedWithAbstractClass = annotation != null && annotation.value();
         }
     }
 
@@ -9314,7 +9735,7 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
         if (annotatedClass != null) {
             EntityTableView annotation = annotatedClass.getAnnotation(EntityTableView.class);
             if (annotation != null) {
-                _tableViewEnabled = annotation.enabled().toBoolean();
+                _tableViewEnabled = annotation.enabled().toBoolean(_tableViewEnabled);
                 _tableViewWithInsertEnabled = annotation.inserts().toBoolean(_tableViewWithInsertEnabled);
                 _tableViewWithUpdateEnabled = annotation.updates().toBoolean(_tableViewWithUpdateEnabled);
                 _tableViewWithDeleteEnabled = annotation.deletes().toBoolean(_tableViewWithDeleteEnabled);
@@ -9562,6 +9983,7 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
             if (annotation != null) {
                 _bplCodeGenEnabled = annotation.bpl().toBoolean(_bplCodeGenEnabled);
                 _bwsCodeGenEnabled = annotation.bws().toBoolean(_bwsCodeGenEnabled);
+                _dafCodeGenEnabled = annotation.daf().toBoolean(_dafCodeGenEnabled);
                 _fwsCodeGenEnabled = annotation.fws().toBoolean(_fwsCodeGenEnabled);
                 _guiCodeGenEnabled = annotation.gui().toBoolean(_guiCodeGenEnabled);
                 _sqlCodeGenEnabled = annotation.sql().toBoolean(_sqlCodeGenEnabled);
@@ -9672,6 +10094,21 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
             _radioColumns = Math.min(10, Math.max(0, annotation.radioColumns()));
             _searchDisplayFormat = annotation.displayFormat();
             _searchDisplayMode = annotation.displayMode();
+        }
+    }
+
+    private void annotateEntityViewLocation(Class<?> type) {
+        Class<?> annotatedClass = XS1.getAnnotatedClass(type, EntityViewLocation.class);
+        if (annotatedClass != null) {
+            EntityViewLocation annotation = annotatedClass.getAnnotation(EntityViewLocation.class);
+            if (annotation != null) {
+                setApplicationOrigin(specified(annotation.origin(), _applicationOrigin));
+                setApplicationContextRoot(specified(annotation.application(), _applicationContextRoot));
+                setApplicationConsolePath(specified(annotation.consolePath(), _applicationConsolePath));
+                setApplicationReadingPath(specified(annotation.readingPath(), _applicationReadingPath));
+                setApplicationWritingPath(specified(annotation.writingPath(), _applicationWritingPath));
+                _annotatedWithEntityViewLocation = true;
+            }
         }
     }
 
@@ -9795,7 +10232,21 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
     }
 
     /**
-     * @return the direct known extensions list
+     * @return the ancestors list
+     */
+    @Override
+    public List<Entity> getAncestorsList() {
+        List<Entity> ancestors = new ArrayList<>();
+        if (_baseClass != null) {
+            Entity base = getBaseClassMainInstance();
+            ancestors.addAll(base.getAncestorsList());
+            ancestors.add(base);
+        }
+        return ancestors;
+    }
+
+    /**
+     * @return the known extensions list
      */
     @Override
     public List<Entity> getExtensionsList() {
@@ -9809,18 +10260,12 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
     public Map<String, Entity> getExtensionsMap() {
         Map<String, Entity> entities = new LinkedHashMap<>();
         Entity ext;
-//      PersistentEntity pent;
-//      InheritanceMappingStrategy ims;
         List<Class<?>> subclasses = getMainInstanceSubclassesList();
         if (subclasses != null) {
             for (Class<?> subclass : subclasses) {
                 ext = _project.getEntity(subclass);
                 entities.put(subclass.getName(), ext);
-//              pent = ext instanceof PersistentEntity ? (PersistentEntity) ext : null;
-//              ims = pent == null ? null : pent.getInheritanceMappingStrategy();
-//              if (InheritanceMappingStrategy.SINGLE_TABLE.equals(ims)) {
                 entities.putAll(ext.getExtensionsMap());
-//              }
             }
         }
         return entities;
@@ -10110,6 +10555,21 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
             set.add(operation.getName());
         }
         return set;
+    }
+
+    /**
+     * @param <T> generic operation type
+     * @param type operation type
+     * @return the operation of the specified class
+     */
+    @Override
+    public <T extends Operation> T getOperation(Class<T> type) {
+        for (Operation operation : getOperationsList()) {
+            if (operation.getClass().isAssignableFrom(type)) {
+                return (T) operation;
+            }
+        }
+        return null;
     }
 
     /**
@@ -10842,6 +11302,32 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
 
     protected static TemporalExpression timestampOf(Object x) {
         return x instanceof TemporalExpression ? (TemporalExpression) x : XB.toTimestamp(x);
+    }
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="iframe">
+    /**
+     * Cree la definición de un iframe usando MessageFormat.format
+     * <p>
+     * @param src URL del documento a incrustar en el iframe
+     * @return la definición de un iframe de 300 x 150 píxeles
+     */
+    protected static String iframe(String src) {
+        return iframe(src, 0, 0);
+    }
+
+    /**
+     * Cree la definición de un iframe usando MessageFormat.format
+     * <p>
+     * @param src URL del documento a incrustar en el iframe
+     * @param width ancho del iframe en píxeles. Un número menor o igual a 0 es equivalente a 300; un número mayor que 0 y menor que 100 es
+     * equivalente a 100.
+     * @param height alto del iframe en píxeles. Un número menor o igual a 0 es equivalente a 150; un número mayor que 0 y menor que 50 es equivalente
+     * a 50.
+     * @return la definición de un iframe
+     */
+    protected static String iframe(String src, int width, int height) {
+        return XS2.iframe(src, width, height);
     }
     // </editor-fold>
 

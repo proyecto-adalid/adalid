@@ -59,21 +59,6 @@ public class Dominio extends meta.entidad.comun.configuracion.basica.Dominio {
     public Dominio dominioSegmento;
 
     @Override
-    protected void settleAttributes() {
-        super.settleAttributes();
-        setOrderBy(codigoDominio);
-//      setSchema(ProyectoBase.getEsquemaEntidadesComunes());
-        // <editor-fold defaultstate="collapsed" desc="localization of Dominio's attributes">
-        setLocalizedLabel(ENGLISH, "domain");
-        setLocalizedLabel(SPANISH, "dominio");
-        setLocalizedCollectionLabel(ENGLISH, "Domains");
-        setLocalizedCollectionLabel(SPANISH, "Dominios");
-        setLocalizedDescription(ENGLISH, "persistence domain object that typically represents a table in the database");
-        setLocalizedDescription(SPANISH, "objeto de dominio de persistencia que normalmente representa una tabla en la base de datos");
-        // </editor-fold>
-    }
-
-    @Override
     protected void settleProperties() {
         super.settleProperties();
         // <editor-fold defaultstate="collapsed" desc="localization of Dominio's properties">

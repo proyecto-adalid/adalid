@@ -49,7 +49,7 @@ public class PaqueteConsultaTarea extends PaqueteConsultaBase {
         System.out.println(tareaUsuario);
         System.out.println(tareaUsuarioCorreo);
         System.out.println(tareaVirtual);
-        System.out.println(TransicionTareaUsuario);
+        System.out.println(transicionTareaUsuario);
     }
     // </editor-fold>
 
@@ -61,6 +61,6 @@ public class PaqueteConsultaTarea extends PaqueteConsultaBase {
 
     TareaVirtual tareaVirtual;
 
-    TransicionTareaUsuario TransicionTareaUsuario;
+    TransicionTareaUsuario transicionTareaUsuario;
 
 }

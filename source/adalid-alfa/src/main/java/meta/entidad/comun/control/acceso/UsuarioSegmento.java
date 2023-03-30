@@ -52,6 +52,16 @@ public class UsuarioSegmento extends AbstractPersistentEntity {
         setLocalizedCollectionLabel(ENGLISH, "User/Segment Associations");
         setLocalizedCollectionLabel(SPANISH, "Asociaciones Usuario/Segmento");
         /**/
+        setLocalizedDescription(ENGLISH, "Each instance of " + b("User/Segment Associations") + " represents a "
+            + "segment associated with an application user."
+            + "");
+        setLocalizedDescription(SPANISH, "Cada instancia de " + b("Asociaciones Usuario/Segmento") + " representa un "
+            + "segmento asociado con un usuario de la aplicación."
+            + "");
+        /**/
+        setLocalizedShortDescription(ENGLISH, "segment associated with an application user");
+        setLocalizedShortDescription(SPANISH, "segmento asociado con un usuario de la aplicación");
+        /**/
         // </editor-fold>
     }
 

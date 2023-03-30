@@ -69,14 +69,23 @@ public class PasoRutina extends AbstractPersistentEntity {
         setLocalizedCollectionLabel(SPANISH, "Pasos de Rutina de Usuario");
         setLocalizedCollectionShortLabel(ENGLISH, "Steps");
         setLocalizedCollectionShortLabel(SPANISH, "Pasos");
-        setLocalizedDescription(ENGLISH, ""
-            + "A user routine step implements a specific action "
+        /**/
+        setLocalizedDescription(ENGLISH, "Each instance of " + b("User Routine Steps") + " represents a "
+            + "user routine step that implements a specific action "
             + "in the path a user follows through your website interface to complete a task."
             + "");
-        setLocalizedDescription(SPANISH, ""
-            + "Un paso de una rutina de usuario implementa una acción específica "
+        setLocalizedDescription(SPANISH, "Cada instancia de " + b("Pasos de Rutina de Usuario") + " representa un "
+            + "paso de una rutina de usuario que implementa una acción específica "
             + "en la ruta que sigue un usuario a través de la interfaz de su sitio web para completar una tarea."
             + "");
+        /**/
+        setLocalizedShortDescription(ENGLISH, "user routine step that implements a specific action "
+            + "in the path a user follows through your website interface to complete a task"
+            + "");
+        setLocalizedShortDescription(SPANISH, "paso de una rutina de usuario que implementa una acción específica "
+            + "en la ruta que sigue un usuario a través de la interfaz de su sitio web para completar una tarea"
+            + "");
+        /**/
         // </editor-fold>
     }
 

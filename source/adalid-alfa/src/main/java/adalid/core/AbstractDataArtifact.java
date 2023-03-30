@@ -23,6 +23,7 @@ import adalid.core.parameters.*;
 import adalid.core.primitives.*;
 import adalid.core.properties.*;
 import adalid.core.wrappers.*;
+import java.io.ObjectStreamClass;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.math.BigDecimal;
@@ -865,6 +866,19 @@ public abstract class AbstractDataArtifact extends AbstractArtifact implements A
     @Override
     public Class<?> getSegmentEntityClass() { // since 20210218
         return _segmentEntityClass == null ? null : _segmentEntityClass.equals(Entity.class) ? getDataType() : _segmentEntityClass;
+    }
+
+    /**
+     * @return the Serial Version UID of the data class
+     */
+    @Override
+    public Long getSerialVersionUID() { // since 19/01/2023
+        return getSerialVersionUID(getDataClass());
+    }
+
+    protected Long getSerialVersionUID(Class<?> dataClass) { // since 19/01/2023
+        ObjectStreamClass objectStreamClass = dataClass == null ? null : ObjectStreamClass.lookup(dataClass);
+        return objectStreamClass == null ? null : objectStreamClass.getSerialVersionUID();
     }
 
     /**
@@ -2343,7 +2357,6 @@ public abstract class AbstractDataArtifact extends AbstractArtifact implements A
      * @param value the sequence start value to set
      */
     public void setSequencePropertyStart(long value) {
-//      XS1.checkAccess();
         boolean log = depth() == 0;
         if (isSequenceProperty()) {
             _sequencePropertyStart = Math.min(Long.MAX_VALUE, Math.max(1, value));
@@ -2372,7 +2385,6 @@ public abstract class AbstractDataArtifact extends AbstractArtifact implements A
      * @param value the sequence stop value to set
      */
     public void setSequencePropertyStop(long value) {
-//      XS1.checkAccess();
         boolean log = depth() == 0;
         if (isSequenceProperty()) {
             _sequencePropertyStop = Math.min(Long.MAX_VALUE, Math.max(1, value));
@@ -2400,7 +2412,6 @@ public abstract class AbstractDataArtifact extends AbstractArtifact implements A
      * @param value the sequence step value to set
      */
     public void setSequencePropertyStep(long value) {
-//      XS1.checkAccess();
         boolean log = depth() == 0;
         if (isSequenceProperty()) {
             _sequencePropertyStep = Math.min(Long.MAX_VALUE, Math.max(1, value));
@@ -3804,9 +3815,9 @@ public abstract class AbstractDataArtifact extends AbstractArtifact implements A
             if (_indexed) {
                 if (this instanceof StringData) {
                     StringData data = (StringData) this;
-                    int maxLength = (Integer) IntUtils.valueOf(data.getMaxLength());
+                    int maxLength = IntUtils.valueOf(data.getMaxLength());
                     if (maxLength < 1) {
-                        logger.error(fieldName + " is a clob property and therefore cannot be indexed");
+                        logger.error(fieldName + " is a CLOB property and therefore cannot be indexed");
                         Project.increaseParserErrorCount();
                     }
                 }
@@ -4023,6 +4034,7 @@ public abstract class AbstractDataArtifact extends AbstractArtifact implements A
         String regex = "";
         String converter = "";
         String validator = "";
+        AutoComplete autoComplete = AutoComplete.UNSPECIFIED;
         LetterCase letterCase = LetterCase.UNSPECIFIED;
         boolean allowDiacritics = false;
         boolean richTextFormat = false;
@@ -4035,6 +4047,7 @@ public abstract class AbstractDataArtifact extends AbstractArtifact implements A
             regex = data.getPatternRegex();
             converter = data.getSpecialConverterName();
             validator = data.getSpecialValidatorName();
+            autoComplete = data.getAutoComplete();
             letterCase = data.getLetterCase();
             allowDiacritics = data.getAllowDiacritics();
             richTextFormat = data.getRichTextFormat();
@@ -4063,9 +4076,17 @@ public abstract class AbstractDataArtifact extends AbstractArtifact implements A
             regex = specified(annotation.regex(), regex);
             converter = specified(annotation.converter(), converter);
             validator = specified(annotation.validator(), validator);
+            autoComplete = specified(annotation.autoComplete(), autoComplete);
             letterCase = specified(annotation.letterCase(), letterCase);
             allowDiacritics = annotation.allowDiacritics().toBoolean(allowDiacritics);
             richTextFormat = annotation.richTextFormat().toBoolean(richTextFormat);
+            if (richTextFormat) {
+                maxLength = 0;
+                if (log && aml > 0) {
+                    logger.warn("max length of " + fieldName + " was ignored; rich text format properties must be defined with no limit");
+                    Project.increaseParserWarningCount();
+                }
+            }
         }
         if (data != null) {
             int projectMaximumStringFieldMaxLength = Project.getMaximumStringFieldMaxLength();
@@ -4147,6 +4168,7 @@ public abstract class AbstractDataArtifact extends AbstractArtifact implements A
             data.setMinLength(minLength);
             data.setInputMask(mask);
             data.setSlotChar(slotChar);
+            data.setAutoComplete(autoComplete);
             data.setLetterCase(letterCase);
             data.setAllowDiacritics(allowDiacritics);
             data.setRichTextFormat(richTextFormat);

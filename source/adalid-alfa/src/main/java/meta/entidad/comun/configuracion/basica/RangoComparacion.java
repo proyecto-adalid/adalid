@@ -74,6 +74,7 @@ public class RangoComparacion extends AbstractPersistentEnumerationEntity {
     protected void settleProperties() {
         super.settleProperties();
         // <editor-fold defaultstate="collapsed" desc="localization of RangoComparacion's properties">
+        /**/
         numero.setLocalizedLabel(ENGLISH, "comparison operator range number");
         numero.setLocalizedLabel(SPANISH, "número del rango de operadores de comparación");
         numero.setLocalizedShortLabel(ENGLISH, "number");
@@ -83,6 +84,7 @@ public class RangoComparacion extends AbstractPersistentEnumerationEntity {
         codigo.setLocalizedLabel(SPANISH, "código del rango de operadores de comparación");
         codigo.setLocalizedShortLabel(ENGLISH, "code");
         codigo.setLocalizedShortLabel(SPANISH, "código");
+        /**/
         // </editor-fold>
     }
 
@@ -90,6 +92,7 @@ public class RangoComparacion extends AbstractPersistentEnumerationEntity {
     protected void settleInstances() {
         super.settleInstances();
         // <editor-fold defaultstate="collapsed" desc="localization of RangoComparacion's instances">
+        /**/
         DISCRETO.newInstanceField(codigo, "Discrete", ENGLISH);
         DISCRETO.newInstanceField(codigo, "Discreto", SPANISH);
         /**/
@@ -101,7 +104,16 @@ public class RangoComparacion extends AbstractPersistentEnumerationEntity {
         /**/
         CONTINUO.newInstanceField(codigo, "Continuous", ENGLISH);
         CONTINUO.newInstanceField(codigo, "Continuo", SPANISH);
+        /**/
         // </editor-fold>
+        /**/
+        // ADVERTENCIA: los números se usan para dar valor a la propiedad rangos de la entidad OperadorCom
+        /**/
+        DISCRETO.newInstanceField(numero, 0);
+        LOGICO.newInstanceField(numero, 1);
+        TEXTO.newInstanceField(numero, 2);
+        CONTINUO.newInstanceField(numero, 3);
+        /**/
     }
 
 }

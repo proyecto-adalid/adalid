@@ -40,6 +40,7 @@ import meta.entidad.comun.configuracion.basica.TipoRastroFun;
 import meta.entidad.comun.configuracion.basica.TipoRecurso;
 import meta.entidad.comun.configuracion.basica.TipoValor;
 import meta.entidad.comun.configuracion.basica.VersionAdalid;
+import meta.entidad.comun.operacion.basica.DialogoDinamicoRemoto;
 import meta.entidad.comun.operacion.basica.PaginaUsuario;
 import meta.entidad.comun.operacion.basica.RecursoValor;
 import meta.paquete.base.PaqueteConsultaBase;
@@ -70,14 +71,17 @@ public class PaqueteConsultaRecursosBasicos extends PaqueteConsultaBase {
         super.print();
         System.out.println(Aplicacion);
         System.out.println(AtributoAplicacion);
+//      System.out.println(CampoValorTemporal);
         System.out.println(ClaseJava);
         System.out.println(ClaseRecurso);
         System.out.println(CondicionEjeFun);
 //      System.out.println(CondicionTarea);
+        System.out.println(DialogoDinamicoRemoto);
         System.out.println(Dominio);
         System.out.println(DominioParametro);
 //      System.out.println(FiltroFuncion);
 //      System.out.println(FiltroFuncionPar);
+//      System.out.println(FormatoPaginaInforme);
         System.out.println(Funcion);
         System.out.println(FuncionParametro);
         System.out.println(GrupoProceso);
@@ -107,6 +111,7 @@ public class PaqueteConsultaRecursosBasicos extends PaqueteConsultaBase {
         System.out.println(TipoRastroFun);
         System.out.println(TipoRecurso);
         System.out.println(TipoValor);
+//      System.out.println(TipoValorCriterio);
         System.out.println(VersionAdalid);
 //      System.out.println(VistaFuncion);
 //      System.out.println(VistaFuncionPar);
@@ -120,6 +125,8 @@ public class PaqueteConsultaRecursosBasicos extends PaqueteConsultaBase {
 
     AtributoAplicacion AtributoAplicacion;
 
+//  CampoValorTemporal CampoValorTemporal;
+//
     ClaseJava ClaseJava;
 
     ClaseRecurso ClaseRecurso;
@@ -128,6 +135,8 @@ public class PaqueteConsultaRecursosBasicos extends PaqueteConsultaBase {
 
 //  CondicionTarea CondicionTarea;
 //
+    DialogoDinamicoRemoto DialogoDinamicoRemoto;
+
     Dominio Dominio;
 
     DominioParametro DominioParametro;
@@ -135,6 +144,8 @@ public class PaqueteConsultaRecursosBasicos extends PaqueteConsultaBase {
 //  FiltroFuncion FiltroFuncion;
 //
 //  FiltroFuncionPar FiltroFuncionPar;
+//
+//  FormatoPaginaInforme FormatoPaginaInforme;
 //
     Funcion Funcion;
 
@@ -193,6 +204,8 @@ public class PaqueteConsultaRecursosBasicos extends PaqueteConsultaBase {
     TipoRecurso TipoRecurso;
 
     TipoValor TipoValor;
+//
+//  TipoValorCriterio TipoValorCriterio;
 
     VersionAdalid VersionAdalid;
 

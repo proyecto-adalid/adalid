@@ -40,6 +40,7 @@ import meta.entidad.comun.configuracion.basica.TipoRastroFun;
 import meta.entidad.comun.configuracion.basica.TipoRecurso;
 import meta.entidad.comun.configuracion.basica.TipoValor;
 import meta.entidad.comun.configuracion.basica.VersionAdalid;
+import meta.entidad.comun.operacion.basica.DialogoDinamicoRemoto;
 import meta.entidad.comun.operacion.basica.PaginaUsuario;
 import meta.entidad.comun.operacion.basica.RecursoValor;
 import meta.paquete.base.PaqueteRegistroBase;
@@ -70,14 +71,17 @@ public class PaqueteRegistroRecursosBasicos extends PaqueteRegistroBase {
         super.print();
         System.out.println(Aplicacion);
         System.out.println(AtributoAplicacion);
+//      System.out.println(CampoValorTemporal);
         System.out.println(ClaseJava);
         System.out.println(ClaseRecurso);
         System.out.println(CondicionEjeFun);
 //      System.out.println(CondicionTarea);
+        System.out.println(DialogoDinamicoRemoto);
         System.out.println(Dominio);
         System.out.println(DominioParametro);
 //      System.out.println(FiltroFuncion);
 //      System.out.println(FiltroFuncionPar);
+//      System.out.println(FormatoPaginaInforme);
         System.out.println(Funcion);
         System.out.println(FuncionParametro);
         System.out.println(GrupoProceso);
@@ -107,10 +111,12 @@ public class PaqueteRegistroRecursosBasicos extends PaqueteRegistroBase {
         System.out.println(TipoRastroFun);
         System.out.println(TipoRecurso);
         System.out.println(TipoValor);
+//      System.out.println(TipoValorCriterio);
         System.out.println(VersionAdalid);
 //      System.out.println(VistaFuncion);
 //      System.out.println(VistaFuncionPar);
         System.out.println(registroFiltro);
+//      System.out.println(registroTarea);
         System.out.println(registroVista);
     }
     // </editor-fold>
@@ -119,6 +125,8 @@ public class PaqueteRegistroRecursosBasicos extends PaqueteRegistroBase {
 
     AtributoAplicacion AtributoAplicacion;
 
+//  CampoValorTemporal CampoValorTemporal;
+//
     ClaseJava ClaseJava;
 
     ClaseRecurso ClaseRecurso;
@@ -127,6 +135,8 @@ public class PaqueteRegistroRecursosBasicos extends PaqueteRegistroBase {
 
 //  CondicionTarea CondicionTarea;
 //
+    DialogoDinamicoRemoto DialogoDinamicoRemoto;
+
     Dominio Dominio;
 
     DominioParametro DominioParametro;
@@ -134,6 +144,8 @@ public class PaqueteRegistroRecursosBasicos extends PaqueteRegistroBase {
 //  FiltroFuncion FiltroFuncion;
 //
 //  FiltroFuncionPar FiltroFuncionPar;
+//
+//  FormatoPaginaInforme FormatoPaginaInforme;
 //
     Funcion Funcion;
 
@@ -192,6 +204,8 @@ public class PaqueteRegistroRecursosBasicos extends PaqueteRegistroBase {
     TipoRecurso TipoRecurso;
 
     TipoValor TipoValor;
+//
+//  TipoValorCriterio TipoValorCriterio;
 
     VersionAdalid VersionAdalid;
 
@@ -201,6 +215,8 @@ public class PaqueteRegistroRecursosBasicos extends PaqueteRegistroBase {
 //
     PaqueteRegistroFiltro registroFiltro;
 
+//  PaqueteRegistroTarea registroTarea;
+//
     PaqueteRegistroVista registroVista;
 
 }

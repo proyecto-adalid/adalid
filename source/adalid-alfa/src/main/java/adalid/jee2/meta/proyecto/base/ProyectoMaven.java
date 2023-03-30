@@ -244,4 +244,16 @@ public abstract class ProyectoMaven extends ProyectoJava2 {
         return group.contains(alias) ? group : group + "." + alias;
     }
 
+    @Override
+    protected String getDefaultPersistenceRootPackageName() {
+        /*
+        String group1 = _pom == null ? null : _pom.getProperty("project.groupId");
+        String group2 = StringUtils.defaultIfBlank(group1, DEFAULT_TLD + "." + DEFAULT_SLD);
+        String group3 = StrUtils.getLowerCaseIdentifier(group2, '.');
+        String dbname = StrUtils.getLowerCaseIdentifier(getDatabaseName(), '.');
+        return group3 + "." + dbname;
+        /**/
+        return super.getDefaultPersistenceRootPackageName();
+    }
+
 }

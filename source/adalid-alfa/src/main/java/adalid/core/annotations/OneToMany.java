@@ -13,6 +13,7 @@
 package adalid.core.annotations;
 
 import adalid.core.enums.*;
+import adalid.core.interfaces.Entity;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -36,7 +37,7 @@ public @interface OneToMany {
      *
      * @return targetEntity
      */
-    Class targetEntity() default void.class;
+    Class<? extends Entity> targetEntity() default Entity.class;
 
     /**
      * mappedBy especifica el nombre del campo que posee la relación. Ese campo es la referencia (propiedad que hace referencia a otra entidad)

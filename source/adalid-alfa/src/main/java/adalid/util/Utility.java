@@ -50,13 +50,13 @@ public class Utility {
 
     public static final boolean WINDOWS = StringUtils.containsIgnoreCase(OS_NAME, "windows");
 
-    private static ProjectObjectModel pom;
+    private static ProjectObjectModelReader pom;
 
     private static ProjectBuilderDictionary pbd;
 
-    private static ProjectObjectModel pom() {
+    private static ProjectObjectModelReader pom() {
         if (pom == null) {
-            pom = new ProjectObjectModel();
+            pom = new adalid.util.ProjectObjectModel();
         }
         return pom;
     }
@@ -84,6 +84,10 @@ public class Utility {
             pbd = ProjectBuilderDictionary.load();
         }
         return pbd;
+    }
+
+    public static <T extends Utility> T instanceOf(Class<T> clazz) throws Exception {
+        return clazz.getDeclaredConstructor().newInstance();
     }
 
     public static String getLastExecutedProjectAlias() {
@@ -225,6 +229,28 @@ public class Utility {
      */
     public static void setBootstrappingFileName(String name) {
         BootstrappingFile.setName(name);
+    }
+
+    private final long startTime = System.currentTimeMillis();
+
+    protected String starting() {
+        return starting(getClass());
+    }
+
+    protected String starting(Class<?> clazz) {
+        return RunUtils.starting(clazz);
+    }
+
+    protected String finished() {
+        return finished(getClass());
+    }
+
+    protected String finished(Class<?> clazz) {
+        return finished(clazz, startTime);
+    }
+
+    protected String finished(Class<?> clazz, long millis) {
+        return RunUtils.finished(clazz, millis);
     }
 
 }

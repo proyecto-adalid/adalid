@@ -470,7 +470,9 @@ public abstract class AbstractSqlProgrammer extends AbstractProgrammer implement
         if (obj == null) {
             return null;
         } else if (obj instanceof String) {
-            return escapeQuotes(obj.toString());
+            String string = obj.toString();
+            String strong = MarkupUtils.isPseudoHTML(string) ? MarkupUtils.getPlainTextString(string) : string;
+            return escapeQuotes(strong);
         } else if (obj instanceof Date) {
             return TimeUtils.jdbcDateString(obj);
         } else if (obj instanceof Time) {

@@ -16,7 +16,9 @@ import adalid.core.*;
 import adalid.core.interfaces.*;
 import adalid.core.sql.*;
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * @author Jorge Campins
@@ -30,6 +32,8 @@ public class CrudJavaServerPage extends JavaServerPage {
     private List<PageField> _fields;
 
     private List<PageField> _masterFields;
+
+    private Set<Entity> _entitiesReferencedByFields;
 
     /**
      * @return the fields list
@@ -131,6 +135,28 @@ public class CrudJavaServerPage extends JavaServerPage {
             return field;
         }
         return null;
+    }
+
+    /**
+     * @return the list of entities referenced by fields
+     */
+    @Override
+    public Set<Entity> getEntitiesReferencedByFields() {
+        if (_entitiesReferencedByFields == null) {
+            _entitiesReferencedByFields = new LinkedHashSet<>();
+            addEntitiesReferencedByFields(getFields());
+            addEntitiesReferencedByFields(getMasterHeadingFields());
+        }
+        return _entitiesReferencedByFields;
+    }
+
+    private void addEntitiesReferencedByFields(List<PageField> fields) {
+        for (PageField field : fields) {
+            DataArtifact dataArtifact = field.getDataArtifact();
+            if (dataArtifact instanceof Entity) {
+                _entitiesReferencedByFields.add((Entity) dataArtifact);
+            }
+        }
     }
 
 }

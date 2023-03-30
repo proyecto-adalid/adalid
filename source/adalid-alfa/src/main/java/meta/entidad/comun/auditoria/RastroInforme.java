@@ -259,8 +259,17 @@ public class RastroInforme extends AbstractPersistentEntity {
         setLocalizedCollectionLabel(SPANISH, "Rastros de Auditoría de Informes");
         setLocalizedCollectionShortLabel(ENGLISH, "Report Trails");
         setLocalizedCollectionShortLabel(SPANISH, "Rastros de Informes");
-        setLocalizedDescription(ENGLISH, "audit trail of the execution of export and report operations");
-        setLocalizedDescription(SPANISH, "rastro de auditoría de la generación de archivos e informes");
+        /**/
+        setLocalizedDescription(ENGLISH, "Each instance of " + b("Report Audit Trails") + " represents an "
+            + "audit trail of the execution of export and report operations."
+            + "");
+        setLocalizedDescription(SPANISH, "Cada instancia de " + b("Rastros de Auditoría de Informes") + " representa un "
+            + "rastro de auditoría de la generación de archivos e informes."
+            + "");
+        /**/
+        setLocalizedShortDescription(ENGLISH, "audit trail of the execution of export and report operations");
+        setLocalizedShortDescription(SPANISH, "rastro de auditoría de la generación de archivos e informes");
+        /**/
         // </editor-fold>
     }
 

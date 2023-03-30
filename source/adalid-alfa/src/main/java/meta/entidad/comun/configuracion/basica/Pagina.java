@@ -116,8 +116,17 @@ public class Pagina extends AbstractPersistentEntity {
         setLocalizedLabel(SPANISH, "página");
         setLocalizedCollectionLabel(ENGLISH, "Pages");
         setLocalizedCollectionLabel(SPANISH, "Páginas");
-        setLocalizedDescription(ENGLISH, "web application page");
-        setLocalizedDescription(SPANISH, "página de la aplicación web");
+        /**/
+        setLocalizedDescription(ENGLISH, "Each instance of " + b("Pages") + " represents a "
+            + "web application page."
+            + "");
+        setLocalizedDescription(SPANISH, "Cada instancia de " + b("Páginas") + " representa una "
+            + "página web de la aplicación."
+            + "");
+        /**/
+        setLocalizedShortDescription(ENGLISH, "web application page");
+        setLocalizedShortDescription(SPANISH, "página web de la aplicación");
+        /**/
         // </editor-fold>
     }
 

@@ -953,6 +953,26 @@ class XS1 {
         }
         return hits;
     }
+
+    static Object newInstance(String className) {
+        Class<?> clazz = forName(className);
+        if (clazz == null) {
+            return null;
+        }
+        try {
+            return clazz.getDeclaredConstructor().newInstance();
+        } catch (IllegalAccessException | IllegalArgumentException | InstantiationException | InvocationTargetException | NoSuchMethodException | SecurityException ex) {
+            return null;
+        }
+    }
+
+    static Class<?> forName(String className) {
+        try {
+            return Class.forName(className);
+        } catch (ClassNotFoundException ex) {
+            return null;
+        }
+    }
 //
     // <editor-fold defaultstate="collapsed" desc="static Object invoke(Object object, String methodName)">
 //  static Object invoke(Object object, String methodName) {

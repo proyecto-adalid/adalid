@@ -25,6 +25,8 @@ import java.util.Set;
  */
 public class BundleWebui extends BundleAbstracto {
 
+    private static final Locale[] supported_locales = adalid.commons.bundles.Bundle.getSupportedLocales();
+
     private static final Map<Locale, ResourceBundle> bundles = new LinkedHashMap<>();
 
     private static final Map<Locale, Set<String>> bundleKeys = new LinkedHashMap<>();
@@ -46,7 +48,7 @@ public class BundleWebui extends BundleAbstracto {
 
     @Override
     protected Locale[] getSupportedLocales() {
-        return adalid.commons.bundles.Bundle.getSupportedLocales();
+        return supported_locales;
     }
 
     @Override

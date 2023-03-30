@@ -66,12 +66,21 @@ public class PaginaInicio extends AbstractPersistentEnumerationEntity {
         super.settleAttributes();
 //      setSchema(ProyectoBase.getEsquemaEntidadesComunes());
         // <editor-fold defaultstate="collapsed" desc="localization of PaginaInicio's attributes">
-        setLocalizedLabel(ENGLISH, "landing page");
+        setLocalizedLabel(ENGLISH, "start page");
         setLocalizedLabel(SPANISH, "página de inicio");
-        setLocalizedCollectionLabel(ENGLISH, "Landing Pages");
+        setLocalizedCollectionLabel(ENGLISH, "Start Pages");
         setLocalizedCollectionLabel(SPANISH, "Páginas de Inicio");
-        setLocalizedDescription(ENGLISH, "type of landing page");
-        setLocalizedDescription(SPANISH, "tipo de página de inicio");
+        /**/
+        setLocalizedDescription(ENGLISH, "Each instance of " + b("Start Pages") + " represents a "
+            + "web page displayed after starting a new session."
+            + "");
+        setLocalizedDescription(SPANISH, "Cada instancia de " + b("Páginas de Inicio") + " representa una "
+            + "página web mostrada después de iniciar una nueva sesión de trabajo."
+            + "");
+        /**/
+        setLocalizedShortDescription(ENGLISH, "web page displayed after starting a new session");
+        setLocalizedShortDescription(SPANISH, "página web mostrada después de iniciar una nueva sesión de trabajo");
+        /**/
         // </editor-fold>
     }
 
@@ -79,12 +88,12 @@ public class PaginaInicio extends AbstractPersistentEnumerationEntity {
     protected void settleProperties() {
         super.settleProperties();
         // <editor-fold defaultstate="collapsed" desc="localization of PaginaInicio's properties">
-        numero.setLocalizedLabel(ENGLISH, "landing page number");
+        numero.setLocalizedLabel(ENGLISH, "start page number");
         numero.setLocalizedLabel(SPANISH, "número de la página de inicio");
         numero.setLocalizedShortLabel(ENGLISH, "number");
         numero.setLocalizedShortLabel(SPANISH, "número");
         /**/
-        codigo.setLocalizedLabel(ENGLISH, "landing page code");
+        codigo.setLocalizedLabel(ENGLISH, "start page code");
         codigo.setLocalizedLabel(SPANISH, "código de la página de inicio");
         codigo.setLocalizedShortLabel(ENGLISH, "code");
         codigo.setLocalizedShortLabel(SPANISH, "código");

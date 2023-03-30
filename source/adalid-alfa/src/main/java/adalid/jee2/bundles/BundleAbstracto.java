@@ -65,6 +65,7 @@ public abstract class BundleAbstracto {
     }
 
     private void load() {
+        logger.trace(baseName);
         ResourceBundle bundle, bundlePlus;
         Locale localePlus;
         Locale[] supportedLocales = getSupportedLocales();

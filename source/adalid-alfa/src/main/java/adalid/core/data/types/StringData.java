@@ -54,6 +54,8 @@ public class StringData extends CharacterPrimitive {
 
     private final Map<Locale, String> _localizedRegexErrorMessage = new LinkedHashMap<>();
 
+    private AutoComplete _autoComplete = AutoComplete.UNSPECIFIED;
+
     private LetterCase _letterCase = LetterCase.UNSPECIFIED;
 
     private boolean _allowDiacritics = true;
@@ -279,7 +281,7 @@ public class StringData extends CharacterPrimitive {
      * @return the maxLength
      */
     public Integer getMaxLength() {
-        return _maxLength;
+        return _richTextFormat ? null : _maxLength;
     }
 
     /**
@@ -389,6 +391,21 @@ public class StringData extends CharacterPrimitive {
         } else {
             _localizedRegexErrorMessage.put(l, message);
         }
+    }
+
+    /**
+     * @return the auto complete
+     */
+    public AutoComplete getAutoComplete() {
+        return _autoComplete;
+    }
+
+    /**
+     * @param autoComplete the auto complete to set
+     */
+    public void setAutoComplete(AutoComplete autoComplete) {
+        XS2.checkAccess();
+        _autoComplete = autoComplete == null ? AutoComplete.UNSPECIFIED : autoComplete;
     }
 
     /**
@@ -1158,7 +1175,7 @@ public class StringData extends CharacterPrimitive {
     }
     /**/
     // </editor-fold>
-/**/
+//
     // <editor-fold defaultstate="collapsed" desc="since 06/06/2022">
     public int getLargeDisplayWidth() {
         return _largeDisplayWidth;

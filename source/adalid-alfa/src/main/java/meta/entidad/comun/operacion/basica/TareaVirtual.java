@@ -73,8 +73,17 @@ public class TareaVirtual extends AbstractPersistentEntity {
         setLocalizedLabel(SPANISH, "tarea virtual");
         setLocalizedCollectionLabel(ENGLISH, "Virtual Tasks");
         setLocalizedCollectionLabel(SPANISH, "Tareas Virtuales");
-        setLocalizedDescription(ENGLISH, "task notification for the user");
-        setLocalizedDescription(SPANISH, "notificación de tarea para el usuario");
+        /**/
+        setLocalizedDescription(ENGLISH, "Each instance of " + b("Virtual Tasks") + " represents a "
+            + "virtual task notification."
+            + "");
+        setLocalizedDescription(SPANISH, "Cada instancia de " + b("Tareas Virtuales") + " representa una "
+            + "notificación de tarea virtual."
+            + "");
+        /**/
+        setLocalizedShortDescription(ENGLISH, "virtual task notification");
+        setLocalizedShortDescription(SPANISH, "notificación de tarea virtual");
+        /**/
         // </editor-fold>
     }
 

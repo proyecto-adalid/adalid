@@ -1422,6 +1422,15 @@ public abstract class AbstractArtifact implements Artifact, Wrappable {
         return StrUtils.getString(equals, separator, open, close, _attributes.get(name));
     }
 
+    public String getStringKeyValuePairAttribute(Class<?> clazz, String name, String key) {
+        return getStringKeyValuePairAttribute(clazz, name, key, null);
+    }
+
+    public String getStringKeyValuePairAttribute(Class<?> clazz, String name, String key, Object defaultValue) {
+        Object object = getKeyValuePairAttribute(attributeName(clazz, name), key, defaultValue);
+        return object == null ? null : StringUtils.trimToNull(object.toString());
+    }
+
     public Object getKeyValuePairAttribute(Class<?> clazz, String name, String key) {
         return getKeyValuePairAttribute(attributeName(clazz, name), key);
     }
@@ -1461,7 +1470,7 @@ public abstract class AbstractArtifact implements Artifact, Wrappable {
     }
 
     private String attributeName(Class<?> clazz, String name) {
-        return clazz.getSimpleName() + ":" + name;
+        return (clazz != null ? clazz : getNamedClass()).getSimpleName() + ":" + name;
     }
 
     /**
@@ -2025,9 +2034,13 @@ public abstract class AbstractArtifact implements Artifact, Wrappable {
     }
 
     // <editor-fold defaultstate="collapsed" desc="MarkupUtils">
-    protected static final String BR = "\n";
+    protected static final String BR = MarkupUtils.BR;
 
-    protected static final String HT = "\t";
+    protected static final String HT = MarkupUtils.HT;
+
+    protected static final String FWGTS = MarkupUtils.FWGTS;
+
+    protected static final String FWLTS = MarkupUtils.FWLTS;
 
     protected static final String _de_ = " de ";
 

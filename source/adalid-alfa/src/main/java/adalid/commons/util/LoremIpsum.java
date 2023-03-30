@@ -111,6 +111,10 @@ public class LoremIpsum {
     }
 
     /**/
+    public static String getString() {
+        return SX[LX.length - 1];
+    }
+
     public static String getString(int n) {
         if (n > 0) {
             int m = SX[0].length();

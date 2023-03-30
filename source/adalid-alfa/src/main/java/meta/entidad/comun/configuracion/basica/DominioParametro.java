@@ -92,8 +92,17 @@ public class DominioParametro extends AbstractPersistentEntity {
         setLocalizedCollectionLabel(SPANISH, "Parámetros de Dominio");
         setLocalizedCollectionShortLabel(ENGLISH, "Parameters");
         setLocalizedCollectionShortLabel(SPANISH, "Parámetros");
-        setLocalizedDescription(ENGLISH, "persistence domain object's property that typically represents a table's column in the database");
-        setLocalizedDescription(SPANISH, "propiedad del objeto de dominio de persistencia que normalmente representa la columna de una tabla en la base de datos");
+        /**/
+        setLocalizedDescription(ENGLISH, "Each instance of " + b("Domain Parameters") + " represents a "
+            + "persistence domain object's property that typically represents a table's column in the database."
+            + "");
+        setLocalizedDescription(SPANISH, "Cada instancia de " + b("Parámetros de Dominio") + " representa una "
+            + "propiedad del objeto de dominio de persistencia que normalmente representa la columna de una tabla en la base de datos."
+            + "");
+        /**/
+        setLocalizedShortDescription(ENGLISH, "persistence domain object's property that typically represents a table's column in the database");
+        setLocalizedShortDescription(SPANISH, "propiedad del objeto de dominio de persistencia que normalmente representa la columna de una tabla en la base de datos");
+        /**/
         // </editor-fold>
     }
 

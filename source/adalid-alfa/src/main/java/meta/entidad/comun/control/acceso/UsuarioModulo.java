@@ -64,6 +64,16 @@ public class UsuarioModulo extends AbstractPersistentEntity {
         setLocalizedCollectionShortLabel(ENGLISH, usuario, "Módulos");
         setLocalizedCollectionShortLabel(SPANISH, usuario, "Módulos");
         /**/
+        setLocalizedDescription(ENGLISH, "Each instance of " + b("User/Module Associations") + " represents a "
+            + "module associated with an application user."
+            + "");
+        setLocalizedDescription(SPANISH, "Cada instancia de " + b("Asociaciones Usuario/Módulo") + " representa un "
+            + "módulo asociado con un usuario de la aplicación."
+            + "");
+        /**/
+        setLocalizedShortDescription(ENGLISH, "module associated with an application user");
+        setLocalizedShortDescription(SPANISH, "módulo asociado con un usuario de la aplicación");
+        /**/
         // </editor-fold>
         /**/
     }

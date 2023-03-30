@@ -85,6 +85,11 @@ public class JobSchedule {
     public boolean persistent = false;
 
     /**
+     * Specifies whether the timer that is created is permanently disabled.
+     */
+    public boolean permanentlyDisabled = false;
+
+    /**
      * @return the second
      */
     public String getSecond() {
@@ -150,8 +155,15 @@ public class JobSchedule {
     /**
      * @return the persistent indicator
      */
-    public boolean getPersistent() {
+    public boolean isPersistent() {
         return persistent;
+    }
+
+    /**
+     * @return the disabled indicator
+     */
+    public boolean isPermanentlyDisabled() {
+        return permanentlyDisabled;
     }
 
 }

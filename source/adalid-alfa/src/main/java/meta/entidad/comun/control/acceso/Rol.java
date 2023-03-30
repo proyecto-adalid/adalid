@@ -94,6 +94,17 @@ public class Rol extends AbstractPersistentEntity {
         setLocalizedLabel(SPANISH, "rol");
         setLocalizedCollectionLabel(ENGLISH, "Roles");
         setLocalizedCollectionLabel(SPANISH, "Roles");
+        /**/
+        setLocalizedDescription(ENGLISH, "Each instance of " + b("Roles") + " represents an "
+            + "application role."
+            + "");
+        setLocalizedDescription(SPANISH, "Cada instancia de " + b("Roles") + " representa un "
+            + "rol de la aplicación."
+            + "");
+        /**/
+        setLocalizedShortDescription(ENGLISH, "application role");
+        setLocalizedShortDescription(SPANISH, "rol de la aplicación");
+        /**/
         // </editor-fold>
     }
 

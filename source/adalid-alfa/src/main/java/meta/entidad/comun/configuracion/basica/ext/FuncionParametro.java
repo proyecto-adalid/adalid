@@ -18,6 +18,7 @@ import adalid.core.enums.*;
 import adalid.core.interfaces.*;
 import adalid.core.properties.*;
 import java.lang.reflect.Field;
+import meta.entidad.comun.configuracion.basica.ClaseJava;
 import meta.entidad.comun.configuracion.basica.Parametro;
 import meta.entidad.comun.configuracion.basica.RangoAgregacion;
 import meta.entidad.comun.configuracion.basica.RangoComparacion;
@@ -47,6 +48,11 @@ public class FuncionParametro extends meta.entidad.comun.configuracion.basica.Fu
         super(declaringArtifact, declaringField);
     }
     // </editor-fold>
+
+    @ForeignKey(onDelete = OnDeleteAction.NONE, onUpdate = OnUpdateAction.NONE)
+    @ManyToOne(navigability = Navigability.UNIDIRECTIONAL, view = MasterDetailView.NONE)
+    @ColumnField(nullable = Kleenean.FALSE)
+    public ClaseJava claseJava;
 
     @ForeignKey(onDelete = OnDeleteAction.NONE, onUpdate = OnUpdateAction.NONE)
     @ManyToOne(navigability = Navigability.UNIDIRECTIONAL, view = MasterDetailView.NONE)
@@ -177,6 +183,11 @@ public class FuncionParametro extends meta.entidad.comun.configuracion.basica.Fu
         /**/
         // <editor-fold defaultstate="collapsed" desc="localization of FuncionParametro's properties">
         /**/
+        claseJava.setLocalizedLabel(ENGLISH, "data class");
+        claseJava.setLocalizedLabel(SPANISH, "clase de dato");
+        claseJava.setLocalizedShortLabel(ENGLISH, "class");
+        claseJava.setLocalizedShortLabel(SPANISH, "clase");
+        /**/
         tipoDatoPar.setLocalizedLabel(ENGLISH, "parameter data type");
         tipoDatoPar.setLocalizedLabel(SPANISH, "tipo de dato de parámetro");
         tipoDatoPar.setLocalizedShortLabel(ENGLISH, "data type");
@@ -293,7 +304,7 @@ public class FuncionParametro extends meta.entidad.comun.configuracion.basica.Fu
         super.settleTabs();
         /**/
         tab110.newTabField(aliasFuncionParametro, columnaFuncionParametro, detalleFuncionParametro, descripcionFuncionParametro);
-        tab110.newTabField(funcion, parametro, tipoParametro, tipoDatoPar, claseRecursoValor, funcionReferencia);
+        tab110.newTabField(funcion, parametro, tipoParametro, tipoDatoPar, claseJava, claseRecursoValor, funcionReferencia);
         /**/
         tab120.newTabField(claseJavaFuncionParametro, idListaValor, idClaseObjetoValor, valorMinimo, valorMaximo, valorOmision);
         tab120.newTabField(criterioBusqueda, accesoRestringido, esParametroBusqueda, esParametroSinRastro, esParametroSegmento, esParametroHeredado, esParametroVinculado, esPassword);

@@ -64,14 +64,23 @@ public class RutinaUsuario extends AbstractPersistentEntity {
         setLocalizedCollectionLabel(SPANISH, "Rutinas de Usuario");
         setLocalizedCollectionShortLabel(ENGLISH, "Routines");
         setLocalizedCollectionShortLabel(SPANISH, "Rutinas");
-        setLocalizedDescription(ENGLISH, ""
-            + "A user routine automates the path a user follows through your website interface to complete a task: "
+        /**/
+        setLocalizedDescription(ENGLISH, "Each instance of " + b("User Routines") + " represents a "
+            + "routine that automates the path a user follows through your website interface to complete a task: "
             + "make a reservation, purchase a product, subscribe to something. "
             + "");
-        setLocalizedDescription(SPANISH, ""
-            + "Una rutina de usuario automatiza la ruta que sigue un usuario a través de la interfaz de su sitio web para completar una tarea: "
+        setLocalizedDescription(SPANISH, "Cada instancia de " + b("Rutinas de Usuario") + " representa una "
+            + "rutina que automatiza la ruta que sigue un usuario a través de la interfaz de su sitio web para completar una tarea: "
             + "hacer una reserva, comprar un producto, suscribirse a algo."
             + "");
+        /**/
+        setLocalizedShortDescription(ENGLISH, "routine that automates the path a user follows through your website interface to complete a task: "
+            + "make a reservation, purchase a product, subscribe to something"
+            + "");
+        setLocalizedShortDescription(SPANISH, "rutina que automatiza la ruta que sigue un usuario a través de la interfaz de su sitio web para completar una tarea: "
+            + "make a reservation, purchase a product, subscribe to something"
+            + "");
+        /**/
         // </editor-fold>
     }
 

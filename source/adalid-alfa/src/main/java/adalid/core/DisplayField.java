@@ -294,27 +294,27 @@ public abstract class DisplayField extends AbstractArtifact implements Comparabl
             DataArtifact dataArtifact = _parent == null ? _dataArtifact : _parent.getDataArtifact();
             if (_entityCollection != null || (dataArtifact != null && dataArtifact.isProperty())) {
                 outerloop:
-                for (Step step : stepsList) {
-                    int index = 0;
-                    for (StepField stepField : step.getStepFieldsList()) {
-                        Property sfp = stepField.getProperty();
-                        EntityCollection sfc = stepField.getEntityCollection();
-                        if (sfp != null) {
-                            if (sfp == dataArtifact) {
-                                _step = step;
-                                _stepFieldIndex = index;
-                                break outerloop;
+                    for (Step step : stepsList) {
+                        int index = 0;
+                        for (StepField stepField : step.getStepFieldsList()) {
+                            Property sfp = stepField.getProperty();
+                            EntityCollection sfc = stepField.getEntityCollection();
+                            if (sfp != null) {
+                                if (sfp == dataArtifact) {
+                                    _step = step;
+                                    _stepFieldIndex = index;
+                                    break outerloop;
+                                }
+                            } else if (sfc != null) {
+                                if (sfc == _entityCollection) {
+                                    _step = step;
+                                    _stepFieldIndex = index;
+                                    break outerloop;
+                                }
                             }
-                        } else if (sfc != null) {
-                            if (sfc == _entityCollection) {
-                                _step = step;
-                                _stepFieldIndex = index;
-                                break outerloop;
-                            }
+                            index++;
                         }
-                        index++;
                     }
-                }
             }
         }
         List<Tab> tabsList = entity.getTabsList();

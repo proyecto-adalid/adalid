@@ -84,8 +84,8 @@ public class Maestro102 extends Maestro {
 //      putEnvironmentVariable(CONTENT_ROOT_DIR_WINDOWS, "%SystemDrive%/content-root");
 //
 //      putEnvironmentVariable(POSTGRESQL_DRIVER_ID, "pgjdbc4");
-//      putEnvironmentVariable(POSTGRESQL_DRIVER_JAR, "postgresql-42.2.18.jar");
-//      putEnvironmentVariable(POSTGRESQL_DRIVER_VERSION, "42.2.18");
+//      putEnvironmentVariable(POSTGRESQL_DRIVER_JAR, "postgresql-42.5.1.jar");
+//      putEnvironmentVariable(POSTGRESQL_DRIVER_VERSION, "42.5.1");
 //
 //      putEnvironmentVariable(VERSION_POSTGRESQL, "15");
 //      putEnvironmentVariable(VERSION_WILDFLY, "26.1.2.Final");
@@ -130,6 +130,7 @@ public class Maestro102 extends Maestro {
         super.addDirectives();
 //      addFileExclusionPattern(expresión regular para evaluar el nombre de los archivos que se deben excluir);
 //      por ejemplo: addFileExclusionPattern("^.*/data-migration/base/insert-select-past-data-[${backslash}${backslash}d]{8}-[${backslash}${backslash}d]{4}${backslash}${backslash}.sql${dollar}");
+//      por ejemplo: addFileExclusionPattern("^.*/webapp/resources/help/base/special-component/barraBotonesAccion1.xhtml${dollar}");
 //      addFilePreservationPattern(expresión regular para evaluar el nombre de los archivos que se deben preservar);
 //      por ejemplo: addFilePreservationPattern("^.*/${backslash}${backslash}.gitignore${dollar}"); // preserva los archivos .gitignore
     }

@@ -16,6 +16,7 @@ import adalid.commons.util.*;
 import adalid.core.*;
 import adalid.core.enums.*;
 import adalid.core.interfaces.*;
+import adalid.core.jee.JavaWebProject;
 import adalid.core.programmers.*;
 import adalid.jee2.*;
 import java.util.ArrayList;
@@ -40,6 +41,7 @@ import meta.paquete.base.PaqueteBase;
 import meta.paquete.comun.PaqueteConsultaRecursosBasicos;
 import meta.paquete.comun.PaqueteProcesamientoRecursosBasicos;
 import meta.paquete.comun.PaqueteRegistroRecursosBasicos;
+import meta.psm.ProjectAttributeKeys;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -47,7 +49,7 @@ import org.apache.log4j.Logger;
 /**
  * @author Jorge Campins
  */
-public abstract class ProyectoJava1 extends ProyectoBase {
+public abstract class ProyectoJava1 extends ProyectoBase implements JavaWebProject {
 
     private static final Logger logger = Logger.getLogger(Project.class);
 
@@ -65,6 +67,20 @@ public abstract class ProyectoJava1 extends ProyectoBase {
      * Utilice / como separador en lugar de \. Por ejemplo: C:/xyz2ap101/content-root
      */
     protected static final String CONTENT_ROOT_DIR_WINDOWS = "content.root.dir.windows";
+
+    /**
+     * Ruta del directorio HOME de la aplicación en Linux generada con la plataforma de solo base de datos. El directorio debe existir antes de
+     * definir las propiedades del sistema en el servidor de aplicaciones y el servidor de aplicaciones se debe configurar para utilizar este
+     * directorio en lugar del predeterminado.
+     */
+    protected static final String DATABASE_HOME_DIR_LINUX = "database.home.dir.linux";
+
+    /**
+     * Ruta del directorio HOME de la aplicación en Windows generada con la plataforma de solo base de datos. El directorio debe existir antes de
+     * definir las propiedades del sistema en el servidor de aplicaciones y el servidor de aplicaciones se debe configurar para utilizar este
+     * directorio en lugar del predeterminado. Utilice / como separador en lugar de \. Por ejemplo: C:/xyz2ap101/database-home
+     */
+    protected static final String DATABASE_HOME_DIR_WINDOWS = "database.home.dir.windows";
 
     /**
      * Ruta del directorio HOME de Java en Linux
@@ -243,6 +259,16 @@ public abstract class ProyectoJava1 extends ProyectoBase {
 
     private String _rootPackageName;
 
+    private String _persistenceRootPackageName;
+
+    private String _googleRecaptchaSiteKey;
+
+    private String _googleRecaptchaSecretKey;
+
+    private int _projectChangeForgottenPasswordTimeout = 15;
+
+    private boolean _multiApplication;
+
     private boolean _flushAfterEachInsert = true;
 
     private boolean _flushAfterEachUpdate = true;
@@ -265,6 +291,12 @@ public abstract class ProyectoJava1 extends ProyectoBase {
 
     private boolean _projectRecaptchaSiteVerificationEnabled;
 
+    private boolean _projectAssignNewPasswordEnabled = true;
+
+    private boolean _projectChangeOwnPasswordEnabled = true;
+
+    private boolean _projectChangeForgottenPasswordEnabled = true;
+
     private boolean _exporterShellEnabled;
 
     private boolean _reporterShellEnabled;
@@ -286,6 +318,8 @@ public abstract class ProyectoJava1 extends ProyectoBase {
     private String _securityRealmName;
 
     private String _roleBasedAccessControllerName;
+
+    private String _webSecurityPrefix;
 
     private boolean _authenticatedUserAutomaticRegistrationEnabled = true; // enable by default for LDAP and CIAM
 
@@ -406,6 +440,7 @@ public abstract class ProyectoJava1 extends ProyectoBase {
     /**
      * @return the ear project name
      */
+    @Override
     public String getEarProjectName() {
         return StringUtils.defaultIfBlank(_earProjectName, getDefaultEarProjectName());
     }
@@ -420,6 +455,7 @@ public abstract class ProyectoJava1 extends ProyectoBase {
     /**
      * @return the ejb project name
      */
+    @Override
     public String getEjbProjectName() {
         return StringUtils.defaultIfBlank(_ejbProjectName, getDefaultEjbProjectName());
     }
@@ -476,6 +512,7 @@ public abstract class ProyectoJava1 extends ProyectoBase {
     /**
      * @return the web project name
      */
+    @Override
     public String getWebProjectName() {
         return StringUtils.defaultIfBlank(_webProjectName, getDefaultWebProjectName());
     }
@@ -490,6 +527,7 @@ public abstract class ProyectoJava1 extends ProyectoBase {
     /**
      * @return the web-api project name
      */
+    @Override
     public String getWebApiProjectName() {
         return StringUtils.defaultIfBlank(_webApiProjectName, getDefaultWebApiProjectName());
     }
@@ -502,6 +540,14 @@ public abstract class ProyectoJava1 extends ProyectoBase {
     }
 
     /**
+     * @return the web project pages extension
+     */
+    @Override
+    public String getWebPageFileExtension() {
+        return StringUtils.defaultIfBlank(getStringAttribute(ProjectAttributeKeys.WEB_PAGES_FILE_EXTENSION), "xhtml");
+    }
+
+    /**
      * @return the root package name
      */
     public String getRootPackageName() {
@@ -509,10 +555,80 @@ public abstract class ProyectoJava1 extends ProyectoBase {
     }
 
     /**
-     * @param rootPackageName the root package name to set
+     * @param packageName the root package name to set
      */
-    public void setRootPackageName(String rootPackageName) {
-        _rootPackageName = StrUtils.getLowerCaseIdentifier(rootPackageName, '.');
+    public void setRootPackageName(String packageName) {
+        _rootPackageName = StrUtils.getLowerCaseIdentifier(packageName, '.');
+    }
+
+    /**
+     * @return the persistence root package name to set
+     */
+    public String getPersistenceRootPackageName() {
+        return StringUtils.defaultIfBlank(_persistenceRootPackageName, getDefaultPersistenceRootPackageName());
+    }
+
+    /**
+     * @param packageName the persistence root package name to set
+     */
+    public void setPersistenceRootPackageName(String packageName) {
+        _persistenceRootPackageName = StrUtils.getLowerCaseIdentifier(packageName, '.');
+    }
+
+    /**
+     * @return the Google reCAPTCHA site key
+     */
+    public String getGoogleRecaptchaSiteKey() {
+        return StringUtils.defaultIfBlank(_googleRecaptchaSiteKey, getDefaultGoogleRecaptchaSiteKey());
+    }
+
+    /**
+     * @param key the Google reCAPTCHA site key to set
+     */
+    public void setGoogleRecaptchaSiteKey(String key) {
+        _googleRecaptchaSiteKey = key;
+    }
+
+    /**
+     * @return the Google reCAPTCHA secret key
+     */
+    public String getGoogleRecaptchaSecretKey() {
+        return StringUtils.defaultIfBlank(_googleRecaptchaSecretKey, getDefaultGoogleRecaptchaSecretKey());
+    }
+
+    /**
+     * @param key the Google reCAPTCHA secret key to set
+     */
+    public void setGoogleRecaptchaSecretKey(String key) {
+        _googleRecaptchaSecretKey = key;
+    }
+
+    /**
+     * @return the single-application project indicator
+     */
+//  @Override
+    public boolean isSingleApplication() {
+        return !isMultiApplication();
+    }
+
+    /**
+     * @return the multi-application project indicator
+     */
+    @Override
+    public boolean isMultiApplication() {
+        return _multiApplication;
+    }
+
+    /**
+     * El método setMultiApplication se utiliza para especificar si el proyecto generado puede utilizar, o no, vistas (páginas) de aplicaciones
+     * empresariales de otros proyectos. Por lo general, el módulo Web de un proyecto contiene todas las vistas correspondientes a las entidades
+     * referenciadas en el proyecto; pero también podría utilizar vistas que se encuentren en el módulo Web de la aplicación empresarial de otro
+     * proyecto.
+     *
+     * @param multiple true para permitir el uso de vistas (páginas) de aplicaciones empresariales de otros proyectos
+     */
+    protected void setMultiApplication(boolean multiple) {
+        _multiApplication = multiple;
     }
 
     /**
@@ -578,7 +694,7 @@ public abstract class ProyectoJava1 extends ProyectoBase {
 
     /**
      * El método setInternetAccessAllowed se utiliza para especificar si el proyecto generado incluye, o no, características que requieren acceso a
-     * internet para su funcionamiento (por ejemplo, si la página Inicio de Sesión incluye, o no, un elemento Google reCaptcha). El valor
+     * internet para su funcionamiento (por ejemplo, si la página Inicio de Sesión incluye, o no, un elemento Google reCAPTCHA). El valor
      * predeterminado de esta propiedad es false (no se incluyen características que requieren acceso a internet).
      *
      * @param allowed true, si el proyecto generado incluye características que requieren acceso a internet; de lo contrario false.
@@ -725,6 +841,84 @@ public abstract class ProyectoJava1 extends ProyectoBase {
      */
     public void setProjectRecaptchaSiteVerificationEnabled(boolean enabled) {
         _projectRecaptchaSiteVerificationEnabled = enabled;
+    }
+
+    /**
+     * @return true if project assign new password feature should be enabled; false otherwise
+     */
+    public boolean isProjectAssignNewPasswordEnabled() {
+        return _projectAssignNewPasswordEnabled && SecurityRealmType.JDBC.equals(getSecurityRealmType());
+    }
+
+    /**
+     * El método setProjectAssignNewPasswordEnabled se utiliza para especificar si el proyecto generado debe tener habilitada, o no, la función de
+     * asignación de contraseñas de usuario. Esa función permite, a los usuarios debidamente autorizados, asignar una nueva contraseña a otro usuario,
+     * sin tener que conocer la contraseña actual. Este atributo es relevante solo si el tipo de dominio de seguridad del proyecto es JDBC, en cuyo
+     * caso su valor predeterminado es true (función habilitada).
+     *
+     * @param enabled true, si el proyecto generado debe tener habilitada la función de asignación de contraseñas de usuario; de lo contrario false.
+     */
+    public void setProjectAssignNewPasswordEnabled(boolean enabled) {
+        _projectAssignNewPasswordEnabled = enabled;
+    }
+
+    /**
+     * @return true if project change own password feature should be enabled; false otherwise
+     */
+    public boolean isProjectChangeOwnPasswordEnabled() {
+        return _projectChangeOwnPasswordEnabled && SecurityRealmType.JDBC.equals(getSecurityRealmType());
+    }
+
+    /**
+     * El método setProjectChangeOwnPasswordEnabled se utiliza para especificar si el proyecto generado debe tener habilitada, o no, la función de
+     * cambio de las propias contraseñas de usuario. Esa función permite a cada usuario cambiar su propia contraseña, pero solo si recuerda su
+     * contraseña actual. Este atributo es relevante solo si el tipo de dominio de seguridad del proyecto es JDBC, en cuyo caso su valor
+     * predeterminado es true (función habilitada).
+     *
+     * @param enabled true, si el proyecto generado debe tener habilitada la función de cambio de las propias contraseñas de usuario; de lo contrario
+     * false.
+     */
+    public void setProjectChangeOwnPasswordEnabled(boolean enabled) {
+        _projectChangeOwnPasswordEnabled = enabled;
+    }
+
+    /**
+     * @return true if project change forgotten password feature should be enabled; false otherwise
+     */
+    public boolean isProjectChangeForgottenPasswordEnabled() {
+        return _projectChangeForgottenPasswordEnabled && _internetAccessAllowed && _projectMailingEnabled && SecurityRealmType.JDBC.equals(getSecurityRealmType());
+    }
+
+    /**
+     * El método setProjectChangeForgottenPasswordEnabled se utiliza para especificar si el proyecto generado debe tener habilitada, o no, la función
+     * de cambio de contraseñas olvidadas de usuario. Esa función permite, a cada usuario que tenga registrada una cuenta de correo electrónico,
+     * cambiar su propia contraseña, sin tener que recordar su contraseña actual; para ello requiere acceso a algún servidor de correo electrónico a
+     * través de Internet. Este atributo es relevante solo si el tipo de dominio de seguridad del proyecto es JDBC, en cuyo caso su valor
+     * predeterminado es true (función habilitada).
+     *
+     * @param enabled true, si el proyecto generado debe tener habilitada la función de cambio de contraseñas olvidadas de usuario; de lo contrario
+     * false.
+     */
+    public void setProjectChangeForgottenPasswordEnabled(boolean enabled) {
+        _projectChangeForgottenPasswordEnabled = enabled;
+    }
+
+    /**
+     * @return change forgotten password timeout
+     */
+    public int getProjectChangeForgottenPasswordTimeout() {
+        return _projectChangeForgottenPasswordTimeout;
+    }
+
+    /**
+     * El método setProjectChangeForgottenPasswordTimeout se utiliza para especificar el tiempo de espera, expresado en minutos, de la función de
+     * cambio de contraseñas olvidadas de usuario. El tiempo de espera predeterminado es de 15 minutos.
+     *
+     * @param timeout tiempo de espera, expresado en minutos. Debe ser un número entre 5 y 60. Si es menor que 5 se utiliza 5; si es mayor que 60 se
+     * utiliza 60.
+     */
+    public void setProjectChangeForgottenPasswordTimeout(int timeout) {
+        _projectChangeForgottenPasswordTimeout = timeout < 5 ? 5 : timeout > 60 ? 60 : timeout;
     }
 
     /**
@@ -975,6 +1169,20 @@ public abstract class ProyectoJava1 extends ProyectoBase {
     }
 
     /**
+     * @return the web project security prefix
+     */
+    public String getWebSecurityPrefix() {
+        return StringUtils.defaultIfBlank(_webSecurityPrefix, getWebProjectName());
+    }
+
+    /**
+     * @param prefix the web project security prefix to set
+     */
+    public void setWebSecurityPrefix(String prefix) {
+        _webSecurityPrefix = StrUtils.getLowerCaseIdentifier(prefix, '-');
+    }
+
+    /**
      * @return true if authenticated users automatic registration should be enabled; false otherwise
      */
     public boolean isAuthenticatedUserAutomaticRegistrationEnabled() {
@@ -984,7 +1192,7 @@ public abstract class ProyectoJava1 extends ProyectoBase {
     /**
      * El método setAuthenticatedUserAutomaticRegistrationEnabled se utiliza para especificar si el proyecto generado debe registrar automáticamente,
      * o no, los usuarios que se conectan y no están registrados en la base de datos. Un usuario se puede conectar sin estar registrado en la base de
-     * datos solo si el tipo de dominio de seguridad del proyecto no es JDBC.
+     * datos si el tipo de dominio de seguridad del proyecto no es JDBC.
      *
      * @param enabled true, si el proyecto generado debe registrar automáticamente, o no, los usuarios que se conectan y no están registrados en la
      * base de datos; de lo contrario false.
@@ -1046,6 +1254,18 @@ public abstract class ProyectoJava1 extends ProyectoBase {
 
     protected String getDefaultRootPackageName() {
         return getAlias();
+    }
+
+    protected String getDefaultPersistenceRootPackageName() {
+        return getRootPackageName();
+    }
+
+    protected String getDefaultGoogleRecaptchaSiteKey() {
+        return "6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI";
+    }
+
+    protected String getDefaultGoogleRecaptchaSecretKey() {
+        return "6LeIxAcTAAAAAGG-vFI1TnRWxMZNFuojJ4WifJWe";
     }
 
     protected boolean getDefaultOperatingSystemShellKeepTempFiles() {

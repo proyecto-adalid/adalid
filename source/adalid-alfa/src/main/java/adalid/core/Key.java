@@ -285,7 +285,7 @@ public class Key extends AbstractArtifact {
     }
     /**/
     // </editor-fold>
-/**/
+//
     public boolean isValidKeyFor(PersistentEntity entity) {
         if (_containsNullProperties) {
             return false;

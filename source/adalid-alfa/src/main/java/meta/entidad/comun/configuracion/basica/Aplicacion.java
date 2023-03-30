@@ -84,8 +84,17 @@ public class Aplicacion extends AbstractPersistentEntity {
         setLocalizedLabel(SPANISH, "aplicación");
         setLocalizedCollectionLabel(ENGLISH, "Applications");
         setLocalizedCollectionLabel(SPANISH, "Aplicaciones");
-        setLocalizedDescription(ENGLISH, "application including the user interface and client-side logic");
-        setLocalizedDescription(SPANISH, "aplicación que incluye la interfaz de usuario y la lógica del lado del cliente");
+        /**/
+        setLocalizedDescription(ENGLISH, "Each instance of " + b("Applications") + " represents an "
+            + "application including the user interface and client-side logic."
+            + "");
+        setLocalizedDescription(SPANISH, "Cada instancia de " + b("Aplicaciones") + " representa una "
+            + "aplicación que incluye la interfaz de usuario y la lógica del lado del cliente."
+            + "");
+        /**/
+        setLocalizedShortDescription(ENGLISH, "application including the user interface and client-side logic");
+        setLocalizedShortDescription(SPANISH, "aplicación que incluye la interfaz de usuario y la lógica del lado del cliente");
+        /**/
         // </editor-fold>
     }
 

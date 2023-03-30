@@ -105,6 +105,10 @@ public class Usuario extends AbstractPersistentEntity {
     @PropertyField(create = Kleenean.FALSE, update = Kleenean.FALSE)
     public TimestampProperty fechaHoraRegistro;
 
+    @ColumnField(nullable = Kleenean.TRUE)
+    @PropertyField(create = Kleenean.FALSE, update = Kleenean.FALSE)
+    public TimestampProperty fechaHoraSincronizacion;
+
     @SegmentProperty
     @EntityReferenceSearch(searchType = SearchType.LIST, listStyle = ListStyle.CHARACTER_KEY_AND_NAME, displayMode = DisplayMode.WRITING)
     @ForeignKey(onDelete = OnDeleteAction.NONE, onUpdate = OnUpdateAction.NONE)
@@ -122,6 +126,17 @@ public class Usuario extends AbstractPersistentEntity {
         setLocalizedLabel(SPANISH, "usuario");
         setLocalizedCollectionLabel(ENGLISH, "Users");
         setLocalizedCollectionLabel(SPANISH, "Usuarios");
+        /**/
+        setLocalizedDescription(ENGLISH, "Each instance of " + b("Users") + " represents an "
+            + "application user."
+            + "");
+        setLocalizedDescription(SPANISH, "Cada instancia de " + b("Usuarios") + " representa un "
+            + "usuario de la aplicación."
+            + "");
+        /**/
+        setLocalizedShortDescription(ENGLISH, "application user");
+        setLocalizedShortDescription(SPANISH, "usuario de la aplicación");
+        /**/
         // </editor-fold>
     }
 
@@ -235,6 +250,13 @@ public class Usuario extends AbstractPersistentEntity {
         fechaHoraRegistro.setLocalizedShortLabel(SPANISH, "fecha/hora registro");
         fechaHoraRegistro.setLocalizedDescription(ENGLISH, "automatic registration timestamp");
         fechaHoraRegistro.setLocalizedDescription(SPANISH, "fecha/hora de registro automático");
+        /**/
+        fechaHoraSincronizacion.setLocalizedLabel(ENGLISH, "last synchronization timestamp");
+        fechaHoraSincronizacion.setLocalizedLabel(SPANISH, "fecha/hora última sincronización");
+        fechaHoraSincronizacion.setLocalizedShortLabel(ENGLISH, "synchronization timestamp");
+        fechaHoraSincronizacion.setLocalizedShortLabel(SPANISH, "fecha/hora sincronización");
+        fechaHoraSincronizacion.setLocalizedDescription(ENGLISH, "timestamp of last synchronization");
+        fechaHoraSincronizacion.setLocalizedDescription(SPANISH, "fecha/hora de la última sincronización");
         /**/
         grupo.setLocalizedLabel(ENGLISH, "user group");
         grupo.setLocalizedLabel(SPANISH, "grupo de usuarios");

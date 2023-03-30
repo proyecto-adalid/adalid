@@ -330,10 +330,19 @@ public class TareaUsuarioCorreo extends AbstractPersistentEntity {
         // <editor-fold defaultstate="collapsed" desc="localization of TareaUsuarioCorreo's attributes">
         setLocalizedLabel(ENGLISH, "task mail");
         setLocalizedLabel(SPANISH, "correo de tarea");
-        setLocalizedCollectionLabel(ENGLISH, "Tasks mail");
-        setLocalizedCollectionLabel(SPANISH, "Correos de tareas");
-        setLocalizedDescription(ENGLISH, "task notification mail");
-        setLocalizedDescription(SPANISH, "correo de notificación de tarea");
+        setLocalizedCollectionLabel(ENGLISH, "Task Mails");
+        setLocalizedCollectionLabel(SPANISH, "Correos de Tareas");
+        /**/
+        setLocalizedDescription(ENGLISH, "Each instance of " + b("Task Mails") + " represents a "
+            + "task notification e-mail."
+            + "");
+        setLocalizedDescription(SPANISH, "Cada instancia de " + b("Correos de Tareas") + " representa un "
+            + "correo electrónico de notificación de tarea."
+            + "");
+        /**/
+        setLocalizedShortDescription(ENGLISH, "task notification e-mail");
+        setLocalizedShortDescription(SPANISH, "correo electrónico de notificación de tarea");
+        /**/
         // </editor-fold>
     }
 

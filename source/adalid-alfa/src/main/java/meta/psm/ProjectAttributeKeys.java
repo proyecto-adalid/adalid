@@ -222,6 +222,11 @@ public class ProjectAttributeKeys {
     public static final String RPH_NO_RIGHT_IMAGE = "rph_no_right_image";
 
     /**
+     * URL del documento de ayuda o de la página que contiene la documentación de la aplicación generada.
+     */
+    public static final String HELP_DOCUMENT_URL = "help_document_url";
+
+    /**
      * Ruta del subdirectorio del módulo Web de la aplicación generada en donde se deben almacenar los archivos de ayuda para que la interfaz gráfica
      * los pueda presentar al usuario. La ruta debe ser relativa al directorio src/main/webapp del módulo Web de la aplicación. El valor
      * predeterminado es <b>resources/help/custom-made</b>.

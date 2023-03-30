@@ -12,6 +12,8 @@
  */
 package adalid.commons;
 
+import org.apache.maven.artifact.versioning.ArtifactVersion;
+
 /**
  * @author Jorge Campins
  */
@@ -30,5 +32,9 @@ public interface ProjectObjectModelReader {
     String getProjectVersionNumber();
 
     String getProjectVersionString();
+
+    ArtifactVersion getArtifactVersion();
+
+    void logProjectVersion();
 
 }

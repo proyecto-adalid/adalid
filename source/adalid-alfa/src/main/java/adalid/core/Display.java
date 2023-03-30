@@ -22,6 +22,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -522,6 +523,11 @@ public abstract class Display extends AbstractArtifact implements Comparable<Dis
      */
     public abstract List<? extends DisplayField> getMasterHeadingFields();
 
+    /**
+     * @return the list of entities referenced by fields
+     */
+    public abstract Set<Entity> getEntitiesReferencedByFields();
+
     private final ByPropertyDisplaySortKey byPropertyDisplaySortKey = new ByPropertyDisplaySortKey();
 
     class ByPropertyDisplaySortKey implements Comparator<DisplayField> {
@@ -667,6 +673,38 @@ public abstract class Display extends AbstractArtifact implements Comparable<Dis
             }
         }
         return new ArrayList<>();
+    }
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="predicates">
+    public boolean isApplicationDefaultLocation() {
+        Entity entity = getEntity();
+        Entity master = getMaster();
+        return (entity != null && entity.isApplicationDefaultLocation())
+            && (entity.isBasicOperationEntity() || master == null || master.isApplicationDefaultLocation());
+    }
+
+    public boolean isChildViewDisplay() {
+        Entity entity = getEntity();
+        Entity master = getMaster();
+        EntityReference reference = getReference();
+        DisplayFormat displayFormat = getDisplayFormat();
+        return entity != null && master != null && reference != null
+            && entity.isApplicationDefaultLocation()
+            && master.isApplicationDefaultLocation()
+            && ((reference.isOneToOne() && DisplayFormat.DETAIL.equals(displayFormat))
+            || (reference.isManyToOne() && DisplayFormat.TABLE.equals(displayFormat)));
+    }
+
+    public boolean isCollateralViewDisplay() {
+        Entity entity = getEntity();
+        Entity master = getMaster();
+        EntityReference reference = getReference();
+        DisplayFormat displayFormat = getDisplayFormat();
+        return entity != null && master != null && reference != null
+            && entity.isApplicationDefaultLocation()
+            && master.isApplicationDefaultLocation()
+            && DisplayFormat.TABLE.equals(displayFormat);
     }
     // </editor-fold>
 

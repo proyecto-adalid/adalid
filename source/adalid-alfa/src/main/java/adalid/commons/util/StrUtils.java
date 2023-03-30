@@ -1279,6 +1279,8 @@ public class StrUtils {
     }
 
     public static String encode(String string) {
+        // <editor-fold defaultstate="collapsed" desc="until 25/02/2023">
+        /*
         if (string == null) {
             return null;
         }
@@ -1287,9 +1289,14 @@ public class StrUtils {
         } catch (UnsupportedEncodingException e) {
             return string;
         }
+        /**/
+        // </editor-fold>
+        return string == null ? null : URLEncoder.encode(string, StandardCharsets.UTF_8);
     }
 
     public static String decode(String string) {
+        // <editor-fold defaultstate="collapsed" desc="until 25/02/2023">
+        /*
         if (string == null) {
             return null;
         }
@@ -1298,6 +1305,9 @@ public class StrUtils {
         } catch (UnsupportedEncodingException e) {
             return string;
         }
+        /**/
+        // </editor-fold>
+        return string == null ? null : URLDecoder.decode(string, StandardCharsets.UTF_8);
     }
 
     public static String getCamelCase(String string) {

@@ -13,7 +13,6 @@
 package adalid.core.predicates;
 
 import adalid.core.*;
-import adalid.core.enums.*;
 import org.apache.commons.collections.Predicate;
 
 /**
@@ -25,10 +24,7 @@ public class IsChildViewDisplay implements Predicate {
     public boolean evaluate(Object object) {
         if (object instanceof Display) {
             Display display = (Display) object;
-            if (display.getEntity() != null && display.getReference() != null && display.getMaster() != null) {
-                return (display.getReference().isOneToOne() && DisplayFormat.DETAIL.equals(display.getDisplayFormat()))
-                    || (display.getReference().isManyToOne() && DisplayFormat.TABLE.equals(display.getDisplayFormat()));
-            }
+            return display.isChildViewDisplay();
         }
         return false;
     }

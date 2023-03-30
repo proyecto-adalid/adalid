@@ -14,15 +14,19 @@ package adalid.jee2;
 
 import adalid.commons.bundles.Bundle;
 import adalid.commons.util.StrUtils;
+import adalid.core.Constants;
 import java.util.LinkedHashMap;
 import java.util.Locale;
 import java.util.Map;
 import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
 
 /**
  * @author Jorge Campins
  */
 public class SpecialPage {
+
+    private static final Logger logger = Logger.getLogger(SpecialPage.class);
 
     private static final String CODE = SpecialPage.class.getSimpleName();
 
@@ -34,7 +38,7 @@ public class SpecialPage {
 
     private final String _code, _view;
 
-    private String _helpFileName, _helpFileBookmark, _iconClass;
+    private String _helpDocument, _helpFileName, _helpFileBookmark, _iconClass;
 
     private Long _id;
 
@@ -85,6 +89,28 @@ public class SpecialPage {
 
     public boolean isInternalView() {
         return _view.startsWith("/");
+    }
+
+    /**
+     * @return the help document
+     */
+    public String getHelpDocument() {
+        return _helpDocument;
+    }
+
+    /**
+     * El método setHelpDocument se utiliza para establecer el documento incrustado de ayuda de la página.
+     *
+     * @param document definición del documento incrustado de ayuda de la página; si utiliza la plataforma jee2, puede ser una URL o un
+     * <b>iframe</b> que incluya la URL del documento.
+     */
+    public void setHelpDocument(String document) {
+        if (document != null && document.matches(Constants.EMBEDDED_DOCUMENT_REGEX)) {
+            _helpDocument = document;
+        } else {
+            _helpDocument = null;
+            logger.warn("\"" + document + "\" is not a valid help document; " + _code + " help document has been annulled ");
+        }
     }
 
     /**

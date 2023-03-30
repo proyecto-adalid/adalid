@@ -109,8 +109,17 @@ public class ConjuntoSegmento extends AbstractPersistentEntity {
         setLocalizedCollectionLabel(SPANISH, "Conjuntos de Segmentos");
         setLocalizedCollectionShortLabel(ENGLISH, "Segment Sets");
         setLocalizedCollectionShortLabel(SPANISH, "Conjuntos");
-        setLocalizedDescription(ENGLISH, "segment set of a resource class; typically represents a set of rows of a table in the database");
-        setLocalizedDescription(SPANISH, "conjunto de segmentos de una clase de recursos; normalmente representa un conjunto de filas de una tabla en la base de datos");
+        /**/
+        setLocalizedDescription(ENGLISH, "Each instance of " + b("Segment Sets") + " represents a "
+            + "set of instances of a resource class, which typically corresponds to a set of rows of a table in the database."
+            + "");
+        setLocalizedDescription(SPANISH, "Cada instancia de " + b("Conjuntos de Segmentos") + " representa un "
+            + "conjunto de instancias de una clase de recursos, lo cual normalmente corresponde a un conjunto de filas de una tabla en la base de datos."
+            + "");
+        /**/
+        setLocalizedShortDescription(ENGLISH, "set of instances of a resource class, which typically corresponds to a set of rows of a table in the database");
+        setLocalizedShortDescription(SPANISH, "conjunto de instancias de una clase de recursos, lo cual normalmente corresponde a un conjunto de filas de una tabla en la base de datos");
+        /**/
         // </editor-fold>
     }
 

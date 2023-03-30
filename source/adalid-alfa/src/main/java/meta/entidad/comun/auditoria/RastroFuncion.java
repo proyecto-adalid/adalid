@@ -175,8 +175,17 @@ public class RastroFuncion extends AbstractPersistentEntity {
         setLocalizedCollectionLabel(SPANISH, "Rastros de Auditoría de Funciones");
         setLocalizedCollectionShortLabel(ENGLISH, "Function Trails");
         setLocalizedCollectionShortLabel(SPANISH, "Rastros de Funciones");
-        setLocalizedDescription(ENGLISH, "audit trail of the execution of CRUD operations and business processes");
-        setLocalizedDescription(SPANISH, "rastro de auditoría de la ejecución de operaciones de registro y procesos de negocio");
+        /**/
+        setLocalizedDescription(ENGLISH, "Each instance of " + b("Function Audit Trails") + " represents an "
+            + "audit trail of the execution of CRUD operations and business processes."
+            + "");
+        setLocalizedDescription(SPANISH, "Cada instancia de " + b("Rastros de Auditoría de Funciones") + " representa un "
+            + "rastro de auditoría de la ejecución de operaciones de registro y procesos de negocio."
+            + "");
+        /**/
+        setLocalizedShortDescription(ENGLISH, "audit trail of the execution of CRUD operations and business processes");
+        setLocalizedShortDescription(SPANISH, "rastro de auditoría de la ejecución de operaciones de registro y procesos de negocio");
+        /**/
         // </editor-fold>
     }
 

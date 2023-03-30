@@ -31,6 +31,7 @@ import meta.entidad.comun.configuracion.basica.ClaseRecurso;
 import meta.entidad.comun.configuracion.basica.CondicionEjeFun;
 import meta.entidad.comun.configuracion.basica.Dominio;
 import meta.entidad.comun.configuracion.basica.DominioParametro;
+import meta.entidad.comun.configuracion.basica.FormatoPaginaInforme;
 import meta.entidad.comun.configuracion.basica.Funcion;
 import meta.entidad.comun.configuracion.basica.FuncionParametro;
 import meta.entidad.comun.configuracion.basica.GrupoProceso;
@@ -72,6 +73,7 @@ import meta.entidad.comun.control.acceso.RolPaginaEspecial;
 import meta.entidad.comun.control.acceso.RolUsuario;
 import meta.entidad.comun.control.acceso.RolVistaFuncion;
 import meta.entidad.comun.control.acceso.Segmento;
+import meta.entidad.comun.control.acceso.TipoRestriccionFormatos;
 import meta.entidad.comun.control.acceso.TipoRol;
 import meta.entidad.comun.control.acceso.Usuario;
 import meta.entidad.comun.control.acceso.UsuarioFuncion;
@@ -98,7 +100,9 @@ import meta.entidad.comun.control.prueba.ProgramaPrueba;
 import meta.entidad.comun.control.prueba.TipoDocumentoPrueba;
 import meta.entidad.comun.control.prueba.TipoPiezaPrueba;
 import meta.entidad.comun.control.prueba.TipoResultadoPrueba;
+import meta.entidad.comun.operacion.basica.CampoValorTemporal;
 import meta.entidad.comun.operacion.basica.CondicionTarea;
+import meta.entidad.comun.operacion.basica.DialogoDinamicoRemoto;
 import meta.entidad.comun.operacion.basica.FiltroFuncion;
 import meta.entidad.comun.operacion.basica.FiltroFuncionPar;
 import meta.entidad.comun.operacion.basica.OperadorCom;
@@ -108,6 +112,7 @@ import meta.entidad.comun.operacion.basica.TareaUsuario;
 import meta.entidad.comun.operacion.basica.TareaUsuarioCorreo;
 import meta.entidad.comun.operacion.basica.TareaVirtual;
 import meta.entidad.comun.operacion.basica.TipoAgregacion;
+import meta.entidad.comun.operacion.basica.TipoValorCriterio;
 import meta.entidad.comun.operacion.basica.TransicionTareaUsuario;
 import meta.entidad.comun.operacion.basica.VistaFuncion;
 import meta.entidad.comun.operacion.basica.VistaFuncionCol;
@@ -213,6 +218,7 @@ public class EntidadesComunes extends Project implements SpecialEntityPack {
         System.out.println(Aplicacion);
         System.out.println(ArchivoAdjunto);
         System.out.println(AtributoAplicacion);
+        System.out.println(CampoValorTemporal);
         System.out.println(CasoPrueba);
         System.out.println(ClaseJava);
         System.out.println(ClaseRecurso);
@@ -227,6 +233,7 @@ public class EntidadesComunes extends Project implements SpecialEntityPack {
         System.out.println(DocumentoPruebaX4);
         System.out.println(DocumentoPruebaX5);
         System.out.println(DocumentoPruebaX6);
+        System.out.println(DialogoDinamicoRemoto);
         System.out.println(Dominio);
         System.out.println(DominioParametro);
         System.out.println(EjecucionLineaPrueba);
@@ -235,6 +242,7 @@ public class EntidadesComunes extends Project implements SpecialEntityPack {
         System.out.println(EscenarioPrueba);
         System.out.println(FiltroFuncion);
         System.out.println(FiltroFuncionPar);
+        System.out.println(FormatoPaginaInforme);
         System.out.println(Funcion);
         System.out.println(FuncionParametro);
         System.out.println(GrupoProceso);
@@ -292,9 +300,11 @@ public class EntidadesComunes extends Project implements SpecialEntityPack {
         System.out.println(TipoPiezaPrueba);
         System.out.println(TipoRastroFun);
         System.out.println(TipoRecurso);
+        System.out.println(TipoRestriccionFormatos);
         System.out.println(TipoResultadoPrueba);
         System.out.println(TipoRol);
         System.out.println(TipoValor);
+        System.out.println(TipoValorCriterio);
         System.out.println(TransicionTareaUsuario);
         System.out.println(Usuario);
         System.out.println(UsuarioFuncion);
@@ -302,7 +312,7 @@ public class EntidadesComunes extends Project implements SpecialEntityPack {
         System.out.println(UsuarioSegmento);
         System.out.println(VersionAdalid);
         System.out.println(VistaFuncion);
-        System.out.println(VistaFuncionPar);
+        System.out.println(VistaFuncionCol);
     }
     // </editor-fold>
 
@@ -315,6 +325,8 @@ public class EntidadesComunes extends Project implements SpecialEntityPack {
     ArchivoAdjunto ArchivoAdjunto;
 
     AtributoAplicacion AtributoAplicacion;
+
+    CampoValorTemporal CampoValorTemporal;
 
     CasoPrueba CasoPrueba;
 
@@ -344,6 +356,8 @@ public class EntidadesComunes extends Project implements SpecialEntityPack {
 
     DocumentoPruebaX6 DocumentoPruebaX6;
 
+    DialogoDinamicoRemoto DialogoDinamicoRemoto;
+
     Dominio Dominio;
 
     DominioParametro DominioParametro;
@@ -359,6 +373,8 @@ public class EntidadesComunes extends Project implements SpecialEntityPack {
     FiltroFuncion FiltroFuncion;
 
     FiltroFuncionPar FiltroFuncionPar;
+
+    FormatoPaginaInforme FormatoPaginaInforme;
 
     Funcion Funcion;
 
@@ -474,11 +490,15 @@ public class EntidadesComunes extends Project implements SpecialEntityPack {
 
     TipoRecurso TipoRecurso;
 
+    TipoRestriccionFormatos TipoRestriccionFormatos;
+
     TipoResultadoPrueba TipoResultadoPrueba;
 
     TipoRol TipoRol;
 
     TipoValor TipoValor;
+
+    TipoValorCriterio TipoValorCriterio;
 
     TransicionTareaUsuario TransicionTareaUsuario;
 
@@ -494,6 +514,6 @@ public class EntidadesComunes extends Project implements SpecialEntityPack {
 
     VistaFuncion VistaFuncion;
 
-    VistaFuncionCol VistaFuncionPar;
+    VistaFuncionCol VistaFuncionCol;
 
 }

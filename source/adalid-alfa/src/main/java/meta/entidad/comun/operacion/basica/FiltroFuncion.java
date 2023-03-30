@@ -117,8 +117,17 @@ public class FiltroFuncion extends AbstractPersistentEntity {
         setLocalizedCollectionLabel(SPANISH, "Filtros de Búsqueda");
         setLocalizedCollectionShortLabel(ENGLISH, "Filters");
         setLocalizedCollectionShortLabel(SPANISH, "Filtros");
-        setLocalizedDescription(ENGLISH, "query filter defined by the end user");
-        setLocalizedDescription(SPANISH, "filtro de búsqueda definido por el usuario final");
+        /**/
+        setLocalizedDescription(ENGLISH, "Each instance of " + b("Query Filters") + " represents a "
+            + "query filter defined by the user."
+            + "");
+        setLocalizedDescription(SPANISH, "Cada instancia de " + b("Filtros de Búsqueda") + " representa un "
+            + "filtro de búsqueda definido por el usuario."
+            + "");
+        /**/
+        setLocalizedShortDescription(ENGLISH, "query filter defined by the user");
+        setLocalizedShortDescription(SPANISH, "filtro de búsqueda definido por el usuario");
+        /**/
         // </editor-fold>
     }
 

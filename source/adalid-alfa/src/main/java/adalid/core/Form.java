@@ -13,7 +13,9 @@
 package adalid.core;
 
 import adalid.core.enums.*;
+import adalid.core.interfaces.Entity;
 import java.util.List;
+import java.util.Set;
 
 /**
  * @author Jorge Campins
@@ -42,6 +44,14 @@ public class Form extends Display {
      */
     @Override
     public List<FormField> getMasterHeadingFields() {
+        return null;
+    }
+
+    /**
+     * @return the list of entities referenced by fields
+     */
+    @Override
+    public Set<Entity> getEntitiesReferencedByFields() {
         return null;
     }
 

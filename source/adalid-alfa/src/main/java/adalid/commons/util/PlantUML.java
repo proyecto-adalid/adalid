@@ -14,6 +14,7 @@ package adalid.commons.util;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import net.sourceforge.plantuml.GeneratedImage;
 import net.sourceforge.plantuml.SourceFileReader;
@@ -27,8 +28,11 @@ public class PlantUML {
     private static final Logger logger = Logger.getLogger(PlantUML.class);
 
     public static File generateImage(File file) {
+        if (file == null) {
+            return null;
+        }
         try {
-            SourceFileReader reader = new SourceFileReader(file);
+            SourceFileReader reader = new SourceFileReader(file, file.getAbsoluteFile().getParentFile(), StandardCharsets.UTF_8.name());
             List<GeneratedImage> list = reader.getGeneratedImages();
             if (list != null && !list.isEmpty()) {
                 return list.get(0).getPngFile();

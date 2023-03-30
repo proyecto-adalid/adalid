@@ -101,6 +101,17 @@ public class RolFuncionPar extends AbstractPersistentEntity {
         setLocalizedCollectionLabel(SPANISH, rolFuncion, "Parámetros de Funciones por Rol");
         setLocalizedCollectionShortLabel(ENGLISH, rolFuncion, "Parameters");
         setLocalizedCollectionShortLabel(SPANISH, rolFuncion, "Parámetros");
+        /**/
+        setLocalizedDescription(ENGLISH, "Each instance of " + b("Role/Function/Parameter Associations") + " represents a "
+            + "parameter of a function associated with an application role."
+            + "");
+        setLocalizedDescription(SPANISH, "Cada instancia de " + b("Asociaciones Rol/Función/Parámetro") + " representa un "
+            + "parámetro de una función asociada con un rol de la aplicación."
+            + "");
+        /**/
+        setLocalizedShortDescription(ENGLISH, "parameter of a function associated with an application role");
+        setLocalizedShortDescription(SPANISH, "parámetro de una función asociada con un rol de la aplicación");
+        /**/
         // </editor-fold>
     }
 

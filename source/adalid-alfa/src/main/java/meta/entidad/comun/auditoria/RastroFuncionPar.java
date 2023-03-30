@@ -135,8 +135,17 @@ public class RastroFuncionPar extends AbstractPersistentEntity {
         setLocalizedCollectionLabel(SPANISH, "Rastros de Auditoría de Parámetros");
         setLocalizedCollectionShortLabel(ENGLISH, "Parameter Trails");
         setLocalizedCollectionShortLabel(SPANISH, "Rastros de Parámetros");
-        setLocalizedDescription(ENGLISH, "audit trail of the parameters of the execution of CRUD operations and business processes");
-        setLocalizedDescription(SPANISH, "rastro de auditoría de los parámetros de la ejecución de operaciones de registro y procesos de negocio");
+        /**/
+        setLocalizedDescription(ENGLISH, "Each instance of " + b("Function Parameter Audit Trails") + " represents an "
+            + "audit trail of the parameters of the execution of CRUD operations and business processes."
+            + "");
+        setLocalizedDescription(SPANISH, "Cada instancia de " + b("Rastros de Auditoría de Parámetros") + " representa un "
+            + "rastro de auditoría de los parámetros de la ejecución de operaciones de registro y procesos de negocio."
+            + "");
+        /**/
+        setLocalizedShortDescription(ENGLISH, "audit trail of the parameters of the execution of CRUD operations and business processes");
+        setLocalizedShortDescription(SPANISH, "rastro de auditoría de los parámetros de la ejecución de operaciones de registro y procesos de negocio");
+        /**/
         // </editor-fold>
     }
 

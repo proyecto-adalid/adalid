@@ -66,6 +66,16 @@ public class UsuarioFuncion extends AbstractPersistentEntity {
         setLocalizedCollectionShortLabel(ENGLISH, usuario, "Functions");
         setLocalizedCollectionShortLabel(SPANISH, usuario, "Funciones");
         /**/
+        setLocalizedDescription(ENGLISH, "Each instance of " + b("User/Function Associations") + " represents a "
+            + "function associated with an application user."
+            + "");
+        setLocalizedDescription(SPANISH, "Cada instancia de " + b("Asociaciones Usuario/Función") + " representa una "
+            + "función asociada con un usuario de la aplicación."
+            + "");
+        /**/
+        setLocalizedShortDescription(ENGLISH, "function associated with an application user");
+        setLocalizedShortDescription(SPANISH, "función asociada con un usuario de la aplicación");
+        /**/
         // </editor-fold>
         /**/
     }

@@ -84,31 +84,31 @@ public abstract class AbstractPersistentEnumerationEntity extends AbstractPersis
                 List<String> labels = new ArrayList<>();
                 Property businessKeyProperty = getBusinessKeyProperty();
                 localeLoop:
-                for (Locale locale : supportedLocales) {
-                    labels.clear();
-                    instanceLoop:
-                    for (Instance instance : instances) {
-                        name = instance.getFullName();
-                        fieldLoop:
-                        for (InstanceField field : instance.getInstanceFieldsList()) {
-                            if (businessKeyProperty.equals(field.getProperty())) {
-                                value = field.getLocalizedValue(locale);
-                                if (value == null) {
-                                    value = StrUtils.getWordyString(instance.getName());
-                                }
-                                if (labels.contains(value)) {
-                                    logger.error(name + " has duplicated business key \"" + value + "\" for locale \"" + locale + "\"");
-                                    Project.increaseParserErrorCount();
-                                } else {
-                                    labels.add(value);
-                                }
-                                continue instanceLoop;
+                    for (Locale locale : supportedLocales) {
+                        labels.clear();
+                        instanceLoop:
+                            for (Instance instance : instances) {
+                                name = instance.getFullName();
+                                fieldLoop:
+                                    for (InstanceField field : instance.getInstanceFieldsList()) {
+                                        if (businessKeyProperty.equals(field.getProperty())) {
+                                            value = field.getLocalizedValue(locale);
+                                            if (value == null) {
+                                                value = StrUtils.getWordyString(instance.getName());
+                                            }
+                                            if (labels.contains(value)) {
+                                                logger.error(name + " has duplicated business key \"" + value + "\" for locale \"" + locale + "\"");
+                                                Project.increaseParserErrorCount();
+                                            } else {
+                                                labels.add(value);
+                                            }
+                                            continue instanceLoop;
+                                        }
+                                    }
+                                logger.error(name + " has no business key value for locale \"" + locale + "\"");
+                                Project.increaseParserErrorCount();
                             }
-                        }
-                        logger.error(name + " has no business key value for locale \"" + locale + "\"");
-                        Project.increaseParserErrorCount();
                     }
-                }
             }
             // tagging since 22/08/2022
             _customTagging = true;

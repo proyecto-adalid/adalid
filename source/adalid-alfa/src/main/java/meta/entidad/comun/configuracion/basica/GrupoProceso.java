@@ -106,6 +106,17 @@ public class GrupoProceso extends AbstractPersistentEntity {
         setLocalizedCollectionLabel(SPANISH, "Grupos de Procesos");
         setLocalizedCollectionShortLabel(ENGLISH, "Groups");
         setLocalizedCollectionShortLabel(SPANISH, "Grupos");
+        /**/
+        setLocalizedDescription(ENGLISH, "Each instance of " + b("Process Groups") + " represents an "
+            + "application process group."
+            + "");
+        setLocalizedDescription(SPANISH, "Cada instancia de " + b("Grupos de Procesos") + " representa un "
+            + "grupo de procesos de la aplicación."
+            + "");
+        /**/
+        setLocalizedShortDescription(ENGLISH, "application process group");
+        setLocalizedShortDescription(SPANISH, "grupo de procesos de la aplicación");
+        /**/
         // </editor-fold>
     }
 

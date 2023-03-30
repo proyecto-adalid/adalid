@@ -83,6 +83,17 @@ public class RolUsuario extends AbstractPersistentEntity {
         setLocalizedCollectionLabel(SPANISH, usuario, "Roles por Usuario");
         setLocalizedCollectionShortLabel(ENGLISH, usuario, "Roles");
         setLocalizedCollectionShortLabel(SPANISH, usuario, "Roles");
+        /**/
+        setLocalizedDescription(ENGLISH, "Each instance of " + b("Role/User Associations") + " represents a "
+            + "user associated with an application role."
+            + "");
+        setLocalizedDescription(SPANISH, "Cada instancia de " + b("Asociaciones Rol/Usuario") + " representa un "
+            + "usuario asociado con un rol de la aplicación."
+            + "");
+        /**/
+        setLocalizedShortDescription(ENGLISH, "user associated with an application role");
+        setLocalizedShortDescription(SPANISH, "usuario asociado con un rol de la aplicación");
+        /**/
         // </editor-fold>
     }
 

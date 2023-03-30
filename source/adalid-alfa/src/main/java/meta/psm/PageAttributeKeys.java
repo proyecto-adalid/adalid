@@ -25,7 +25,7 @@ public class PageAttributeKeys {
 
     public static final String HELP_PAGE_TEXT = "help.page.text";
 
-    public static final String HREF = "href";
+    public static final String HREF = adalid.core.Page.HREF;
 
     public static final String STRICTLY_PERSONALIZED_READING = "strictly.personalized.reading";
 

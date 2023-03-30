@@ -12,9 +12,15 @@
  */
 package adalid.core.jee;
 
+import adalid.commons.util.*;
 import adalid.core.*;
+import adalid.core.interfaces.*;
+import adalid.core.predicates.*;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * @author Jorge Campins
@@ -27,6 +33,10 @@ public class ConsoleJavaServerPage extends JavaServerPage {
 
     private List<PageField> _fields;
 
+    private List<PageField> _masterFields;
+
+    private Set<Entity> _entitiesReferencedByFields;
+
     /**
      * @return the fields list
      */
@@ -36,6 +46,42 @@ public class ConsoleJavaServerPage extends JavaServerPage {
             _fields = new ArrayList<>();
         }
         return _fields;
+    }
+
+    /**
+     * @return the fields list
+     */
+    @Override
+    public List<PageField> getMasterHeadingFields() {
+        if (_masterFields == null) {
+            _masterFields = new ArrayList<>();
+        }
+        return _masterFields;
+    }
+
+    /**
+     * @return the list of entities referenced by fields
+     */
+    @Override
+    public Set<Entity> getEntitiesReferencedByFields() {
+        if (_entitiesReferencedByFields == null) {
+            _entitiesReferencedByFields = new LinkedHashSet<>();
+            Entity entity = getEntity();
+            if (entity != null) {
+                Collection<Operation> operations = ColUtils.filter(entity.getBusinessOperationsList(), new IsAccesibleOperation());
+                if (operations != null && !operations.isEmpty()) {
+                    for (Operation operation : operations) {
+                        for (Parameter parameter : operation.getParametersList()) {
+                            if (parameter instanceof Entity) {
+                                _entitiesReferencedByFields.add((Entity) parameter);
+                            }
+                        }
+
+                    }
+                }
+            }
+        }
+        return _entitiesReferencedByFields;
     }
 
 }

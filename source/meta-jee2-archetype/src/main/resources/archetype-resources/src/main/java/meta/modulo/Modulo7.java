@@ -19,10 +19,12 @@ public class Modulo7 extends adalid.core.Project {
         super.settleAttributes();
         /**/
         setLocalizedLabel(SPANISH, "Módulo 7");
-        setLocalizedDescription(SPANISH, "Módulo 7");
+        setLocalizedDescription(SPANISH, "Descripción del Módulo 7");
+        setLocalizedShortDescription(SPANISH, "Descripción corta del Módulo 7");
         /**/
         setLocalizedLabel(ENGLISH, "Module 7");
-        setLocalizedDescription(ENGLISH, "Module 7");
+        setLocalizedDescription(ENGLISH, "Module 7 description");
+        setLocalizedShortDescription(ENGLISH, "Module 7 short description");
         /**/
     }
 

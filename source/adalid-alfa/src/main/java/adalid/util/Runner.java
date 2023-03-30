@@ -36,10 +36,17 @@ public class Runner extends Utility {
     private static final ResourceBundle RB = ResourceBundle.getBundle(Runner.class.getCanonicalName());
 
     public static void run(Class<? extends Runner> mainRunner) {
+        Runner runner = new Runner();
+        runner.sprint(mainRunner);
+    }
+
+    private void sprint(Class<? extends Runner> mainRunner) {
+        long millis = System.currentTimeMillis();
+        logger.warn(starting(mainRunner));
         String runner = mainRunner.getCanonicalName();
-        logger.info("runner=" + runner);
+//      logger.info("runner=" + runner);
         String prefix = StringUtils.substringBeforeLast(mainRunner.getPackageName(), ".");
-        logger.info("prefix=" + prefix);
+//      logger.info("prefix=" + prefix);
         String exclude = "." + (WINDOWS ? "linux" : "windows") + ".";
 //      logger.info("exclude=" + exclude);
 //      String include = "." + (WINDOWS ? "windows" : "linux") + ".";
@@ -62,26 +69,27 @@ public class Runner extends Utility {
         if (names != null && !names.isEmpty()) {
             execute(showInputDialog(names));
         }
+        logger.warn(finished(mainRunner, millis));
     }
 
-    private static boolean runnableProject(Object o) {
+    private boolean runnableProject(Object o) {
         Class<?> c = o instanceof Class ? (Class<?>) o : null;
         MasterProject a = c == null ? null : c.getAnnotation(MasterProject.class);
         return a != null && a.runnable();
     }
 
-    private static boolean runnableUtility(Object o) {
+    private boolean runnableUtility(Object o) {
         Class<?> c = o instanceof Class ? (Class<?>) o : null;
         RunnableClass a = c == null ? null : c.getAnnotation(RunnableClass.class);
         return a != null && a.value();
     }
 
-    private static boolean fairName(Object o, String prefix, String infix, String runner) {
+    private boolean fairName(Object o, String prefix, String infix, String runner) {
         String name = o == null ? null : o.toString();
         return name != null && name.startsWith(prefix) && !name.contains(infix) && !name.equals(runner);
     }
 
-    private static String showInputDialog(Collection<String> names) {
+    private String showInputDialog(Collection<String> names) {
 //      final Component parent = null;
         final Object message = "Clase";
         final String title = "Seleccione la clase que desea ejecutar";
@@ -93,13 +101,13 @@ public class Runner extends Utility {
         return value == null ? null : value.toString();
     }
 
-    private static final String LAST_EXECUTED = "${lastExecutedProject}";
+    private final String LAST_EXECUTED = "${lastExecutedProject}";
 
-    private static final String EXECUTE_MESSAGE = "\n\n¿Desea ejecutar la clase?";
+    private final String EXECUTE_MESSAGE = "\n\n¿Desea ejecutar la clase?";
 
-    private static final String EXECUTE_TITLE = "Ejecutar ";
+    private final String EXECUTE_TITLE = "Ejecutar ";
 
-    private static void execute(String name) {
+    private void execute(String name) {
         if (name == null || name.isEmpty()) {
             return;
         }
@@ -117,7 +125,10 @@ public class Runner extends Utility {
                 Class<?> clazz = (Class<?>) Class.forName(name);
                 Method method = clazz.getMethod("main", String[].class);
                 String[] args = null;
+                long millis = System.currentTimeMillis();
+                logger.warn(starting(clazz));
                 method.invoke(null, (Object) args);
+                logger.warn(finished(clazz, millis));
                 updateProjectBuilderDictionary(clazz);
             } catch (ClassNotFoundException | NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException ex) {
                 logger.fatal(ThrowableUtils.getString(ex));
@@ -125,7 +136,7 @@ public class Runner extends Utility {
         }
     }
 
-    private static String getString(String key) {
+    private String getString(String key) {
         try {
             String string = RB.getString(key);
             return StringUtils.trimToNull(string);
@@ -134,7 +145,7 @@ public class Runner extends Utility {
         }
     }
 
-    private static String split(String string) {
+    private String split(String string) {
         return StrUtils.separateLines(string, 70, "\n", true);
     }
 

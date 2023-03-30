@@ -58,8 +58,17 @@ public class Segmento extends AbstractPersistentEntity {
         setLocalizedLabel(SPANISH, "segmento");
         setLocalizedCollectionLabel(ENGLISH, "Segments");
         setLocalizedCollectionLabel(SPANISH, "Segmentos");
-        setLocalizedDescription(ENGLISH, "reference to a row of a table in the database");
-        setLocalizedDescription(SPANISH, "referencia a una fila de una tabla en la base de datos");
+        /**/
+        setLocalizedDescription(ENGLISH, "Each instance of " + b("Segments") + " represents a "
+            + "reference to a row of a table in the database."
+            + "");
+        setLocalizedDescription(SPANISH, "Cada instancia de " + b("Segmentos") + " representa una "
+            + "referencia a una fila de una tabla en la base de datos."
+            + "");
+        /**/
+        setLocalizedShortDescription(ENGLISH, "reference to a row of a table in the database");
+        setLocalizedShortDescription(SPANISH, "referencia a una fila de una tabla en la base de datos");
+        /**/
         // </editor-fold>
     }
 

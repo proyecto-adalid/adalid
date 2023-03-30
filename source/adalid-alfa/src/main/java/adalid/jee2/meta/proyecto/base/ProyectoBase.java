@@ -389,7 +389,7 @@ public class ProyectoBase extends Project implements SubjectProject, SpecialEnti
                             dominio += ", " + getEntityNumber(extension);
                         }
                     }
-                    CondicionTarea condicion = getTypifiedEntity(CondicionTarea.class);
+                    CondicionTarea condicion = getTypedEntity(CondicionTarea.class);
                     List<NativeQuerySegment> list = new ArrayList<>();
                     list.add(selectRecursosConTareasAsignadas(np, usuario, dominio, condicion));
                     list.add(selectRecursosConTareasPendientes(np, usuario, dominio, condicion));

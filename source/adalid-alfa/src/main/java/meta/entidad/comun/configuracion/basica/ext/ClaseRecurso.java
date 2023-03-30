@@ -79,25 +79,6 @@ public class ClaseRecurso extends meta.entidad.comun.configuracion.basica.ClaseR
     public ClaseRecurso claseRecursoBase;
 
     @Override
-    protected void settleAttributes() {
-        super.settleAttributes();
-        setOrderBy(codigoClaseRecurso);
-//      setSchema(ProyectoBase.getEsquemaEntidadesComunes());
-        // <editor-fold defaultstate="collapsed" desc="localization of ClaseRecurso's attributes">
-        setLocalizedLabel(ENGLISH, "resource class");
-        setLocalizedLabel(SPANISH, "clase de recurso");
-        setLocalizedShortLabel(ENGLISH, "class");
-        setLocalizedShortLabel(SPANISH, "clase");
-        setLocalizedCollectionLabel(ENGLISH, "Resource Classes");
-        setLocalizedCollectionLabel(SPANISH, "Clases de Recurso");
-        setLocalizedCollectionShortLabel(ENGLISH, "Classes");
-        setLocalizedCollectionShortLabel(SPANISH, "Clases");
-        setLocalizedDescription(ENGLISH, "persistence domain object that typically represents a table in the database");
-        setLocalizedDescription(SPANISH, "objeto de dominio de persistencia que normalmente representa una tabla en la base de datos");
-        // </editor-fold>
-    }
-
-    @Override
     protected void settleProperties() {
         super.settleProperties();
         /**/

@@ -743,6 +743,11 @@ public interface Entity extends Comparable<Entity>, DataArtifact, EntityReferenc
     boolean isSelectEnabled();
 
     /**
+     * @param enabled the select enabled indicator to set
+     */
+    void setSelectEnabled(boolean enabled);
+
+    /**
      * @return the select operation access mode
      */
     OperationAccess isSelectOperationAccess();
@@ -773,6 +778,11 @@ public interface Entity extends Comparable<Entity>, DataArtifact, EntityReferenc
     boolean isInsertEnabled();
 
     /**
+     * @param enabled the insert enabled indicator to set
+     */
+    void setInsertEnabled(boolean enabled);
+
+    /**
      * @return the insert confirmation required indicator
      */
     boolean isInsertConfirmationRequired();
@@ -791,6 +801,11 @@ public interface Entity extends Comparable<Entity>, DataArtifact, EntityReferenc
      * @return the update allowed indicator
      */
     boolean isUpdateEnabled();
+
+    /**
+     * @param enabled the update enabled indicator to set
+     */
+    void setUpdateEnabled(boolean enabled);
 
     /**
      * @return the update confirmation required indicator
@@ -813,6 +828,11 @@ public interface Entity extends Comparable<Entity>, DataArtifact, EntityReferenc
     boolean isDeleteEnabled();
 
     /**
+     * @param enabled the delete enabled indicator to set
+     */
+    void setDeleteEnabled(boolean enabled);
+
+    /**
      * @return the delete confirmation required indicator
      */
     boolean isDeleteConfirmationRequired();
@@ -833,6 +853,11 @@ public interface Entity extends Comparable<Entity>, DataArtifact, EntityReferenc
     boolean isReportEnabled();
 
     /**
+     * @param enabled the report enabled indicator to set
+     */
+    void setReportEnabled(boolean enabled);
+
+    /**
      * @return the report rows limit
      */
     int getReportRowsLimit();
@@ -846,6 +871,11 @@ public interface Entity extends Comparable<Entity>, DataArtifact, EntityReferenc
      * @return the export allowed indicator
      */
     boolean isExportEnabled();
+
+    /**
+     * @param enabled the export enabled indicator to set
+     */
+    void setExportEnabled(boolean enabled);
 
     /**
      * @return the export rows limit
@@ -863,9 +893,28 @@ public interface Entity extends Comparable<Entity>, DataArtifact, EntityReferenc
     boolean isForeignEntityClass();
 
     /**
+     * El método setForeignEntityClass se utiliza para especificar si la entidad se debe agregar, o no, al conjunto de entidades foráneas de la
+     * aplicación. Las entidades foráneas son entidades cuyas correspondientes tablas no están definidas en la base de datos de la aplicación, sino en
+     * otra que tipicamente reside en un servidor diferente.
+     *
+     * @param foreignEntityClass true o false para agregar o no la entidad, respectivamente; null, para agregar la entidad solo si pertenece a un
+     * módulo de entidades foráneas (vea el elemento foreign de la Anotación ProjectModule)
+     */
+    void setForeignEntityClass(Boolean foreignEntityClass);
+
+    /**
      * @return the private entity class indicator
      */
     boolean isPrivateEntityClass();
+
+    /**
+     * El método setPrivateEntityClass se utiliza para especificar si la entidad se debe agregar, o no, al conjunto de entidades privadas de la
+     * aplicación. Las entidades privadas son entidades para las que no se deben generar vistas.
+     *
+     * @param privateEntityClass true o false para agregar o no la entidad, respectivamente; null, para agregar la entidad solo si pertenece a un
+     * módulo de entidades privadas (vea el elemento privacy de la Anotación ProjectModule)
+     */
+    void setPrivateEntityClass(Boolean privateEntityClass);
 
     /**
      * @return the link-outer-children indicator
@@ -883,9 +932,14 @@ public interface Entity extends Comparable<Entity>, DataArtifact, EntityReferenc
     boolean isLinkOuterSiblings();
 
     /**
-     * @return the table view allowed indicator
+     * @return the table view enabled indicator
      */
     boolean isTableViewEnabled();
+
+    /**
+     * @param enabled the table view enabled indicator to set
+     */
+    void setTableViewEnabled(boolean enabled);
 
     /**
      * @return the table-view-with-insert-enabled indicator
@@ -918,9 +972,14 @@ public interface Entity extends Comparable<Entity>, DataArtifact, EntityReferenc
     String getTableViewHelpFileName();
 
     /**
-     * @return the detail view allowed indicator
+     * @return the detail view enabled indicator
      */
     boolean isDetailViewEnabled();
+
+    /**
+     * @param enabled the detail view enabled indicator to set
+     */
+    void setDetailViewEnabled(boolean enabled);
 
     /**
      * @return the detail view help document
@@ -933,9 +992,14 @@ public interface Entity extends Comparable<Entity>, DataArtifact, EntityReferenc
     String getDetailViewHelpFileName();
 
     /**
-     * @return the tree view allowed indicator
+     * @return the tree view enabled indicator
      */
     boolean isTreeViewEnabled();
+
+    /**
+     * @param enabled the tree view enabled indicator to set
+     */
+    void setTreeViewEnabled(boolean enabled);
 
     /**
      * @return the tree view help document
@@ -948,9 +1012,14 @@ public interface Entity extends Comparable<Entity>, DataArtifact, EntityReferenc
     String getTreeViewHelpFileName();
 
     /**
-     * @return the console view allowed indicator
+     * @return the console view enabled indicator
      */
     boolean isConsoleViewEnabled();
+
+    /**
+     * @param enabled the console view enabled indicator to set
+     */
+    void setConsoleViewEnabled(boolean enabled);
 
     /**
      * @return the console view help document
@@ -983,9 +1052,29 @@ public interface Entity extends Comparable<Entity>, DataArtifact, EntityReferenc
     boolean isBplCodeGenEnabled();
 
     /**
+     * @param enabled the business process logic code generation enabled indicator to set
+     */
+    void setBplCodeGenEnabled(boolean enabled);
+
+    /**
      * @return the business web service code generation enabled indicator
      */
     boolean isBwsCodeGenEnabled();
+
+    /**
+     * @param enabled the business web service code generation enabled indicator to set
+     */
+    void setBwsCodeGenEnabled(boolean enabled);
+
+    /**
+     * @return the data access facade code generation enabled indicator
+     */
+    boolean isDafCodeGenEnabled();
+
+    /**
+     * @param enabled the data access facade code generation enabled indicator to set
+     */
+    void setDafCodeGenEnabled(boolean enabled);
 
     /**
      * @return the facade web service code generation enabled indicator
@@ -993,14 +1082,29 @@ public interface Entity extends Comparable<Entity>, DataArtifact, EntityReferenc
     boolean isFwsCodeGenEnabled();
 
     /**
+     * @param enabled the facade web service code generation enabled indicator to set
+     */
+    void setFwsCodeGenEnabled(boolean enabled);
+
+    /**
      * @return the GUI code generation enabled indicator
      */
     boolean isGuiCodeGenEnabled();
 
     /**
+     * @param enabled the GUI code generation enabled indicator to set
+     */
+    void setGuiCodeGenEnabled(boolean enabled);
+
+    /**
      * @return the SQL code generation enabled indicator
      */
     boolean isSqlCodeGenEnabled();
+
+    /**
+     * @param enabled the SQL code generation enabled indicator to set
+     */
+    void setSqlCodeGenEnabled(boolean enabled);
 
     /**
      * @return the entity state machine code generation enabled indicator
@@ -1077,6 +1181,46 @@ public interface Entity extends Comparable<Entity>, DataArtifact, EntityReferenc
      * @return the search display mode
      */
     DisplayMode getSearchDisplayMode();
+
+    /**
+     * @return the origin (protocol + server + port) of the application containing the entity views
+     */
+    String getApplicationOrigin();
+
+    void setApplicationOrigin(String origin);
+
+    /**
+     * @return the context-root of the application containing the entity views
+     */
+    String getApplicationContextRoot();
+
+    void setApplicationContextRoot(String contextRoot);
+
+    /**
+     * @return the path of the processing consoles within the context-root of the application that contains the entity views
+     */
+    String getApplicationConsolePath();
+
+    void setApplicationConsolePath(String consolePath);
+
+    /**
+     * @return the path of the reading views within the context-root of the application that contains the entity views
+     */
+    String getApplicationReadingPath();
+
+    void setApplicationReadingPath(String readingPath);
+
+    /**
+     * @return the path of the writing views within the context-root of the application that contains the entity views
+     */
+    String getApplicationWritingPath();
+
+    void setApplicationWritingPath(String writingPath);
+
+    /**
+     * @return true if the views are in the generated application (default origin and context-root)
+     */
+    boolean isApplicationDefaultLocation();
 
     /**
      * @return the search query filter
@@ -1193,6 +1337,13 @@ public interface Entity extends Comparable<Entity>, DataArtifact, EntityReferenc
     void setDefaultValue(SpecialEntityValue defaultValue);
 
     /**
+     * @return true if the entity has at least one display
+     */
+    boolean isDisplayAvailable();
+
+    void setDisplayAvailable(Boolean displayAvailable);
+
+    /**
      * @return true if the entity is master of at least one detail
      */
     boolean isWritingPageMaster();
@@ -1231,7 +1382,12 @@ public interface Entity extends Comparable<Entity>, DataArtifact, EntityReferenc
     HierarchyNodeType getHierarchyNodeType();
 
     /**
-     * @return the direct known extensions list
+     * @return the ancestors list
+     */
+    List<Entity> getAncestorsList();
+
+    /**
+     * @return the known extensions list
      */
     List<Entity> getExtensionsList();
 
@@ -1259,6 +1415,13 @@ public interface Entity extends Comparable<Entity>, DataArtifact, EntityReferenc
      * @return the accesible operations overlay entities map
      */
     Map<String, Entity> getAccesibleOperationsOverlayEntitiesMap();
+
+    /**
+     * @param <T> generic operation type
+     * @param type operation type
+     * @return the operation of the specified class
+     */
+    <T extends Operation> T getOperation(Class<T> type);
 
     /**
      * @return the CRUD operation list

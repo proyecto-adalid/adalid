@@ -49,7 +49,6 @@ public class TipoAgregacion extends AbstractPersistentEnumerationEntity {
     @NameProperty
     public StringProperty nombre;
 
-    @PropertyField(update = Kleenean.FALSE)
     @StringField(maxLength = 10)
     public StringProperty rangos;
 
@@ -99,6 +98,7 @@ public class TipoAgregacion extends AbstractPersistentEnumerationEntity {
     protected void settleProperties() {
         super.settleProperties();
         // <editor-fold defaultstate="collapsed" desc="localization of TipoAgregacion's properties">
+        /**/
         numero.setLocalizedLabel(ENGLISH, "aggregation type number");
         numero.setLocalizedLabel(SPANISH, "número del tipo de agregación");
         numero.setLocalizedShortLabel(ENGLISH, "number");
@@ -116,6 +116,7 @@ public class TipoAgregacion extends AbstractPersistentEnumerationEntity {
         /**/
         rangos.setLocalizedLabel(ENGLISH, "ranges");
         rangos.setLocalizedLabel(SPANISH, "rangos");
+        /**/
         // </editor-fold>
     }
 
@@ -192,6 +193,7 @@ public class TipoAgregacion extends AbstractPersistentEnumerationEntity {
         PROMEDIO_DESVIACION_MINIMO_MAXIMO.newInstanceField(rangos, "3");
         /**/
         // <editor-fold defaultstate="collapsed" desc="localization of TipoAgregacion's instances">
+        /**/
         GRUPO.newInstanceField(codigo, "Group", ENGLISH);
         GRUPO.newInstanceField(codigo, "Grupo", SPANISH);
         /**/
@@ -269,6 +271,7 @@ public class TipoAgregacion extends AbstractPersistentEnumerationEntity {
         /**/
         PROMEDIO_DESVIACION_MINIMO_MAXIMO.newInstanceField(nombre, "Average, Deviation, Minimum, Maximum", ENGLISH);
         PROMEDIO_DESVIACION_MINIMO_MAXIMO.newInstanceField(nombre, "Promedio, Desviación, Mínimo, Máximo", SPANISH);
+        /**/
         // </editor-fold>
     }
 

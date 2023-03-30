@@ -113,8 +113,17 @@ public class ClaseRecurso extends AbstractPersistentEntity {
         setLocalizedCollectionLabel(SPANISH, "Clases de Recurso");
         setLocalizedCollectionShortLabel(ENGLISH, "Classes");
         setLocalizedCollectionShortLabel(SPANISH, "Clases");
-        setLocalizedDescription(ENGLISH, "persistence domain object that typically represents a table in the database");
-        setLocalizedDescription(SPANISH, "objeto de dominio de persistencia que normalmente representa una tabla en la base de datos");
+        /**/
+        setLocalizedDescription(ENGLISH, "Each instance of " + b("Resource Classes") + " represents a "
+            + "persistence domain object that typically represents a table in the database."
+            + "");
+        setLocalizedDescription(SPANISH, "Cada instancia de " + b("Clases de Recurso") + " representa un "
+            + "objeto de dominio de persistencia que normalmente representa una tabla en la base de datos."
+            + "");
+        /**/
+        setLocalizedShortDescription(ENGLISH, "persistence domain object that typically represents a table in the database");
+        setLocalizedShortDescription(SPANISH, "objeto de dominio de persistencia que normalmente representa una tabla en la base de datos");
+        /**/
         // </editor-fold>
     }
 

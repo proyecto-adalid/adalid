@@ -279,16 +279,10 @@ public class OracleProgrammer extends AbstractSqlProgrammer {
     public String getString(Object obj) {
         if (obj == null) {
             return null;
-        } else if (obj instanceof String) {
-            return escapeQuotes(obj.toString());
-        } else if (obj instanceof Date) {
-            return TimeUtils.jdbcDateString(obj);
         } else if (obj instanceof Time) {
             return TimeUtils.jdbcTimestampString(obj);
-        } else if (obj instanceof java.util.Date) {
-            return TimeUtils.jdbcTimestampString(obj);
         } else {
-            return obj.toString();
+            return super.getString(obj);
         }
     }
 

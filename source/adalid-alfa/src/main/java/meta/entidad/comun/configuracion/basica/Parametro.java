@@ -97,8 +97,17 @@ public class Parametro extends AbstractPersistentEntity {
         setLocalizedLabel(SPANISH, "parámetro");
         setLocalizedCollectionLabel(ENGLISH, "Parameters");
         setLocalizedCollectionLabel(SPANISH, "Parámetros");
-        setLocalizedDescription(ENGLISH, "parameter of an application function");
-        setLocalizedDescription(SPANISH, "parámetro de una función de la aplicación");
+        /**/
+        setLocalizedDescription(ENGLISH, "Each instance of " + b("Parameters") + " represents a "
+            + "parameter of an application function."
+            + "");
+        setLocalizedDescription(SPANISH, "Cada instancia de " + b("Parámetros") + " representa un "
+            + "parámetro de una función de la aplicación."
+            + "");
+        /**/
+        setLocalizedShortDescription(ENGLISH, "parameter of an application function");
+        setLocalizedShortDescription(SPANISH, "parámetro de una función de la aplicación");
+        /**/
         // </editor-fold>
     }
 

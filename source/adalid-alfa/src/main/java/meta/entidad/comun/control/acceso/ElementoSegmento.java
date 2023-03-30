@@ -102,8 +102,17 @@ public class ElementoSegmento extends AbstractPersistentEntity {
         setLocalizedCollectionLabel(SPANISH, "Elementos del Conjunto de Segmentos");
         setLocalizedCollectionShortLabel(ENGLISH, "Elements");
         setLocalizedCollectionShortLabel(SPANISH, "Elementos");
-        setLocalizedDescription(ENGLISH, "segment set element; typically represents a row of a table in the database");
-        setLocalizedDescription(SPANISH, "elemento de conjunto de segmentos; normalmente representa una fila de una tabla en la base de datos");
+        /**/
+        setLocalizedDescription(ENGLISH, "Each instance of " + b("Segment Set Elements") + " represents a "
+            + "segment set element, which typically corresponds to a row of a table in the database."
+            + "");
+        setLocalizedDescription(SPANISH, "Cada instancia de " + b("Elementos del Conjunto de Segmentos") + " representa un "
+            + "elemento de conjunto de segmentos, el cual normalmente corresponde a una fila de una tabla en la base de datos."
+            + "");
+        /**/
+        setLocalizedShortDescription(ENGLISH, "segment set element, which typically corresponds to a row of a table in the database");
+        setLocalizedShortDescription(SPANISH, "elemento de conjunto de segmentos, el cual normalmente corresponde a una fila de una tabla en la base de datos");
+        /**/
         // </editor-fold>
     }
 

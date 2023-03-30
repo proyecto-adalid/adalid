@@ -180,8 +180,17 @@ public class VistaFuncion extends AbstractPersistentEntity {
         setLocalizedLabel(SPANISH, "vista");
         setLocalizedCollectionLabel(ENGLISH, "Views");
         setLocalizedCollectionLabel(SPANISH, "Vistas");
-        setLocalizedDescription(ENGLISH, "view to generate files and reports defined by the end user");
-        setLocalizedDescription(SPANISH, "vista para generar archivos e informes definida por el usuario final");
+        /**/
+        setLocalizedDescription(ENGLISH, "Each instance of " + b("Views") + " represents a "
+            + "view to generate files and reports defined by the user."
+            + "");
+        setLocalizedDescription(SPANISH, "Cada instancia de " + b("Vistas") + " representa una "
+            + "vista para generar archivos e informes definida por el usuario."
+            + "");
+        /**/
+        setLocalizedShortDescription(ENGLISH, "view to generate files and reports defined by the user");
+        setLocalizedShortDescription(SPANISH, "vista para generar archivos e informes definida por el usuario");
+        /**/
         // </editor-fold>
     }
 

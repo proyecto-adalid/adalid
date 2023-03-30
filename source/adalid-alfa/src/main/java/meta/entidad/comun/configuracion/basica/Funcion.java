@@ -104,8 +104,17 @@ public class Funcion extends AbstractPersistentEntity {
         setLocalizedLabel(SPANISH, "función");
         setLocalizedCollectionLabel(ENGLISH, "Functions");
         setLocalizedCollectionLabel(SPANISH, "Funciones");
-        setLocalizedDescription(ENGLISH, "application function (CRUD, business process, generation of files and reports, etc.)");
-        setLocalizedDescription(SPANISH, "función de la aplicación (CRUD, proceso de negocio, generación de archivos e informes, etc.)");
+        /**/
+        setLocalizedDescription(ENGLISH, "Each instance of " + b("Functions") + " represents an "
+            + "application function (CRUD, business process, generation of files and reports, etc.)."
+            + "");
+        setLocalizedDescription(SPANISH, "Cada instancia de " + b("Funciones") + " representa una "
+            + "función de la aplicación (CRUD, proceso de negocio, generación de archivos e informes, etc.)."
+            + "");
+        /**/
+        setLocalizedShortDescription(ENGLISH, "application function (CRUD, business process, generation of files and reports, etc.)");
+        setLocalizedShortDescription(SPANISH, "función de la aplicación (CRUD, proceso de negocio, generación de archivos e informes, etc.)");
+        /**/
         // </editor-fold>
     }
 

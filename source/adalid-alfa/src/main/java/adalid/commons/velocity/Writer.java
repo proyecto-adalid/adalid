@@ -69,6 +69,12 @@ public class Writer {
     // <editor-fold defaultstate="collapsed" desc="static fields">
     private static Level _alertLevel = Level.OFF;
 
+    private static Level _disabledLevel = Level.OFF;
+
+    private static Level _excludedLevel = Level.OFF;
+
+    private static Level _preservedLevel = Level.OFF;
+
     private static Level _detailLevel = Level.OFF;
 
     private static Level _trackingLevel = Level.OFF;
@@ -87,7 +93,7 @@ public class Writer {
      * alert messages logging
      */
     public static void setAlertLevel(Level level) {
-        _alertLevel = LogUtils.check(level, Level.WARN, Level.WARN);
+        _alertLevel = _disabledLevel = _excludedLevel = _preservedLevel = LogUtils.check(level, Level.WARN, Level.WARN);
     }
 
     /**
@@ -696,7 +702,7 @@ public class Writer {
                         tpfnwox = StringUtils.removeEndIgnoreCase(templatePropertiesFile.getName(), PROPERTIES_SUFFIX);
                         pattern = "template \"{0}\" ignored, check property \"{1}\" at file \"{2}\"";
                         message = MessageFormat.format(pattern, tpfnwox, TP_DISABLED, templatePropertiesFile);
-                        log(_alertLevel, message);
+                        log(_disabledLevel, message);
                         alerts++;
                     } else if (missing(disabledMissing)) {
                         processedTemplatePropertiesFileMap.put(template, currPath);
@@ -704,7 +710,7 @@ public class Writer {
                         tpfnwox = StringUtils.removeEndIgnoreCase(templatePropertiesFile.getName(), PROPERTIES_SUFFIX);
                         pattern = "template \"{0}\" ignored because {3} is missing, check property \"{1}\" at file \"{2}\"";
                         message = MessageFormat.format(pattern, tpfnwox, TP_DISABLED_MISSING, templatePropertiesFile, disabledMissing);
-                        log(_alertLevel, message);
+                        log(_disabledLevel, message);
                         alerts++;
                     } else if (foreign(disabledForeign)) {
                         processedTemplatePropertiesFileMap.put(template, currPath);
@@ -712,7 +718,7 @@ public class Writer {
                         tpfnwox = StringUtils.removeEndIgnoreCase(templatePropertiesFile.getName(), PROPERTIES_SUFFIX);
                         pattern = "template \"{0}\" ignored because {3} is foreign, check property \"{1}\" at file \"{2}\"";
                         message = MessageFormat.format(pattern, tpfnwox, TP_DISABLED_FOREIGN, templatePropertiesFile, disabledForeign);
-                        log(_alertLevel, message);
+                        log(_disabledLevel, message);
                         alerts++;
                     } else if (privado(disabledPrivate)) {
                         processedTemplatePropertiesFileMap.put(template, currPath);
@@ -720,7 +726,7 @@ public class Writer {
                         tpfnwox = StringUtils.removeEndIgnoreCase(templatePropertiesFile.getName(), PROPERTIES_SUFFIX);
                         pattern = "template \"{0}\" ignored because {3} is private, check property \"{1}\" at file \"{2}\"";
                         message = MessageFormat.format(pattern, tpfnwox, TP_DISABLED_PRIVATE, templatePropertiesFile, disabledPrivate);
-                        log(_alertLevel, message);
+                        log(_disabledLevel, message);
                         alerts++;
                     } else {
                         processedTemplatePropertiesFileMap.put(template, currPath);
@@ -954,7 +960,7 @@ public class Writer {
                         excludedFiles++;
                         pattern = "file {0} will be deleted; it matches exclusion expression \"{1}\"";
                         message = MessageFormat.format(pattern, StringUtils.removeStartIgnoreCase(slashedPath, raiz), regex);
-                        log(_alertLevel, message);
+                        log(_excludedLevel, message);
                         alerts++;
                         FileUtils.deleteQuietly(file);
                         return;
@@ -965,7 +971,8 @@ public class Writer {
                 preservedFiles++;
                 pattern = "file {2} will not be replaced" + hint;
                 message = MessageFormat.format(pattern, TP_PRESERVE, templatePropertiesFile, fullname);
-                log(_detailLevel, message);
+                log(_preservedLevel, message);
+                alerts++;
                 return;
             }
             if (filePreservationPatterns != null) {
@@ -975,7 +982,7 @@ public class Writer {
                         preservedFiles++;
                         pattern = "file {0} will not be replaced; it matches preservation expression \"{1}\"";
                         message = MessageFormat.format(pattern, StringUtils.removeStartIgnoreCase(slashedPath, raiz), regex);
-                        log(_alertLevel, message);
+                        log(_preservedLevel, message);
                         alerts++;
                         return;
                     }
@@ -990,7 +997,7 @@ public class Writer {
                         excludedFiles++;
                         pattern = "file {0} will not be written; it matches exclusion expression \"{1}\"";
                         message = MessageFormat.format(pattern, StringUtils.removeStartIgnoreCase(slashedPath, raiz), regex);
-                        log(_alertLevel, message);
+                        log(_excludedLevel, message);
                         alerts++;
                         return;
                     }

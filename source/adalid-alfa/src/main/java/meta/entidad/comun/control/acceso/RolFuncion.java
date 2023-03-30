@@ -66,6 +66,17 @@ public class RolFuncion extends AbstractPersistentEntity {
         setLocalizedCollectionLabel(SPANISH, rol, "Funciones por Rol");
         setLocalizedCollectionShortLabel(ENGLISH, rol, "Functions");
         setLocalizedCollectionShortLabel(SPANISH, rol, "Funciones");
+        /**/
+        setLocalizedDescription(ENGLISH, "Each instance of " + b("Role/Function Associations") + " represents a "
+            + "function associated with an application role."
+            + "");
+        setLocalizedDescription(SPANISH, "Cada instancia de " + b("Asociaciones Rol/Función") + " representa una "
+            + "función asociada con un rol de la aplicación."
+            + "");
+        /**/
+        setLocalizedShortDescription(ENGLISH, "function associated with an application role");
+        setLocalizedShortDescription(SPANISH, "función asociada con un rol de la aplicación");
+        /**/
         // </editor-fold>
     }
 

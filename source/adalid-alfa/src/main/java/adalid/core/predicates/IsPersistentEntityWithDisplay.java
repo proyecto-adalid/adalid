@@ -12,9 +12,7 @@
  */
 package adalid.core.predicates;
 
-import adalid.core.*;
 import adalid.core.interfaces.*;
-import java.util.List;
 import org.apache.commons.collections.Predicate;
 
 /**
@@ -26,17 +24,7 @@ public class IsPersistentEntityWithDisplay implements Predicate {
     public boolean evaluate(Object object) {
         if (object instanceof PersistentEntity) {
             Entity entity = (Entity) object;
-            Project project = TLC.getProject();
-            if (project != null) {
-                List<? extends Display> displays = project.getDisplaysList();
-                if (displays != null) {
-                    for (Display display : displays) {
-                        if (entity.equals(display.getEntity())) {
-                            return true;
-                        }
-                    }
-                }
-            }
+            return entity.isDisplayAvailable();
         }
         return false;
     }

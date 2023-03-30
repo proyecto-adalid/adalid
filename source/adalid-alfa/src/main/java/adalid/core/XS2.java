@@ -18,11 +18,13 @@ import adalid.core.interfaces.*;
 import java.lang.reflect.Field;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
+import org.apache.commons.lang.StringUtils;
 
 /**
  * @author Jorge Campins
@@ -57,6 +59,15 @@ public class XS2 {
         } catch (MalformedURLException ex) {
             return null;
         }
+    }
+
+    public static String iframe(String src, int width, int height) {
+        if (StringUtils.isBlank(src)) {
+            return null;
+        }
+        int w = width > 100 ? width : width > 0 ? 100 : 300;
+        int h = height > 50 ? height : height > 0 ? 50 : 150;
+        return MessageFormat.format(Constants.IFRAME_SIMPLE_PATTERN, src.trim(), w, h);
     }
 
     public static Set<String> canonicalNames(Set<Class<?>> classes) {

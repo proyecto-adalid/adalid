@@ -54,8 +54,17 @@ public class ArchivoAdjunto extends AbstractPersistentEntity {
         setLocalizedCollectionLabel(SPANISH, "Archivos Adjuntos");
         setLocalizedCollectionShortLabel(ENGLISH, "Attachments");
         setLocalizedCollectionShortLabel(SPANISH, "Adjuntos");
-        setLocalizedDescription(ENGLISH, "audit trail of the execution of file upload operations on the server");
-        setLocalizedDescription(SPANISH, "rastro de auditoría de la ejecución de operaciones de carga de archivos en el servidor");
+        /**/
+        setLocalizedDescription(ENGLISH, "Each instance of " + b("Attached Files") + " represents an "
+            + "audit trail of the execution of file upload operations on the server."
+            + "");
+        setLocalizedDescription(SPANISH, "Cada instancia de " + b("Archivos Adjuntos") + " representa un "
+            + "rastro de auditoría de la ejecución de operaciones de carga de archivos en el servidor."
+            + "");
+        /**/
+        setLocalizedShortDescription(ENGLISH, "audit trail of the execution of file upload operations on the server");
+        setLocalizedShortDescription(SPANISH, "rastro de auditoría de la ejecución de operaciones de carga de archivos en el servidor");
+        /**/
         // </editor-fold>
     }
 

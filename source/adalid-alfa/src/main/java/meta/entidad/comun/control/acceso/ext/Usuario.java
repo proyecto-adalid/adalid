@@ -183,19 +183,6 @@ public class Usuario extends meta.entidad.comun.control.acceso.Usuario {
     public EntityCollection roles;
 
     @Override
-    protected void settleAttributes() {
-        super.settleAttributes();
-//      setOrderBy(codigoUsuario);
-//      setSchema(ProyectoBase.getEsquemaEntidadesComunes());
-        // <editor-fold defaultstate="collapsed" desc="localization of Usuario's attributes">
-        setLocalizedLabel(ENGLISH, "user");
-        setLocalizedLabel(SPANISH, "usuario");
-        setLocalizedCollectionLabel(ENGLISH, "Users");
-        setLocalizedCollectionLabel(SPANISH, "Usuarios");
-        // </editor-fold>
-    }
-
-    @Override
     protected void settleProperties() {
         super.settleProperties();
         /**/
@@ -277,7 +264,7 @@ public class Usuario extends meta.entidad.comun.control.acceso.Usuario {
         limiteArchivoDetalle.setLocalizedLabel(SPANISH, "limite archivo detalle");
         limiteArchivoDetalle.setLocalizedDescription(ENGLISH, "limit of rows of user-defined views that the user can save in "
             + "files of type \"Detail\"; if it is 0 the user has no limit");
-        limiteArchivoDetalle.setLocalizedDescription(SPANISH, "límite de filas al guardar los resultados de la consulta, "
+        limiteArchivoDetalle.setLocalizedDescription(SPANISH, "límite de filas al guardar el resultado de la consulta, "
             + "mediante vistas definidas por el usuario, en archivos de tipo \"Detalle\"; si es 0 el usuario no tiene límite");
         limiteArchivoDetalle.setLocalizedTooltip(ENGLISH, "limit of rows for files of type \"Detail\"");
         limiteArchivoDetalle.setLocalizedTooltip(SPANISH, "límite de filas para archivos de tipo \"Detalle\"");
@@ -288,7 +275,7 @@ public class Usuario extends meta.entidad.comun.control.acceso.Usuario {
         limiteArchivoResumen.setLocalizedLabel(SPANISH, "limite archivo resumen");
         limiteArchivoResumen.setLocalizedDescription(ENGLISH, "limit of rows of user-defined views that the user can save in "
             + "files of type \"Summary\"; if it is 0 the user has no limit");
-        limiteArchivoResumen.setLocalizedDescription(SPANISH, "límite de filas al guardar los resultados de la consulta, "
+        limiteArchivoResumen.setLocalizedDescription(SPANISH, "límite de filas al guardar el resultado de la consulta, "
             + "mediante vistas definidas por el usuario, en archivos de tipo \"Resumen\"; si es 0 el usuario no tiene límite");
         limiteArchivoResumen.setLocalizedTooltip(ENGLISH, "limit of rows for files of type \"Summary\"");
         limiteArchivoResumen.setLocalizedTooltip(SPANISH, "límite de filas para archivos de tipo \"Resumen\"");
@@ -299,7 +286,7 @@ public class Usuario extends meta.entidad.comun.control.acceso.Usuario {
         limiteInformeDetalle.setLocalizedLabel(SPANISH, "limite informe detalle");
         limiteInformeDetalle.setLocalizedDescription(ENGLISH, "limit of rows of user-defined views that the user can save in "
             + "reports of type \"Detail\"; if it is 0 the user has no limit");
-        limiteInformeDetalle.setLocalizedDescription(SPANISH, "límite de filas al guardar los resultados de la consulta, "
+        limiteInformeDetalle.setLocalizedDescription(SPANISH, "límite de filas al guardar el resultado de la consulta, "
             + "mediante vistas definidas por el usuario, en informes de tipo \"Detalle\"; si es 0 el usuario no tiene límite");
         limiteInformeDetalle.setLocalizedTooltip(ENGLISH, "limit of rows for reports of type \"Detail\"");
         limiteInformeDetalle.setLocalizedTooltip(SPANISH, "límite de filas para informes de tipo \"Detalle\"");
@@ -310,7 +297,7 @@ public class Usuario extends meta.entidad.comun.control.acceso.Usuario {
         limiteInformeResumen.setLocalizedLabel(SPANISH, "limite informe resumen");
         limiteInformeResumen.setLocalizedDescription(ENGLISH, "limit of rows of user-defined views that the user can save in "
             + "reports of type \"Summary\"; if it is 0 the user has no limit");
-        limiteInformeResumen.setLocalizedDescription(SPANISH, "límite de filas al guardar los resultados de la consulta, "
+        limiteInformeResumen.setLocalizedDescription(SPANISH, "límite de filas al guardar el resultado de la consulta, "
             + "mediante vistas definidas por el usuario, en informes de tipo \"Resumen\"; si es 0 el usuario no tiene límite");
         limiteInformeResumen.setLocalizedTooltip(ENGLISH, "limit of rows for reports of type \"Summary\"");
         limiteInformeResumen.setLocalizedTooltip(SPANISH, "límite de filas para informes de tipo \"Resumen\"");
@@ -321,7 +308,7 @@ public class Usuario extends meta.entidad.comun.control.acceso.Usuario {
         limiteInformeGrafico.setLocalizedLabel(SPANISH, "limite informe grafico");
         limiteInformeGrafico.setLocalizedDescription(ENGLISH, "limit of rows of user-defined views that the user can save in "
             + "reports of type \"Chart\"; if it is 0 the user has no limit");
-        limiteInformeGrafico.setLocalizedDescription(SPANISH, "límite de filas al guardar los resultados de la consulta, "
+        limiteInformeGrafico.setLocalizedDescription(SPANISH, "límite de filas al guardar el resultado de la consulta, "
             + "mediante vistas definidas por el usuario, en informes de tipo \"Gráfico\"; si es 0 el usuario no tiene límite");
         limiteInformeGrafico.setLocalizedTooltip(ENGLISH, "limit of rows for reports of type \"Chart\"");
         limiteInformeGrafico.setLocalizedTooltip(SPANISH, "límite de filas para informes de tipo \"Gráfico\"");
@@ -358,9 +345,9 @@ public class Usuario extends meta.entidad.comun.control.acceso.Usuario {
         /**/
         vistasRestringidas.setLocalizedLabel(ENGLISH, "restricted views");
         vistasRestringidas.setLocalizedLabel(SPANISH, "vistas restringidas");
-        vistasRestringidas.setLocalizedDescription(ENGLISH, "restricted access to save query results, "
+        vistasRestringidas.setLocalizedDescription(ENGLISH, "restricted access to save the query result, "
             + "via user-defined views, in files and reports of any format");
-        vistasRestringidas.setLocalizedDescription(SPANISH, "acceso restringido para guardar los resultados de la consulta, "
+        vistasRestringidas.setLocalizedDescription(SPANISH, "acceso restringido para guardar el resultado de la consulta, "
             + "mediante vistas definidas por el usuario, en archivos e informes de cualquier formato");
         vistasRestringidas.setLocalizedTooltip(ENGLISH, "restricted access to files and reports");
         vistasRestringidas.setLocalizedTooltip(SPANISH, "acceso restringido a archivos e informes");
@@ -382,21 +369,21 @@ public class Usuario extends meta.entidad.comun.control.acceso.Usuario {
             + ", such as CSV, TSV, RTF, ODT, ODS, HTML, DOCX, PPTX and XLSX");
         restriccionFormatos.setLocalizedTooltip(SPANISH, "acceso restringido a formatos de archivo"
             + ", tales como CSV, TSV, RTF, ODT, ODS, HTML, DOCX, PPTX y XLSX");
-        /**/
-        paginaInicio.setLocalizedLabel(ENGLISH, "landing page");
+        /*
+        paginaInicio.setLocalizedLabel(ENGLISH, "start page");
         paginaInicio.setLocalizedLabel(SPANISH, "página de inicio");
         /**/
         paginaMenu.setLocalizedLabel(ENGLISH, "menu page");
         paginaMenu.setLocalizedLabel(SPANISH, "página del menú");
-        paginaMenu.setLocalizedDescription(ENGLISH, "page to be used as home page; must be specified if landing page is \"Menu page\"");
-        paginaMenu.setLocalizedDescription(SPANISH, "página que se ha de utilizar como página de inicio; "
+        paginaMenu.setLocalizedDescription(ENGLISH, "menu page to be used as start page; must be specified if start page is \"Menu page\"");
+        paginaMenu.setLocalizedDescription(SPANISH, "página del menú que se ha de utilizar como página de inicio; "
             + "se debe especificar si página de inicio es \"Página del menú\"");
         /**/
         otraPagina.setLocalizedLabel(ENGLISH, "other page");
         otraPagina.setLocalizedLabel(SPANISH, "otra página");
         otraPagina.setLocalizedDescription(ENGLISH, ""
-            + "special page to be used as landing page"
-            + "; it must be specified if landing page is \"Other page\""
+            + "special page to be used as start page"
+            + "; it must be specified if start page is \"Other page\""
             + " and such option is only available if there is at least one special page defined"
             + "");
         otraPagina.setLocalizedDescription(SPANISH, ""
@@ -407,6 +394,8 @@ public class Usuario extends meta.entidad.comun.control.acceso.Usuario {
         /**/
         temaInterfaz.setLocalizedLabel(ENGLISH, "user interface theme");
         temaInterfaz.setLocalizedLabel(SPANISH, "tema de la interfaz");
+        temaInterfaz.setLocalizedDescription(ENGLISH, "set of shapes and colors for graphic elements used to customize the appearance of the application");
+        temaInterfaz.setLocalizedDescription(SPANISH, "conjunto de formas y colores para elementos gráficos utilizados para personalizar la apariencia de la aplicación");
         /**/
         filasPorPagina.setLocalizedLabel(ENGLISH, "rows per page");
         filasPorPagina.setLocalizedLabel(SPANISH, "filas por página");
@@ -526,7 +515,7 @@ public class Usuario extends meta.entidad.comun.control.acceso.Usuario {
         tab10.copy(step10, false); // false para una copia superficial, excluyendo los campos del paso.
         tab10.newTabField(octetos, archivo, correoElectronico, numeroTelefonoMovil);
         tab10.newTabField(esSuperUsuario, esSuperAuditor, esUsuarioEspecial, esUsuarioInactivo, esUsuarioAutomatico);
-        tab10.newTabField(grupo, usuarioSupervisor, fechaHoraRegistro);
+        tab10.newTabField(grupo, usuarioSupervisor, fechaHoraRegistro, fechaHoraSincronizacion);
         /**/
         tab20.copy(step20);
         /**/
@@ -683,14 +672,14 @@ public class Usuario extends meta.entidad.comun.control.acceso.Usuario {
         usuariosInactivos.setLocalizedErrorMessage(ENGLISH, "the user is an active user");
         usuariosInactivos.setLocalizedErrorMessage(SPANISH, "el usuario es un usuario activo");
         /**/
-        conPaginaMenu.setLocalizedDescription(ENGLISH, "landing page is \"Menu page\"");
+        conPaginaMenu.setLocalizedDescription(ENGLISH, "start page is \"Menu page\"");
         conPaginaMenu.setLocalizedDescription(SPANISH, "página de inicio es \"Página del menú\"");
-        conPaginaMenu.setLocalizedErrorMessage(ENGLISH, "landing page is not \"Menu page\"");
+        conPaginaMenu.setLocalizedErrorMessage(ENGLISH, "start page is not \"Menu page\"");
         conPaginaMenu.setLocalizedErrorMessage(SPANISH, "página de inicio no es \"Página del menú\"");
         /**/
-        conOtraPagina.setLocalizedDescription(ENGLISH, "landing page is \"Other page\"");
+        conOtraPagina.setLocalizedDescription(ENGLISH, "start page is \"Other page\"");
         conOtraPagina.setLocalizedDescription(SPANISH, "página de inicio es \"Otra página\"");
-        conOtraPagina.setLocalizedErrorMessage(ENGLISH, "landing page is not \"Other page\"");
+        conOtraPagina.setLocalizedErrorMessage(ENGLISH, "start page is not \"Other page\"");
         conOtraPagina.setLocalizedErrorMessage(SPANISH, "página de inicio no es \"Otra página\"");
         /*
         check100.setLocalizedDescription(ENGLISH, "group must be \"Special Users\" if and only if it is a special user");
@@ -698,9 +687,9 @@ public class Usuario extends meta.entidad.comun.control.acceso.Usuario {
         check100.setLocalizedErrorMessage(ENGLISH, "group must be \"Special Users\" if and only if it is a special user");
         check100.setLocalizedErrorMessage(SPANISH, "grupo debe ser \"Usuarios Especiales\" si y solo si es un usuario especial");
         /**/
-        check101.setLocalizedDescription(ENGLISH, "menu page must be specified if landing page is \"Menu page\"");
+        check101.setLocalizedDescription(ENGLISH, "menu page must be specified if start page is \"Menu page\"");
         check101.setLocalizedDescription(SPANISH, "página del menú se debe especificar si página de inicio es \"Página del menú\"");
-        check101.setLocalizedErrorMessage(ENGLISH, "menu page must be specified if landing page is \"Menu page\"");
+        check101.setLocalizedErrorMessage(ENGLISH, "menu page must be specified if start page is \"Menu page\"");
         check101.setLocalizedErrorMessage(SPANISH, "página del menú se debe especificar si página de inicio es \"Página del menú\"");
         /**/
         check102.setLocalizedDescription(ENGLISH, "menu page must be a valid menu page");
@@ -708,9 +697,9 @@ public class Usuario extends meta.entidad.comun.control.acceso.Usuario {
         check102.setLocalizedErrorMessage(ENGLISH, "invalid menu page");
         check102.setLocalizedErrorMessage(SPANISH, "página del menú inválida");
         /**/
-        check111.setLocalizedDescription(ENGLISH, "other page must be specified if landing page is \"Other page\"");
+        check111.setLocalizedDescription(ENGLISH, "other page must be specified if start page is \"Other page\"");
         check111.setLocalizedDescription(SPANISH, "otra página se debe especificar si página de inicio es \"Otra página\"");
-        check111.setLocalizedErrorMessage(ENGLISH, "other page must be specified if landing page is \"Other page\"");
+        check111.setLocalizedErrorMessage(ENGLISH, "other page must be specified if start page is \"Other page\"");
         check111.setLocalizedErrorMessage(SPANISH, "otra página se debe especificar si página de inicio es \"Otra página\"");
         /**/
         check112.setLocalizedDescription(ENGLISH, "other page must be active");
@@ -862,10 +851,10 @@ public class Usuario extends meta.entidad.comun.control.acceso.Usuario {
         /**/
         // <editor-fold defaultstate="collapsed" desc="localization of Usuario's expressions">
         /**/
-        paginaMenu.setLocalizedRequiringFilterTag(ENGLISH, "if " + b("landing page") + " is \"Menu page\"");
+        paginaMenu.setLocalizedRequiringFilterTag(ENGLISH, "if " + b("start page") + " is \"Menu page\"");
         paginaMenu.setLocalizedRequiringFilterTag(SPANISH, "sí " + b("página de inicio") + " es \"Página del menú\"");
         /**/
-        otraPagina.setLocalizedRequiringFilterTag(ENGLISH, "if " + b("landing page") + " is \"Other page\"");
+        otraPagina.setLocalizedRequiringFilterTag(ENGLISH, "if " + b("start page") + " is \"Other page\"");
         otraPagina.setLocalizedRequiringFilterTag(SPANISH, "sí " + b("página de inicio") + " es \"Otra página\"");
         /**/
         // </editor-fold>
@@ -917,6 +906,8 @@ public class Usuario extends meta.entidad.comun.control.acceso.Usuario {
     protected CambiarPreferencias cambiarPreferencias;
 
     protected CambiarPassword cambiarPassword;
+
+    protected AlterarPassword alterarPassword;
 
     protected CargarArchivo cargarArchivo;
 
@@ -1319,11 +1310,11 @@ public class Usuario extends meta.entidad.comun.control.acceso.Usuario {
         protected meta.entidad.comun.control.acceso.Usuario usuario;
 
         @ParameterField(auditable = Kleenean.FALSE, password = Kleenean.TRUE, required = Kleenean.TRUE)
-        @StringField(maxLength = 128)
+        @StringField(maxLength = 128, autoComplete = AutoComplete.NEW_PASSWORD)
         protected StringParameter nuevoPassword;
 
         @ParameterField(auditable = Kleenean.FALSE, password = Kleenean.TRUE, required = Kleenean.TRUE)
-        @StringField(maxLength = 128)
+        @StringField(maxLength = 128, autoComplete = AutoComplete.OFF)
         protected StringParameter confirmacionPassword;
 
         @Override
@@ -1502,25 +1493,27 @@ public class Usuario extends meta.entidad.comun.control.acceso.Usuario {
                 + "it is a required field and has no default value");
             usuario.setLocalizedDescription(SPANISH, "Código del usuario cuya configuración desea cambiar; "
                 + "es un dato obligatorio y no tiene valor por omisión");
-            /**/
-            paginaInicio.setLocalizedLabel(ENGLISH, "landing page");
+            /*
+            paginaInicio.setLocalizedLabel(ENGLISH, "start page");
             paginaInicio.setLocalizedLabel(SPANISH, "página de inicio");
             /**/
             paginaMenu.setLocalizedLabel(ENGLISH, "menu page");
             paginaMenu.setLocalizedLabel(SPANISH, "página del menú");
-            paginaMenu.setLocalizedDescription(ENGLISH, "page to be used as home page; "
-                + "must be specified if landing page is \"Menu page\"");
-            paginaMenu.setLocalizedDescription(SPANISH, "página que se ha de utilizar como página de inicio; "
+            paginaMenu.setLocalizedDescription(ENGLISH, "menu page to be used as start page; "
+                + "must be specified if start page is \"Menu page\"");
+            paginaMenu.setLocalizedDescription(SPANISH, "página del menú que se ha de utilizar como página de inicio; "
                 + "se debe especificar si página de inicio es \"Página del menú\"");
             /**/
             otraPagina.setLocalizedLabel(ENGLISH, "other page");
             otraPagina.setLocalizedLabel(SPANISH, "otra página");
-            otraPagina.setLocalizedDescription(ENGLISH, "special page to be used as home page; must be specified if landing page is \"Other page\"");
+            otraPagina.setLocalizedDescription(ENGLISH, "special page to be used as start page; must be specified if start page is \"Other page\"");
             otraPagina.setLocalizedDescription(SPANISH, "página especial que se ha de utilizar como página de inicio; "
                 + "se debe especificar si página de inicio es \"Otra página\"");
             /**/
-            tema.setLocalizedLabel(ENGLISH, "theme");
-            tema.setLocalizedLabel(SPANISH, "tema");
+            tema.setLocalizedLabel(ENGLISH, "user interface theme");
+            tema.setLocalizedLabel(SPANISH, "tema de la interfaz");
+            tema.setLocalizedDescription(ENGLISH, "set of shapes and colors for graphic elements used to customize the appearance of the application");
+            tema.setLocalizedDescription(SPANISH, "conjunto de formas y colores para elementos gráficos utilizados para personalizar la apariencia de la aplicación");
             /**/
             filasPorPagina.setLocalizedLabel(ENGLISH, "rows per page");
             filasPorPagina.setLocalizedLabel(SPANISH, "filas por página");
@@ -1579,19 +1572,19 @@ public class Usuario extends meta.entidad.comun.control.acceso.Usuario {
             check112 = conOtraPagina.and(otraPagina.isNotNull()).implies(filtroOtraPagina);
             /**/
             // <editor-fold defaultstate="collapsed" desc="localization of CambiarConfiguracion's expressions">
-            conPaginaMenu.setLocalizedDescription(ENGLISH, "landing page is \"Menu page\"");
+            conPaginaMenu.setLocalizedDescription(ENGLISH, "start page is \"Menu page\"");
             conPaginaMenu.setLocalizedDescription(SPANISH, "página de inicio es \"Página del menú\"");
-            conPaginaMenu.setLocalizedErrorMessage(ENGLISH, "landing page is not \"Menu page\"");
+            conPaginaMenu.setLocalizedErrorMessage(ENGLISH, "start page is not \"Menu page\"");
             conPaginaMenu.setLocalizedErrorMessage(SPANISH, "página de inicio no es \"Página del menú\"");
             /**/
-            conOtraPagina.setLocalizedDescription(ENGLISH, "landing page is \"Other page\"");
+            conOtraPagina.setLocalizedDescription(ENGLISH, "start page is \"Other page\"");
             conOtraPagina.setLocalizedDescription(SPANISH, "página de inicio es \"Otra página\"");
-            conOtraPagina.setLocalizedErrorMessage(ENGLISH, "landing page is not \"Other page\"");
+            conOtraPagina.setLocalizedErrorMessage(ENGLISH, "start page is not \"Other page\"");
             conOtraPagina.setLocalizedErrorMessage(SPANISH, "página de inicio no es \"Otra página\"");
             /**/
-            check101.setLocalizedDescription(ENGLISH, "menu page must be specified if landing page is \"Menu page\"");
+            check101.setLocalizedDescription(ENGLISH, "menu page must be specified if start page is \"Menu page\"");
             check101.setLocalizedDescription(SPANISH, "página del menú se debe especificar si página de inicio es \"Página del menú\"");
-            check101.setLocalizedErrorMessage(ENGLISH, "menu page must be specified if landing page is \"Menu page\"");
+            check101.setLocalizedErrorMessage(ENGLISH, "menu page must be specified if start page is \"Menu page\"");
             check101.setLocalizedErrorMessage(SPANISH, "página del menú se debe especificar si página de inicio es \"Página del menú\"");
             /**/
             check102.setLocalizedDescription(ENGLISH, "menu page must be a valid menu page");
@@ -1599,9 +1592,9 @@ public class Usuario extends meta.entidad.comun.control.acceso.Usuario {
             check102.setLocalizedErrorMessage(ENGLISH, "invalid menu page");
             check102.setLocalizedErrorMessage(SPANISH, "página del menú inválida");
             /**/
-            check111.setLocalizedDescription(ENGLISH, "other page must be specified if landing page is \"Other page\"");
+            check111.setLocalizedDescription(ENGLISH, "other page must be specified if start page is \"Other page\"");
             check111.setLocalizedDescription(SPANISH, "otra página se debe especificar si página de inicio es \"Otra página\"");
-            check111.setLocalizedErrorMessage(ENGLISH, "other page must be specified if landing page is \"Other page\"");
+            check111.setLocalizedErrorMessage(ENGLISH, "other page must be specified if start page is \"Other page\"");
             check111.setLocalizedErrorMessage(SPANISH, "otra página se debe especificar si página de inicio es \"Otra página\"");
             /**/
             check112.setLocalizedDescription(ENGLISH, "other page is active");
@@ -1691,6 +1684,8 @@ public class Usuario extends meta.entidad.comun.control.acceso.Usuario {
             // <editor-fold defaultstate="collapsed" desc="localization of CambiarPassword's attributes">
             setLocalizedLabel(ENGLISH, "change password");
             setLocalizedLabel(SPANISH, "cambiar contraseña");
+            setLocalizedDescription(ENGLISH, "change user password");
+            setLocalizedDescription(SPANISH, "cambiar la contraseña del usuario");
             setLocalizedSuccessMessage(ENGLISH, "password successfully updated");
             setLocalizedSuccessMessage(SPANISH, "contraseña actualizada con éxito");
             // </editor-fold>
@@ -1700,15 +1695,15 @@ public class Usuario extends meta.entidad.comun.control.acceso.Usuario {
         protected meta.entidad.comun.control.acceso.Usuario usuario;
 
         @ParameterField(auditable = Kleenean.FALSE, password = Kleenean.TRUE, required = Kleenean.TRUE)
-        @StringField(maxLength = 128)
+        @StringField(maxLength = 128, autoComplete = AutoComplete.OFF)
         protected StringParameter password;
 
         @ParameterField(auditable = Kleenean.FALSE, password = Kleenean.TRUE, required = Kleenean.TRUE)
-        @StringField(maxLength = 128)
+        @StringField(maxLength = 128, autoComplete = AutoComplete.NEW_PASSWORD)
         protected StringParameter nuevoPassword;
 
         @ParameterField(auditable = Kleenean.FALSE, password = Kleenean.TRUE, required = Kleenean.TRUE)
-        @StringField(maxLength = 128)
+        @StringField(maxLength = 128, autoComplete = AutoComplete.OFF)
         protected StringParameter confirmacionPassword;
 
         @Override
@@ -1743,6 +1738,101 @@ public class Usuario extends meta.entidad.comun.control.acceso.Usuario {
                 + "it is a required field and has no default value");
             confirmacionPassword.setLocalizedDescription(SPANISH, "La confirmación de la contraseña debe coincidir con la nueva contraseña; "
                 + "es un dato obligatorio y no tiene valor por omisión");
+            /**/
+            // </editor-fold>
+        }
+
+    }
+
+    @OperationClass(access = OperationAccess.PRIVATE)
+    @ProcessOperationClass(builtIn = true)
+    public class AlterarPassword extends ProcessOperation {
+
+        private final String english_key_url = "https://en.wikipedia.org/wiki/Enter_key";
+
+        private final String english_tooltip = ""
+            + "Click the " + b("Send e-mail") + " button; "
+            + "if that button is disabled, type your user code in the " + b("user") + " field and press the "
+            + a(english_key_url, "Enter key") + " to enable it and then click it; "
+            + "an e-mail with a hyperlink to set your new password will be sent to your e-mail account."
+            + BR + BR
+            + b("Keep this browser window open so that your current work session remains valid.")
+            + BR + BR
+            + b("Open the hyperlink sent by e-mail in this or in another window of this same browser") + "; "
+            + "that hyperlink will open this very page, displaying the other fields and buttons needed to change your password."
+            + BR + BR
+            + "Type your new password in the " + b("new password") + " and " + b("password confirmation") + " fields "
+            + "and then click the " + b("Change password") + " button. "
+            + BR + BR
+            + b("The validity of the hyperlink expires ${timeout} minutes after sending the e-mail") + "; "
+            + "if necessary, you can send another e-mail by clicking the " + b("Send e-mail") + " button again. "
+            + "";
+
+        private final String spanish_key_url = "https://es.wikipedia.org/wiki/Entrar_(tecla)";
+
+        private final String spanish_tooltip = ""
+            + "Haga clic en el botón " + b("Enviar correo") + "; "
+            + "si ese botón está inhabilitado, escriba su código de usuario en el campo " + b("usuario") + " y presione la "
+            + a(spanish_key_url, "tecla Entrar") + " para habilitarlo y luego hacer clic en él; "
+            + "se enviará un correo electrónico con un hipervínculo para establecer su nueva contraseña a su cuenta de correo electrónico."
+            + BR + BR
+            + b("Mantenga abierta esta ventana del navegador para que su sesión de trabajo actual siga siendo válida.")
+            + BR + BR
+            + b("Abra el hipervínculo enviado por correo en ésta o en otra ventana de este mismo navegador") + "; "
+            + "ese hipervínculo abrirá esta misma página, mostrando los demás campos y botones necesarios para cambiar su contraseña."
+            + BR + BR
+            + "Escriba su nueva contraseña en los campos " + b("nueva contraseña") + " y " + b("confirmación de la contraseña") + " "
+            + "y luego haga clic en el botón " + b("Cambiar contraseña") + ". "
+            + BR + BR
+            + b("La validez del hipervínculo caduca ${timeout} minutos después de enviar el correo") + "; "
+            + "si fuese necesario, puede enviar otro correo haciendo nuevamente clic en el botón " + b("Enviar correo") + ". "
+            + "";
+
+        @Override
+        protected void settleAttributes() {
+            super.settleAttributes();
+            // <editor-fold defaultstate="collapsed" desc="localization of AlterarPassword's attributes">
+            setLocalizedLabel(ENGLISH, "change password");
+            setLocalizedLabel(SPANISH, "cambiar contraseña");
+            setLocalizedDescription(ENGLISH, "change user password");
+            setLocalizedDescription(SPANISH, "cambiar la contraseña del usuario");
+            setLocalizedSuccessMessage(ENGLISH, "password successfully updated");
+            setLocalizedSuccessMessage(SPANISH, "contraseña actualizada con éxito");
+            setLocalizedTooltip(ENGLISH, english_tooltip);
+            setLocalizedTooltip(SPANISH, spanish_tooltip);
+            // </editor-fold>
+        }
+
+        @InstanceReference
+        protected meta.entidad.comun.control.acceso.Usuario usuario;
+
+        @ParameterField(auditable = Kleenean.FALSE, password = Kleenean.TRUE, required = Kleenean.TRUE)
+        @StringField(maxLength = 128, autoComplete = AutoComplete.NEW_PASSWORD)
+        protected StringParameter nuevoPassword;
+
+        @ParameterField(auditable = Kleenean.FALSE, password = Kleenean.TRUE, required = Kleenean.TRUE)
+        @StringField(maxLength = 128, autoComplete = AutoComplete.OFF)
+        protected StringParameter confirmacionPassword;
+
+        @Override
+        protected void settleParameters() {
+            super.settleParameters();
+            // <editor-fold defaultstate="collapsed" desc="localization of AlterarPassword's parameters">
+            /**/
+            usuario.setLocalizedLabel(ENGLISH, "user");
+            usuario.setLocalizedLabel(SPANISH, "usuario");
+            usuario.setLocalizedDescription(ENGLISH, "Your user code");
+            usuario.setLocalizedDescription(SPANISH, "Su código de usuario");
+            /**/
+            nuevoPassword.setLocalizedLabel(ENGLISH, "new password");
+            nuevoPassword.setLocalizedLabel(SPANISH, "nueva contraseña");
+            nuevoPassword.setLocalizedDescription(ENGLISH, "The new password must be a string of up to 128 letters, numbers and other characters");
+            nuevoPassword.setLocalizedDescription(SPANISH, "La nueva contraseña debe ser una secuencia de hasta 128 letras, números y otros caracteres");
+            /**/
+            confirmacionPassword.setLocalizedLabel(ENGLISH, "password confirmation");
+            confirmacionPassword.setLocalizedLabel(SPANISH, "confirmación de la contraseña");
+            confirmacionPassword.setLocalizedDescription(ENGLISH, "The password confirmation must match the new password");
+            confirmacionPassword.setLocalizedDescription(SPANISH, "La confirmación de la contraseña debe coincidir con la nueva contraseña");
             /**/
             // </editor-fold>
         }

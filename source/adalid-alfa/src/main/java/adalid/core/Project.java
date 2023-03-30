@@ -25,6 +25,7 @@ import adalid.core.enums.*;
 import adalid.core.exceptions.*;
 import adalid.core.interfaces.*;
 import adalid.core.programmers.*;
+import adalid.core.properties.*;
 import adalid.core.sql.*;
 import adalid.core.wrappers.*;
 import java.lang.annotation.Annotation;
@@ -64,6 +65,8 @@ public abstract class Project extends AbstractArtifact implements ProjectBuilder
     private static boolean _defaultEntityCodeGenBPL = true;
 
     private static boolean _defaultEntityCodeGenBWS = false;
+
+    private static boolean _defaultEntityCodeGenDAF = true;
 
     private static boolean _defaultEntityCodeGenFWS = false;
 
@@ -374,7 +377,7 @@ public abstract class Project extends AbstractArtifact implements ProjectBuilder
     }
 
     /**
-     * El método setDefaultCharacterKeyMaxLength se utiliza para establecer la cantidad predeterminada de caracteres de propiedades StringProperty que
+     * El método setDefaultNamePropertyMaxLength se utiliza para establecer la cantidad predeterminada de caracteres de propiedades StringProperty que
      * son la propiedad nombre de la entidad y, por lo tanto, indexadas y con longitud limitada.
      *
      * @param maxLength cantidad de caracteres. Su valor debe ser un número entero entre 100 y la cantidad máxima de caracteres de propiedades
@@ -556,6 +559,25 @@ public abstract class Project extends AbstractArtifact implements ProjectBuilder
      */
     public static void setDefaultEntityCodeGenBWS(boolean b) {
         _defaultEntityCodeGenBWS = b;
+    }
+
+    /**
+     * @return the default @EntityCodeGen DAF (Data Access Facade) value
+     */
+    public static boolean getDefaultEntityCodeGenDAF() {
+        return _defaultEntityCodeGenDAF;
+    }
+
+    /**
+     * El método setDefaultEntityCodeGenDAF se utiliza para establecer el valor predeterminado del atributo daf de las meta-entidades. El atributo
+     * indica si se debe, o no, generar una fachada de acceso a datos (DAF, por las siglas en inglés de Data Access Facade) para la entidad.
+     *
+     * El método setDefaultEntityCodeGenDAF es un método estático que debe ejecutarse en el método setStaticAttributes del proyecto maestro.
+     *
+     * @param b valor predeterminado del atributo daf
+     */
+    public static void setDefaultEntityCodeGenDAF(boolean b) {
+        _defaultEntityCodeGenDAF = b;
     }
 
     /**
@@ -1080,6 +1102,14 @@ public abstract class Project extends AbstractArtifact implements ProjectBuilder
 
     private boolean _privateModule;
 
+    private boolean _disablePrivateAndOtherContextEntitiesBplCodeGen; // since 10/02/2023 disable selected entities BPL code generation
+
+    private boolean _disablePrivateAndOtherContextEntitiesBwsCodeGen; // since 10/02/2023 disable selected entities BWS code generation
+
+    private boolean _disablePrivateAndOtherContextEntitiesDafCodeGen; // since 11/02/2023 disable selected entities DAF code generation
+
+    private boolean _disablePrivateAndOtherContextEntitiesFwsCodeGen; // since 10/02/2023 disable selected entities FWS code generation
+
     private String _acronym = "";
 
     private String _helpDocument = "";
@@ -1391,11 +1421,13 @@ public abstract class Project extends AbstractArtifact implements ProjectBuilder
     }
 
     /**
+     * getTypifiedEntity was renamed to getTypedEntity on 09/02/2023
+     *
      * @param <T> generic class
      * @param type entity class
      * @return the root entity of the specified class
      */
-    public <T> T getTypifiedEntity(Class<? extends T> type) {
+    public <T extends Entity> T getTypedEntity(Class<T> type) {
         Entity entity = getEntity(type);
         return entity == null ? null : (T) entity;
     }
@@ -1461,6 +1493,16 @@ public abstract class Project extends AbstractArtifact implements ProjectBuilder
     public boolean referencesModule(Class<?> type) {
         Project module = getModule(type);
         return module != null;
+    }
+
+    /**
+     * @param <T> generic class
+     * @param type entity class
+     * @return the root entity of the specified class
+     */
+    public <T extends Project> T getTypedModule(Class<T> type) {
+        Project project = getModule(type);
+        return project == null ? null : (T) project;
     }
 
     /**
@@ -1889,6 +1931,71 @@ public abstract class Project extends AbstractArtifact implements ProjectBuilder
         return _privateModule;
     }
 
+    public boolean isDisablePrivateAndOtherContextEntitiesBplCodeGen() {
+        return _disablePrivateAndOtherContextEntitiesBplCodeGen;
+    }
+
+    /**
+     * El método setDisablePrivateAndOtherContextEntitiesBplCodeGen se utiliza para inhabilitar la generación de código BPL (Business Process Logic)
+     * de entidades privadas y de entidades cuyas vistas (páginas) se encuentran en el módulo Web de la aplicación empresarial de otro proyecto.
+     *
+     * El método setDisablePrivateAndOtherContextEntitiesBplCodeGen debe ejecutarse en el método configureGenerator del proyecto.
+     *
+     * @param disable true o false para inhabilitar, o no, la generación de código BPL
+     */
+    public void setDisablePrivateAndOtherContextEntitiesBplCodeGen(boolean disable) {
+        _disablePrivateAndOtherContextEntitiesBplCodeGen = disable;
+    }
+
+    public boolean isDisablePrivateAndOtherContextEntitiesBwsCodeGen() {
+        return _disablePrivateAndOtherContextEntitiesBwsCodeGen;
+    }
+
+    /**
+     * El método setDisablePrivateAndOtherContextEntitiesBwsCodeGen se utiliza para inhabilitar la generación de código BWS (Business Web Service) de
+     * entidades privadas y de entidades cuyas vistas (páginas) se encuentran en el módulo Web de la aplicación empresarial de otro proyecto.
+     *
+     * El método setDisablePrivateAndOtherContextEntitiesBwsCodeGen debe ejecutarse en el método configureGenerator del proyecto.
+     *
+     * @param disable true o false para inhabilitar, o no, la generación de código BWS
+     */
+    public void setDisablePrivateAndOtherContextEntitiesBwsCodeGen(boolean disable) {
+        _disablePrivateAndOtherContextEntitiesBwsCodeGen = disable;
+    }
+
+    public boolean isDisablePrivateAndOtherContextEntitiesDafCodeGen() {
+        return _disablePrivateAndOtherContextEntitiesDafCodeGen;
+    }
+
+    /**
+     * El método setDisablePrivateAndOtherContextEntitiesDafCodeGen se utiliza para inhabilitar la generación de fachadas de acceso a datos (código
+     * DAF, por las siglas en inglés de Data Access Façade) de entidades privadas y de entidades cuyas vistas (páginas) se encuentran en el módulo Web
+     * de la aplicación empresarial de otro proyecto.
+     *
+     * El método setDisablePrivateAndOtherContextEntitiesDafCodeGen debe ejecutarse en el método configureGenerator del proyecto.
+     *
+     * @param disable true o false para inhabilitar, o no, la generación de código DAF
+     */
+    public void setDisablePrivateAndOtherContextEntitiesDafCodeGen(boolean disable) {
+        _disablePrivateAndOtherContextEntitiesDafCodeGen = disable;
+    }
+
+    public boolean isDisablePrivateAndOtherContextEntitiesFwsCodeGen() {
+        return _disablePrivateAndOtherContextEntitiesFwsCodeGen;
+    }
+
+    /**
+     * El método setDisablePrivateAndOtherContextEntitiesFwsCodeGen se utiliza para inhabilitar la generación de código FWS (Façade Web Service) de
+     * entidades privadas y de entidades cuyas vistas (páginas) se encuentran en el módulo Web de la aplicación empresarial de otro proyecto.
+     *
+     * El método setDisablePrivateAndOtherContextEntitiesFwsCodeGen debe ejecutarse en el método configureGenerator del proyecto.
+     *
+     * @param disable true o false para inhabilitar, o no, la generación de código FWS
+     */
+    public void setDisablePrivateAndOtherContextEntitiesFwsCodeGen(boolean disable) {
+        _disablePrivateAndOtherContextEntitiesFwsCodeGen = disable;
+    }
+
     /**
      * @return the module's menu type
      */
@@ -2270,6 +2377,598 @@ public abstract class Project extends AbstractArtifact implements ProjectBuilder
         }
     }
 
+    public void addEntityAttribute(String attributeName, Object attributeValue, Class<? extends Entity>... entityClasses) {
+        if (StringUtils.isNotBlank(attributeName) && attributeValue != null && entityClasses != null && entityClasses.length > 0) {
+            forEntityAttribute(attributeName, attributeValue, entityNames(entityClasses));
+        }
+    }
+
+    private void forEntityAttribute(String attributeName, Object attributeValue, Set<String> entityNames) {
+        for (String name : entityNames) {
+            Entity entity = getEntity(name);
+            if (entity != null) {
+                entity.addAttribute(attributeName, attributeValue);
+            }
+        }
+    }
+
+    /**
+     * El método setForeignEntityClass se utiliza para especificar un conjunto de entidades que se debe agregar, o no, al conjunto de entidades
+     * foráneas de la aplicación. Las entidades foráneas son entidades cuyas correspondientes tablas no están definidas en la base de datos de la
+     * aplicación, sino en otra que típicamente reside en un servidor diferente.
+     *
+     * El método setForeignEntityClass debe ejecutarse en el método configureAnalyzer del proyecto.
+     *
+     * @param foreignEntityClass true o false para agregar o no las entidades, respectivamente; null, para agregar las entidades solo si pertenecen a
+     * un módulo de entidades foráneas (vea el elemento foreign de la Anotación ProjectModule)
+     * @param moduleClass clase del módulo que contiene las entidades que se van a agregar, o no, al conjunto de entidades foráneas de la aplicación
+     */
+    public void setForeignEntityClass(Boolean foreignEntityClass, Class<? extends Project> moduleClass) {
+        if (moduleClass != null) {
+            Project module = getModule(moduleClass);
+            if (module != null) {
+                for (Entity entity : module.getEntitiesList()) {
+                    entity.setForeignEntityClass(foreignEntityClass);
+                }
+            }
+        }
+    }
+
+    /**
+     * El método setForeignEntityClass se utiliza para especificar un conjunto de entidades que se debe agregar, o no, al conjunto de entidades
+     * foráneas de la aplicación. Las entidades foráneas son entidades cuyas correspondientes tablas no están definidas en la base de datos de la
+     * aplicación, sino en otra que típicamente reside en un servidor diferente.
+     *
+     * El método setForeignEntityClass debe ejecutarse en el método configureAnalyzer del proyecto.
+     *
+     * @param foreignEntityClass true o false para agregar o no las entidades, respectivamente; null, para agregar las entidades solo si pertenecen a
+     * un módulo de entidades foráneas (vea el elemento foreign de la Anotación ProjectModule)
+     * @param entityClasses una o más clases de entidades que se van a agregar, o no, al conjunto de entidades foráneas de la aplicación
+     */
+    public void setForeignEntityClass(Boolean foreignEntityClass, Class<? extends Entity>... entityClasses) {
+        if (entityClasses != null && entityClasses.length > 0) {
+            forForeignEntityClass(foreignEntityClass, entityNames(entityClasses));
+        }
+    }
+
+    private void forForeignEntityClass(Boolean foreignEntityClass, Set<String> entityNames) {
+        for (String name : entityNames) {
+            Entity entity = getEntity(name);
+            if (entity != null) {
+                entity.setForeignEntityClass(foreignEntityClass);
+            }
+        }
+    }
+
+    /**
+     * El método setPrivateEntityClass se utiliza para especificar un conjunto de entidades que se debe agregar, o no, al conjunto de entidades
+     * privadas de la aplicación. Las entidades privadas son entidades para las que no se deben generar vistas.
+     *
+     * El método setPrivateEntityClass debe ejecutarse en el método configureAnalyzer del proyecto.
+     *
+     * @param privateEntityClass true o false para agregar o no las entidades, respectivamente; null, para agregar las entidades solo si pertenecen a
+     * un módulo de entidades privadas (vea el elemento private de la Anotación ProjectModule)
+     * @param moduleClass clase del módulo que contiene las entidades que se van a agregar, o no, al conjunto de entidades privadas de la aplicación
+     */
+    public void setPrivateEntityClass(Boolean privateEntityClass, Class<? extends Project> moduleClass) {
+        if (moduleClass != null) {
+            Project module = getModule(moduleClass);
+            if (module != null) {
+                for (Entity entity : module.getEntitiesList()) {
+                    entity.setPrivateEntityClass(privateEntityClass);
+                }
+            }
+        }
+    }
+
+    /**
+     * El método setPrivateEntityClass se utiliza para especificar un conjunto de entidades que se debe agregar, o no, al conjunto de entidades
+     * privadas de la aplicación. Las entidades privadas son entidades para las que no se deben generar vistas.
+     *
+     * El método setPrivateEntityClass debe ejecutarse en el método configureAnalyzer del proyecto.
+     *
+     * @param privateEntityClass true o false para agregar o no las entidades, respectivamente; null, para agregar las entidades solo si pertenecen a
+     * un módulo de entidades privadas (vea el elemento private de la Anotación ProjectModule)
+     * @param entityClasses una o más clases de entidades que se van a agregar, o no, al conjunto de entidades privadas de la aplicación
+     */
+    public void setPrivateEntityClass(Boolean privateEntityClass, Class<? extends Entity>... entityClasses) {
+        if (entityClasses != null && entityClasses.length > 0) {
+            forPrivateEntityClass(privateEntityClass, entityNames(entityClasses));
+        }
+    }
+
+    private void forPrivateEntityClass(Boolean privateEntityClass, Set<String> entityNames) {
+        for (String name : entityNames) {
+            Entity entity = getEntity(name);
+            if (entity != null) {
+                entity.setPrivateEntityClass(privateEntityClass);
+            }
+        }
+    }
+
+    /**
+     * El método setApplicationOrigin se utiliza para establecer el origen de la aplicación empresarial que contiene las vistas (páginas) de un
+     * conjunto de entidades.
+     *
+     * Este atributo solo tiene efecto si el proyecto generado puede utilizar vistas (páginas) de otros proyectos. Utilice el método
+     * setMultiApplication del proyecto maestro para permitir el uso de vistas de otros proyectos.
+     *
+     * El método setApplicationOrigin debe ejecutarse en el método configureGenerator del proyecto.
+     *
+     * @param origin origen de las vistas de las entidades del conjunto definido por el siguiente parámetro; consta del protocolo, el nombre o
+     * dirección IP del servidor y el número de puerto. Por ejemplo, http://86.48.31.84:8080
+     *
+     * @param moduleClass clase del módulo que contiene las entidades cuyo origen se va a establecer
+     */
+    public void setApplicationOrigin(String origin, Class<? extends Project> moduleClass) {
+        if (moduleClass != null) {
+            Project module = getModule(moduleClass);
+            if (module != null) {
+                for (Entity entity : module.getEntitiesList()) {
+                    entity.setApplicationOrigin(origin);
+                }
+            }
+        }
+    }
+
+    /**
+     * El método setApplicationOrigin se utiliza para establecer el origen de la aplicación empresarial que contiene las vistas (páginas) de un
+     * conjunto de entidades.
+     *
+     * Este atributo solo tiene efecto si el proyecto generado puede utilizar vistas (páginas) de otros proyectos. Utilice el método
+     * setMultiApplication del proyecto maestro para permitir el uso de vistas de otros proyectos.
+     *
+     * El método setApplicationOrigin debe ejecutarse en el método configureGenerator del proyecto.
+     *
+     * @param origin origen de las vistas de las entidades del conjunto definido por el siguiente parámetro; consta del protocolo, el nombre o
+     * dirección IP del servidor y el número de puerto. Por ejemplo, http://86.48.31.84:8080
+     *
+     * @param entityClasses una o más clases de entidades cuyo origen se va a establecer
+     */
+    public void setApplicationOrigin(String origin, Class<? extends Entity>... entityClasses) {
+        if (entityClasses != null && entityClasses.length > 0) {
+            forApplicationOrigin(origin, entityNames(entityClasses));
+        }
+    }
+
+    private void forApplicationOrigin(String origin, Set<String> entityNames) {
+        for (String name : entityNames) {
+            Entity entity = getEntity(name);
+            if (entity != null) {
+                entity.setApplicationOrigin(origin);
+            }
+        }
+    }
+
+    /**
+     * El método setApplicationContextRoot se utiliza para establecer la raíz de contexto del módulo Web de la aplicación empresarial que contiene las
+     * vistas (páginas) de un conjunto de entidades.
+     *
+     * Este atributo solo tiene efecto si el proyecto generado puede utilizar vistas (páginas) de otros proyectos. Utilice el método
+     * setMultiApplication del proyecto maestro para permitir el uso de vistas de otros proyectos.
+     *
+     * El método setApplicationContextRoot debe ejecutarse en el método configureGenerator del proyecto.
+     *
+     * @param contextRoot raíz de contexto del módulo Web de la aplicación que contiene las vistas de las entidades del conjunto definido por el
+     * siguiente parámetro. Por ejemplo, <b>showcase102-web</b>
+     *
+     * @param moduleClass clase del módulo que contiene las entidades cuya raíz de contexto se va a establecer
+     */
+    public void setApplicationContextRoot(String contextRoot, Class<? extends Project> moduleClass) {
+        if (moduleClass != null) {
+            Project module = getModule(moduleClass);
+            if (module != null) {
+                for (Entity entity : module.getEntitiesList()) {
+                    entity.setApplicationContextRoot(contextRoot);
+                }
+            }
+        }
+    }
+
+    /**
+     * El método setApplicationContextRoot se utiliza para establecer la raíz de contexto del módulo Web de la aplicación empresarial que contiene las
+     * vistas (páginas) de un conjunto de entidades.
+     *
+     * Este atributo solo tiene efecto si el proyecto generado puede utilizar vistas (páginas) de otros proyectos. Utilice el método
+     * setMultiApplication del proyecto maestro para permitir el uso de vistas de otros proyectos.
+     *
+     * El método setApplicationContextRoot debe ejecutarse en el método configureGenerator del proyecto.
+     *
+     * @param contextRoot raíz de contexto del módulo Web de la aplicación que contiene las vistas de las entidades del conjunto definido por el
+     * siguiente parámetro. Por ejemplo, <b>showcase102-web</b>
+     *
+     * @param entityClasses una o más clases de entidades cuya raíz de contexto se va a establecer
+     */
+    public void setApplicationContextRoot(String contextRoot, Class<? extends Entity>... entityClasses) {
+        if (entityClasses != null && entityClasses.length > 0) {
+            forApplicationContextRoot(contextRoot, entityNames(entityClasses));
+        }
+    }
+
+    private void forApplicationContextRoot(String contextRoot, Set<String> entityNames) {
+        for (String name : entityNames) {
+            Entity entity = getEntity(name);
+            if (entity != null) {
+                entity.setApplicationContextRoot(contextRoot);
+            }
+        }
+    }
+
+    /**
+     * El método setApplicationConsolePath se utiliza para establecer la parte intermedia del path de las vistas (páginas) de procesamiento de un
+     * conjunto de entidades.
+     *
+     * El método setApplicationConsolePath debe ejecutarse en el método configureGenerator del proyecto.
+     *
+     * @param consolePath parte intermedia del path de las vistas (páginas) de procesamiento de las entidades del conjunto definido por el siguiente
+     * parámetro. Por ejemplo, <b>faces/views/base/crop/procesamiento</b>
+     *
+     * @param moduleClass clase del módulo que contiene las entidades cuya parte intermedia del path se va a establecer
+     */
+    public void setApplicationConsolePath(String consolePath, Class<? extends Project> moduleClass) {
+        if (moduleClass != null) {
+            Project module = getModule(moduleClass);
+            if (module != null) {
+                for (Entity entity : module.getEntitiesList()) {
+                    entity.setApplicationConsolePath(consolePath);
+                }
+            }
+        }
+    }
+
+    /**
+     * El método setApplicationConsolePath se utiliza para establecer la parte intermedia del path de las vistas (páginas) de procesamiento de un
+     * conjunto de entidades.
+     *
+     * El método setApplicationConsolePath debe ejecutarse en el método configureGenerator del proyecto.
+     *
+     * @param consolePath parte intermedia del path de las vistas (páginas) de procesamiento de las entidades del conjunto definido por el siguiente
+     * parámetro. Por ejemplo, <b>faces/views/base/crop/procesamiento</b>
+     *
+     * @param entityClasses una o más clases de entidades cuya parte intermedia del path se va a establecer
+     */
+    public void setApplicationConsolePath(String consolePath, Class<? extends Entity>... entityClasses) {
+        if (entityClasses != null && entityClasses.length > 0) {
+            forApplicationConsolePath(consolePath, entityNames(entityClasses));
+        }
+    }
+
+    private void forApplicationConsolePath(String consolePath, Set<String> entityNames) {
+        for (String name : entityNames) {
+            Entity entity = getEntity(name);
+            if (entity != null) {
+                entity.setApplicationConsolePath(consolePath);
+            }
+        }
+    }
+
+    /**
+     * El método setApplicationReadingPath se utiliza para establecer la parte intermedia del path de las vistas (páginas) de consulta de un conjunto
+     * de entidades.
+     *
+     * El método setApplicationReadingPath debe ejecutarse en el método configureGenerator del proyecto.
+     *
+     * @param readingPath parte intermedia del path de las vistas (páginas) de consulta de las entidades del conjunto definido por el siguiente
+     * parámetro. Por ejemplo, <b>faces/views/base/crop/consulta</b>
+     *
+     * @param moduleClass clase del módulo que contiene las entidades cuya parte intermedia del path se va a establecer
+     */
+    public void setApplicationReadingPath(String readingPath, Class<? extends Project> moduleClass) {
+        if (moduleClass != null) {
+            Project module = getModule(moduleClass);
+            if (module != null) {
+                for (Entity entity : module.getEntitiesList()) {
+                    entity.setApplicationReadingPath(readingPath);
+                }
+            }
+        }
+    }
+
+    /**
+     * El método setApplicationReadingPath se utiliza para establecer la parte intermedia del path de las vistas (páginas) de consulta de un conjunto
+     * de entidades.
+     *
+     * El método setApplicationReadingPath debe ejecutarse en el método configureGenerator del proyecto.
+     *
+     * @param readingPath parte intermedia del path de las vistas (páginas) de consulta de las entidades del conjunto definido por el siguiente
+     * parámetro. Por ejemplo, <b>faces/views/base/crop/consulta</b>
+     *
+     * @param entityClasses una o más clases de entidades cuya parte intermedia del path se va a establecer
+     */
+    public void setApplicationReadingPath(String readingPath, Class<? extends Entity>... entityClasses) {
+        if (entityClasses != null && entityClasses.length > 0) {
+            forApplicationReadingPath(readingPath, entityNames(entityClasses));
+        }
+    }
+
+    private void forApplicationReadingPath(String readingPath, Set<String> entityNames) {
+        for (String name : entityNames) {
+            Entity entity = getEntity(name);
+            if (entity != null) {
+                entity.setApplicationReadingPath(readingPath);
+            }
+        }
+    }
+
+    /**
+     * El método setApplicationWritingPath se utiliza para establecer la parte intermedia del path de las vistas (páginas) de registro de un conjunto
+     * de entidades.
+     *
+     * El método setApplicationWritingPath debe ejecutarse en el método configureGenerator del proyecto.
+     *
+     * @param writingPath parte intermedia del path de las vistas (páginas) de registro de las entidades del conjunto definido por el siguiente
+     * parámetro. Por ejemplo, <b>faces/views/base/crop/registro</b>
+     *
+     * @param moduleClass clase del módulo que contiene las entidades cuya parte intermedia del path se va a establecer
+     */
+    public void setApplicationWritingPath(String writingPath, Class<? extends Project> moduleClass) {
+        if (moduleClass != null) {
+            Project module = getModule(moduleClass);
+            if (module != null) {
+                for (Entity entity : module.getEntitiesList()) {
+                    entity.setApplicationWritingPath(writingPath);
+                }
+            }
+        }
+    }
+
+    /**
+     * El método setApplicationWritingPath se utiliza para establecer la parte intermedia del path de las vistas (páginas) de registro de un conjunto
+     * de entidades.
+     *
+     * El método setApplicationWritingPath debe ejecutarse en el método configureGenerator del proyecto.
+     *
+     * @param writingPath parte intermedia del path de las vistas (páginas) de registro de las entidades del conjunto definido por el siguiente
+     * parámetro. Por ejemplo, <b>faces/views/base/crop/registro</b>
+     *
+     * @param entityClasses una o más clases de entidades cuya parte intermedia del path se va a establecer
+     */
+    public void setApplicationWritingPath(String writingPath, Class<? extends Entity>... entityClasses) {
+        if (entityClasses != null && entityClasses.length > 0) {
+            forApplicationWritingPath(writingPath, entityNames(entityClasses));
+        }
+    }
+
+    private void forApplicationWritingPath(String writingPath, Set<String> entityNames) {
+        for (String name : entityNames) {
+            Entity entity = getEntity(name);
+            if (entity != null) {
+                entity.setApplicationWritingPath(writingPath);
+            }
+        }
+    }
+
+    /**
+     * El método setBplCodeGenEnabled se utiliza para especificar si se debe, o no, generar código BPL (Business Process Logic) para un conjunto de
+     * entidades.
+     *
+     * El método setBplCodeGenEnabled debe ejecutarse en el método configureGenerator del proyecto.
+     *
+     * @param enabled true o false para generar, o no, código BPL para las entidades del conjunto definido por el parámetro moduleClass
+     * @param moduleClass clase del módulo que contiene las entidades cuya generación de código BPL se va a establecer
+     */
+    public void setBplCodeGenEnabled(boolean enabled, Class<? extends Project> moduleClass) {
+        setBplCodeGenEnabled(enabled, false, moduleClass);
+    }
+
+    /**
+     * El método setBplCodeGenEnabled se utiliza para especificar si se debe, o no, generar código BPL (Business Process Logic) para un conjunto de
+     * entidades.El método setBplCodeGenEnabled debe ejecutarse en el método configureGenerator del proyecto.
+     *
+     *
+     * @param enabled true o false para generar, o no, código BPL para las entidades del conjunto definido por el parámetro moduleClass
+     * @param updateOnlyEntities true para actualizar solo las entidades; o false, para actualizar el atributo de las entidades y sus operaciones
+     * @param moduleClass clase del módulo que contiene las entidades cuya generación de código BPL se va a establecer
+     */
+    public void setBplCodeGenEnabled(boolean enabled, boolean updateOnlyEntities, Class<? extends Project> moduleClass) {
+        if (moduleClass != null) {
+            Project module = getModule(moduleClass);
+            if (module != null) {
+                for (Entity entity : module.getEntitiesList()) {
+                    forBplCodeGenEnabled(enabled, updateOnlyEntities, entity);
+                }
+            }
+        }
+    }
+
+    /**
+     * El método setBplCodeGenEnabled se utiliza para especificar si se debe, o no, generar código BPL (Business Process Logic) para un conjunto de
+     * entidades.
+     *
+     * El método setBplCodeGenEnabled debe ejecutarse en el método configureGenerator del proyecto.
+     *
+     * @param enabled true o false para generar, o no, código BPL para las entidades del conjunto definido por el parámetro entityClasses
+     * @param entityClasses una o más clases de entidades cuya generación de código BPL se va a establecer
+     */
+    public void setBplCodeGenEnabled(boolean enabled, Class<? extends Entity>... entityClasses) {
+        setBplCodeGenEnabled(enabled, false, entityClasses);
+    }
+
+    /**
+     * El método setBplCodeGenEnabled se utiliza para especificar si se debe, o no, generar código BPL (Business Process Logic) para un conjunto de
+     * entidades.
+     *
+     * El método setBplCodeGenEnabled debe ejecutarse en el método configureGenerator del proyecto.
+     *
+     * @param enabled true o false para generar, o no, código BPL para las entidades del conjunto definido por el parámetro entityClasses
+     * @param updateOnlyEntities true para actualizar solo las entidades; o false, para actualizar el atributo de las entidades y sus operaciones
+     * @param entityClasses una o más clases de entidades cuya generación de código BPL se va a establecer
+     */
+    public void setBplCodeGenEnabled(boolean enabled, boolean updateOnlyEntities, Class<? extends Entity>... entityClasses) {
+        if (entityClasses != null && entityClasses.length > 0) {
+            forBplCodeGenEnabled(enabled, updateOnlyEntities, entityNames(entityClasses));
+        }
+    }
+
+    private void forBplCodeGenEnabled(boolean enabled, boolean updateOnlyEntities, Set<String> entityNames) {
+        for (String name : entityNames) {
+            Entity entity = getEntity(name);
+            if (entity != null) {
+                forBplCodeGenEnabled(enabled, updateOnlyEntities, entity);
+            }
+        }
+    }
+
+    private void forBplCodeGenEnabled(boolean enabled, boolean updateOnlyEntities, Entity entity) {
+        if (isOptionalBplCodeGen(entity)) {
+            entity.setBplCodeGenEnabled(enabled);
+            if (!updateOnlyEntities) {
+                for (Operation operation : entity.getOperationsList()) {
+                    if (operation instanceof ProcessOperation) {
+                        ProcessOperation processOperation = (ProcessOperation) operation;
+                        processOperation.setBplCodeGenEnabled(enabled);
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * El método setBwsCodeGenEnabled se utiliza para especificar si se debe, o no, generar código BWS (Business Web Service) para un conjunto de
+     * entidades.
+     *
+     * El método setBwsCodeGenEnabled debe ejecutarse en el método configureGenerator del proyecto.
+     *
+     * @param enabled true o false para generar, o no, código BWS para las entidades del conjunto definido por el parámetro moduleClass
+     * @param moduleClass clase del módulo que contiene las entidades cuya generación de código BWS se va a establecer
+     */
+    public void setBwsCodeGenEnabled(boolean enabled, Class<? extends Project> moduleClass) {
+        if (moduleClass != null) {
+            Project module = getModule(moduleClass);
+            if (module != null) {
+                for (Entity entity : module.getEntitiesList()) {
+                    entity.setBwsCodeGenEnabled(enabled);
+                }
+            }
+        }
+    }
+
+    /**
+     * El método setBwsCodeGenEnabled se utiliza para especificar si se debe, o no, generar código BWS (Business Web Service) para un conjunto de
+     * entidades.
+     *
+     * El método setBwsCodeGenEnabled debe ejecutarse en el método configureGenerator del proyecto.
+     *
+     * @param enabled true o false para generar, o no, código BWS para las entidades del conjunto definido por el parámetro entityClasses
+     * @param entityClasses una o más clases de entidades cuya generación de código BWS se va a establecer
+     */
+    public void setBwsCodeGenEnabled(boolean enabled, Class<? extends Entity>... entityClasses) {
+        if (entityClasses != null && entityClasses.length > 0) {
+            forBwsCodeGenEnabled(enabled, entityNames(entityClasses));
+        }
+    }
+
+    private void forBwsCodeGenEnabled(boolean enabled, Set<String> entityNames) {
+        for (String name : entityNames) {
+            Entity entity = getEntity(name);
+            if (entity != null) {
+                entity.setBwsCodeGenEnabled(enabled);
+            }
+        }
+    }
+
+    /**
+     * El método setDafCodeGenEnabled se utiliza para especificar si se debe, o no, generar una fachada de acceso a datos (código DAF, por las siglas
+     * en inglés de Data Access Façade) para un conjunto de entidades.
+     *
+     * El método setDafCodeGenEnabled debe ejecutarse en el método configureGenerator del proyecto.
+     *
+     * @param enabled true o false para generar, o no, código DAF para las entidades del conjunto definido por el parámetro moduleClass
+     * @param moduleClass clase del módulo que contiene las entidades cuya generación de código DAF se va a establecer
+     */
+    public void setDafCodeGenEnabled(boolean enabled, Class<? extends Project> moduleClass) {
+        if (moduleClass != null) {
+            Project module = getModule(moduleClass);
+            if (module != null) {
+                for (Entity entity : module.getEntitiesList()) {
+                    if (isOptionalDafCodeGen(entity)) {
+                        entity.setDafCodeGenEnabled(enabled);
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * El método setDafCodeGenEnabled se utiliza para especificar si se debe, o no, generar una fachada de acceso a datos (código DAF, por las siglas
+     * en inglés de Data Access Façade) para un conjunto de entidades.
+     *
+     * El método setDafCodeGenEnabled debe ejecutarse en el método configureGenerator del proyecto.
+     *
+     * @param enabled true o false para generar, o no, código DAF para las entidades del conjunto definido por el parámetro entityClasses
+     * @param entityClasses una o más clases de entidades cuya generación de código DAF se va a establecer
+     */
+    public void setDafCodeGenEnabled(boolean enabled, Class<? extends Entity>... entityClasses) {
+        if (entityClasses != null && entityClasses.length > 0) {
+            forDafCodeGenEnabled(enabled, entityNames(entityClasses));
+        }
+    }
+
+    private void forDafCodeGenEnabled(boolean enabled, Set<String> entityNames) {
+        for (String name : entityNames) {
+            Entity entity = getEntity(name);
+            if (entity != null) {
+                if (isOptionalDafCodeGen(entity)) {
+                    entity.setDafCodeGenEnabled(enabled);
+                }
+            }
+        }
+    }
+
+    /**
+     * El método setFwsCodeGenEnabled se utiliza para especificar si se debe, o no, generar código FWS (Façade Web Service) para un conjunto de
+     * entidades.
+     *
+     * El método setFwsCodeGenEnabled debe ejecutarse en el método configureGenerator del proyecto.
+     *
+     * @param enabled true o false para generar, o no, código FWS para las entidades del conjunto definido por el parámetro moduleClass
+     * @param moduleClass clase del módulo que contiene las entidades cuya generación de código FWS se va a establecer
+     */
+    public void setFwsCodeGenEnabled(boolean enabled, Class<? extends Project> moduleClass) {
+        if (moduleClass != null) {
+            Project module = getModule(moduleClass);
+            if (module != null) {
+                for (Entity entity : module.getEntitiesList()) {
+                    entity.setFwsCodeGenEnabled(enabled);
+                }
+            }
+        }
+    }
+
+    /**
+     * El método setFwsCodeGenEnabled se utiliza para especificar si se debe, o no, generar código FWS (Façade Web Service) para un conjunto de
+     * entidades.
+     *
+     * El método setFwsCodeGenEnabled debe ejecutarse en el método configureGenerator del proyecto.
+     *
+     * @param enabled true o false para generar, o no, código FWS para las entidades del conjunto definido por el parámetro entityClasses
+     * @param entityClasses una o más clases de entidades cuya generación de código FWS se va a establecer
+     */
+    public void setFwsCodeGenEnabled(boolean enabled, Class<? extends Entity>... entityClasses) {
+        if (entityClasses != null && entityClasses.length > 0) {
+            forFwsCodeGenEnabled(enabled, entityNames(entityClasses));
+        }
+    }
+
+    private void forFwsCodeGenEnabled(boolean enabled, Set<String> entityNames) {
+        for (String name : entityNames) {
+            Entity entity = getEntity(name);
+            if (entity != null) {
+                entity.setFwsCodeGenEnabled(enabled);
+            }
+        }
+    }
+
+    private Set<String> entityNames(Class<? extends Entity>... entityClasses) {
+        Set<String> entityNames = new LinkedHashSet<>();
+        for (Class<?> entityClass : entityClasses) {
+            if (Entity.class.isAssignableFrom(entityClass)) {
+                entityNames.add(entityClass.getSimpleName());
+            }
+        }
+        return entityNames;
+    }
+
     /**
      * @return the processing groups set
      */
@@ -2282,6 +2981,26 @@ public abstract class Project extends AbstractArtifact implements ProjectBuilder
      */
     public Set<UserFlow> getUserFlows() {
         return _userFlows;
+    }
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="evaluate predicates">
+    public boolean evaluateEntity(String entityName, String predicateName) {
+        if (entityName != null && predicateName != null) {
+            Entity entity = getEntity(entityName);
+            if (entity != null) {
+                boolean not = predicateName.startsWith("!");
+                String string = not ? predicateName.substring(1) : predicateName;
+                String prefix = string.contains(".") ? "" : "adalid.core.predicates.";
+                Object object = XS1.newInstance(prefix + string);
+                if (object instanceof org.apache.commons.collections.Predicate) {
+                    org.apache.commons.collections.Predicate predicate = (org.apache.commons.collections.Predicate) object;
+                    boolean b = predicate.evaluate(entity);
+                    return not ? !b : b;
+                }
+            }
+        }
+        return false;
     }
     // </editor-fold>
 
@@ -2594,7 +3313,22 @@ public abstract class Project extends AbstractArtifact implements ProjectBuilder
 
     @Override
     public boolean build(String platform) {
+        /* until 24/02/2023
         return build() && generate(platform);
+        /**/
+        Class<? extends Project> clazz = getClass();
+        long millis1 = System.currentTimeMillis();
+        logger.warn("build and generate platform " + platform + " for project " + RunUtils.starting(clazz));
+        boolean built = build();
+        logger.warn("build project " + RunUtils.finished(clazz, millis1));
+        boolean generated = false;
+        if (built) {
+            long millis2 = System.currentTimeMillis();
+            generated = generate(platform);
+            logger.warn("generate platform " + platform + " for project " + RunUtils.finished(clazz, millis2));
+        }
+        logger.warn("build and generate platform " + platform + " for project " + RunUtils.finished(clazz, millis1));
+        return built && generated;
     }
 
     public boolean build() {
@@ -2633,7 +3367,7 @@ public abstract class Project extends AbstractArtifact implements ProjectBuilder
         return TimeUtils.simpleTimestampString(TimeUtils.actualTimestamp()); // yyyyMMdd-HHmmss-SSS;
     }
 
-    private final ProjectObjectModel pom = new ProjectObjectModel();
+    private final ProjectObjectModelReader pom = new adalid.core.ProjectObjectModel();
 
     public ProjectObjectModelReader getProjectObjectModel() {
         return pom;
@@ -2663,6 +3397,7 @@ public abstract class Project extends AbstractArtifact implements ProjectBuilder
     protected boolean analyze() {
         logger.info(signature("analyze", getClass().getName()));
         TLC.setProject(this);
+        configureAnalyzer();
         List<Project> modulesList = getModulesList();
         Collections.sort(modulesList);
         boolean analyzed = true;
@@ -2693,7 +3428,6 @@ public abstract class Project extends AbstractArtifact implements ProjectBuilder
     public boolean generate(String platform) {
         logger.info(signature("generate", "platform=" + platform));
         TLC.setProject(this);
-        configureGenerator();
         boolean fee = readyToWrite(platform);
         boolean faa = checkBootstrappingProperties();
         boolean foo = checkProjectAlias();
@@ -2705,18 +3439,82 @@ public abstract class Project extends AbstractArtifact implements ProjectBuilder
             logger.error("project was not built; generation aborted");
             return false;
         }
+        configureGenerator();
+        disablePrivateAndOtherContextEntitiesCodeGen();
         configureWriter();
         Writer writer = getWriter();
         writer.setFileExclusionPatterns(_fileExclusionPatterns);
         writer.setFilePreservationPatterns(_filePreservationPatterns);
         writer.setAvailableResourceNames(getEntitiesMap().keySet());
-        writer.setForeignResourceNames(XS2.simpleNames(_foreignEntityClasses));
-        writer.setPrivateResourceNames(XS2.simpleNames(_privateEntityClasses));
+        writer.setForeignResourceNames(foreignEntitySimpleNames());
+        writer.setPrivateResourceNames(privateEntitySimpleNames());
         boolean b1 = writer.write(platform);
         boolean b2 = afterWriting(b1);
         boolean ok = b1 && b2;
         printSummary(ok);
         return ok;
+    }
+
+    protected void disablePrivateAndOtherContextEntitiesCodeGen() {
+        if (disableEntitiesCodeGen()) {
+            for (Entity entity : getEntitiesList()) {
+                if (entity.isPrivateEntityClass() || !entity.isApplicationDefaultLocation()) {
+                    if (_disablePrivateAndOtherContextEntitiesBplCodeGen) {
+                        if (isOptionalBplCodeGen(entity)) {
+                            entity.setBplCodeGenEnabled(false);
+                        }
+                    }
+                    if (_disablePrivateAndOtherContextEntitiesBwsCodeGen) {
+                        entity.setBwsCodeGenEnabled(false);
+                    }
+                    if (_disablePrivateAndOtherContextEntitiesDafCodeGen) {
+                        if (isOptionalDafCodeGen(entity)) {
+                            entity.setDafCodeGenEnabled(false);
+                        }
+                    }
+                    if (_disablePrivateAndOtherContextEntitiesFwsCodeGen) {
+                        entity.setFwsCodeGenEnabled(false);
+                    }
+                }
+            }
+        }
+    }
+
+    private boolean disableEntitiesCodeGen() {
+        return _disablePrivateAndOtherContextEntitiesBplCodeGen
+            || _disablePrivateAndOtherContextEntitiesBwsCodeGen
+            || _disablePrivateAndOtherContextEntitiesDafCodeGen
+            || _disablePrivateAndOtherContextEntitiesFwsCodeGen;
+    }
+
+    protected boolean isOptionalBplCodeGen(Entity entity) {
+        return entity != null;
+    }
+
+    protected boolean isOptionalDafCodeGen(Entity entity) {
+        return entity != null;
+    }
+
+    private Set<String> foreignEntitySimpleNames() {
+        Set<String> set = new LinkedHashSet<>();
+        List<Entity> list = getEntitiesList();
+        for (Entity entity : list) {
+            if (entity.isForeignEntityClass()) {
+                set.add(entity.getClass().getSimpleName());
+            }
+        }
+        return set;
+    }
+
+    private Set<String> privateEntitySimpleNames() {
+        Set<String> set = new LinkedHashSet<>();
+        List<Entity> list = getEntitiesList();
+        for (Entity entity : list) {
+            if (entity.isPrivateEntityClass() || !entity.isApplicationDefaultLocation()) {
+                set.add(entity.getClass().getSimpleName());
+            }
+        }
+        return set;
     }
 
     @Override
@@ -2735,6 +3533,13 @@ public abstract class Project extends AbstractArtifact implements ProjectBuilder
         } else {
             logger.warn("project " + alias + " generated with errors");
         }
+    }
+
+    /**
+     * set analyzer settings
+     */
+    public void configureAnalyzer() {
+        track("configureAnalyzer");
     }
 
     /**
@@ -2797,6 +3602,18 @@ public abstract class Project extends AbstractArtifact implements ProjectBuilder
     private String signature(String method, Object... parameters) {
         String pattern = "{0}({1})";
         return MessageFormat.format(pattern, method, StringUtils.join(parameters, ", "));
+    }
+
+    public Display getDisplayOf(String name) {
+        if (StringUtils.isNotBlank(name)) {
+            List<? extends Display> displays = getDisplaysList();
+            for (Display display : displays) {
+                if (name.equals(display.getName())) {
+                    return display;
+                }
+            }
+        }
+        return null;
     }
 
     // <editor-fold defaultstate="collapsed" desc="entity display getters">
@@ -3323,6 +4140,32 @@ public abstract class Project extends AbstractArtifact implements ProjectBuilder
         getParser().track(depth(), round(), getClassPath(), method, parameters);
     }
 
+    // <editor-fold defaultstate="collapsed" desc="iframe">
+    /**
+     * Cree la definición de un iframe usando MessageFormat.format
+     * <p>
+     * @param src URL del documento a incrustar en el iframe
+     * @return la definición de un iframe de 300 x 150 píxeles
+     */
+    protected static String iframe(String src) {
+        return iframe(src, 0, 0);
+    }
+
+    /**
+     * Cree la definición de un iframe usando MessageFormat.format
+     * <p>
+     * @param src URL del documento a incrustar en el iframe
+     * @param width ancho del iframe en píxeles. Un número menor o igual a 0 es equivalente a 300; un número mayor que 0 y menor que 100 es
+     * equivalente a 100.
+     * @param height alto del iframe en píxeles. Un número menor o igual a 0 es equivalente a 150; un número mayor que 0 y menor que 50 es equivalente
+     * a 50.
+     * @return la definición de un iframe
+     */
+    protected static String iframe(String src, int width, int height) {
+        return XS2.iframe(src, width, height);
+    }
+    // </editor-fold>
+
     // <editor-fold defaultstate="collapsed" desc="Comparable">
     @Override
     public int compareTo(Project o) {
@@ -3587,7 +4430,16 @@ public abstract class Project extends AbstractArtifact implements ProjectBuilder
                 Class<?> fieldType1 = field1.getType();
                 if (Entity.class.isAssignableFrom(fieldType1)) {
                     putReferences(fieldType1, type, null, null);
+                } else if (EntityCollection.class.isAssignableFrom(fieldType1)) {
+                    Class<? extends Entity> targetEntityClass = targetEntityClass(field1);
+                    if (targetEntityClass != null) {
+                        putReferences(targetEntityClass, type, null, null);
+                    }
                 } else if (Operation.class.isAssignableFrom(fieldType1)) {
+                    Class<? extends Entity> constructedEntityClass = constructedEntityClass(fieldType1);
+                    if (constructedEntityClass != null) {
+                        putReferences(constructedEntityClass, type, null, null);
+                    }
                     for (Field field2 : XS1.getFields(fieldType1, Operation.class)) { // type.getDeclaredFields()
                         Class<?> fieldType2 = field2.getType();
                         if (Entity.class.isAssignableFrom(fieldType2)) {
@@ -3595,7 +4447,40 @@ public abstract class Project extends AbstractArtifact implements ProjectBuilder
                         }
                     }
                 }
+                if (Entity.class.isAssignableFrom(fieldType1) || LongProperty.class.isAssignableFrom(fieldType1)) {
+                    Class<? extends Entity> segmentEntityClass = segmentEntityClass(field1);
+                    if (segmentEntityClass != null) {
+                        putReferences(segmentEntityClass, type, null, null);
+                    }
+                }
             }
+        }
+
+        private Class<? extends Entity> targetEntityClass(Field field) {
+            Class<? extends Entity> targetEntityClass = null;
+            if (field.isAnnotationPresent(OneToMany.class)) {
+                OneToMany annotation = field.getAnnotation(OneToMany.class);
+                targetEntityClass = annotation.targetEntity();
+            }
+            return targetEntityClass != null && targetEntityClass != Entity.class && Entity.class.isAssignableFrom(targetEntityClass) ? targetEntityClass : null;
+        }
+
+        private Class<? extends Entity> constructedEntityClass(Class<?> operationClass) {
+            Class<? extends Entity> constructedEntityClass = null;
+            if (operationClass.isAnnotationPresent(ConstructionOperationClass.class)) {
+                ConstructionOperationClass annotation = operationClass.getAnnotation(ConstructionOperationClass.class);
+                constructedEntityClass = annotation.type();
+            }
+            return constructedEntityClass != null && constructedEntityClass != Entity.class && Entity.class.isAssignableFrom(constructedEntityClass) ? constructedEntityClass : null;
+        }
+
+        private Class<? extends Entity> segmentEntityClass(Field field) {
+            Class<? extends Entity> segmentEntityClass = null;
+            if (field.isAnnotationPresent(SegmentProperty.class)) {
+                SegmentProperty annotation = field.getAnnotation(SegmentProperty.class);
+                segmentEntityClass = annotation.entityClass();
+            }
+            return segmentEntityClass != null && segmentEntityClass != Entity.class && Entity.class.isAssignableFrom(segmentEntityClass) ? segmentEntityClass : null;
         }
 
         private void putProjectReference(Class<?> type, Class<?> declaringType, Artifact declaringArtifact, Field declaringField) {
@@ -4110,30 +4995,22 @@ public abstract class Project extends AbstractArtifact implements ProjectBuilder
             }
         }
 
-        /**
-         *
-         */
+        /*
         void increaseAlertCount() {
             alerts++;
         }
 
-        /**
-         *
-         */
+        /**/
         void increaseWarningCount() {
             warnings++;
         }
 
-        /**
-         *
-         */
+        /**/
         void increaseErrorCount() {
             errors++;
         }
 
-        /**
-         *
-         */
+        /**/
         void increaseTransitionCount() {
             Level level = Project.getTransitionLevel();
             if (level.equals(Level.WARN)) {

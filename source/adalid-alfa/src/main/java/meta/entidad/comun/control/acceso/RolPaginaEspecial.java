@@ -87,6 +87,16 @@ public class RolPaginaEspecial extends AbstractPersistentEntity {
         setLocalizedCollectionShortLabel(ENGLISH, rol, "Special Pages");
         setLocalizedCollectionShortLabel(SPANISH, rol, "Páginas Especiales");
         /**/
+        setLocalizedDescription(ENGLISH, "Each instance of " + b("Role/Special Page Associations") + " represents an "
+            + "special web page associated with an application role."
+            + "");
+        setLocalizedDescription(SPANISH, "Cada instancia de " + b("Asociaciones Rol/Página Especial") + " representa una "
+            + "página web especial asociada con un rol de la aplicación."
+            + "");
+        /**/
+        setLocalizedShortDescription(ENGLISH, "special web page associated with an application role");
+        setLocalizedShortDescription(SPANISH, "página web especial asociada con un rol de la aplicación");
+        /**/
         // </editor-fold>
     }
 

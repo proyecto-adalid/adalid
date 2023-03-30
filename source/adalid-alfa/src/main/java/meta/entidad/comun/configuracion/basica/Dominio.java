@@ -70,8 +70,17 @@ public class Dominio extends AbstractPersistentEntity {
         setLocalizedLabel(SPANISH, "dominio");
         setLocalizedCollectionLabel(ENGLISH, "Domains");
         setLocalizedCollectionLabel(SPANISH, "Dominios");
-        setLocalizedDescription(ENGLISH, "persistence domain object that typically represents a table in the database");
-        setLocalizedDescription(SPANISH, "objeto de dominio de persistencia que normalmente representa una tabla en la base de datos");
+        /**/
+        setLocalizedDescription(ENGLISH, "Each instance of " + b("Domains") + " represents a "
+            + "persistence domain object that typically represents a table in the database."
+            + "");
+        setLocalizedDescription(SPANISH, "Cada instancia de " + b("Dominios") + " representa un "
+            + "objeto de dominio de persistencia que normalmente representa una tabla en la base de datos."
+            + "");
+        /**/
+        setLocalizedShortDescription(ENGLISH, "persistence domain object that typically represents a table in the database");
+        setLocalizedShortDescription(SPANISH, "objeto de dominio de persistencia que normalmente representa una tabla en la base de datos");
+        /**/
         // </editor-fold>
     }
 

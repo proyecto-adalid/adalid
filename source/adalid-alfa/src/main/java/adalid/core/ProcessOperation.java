@@ -79,9 +79,9 @@ public abstract class ProcessOperation extends Operation {
 
     private int _jobPriority;
 
-    private boolean _bplCodeGenEnabled = true;
+    private Boolean _bplCodeGenEnabled;
 
-    private boolean _sqlCodeGenEnabled = true;
+    private Boolean _sqlCodeGenEnabled;
 
     private Kleenean _overloading = Kleenean.UNSPECIFIED;
 
@@ -300,31 +300,99 @@ public abstract class ProcessOperation extends Operation {
     }
 
     /**
+     * @return true if this operation business process logic code generation is enabled on the declaring entity or any of its extensions
+     */
+    public boolean isExtensionBplCodeGenEnabled() {
+        return isBplCodeGenEnabled() || isExtensionBplCodeGenEnabled(getDeclaringEntityRoot());
+    }
+
+    private boolean isExtensionBplCodeGenEnabled(Entity entity) {
+        if (entity != null) {
+            for (Entity e : entity.getExtensionsList()) {
+                ProcessOperation o = (ProcessOperation) e.getOperation(getClass());
+                if (o != null && o.isExtensionBplCodeGenEnabled()) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    /**
      * @return the business process logic code generation enabled indicator
      */
     public boolean isBplCodeGenEnabled() {
+        if (_bplCodeGenEnabled == null) {
+            Entity operationEntityRoot = getDeclaringEntityRoot();
+            return operationEntityRoot == null || operationEntityRoot.isBplCodeGenEnabled();
+        }
         return _bplCodeGenEnabled;
+    }
+
+    /**
+     * El método setBplCodeGenEnabled se utiliza para especificar si se debe, o no, generar código BPL (Business Process Logic) para la operación.
+     *
+     * El método setBplCodeGenEnabled debe ejecutarse en el método settleAttributes de la operación .
+     *
+     * @param enabled true o false para generar, o no, código BPL para la operación
+     */
+    public void setBplCodeGenEnabled(boolean enabled) {
+        _bplCodeGenEnabled = enabled;
+    }
+
+    /**
+     * @return the business web service code generation enabled indicator
+     */
+    private boolean isBwsCodeGenEnabled() {
+        Entity operationEntityRoot = getDeclaringEntityRoot();
+        return operationEntityRoot == null || operationEntityRoot.isBwsCodeGenEnabled();
     }
 
     /**
      * @return the SQL code generation enabled indicator
      */
     public boolean isSqlCodeGenEnabled() {
+        if (_sqlCodeGenEnabled == null) {
+            Entity operationEntityRoot = getDeclaringEntityRoot();
+            return operationEntityRoot == null || operationEntityRoot.isSqlCodeGenEnabled();
+        }
         return _sqlCodeGenEnabled;
+    }
+
+    /**
+     * El método setSqlCodeGenEnabled se utiliza para especificar si se debe, o no, generar código SQL para la operación.
+     *
+     * El método setSqlCodeGenEnabled debe ejecutarse en el método settleAttributes de la operación.
+     *
+     * @param enabled true o false para generar, o no, código SQL para la operación
+     */
+    public void setSqlCodeGenEnabled(boolean enabled) {
+        _sqlCodeGenEnabled = enabled;
     }
 
     /**
      * @return the overloading indicator
      */
     public Kleenean getOverloading() {
-        return _overloading;
+        return isSqlCodeGenEnabled() ? _overloading : Kleenean.UNSPECIFIED;
     }
 
     /**
      * @return the serviceable indicator
      */
     public Kleenean getServiceable() {
-        return _serviceable;
+        return isBplCodeGenEnabled() && isBwsCodeGenEnabled() ? _serviceable : Kleenean.UNSPECIFIED;
+    }
+
+    /**
+     * El método setServiceable se utiliza para especificar si se debe, o no, generar código BWS (Business Web Service) para la operación.
+     *
+     * El método setServiceable debe ejecutarse en el método settleAttributes de la operación.
+     *
+     * @param serviceable TRUE o FALSE para generar, o no, código BWS para la operación.
+     */
+    public void setServiceable(Kleenean serviceable) {
+        _serviceable = serviceable;
     }
 
     /**
@@ -348,7 +416,7 @@ public abstract class ProcessOperation extends Operation {
     @Override
     public boolean isSelfConstructor() {
         Entity declaringEntity = isConstructor() ? getDeclaringEntity() : null;
-        return declaringEntity != null && declaringEntity.getClass() == _constructionType;
+        return declaringEntity != null && declaringEntity.getClass().getSimpleName().equals(_constructionType.getSimpleName());
     }
 
     /**
@@ -729,12 +797,8 @@ public abstract class ProcessOperation extends Operation {
                 _jobPriority = Math.max(0, annotation.priority());
                 _bplCodeGenEnabled = annotation.bpl().toBoolean(_bplCodeGenEnabled);
                 _sqlCodeGenEnabled = annotation.sql().toBoolean(_sqlCodeGenEnabled);
-                if (_sqlCodeGenEnabled) {
-                    _overloading = annotation.overloading();
-                }
-                if (_bplCodeGenEnabled) {
-                    _serviceable = annotation.serviceable();
-                }
+                _serviceable = specified(annotation.serviceable(), _serviceable);
+                _overloading = specified(annotation.overloading(), _overloading);
                 _annotatedWithProcessOperationClass = true;
             }
         }

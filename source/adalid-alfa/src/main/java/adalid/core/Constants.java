@@ -211,6 +211,22 @@ public class Constants {
     public static final String IFRAME_REGEX = "^" + iframe_regex + "$";
 
     /**
+     * A simple pattern to get the definition of an iframe using MessageFormat.format
+     * <p>
+     * The pattern includes the following parameters:
+     * <ul>
+     * <li><b>{0}</b> Attribute <b>src</b>: Specifies the URL of the document to embed in the iframe</li>
+     * <li><b>{1}</b> Attribute <b>width</b>: Specifies the width of the iframe in pixels</li>
+     * <li><b>{2}</b> Attribute <b>height</b>: Specifies the height of the iframe in pixels</li>
+     * </ul>
+     */
+    public static final String IFRAME_SIMPLE_PATTERN = ""
+        + "<iframe src=\"{0}\" width=\"{1}\" height=\"{2}\" "
+        + "frameborder=\"0\" allow=\"accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture\" allowfullscreen>"
+        + "</iframe>"
+        + "";
+
+    /**
      * RegEx testing from Dan's Tools. https://www.regextester.com/99829/
      */
     public static final String EMBEDDED_DOCUMENT_REGEX = "^(" + iframe_regex + "|" + url_regex + ")$";

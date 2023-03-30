@@ -13,7 +13,10 @@
 package meta.proyecto.comun;
 
 import adalid.core.*;
+import meta.entidad.comun.configuracion.basica.FormatoPaginaInforme;
+import meta.entidad.comun.operacion.basica.CampoValorTemporal;
 import meta.entidad.comun.operacion.basica.CondicionTarea;
+import meta.entidad.comun.operacion.basica.DialogoDinamicoRemoto;
 import meta.entidad.comun.operacion.basica.FiltroFuncion;
 import meta.entidad.comun.operacion.basica.FiltroFuncionPar;
 import meta.entidad.comun.operacion.basica.OperadorCom;
@@ -23,6 +26,7 @@ import meta.entidad.comun.operacion.basica.TareaUsuario;
 import meta.entidad.comun.operacion.basica.TareaUsuarioCorreo;
 import meta.entidad.comun.operacion.basica.TareaVirtual;
 import meta.entidad.comun.operacion.basica.TipoAgregacion;
+import meta.entidad.comun.operacion.basica.TipoValorCriterio;
 import meta.entidad.comun.operacion.basica.TransicionTareaUsuario;
 import meta.entidad.comun.operacion.basica.VistaFuncion;
 import meta.entidad.comun.operacion.basica.VistaFuncionCol;
@@ -49,9 +53,12 @@ public class OperacionBasica extends Project {
     @Override
     public void print() {
         super.print();
+        System.out.println(CampoValorTemporal);
         System.out.println(CondicionTarea);
+        System.out.println(DialogoDinamicoRemoto);
         System.out.println(FiltroFuncion);
         System.out.println(FiltroFuncionPar);
+        System.out.println(FormatoPaginaInforme);
         System.out.println(OperadorCom);
         System.out.println(Favoritos);
         System.out.println(RecursoValor);
@@ -59,17 +66,24 @@ public class OperacionBasica extends Project {
         System.out.println(TareaUsuarioCorreo);
         System.out.println(TareaVirtual);
         System.out.println(TipoAgregacion);
+        System.out.println(TipoValorCriterio);
         System.out.println(TransicionTareaUsuario);
         System.out.println(VistaFuncion);
         System.out.println(VistaFuncionPar);
     }
     // </editor-fold>
 
+    CampoValorTemporal CampoValorTemporal;
+
     CondicionTarea CondicionTarea;
+
+    DialogoDinamicoRemoto DialogoDinamicoRemoto;
 
     FiltroFuncion FiltroFuncion;
 
     FiltroFuncionPar FiltroFuncionPar;
+
+    FormatoPaginaInforme FormatoPaginaInforme;
 
     OperadorCom OperadorCom;
 
@@ -84,6 +98,8 @@ public class OperacionBasica extends Project {
     TareaVirtual TareaVirtual;
 
     TipoAgregacion TipoAgregacion;
+
+    TipoValorCriterio TipoValorCriterio;
 
     TransicionTareaUsuario TransicionTareaUsuario;
 

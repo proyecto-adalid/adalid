@@ -19,8 +19,8 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * La anotación EntityReferenceSearch se utiliza para configurar la forma en que las vistas (páginas) de implementan la búsqueda y/o selección del
- * valor de la referencia (propiedad o parámetro que hace referencia a otra entidad).
+ * La anotación EntityReferenceSearch se utiliza para configurar la forma en que las vistas (páginas) implementan la búsqueda y/o selección del valor
+ * de la referencia (propiedad o parámetro que hace referencia a otra entidad).
  *
  * @author Jorge Campins
  */

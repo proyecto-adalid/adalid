@@ -271,9 +271,9 @@ public @interface ProcessOperationClass {
     /**
      * bpl indica si se debe, o no, generar código BPL (Business Process Logic) para la operación. Su valor es uno de los elementos de la enumeración
      * Kleenean. Seleccione TRUE para generar código BPL; en caso contrario, seleccione FALSE. Alternativamente, omita el elemento o seleccione
-     * UNSPECIFIED para utilizar el valor predeterminado del atributo. El valor predeterminado del atributo es TRUE. La generación del código BPL
-     * también depende del valor especificado mediante el elemento <b>bpl</b> de la anotación <b>EntityCodeGen</b> de la entidad a la que pertenece la
-     * operación.
+     * UNSPECIFIED para utilizar el valor predeterminado del atributo. El valor predeterminado del atributo es el valor del elemento <b>bpl</b> de la
+     * anotación <b>EntityCodeGen</b> de la entidad a la que pertenece la operación; por lo tanto, el valor predeterminado también depende del valor
+     * especificado mediante el método <b>setDefaultEntityCodeGenBPL</b> del proyecto maestro.
      *
      * @return bpl
      */
@@ -282,8 +282,9 @@ public @interface ProcessOperationClass {
     /**
      * sql indica si se debe, o no, generar código SQL para la operación. Su valor es uno de los elementos de la enumeración Kleenean. Seleccione TRUE
      * para generar código SQL; en caso contrario, seleccione FALSE. Alternativamente, omita el elemento o seleccione UNSPECIFIED para utilizar el
-     * valor predeterminado del atributo. El valor predeterminado del atributo es TRUE. La generación del código SQL también depende del valor
-     * especificado mediante el elemento <b>bpl</b> de la anotación <b>EntityCodeGen</b> de la entidad a la que pertenece la operación.
+     * valor predeterminado del atributo. El valor predeterminado del atributo es el valor del elemento <b>sql</b> de la anotación
+     * <b>EntityCodeGen</b> de la entidad a la que pertenece la operación; por lo tanto, el valor predeterminado también depende del valor
+     * especificado mediante el método <b>setDefaultEntityCodeGenSQL</b> del proyecto maestro.
      *
      * @return sql
      */
@@ -303,8 +304,8 @@ public @interface ProcessOperationClass {
      * serviceable indica si se debe, o no, generar código BWS (Business Web Service) para la operación. Su valor es uno de los elementos de la
      * enumeración Kleenean. Seleccione TRUE para generar código BWS; en caso contrario, seleccione FALSE. Alternativamente, omita el elemento o
      * seleccione UNSPECIFIED para utilizar el valor predeterminado del atributo. El valor predeterminado del atributo es FALSE. La generación del
-     * código BWS también depende del valor especificado mediante el método <b>setInternetAccessAllowed</b> del proyecto maestro, y del elemento
-     * <b>bws</b> de la anotación <b>EntityCodeGen</b> de la entidad a la que pertenece la operación.
+     * código BWS también depende del valor especificado mediante el método <b>setInternetAccessAllowed</b> del proyecto maestro, del elemento
+     * <b>bpl</b> de esta anotación y del elemento <b>bws</b> de la anotación <b>EntityCodeGen</b> de la entidad a la que pertenece la operación.
      *
      * @return serviceable
      */

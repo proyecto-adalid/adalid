@@ -48,6 +48,7 @@ public class EntidadesCatalogo extends Project {
         System.out.println(Funcion);
         System.out.println(FuncionParametro);
         System.out.println(GrupoProceso);
+        System.out.println(ModuloAplicacion);
 //      System.out.println(OpcionMenu);
         System.out.println(Pagina);
         System.out.println(Parametro);
@@ -69,6 +70,8 @@ public class EntidadesCatalogo extends Project {
     FuncionParametro FuncionParametro;
 
     GrupoProceso GrupoProceso;
+
+    ModuloAplicacion ModuloAplicacion;
 
 //  OpcionMenu OpcionMenu;
 //

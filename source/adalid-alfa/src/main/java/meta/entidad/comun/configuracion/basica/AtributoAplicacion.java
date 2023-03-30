@@ -54,8 +54,17 @@ public class AtributoAplicacion extends AbstractPersistentEntity {
         setLocalizedCollectionLabel(SPANISH, "Atributos de la Aplicación");
         setLocalizedCollectionShortLabel(ENGLISH, "Attributes");
         setLocalizedCollectionShortLabel(SPANISH, "Atributos");
-        setLocalizedDescription(ENGLISH, "application's extraordinary attribute");
-        setLocalizedDescription(SPANISH, "atributo extraordinario de la aplicación");
+        /**/
+        setLocalizedDescription(ENGLISH, "Each instance of " + b("Application Attributes") + " represents an "
+            + "application extraordinary attribute."
+            + "");
+        setLocalizedDescription(SPANISH, "Cada instancia de " + b("Atributos de la Aplicación") + " representa un "
+            + "atributo extraordinario de la aplicación."
+            + "");
+        /**/
+        setLocalizedShortDescription(ENGLISH, "application extraordinary attribute");
+        setLocalizedShortDescription(SPANISH, "atributo extraordinario de la aplicación");
+        /**/
         // </editor-fold>
     }
 

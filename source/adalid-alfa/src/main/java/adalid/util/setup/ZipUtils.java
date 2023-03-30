@@ -57,7 +57,7 @@ public class ZipUtils {
         int outputLength = 0;
         byte[] outputBytes;
         byte[] outputBuffer = new byte[BUFFER_SIZE];
-        try ( ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
+        try (ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
             while (!deflater.finished()) {
                 int n = deflater.deflate(outputBuffer);
                 outputLength += n;
@@ -86,7 +86,7 @@ public class ZipUtils {
         int outputLength = 0;
         byte[] outputBytes;
         byte[] outputBuffer = new byte[BUFFER_SIZE];
-        try ( ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
+        try (ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
             while (!inflater.finished()) {
                 int n = inflater.inflate(outputBuffer);
                 outputLength += n;
@@ -122,7 +122,7 @@ public class ZipUtils {
 
     private static boolean zip(File f) throws IOException {
         String zipPathName = f.getCanonicalPath() + ".zip";
-        try ( FileOutputStream fos = new FileOutputStream(zipPathName);  ZipOutputStream zipOut = new ZipOutputStream(fos)) {
+        try (FileOutputStream fos = new FileOutputStream(zipPathName); ZipOutputStream zipOut = new ZipOutputStream(fos)) {
             zip(f, f.getName(), zipOut);
         }
         return true;
@@ -156,7 +156,7 @@ public class ZipUtils {
         if (StringUtils.isNotBlank(zipPathName)) {
             if (pathNames != null && pathNames.length > 0) {
                 boolean zip = false;
-                try ( FileOutputStream fos = new FileOutputStream(zipPathName);  ZipOutputStream zipOut = new ZipOutputStream(fos)) {
+                try (FileOutputStream fos = new FileOutputStream(zipPathName); ZipOutputStream zipOut = new ZipOutputStream(fos)) {
                     for (String pathName : pathNames) {
                         if (StringUtils.isNotBlank(pathName)) {
                             File f = new File(pathName);
@@ -181,7 +181,7 @@ public class ZipUtils {
                     zip(child, dirName + child.getName(), zipOut);
                 }
             } else {
-                try ( FileInputStream fis = new FileInputStream(file)) {
+                try (FileInputStream fis = new FileInputStream(file)) {
                     zipOut.putNextEntry(new ZipEntry(filePath));
                     byte[] bytes = new byte[BUFFER_SIZE];
                     int length;
@@ -206,7 +206,7 @@ public class ZipUtils {
             if (zip.isFile() && zip.canRead() && !zip.isHidden()) {
                 byte[] buffer = new byte[BUFFER_SIZE];
                 File dir = newFile(dirPathName, zipPathName, ".dir");
-                try ( ZipInputStream zipIn = new ZipInputStream(new FileInputStream(zipPathName))) {
+                try (ZipInputStream zipIn = new ZipInputStream(new FileInputStream(zipPathName))) {
                     ZipEntry zipEntry = zipIn.getNextEntry();
                     while (zipEntry != null) {
                         File file = newFile(dir, zipEntry);
@@ -218,7 +218,7 @@ public class ZipUtils {
                             verifyDir(file.getParentFile());
                             // write file content
                             try (
-                                 FileOutputStream fos = new FileOutputStream(file)) {
+                                FileOutputStream fos = new FileOutputStream(file)) {
                                 int len;
                                 while ((len = zipIn.read(buffer)) > 0) {
                                     fos.write(buffer, 0, len);

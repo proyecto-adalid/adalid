@@ -25,7 +25,7 @@ import org.apache.commons.lang.StringUtils;
  * @author Jorge Campins
  */
 @EntityClass(catalog = Kleenean.TRUE, independent = Kleenean.TRUE, resourceType = ResourceType.CONFIGURATION, resourceGender = ResourceGender.MASCULINE)
-@EntityCodeGen(bws = Kleenean.FALSE, fws = Kleenean.FALSE)
+@EntityCodeGen(bpl = Kleenean.FALSE, bws = Kleenean.FALSE, fws = Kleenean.FALSE, gui = Kleenean.FALSE, sql = Kleenean.TRUE)
 @EntitySelectOperation(enabled = Kleenean.TRUE, access = OperationAccess.PUBLIC, rowsLimit = 0)
 @EntityInsertOperation(enabled = Kleenean.FALSE)
 @EntityUpdateOperation(enabled = Kleenean.FALSE)
@@ -87,8 +87,17 @@ public class MensajeAplicacion extends AbstractPersistentEntity {
         setLocalizedCollectionLabel(SPANISH, "Mensajes de la Aplicación");
         setLocalizedCollectionShortLabel(ENGLISH, "Messages");
         setLocalizedCollectionShortLabel(SPANISH, "Mensajes");
-        setLocalizedDescription(ENGLISH, "application's message");
-        setLocalizedDescription(SPANISH, "mensaje de la aplicación");
+        /**/
+        setLocalizedDescription(ENGLISH, "Each instance of " + b("Application Messages") + " represents an "
+            + "application message."
+            + "");
+        setLocalizedDescription(SPANISH, "Cada instancia de " + b("Mensajes de la Aplicación") + " representa un "
+            + "mensaje de la aplicación."
+            + "");
+        /**/
+        setLocalizedShortDescription(ENGLISH, "application message");
+        setLocalizedShortDescription(SPANISH, "mensaje de la aplicación");
+        /**/
         // </editor-fold>
         /**/
     }

@@ -100,6 +100,16 @@ public class RolPagina extends AbstractPersistentEntity {
         setLocalizedCollectionShortLabel(ENGLISH, rol, "Favorites");
         setLocalizedCollectionShortLabel(SPANISH, rol, "Favoritos");
         /**/
+        setLocalizedDescription(ENGLISH, "Each instance of " + b("Role/Page Associations") + " represents a "
+            + "web page associated with an application role."
+            + "");
+        setLocalizedDescription(SPANISH, "Cada instancia de " + b("Asociaciones Rol/Página") + " representa una "
+            + "página web asociada con un rol de la aplicación."
+            + "");
+        /**/
+        setLocalizedShortDescription(ENGLISH, "web page associated with an application role");
+        setLocalizedShortDescription(SPANISH, "página web asociada con un rol de la aplicación");
+        /**/
         // </editor-fold>
     }
 

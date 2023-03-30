@@ -48,9 +48,11 @@ public class FiltroFuncionPar extends AbstractPersistentEntity {
         super.addAllocationStrings(
             "filtroFuncion.usuario",
             "filtroFuncion.funcion",
+            "funcionParametro.claseJava",
             "funcionParametro.claseRecursoValor",
-            "funcionParametro.funcion", // "funcionParametro.tipoValor",
-            "funcionParametro.rangoComparacion"
+            "funcionParametro.funcion",
+            "funcionParametro.rangoComparacion",
+            "tipoValorCriterio.claseJava"
         );
     }
 
@@ -86,9 +88,25 @@ public class FiltroFuncionPar extends AbstractPersistentEntity {
     public StringProperty claseJava;
 
     /**/
+    @ForeignKey(onDelete = OnDeleteAction.NONE, onUpdate = OnUpdateAction.NONE)
+    @ManyToOne(navigability = Navigability.UNIDIRECTIONAL, view = MasterDetailView.NONE)
+    @ColumnField(nullable = Kleenean.TRUE)
+    @PropertyField(table = Kleenean.TRUE, detail = Kleenean.TRUE, create = Kleenean.TRUE, update = Kleenean.TRUE)
+    public TipoValorCriterio tipoValorCriterio;
+
     @VariantString
-    @PropertyField(table = Kleenean.TRUE, detail = Kleenean.TRUE, create = Kleenean.TRUE, update = Kleenean.TRUE, required = Kleenean.TRUE)
+    @PropertyField(table = Kleenean.TRUE, detail = Kleenean.TRUE, create = Kleenean.TRUE, update = Kleenean.TRUE, anchor = "tipoValorCriterio", anchorType = AnchorType.INLINE)
     public StringProperty valor;
+
+    @ColumnField(nullable = Kleenean.TRUE)
+    @PropertyField(table = Kleenean.TRUE, detail = Kleenean.TRUE, create = Kleenean.TRUE, update = Kleenean.TRUE, anchor = "tipoValorCriterio", anchorType = AnchorType.INLINE)
+    public IntegerProperty cifraValorTemporal;
+
+    @ForeignKey(onDelete = OnDeleteAction.NONE, onUpdate = OnUpdateAction.NONE)
+    @ManyToOne(navigability = Navigability.UNIDIRECTIONAL, view = MasterDetailView.NONE)
+    @ColumnField(nullable = Kleenean.TRUE)
+    @PropertyField(table = Kleenean.TRUE, detail = Kleenean.TRUE, create = Kleenean.TRUE, update = Kleenean.TRUE, anchor = "tipoValorCriterio", anchorType = AnchorType.INLINE)
+    public CampoValorTemporal campoValorTemporal;
 
     @PropertyField(hidden = Kleenean.TRUE)
     public TimestampProperty valorFechaHora;
@@ -129,8 +147,17 @@ public class FiltroFuncionPar extends AbstractPersistentEntity {
         setLocalizedCollectionLabel(SPANISH, "Criterios de Filtro de Búsqueda");
         setLocalizedCollectionShortLabel(ENGLISH, "Criteria");
         setLocalizedCollectionShortLabel(SPANISH, "Criterios");
-        setLocalizedDescription(ENGLISH, "criterion of query filter defined by the end user");
-        setLocalizedDescription(SPANISH, "criterio de filtro de búsqueda definido por el usuario final");
+        /**/
+        setLocalizedDescription(ENGLISH, "Each instance of " + b("Query Filter Criteria") + " represents a "
+            + "criterion of query filter defined by the user."
+            + "");
+        setLocalizedDescription(SPANISH, "Cada instancia de " + b("Criterios de Filtro de Búsqueda") + " representa un "
+            + "criterio de filtro de búsqueda definido por el usuario."
+            + "");
+        /**/
+        setLocalizedShortDescription(ENGLISH, "criterion of query filter defined by the user");
+        setLocalizedShortDescription(SPANISH, "criterio de filtro de búsqueda definido por el usuario");
+        /**/
         // </editor-fold>
     }
 
@@ -141,6 +168,26 @@ public class FiltroFuncionPar extends AbstractPersistentEntity {
         claseJava.setCalculableValueExpression(funcionParametro.claseJavaFuncionParametro);
         claseJava.setDefaultValue(funcionParametro.claseJavaFuncionParametro);
         claseJava.setInitialValue(funcionParametro.claseJavaFuncionParametro);
+        /**/
+        tipoValorCriterio.setInitialValue(operadorCom.necesitaValor.then(tipoValorCriterio.SIMPLE));
+        tipoValorCriterio.setDefaultValue(operadorCom.necesitaValor.then(tipoValorCriterio.SIMPLE));
+        /**/
+        cifraValorTemporal.setMinValue(0);
+        cifraValorTemporal.setMaxValue(6000); // TemporalAddend.LIMITS = {6700, 6700, 6700 * 12, 6700 * 365, 6700 * 365 * 24};
+        /**/
+        BooleanExpression temporalAddend = tipoValorCriterio.isIn(
+            tipoValorCriterio.HOY_MAS,
+            tipoValorCriterio.HOY_MENOS,
+            tipoValorCriterio.AHORA_MAS,
+            tipoValorCriterio.AHORA_MENOS
+        );
+        /**/
+        CharacterExpression cifraX = cifraValorTemporal.isNull().then("0").otherwise(cifraValorTemporal.toCharString());
+        CharacterExpression campoX = campoValorTemporal.isNull().then("D").otherwise(campoValorTemporal.letra);
+        CharacterExpression valorX = temporalAddend.then(concat(tipoValorCriterio.signo, cifraX, campoX));
+        /**/
+        valor.setInitialValue(valorX);
+        valor.setDefaultValue(valorX);
         /**/
         valor.setTypeNameExpression(funcionParametro.claseJavaFuncionParametro);
         /**/
@@ -163,8 +210,19 @@ public class FiltroFuncionPar extends AbstractPersistentEntity {
         operadorCom.setLocalizedShortLabel(ENGLISH, "operator");
         operadorCom.setLocalizedShortLabel(SPANISH, "operador");
         /**/
-        valor.setLocalizedLabel(ENGLISH, "value");
-        valor.setLocalizedLabel(SPANISH, "valor");
+        tipoValorCriterio.setLocalizedLabel(ENGLISH, "value type");
+        tipoValorCriterio.setLocalizedLabel(SPANISH, "tipo de valor");
+        tipoValorCriterio.setLocalizedAnchorLabel(SPANISH, "valor");
+        tipoValorCriterio.setLocalizedAnchoredLabel(SPANISH, "tipo");
+        /**/
+        cifraValorTemporal.setLocalizedLabel(ENGLISH, "quantity");
+        cifraValorTemporal.setLocalizedLabel(SPANISH, "cantidad");
+        /**/
+        campoValorTemporal.setLocalizedLabel(ENGLISH, "unit");
+        campoValorTemporal.setLocalizedLabel(SPANISH, "unidad");
+        /**/
+        valor.setLocalizedLabel(ENGLISH, "simple value");
+        valor.setLocalizedLabel(SPANISH, "valor simple");
         /**/
         valorFechaHora.setLocalizedLabel(ENGLISH, "timestamp value");
         valorFechaHora.setLocalizedLabel(SPANISH, "valor fecha hora");
@@ -229,9 +287,47 @@ public class FiltroFuncionPar extends AbstractPersistentEntity {
         /**/
         operadorCom.setSearchQueryFilter(operadorCom.rangos.contains(funcionParametro.rangoComparacion.numero));
         operadorCom.setModifyingFilter(funcionParametro.isNotNull());
+        /**/
         BooleanExpression necesitaValor = and(funcionParametro.isNotNull(), operadorCom.isNotNull(), operadorCom.necesitaValor.isTrue());
+        BooleanExpression valorTemporal = funcionParametro.claseJava.isIn(
+            funcionParametro.claseJava.JAVA_DATE,
+            funcionParametro.claseJava.JAVA_TIMESTAMP
+        );
+        BooleanExpression necesitaValorTemporal = and(necesitaValor, valorTemporal);
+        BooleanExpression necesitaValorSimple = and(necesitaValor, tipoValorCriterio.isEqualTo(tipoValorCriterio.SIMPLE));
+        BooleanExpression necesitaValorCompuesto = and(necesitaValorTemporal,
+            tipoValorCriterio.isIn(
+                tipoValorCriterio.HOY_MAS,
+                tipoValorCriterio.HOY_MENOS,
+                tipoValorCriterio.AHORA_MAS,
+                tipoValorCriterio.AHORA_MENOS
+            )
+        );
+        /**/
+        tipoValorCriterio.setModifyingFilter(necesitaValorTemporal);
+        tipoValorCriterio.setRenderingFilter(necesitaValor);
+        tipoValorCriterio.setRequiringFilter(necesitaValorTemporal);
+        tipoValorCriterio.setNullifyingFilter(not(necesitaValor));
+        tipoValorCriterio.setSearchQueryFilter(tipoValorCriterio.clases.isNull().or(tipoValorCriterio.clases.contains(funcionParametro.claseJava.letra)));
+        /**/
+        cifraValorTemporal.setModifyingFilter(necesitaValorCompuesto);
+        cifraValorTemporal.setRenderingFilter(necesitaValorCompuesto);
+        cifraValorTemporal.setRequiringFilter(necesitaValorCompuesto);
+        cifraValorTemporal.setNullifyingFilter(not(necesitaValorCompuesto));
+        /**/
+        campoValorTemporal.setModifyingFilter(necesitaValorCompuesto);
+        campoValorTemporal.setRenderingFilter(necesitaValorCompuesto);
+        campoValorTemporal.setRequiringFilter(necesitaValorCompuesto);
+        campoValorTemporal.setNullifyingFilter(not(necesitaValorCompuesto));
+        campoValorTemporal.setSearchQueryFilter(campoValorTemporal.tipos.contains(tipoValorCriterio.numero));
+        /* until 05/03/2023
 //      valor.setModifyingFilter(necesitaValor.and(funcionParametro.tipoValor.isEqualTo(funcionParametro.tipoValor.CONTINUO)));
         valor.setModifyingFilter(necesitaValor);
+        valor.setNullifyingFilter(not(necesitaValor));
+        /**/
+        valor.setModifyingFilter(necesitaValorSimple);
+        valor.setRenderingFilter(necesitaValor);
+        valor.setRequiringFilter(necesitaValorSimple);
         valor.setNullifyingFilter(not(necesitaValor));
         /*
         recursoValor.setModifyingFilter(necesitaValor.and(funcionParametro.tipoValor.isEqualTo(funcionParametro.tipoValor.RECURSO)));

@@ -72,6 +72,8 @@ public class SqlMerger extends SqlUtil {
 
     private final Set<String> _mutableKeyTableNames = new TreeSet<>();
 
+    private final Set<String> _addedKeyTableNames = new TreeSet<>();
+
     private final Set<String> _updatedKeyTableNames = new TreeSet<>();
 
     private final Set<String> _updatedRowTableNames = new TreeSet<>();
@@ -403,6 +405,10 @@ public class SqlMerger extends SqlUtil {
         return _mutableKeyTableNames.contains(tableName);
     }
 
+    public Set<String> getAddedKeyTableNames() {
+        return _addedKeyTableNames;
+    }
+
     public Set<String> getUpdatedKeyTableNames() {
         return _updatedKeyTableNames;
     }
@@ -481,6 +487,7 @@ public class SqlMerger extends SqlUtil {
         _tableNames.clear();
         _currentKeyTableNames.clear();
         _mutableKeyTableNames.clear();
+        _addedKeyTableNames.clear();
         _updatedKeyTableNames.clear();
         _updatedRowTableNames.clear();
         _deletedRowTableNames.clear();
@@ -493,6 +500,7 @@ public class SqlMerger extends SqlUtil {
         _droppedColumns.clear();
         _addedRows.clear();
         _deletedRows.clear();
+        _addedValues.clear();
         _updatedRows.clear();
     }
 
@@ -821,7 +829,6 @@ public class SqlMerger extends SqlUtil {
         SqlColumn column1, column2;
         String strKey, strValue1, strValue2, subject, predicate, text;
         for (String key : keySet) {
-//          strKey = StrUtils.enclose(key, '[', ']');
             strKey = "#" + key;
             if (map1.containsKey(key) && map2.containsKey(key)) {
                 row1 = map1.get(key);
@@ -834,6 +841,11 @@ public class SqlMerger extends SqlUtil {
                     if (colname.equals(vn1) && colname.equals(vn2)) {
                         continue;
                     }
+                    column1 = colmap1.get(colname);
+                    column2 = colmap2.get(colname);
+                    if (column1 == null) {
+                        continue; // dropped column
+                    }
                     rowValue1 = valuesMap1.get(colname);
                     rowValue2 = valuesMap2.get(colname);
                     strValue1 = rowValue1 == null ? null : rowValue1.getValue();
@@ -841,38 +853,44 @@ public class SqlMerger extends SqlUtil {
                     if (StringUtils.equals(strValue1, strValue2)) {
                         continue;
                     }
+                    boolean oldColumn = column2 != null;
+                    boolean newColumn = column2 == null;
+                    boolean newColumnWithValue = newColumn && rowValue1 != null && strValue1 != null;
                     rowValuePair = new SqlRowValuePair(rowValue1, rowValue2);
-                    rowValuePairs.add(rowValuePair);
+                    if (oldColumn) {
+                        rowValuePairs.add(rowValuePair);
+                    }
                     _updatedRows.put(tableName + "/" + key, rowPair);
                     _updatedRowTableNames.add(tableName);
                     bk = colname.equals(bk1) || colname.equals(bk2);
                     if (bk) {
                         subject = strKey;
-                        predicate = "business key modified";
+                        _currentKeyTableNames.add(tableName);
+                        if (oldColumn) {
+                            predicate = "business key modified";
+                            _updatedKeyTableNames.add(tableName);
+                        } else {
+                            predicate = "business key added";
+                            _addedKeyTableNames.add(tableName);
+                        }
                     } else {
                         subject = isDetailLoggingEnabled() ? strKey : "rows";
                         predicate = "modified";
                     }
-                    column1 = colmap1.get(colname);
-                    column2 = colmap2.get(colname);
                     text = join(tableName, subject, predicate);
                     if (bk || isDetailLoggingEnabled()) {
-                        if (column2 != null && column1 != null) {
+                        if (oldColumn) {
                             text += " (" + colname + ": " + StrUtils.enclose(strValue2, '"') + " -> " + StrUtils.enclose(strValue1, '"') + ")";
-//                      } else if (column2 != null) {
-//                          text += ", old column " + colname + ": " + StrUtils.enclose(strValue2, '"');
-//                      } else if (column1 != null) {
-//                          text += ", new column " + colname + ": " + StrUtils.enclose(strValue1, '"');
+                        } else {
+                            text += " (" + colname + ": " + StrUtils.enclose(strValue1, '"') + ")";
                         }
                     }
-                    if (bk) {
-                        _updatedKeyTableNames.add(tableName);
-                        _currentKeyTableNames.add(tableName);
+                    if (bk && oldColumn) {
                         logWarning(tableName, text + DATA_CONV_REQD);
                     } else {
                         logDetails(tableName, text);
-                        if (column2 == null && column1 != null && rowValue1 != null && strValue1 != null) {
-                            logger.trace(rowValue1.getUpdateStatement()); // new column with value
+                        if (newColumnWithValue) {
+                            logger.trace(getUpdateStatement(rowValue1));
                             _addedValues.add(rowValue1);
                         } else if (rowValuePair.isUpdatableColumn()) {
                             text = join(tableName, strKey, colname, "has a new value" + END_USER_VALUE);
@@ -907,6 +925,10 @@ public class SqlMerger extends SqlUtil {
                 logWarning(tableName, text + DATA_CONV_REQD);
             }
         }
+    }
+
+    private String getUpdateStatement(SqlRowValue rowValue) {
+        return rowValue.getUpdateStatement();
     }
 
     private String join(String... texts) {
@@ -1210,6 +1232,9 @@ public class SqlMerger extends SqlUtil {
         if (merge) {
             logger.info("added tables=" + _addedTables.size()); // + " " + _addedTables
             logger.info("dropped tables=" + _droppedTables.size()); // + " " + _droppedTables
+            if (!_addedKeyTableNames.isEmpty()) {
+                logger.warn("added-key tables=" + _addedKeyTableNames.size() + " " + _addedKeyTableNames);
+            }
             if (!_updatedKeyTableNames.isEmpty()) {
                 logger.warn("updated-key tables=" + _updatedKeyTableNames.size() + " " + _updatedKeyTableNames);
             }

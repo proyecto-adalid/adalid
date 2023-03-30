@@ -12,6 +12,7 @@
  */
 package adalid.commons.util;
 
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 import org.apache.commons.lang.StringEscapeUtils;
@@ -38,6 +39,10 @@ public class MarkupUtils {
     public static final String CY = ">;>"; // MID CSS CLASS
 
     public static final String CZ = ";;>"; // END CSS CLASS
+
+    public static final String G1 = "<++"; // TAG GRAPHIC IMAGE
+
+    public static final String G2 = "++>"; // END GRAPHIC IMAGE
 
     public static final String I1 = "<//"; // TAG ITALIC TEXT
 
@@ -95,6 +100,10 @@ public class MarkupUtils {
 
     public static final String RAQUO = "\u00BB"; // &raquo;
 
+    public static final String FWLTS = "\uFF1C"; // Fullwidth Less-Than Sign
+
+    public static final String FWGTS = "\uFF1E"; // Fullwidth Greater-Than Sign
+
     public static final String BULLET = "\u2022"; // &bull;
 
     public static final String MIDDOT = "\u00B7"; // &middot;
@@ -130,6 +139,10 @@ public class MarkupUtils {
     public static final String cy = "\">";
 
     public static final String cz = "</i>";
+
+    public static final String g1 = "<img";
+
+    public static final String g2 = "></img>";
 
     public static final String ht = StringUtils.repeat("&nbsp;", 4);
 
@@ -196,7 +209,7 @@ public class MarkupUtils {
         if (StringUtils.isBlank(string)) {
             return false;
         }
-        final String[] tags = {ULLI, LIUL, AX, AY, AZ, B1, B2, CX, CY, CZ, I1, I2, M1, M2, S1, S2, U1, U2,
+        final String[] tags = {ULLI, LIUL, AX, AY, AZ, B1, B2, CX, CY, CZ, G1, G2, I1, I2, M1, M2, S1, S2, U1, U2,
             H1T1, H1T2, H2T1, H2T2, H3T1, H3T2, H4T1, H4T2, H5T1, H5T2, H6T1, H6T2};
         for (String tag : tags) { // LILI, BR and HT are intentionally excluded
             if (string.contains(tag)) {
@@ -215,6 +228,49 @@ public class MarkupUtils {
     public static boolean containsHTML(String string) {
         // Dotall mode enabled via the embedded flag expression (?s)
         return string != null && string.matches("(?s)([^<]*<\\w+(\\s[^>]*)?>)+.*");
+    }
+
+    private static final String request_context_path = "#{request.contextPath}";
+
+    private static final String webapp_image_library = request_context_path + "/resources/images/base";
+
+    private static final String img_argument_pattern = "src=\"{0}\" width=\"{1}\" height=\"{2}\"";
+
+    private static final char img_argument_begin = '[';
+
+    private static final char img_argument_close = ']';
+
+    private static final char img_argument_delim = '|';
+
+    public static String img(String name, int w, int h) {
+        return img(webapp_image_library, name, w, h);
+    }
+
+    public static String img(String path, String name, int w, int h) {
+        final String prefix = G1 + img_argument_begin;
+        final String suffix = img_argument_close + G2;
+        final String src = StringUtils.trimToEmpty(path) + "/" + name;
+        final String[] arguments = {src, "" + w, "" + h};
+        return prefix + StringUtils.join(arguments, img_argument_delim) + suffix;
+    }
+
+    private static String img(String html) {
+        final String prefix = g1 + img_argument_begin;
+        final String suffix = img_argument_close + g2;
+        final String[] substrings = StringUtils.substringsBetween(html, prefix, suffix);
+        Object[] arguments;
+        String attributes;
+        if (substrings != null) {
+            for (String substring : substrings) {
+                arguments = StringUtils.split(substring, img_argument_delim);
+                if (arguments != null && arguments.length == 3) {
+                    attributes = MessageFormat.format(img_argument_pattern, arguments);
+//                  attributes = attributes.replace(request_context_path, URX.WEB);
+                    html = StringUtils.replaceOnce(html, prefix + substring + suffix, g1 + " " + attributes + g2);
+                }
+            }
+        }
+        return html;
     }
 
     // <editor-fold defaultstate="collapsed" desc="pseudo-tagging methods">
@@ -450,6 +506,9 @@ public class MarkupUtils {
         String sep = StringUtils.defaultIfBlank(separator, MIDDOT);
         List<String> list = new ArrayList<>();
         for (String string : strings) {
+            if (StringUtils.isBlank(string)) {
+                continue;
+            }
             list.add(open + string + close);
         }
         return StringUtils.join(list, sep);
@@ -486,6 +545,8 @@ public class MarkupUtils {
         } else {
             html = html.replace("<<", LAQUO);
             html = html.replace(">>", RAQUO);
+            html = html.replace(FWLTS, "&lt;");
+            html = html.replace(FWGTS, "&gt;");
         }
         return html;
     }
@@ -503,16 +564,19 @@ public class MarkupUtils {
             html = StringUtils.replace(html, seudoLILI + b + "\t", seudoLILI);
             html = StringUtils.replace(html, seudoLILI + b, seudoLILI);
         }
-        final String[] TAGS = {ULLI, LILI, LIUL, AX, AY, AZ, B1, B2, CX, CY, CZ, I1, I2, M1, M2, S1, S2, U1, U2,
+        final String[] TAGS = {ULLI, LILI, LIUL, AX, AY, AZ, B1, B2, CX, CY, CZ, G1, G2, I1, I2, M1, M2, S1, S2, U1, U2,
             H1T1, H1T2, H2T1, H2T2, H3T1, H3T2, H4T1, H4T2, H5T1, H5T2, H6T1, H6T2, BR, HT}; // BR and HT must be last
-        final String[] tags = {ulli, lili, liul, ax, ay, az, b1, b2, cx, cy, cz, i1, i2, m1, m2, s1, s2, u1, u2,
+        final String[] tags = {ulli, lili, liul, ax, ay, az, b1, b2, cx, cy, cz, g1, g2, i1, i2, m1, m2, s1, s2, u1, u2,
             h1t1, h1t2, h2t1, h2t2, h3t1, h3t2, h4t1, h4t2, h5t1, h5t2, h6t1, h6t2, br, ht}; // br and ht must be last
         for (int i = 0; i < tags.length; i++) { // replace HTML pseudo-tags
             html = StringUtils.replace(html, StringEscapeUtils.escapeHtml(TAGS[i]), tags[i]);
         }
+        html = img(html);
         html = html.replace("&lt;&lt;", LAQUO);
         html = html.replace("&gt;&gt;", RAQUO);
-        html = html.replaceAll("\\p{Cntrl}", " ");
+        html = html.replace(StringEscapeUtils.escapeHtml(FWLTS), "&lt;");
+        html = html.replace(StringEscapeUtils.escapeHtml(FWGTS), "&gt;");
+        html = html.replaceAll("\\p{Cntrl}", "");
         html = html.trim();
         return html;
     }
@@ -535,7 +599,7 @@ public class MarkupUtils {
         }
         creole = creole.replaceAll(AX + ".*" + AY, "");
         creole = creole.replaceAll(CX + ".*" + CY, "");
-        final String[] NCPT = {AZ, CZ, H1T1, H1T2, H2T1, H2T2, H3T1, H3T2, H4T1, H4T2, H5T1, H5T2, H6T1, H6T2};
+        final String[] NCPT = {AZ, CZ, G1, G2, H1T1, H1T2, H2T1, H2T2, H3T1, H3T2, H4T1, H4T2, H5T1, H5T2, H6T1, H6T2};
         for (String tag : NCPT) {  // remove non creole pseudo-tags; ULLI, LILI, LIUL, BR and HT are intentionally excluded
             creole = StringUtils.remove(creole, tag);
         }
@@ -552,6 +616,8 @@ public class MarkupUtils {
 //      creole = creole.replace(">>", "<&caret-right>");
         creole = creole.replace("<<", LAQUO);
         creole = creole.replace(">>", RAQUO);
+        creole = creole.replace(FWLTS, "<");
+        creole = creole.replace(FWGTS, ">");
 //      creole = creole.replace(" + ", " &#x2795 ");
 //      creole = creole.replace(" - ", " &#x2796 ");
         creole = creole.replace(" + ", " <&plus> ");
@@ -604,7 +670,17 @@ public class MarkupUtils {
 
     /**/
     // </editor-fold>
-/**/
+//
+    /**
+     * Returns <code>string</code> removing the pseudo-tags.
+     *
+     * @param string text to search and remove the pseudo-tags
+     * @return <code>string</code> without pseudo-tags
+     */
+    public static String getPlainTextString(String string) {
+        return getTextFormattedString(string);
+    }
+
     /**
      * Returns <code>string</code> removing the pseudo-tags.
      *
@@ -616,15 +692,19 @@ public class MarkupUtils {
             return null;
         }
         String text = StringUtils.removeEnd(string, "\b" + NBSP);
-        text = text.replaceAll(AX + ".*" + AY, "");
-        text = text.replaceAll(CX + ".*" + CY, "");
-        final String[] TAGS = {AZ, B1, B2, CZ, I1, I2, M1, M2, S1, S2, U1, U2,
-            H1T1, H1T2, H2T1, H2T2, H3T1, H3T2, H4T1, H4T2, H5T1, H5T2, H6T1, H6T2};
-        for (String tag : TAGS) { // ULLI, LILI, LIUL, BR and HT are intentionally excluded
-            text = StringUtils.remove(text, tag);
+        if (isPseudoHTML(string)) {
+            text = text.replaceAll(AX + ".*" + AY, "");
+            text = text.replaceAll(CX + ".*" + CY, "");
+            final String[] TAGS = {AZ, B1, B2, CZ, G1, G2, I1, I2, M1, M2, S1, S2, U1, U2,
+                H1T1, H1T2, H2T1, H2T2, H3T1, H3T2, H4T1, H4T2, H5T1, H5T2, H6T1, H6T2};
+            for (String tag : TAGS) { // ULLI, LILI, LIUL, BR and HT are intentionally excluded
+                text = StringUtils.remove(text, tag);
+            }
         }
         text = text.replace("<<", LAQUO);
         text = text.replace(">>", RAQUO);
+        text = text.replace(FWLTS, "<");
+        text = text.replace(FWGTS, ">");
         text = text.trim();
         return text;
     }

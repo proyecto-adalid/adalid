@@ -307,13 +307,20 @@ public class RastroProceso extends AbstractPersistentEntity {
         setLocalizedCollectionLabel(SPANISH, "Rastros de Auditoría de Procesos");
         setLocalizedCollectionShortLabel(ENGLISH, "Process Trails");
         setLocalizedCollectionShortLabel(SPANISH, "Rastros de Procesos");
-        setLocalizedDescription(ENGLISH, "audit trail of the execution of business and scheduled processes");
-        setLocalizedDescription(SPANISH, "rastro de auditoría de la ejecución de procesos de negocio y calendarizados");
-        /**/
         setLocalizedCollectionLabel(ENGLISH, superior, "Subprocess Audit Trails by Parent Process Trail");
         setLocalizedCollectionLabel(SPANISH, superior, "Rastros de Auditoría de Subprocesos por Rastro de Proceso Superior");
         setLocalizedCollectionShortLabel(ENGLISH, superior, "Subprocess Trails");
         setLocalizedCollectionShortLabel(SPANISH, superior, "Rastros de Subprocesos");
+        /**/
+        setLocalizedDescription(ENGLISH, "Each instance of " + b("Process Audit Trails") + " represents an "
+            + "audit trail of the execution of business and scheduled processes."
+            + "");
+        setLocalizedDescription(SPANISH, "Cada instancia de " + b("Rastros de Auditoría de Procesos") + " representa un "
+            + "rastro de auditoría de la ejecución de procesos de negocio y calendarizados."
+            + "");
+        /**/
+        setLocalizedShortDescription(ENGLISH, "audit trail of the execution of business and scheduled processes");
+        setLocalizedShortDescription(SPANISH, "rastro de auditoría de la ejecución de procesos de negocio y calendarizados");
         /**/
         // </editor-fold>
     }

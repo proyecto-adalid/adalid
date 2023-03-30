@@ -19,6 +19,32 @@ import org.apache.log4j.Logger;
  */
 public class RunUtils {
 
+    private static final String starting = " starting now ";
+
+    private static final String finished = " finished in ";
+
+    private static final String single_prime = "'";
+
+    private static final String double_prime = "\"";
+
+    public static String starting(Class<?> clazz) {
+        return canonical(clazz) + starting;
+    }
+
+    public static String finished(Class<?> clazz, long millis) {
+        return canonical(clazz) + finished + elapsed(millis);
+    }
+
+    private static String canonical(Class<?> clazz) {
+        return clazz != null ? clazz.getCanonicalName() : RunUtils.class.getCanonicalName();
+    }
+
+    private static String elapsed(long millis) {
+        long seconds = (System.currentTimeMillis() - millis) / 1000;
+        long minutes = (seconds / 60);
+        return minutes == 0 ? seconds + double_prime : (seconds / 60) + single_prime + (seconds % 60) + double_prime;
+    }
+
     public static void logMemory(Logger logger) {
         logMemory(logger, null);
     }

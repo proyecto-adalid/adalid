@@ -74,6 +74,7 @@ public class RangoAgregacion extends AbstractPersistentEnumerationEntity {
     protected void settleProperties() {
         super.settleProperties();
         // <editor-fold defaultstate="collapsed" desc="localization of RangoAgregacion's properties">
+        /**/
         numero.setLocalizedLabel(ENGLISH, "aggregation operator range number");
         numero.setLocalizedLabel(SPANISH, "número del rango de operadores de agregación");
         numero.setLocalizedShortLabel(ENGLISH, "number");
@@ -83,6 +84,7 @@ public class RangoAgregacion extends AbstractPersistentEnumerationEntity {
         codigo.setLocalizedLabel(SPANISH, "código del rango de operadores de agregación");
         codigo.setLocalizedShortLabel(ENGLISH, "code");
         codigo.setLocalizedShortLabel(SPANISH, "código");
+        /**/
         // </editor-fold>
     }
 
@@ -104,6 +106,14 @@ public class RangoAgregacion extends AbstractPersistentEnumerationEntity {
         SUMA_CUENTA_PROMEDIO_DESVIACION_MINIMO_MAXIMO.newInstanceField(codigo, "S/C/P/D/Mín/Máx", SPANISH);
         /**/
         // </editor-fold>
+        /**/
+        // ADVERTENCIA: los números se usan para dar valor a la propiedad rangos de la entidad TipoAgregacion
+        /**/
+        VACIO.newInstanceField(numero, 0);
+        CUENTA.newInstanceField(numero, 1);
+        CUENTA_MINIMO_MAXIMO.newInstanceField(numero, 2);
+        SUMA_CUENTA_PROMEDIO_DESVIACION_MINIMO_MAXIMO.newInstanceField(numero, 3);
+        /**/
     }
 
 }

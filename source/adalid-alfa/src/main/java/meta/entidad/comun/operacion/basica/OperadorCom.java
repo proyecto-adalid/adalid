@@ -47,10 +47,8 @@ public class OperadorCom extends AbstractPersistentEnumerationEntity {
     public StringProperty codigo;
 
     @ColumnField(nullable = Kleenean.FALSE)
-    @PropertyField(update = Kleenean.FALSE)
     public BooleanProperty necesitaValor;
 
-    @PropertyField(update = Kleenean.FALSE)
     @StringField(maxLength = 10)
     public StringProperty rangos;
 
@@ -147,6 +145,7 @@ public class OperadorCom extends AbstractPersistentEnumerationEntity {
         super.settleProperties();
         necesitaValor.setDefaultValue(true);
         // <editor-fold defaultstate="collapsed" desc="localization of OperadorCom's properties">
+        /**/
         numero.setLocalizedLabel(ENGLISH, "comparison operator number");
         numero.setLocalizedLabel(SPANISH, "número del operador de comparación");
         numero.setLocalizedShortLabel(ENGLISH, "number");
@@ -162,12 +161,14 @@ public class OperadorCom extends AbstractPersistentEnumerationEntity {
         /**/
         rangos.setLocalizedLabel(ENGLISH, "ranges");
         rangos.setLocalizedLabel(SPANISH, "rangos");
+        /**/
         // </editor-fold>
     }
 
     @Override
     protected void settleInstances() {
         super.settleInstances();
+        /**/
         ES_NULO.newInstanceField(numero, 1);
         ES_NULO.newInstanceField(codigo, "Es nulo");
         NO_ES_NULO.newInstanceField(numero, 2);
@@ -278,7 +279,9 @@ public class OperadorCom extends AbstractPersistentEnumerationEntity {
         ES_NULO_O_NO_CONTIENE.newInstanceField(rangos, "2");
         ES_NULO_O_TERMINA_EN.newInstanceField(rangos, "2");
         ES_NULO_O_NO_TERMINA_EN.newInstanceField(rangos, "2");
+        /**/
         // <editor-fold defaultstate="collapsed" desc="localization of OperadorCom's instances">
+        /**/
         ES_NULO.newInstanceField(codigo, "Is null", ENGLISH);
         ES_NULO.newInstanceField(codigo, "Es nulo", SPANISH);
         /**/
@@ -386,6 +389,7 @@ public class OperadorCom extends AbstractPersistentEnumerationEntity {
         /**/
         NO_EXISTE.newInstanceField(codigo, "Doesn't exist", ENGLISH);
         NO_EXISTE.newInstanceField(codigo, "No existe", SPANISH);
+        /**/
         // </editor-fold>
     }
 

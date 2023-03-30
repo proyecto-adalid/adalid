@@ -12,6 +12,7 @@
  */
 package meta.paquete.comun;
 
+import meta.entidad.comun.control.acceso.ClaseFabricador;
 import meta.entidad.comun.control.acceso.ConjuntoSegmento;
 import meta.entidad.comun.control.acceso.ElementoSegmento;
 import meta.entidad.comun.control.acceso.GrupoUsuario;
@@ -25,6 +26,7 @@ import meta.entidad.comun.control.acceso.RolPaginaEspecial;
 import meta.entidad.comun.control.acceso.RolUsuario;
 import meta.entidad.comun.control.acceso.RolVistaFuncion;
 import meta.entidad.comun.control.acceso.Segmento;
+import meta.entidad.comun.control.acceso.TipoRestriccionFormatos;
 import meta.entidad.comun.control.acceso.TipoRol;
 import meta.entidad.comun.control.acceso.Usuario;
 import meta.entidad.comun.control.acceso.UsuarioFuncion;
@@ -55,6 +57,7 @@ public class PaqueteRegistroControlAcceso extends PaqueteRegistroBase {
     @Override
     public void print() {
         super.print();
+        System.out.println(ClaseFabricador);
         System.out.println(ConjuntoSegmento);
         System.out.println(ElementoSegmento);
         System.out.println(GrupoUsuario);
@@ -68,6 +71,7 @@ public class PaqueteRegistroControlAcceso extends PaqueteRegistroBase {
         System.out.println(RolUsuario);
         System.out.println(RolVistaFuncion);
         System.out.println(Segmento);
+        System.out.println(TipoRestriccionFormatos);
         System.out.println(TipoRol);
         System.out.println(Usuario);
         System.out.println(UsuarioFuncion);
@@ -75,6 +79,8 @@ public class PaqueteRegistroControlAcceso extends PaqueteRegistroBase {
         System.out.println(UsuarioSegmento);
     }
     // </editor-fold>
+
+    ClaseFabricador ClaseFabricador;
 
     ConjuntoSegmento ConjuntoSegmento;
 
@@ -101,6 +107,8 @@ public class PaqueteRegistroControlAcceso extends PaqueteRegistroBase {
     RolVistaFuncion RolVistaFuncion;
 
     Segmento Segmento;
+
+    TipoRestriccionFormatos TipoRestriccionFormatos;
 
     TipoRol TipoRol;
 

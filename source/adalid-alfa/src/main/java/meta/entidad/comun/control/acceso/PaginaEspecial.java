@@ -52,8 +52,17 @@ public class PaginaEspecial extends AbstractPersistentEntity {
         setLocalizedLabel(SPANISH, "página especial");
         setLocalizedCollectionLabel(ENGLISH, "Special Pages");
         setLocalizedCollectionLabel(SPANISH, "Páginas Especiales");
-        setLocalizedDescription(ENGLISH, "special (handmade, not generated) web application page");
-        setLocalizedDescription(SPANISH, "página de aplicación web especial (hecha a mano, no generada)");
+        /**/
+        setLocalizedDescription(ENGLISH, "Each instance of " + b("Special Pages") + " represents an "
+            + "special (handmade, not generated) web application page."
+            + "");
+        setLocalizedDescription(SPANISH, "Cada instancia de " + b("Páginas Especiales") + " representa una "
+            + "página web especial (hecha a mano, no generada) de la aplicación."
+            + "");
+        /**/
+        setLocalizedShortDescription(ENGLISH, "special (handmade, not generated) web application page");
+        setLocalizedShortDescription(SPANISH, "página web especial (hecha a mano, no generada) de la aplicación");
+        /**/
         // </editor-fold>
     }
 
