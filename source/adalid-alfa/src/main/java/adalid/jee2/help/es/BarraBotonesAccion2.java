@@ -29,6 +29,16 @@ public class BarraBotonesAccion2 extends AbstractHelpWriter {
     @Override
     public String getHelpPageText() {
         String str = ""
+            + "La primera columna de la tabla corresponde a la casilla de selección. "
+            + "La casilla permite seleccionar filas para luego ejecutar una acción sobre cada una de ellas, "
+            + "haciendo clic en alguno de los siguientes botones de la barra de botones de acción de la página: Editar, Eliminar y Ejecutar. "
+            + "Alternativamente, estas y otras acciones de pueden ejecutar haciendo clic en los botones de la barra de botones de acción de la fila, "
+            + "que aparece en la segunda columna. Esta barra solo muestra los botones de las acciones disponibles en el momento. "
+            + "La tercera columna muestra el número de la fila; "
+            + "este número no forma parte del registro almacenado en la base de datos; "
+            + "es la posición de la fila dentro del conjunto de filas que se obtiene como resultado de la consulta a la base de datos. "
+            + "Cuando se está consultando, si existe una página de consulta y/o registro detallado para la entidad, "
+            + "el número de la fila es un hipervínculo que abre esa página para mostrar la fila. "
             + h3("Barra de botones de acción de la fila")
             + "Cada fila de la tabla incluye una barra de botones de acción, la cual puede contener los siguientes botones:"
             + ul(

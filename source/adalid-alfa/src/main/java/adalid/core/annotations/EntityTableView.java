@@ -178,6 +178,32 @@ public @interface EntityTableView {
     String readingViewWesternToolbarSnippet() default "";
 
     /**
+     * readingViewAboveTableSnippet especifica la ruta y el nombre del snippet ubicado encima de la tabla en las vistas (páginas) de consulta tabular
+     * de la entidad.
+     *
+     * Si utiliza la plataforma jee2, los snippets se deben agregar en el subdirectorio resources/snippets/custom-made del directorio src/main/webapp
+     * del módulo Web, o en algún subdirectorio de resources/snippets/custom-made; si el valor de snippet no comienza por
+     * <b>/resources/snippets/custom-made/</b>, ese prefijo se le agrega automáticamente. Además, los snippets deben ser archivos xhtml; si el valor
+     * de snippet no termina con <b>.xhtml</b>, ese sufijo se le agrega automáticamente.
+     *
+     * @return readingViewAboveTableSnippet
+     */
+    String readingViewAboveTableSnippet() default "";
+
+    /**
+     * readingViewBelowTableSnippet especifica la ruta y el nombre del snippet ubicado debajo de la tabla en las vistas (páginas) de consulta tabular
+     * de la entidad.
+     *
+     * Si utiliza la plataforma jee2, los snippets se deben agregar en el subdirectorio resources/snippets/custom-made del directorio src/main/webapp
+     * del módulo Web, o en algún subdirectorio de resources/snippets/custom-made; si el valor de snippet no comienza por
+     * <b>/resources/snippets/custom-made/</b>, ese prefijo se le agrega automáticamente. Además, los snippets deben ser archivos xhtml; si el valor
+     * de snippet no termina con <b>.xhtml</b>, ese sufijo se le agrega automáticamente.
+     *
+     * @return readingViewBelowTableSnippet
+     */
+    String readingViewBelowTableSnippet() default "";
+
+    /**
      * writingViewHeadSnippet especifica la ruta y el nombre del snippet del encabezado en las vistas (páginas) de registro tabular de la entidad.
      *
      * Si utiliza la plataforma jee2, los snippets se deben agregar en el subdirectorio resources/snippets/custom-made del directorio src/main/webapp
@@ -214,5 +240,31 @@ public @interface EntityTableView {
      * @return writingViewWesternToolbarSnippet
      */
     String writingViewWesternToolbarSnippet() default "";
+
+    /**
+     * writingViewAboveTableSnippet especifica la ruta y el nombre del snippet ubicado encima de la tabla en las vistas (páginas) de registro tabular
+     * de la entidad.
+     *
+     * Si utiliza la plataforma jee2, los snippets se deben agregar en el subdirectorio resources/snippets/custom-made del directorio src/main/webapp
+     * del módulo Web, o en algún subdirectorio de resources/snippets/custom-made; si el valor de snippet no comienza por
+     * <b>/resources/snippets/custom-made/</b>, ese prefijo se le agrega automáticamente. Además, los snippets deben ser archivos xhtml; si el valor
+     * de snippet no termina con <b>.xhtml</b>, ese sufijo se le agrega automáticamente.
+     *
+     * @return writingViewAboveTableSnippet
+     */
+    String writingViewAboveTableSnippet() default "";
+
+    /**
+     * writingViewBelowTableSnippet especifica la ruta y el nombre del snippet ubicado debajo de la tabla en las vistas (páginas) de registro tabular
+     * de la entidad.
+     *
+     * Si utiliza la plataforma jee2, los snippets se deben agregar en el subdirectorio resources/snippets/custom-made del directorio src/main/webapp
+     * del módulo Web, o en algún subdirectorio de resources/snippets/custom-made; si el valor de snippet no comienza por
+     * <b>/resources/snippets/custom-made/</b>, ese prefijo se le agrega automáticamente. Además, los snippets deben ser archivos xhtml; si el valor
+     * de snippet no termina con <b>.xhtml</b>, ese sufijo se le agrega automáticamente.
+     *
+     * @return writingViewBelowTableSnippet
+     */
+    String writingViewBelowTableSnippet() default "";
 
 }

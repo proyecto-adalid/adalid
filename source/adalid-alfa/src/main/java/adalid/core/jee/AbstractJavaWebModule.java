@@ -334,6 +334,11 @@ public abstract class AbstractJavaWebModule extends AbstractJavaModule implement
         page.setMaster(master);
         page.setDisplayMode(mode);
         page.setDisplayFormat(format);
+        /**/
+        if (entity != null && master != null && reference != null) {
+            page.setMasterDetailViewSequence(reference.getMasterDetailViewSequence());
+        }
+        /**/
         _pages.put(pageName, page);
         return true;
     }

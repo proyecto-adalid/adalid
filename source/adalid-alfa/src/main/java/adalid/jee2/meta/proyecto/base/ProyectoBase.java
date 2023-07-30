@@ -523,6 +523,7 @@ public class ProyectoBase extends Project implements SubjectProject, SpecialEnti
     }
 
     @ProjectModule(menu = Kleenean.FALSE, role = Kleenean.FALSE)
+    @ProjectModuleDocGen(classDiagram = Kleenean.FALSE)
     EntidadesBasicas entidadesBasicas;
 
     // <editor-fold defaultstate="collapsed" desc="private fields">

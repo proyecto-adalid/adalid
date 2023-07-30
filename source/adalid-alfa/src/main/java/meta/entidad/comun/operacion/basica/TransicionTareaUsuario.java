@@ -39,6 +39,17 @@ public class TransicionTareaUsuario extends TransicionAbstracta {
         setLocalizedLabel(SPANISH, "transición de tarea");
         setLocalizedCollectionLabel(ENGLISH, "Task Transitions");
         setLocalizedCollectionLabel(SPANISH, "Transiciones de Tareas");
+        /**/
+        setLocalizedDescription(ENGLISH, "Each instance of " + b("Task Transitions") + " represents a "
+            + "change of the state of a task notification."
+            + "");
+        setLocalizedDescription(SPANISH, "Cada instancia de " + b("Transiciones de Tareas") + " representa un "
+            + "cambio del estado de una notificación de tarea."
+            + "");
+        /**/
+        setLocalizedShortDescription(ENGLISH, "change of the state of a task notification");
+        setLocalizedShortDescription(SPANISH, "cambio del estado de una notificación de tarea");
+        /**/
         // </editor-fold>
     }
 

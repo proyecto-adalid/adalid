@@ -539,7 +539,7 @@ public class MarkupUtils {
         if (StringUtils.isBlank(string)) {
             return null;
         }
-        String html = StringUtils.removeEnd(string, "\b" + NBSP);
+        String html = StringUtils.removeEnd(string, NBSP); // "\b" + NBSP until 26/07/2023
         if (isPseudoHTML(html)) {
             html = htmlFormattedString(html);
         } else {
@@ -591,7 +591,7 @@ public class MarkupUtils {
         if (StringUtils.isBlank(string)) {
             return null;
         }
-        String creole = StringUtils.removeEnd(string, "\b" + NBSP);
+        String creole = StringUtils.removeEnd(string, NBSP); // "\b" + NBSP until 26/07/2023
         final String[] BMUC = {B1 + M1, M2 + B2, M1 + B1, B2 + M2, M1 + U1, U2 + M2, U1 + M1, M2 + U2};
         final String[] UBBU = {U1 + B1, B2 + U2, U1 + B1, B2 + U2, U1 + B1, B2 + U2, U1 + B1, B2 + U2};
         for (int i = 0; i < UBBU.length; i++) { // replace B, M, U combinations with U+B and B+U pseudo-tags
@@ -691,7 +691,7 @@ public class MarkupUtils {
         if (StringUtils.isBlank(string)) {
             return null;
         }
-        String text = StringUtils.removeEnd(string, "\b" + NBSP);
+        String text = StringUtils.removeEnd(string, NBSP); // "\b" + NBSP until 26/07/2023
         if (isPseudoHTML(string)) {
             text = text.replaceAll(AX + ".*" + AY, "");
             text = text.replaceAll(CX + ".*" + CY, "");

@@ -109,7 +109,6 @@ public class Pagina extends AbstractPersistentEntity {
     @Override
     protected void settleAttributes() {
         super.settleAttributes();
-        setOrderBy(codigoPagina);
 //      setSchema(ProyectoBase.getEsquemaEntidadesComunes());
         // <editor-fold defaultstate="collapsed" desc="localization of Pagina's attributes">
         setLocalizedLabel(ENGLISH, "page");
@@ -133,6 +132,8 @@ public class Pagina extends AbstractPersistentEntity {
     @Override
     protected void settleProperties() {
         super.settleProperties();
+        /**/
+        setOrderBy(codigoPagina);
         /**/
         esPublica.setInitialValue(false);
         esPublica.setDefaultValue(false);

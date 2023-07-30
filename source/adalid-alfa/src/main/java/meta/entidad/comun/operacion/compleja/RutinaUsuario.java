@@ -53,7 +53,6 @@ public class RutinaUsuario extends AbstractPersistentEntity {
     @Override
     protected void settleAttributes() {
         super.settleAttributes();
-        setOrderBy(nombre);
 //      setSchema(ProyectoBase.getEsquemaEntidadesComunes());
         // <editor-fold defaultstate="collapsed" desc="localization of RutinaUsuario's attributes">
         setLocalizedLabel(ENGLISH, "user routine");
@@ -120,6 +119,8 @@ public class RutinaUsuario extends AbstractPersistentEntity {
     @Override
     protected void settleProperties() {
         super.settleProperties();
+        /**/
+        setOrderBy(nombre);
         /**/
         // <editor-fold defaultstate="collapsed" desc="localization of RutinaUsuario's properties">
         /**/

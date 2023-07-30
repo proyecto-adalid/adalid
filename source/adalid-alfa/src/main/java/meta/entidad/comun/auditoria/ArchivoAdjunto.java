@@ -264,6 +264,13 @@ public class ArchivoAdjunto extends AbstractPersistentEntity {
         restaurable.setLocalizedLabel(ENGLISH, "restorable");
         restaurable.setLocalizedLabel(SPANISH, "restaurable");
         /**/
+        restaurable.setLocalizedDefaultValueTag(ENGLISH, ""
+            + "False, if the content of the file was not stored or was stored in a column of another table; otherwise True"
+        );
+        restaurable.setLocalizedDefaultValueTag(SPANISH, ""
+            + "Falso, si el contenido del archivo no se almacenó o se almacenó en una columna de otra tabla; de lo contrario, Verdadero"
+        );
+        /**/
         // </editor-fold>
     }
 

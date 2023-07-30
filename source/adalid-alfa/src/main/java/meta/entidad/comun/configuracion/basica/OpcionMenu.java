@@ -95,7 +95,6 @@ public class OpcionMenu extends AbstractPersistentEntity {
     @Override
     protected void settleAttributes() {
         super.settleAttributes();
-        setOrderBy(codigoOpcionMenu);
 //      setSchema(ProyectoBase.getEsquemaEntidadesComunes());
         // <editor-fold defaultstate="collapsed" desc="localization of OpcionMenu's attributes">
         setLocalizedLabel(ENGLISH, "menu option");
@@ -112,6 +111,9 @@ public class OpcionMenu extends AbstractPersistentEntity {
     @Override
     protected void settleProperties() {
         super.settleProperties();
+        /**/
+        setOrderBy(codigoOpcionMenu);
+        /**/
         esOpcionMenuInactiva.setInitialValue(false);
         esOpcionMenuInactiva.setDefaultValue(false);
         esOpcionMenuSincronizada.setInitialValue(false);

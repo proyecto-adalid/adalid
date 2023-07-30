@@ -195,6 +195,9 @@ public class FiltroFuncionPar extends AbstractPersistentEntity {
         idClaseRecursoValor.setInitialValue(funcionParametro.claseRecursoValor.id);
         /**/
         // <editor-fold defaultstate="collapsed" desc="localization of FiltroFuncionPar's properties">
+        /**/
+        String english, spanish;
+        /**/
         filtroFuncion.setLocalizedLabel(ENGLISH, "query filter");
         filtroFuncion.setLocalizedLabel(SPANISH, "filtro de búsqueda");
         filtroFuncion.setLocalizedShortLabel(ENGLISH, "filter");
@@ -212,8 +215,18 @@ public class FiltroFuncionPar extends AbstractPersistentEntity {
         /**/
         tipoValorCriterio.setLocalizedLabel(ENGLISH, "value type");
         tipoValorCriterio.setLocalizedLabel(SPANISH, "tipo de valor");
+        tipoValorCriterio.setLocalizedAnchorLabel(ENGLISH, "value");
         tipoValorCriterio.setLocalizedAnchorLabel(SPANISH, "valor");
+        tipoValorCriterio.setLocalizedAnchoredLabel(ENGLISH, "type");
         tipoValorCriterio.setLocalizedAnchoredLabel(SPANISH, "tipo");
+        /**/
+        english = "If " + b("operator") + " needs a value, then SIMPLE";
+        spanish = "Sí " + b("operador") + " necesita un valor, entonces SIMPLE";
+        /**/
+        tipoValorCriterio.setLocalizedInitialValueTag(ENGLISH, english);
+        tipoValorCriterio.setLocalizedInitialValueTag(SPANISH, spanish);
+        tipoValorCriterio.setLocalizedDefaultValueTag(ENGLISH, english);
+        tipoValorCriterio.setLocalizedDefaultValueTag(SPANISH, spanish);
         /**/
         cifraValorTemporal.setLocalizedLabel(ENGLISH, "quantity");
         cifraValorTemporal.setLocalizedLabel(SPANISH, "cantidad");
@@ -223,6 +236,14 @@ public class FiltroFuncionPar extends AbstractPersistentEntity {
         /**/
         valor.setLocalizedLabel(ENGLISH, "simple value");
         valor.setLocalizedLabel(SPANISH, "valor simple");
+        /**/
+        english = "If " + b("value type") + " is not SIMPLE, then " + b("quantity") + " concatenated with " + b("unit");
+        spanish = "Si " + b("tipo de valor") + " no es SIMPLE, entonces " + b("cantidad") + " concatenada con " + b("unidad");
+        /**/
+        valor.setLocalizedInitialValueTag(ENGLISH, english);
+        valor.setLocalizedInitialValueTag(SPANISH, spanish);
+        valor.setLocalizedDefaultValueTag(ENGLISH, english);
+        valor.setLocalizedDefaultValueTag(SPANISH, spanish);
         /**/
         valorFechaHora.setLocalizedLabel(ENGLISH, "timestamp value");
         valorFechaHora.setLocalizedLabel(SPANISH, "valor fecha hora");
@@ -255,6 +276,8 @@ public class FiltroFuncionPar extends AbstractPersistentEntity {
 
     protected Segment privados;
 
+    protected BooleanExpression claim101, claim102, claim103, claim104;
+
     @Override
     protected void settleExpressions() {
         super.settleExpressions();
@@ -263,7 +286,12 @@ public class FiltroFuncionPar extends AbstractPersistentEntity {
         /*
         privados = filtroFuncion.esPublico.isFalse().and(filtroFuncion.esEspecial.isFalse());
         /**/
-        // <editor-fold defaultstate="collapsed" desc="localization of VistaFuncionCol's expressions">
+        claim101 = funcionParametro.funcion.isEqualTo(filtroFuncion.funcion).and(funcionParametro.criterioBusqueda.isTrue());
+        claim102 = operadorCom.rangos.contains(funcionParametro.rangoComparacion.numero);
+        claim103 = tipoValorCriterio.clases.isNull().or(tipoValorCriterio.clases.contains(funcionParametro.claseJava.letra));
+        claim104 = campoValorTemporal.tipos.contains(tipoValorCriterio.numero);
+        /**/
+        // <editor-fold defaultstate="collapsed" desc="localization of FiltroFuncionPar's expressions">
         /**/
         privados.setLocalizedErrorMessage(ENGLISH, "the filter is public");
         privados.setLocalizedErrorMessage(SPANISH, "el filtro es público");
@@ -271,7 +299,36 @@ public class FiltroFuncionPar extends AbstractPersistentEntity {
         privados.setLocalizedErrorMessage(ENGLISH, "the filter is public or special");
         privados.setLocalizedErrorMessage(SPANISH, "el filtro es público o especial");
         /**/
+        claim101.setLocalizedLabel(ENGLISH, "verify function parameter");
+        claim101.setLocalizedLabel(SPANISH, "chequear parámetro de función");
+        claim101.setLocalizedDescription(ENGLISH, "the parameter must be a search criterion and its function must be equal to the function associated with the filter");
+        claim101.setLocalizedDescription(SPANISH, "el parámetro debe ser un criterio de búsqueda y su función debe ser igual a la función asociada al filtro");
+        claim101.setLocalizedErrorMessage(ENGLISH, "the parameter is not a search criterion or its function is not equal to the function associated with the filter");
+        claim101.setLocalizedErrorMessage(SPANISH, "el parámetro no es un criterio de búsqueda o su función no es igual a la función asociada al filtro");
+        /**/
+        claim102.setLocalizedLabel(ENGLISH, "verify comparison operator");
+        claim102.setLocalizedLabel(SPANISH, "chequear operador de comparación");
+        claim102.setLocalizedDescription(ENGLISH, "the comparison operator is compatible with the parameter");
+        claim102.setLocalizedDescription(SPANISH, "el operador de comparación es compatible con el parámetro");
+        claim102.setLocalizedErrorMessage(ENGLISH, "the comparison operator is not compatible with the parameter");
+        claim102.setLocalizedErrorMessage(SPANISH, "el operador de comparación es incompatible con el parámetro");
+        /**/
+        claim103.setLocalizedLabel(ENGLISH, "verify value type");
+        claim103.setLocalizedLabel(SPANISH, "chequear tipo de valor");
+        claim103.setLocalizedDescription(ENGLISH, "the value type is compatible with the parameter");
+        claim103.setLocalizedDescription(SPANISH, "el tipo de valor es compatible con el parámetro");
+        claim103.setLocalizedErrorMessage(ENGLISH, "the value type is not compatible with the parameter");
+        claim103.setLocalizedErrorMessage(SPANISH, "el tipo de valor es incompatible con el parámetro");
+        /**/
+        claim104.setLocalizedLabel(ENGLISH, "verify temporal value");
+        claim104.setLocalizedLabel(SPANISH, "chequear valor temporal");
+        claim104.setLocalizedDescription(ENGLISH, "the temporal value is compatible with the parameter value type");
+        claim104.setLocalizedDescription(SPANISH, "el valor temporal es compatible con el tipo de valor del parámetro");
+        claim104.setLocalizedErrorMessage(ENGLISH, "the temporal value is not compatible with the parameter value type");
+        claim104.setLocalizedErrorMessage(SPANISH, "el valor temporal es incompatible con el tipo de valor del parámetro");
+        /**/
         // </editor-fold>
+        /**/
     }
 
     @Override
@@ -282,10 +339,9 @@ public class FiltroFuncionPar extends AbstractPersistentEntity {
         setUpdateFilter(privados);
         setDeleteFilter(privados);
         /**/
-        funcionParametro.setSearchQueryFilter(funcionParametro.funcion.isEqualTo(filtroFuncion.funcion).
-            and(funcionParametro.criterioBusqueda.isTrue()));
+        funcionParametro.setSearchQueryFilter(claim101);
         /**/
-        operadorCom.setSearchQueryFilter(operadorCom.rangos.contains(funcionParametro.rangoComparacion.numero));
+        operadorCom.setSearchQueryFilter(claim102);
         operadorCom.setModifyingFilter(funcionParametro.isNotNull());
         /**/
         BooleanExpression necesitaValor = and(funcionParametro.isNotNull(), operadorCom.isNotNull(), operadorCom.necesitaValor.isTrue());
@@ -308,7 +364,7 @@ public class FiltroFuncionPar extends AbstractPersistentEntity {
         tipoValorCriterio.setRenderingFilter(necesitaValor);
         tipoValorCriterio.setRequiringFilter(necesitaValorTemporal);
         tipoValorCriterio.setNullifyingFilter(not(necesitaValor));
-        tipoValorCriterio.setSearchQueryFilter(tipoValorCriterio.clases.isNull().or(tipoValorCriterio.clases.contains(funcionParametro.claseJava.letra)));
+        tipoValorCriterio.setSearchQueryFilter(claim103);
         /**/
         cifraValorTemporal.setModifyingFilter(necesitaValorCompuesto);
         cifraValorTemporal.setRenderingFilter(necesitaValorCompuesto);
@@ -319,7 +375,7 @@ public class FiltroFuncionPar extends AbstractPersistentEntity {
         campoValorTemporal.setRenderingFilter(necesitaValorCompuesto);
         campoValorTemporal.setRequiringFilter(necesitaValorCompuesto);
         campoValorTemporal.setNullifyingFilter(not(necesitaValorCompuesto));
-        campoValorTemporal.setSearchQueryFilter(campoValorTemporal.tipos.contains(tipoValorCriterio.numero));
+        campoValorTemporal.setSearchQueryFilter(claim104);
         /* until 05/03/2023
 //      valor.setModifyingFilter(necesitaValor.and(funcionParametro.tipoValor.isEqualTo(funcionParametro.tipoValor.CONTINUO)));
         valor.setModifyingFilter(necesitaValor);
@@ -332,6 +388,28 @@ public class FiltroFuncionPar extends AbstractPersistentEntity {
         /*
         recursoValor.setModifyingFilter(necesitaValor.and(funcionParametro.tipoValor.isEqualTo(funcionParametro.tipoValor.RECURSO)));
         recursoValor.setNullifyingFilter(not(necesitaValor));
+        /**/
+        // <editor-fold defaultstate="collapsed" desc="localization of FiltroFuncionPar's filters">
+        /**/
+        String english = "If " + b("operator") + " needs a value";
+        String spanish = "Sí " + b("operador") + " necesita un valor";
+        /**/
+        tipoValorCriterio.setLocalizedRequiringFilterTag(ENGLISH, english);
+        tipoValorCriterio.setLocalizedRequiringFilterTag(SPANISH, spanish);
+        /**/
+        english = english + " and " + b("value type"); // is or is not SIMPLE
+        spanish = spanish + " y " + b("tipo de valor"); // es o no es SIMPLE
+        /**/
+        cifraValorTemporal.setLocalizedRequiringFilterTag(ENGLISH, english + " is not SIMPLE");
+        cifraValorTemporal.setLocalizedRequiringFilterTag(SPANISH, spanish + " no es SIMPLE");
+        /**/
+        campoValorTemporal.setLocalizedRequiringFilterTag(ENGLISH, english + " is not SIMPLE");
+        campoValorTemporal.setLocalizedRequiringFilterTag(SPANISH, spanish + " no es SIMPLE");
+        /**/
+        valor.setLocalizedRequiringFilterTag(ENGLISH, english + " is SIMPLE");
+        valor.setLocalizedRequiringFilterTag(SPANISH, spanish + " es SIMPLE");
+        /**/
+        // </editor-fold>
         /**/
     }
 

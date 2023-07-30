@@ -10,17 +10,42 @@
  *
  * Para mas detalles vea la licencia "GNU General Public License" en http://www.gnu.org/licenses
  */
-package adalid.core.enums;
+package adalid.jee2;
 
 /**
  * @author Jorge Campins
  */
-public enum AnchorType {
+public class ImageFile {
 
-    UNLINKED, BLOCK, INLINE, INLINE_BLOCK;
+    private final String name;
 
-    public String getStyleClass() {
-        return "xs-anchor-type-" + name().toLowerCase().replace('_', '-');
+    public ImageFile(String name) {
+        this.name = name;
+    }
+
+    /**
+     * @return the image file name
+     */
+    public String getImageFileName() {
+        return name;
+    }
+
+    public String path;
+
+    public String getPath() {
+        return path;
+    }
+
+    public int height;
+
+    public int getHeight() {
+        return height < 0 ? 0 : height;
+    }
+
+    public int width;
+
+    public int getWidth() {
+        return width < 0 ? 0 : width;
     }
 
 }

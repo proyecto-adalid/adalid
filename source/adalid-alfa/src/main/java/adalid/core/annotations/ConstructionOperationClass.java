@@ -12,6 +12,7 @@
  */
 package adalid.core.annotations;
 
+import adalid.core.enums.*;
 import adalid.core.interfaces.*;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -36,5 +37,15 @@ public @interface ConstructionOperationClass {
      * @return type
      */
     Class<? extends Entity> type();
+
+    /**
+     * onsuccess especifica la acción que se debe llevar a cabo al finalizar la operación, cuando ésta se ejecuta con éxito. Su valor es uno de los
+     * elementos de la enumeración OnConstructionOperationSuccess. Seleccione DISPLAY_NEW_INSTANCE para mostrar la instancia construída abriendo la
+     * vista (página) de consulta o registro de esa clase de entidad. Alternativamente, omita el elemento o seleccione UNSPECIFIED para no llevar a
+     * cabo una acción.
+     *
+     * @return onsuccess
+     */
+    OnConstructionOperationSuccess onsuccess() default OnConstructionOperationSuccess.UNSPECIFIED;
 
 }

@@ -231,6 +231,11 @@ public abstract class AbstractDataArtifact extends AbstractArtifact implements A
     /**
      *
      */
+    private AnchorType _firstAnchoredFieldAnchorType = AnchorType.UNLINKED;
+
+    /**
+     *
+     */
     private boolean _anchoringLinkedDetailFields;
 
     /**
@@ -334,6 +339,11 @@ public abstract class AbstractDataArtifact extends AbstractArtifact implements A
      *
      */
     private StandardRelationalOp _linkedColumnOperator = StandardRelationalOp.EQ; // StandardRelationalOp.UNSPECIFIED?
+
+    /**
+     *
+     */
+    private String _masterHeadingSnippetFileName = "";
 
     /**
      *
@@ -1490,6 +1500,24 @@ public abstract class AbstractDataArtifact extends AbstractArtifact implements A
     }
 
     /**
+     * @return the anchor type of the first anchored field
+     */
+    @Override
+    public AnchorType getFirstAnchoredFieldAnchorType() {
+        return _firstAnchoredFieldAnchorType;
+    }
+
+    /**
+     * Sets the first anchored field anchor type
+     *
+     * @param anchorType the anchor type of the first anchored field
+     */
+    @Override
+    public void setFirstAnchoredFieldAnchorType(AnchorType anchorType) {
+        _firstAnchoredFieldAnchorType = anchorType;
+    }
+
+    /**
      * @return the anchoring linked detail fields indicator
      */
     @Override
@@ -1984,6 +2012,24 @@ public abstract class AbstractDataArtifact extends AbstractArtifact implements A
     @Override
     public StandardRelationalOp getLinkedColumnOperator() {
         return _linkedColumnOperator;
+    }
+
+    /**
+     * @return the master-heading snippet file name
+     */
+    public String getMasterHeadingSnippetFileName() {
+        return _masterHeadingSnippetFileName;
+    }
+
+    protected void setMasterHeadingSnippetFileName(String fileName) {
+        if (StringUtils.isBlank(fileName)) {
+            _masterHeadingSnippetFileName = "";
+        } else if (isValidSnippetFileName(fileName)) {
+            _masterHeadingSnippetFileName = fileName;
+        } else if (isLoggableProperty()) {
+            logger.error(getName() + " master heading snippet is invalid ");
+            Project.increaseParserErrorCount();
+        }
     }
 
     /**
@@ -3704,8 +3750,12 @@ public abstract class AbstractDataArtifact extends AbstractArtifact implements A
             _defaultCondition = DefaultCondition.IF_NULL;
             _defaultCheckpoint = Checkpoint.USER_INTERFACE;
             Entity owner = (Entity) this;
-            owner.setInitialValue(SpecialEntityValue.CURRENT_USER);
-            owner.setDefaultValue(SpecialEntityValue.CURRENT_USER);
+            if (owner.getInitialValue() == null) {
+                owner.setInitialValue(SpecialEntityValue.CURRENT_USER);
+            }
+            if (owner.getDefaultValue() == null) {
+                owner.setDefaultValue(SpecialEntityValue.CURRENT_USER);
+            }
         }
         if (isUserProperty()) {
             _nullable = true;
@@ -5336,6 +5386,10 @@ public abstract class AbstractDataArtifact extends AbstractArtifact implements A
 //          _sequenceNumber = Math.max(0, annotation.sequence());
             _sequenceNumber = annotation.sequence();
             /**/
+            fileName = annotation.masterHeadingSnippet();
+            if (StringUtils.isNotBlank(fileName)) {
+                setMasterHeadingSnippetFileName(fileName);
+            }
             fileName = annotation.readingTableSnippet();
             if (StringUtils.isNotBlank(fileName)) {
                 setReadingTableSnippetFileName(fileName);

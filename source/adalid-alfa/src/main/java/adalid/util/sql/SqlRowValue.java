@@ -12,6 +12,8 @@
  */
 package adalid.util.sql;
 
+import org.apache.commons.lang.StringUtils;
+
 /**
  * @author Jorge Campins
  */
@@ -111,6 +113,10 @@ public class SqlRowValue extends SqlArtifact {
      */
     void setLiteral(String literal) {
         _literal = literal;
+    }
+
+    public boolean isDefaultValue() {
+        return StringUtils.equals(_literal, getColumn().getSqlDefaultValueLiteral());
     }
 
     /**

@@ -54,7 +54,6 @@ public class VariableRutina extends AbstractPersistentEntity {
     @Override
     protected void settleAttributes() {
         super.settleAttributes();
-        setOrderBy(rutina, nombre);
 //      setSchema(ProyectoBase.getEsquemaEntidadesComunes());
         // <editor-fold defaultstate="collapsed" desc="localization of VariableRutina's attributes">
         setLocalizedLabel(ENGLISH, "user routine variable");
@@ -124,6 +123,8 @@ public class VariableRutina extends AbstractPersistentEntity {
     @Override
     protected void settleProperties() {
         super.settleProperties();
+        /**/
+        setOrderBy(rutina, nombre);
         /**/
         coleccion.setInitialValue(false);
         coleccion.setDefaultValue(false);

@@ -802,6 +802,8 @@ public class SqlMerger extends SqlUtil {
         return true;
     }
 
+    private static final String v3r5i0n = "v3r5i0n";
+
     private void compareRows(SqlTable table1, SqlTable table2, Set<String> colnames) {
         Map<String, SqlRow> map1 = table1.getRowsByPrimaryKeyMap();
         Map<String, SqlRow> map2 = table2.getRowsByPrimaryKeyMap();
@@ -841,6 +843,9 @@ public class SqlMerger extends SqlUtil {
                     if (colname.equals(vn1) && colname.equals(vn2)) {
                         continue;
                     }
+                    if (colname.equals(v3r5i0n) && colname.equals(v3r5i0n)) {
+                        continue;
+                    }
                     column1 = colmap1.get(colname);
                     column2 = colmap2.get(colname);
                     if (column1 == null) {
@@ -856,6 +861,7 @@ public class SqlMerger extends SqlUtil {
                     boolean oldColumn = column2 != null;
                     boolean newColumn = column2 == null;
                     boolean newColumnWithValue = newColumn && rowValue1 != null && strValue1 != null;
+                    boolean newColumnWithDefaultValue = newColumnWithValue && isDefaultValue(rowValue1);
                     rowValuePair = new SqlRowValuePair(rowValue1, rowValue2);
                     if (oldColumn) {
                         rowValuePairs.add(rowValuePair);
@@ -887,9 +893,14 @@ public class SqlMerger extends SqlUtil {
                     }
                     if (bk && oldColumn) {
                         logWarning(tableName, text + DATA_CONV_REQD);
+                    } else if (newColumnWithDefaultValue) {
+                        text = join(tableName, strKey, colname, "has a new value but it is the default value so an update is not required");
+                        logger.trace(text);
                     } else {
                         logDetails(tableName, text);
                         if (newColumnWithValue) {
+                            text = join(tableName, strKey, colname, "has a new value and it is not the default value so an update is required");
+                            logger.trace(text);
                             logger.trace(getUpdateStatement(rowValue1));
                             _addedValues.add(rowValue1);
                         } else if (rowValuePair.isUpdatableColumn()) {
@@ -925,6 +936,10 @@ public class SqlMerger extends SqlUtil {
                 logWarning(tableName, text + DATA_CONV_REQD);
             }
         }
+    }
+
+    private boolean isDefaultValue(SqlRowValue rowValue) {
+        return rowValue.isDefaultValue();
     }
 
     private String getUpdateStatement(SqlRowValue rowValue) {

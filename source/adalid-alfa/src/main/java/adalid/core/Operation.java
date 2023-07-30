@@ -316,6 +316,8 @@ public abstract class Operation extends AbstractArtifact implements Comparable<O
 
     private boolean _operationActivityDiagramGenEnabled = true;
 
+    private String _confirmationIconClass;
+
     private final Map<Locale, String> _localizedConfirmationMessage = new LinkedHashMap<>();
 
     private final Map<Locale, String> _localizedSuccessMessage = new LinkedHashMap<>();
@@ -395,18 +397,13 @@ public abstract class Operation extends AbstractArtifact implements Comparable<O
                         return parameter;
                     }
                 }
-//              Entity declaringEntity = getDeclaringEntity();
-//              Class<?> declaringClass = declaringEntity == null ? null : declaringEntity.getDataType();
-//              if (declaringClass != null) {
-//                  for (Parameter parameter : parameters) {
-//                      if (declaringClass.isAssignableFrom(parameter.getDataType())) {
-//                          return parameter;
-//                      }
-//                  }
-//              }
             }
         }
         return null;
+    }
+
+    public boolean isInstanceOperation() {
+        return getInstanceParameter() != null;
     }
 
     /**
@@ -632,7 +629,7 @@ public abstract class Operation extends AbstractArtifact implements Comparable<O
         return _operationKind;
     }
 
-    void setOperationKind(OperationKind operationKind) {
+    protected void setOperationKind(OperationKind operationKind) {
         _operationKind = operationKind;
     }
 
@@ -723,6 +720,22 @@ public abstract class Operation extends AbstractArtifact implements Comparable<O
      */
     public boolean isOperationActivityDiagramGenEnabled() {
         return _operationActivityDiagramGenEnabled;
+    }
+
+    /**
+     * @return the confirmation icon class
+     */
+    public String getConfirmationIconClass() {
+        return _confirmationIconClass;
+    }
+
+    /**
+     * El método setConfirmationIconClass se utiliza para establecer la clase del icono de confirmación de la operación.
+     *
+     * @param iconClass clase del icono que se muestra en el diálogo de confirmación
+     */
+    public void setConfirmationIconClass(String iconClass) {
+        _confirmationIconClass = iconClass;
     }
 
     /**
@@ -1351,11 +1364,16 @@ public abstract class Operation extends AbstractArtifact implements Comparable<O
 
     private void setChildrenDisplaySortKey(Parameter parent, List<Parameter> list) {
         int i = 0;
+        boolean first = true;
         for (Parameter child : list) {
             if (child.getAnchorParameter() == parent) {
                 boolean unlinked = AnchorType.UNLINKED.equals(child.getAnchorType());
                 if (!unlinked && !child.isHiddenField()) {
                     parent.setAnchoringLinkedParameters(true);
+                    if (first) {
+                        first = false;
+                        parent.setFirstAnchoredFieldAnchorType(child.getAnchorType());
+                    }
                 }
                 child.setDisplaySortKey(parent.getDisplaySortKey() + (unlinked ? '/' : '-') + String.format("%02d", i++));
                 setChildrenDisplaySortKey(child, list); // como '/' es mayor que '-' las UNLINKED quedan después de las enlazadas
@@ -1437,6 +1455,9 @@ public abstract class Operation extends AbstractArtifact implements Comparable<O
                     logger.error("invalid transition: " + name + "; initial state is null");
                     Project.increaseParserErrorCount();
                 }
+            } else if (!isInstanceOperation()) {
+                logger.error("invalid transition: " + name + "; " + getFullName() + " is not an instance operation and initial state is not null");
+                Project.increaseParserErrorCount();
             }
             if (y == null) {
                 logger.error("invalid transition: " + name + "; final state is null");
@@ -1445,6 +1466,10 @@ public abstract class Operation extends AbstractArtifact implements Comparable<O
             if (x != null && y != null) {
                 if (x == y) {
                     equ++;
+                    if (stateHasTrigger(x)) {
+                        logger.error("invalid transition: " + name + "; " + getFullName() + " final state is equal to initial state and that state has a trigger");
+                        Project.increaseParserErrorCount();
+                    }
                 } else {
                     neq++;
                 }
@@ -1454,6 +1479,15 @@ public abstract class Operation extends AbstractArtifact implements Comparable<O
             logger.warn("some but not all transitions of " + getFullName() + " have its final state equal to its initial state");
             Project.increaseParserWarningCount();
         }
+    }
+
+    private boolean stateHasTrigger(State state) {
+        for (Trigger trigger : getTriggersMap().values()) {
+            if (state.equals(trigger.getState())) {
+                return true;
+            }
+        }
+        return false;
     }
 
     // <editor-fold defaultstate="collapsed" desc="annotate">

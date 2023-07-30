@@ -22,17 +22,6 @@ public abstract class BasicDatabaseOperation extends Operation {
 
     public BasicDatabaseOperation() {
         super();
-        init();
-    }
-
-    /* commented since 20200203
-    public BasicDatabaseOperation(Artifact declaringArtifact, Field declaringField) {
-        super(declaringArtifact, declaringField);
-        init();
-    }
-
-    /**/
-    private void init() {
     }
 
     BasicDatabaseOperationType _basicDatabaseOperationType;

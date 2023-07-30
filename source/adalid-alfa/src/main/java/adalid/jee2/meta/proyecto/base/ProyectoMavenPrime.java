@@ -168,7 +168,7 @@ public abstract class ProyectoMavenPrime extends ProyectoMaven {
     /**
      * El método setThemeDialogWidthSubtrahend se utiliza para especificar la cantidad de pixeles para ajustar el ancho de diálogos dinámicos.
      *
-     * @param subtrahend cantidad de pixeles; debe ser un numero entre 0 y 320. El valor prdeterminado es 64.
+     * @param subtrahend cantidad de pixeles; debe ser un numero entre 0 y 320. El valor predeterminado es 32.
      */
     public void setThemeDialogWidthSubtrahend(int subtrahend) {
         _themeDialogWidthSubtrahend = subtrahend < 0 ? 0 : subtrahend > 320 ? 320 : subtrahend;
@@ -181,7 +181,7 @@ public abstract class ProyectoMavenPrime extends ProyectoMaven {
     /**
      * El método setThemeDialogHeightSubtrahend se utiliza para especificar la cantidad de pixeles para ajustar el alto de diálogos dinámicos.
      *
-     * @param subtrahend cantidad de pixeles; debe ser un numero entre 0 y 240. El valor prdeterminado es 80.
+     * @param subtrahend cantidad de pixeles; debe ser un numero entre 0 y 240. El valor predeterminado es 40.
      */
     public void setThemeDialogHeightSubtrahend(int subtrahend) {
         _themeDialogHeightSubtrahend = subtrahend < 0 ? 0 : subtrahend > 240 ? 240 : subtrahend;
@@ -194,7 +194,7 @@ public abstract class ProyectoMavenPrime extends ProyectoMaven {
     /**
      * El método setThemeDialogPosition se utiliza para especificar la posición inicial de diálogos dinámicos.
      *
-     * @param position elemento de la enumeración ProyectoMavenPrime.DialogPosition. El valor prdeterminado es DialogPosition.CENTER.
+     * @param position elemento de la enumeración ProyectoMavenPrime.DialogPosition. El valor predeterminado es DialogPosition.CENTER.
      */
     public void setThemeDialogPosition(DialogPosition position) {
         _themeDialogPosition = position == null ? DialogPosition.CENTER : position;

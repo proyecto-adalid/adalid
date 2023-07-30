@@ -15,12 +15,8 @@ package adalid.core.enums;
 /**
  * @author Jorge Campins
  */
-public enum AnchorType {
+public enum OnConstructionOperationSuccess {
 
-    UNLINKED, BLOCK, INLINE, INLINE_BLOCK;
-
-    public String getStyleClass() {
-        return "xs-anchor-type-" + name().toLowerCase().replace('_', '-');
-    }
+    UNSPECIFIED, DISPLAY_NEW_INSTANCE
 
 }

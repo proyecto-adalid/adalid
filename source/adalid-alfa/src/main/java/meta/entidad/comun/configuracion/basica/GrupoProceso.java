@@ -94,7 +94,6 @@ public class GrupoProceso extends AbstractPersistentEntity {
         /**/
         setLinkOuterChildren(true);
         setLinkOuterCollaterals(true);
-        setOrderBy(codigoGrupoProceso);
 //      setSchema(ProyectoBase.getEsquemaEntidadesComunes());
         /**/
         // <editor-fold defaultstate="collapsed" desc="localization of GrupoProceso's attributes">
@@ -123,6 +122,8 @@ public class GrupoProceso extends AbstractPersistentEntity {
     @Override
     protected void settleProperties() {
         super.settleProperties();
+        /**/
+        setOrderBy(codigoGrupoProceso);
         /**/
         setGraphicImageExpressions(condicionEjeFun);
         /**/

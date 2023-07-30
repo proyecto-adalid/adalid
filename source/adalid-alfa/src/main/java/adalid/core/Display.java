@@ -83,6 +83,8 @@ public abstract class Display extends AbstractArtifact implements Comparable<Dis
     private List<UIComponent> _components;
 
     /**/
+    private int _masterDetailViewSequence = 0;
+
     private String _helpDocument;
 
     private String _helpFileName;
@@ -91,6 +93,17 @@ public abstract class Display extends AbstractArtifact implements Comparable<Dis
     // <editor-fold defaultstate="collapsed" desc="field getters and setters">
     public boolean isMenuOptionEnabled() {
         return _reference == null || _reference.isMasterDetailViewMenuOptionEnabled(this);
+    }
+
+    /**
+     * @return the master/detail view sequence
+     */
+    public int getMasterDetailViewSequence() {
+        return _masterDetailViewSequence;
+    }
+
+    public void setMasterDetailViewSequence(int sequence) {
+        _masterDetailViewSequence = sequence;
     }
 
     /**
@@ -410,18 +423,23 @@ public abstract class Display extends AbstractArtifact implements Comparable<Dis
                 List<? extends Display> displaysList = module.getDisplaysList();
                 Collections.sort(displaysList);
                 for (Display display : displaysList) {
-                    if (equals(display) || unequals(_displayMode, display.getDisplayMode())) {
-                        continue;
-                    }
-                    if (equals(_entity, display.getEntity())) {
-                        if (_reference == display.getReference() || equals(_reference, display.getReference())) { // nulls are equals
-                            _siblings.add(display);
-                        }
+                    if (isSibling(display)) {
+                        _siblings.add(display);
                     }
                 }
             }
         }
         return _siblings;
+    }
+
+    public boolean isSibling(Display display) {
+        if (display == null || equals(display) || unequals(_displayMode, display.getDisplayMode())) {
+        } else if (equals(_entity, display.getEntity())) {
+            if (_reference == display.getReference() || equals(_reference, display.getReference())) { // nulls are equals
+                return true;
+            }
+        }
+        return false;
     }
 
     private boolean linkOuterSiblings() {
@@ -617,10 +635,48 @@ public abstract class Display extends AbstractArtifact implements Comparable<Dis
     }
 
     public List<? extends DisplayField> getRootMasterHeadingFields() {
-        List<? extends DisplayField> fields = new ArrayList<>(getMasterHeadingFields());
+        List<? extends DisplayField> fields = new ArrayList<>(removeRootMasterHeadingFields(getMasterHeadingFields())); // since 30/04/2023
         CollectionUtils.filter(fields, new IsDisplayRootField());
         Collections.sort(fields, byPropertyDisplaySortKey);
         return fields;
+    }
+
+    private List<? extends DisplayField> removeRootMasterHeadingFields(List<? extends DisplayField> fields) {
+        if (_master == null || _reference == null) {
+            return fields;
+        }
+        final Property[] array = _entity.getRemoveHeadingPropertyArray();
+        if (array == null || array.length == 0) {
+            return fields;
+        }
+        final List<DisplayField> campos = new ArrayList<>();
+        final String fieldPropertyPrefix = _master.getFullName() + ".";
+        final String arrayPropertyPrefix = _reference.getFullName() + ".";
+        final boolean removePropertiesInArray = _entity.isRemovePropertiesInRemoveHeadingPropertyArray();
+        Property fieldProperty;
+        forEachField:
+            for (DisplayField field : fields) {
+                fieldProperty = field.getProperty();
+                if (fieldProperty != null) {
+                    if (fieldProperty.getFullName().startsWith(fieldPropertyPrefix)) {
+                        for (Property arrayProperty : array) {
+                            if (arrayProperty.getFullName().startsWith(arrayPropertyPrefix)) {
+                                if (fieldProperty.getName().equals(arrayProperty.getName())) {
+                                    if (removePropertiesInArray) {
+                                        continue forEachField;
+                                    }
+                                    campos.add(field);
+                                    continue forEachField;
+                                }
+                            }
+                        }
+                        if (removePropertiesInArray) {
+                            campos.add(field);
+                        }
+                    }
+                }
+            }
+        return campos;
     }
 
     public List<String> getRootFieldNames() {

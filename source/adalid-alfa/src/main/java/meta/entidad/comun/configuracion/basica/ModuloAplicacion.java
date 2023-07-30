@@ -85,7 +85,6 @@ public class ModuloAplicacion extends AbstractPersistentEntity {
     @Override
     protected void settleAttributes() {
         super.settleAttributes();
-        setOrderBy(codigoModulo);
 //      setSchema(ProyectoBase.getEsquemaEntidadesComunes());
         /**/
         // <editor-fold defaultstate="collapsed" desc="localization of ModuloAplicacion's attributes">
@@ -112,6 +111,8 @@ public class ModuloAplicacion extends AbstractPersistentEntity {
     @Override
     protected void settleProperties() {
         super.settleProperties();
+        /**/
+        setOrderBy(codigoModulo);
         /**/
         menusPredefinidos.setInitialValue(false);
         menusPredefinidos.setDefaultValue(false);

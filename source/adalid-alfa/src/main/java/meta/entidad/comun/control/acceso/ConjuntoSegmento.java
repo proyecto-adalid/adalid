@@ -64,7 +64,7 @@ public class ConjuntoSegmento extends AbstractPersistentEntity {
 //  @ForeignKey(onDelete = OnDeleteAction.NONE, onUpdate = OnUpdateAction.NONE)
     @ManyToOne(navigability = Navigability.UNIDIRECTIONAL, view = MasterDetailView.NONE)
     @ColumnField(nullable = Kleenean.FALSE)
-    @PropertyField(heading = Kleenean.TRUE, update = Kleenean.FALSE)
+    @PropertyField(heading = Kleenean.TRUE, overlay = Kleenean.TRUE, update = Kleenean.FALSE)
     @EntityReferenceSearch(searchType = SearchType.LIST, listStyle = ListStyle.CHARACTER_KEY)
     public ClaseRecurso claseRecurso;
 
@@ -98,8 +98,6 @@ public class ConjuntoSegmento extends AbstractPersistentEntity {
         super.settleAttributes();
 //      setSchema(ProyectoBase.getEsquemaEntidadesComunes());
         /**/
-        setOrderBy(codigoConjuntoSegmento);
-        /**/
         // <editor-fold defaultstate="collapsed" desc="localization of ConjuntoSegmento's attributes">
         setLocalizedLabel(ENGLISH, "segment set");
         setLocalizedLabel(SPANISH, "conjunto de segmentos");
@@ -126,6 +124,8 @@ public class ConjuntoSegmento extends AbstractPersistentEntity {
     @Override
     protected void settleProperties() {
         super.settleProperties();
+        /**/
+        setOrderBy(codigoConjuntoSegmento);
         /**/
         nombreClaseFabricador.setInitialValue(claseFabricador.nombreClaseFabricador);
         nombreClaseFabricador.setDefaultValue(claseFabricador.nombreClaseFabricador);
@@ -203,6 +203,8 @@ public class ConjuntoSegmento extends AbstractPersistentEntity {
 
     protected Check check201;
 
+    protected BooleanExpression claim201;
+
     @Override
     protected void settleExpressions() {
         super.settleExpressions();
@@ -213,7 +215,8 @@ public class ConjuntoSegmento extends AbstractPersistentEntity {
         /**/
         check101 = claseRecurso.esClaseRecursoSegmento.isTrue();
         /**/
-        check201 = claseFabricador.isNotNull().implies(claseFabricador.codigoClaseRecurso.isEqualTo(claseRecurso.codigoClaseRecurso));
+        claim201 = claseFabricador.codigoClaseRecurso.isEqualTo(claseRecurso.codigoClaseRecurso);
+        check201 = claseFabricador.isNotNull().implies(claim201);
         /**/
         // <editor-fold defaultstate="collapsed" desc="localization of ConjuntoSegmento's expressions">
         /**/
@@ -249,6 +252,13 @@ public class ConjuntoSegmento extends AbstractPersistentEntity {
         check201.setLocalizedErrorMessage(ENGLISH, "the factory class is not a class used to segment the resource class");
         check201.setLocalizedErrorMessage(SPANISH, "la clase de fabricador no es una clase utilizada para segmentar la clase de recurso");
         /**/
+        claim201.setLocalizedLabel(ENGLISH, "verify factory class");
+        claim201.setLocalizedLabel(SPANISH, "chequear clase de fabricador");
+        claim201.setLocalizedDescription(ENGLISH, "the factory class must be a class used to segment the resource class");
+        claim201.setLocalizedDescription(SPANISH, "la clase de fabricador debe ser una clase utilizada para segmentar la clase de recurso");
+        claim201.setLocalizedErrorMessage(ENGLISH, "the factory class is not a class used to segment the resource class");
+        claim201.setLocalizedErrorMessage(SPANISH, "la clase de fabricador no es una clase utilizada para segmentar la clase de recurso");
+        /**/
         // </editor-fold>
     }
 
@@ -258,13 +268,13 @@ public class ConjuntoSegmento extends AbstractPersistentEntity {
         setUpdateFilter(modificables);
         setDeleteFilter(modificables);
         claseRecurso.setSearchQueryFilter(check101);
-        claseFabricador.setSearchQueryFilter(claseFabricador.codigoClaseRecurso.isEqualTo(claseRecurso.codigoClaseRecurso));
+        claseFabricador.setSearchQueryFilter(claim201);
     }
 
     protected Copiar copiar;
 
     @ProcessOperationClass
-    @ConstructionOperationClass(type = ConjuntoSegmento.class)
+    @ConstructionOperationClass(type = ConjuntoSegmento.class, onsuccess = OnConstructionOperationSuccess.DISPLAY_NEW_INSTANCE)
     public class Copiar extends ProcessOperation {
 
         @Override

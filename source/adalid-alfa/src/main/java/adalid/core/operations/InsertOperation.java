@@ -24,13 +24,6 @@ public class InsertOperation extends BasicDatabaseProcessOperation {
         init();
     }
 
-    /* commented since 20200203
-    public InsertOperation(Artifact declaringArtifact, Field declaringField) {
-        super(declaringArtifact, declaringField);
-        init();
-    }
-
-    /**/
     private void init() {
         _basicDatabaseOperationType = BasicDatabaseOperationType.INSERT;
     }

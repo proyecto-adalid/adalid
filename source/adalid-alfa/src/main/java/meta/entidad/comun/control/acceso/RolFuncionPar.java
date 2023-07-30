@@ -24,7 +24,7 @@ import meta.entidad.comun.configuracion.basica.ext.FuncionParametro;
 /**
  * @author Jorge Campins
  */
-@EntityClass(independent = Kleenean.FALSE, resourceType = ResourceType.OPERATION, resourceGender = ResourceGender.MASCULINE)
+@EntityClass(independent = Kleenean.FALSE, resourceType = ResourceType.OPERATION, resourceGender = ResourceGender.FEMININE)
 @EntityCodeGen(bws = Kleenean.FALSE, fws = Kleenean.FALSE)
 @EntitySelectOperation(enabled = Kleenean.TRUE)
 @EntityInsertOperation(enabled = Kleenean.TRUE)
@@ -150,18 +150,33 @@ public class RolFuncionPar extends AbstractPersistentEntity {
 
     protected Segment modificables;
 
+    protected BooleanExpression claim101;
+
     @Override
     protected void settleExpressions() {
         super.settleExpressions();
+        /**/
         modificables = rolFuncion.rol.id.isGreaterOrEqualTo(10000L);
+        claim101 = funcionParametro.funcion.isEqualTo(rolFuncion.funcion).and(funcionParametro.accesoRestringido.isTrue());
+        /**/
         // <editor-fold defaultstate="collapsed" desc="localization of RolFuncionPar's expressions">
+        /**/
         modificables.setLocalizedDescription(ENGLISH, "the role is not a basic configuration role");
         modificables.setLocalizedDescription(SPANISH, "el rol no es un rol de configuración básica del sistema");
         modificables.setLocalizedErrorMessage(ENGLISH, "the role is a basic configuration role; "
             + "the parameters of its functions can't be modified or deleted");
         modificables.setLocalizedErrorMessage(SPANISH, "el rol es un rol de configuración básica del sistema; "
             + "no se permite modificar ni eliminar parámetros de sus funciones");
+        /**/
+        claim101.setLocalizedLabel(ENGLISH, "verify function parameter");
+        claim101.setLocalizedLabel(SPANISH, "chequear parámetro de función");
+        claim101.setLocalizedDescription(ENGLISH, "the parameter must have restricted access and its function must be equal to the function associated with the role");
+        claim101.setLocalizedDescription(SPANISH, "el parámetro debe tener acceso restringido y su función debe ser igual a la función asociada al rol");
+        claim101.setLocalizedErrorMessage(ENGLISH, "the parameter does not have restricted access or its function is not equal to the function associated with the role");
+        claim101.setLocalizedErrorMessage(SPANISH, "el parámetro no tiene acceso restringido o su función no es igual a la función asociada al rol");
+        /**/
         // </editor-fold>
+        /**/
     }
 
     @Override
@@ -170,8 +185,7 @@ public class RolFuncionPar extends AbstractPersistentEntity {
         setInsertFilter(rolFuncion.modificables);
         setUpdateFilter(modificables);
         setDeleteFilter(modificables);
-        funcionParametro.setSearchQueryFilter(funcionParametro.funcion.isEqualTo(rolFuncion.funcion).
-            and(funcionParametro.accesoRestringido.isTrue()));
+        funcionParametro.setSearchQueryFilter(claim101);
     }
 
 }

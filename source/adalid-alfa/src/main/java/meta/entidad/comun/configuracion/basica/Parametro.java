@@ -90,7 +90,6 @@ public class Parametro extends AbstractPersistentEntity {
     @Override
     protected void settleAttributes() {
         super.settleAttributes();
-        setOrderBy(codigoParametro);
 //      setSchema(ProyectoBase.getEsquemaEntidadesComunes());
         // <editor-fold defaultstate="collapsed" desc="localization of Parametro's attributes">
         setLocalizedLabel(ENGLISH, "parameter");
@@ -114,6 +113,9 @@ public class Parametro extends AbstractPersistentEntity {
     @Override
     protected void settleProperties() {
         super.settleProperties();
+        /**/
+        setOrderBy(codigoParametro);
+        /**/
         // <editor-fold defaultstate="collapsed" desc="localization of Parametro's properties">
         codigoParametro.setLocalizedLabel(ENGLISH, "parameter code");
         codigoParametro.setLocalizedLabel(SPANISH, "código del parámetro");

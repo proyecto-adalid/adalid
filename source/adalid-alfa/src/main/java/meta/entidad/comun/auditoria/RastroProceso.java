@@ -184,6 +184,13 @@ public class RastroProceso extends AbstractPersistentEntity {
     @PropertyField(table = Kleenean.FALSE, report = Kleenean.FALSE)
     public SeveridadMensaje severidadMensaje;
 
+    @PropertyField(hidden = Kleenean.TRUE)
+    public LongProperty idRecursoObtenido;
+
+    @UniformResourceLocator(urlType = UrlType.INTERNAL, urlDisplayType = UrlDisplayType.BUTTON)
+    @PropertyField(table = Kleenean.FALSE, report = Kleenean.FALSE, search = Kleenean.FALSE, headertextless = Kleenean.TRUE)
+    public StringProperty paginaRecursoObtenido;
+
     @FileReference(loadField = "fechaHoraInicioEjecucion")
     @PropertyField(table = Kleenean.TRUE, report = Kleenean.FALSE, search = Kleenean.FALSE)
     public StringProperty nombreArchivo;
@@ -223,6 +230,9 @@ public class RastroProceso extends AbstractPersistentEntity {
     @ColumnField(nullable = Kleenean.TRUE)
     @PropertyField(hidden = Kleenean.TRUE)
     public SeveridadMensaje severidadMensajeTem;
+
+    @PropertyField(hidden = Kleenean.TRUE)
+    public LongProperty idRecursoObtenidoTem;
 
     @PropertyField(hidden = Kleenean.TRUE)
     @StringField(maxLength = Project.FILE_REFERENCE_MAX_LENGTH)
@@ -501,6 +511,25 @@ public class RastroProceso extends AbstractPersistentEntity {
         severidadMensaje.setLocalizedShortLabel(ENGLISH, "severity");
         severidadMensaje.setLocalizedShortLabel(SPANISH, "severidad");
         /**/
+        severidadMensaje.setLocalizedDefaultValueTag(ENGLISH, ""
+            + "If " + b("condition") + " is EJECUCION CANCELADA, then FATAL; "
+            + "if " + b("condition") + " is EJECUTADO CON ERRORES, then ERROR; "
+            + "in all other cases, INFORMATIVO"
+        );
+        severidadMensaje.setLocalizedDefaultValueTag(SPANISH, ""
+            + "Si " + b("condición") + " es EJECUCION CANCELADA, entonces FATAL; "
+            + "si " + b("condición") + " es EJECUTADO CON ERRORES, entonces ERROR; "
+            + "en los demás casos, INFORMATIVO"
+        );
+        /**/
+        idRecursoObtenido.setLocalizedLabel(ENGLISH, "obtained resource");
+        idRecursoObtenido.setLocalizedLabel(SPANISH, "recurso obtenido");
+        /**/
+        paginaRecursoObtenido.setLocalizedLabel(ENGLISH, "obtained resource page");
+        paginaRecursoObtenido.setLocalizedLabel(SPANISH, "página recurso obtenido");
+        paginaRecursoObtenido.setLocalizedTooltip(ENGLISH, "open the obtained resource page");
+        paginaRecursoObtenido.setLocalizedTooltip(SPANISH, "abrir la página del recurso obtenido");
+        /**/
         nombreArchivo.setLocalizedLabel(ENGLISH, "file");
         nombreArchivo.setLocalizedLabel(SPANISH, "archivo");
         nombreArchivo.setLocalizedTooltip(ENGLISH, "open the process file");
@@ -532,6 +561,20 @@ public class RastroProceso extends AbstractPersistentEntity {
         severidadMensajeTem.setLocalizedLabel(SPANISH, "severidad temporal de mensaje");
         severidadMensajeTem.setLocalizedShortLabel(ENGLISH, "temporal severity");
         severidadMensajeTem.setLocalizedShortLabel(SPANISH, "severidad temporal");
+        /**/
+        severidadMensajeTem.setLocalizedDefaultValueTag(ENGLISH, ""
+            + "If " + b("condition") + " is EJECUCION CANCELADA, then FATAL; "
+            + "if " + b("condition") + " is EJECUTADO CON ERRORES, then ERROR; "
+            + "in all other cases, INFORMATIVO"
+        );
+        severidadMensajeTem.setLocalizedDefaultValueTag(SPANISH, ""
+            + "Si " + b("condición") + " es EJECUCION CANCELADA, entonces FATAL; "
+            + "si " + b("condición") + " es EJECUTADO CON ERRORES, entonces ERROR; "
+            + "en los demás casos, INFORMATIVO"
+        );
+        /**/
+        idRecursoObtenido.setLocalizedLabel(ENGLISH, "temporal obtained resource");
+        idRecursoObtenido.setLocalizedLabel(SPANISH, "recurso obtenido temporal");
         /**/
         nombreArchivoTem.setLocalizedLabel(ENGLISH, "temporal file");
         nombreArchivoTem.setLocalizedLabel(SPANISH, "archivo temporal");
@@ -613,7 +656,7 @@ public class RastroProceso extends AbstractPersistentEntity {
             funcion, codigoFuncion, nombreFuncion, descripcionFuncion, paginaFuncion,
             idClaseRecursoValor, codigoClaseRecursoValor, nombreClaseRecursoValor, recursoValor,
             idRecurso, versionRecurso, codigoRecurso, nombreRecurso, idPropietarioRecurso, idSegmentoRecurso, paginaRecurso,
-            condicionEjeFun, codigoError, descripcionError, severidadMensaje, nombreArchivo, etiquetaLenguaje); //, mensajeAplicacion);
+            condicionEjeFun, codigoError, descripcionError, severidadMensaje, paginaRecursoObtenido, nombreArchivo, etiquetaLenguaje); //, mensajeAplicacion);
         /**/
         tab120.newTabField(funcion, codigoFuncion, nombreFuncion, descripcionFuncion, paginaFuncion,
             tipoFuncion, tipoRastroFun, grupo, procesoAsincrono, procesoNativo, procesoWeb, subprocesos);

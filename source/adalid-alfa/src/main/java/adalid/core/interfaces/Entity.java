@@ -87,6 +87,12 @@ public interface Entity extends Comparable<Entity>, DataArtifact, EntityReferenc
     String getDefaultCollectionShortLabel(EntityReference reference);
 
     /**
+     * @param format the display format
+     * @return the localized menu option label
+     */
+    String getDefaultMenuOptionLabel(DisplayFormat format);
+
+    /**
      * @param locale locale
      * @param reference entity reference
      * @return the localized label
@@ -113,6 +119,13 @@ public interface Entity extends Comparable<Entity>, DataArtifact, EntityReferenc
      * @return the localized collection short label
      */
     String getLocalizedCollectionShortLabel(Locale locale, EntityReference reference);
+
+    /**
+     * @param locale the locale for the label
+     * @param format the display format
+     * @return the localized menu option label
+     */
+    String getLocalizedMenuOptionLabel(Locale locale, DisplayFormat format);
 
     /**
      * @return the number of reference properties
@@ -1439,17 +1452,15 @@ public interface Entity extends Comparable<Entity>, DataArtifact, EntityReferenc
     List<Operation> getAccesibleBusinessOperationsList();
 
     /**
-     * @return the user-defined accesible construction operation list of this entity class
+     * @return the array of properties that should be excluded from the heading of Master/Detail views (pages)
      */
-    List<Operation> getAccesibleConstructionOperationsList();
+    Property[] getRemoveHeadingPropertyArray();
 
     /**
-     * @param master a second entity class to search for construction operations of this entity class.
-     *
-     * @return the user-defined accesible construction operation list of this entity class; if parameter master is not null, construction operations
-     * defined in the master entity class are also included.
+     * @return true if the array contains the properties that should be excluded from the heading of Master/Detail views (pages); false, if the array
+     * contains the properties that should not be excluded from the heading.
      */
-    List<Operation> getAccesibleConstructionOperationsList(Entity master);
+    boolean isRemovePropertiesInRemoveHeadingPropertyArray();
 
     /**
      * El método <b>isNull</b> contruye una expresión lógica que genera la comparación de esta entidad con el valor nulo. La comparación resulta en

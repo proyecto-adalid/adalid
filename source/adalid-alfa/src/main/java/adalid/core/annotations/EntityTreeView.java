@@ -118,6 +118,32 @@ public @interface EntityTreeView {
     String readingViewWesternToolbarSnippet() default "";
 
     /**
+     * readingViewAboveTreeSnippet especifica la ruta y el nombre del snippet ubicado encima del árbol en las vistas (páginas) de consulta jerárquica
+     * de la entidad.
+     *
+     * Si utiliza la plataforma jee2, los snippets se deben agregar en el subdirectorio resources/snippets/custom-made del directorio src/main/webapp
+     * del módulo Web, o en algún subdirectorio de resources/snippets/custom-made; si el valor de snippet no comienza por
+     * <b>/resources/snippets/custom-made/</b>, ese prefijo se le agrega automáticamente. Además, los snippets deben ser archivos xhtml; si el valor
+     * de snippet no termina con <b>.xhtml</b>, ese sufijo se le agrega automáticamente.
+     *
+     * @return readingViewAboveTreeSnippet
+     */
+    String readingViewAboveTreeSnippet() default "";
+
+    /**
+     * readingViewBelowTreeSnippet especifica la ruta y el nombre del snippet ubicado debajo del árbol en las vistas (páginas) de consulta jerárquica
+     * de la entidad.
+     *
+     * Si utiliza la plataforma jee2, los snippets se deben agregar en el subdirectorio resources/snippets/custom-made del directorio src/main/webapp
+     * del módulo Web, o en algún subdirectorio de resources/snippets/custom-made; si el valor de snippet no comienza por
+     * <b>/resources/snippets/custom-made/</b>, ese prefijo se le agrega automáticamente. Además, los snippets deben ser archivos xhtml; si el valor
+     * de snippet no termina con <b>.xhtml</b>, ese sufijo se le agrega automáticamente.
+     *
+     * @return readingViewBelowTreeSnippet
+     */
+    String readingViewBelowTreeSnippet() default "";
+
+    /**
      * writingViewHeadSnippet especifica la ruta y el nombre del snippet del encabezado en las vistas (páginas) de registro jerárquico de la entidad.
      *
      * Si utiliza la plataforma jee2, los snippets se deben agregar en el subdirectorio resources/snippets/custom-made del directorio src/main/webapp
@@ -154,5 +180,31 @@ public @interface EntityTreeView {
      * @return writingViewWesternToolbarSnippet
      */
     String writingViewWesternToolbarSnippet() default "";
+
+    /**
+     * writingViewAboveTreeSnippet especifica la ruta y el nombre del snippet ubicado encima del árbol en las vistas (páginas) de registro jerárquico
+     * de la entidad.
+     *
+     * Si utiliza la plataforma jee2, los snippets se deben agregar en el subdirectorio resources/snippets/custom-made del directorio src/main/webapp
+     * del módulo Web, o en algún subdirectorio de resources/snippets/custom-made; si el valor de snippet no comienza por
+     * <b>/resources/snippets/custom-made/</b>, ese prefijo se le agrega automáticamente. Además, los snippets deben ser archivos xhtml; si el valor
+     * de snippet no termina con <b>.xhtml</b>, ese sufijo se le agrega automáticamente.
+     *
+     * @return writingViewAboveTreeSnippet
+     */
+    String writingViewAboveTreeSnippet() default "";
+
+    /**
+     * writingViewBelowTreeSnippet especifica la ruta y el nombre del snippet ubicado debajo del árbol en las vistas (páginas) de registro jerárquico
+     * de la entidad.
+     *
+     * Si utiliza la plataforma jee2, los snippets se deben agregar en el subdirectorio resources/snippets/custom-made del directorio src/main/webapp
+     * del módulo Web, o en algún subdirectorio de resources/snippets/custom-made; si el valor de snippet no comienza por
+     * <b>/resources/snippets/custom-made/</b>, ese prefijo se le agrega automáticamente. Además, los snippets deben ser archivos xhtml; si el valor
+     * de snippet no termina con <b>.xhtml</b>, ese sufijo se le agrega automáticamente.
+     *
+     * @return writingViewBelowTreeSnippet
+     */
+    String writingViewBelowTreeSnippet() default "";
 
 }

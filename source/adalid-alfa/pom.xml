@@ -6,7 +6,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.proyecto-adalid</groupId>
     <artifactId>adalid-alfa</artifactId>
-    <version>4.7.0</version><!--adalid-->
+    <version>4.8.0</version><!--adalid-->
     <packaging>jar</packaging>
     <name>adalid-alfa</name>
     <description>Adalid Alfa Library</description>

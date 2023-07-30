@@ -81,7 +81,6 @@ public class DominioParametro extends AbstractPersistentEntity {
     @Override
     protected void settleAttributes() {
         super.settleAttributes();
-        setOrderBy(codigoDominioParametro);
 //      setSchema(ProyectoBase.getEsquemaEntidadesComunes());
         // <editor-fold defaultstate="collapsed" desc="localization of DominioParametro's attributes">
         setLocalizedLabel(ENGLISH, "domain parameter");
@@ -109,6 +108,9 @@ public class DominioParametro extends AbstractPersistentEntity {
     @Override
     protected void settleProperties() {
         super.settleProperties();
+        /**/
+        setOrderBy(codigoDominioParametro);
+        /**/
         // <editor-fold defaultstate="collapsed" desc="localization of DominioParametro's properties">
         codigoDominioParametro.setLocalizedLabel(ENGLISH, "domain parameter code");
         codigoDominioParametro.setLocalizedLabel(SPANISH, "código del parámetro de dominio");

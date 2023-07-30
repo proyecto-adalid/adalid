@@ -91,42 +91,25 @@ public class LoremIpsum {
         return array;
     }
 
-    /*
-    public static void main(String[] args) {
-        for (int i = 0; i < LX.length; i++) {
-            System.out.println(LX[i] + "\t" + SX[i]);
-        }
-        for (int i = 3; i < 20; i = i + 5) {
-            String string = getString(i);
-            System.out.println(i + "\t" + string.length() + "\t" + string);
-        }
-        for (int i = 25; i < 500; i = i + 30) {
-            String string = getString(i);
-            System.out.println(i + "\t" + string.length() + "\t" + string);
-        }
-        for (int i = 900; i < 2500; i = i + 300) {
-            String string = getString(i);
-            System.out.println(i + "\t" + string.length() + "\t" + string);
-        }
-    }
-
-    /**/
     public static String getString() {
         return SX[LX.length - 1];
     }
 
     public static String getString(int n) {
         if (n > 0) {
-            int m = SX[0].length();
+            int m = LX[0];
             if (n > m) {
-//              System.out.println(n + ">\t" + m);
                 for (int i = LX.length - 1; i >= 0; i--) {
                     if (n >= LX[i]) {
                         return SX[i];
                     }
                 }
+            } else if (n < m) {
+                String s = SX[0].substring(0, n + 1);
+                return s.endsWith(" ") ? s.trim() : StringUtils.substringBeforeLast(SX[0].substring(0, n), " ");
+            } else {
+                return SX[0];
             }
-            return StringUtils.substringBeforeLast(SX[0].substring(0, n), " ");
         }
         return null;
     }

@@ -139,6 +139,7 @@ public abstract class ProyectoJava1 extends ProyectoBase implements JavaWebProje
 
     public ProyectoJava1() {
         super();
+        initializeImageFiles();
         initializeJobSchedules();
     }
 
@@ -154,6 +155,22 @@ public abstract class ProyectoJava1 extends ProyectoBase implements JavaWebProje
 
     protected PaqueteRegistroRecursosBasicos registroRecursosBasicos;
 
+    protected final ImageFile pageBookmarkIcon = new ImageFile("PBI");
+
+    protected final ImageFile headerLeftBanner = new ImageFile("HLB");
+
+    protected final ImageFile headerRightBanner = new ImageFile("HRB");
+
+    protected final ImageFile welcomePageBanner = new ImageFile("WPB");
+
+    protected final ImageFile changePasswordBanner = new ImageFile("CPB");
+
+    protected final ImageFile helpPageLogo = new ImageFile("HPL");
+
+    private final List<ImageFile> _headerBannerList = new ArrayList<>();
+
+    private final List<String> _predefinedHeaderBannerNames = new ArrayList<>();
+
     protected final JobSchedule taskNotifierSchedule = new JobSchedule("taskNotifierSchedule");
 
     protected final JobSchedule dailyProcessSchedule = new JobSchedule("dailyProcessSchedule");
@@ -165,6 +182,46 @@ public abstract class ProyectoJava1 extends ProyectoBase implements JavaWebProje
     private final List<JobSchedule> _jobScheduleList = new ArrayList<>();
 
     private final List<String> _predefinedJobScheduleNames = new ArrayList<>();
+
+    private void initializeImageFiles() {
+        addImageFile(pageBookmarkIcon);
+        addImageFile(headerLeftBanner);
+        addImageFile(headerRightBanner);
+        addImageFile(welcomePageBanner);
+        addImageFile(changePasswordBanner);
+        addImageFile(helpPageLogo);
+        /**/
+        pageBookmarkIcon.path = "/resources/images/base/favicon.png";
+        pageBookmarkIcon.height = 16;
+        /**/
+        headerLeftBanner.path = "/resources/images/base/index_hlb.png";
+        headerLeftBanner.height = 36;
+        /**/
+        headerRightBanner.path = "/resources/images/base/index_hrb.png";
+        headerRightBanner.height = 36;
+        /**/
+        welcomePageBanner.path = "/resources/images/base/index.png";
+        welcomePageBanner.height = 250;
+        /**/
+        changePasswordBanner.path = "/resources/images/base/index.png";
+        changePasswordBanner.width = 250;
+        /**/
+        helpPageLogo.path = "/resources/images/base/logo.png";
+        helpPageLogo.height = 60;
+        /**/
+    }
+
+    /**
+     * @return the header banner list
+     */
+    public List<ImageFile> getImageFileList() {
+        return _headerBannerList;
+    }
+
+    private void addImageFile(ImageFile imageFile) {
+        _headerBannerList.add(imageFile);
+        _predefinedHeaderBannerNames.add(imageFile.getImageFileName());
+    }
 
     private void initializeJobSchedules() {
         addJobSchedule(taskNotifierSchedule);

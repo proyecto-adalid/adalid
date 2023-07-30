@@ -348,6 +348,11 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
     /**
      *
      */
+    private final Map<LocaleDisplayFormat, String> _localizedMenuOptionLabelByDisplayFormatMap = new LinkedHashMap<>();
+
+    /**
+     *
+     */
     private final EntityAtlas _atlas = new EntityAtlas(this);
 
     /**
@@ -928,6 +933,16 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
     /**
      *
      */
+    private String _readingTableViewAboveTableSnippetFileName = "";
+
+    /**
+     *
+     */
+    private String _readingTableViewBelowTableSnippetFileName = "";
+
+    /**
+     *
+     */
     private String _writingTableViewHeadSnippetFileName = "";
 
     /**
@@ -939,6 +954,16 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
      *
      */
     private String _writingTableViewWesternToolbarSnippetFileName = "";
+
+    /**
+     *
+     */
+    private String _writingTableViewAboveTableSnippetFileName = "";
+
+    /**
+     *
+     */
+    private String _writingTableViewBelowTableSnippetFileName = "";
 
     /**
      *
@@ -988,6 +1013,16 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
     /**
      *
      */
+    private String _readingDetailViewAboveDetailSnippetFileName = "";
+
+    /**
+     *
+     */
+    private String _readingDetailViewBelowDetailSnippetFileName = "";
+
+    /**
+     *
+     */
     private String _writingDetailViewHeadSnippetFileName = "";
 
     /**
@@ -999,6 +1034,16 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
      *
      */
     private String _writingDetailViewWesternToolbarSnippetFileName = "";
+
+    /**
+     *
+     */
+    private String _writingDetailViewAboveDetailSnippetFileName = "";
+
+    /**
+     *
+     */
+    private String _writingDetailViewBelowDetailSnippetFileName = "";
 
     /**
      *
@@ -1038,6 +1083,16 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
     /**
      *
      */
+    private String _readingTreeViewAboveTreeSnippetFileName = "";
+
+    /**
+     *
+     */
+    private String _readingTreeViewBelowTreeSnippetFileName = "";
+
+    /**
+     *
+     */
     private String _writingTreeViewHeadSnippetFileName = "";
 
     /**
@@ -1049,6 +1104,16 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
      *
      */
     private String _writingTreeViewWesternToolbarSnippetFileName = "";
+
+    /**
+     *
+     */
+    private String _writingTreeViewAboveTreeSnippetFileName = "";
+
+    /**
+     *
+     */
+    private String _writingTreeViewBelowTreeSnippetFileName = "";
 
     /**
      *
@@ -1208,6 +1273,11 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
     /**
      * annotated with EntityReferenceConversionValidation
      */
+    private boolean _customConverterEntityReference = false;
+
+    /**
+     * annotated with EntityReferenceConversionValidation
+     */
     private boolean _restrictedAccessEntityReference = true;
 
     /**
@@ -1348,6 +1418,11 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
      *
      */
     private MasterDetailView _masterDetailView = MasterDetailView.UNSPECIFIED;
+
+    /**
+     *
+     */
+    private int _masterDetailViewSequence = 0;
 
     /**
      *
@@ -1696,12 +1771,38 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
     }
 
     /**
+     * @param format the display format
+     * @return the localized menu option label
+     */
+    @Override
+    public String getDefaultMenuOptionLabel(DisplayFormat format) {
+        return getLocalizedMenuOptionLabel(null, format);
+    }
+
+    /**
+     * El método setDefaultMenuOptionLabel se utiliza para establecer la etiqueta de la opción de menú de las vistas (páginas) de la entidad con el
+     * formato identificado por el parámetro format, que se almacena en el archivo de recursos de configuración regional. En caso de que el archivo de
+     * recursos para el idioma seleccionado por el usuario no esté disponible, la interfaz de la aplicación utiliza el archivo de recursos por defecto
+     * para obtener el valor de la etiqueta.
+     *
+     * @param format formato de la vista (página)
+     * @param defaultMenuOptionLabel texto que se usa como etiqueta de la opción de menú
+     */
+//  @Override
+    public void setDefaultMenuOptionLabel(DisplayFormat format, String defaultMenuOptionLabel) {
+        setLocalizedMenuOptionLabel(null, format, defaultMenuOptionLabel);
+    }
+
+    /**
      * @param locale the locale for the label
      * @param reference the referenced entity
      * @return the localized label
      */
     @Override
     public String getLocalizedLabel(Locale locale, EntityReference reference) {
+        if (reference == null) {
+            return null;
+        }
         LocaleEntityReference ler = localeEntityReferenceReadingKey(locale, reference);
         return _localizedLabelByReferenceMap.get(ler);
     }
@@ -1735,6 +1836,9 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
      */
     @Override
     public String getLocalizedShortLabel(Locale locale, EntityReference reference) {
+        if (reference == null) {
+            return null;
+        }
         LocaleEntityReference ler = localeEntityReferenceReadingKey(locale, reference);
         return _localizedShortLabelByReferenceMap.get(ler);
     }
@@ -1768,6 +1872,9 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
      */
     @Override
     public String getLocalizedCollectionLabel(Locale locale, EntityReference reference) {
+        if (reference == null) {
+            return null;
+        }
         LocaleEntityReference ler = localeEntityReferenceReadingKey(locale, reference);
         return _localizedCollectionLabelByReferenceMap.get(ler);
     }
@@ -1801,6 +1908,9 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
      */
     @Override
     public String getLocalizedCollectionShortLabel(Locale locale, EntityReference reference) {
+        if (reference == null) {
+            return null;
+        }
         LocaleEntityReference ler = localeEntityReferenceReadingKey(locale, reference);
         return _localizedCollectionShortLabelByReferenceMap.get(ler);
     }
@@ -1824,6 +1934,42 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
                 _localizedCollectionShortLabelByReferenceMap.remove(ler);
             } else {
                 _localizedCollectionShortLabelByReferenceMap.put(ler, localizedCollectionShortLabel);
+            }
+        }
+    }
+
+    /**
+     * @param locale the locale for the label
+     * @param format the display format
+     * @return the localized menu option label
+     */
+    @Override
+    public String getLocalizedMenuOptionLabel(Locale locale, DisplayFormat format) {
+        if (format == null || format.equals(DisplayFormat.UNSPECIFIED)) {
+            return null;
+        }
+        LocaleDisplayFormat ldf = localeDisplayFormatReadingKey(locale, format);
+        return _localizedMenuOptionLabelByDisplayFormatMap.get(ldf);
+    }
+
+    /**
+     * El método setLocalizedMenuOptionLabel se utiliza para establecer la etiqueta de la opción de menú de las vistas (páginas) de la entidad con el
+     * formato identificado por el parámetro format, que se almacena en el archivo de recursos de configuración regional. En caso de que el archivo de
+     * recursos para el idioma seleccionado por el usuario no esté disponible, la interfaz de la aplicación utiliza el archivo de recursos por defecto
+     * para obtener el valor de la etiqueta.
+     *
+     * @param locale configuración regional
+     * @param format formato de la vista (página)
+     * @param localizedMenuOptionLabel texto que se usa como etiqueta de la opción de menú
+     */
+//  @Override
+    public void setLocalizedMenuOptionLabel(Locale locale, DisplayFormat format, String localizedMenuOptionLabel) {
+        if (format != null && !format.equals(DisplayFormat.UNSPECIFIED)) {
+            LocaleDisplayFormat ldf = localeDisplayFormatWritingKey(locale, format);
+            if (localizedMenuOptionLabel == null) {
+                _localizedMenuOptionLabelByDisplayFormatMap.remove(ldf);
+            } else {
+                _localizedMenuOptionLabelByDisplayFormatMap.put(ldf, localizedMenuOptionLabel);
             }
         }
     }
@@ -2030,10 +2176,17 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
         if (list.isEmpty()) {
             return map;
         }
+        Collection<Property> collection = new ArrayList<>();
         for (Property property : list) {
             if (property.isOverlayField()) {
-                map.put(property.getPathString(), property);
+                collection.add(property);
             }
+        }
+        if (collection.isEmpty()) {
+            return map;
+        }
+        for (Property property : ColUtils.sort(collection, new ByPropertyDisplaySortKey())) {
+            map.put(property.getPathString(), property);
         }
         return map;
     }
@@ -3486,6 +3639,46 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
     }
 
     /**
+     * @return the reading table view above table snippet file name
+     */
+//  @Override
+    public String getReadingTableViewAboveTableSnippetFileName() {
+        return _readingTableViewAboveTableSnippetFileName;
+    }
+
+    protected void setReadingTableViewAboveTableSnippetFileName(String fileName) {
+        boolean log = depth() == 0;
+        if (StringUtils.isBlank(fileName)) {
+            _readingTableViewAboveTableSnippetFileName = "";
+        } else if (isValidSnippetFileName(fileName)) {
+            _readingTableViewAboveTableSnippetFileName = fileName;
+        } else if (log) {
+            logger.error(getName() + " reading table view above table snippet is invalid ");
+            Project.increaseParserErrorCount();
+        }
+    }
+
+    /**
+     * @return the reading table view below table snippet file name
+     */
+//  @Override
+    public String getReadingTableViewBelowTableSnippetFileName() {
+        return _readingTableViewBelowTableSnippetFileName;
+    }
+
+    protected void setReadingTableViewBelowTableSnippetFileName(String fileName) {
+        boolean log = depth() == 0;
+        if (StringUtils.isBlank(fileName)) {
+            _readingTableViewBelowTableSnippetFileName = "";
+        } else if (isValidSnippetFileName(fileName)) {
+            _readingTableViewBelowTableSnippetFileName = fileName;
+        } else if (log) {
+            logger.error(getName() + " reading table view below table snippet is invalid ");
+            Project.increaseParserErrorCount();
+        }
+    }
+
+    /**
      * @return the writing table view head snippet file name
      */
 //  @Override
@@ -3541,6 +3734,46 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
             _writingTableViewWesternToolbarSnippetFileName = fileName;
         } else if (log) {
             logger.error(getName() + " writing table view western toolbar snippet is invalid ");
+            Project.increaseParserErrorCount();
+        }
+    }
+
+    /**
+     * @return the writing table view above table snippet file name
+     */
+//  @Override
+    public String getWritingTableViewAboveTableSnippetFileName() {
+        return _writingTableViewAboveTableSnippetFileName;
+    }
+
+    protected void setWritingTableViewAboveTableSnippetFileName(String fileName) {
+        boolean log = depth() == 0;
+        if (StringUtils.isBlank(fileName)) {
+            _writingTableViewAboveTableSnippetFileName = "";
+        } else if (isValidSnippetFileName(fileName)) {
+            _writingTableViewAboveTableSnippetFileName = fileName;
+        } else if (log) {
+            logger.error(getName() + " writing table view above table snippet is invalid ");
+            Project.increaseParserErrorCount();
+        }
+    }
+
+    /**
+     * @return the writing table view below table snippet file name
+     */
+//  @Override
+    public String getWritingTableViewBelowTableSnippetFileName() {
+        return _writingTableViewBelowTableSnippetFileName;
+    }
+
+    protected void setWritingTableViewBelowTableSnippetFileName(String fileName) {
+        boolean log = depth() == 0;
+        if (StringUtils.isBlank(fileName)) {
+            _writingTableViewBelowTableSnippetFileName = "";
+        } else if (isValidSnippetFileName(fileName)) {
+            _writingTableViewBelowTableSnippetFileName = fileName;
+        } else if (log) {
+            logger.error(getName() + " writing table view below table snippet is invalid ");
             Project.increaseParserErrorCount();
         }
     }
@@ -3691,6 +3924,46 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
     }
 
     /**
+     * @return the reading detail view above detail snippet file name
+     */
+//  @Override
+    public String getReadingDetailViewAboveDetailSnippetFileName() {
+        return _readingDetailViewAboveDetailSnippetFileName;
+    }
+
+    protected void setReadingDetailViewAboveDetailSnippetFileName(String fileName) {
+        boolean log = depth() == 0;
+        if (StringUtils.isBlank(fileName)) {
+            _readingDetailViewAboveDetailSnippetFileName = "";
+        } else if (isValidSnippetFileName(fileName)) {
+            _readingDetailViewAboveDetailSnippetFileName = fileName;
+        } else if (log) {
+            logger.error(getName() + " reading detail view above detail snippet is invalid ");
+            Project.increaseParserErrorCount();
+        }
+    }
+
+    /**
+     * @return the reading detail view below detail snippet file name
+     */
+//  @Override
+    public String getReadingDetailViewBelowDetailSnippetFileName() {
+        return _readingDetailViewBelowDetailSnippetFileName;
+    }
+
+    protected void setReadingDetailViewBelowDetailSnippetFileName(String fileName) {
+        boolean log = depth() == 0;
+        if (StringUtils.isBlank(fileName)) {
+            _readingDetailViewBelowDetailSnippetFileName = "";
+        } else if (isValidSnippetFileName(fileName)) {
+            _readingDetailViewBelowDetailSnippetFileName = fileName;
+        } else if (log) {
+            logger.error(getName() + " reading detail view below detail snippet is invalid ");
+            Project.increaseParserErrorCount();
+        }
+    }
+
+    /**
      * @return the writing detail view head snippet file name
      */
 //  @Override
@@ -3746,6 +4019,46 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
             _writingDetailViewWesternToolbarSnippetFileName = fileName;
         } else if (log) {
             logger.error(getName() + " writing detail view western toolbar snippet is invalid ");
+            Project.increaseParserErrorCount();
+        }
+    }
+
+    /**
+     * @return the writing detail view above detail snippet file name
+     */
+//  @Override
+    public String getWritingDetailViewAboveDetailSnippetFileName() {
+        return _writingDetailViewAboveDetailSnippetFileName;
+    }
+
+    protected void setWritingDetailViewAboveDetailSnippetFileName(String fileName) {
+        boolean log = depth() == 0;
+        if (StringUtils.isBlank(fileName)) {
+            _writingDetailViewAboveDetailSnippetFileName = "";
+        } else if (isValidSnippetFileName(fileName)) {
+            _writingDetailViewAboveDetailSnippetFileName = fileName;
+        } else if (log) {
+            logger.error(getName() + " writing detail view above detail snippet is invalid ");
+            Project.increaseParserErrorCount();
+        }
+    }
+
+    /**
+     * @return the writing detail view below detail snippet file name
+     */
+//  @Override
+    public String getWritingDetailViewBelowDetailSnippetFileName() {
+        return _writingDetailViewBelowDetailSnippetFileName;
+    }
+
+    protected void setWritingDetailViewBelowDetailSnippetFileName(String fileName) {
+        boolean log = depth() == 0;
+        if (StringUtils.isBlank(fileName)) {
+            _writingDetailViewBelowDetailSnippetFileName = "";
+        } else if (isValidSnippetFileName(fileName)) {
+            _writingDetailViewBelowDetailSnippetFileName = fileName;
+        } else if (log) {
+            logger.error(getName() + " writing detail view below detail snippet is invalid ");
             Project.increaseParserErrorCount();
         }
     }
@@ -3883,6 +4196,46 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
     }
 
     /**
+     * @return the reading tree view above tree snippet file name
+     */
+//  @Override
+    public String getReadingTreeViewAboveTreeSnippetFileName() {
+        return _readingTreeViewAboveTreeSnippetFileName;
+    }
+
+    protected void setReadingTreeViewAboveTreeSnippetFileName(String fileName) {
+        boolean log = depth() == 0;
+        if (StringUtils.isBlank(fileName)) {
+            _readingTreeViewAboveTreeSnippetFileName = "";
+        } else if (isValidSnippetFileName(fileName)) {
+            _readingTreeViewAboveTreeSnippetFileName = fileName;
+        } else if (log) {
+            logger.error(getName() + " reading tree view above tree snippet is invalid ");
+            Project.increaseParserErrorCount();
+        }
+    }
+
+    /**
+     * @return the reading tree view below tree snippet file name
+     */
+//  @Override
+    public String getReadingTreeViewBelowTreeSnippetFileName() {
+        return _readingTreeViewBelowTreeSnippetFileName;
+    }
+
+    protected void setReadingTreeViewBelowTreeSnippetFileName(String fileName) {
+        boolean log = depth() == 0;
+        if (StringUtils.isBlank(fileName)) {
+            _readingTreeViewBelowTreeSnippetFileName = "";
+        } else if (isValidSnippetFileName(fileName)) {
+            _readingTreeViewBelowTreeSnippetFileName = fileName;
+        } else if (log) {
+            logger.error(getName() + " reading tree view below tree snippet is invalid ");
+            Project.increaseParserErrorCount();
+        }
+    }
+
+    /**
      * @return the writing tree view head snippet file name
      */
 //  @Override
@@ -3938,6 +4291,46 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
             _writingTreeViewWesternToolbarSnippetFileName = fileName;
         } else if (log) {
             logger.error(getName() + " writing tree view western toolbar snippet is invalid ");
+            Project.increaseParserErrorCount();
+        }
+    }
+
+    /**
+     * @return the writing tree view above tree snippet file name
+     */
+//  @Override
+    public String getWritingTreeViewAboveTreeSnippetFileName() {
+        return _writingTreeViewAboveTreeSnippetFileName;
+    }
+
+    protected void setWritingTreeViewAboveTreeSnippetFileName(String fileName) {
+        boolean log = depth() == 0;
+        if (StringUtils.isBlank(fileName)) {
+            _writingTreeViewAboveTreeSnippetFileName = "";
+        } else if (isValidSnippetFileName(fileName)) {
+            _writingTreeViewAboveTreeSnippetFileName = fileName;
+        } else if (log) {
+            logger.error(getName() + " writing tree view above tree snippet is invalid ");
+            Project.increaseParserErrorCount();
+        }
+    }
+
+    /**
+     * @return the writing tree view below tree snippet file name
+     */
+//  @Override
+    public String getWritingTreeViewBelowTreeSnippetFileName() {
+        return _writingTreeViewBelowTreeSnippetFileName;
+    }
+
+    protected void setWritingTreeViewBelowTreeSnippetFileName(String fileName) {
+        boolean log = depth() == 0;
+        if (StringUtils.isBlank(fileName)) {
+            _writingTreeViewBelowTreeSnippetFileName = "";
+        } else if (isValidSnippetFileName(fileName)) {
+            _writingTreeViewBelowTreeSnippetFileName = fileName;
+        } else if (log) {
+            logger.error(getName() + " writing tree view below tree snippet is invalid ");
             Project.increaseParserErrorCount();
         }
     }
@@ -4259,7 +4652,7 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
      */
     @Override
     public boolean isEntityStateCodeGenEnabled() {
-        return _smcCodeGenEnabled && _stateProperty != null && !_stateProperty.isInherited();
+        return _smcCodeGenEnabled && _stateProperty != null && _stateProperty.isNotInheritedFromConcrete();
     }
 
     /**
@@ -4328,6 +4721,25 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
         BinaryProperty imageProperty = getImageProperty();
         AvatarShape avatarShape = imageProperty == null ? null : imageProperty.getAvatarShape();
         return !(avatarShape == null || avatarShape.equals(AvatarShape.NONE));
+    }
+
+    /**
+     * @return the custom converter entity reference indicator
+     */
+    public boolean isCustomConverterEntityReference() {
+        return _customConverterEntityReference;
+    }
+
+    /**
+     * El método setCustomConverterEntityReference se utiliza para establecer si existe un componente personalizado que permite convertir el valor de
+     * la referencia (propiedad o parámetro que hace referencia a otra entidad). El valor predeterminado del atributo es false, es decir, no existe un
+     * componente personalizado y, por lo tanto, se utiliza el componente generado para convertir el valor de la referencia.
+     *
+     * @param custom true si existe un componente personalizado que permite convertir el valor de la referencia; de lo contrario, false, para utilizar
+     * el componente generado.
+     */
+    public void setCustomConverterEntityReference(boolean custom) {
+        _customConverterEntityReference = custom;
     }
 
     /**
@@ -6207,6 +6619,18 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
     }
 
     /**
+     * @return the master/detail view sequence
+     */
+    @Override
+    public int getMasterDetailViewSequence() {
+        return _masterDetailViewSequence;
+    }
+
+    public void setMasterDetailViewSequence(int sequence) {
+        _masterDetailViewSequence = sequence;
+    }
+
+    /**
      * @return the master/detail view menu option enabled indicator
      */
     @Override
@@ -7247,9 +7671,9 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
     // <editor-fold defaultstate="collapsed" desc="LocaleEntityReferenceKey">
     protected class LocaleEntityReference {
 
-        Locale loc;
+        private final Locale loc;
 
-        EntityReference ref;
+        private final EntityReference ref;
 
         private LocaleEntityReference(Locale locale, EntityReference reference) {
             loc = locale;
@@ -7289,6 +7713,54 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
             throw new IllegalArgumentException("Locale " + locale + " not supported yet.");
         }
         return new LocaleEntityReference(l, reference);
+    }
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="LocaleDisplayFormatKey">
+    protected class LocaleDisplayFormat {
+
+        private final Locale loc;
+
+        private final DisplayFormat fmt;
+
+        private LocaleDisplayFormat(Locale locale, DisplayFormat format) {
+            loc = locale;
+            fmt = format;
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (obj instanceof LocaleDisplayFormat) {
+                LocaleDisplayFormat ldf = (LocaleDisplayFormat) obj;
+                return loc.equals(ldf.loc) && fmt.equals(ldf.fmt);
+            }
+            return false;
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(loc, fmt);
+        }
+
+    }
+
+    protected LocaleDisplayFormat localeDisplayFormatReadingKey(Locale locale, DisplayFormat format) {
+        if (format == null) {
+            throw new IllegalArgumentException("null display format");
+        }
+        Locale l = locale == null ? Bundle.getLocale() : locale;
+        return new LocaleDisplayFormat(l, format);
+    }
+
+    protected LocaleDisplayFormat localeDisplayFormatWritingKey(Locale locale, DisplayFormat format) {
+        if (format == null) {
+            throw new IllegalArgumentException("null display format");
+        }
+        Locale l = locale == null ? Bundle.getLocale() : Bundle.isSupportedLocale(locale) ? locale : null;
+        if (l == null) {
+            throw new IllegalArgumentException("Locale " + locale + " not supported yet.");
+        }
+        return new LocaleDisplayFormat(l, format);
     }
     // </editor-fold>
 
@@ -8414,11 +8886,16 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
 
     private void setChildrenDisplaySortKey(Property parent, List<Property> list) {
         int i = 0;
+        boolean first = true;
         for (Property child : list) {
             if (child.getAnchorProperty() == parent) {
                 boolean unlinked = AnchorType.UNLINKED.equals(child.getAnchorType());
                 if (!unlinked && child.isDetailField()) {
                     parent.setAnchoringLinkedDetailFields(true);
+                    if (first) {
+                        first = false;
+                        parent.setFirstAnchoredFieldAnchorType(child.getAnchorType());
+                    }
                 }
                 child.setDisplaySortKey(parent.getDisplaySortKey() + (unlinked ? '/' : '-') + String.format("%02d", i++));
                 setChildrenDisplaySortKey(child, list); // como '/' es mayor que '-' las UNLINKED quedan después de las enlazadas
@@ -9772,6 +10249,16 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
                     setReadingTableViewWesternToolbarSnippetFileName(fileName);
                 }
                 /**/
+                fileName = annotation.readingViewAboveTableSnippet();
+                if (StringUtils.isNotBlank(fileName)) {
+                    setReadingTableViewAboveTableSnippetFileName(fileName);
+                }
+                /**/
+                fileName = annotation.readingViewBelowTableSnippet();
+                if (StringUtils.isNotBlank(fileName)) {
+                    setReadingTableViewBelowTableSnippetFileName(fileName);
+                }
+                /**/
                 fileName = annotation.writingViewHeadSnippet();
                 if (StringUtils.isNotBlank(fileName)) {
                     setWritingTableViewHeadSnippetFileName(fileName);
@@ -9785,6 +10272,16 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
                 fileName = annotation.writingViewWesternToolbarSnippet();
                 if (StringUtils.isNotBlank(fileName)) {
                     setWritingTableViewWesternToolbarSnippetFileName(fileName);
+                }
+                /**/
+                fileName = annotation.writingViewAboveTableSnippet();
+                if (StringUtils.isNotBlank(fileName)) {
+                    setWritingTableViewAboveTableSnippetFileName(fileName);
+                }
+                /**/
+                fileName = annotation.writingViewBelowTableSnippet();
+                if (StringUtils.isNotBlank(fileName)) {
+                    setWritingTableViewBelowTableSnippetFileName(fileName);
                 }
                 /**/
             }
@@ -9827,6 +10324,16 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
                     setReadingDetailViewWesternToolbarSnippetFileName(fileName);
                 }
                 /**/
+                fileName = annotation.readingViewAboveDetailSnippet();
+                if (StringUtils.isNotBlank(fileName)) {
+                    setReadingDetailViewAboveDetailSnippetFileName(fileName);
+                }
+                /**/
+                fileName = annotation.readingViewBelowDetailSnippet();
+                if (StringUtils.isNotBlank(fileName)) {
+                    setReadingDetailViewBelowDetailSnippetFileName(fileName);
+                }
+                /**/
                 fileName = annotation.writingViewHeadSnippet();
                 if (StringUtils.isNotBlank(fileName)) {
                     setWritingDetailViewHeadSnippetFileName(fileName);
@@ -9840,6 +10347,16 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
                 fileName = annotation.writingViewWesternToolbarSnippet();
                 if (StringUtils.isNotBlank(fileName)) {
                     setWritingDetailViewWesternToolbarSnippetFileName(fileName);
+                }
+                /**/
+                fileName = annotation.writingViewAboveDetailSnippet();
+                if (StringUtils.isNotBlank(fileName)) {
+                    setWritingDetailViewAboveDetailSnippetFileName(fileName);
+                }
+                /**/
+                fileName = annotation.writingViewBelowDetailSnippet();
+                if (StringUtils.isNotBlank(fileName)) {
+                    setWritingDetailViewBelowDetailSnippetFileName(fileName);
                 }
                 /**/
             }
@@ -9880,6 +10397,16 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
                     setReadingTreeViewWesternToolbarSnippetFileName(fileName);
                 }
                 /**/
+                fileName = annotation.readingViewAboveTreeSnippet();
+                if (StringUtils.isNotBlank(fileName)) {
+                    setReadingTreeViewAboveTreeSnippetFileName(fileName);
+                }
+                /**/
+                fileName = annotation.readingViewBelowTreeSnippet();
+                if (StringUtils.isNotBlank(fileName)) {
+                    setReadingTreeViewBelowTreeSnippetFileName(fileName);
+                }
+                /**/
                 fileName = annotation.writingViewHeadSnippet();
                 if (StringUtils.isNotBlank(fileName)) {
                     setWritingTreeViewHeadSnippetFileName(fileName);
@@ -9893,6 +10420,16 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
                 fileName = annotation.writingViewWesternToolbarSnippet();
                 if (StringUtils.isNotBlank(fileName)) {
                     setWritingTreeViewWesternToolbarSnippetFileName(fileName);
+                }
+                /**/
+                fileName = annotation.writingViewAboveTreeSnippet();
+                if (StringUtils.isNotBlank(fileName)) {
+                    setWritingTreeViewAboveTreeSnippetFileName(fileName);
+                }
+                /**/
+                fileName = annotation.writingViewBelowTreeSnippet();
+                if (StringUtils.isNotBlank(fileName)) {
+                    setWritingTreeViewBelowTreeSnippetFileName(fileName);
                 }
                 /**/
             }
@@ -10033,6 +10570,7 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
         if (annotatedClass != null) {
             EntityReferenceConversionValidation annotation = annotatedClass.getAnnotation(EntityReferenceConversionValidation.class);
             if (annotation != null) {
+                _customConverterEntityReference = annotation.customConverter().toBoolean(_customConverterEntityReference);
                 _restrictedAccessEntityReference = annotation.restrictedAccess().toBoolean(_restrictedAccessEntityReference);
             }
         }
@@ -10041,6 +10579,7 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
     private void annotateEntityReferenceConversionValidation(Field field) {
         EntityReferenceConversionValidation annotation = field.getAnnotation(EntityReferenceConversionValidation.class);
         if (annotation != null) {
+            _customConverterEntityReference = annotation.customConverter().toBoolean(_customConverterEntityReference);
             _restrictedAccessEntityReference = annotation.restrictedAccess().toBoolean(_restrictedAccessEntityReference);
         }
     }
@@ -10132,6 +10671,7 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
             _cascadeType = annotation.cascade();
             _navigability = annotation.navigability();
             _oneToOneDetailView = annotation.detailView().toBoolean(false);
+            _masterDetailViewSequence = Math.max(_masterDetailViewSequence, annotation.viewSequence());
         }
     }
 
@@ -10144,6 +10684,7 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
             _cascadeType = annotation.cascade();
             _navigability = annotation.navigability();
             _masterDetailView = annotation.view();
+            _masterDetailViewSequence = Math.max(_masterDetailViewSequence, annotation.viewSequence());
             _masterDetailViewMenuOptionEnabled = annotation.menu();
             _quickAddingFilter = annotation.quickAdding();
         }
@@ -10456,7 +10997,7 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
 
     @Override
     public boolean isOverlayableEntityReference() {
-        if (isEntityReference() && !isHiddenField() && !isEnumerationEntity()) {
+        if (isEntityReference() && !isHiddenField()) { // umtil 04/05/2023:  && !isEnumerationEntity()
             List<Property> list = getRoot().getOverlayPropertiesList();
             return list != null && !list.isEmpty();
         }
@@ -10629,20 +11170,20 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
         return new ArrayList<>();
     }
 
-    /**
-     * @return the user-defined accesible construction operation list
-     */
-    @Override
+    // <editor-fold defaultstate="collapsed" desc="getAccesibleConstructionOperationsList">
+    /*
+    // * @return the user-defined accesible construction operation list of this entity class
+    //
     public List<Operation> getAccesibleConstructionOperationsList() {
         return getAccesibleConstructionOperationsList(null);
     }
 
-    /**
-     * @param master if not null, construction operations defined in the master entity class will also be included.
-     *
-     * @return the user-defined accesible construction operation list
-     */
-    @Override
+    //
+    // * @param master a second entity class to search for construction operations of this entity class.
+    // *
+    // * @return the user-defined accesible construction operation list of this entity class; if parameter master is not null, construction operations
+    // * defined in the master entity class are also included.
+    //
     public List<Operation> getAccesibleConstructionOperationsList(Entity master) {
         List<Operation> constructors = accesibleConstructionOperationsList(this);
         if (master != null) {
@@ -10663,6 +11204,30 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
                     if (constructionType != null && constructionType.isAssignableFrom(thisClass)) {
                         constructors.add(operation);
                         logger.trace(operation.signature());
+                    }
+                }
+            }
+        }
+        return constructors;
+    }
+    /**/
+    // </editor-fold>
+//
+    public List<ProcessOperation> getConstructionOperationsList() {
+        Class<?> thisClass = getNamedClass();
+        String thisClassSimpleName = thisClass.getSimpleName();
+        List<ProcessOperation> constructors = new ArrayList<>();
+        Map<Class<? extends Entity>, List<ProcessOperation>> map = TLC.getProject().getConstructorsMap();
+        Set<Class<? extends Entity>> keySet = map.keySet();
+        if (keySet != null && !keySet.isEmpty()) {
+            List<ProcessOperation> list;
+            for (Class<? extends Entity> entityClass : keySet) {
+                if (thisClassSimpleName.equals(entityClass.getSimpleName()) || thisClass.isAssignableFrom(entityClass)) {
+                    list = map.get(entityClass);
+                    for (ProcessOperation processOperation : list) {
+                        if (processOperation.isNotInheritedFromConcrete()) {
+                            constructors.add(processOperation);
+                        }
                     }
                 }
             }
@@ -10692,6 +11257,51 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
     @Override
     public Class<? extends EntityWrapper> getDefaultWrapperClass() {
         return EntityWrapper.class;
+    }
+
+    private boolean _removePropertiesInRemoveHeadingPropertyArray;
+
+    /**
+     * @return true if the array contains the properties that should be excluded from the heading of Master/Detail views (pages); false, if the array
+     * contains the properties that should not be excluded from the heading.
+     */
+    @Override
+    public boolean isRemovePropertiesInRemoveHeadingPropertyArray() {
+        return _removePropertiesInRemoveHeadingPropertyArray;
+    }
+
+    private Property[] _removeHeadingPropertyArray;
+
+    /**
+     * @return the array of properties that should be excluded from the heading of Master/Detail views (pages)
+     */
+    @Override
+    public Property[] getRemoveHeadingPropertyArray() {
+        return _removeHeadingPropertyArray;
+    }
+
+    /**
+     * El método setRemoveHeadingPropertyArray se utiliza para establecer el conjunto de propiedades que se deben excluir del encabezado del Maestro
+     * en las vistas (páginas) Maestro/Detalle en las que esta entidad es el Detalle.
+     *
+     * @param properties una o más propiedades de cualquiera de las referencias (propiedades que hacen referencia a otra entidad) que generan vistas
+     * (páginas) Maestro/Detalle.
+     */
+    public void setRemoveHeadingPropertyArray(Property... properties) {
+        _removeHeadingPropertyArray = properties;
+        _removePropertiesInRemoveHeadingPropertyArray = true;
+    }
+
+    /**
+     * El método setRemoveHeadingPropertyNotInArray se utiliza para establecer el conjunto de propiedades que no se deben excluir del encabezado del
+     * Maestro en las vistas (páginas) Maestro/Detalle en las que esta entidad es el Detalle.
+     *
+     * @param properties una o más propiedades de cualquiera de las referencias (propiedades que hacen referencia a otra entidad) que generan vistas
+     * (páginas) Maestro/Detalle.
+     */
+    public void setRemoveHeadingPropertyNotInArray(Property... properties) {
+        _removeHeadingPropertyArray = properties;
+        _removePropertiesInRemoveHeadingPropertyArray = false;
     }
 
     // <editor-fold defaultstate="collapsed" desc="EntityExpression">

@@ -90,10 +90,11 @@ public class Maestro112 extends Maestro {
 //      putEnvironmentVariable(VERSION_ORACLE, "21c");
 //      putEnvironmentVariable(VERSION_WILDFLY, "26.1.2.Final");
 //      putEnvironmentVariable(VERSION_JAVA, "11.0.16.1");
-//      putEnvironmentVariable(VERSION_PRIMEFACES, "11.0.0");
-//      putEnvironmentVariable(VERSION_PRIMEFACES_EXTENSIONS, "11.0.0");
-//      putEnvironmentVariable(VERSION_GOOGLE_GSON, "2.9.0");
+//      putEnvironmentVariable(VERSION_PRIMEFACES, "12.0.0");
+//      putEnvironmentVariable(VERSION_PRIMEFACES_EXTENSIONS, "12.0.3");
+//      putEnvironmentVariable(VERSION_GOOGLE_GSON, "2.9.1");
 //      putEnvironmentVariable(VERSION_THIRD_PARTY_DIR, "4.0");
+//
 //      loadPrivateProperties(LoggingLevel.INFO);
 //      setTheme(PrimeFacesThemes.SAGA);
 //      setThemeSwitchingEnabled(true);

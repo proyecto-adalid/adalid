@@ -10,17 +10,24 @@
  *
  * Para mas detalles vea la licencia "GNU General Public License" en http://www.gnu.org/licenses
  */
-package adalid.core.enums;
+package adalid.core.comparators;
+
+import adalid.core.*;
+import java.util.Comparator;
 
 /**
  * @author Jorge Campins
  */
-public enum AnchorType {
+public class ByMasterDetailViewSequence implements Comparator<Display> {
 
-    UNLINKED, BLOCK, INLINE, INLINE_BLOCK;
-
-    public String getStyleClass() {
-        return "xs-anchor-type-" + name().toLowerCase().replace('_', '-');
+    @Override
+    public int compare(Display o1, Display o2) {
+        if (o1 != null && o2 != null) {
+            int s1 = o1.getMasterDetailViewSequence();
+            int s2 = o2.getMasterDetailViewSequence();
+            return s1 == s2 ? o1.getName().compareTo(o2.getName()) : s1 - s2;
+        }
+        return 0;
     }
 
 }

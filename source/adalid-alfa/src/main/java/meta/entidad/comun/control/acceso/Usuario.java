@@ -90,7 +90,7 @@ public class Usuario extends AbstractPersistentEntity {
 
     @InactiveIndicator
     @ColumnField(nullable = Kleenean.FALSE)
-    @PropertyField(create = Kleenean.FALSE, update = Kleenean.FALSE, table = Kleenean.TRUE, report = Kleenean.TRUE, overlay = Kleenean.TRUE)
+    @PropertyField(create = Kleenean.FALSE, update = Kleenean.FALSE, table = Kleenean.TRUE, report = Kleenean.TRUE, overlay = Kleenean.TRUE, heading = Kleenean.FALSE)
     public BooleanProperty esUsuarioInactivo;
 
     @ColumnField(nullable = Kleenean.FALSE)
@@ -119,7 +119,6 @@ public class Usuario extends AbstractPersistentEntity {
     @Override
     protected void settleAttributes() {
         super.settleAttributes();
-//      setOrderBy(codigoUsuario);
 //      setSchema(ProyectoBase.getEsquemaEntidadesComunes());
         // <editor-fold defaultstate="collapsed" desc="localization of Usuario's attributes">
         setLocalizedLabel(ENGLISH, "user");
@@ -143,6 +142,8 @@ public class Usuario extends AbstractPersistentEntity {
     @Override
     protected void settleProperties() {
         super.settleProperties();
+        /*
+        setOrderBy(codigoUsuario);
         /**/
         esSuperUsuario.setInitialValue(false);
         esSuperUsuario.setDefaultValue(false);

@@ -653,8 +653,9 @@
         @Override
         protected void settleAttributes() {
             super.settleAttributes();
-//          setDefaultCollectionLabel("${vartype}"); // nombre del archivo en los rastros de auditoría
-//          setDefaultLabel("exportar archivo ${vartype}"); // nombre de la función en menús y listas de selección
+            setDefaultLabel("archivo \"${vartype}\""); // nombre de la función en menús y listas de selección
+            setDefaultCollectionLabel("${vartype}"); // nombre del archivo en los rastros de auditoría
+            setDefaultDescription("generar el archivo \"${vartype}\""); // descripción de la función en menús y listas de selección
         }
 
         @Override
@@ -692,8 +693,9 @@
         @Override
         protected void settleAttributes() {
             super.settleAttributes();
-//          setDefaultCollectionLabel("${vartype}"); // nombre del informe en los rastros de auditoría
-//          setDefaultLabel("emitir informe ${vartype}"); // nombre de la función en menús y listas de selección
+            setDefaultLabel("informe \"${vartype}\""); // nombre de la función en menús y listas de selección
+            setDefaultCollectionLabel("${vartype}"); // nombre del informe en los rastros de auditoría
+            setDefaultDescription("emitir el informe \"${vartype}\""); // descripción de la función en menús y listas de selección
         }
 
         @Override
@@ -731,6 +733,9 @@
         @Override
         protected void settleAttributes() {
             super.settleAttributes();
+            setDefaultLabel("${vartype}"); // nombre de la función en menús y listas de selección
+//          setDefaultDescription("ejecutar el procedimiento \"${vartype}\""); // descripción de la función en menús y listas de selección
+//          setDefaultSuccessMessage("el procedimiento \"${vartype}\" se ejecutó con éxito"); // mensaje de ejecución con éxito
         }
 
         @Override
@@ -767,6 +772,9 @@
         @Override
         protected void settleAttributes() {
             super.settleAttributes();
+            setDefaultLabel("${vartype}"); // nombre de la función en menús y listas de selección
+//          setDefaultDescription("ejecutar el proceso \"${vartype}\""); // descripción de la función en menús y listas de selección
+//          setDefaultSuccessMessage("el proceso \"${vartype}\" se ejecutó con éxito"); // mensaje de ejecución con éxito
         }
 
         @Override

@@ -58,7 +58,6 @@ public class PasoRutina extends AbstractPersistentEntity {
     @Override
     protected void settleAttributes() {
         super.settleAttributes();
-        setOrderBy(rutina, numero, id);
 //      setSchema(ProyectoBase.getEsquemaEntidadesComunes());
         // <editor-fold defaultstate="collapsed" desc="localization of PasoRutina's attributes">
         setLocalizedLabel(ENGLISH, "user routine step");
@@ -180,6 +179,8 @@ public class PasoRutina extends AbstractPersistentEntity {
     @Override
     protected void settleProperties() {
         super.settleProperties();
+        /**/
+        setOrderBy(rutina, numero, id);
         /**/
         BooleanExpression iterable = funcion.esConstructor.or(funcion.tipoFuncion.isEqualTo(funcion.tipoFuncion.CONSULTA));
         /**/

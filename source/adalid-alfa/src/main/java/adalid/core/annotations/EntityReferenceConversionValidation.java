@@ -29,6 +29,13 @@ import java.lang.annotation.Target;
 public @interface EntityReferenceConversionValidation {
 
     /**
+     * customConverter específica si existe un componente personalizado que permite convertir el valor de la propiedad o parámetro.
+     *
+     * @return customConverter
+     */
+    Kleenean customConverter() default Kleenean.UNSPECIFIED; // FALSE
+
+    /**
      * restrictedAccess indica si es una referencia con o sin acceso restringido por las reglas de control de acceso. Su valor es uno de los elementos
      * de la enumeración Kleenean. Seleccione TRUE para que sea una referencia con acceso restringido; o FALSE, para que sea una referencia sin acceso
      * restringido. Alternativamente, omita el elemento o seleccione UNSPECIFIED para utilizar el valor predeterminado del atributo. El valor

@@ -75,6 +75,11 @@ public abstract class AbstractArtifact implements Artifact, Wrappable {
     /**
      *
      */
+    private Boolean _inheritedFromConcrete;
+
+    /**
+     *
+     */
     private boolean _finalised;
 
     /**
@@ -327,7 +332,11 @@ public abstract class AbstractArtifact implements Artifact, Wrappable {
             Class<?> declaringArtifactNamedClass = XS1.getNamedClass(declaringArtifact);
             String declaringFieldNamedClassSimpleName = declaringFieldNamedClass.getSimpleName();
             String declaringArtifactNamedClassSimpleName = declaringArtifactNamedClass.getSimpleName();
+            boolean fromAbstract = Modifier.isAbstract(declaringFieldNamedClass.getModifiers());
+            boolean fromConcrete = !fromAbstract;
             _inherited = !declaringFieldNamedClassSimpleName.equals(declaringArtifactNamedClassSimpleName);
+            _inheritedFromAbstract = _inherited && fromAbstract;
+            _inheritedFromConcrete = _inherited && fromConcrete;
         }
         return _inherited;
     }
@@ -337,7 +346,7 @@ public abstract class AbstractArtifact implements Artifact, Wrappable {
      */
     @Override
     public boolean isInheritedFromAbstract() {
-        return _declared && inheritedFromAbstract();
+        return isInherited() && _inheritedFromAbstract;
     }
 
     /**
@@ -345,25 +354,7 @@ public abstract class AbstractArtifact implements Artifact, Wrappable {
      */
     @Override
     public boolean isNotInheritedFromAbstract() {
-        return _declared && !inheritedFromAbstract();
-    }
-
-    private boolean inheritedFromAbstract() {
-        if (_inheritedFromAbstract == null) {
-            Field declaringField = getDeclaringField();
-            Artifact declaringArtifact = getDeclaringArtifact();
-            Class<?> declaringFieldClass = declaringField.getDeclaringClass();
-            Class<?> declaringFieldNamedClass = XS1.getNamedClass(declaringFieldClass);
-            Class<?> declaringArtifactNamedClass = XS1.getNamedClass(declaringArtifact);
-            if (Modifier.isAbstract(declaringFieldNamedClass.getModifiers())) {
-                String declaringFieldNamedClassSimpleName = declaringFieldNamedClass.getSimpleName();
-                String declaringArtifactNamedClassSimpleName = declaringArtifactNamedClass.getSimpleName();
-                _inheritedFromAbstract = !declaringFieldNamedClassSimpleName.equals(declaringArtifactNamedClassSimpleName);
-            } else {
-                _inheritedFromAbstract = false;
-            }
-        }
-        return _inheritedFromAbstract;
+        return !isInheritedFromAbstract();
     }
 
     /**
@@ -371,7 +362,7 @@ public abstract class AbstractArtifact implements Artifact, Wrappable {
      */
     @Override
     public boolean isInheritedFromConcrete() {
-        return _declared && (inherited() && !inheritedFromAbstract());
+        return isInherited() && _inheritedFromConcrete;
     }
 
     /**
@@ -379,7 +370,7 @@ public abstract class AbstractArtifact implements Artifact, Wrappable {
      */
     @Override
     public boolean isNotInheritedFromConcrete() {
-        return _declared && (!inherited() || inheritedFromAbstract());
+        return !isInheritedFromConcrete();
     }
 
     /**

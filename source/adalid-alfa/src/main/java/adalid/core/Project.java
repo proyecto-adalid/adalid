@@ -172,6 +172,57 @@ public abstract class Project extends AbstractArtifact implements ProjectBuilder
     }
 
     /**
+     * El método setCSVSeparator se utiliza para establecer el carácter para separar los campos en archivos CSV para un Locale específico.
+     *
+     * @param locale objeto Locale que representa una o región geográfica, política, cultural, etc.
+     * @param separator separador de campos
+     */
+    public static void setCSVSeparator(Locale locale, char separator) {
+        CSVUtils.setSeparator(locale, separator);
+    }
+
+    /**
+     * El método setCSVQuote se utiliza para establecer el carácter para delimitar los campos en archivos CSV para un Locale específico.
+     *
+     * @param locale objeto Locale que representa una o región geográfica, política, cultural, etc.
+     * @param quote delimitador de campos
+     */
+    public static void setCSVQuote(Locale locale, char quote) {
+        CSVUtils.setQuote(locale, quote);
+    }
+
+    /**
+     * El método setCSVEscape se utiliza para establecer el carácter para incluir el delimitador en el valor de los campos en archivos CSV para un
+     * Locale específico.
+     *
+     * @param locale objeto Locale que representa una o región geográfica, política, cultural, etc.
+     * @param escape escape del delimitador de campos
+     */
+    public static void setCSVEscape(Locale locale, char escape) {
+        CSVUtils.setEscape(locale, escape);
+    }
+
+    /**
+     * El método setCSVLineEnd se utiliza para establecer el fin de línea en archivos CSV para un Locale específico.
+     *
+     * @param locale objeto Locale que representa una o región geográfica, política, cultural, etc.
+     * @param lineEnd fin de línea
+     */
+    public static void setCSVLineEnd(Locale locale, String lineEnd) {
+        CSVUtils.setLineEnd(locale, lineEnd);
+    }
+
+    /**
+     * El método setCSVNullValue se utiliza para establecer el equivalente a valores nulos en archivos CSV para un Locale específico.
+     *
+     * @param locale objeto Locale que representa una o región geográfica, política, cultural, etc.
+     * @param nullValue equivalente a valores nulos
+     */
+    public static void setCSVNullValue(Locale locale, String nullValue) {
+        CSVUtils.setNullValue(locale, nullValue);
+    }
+
+    /**
      * El método setDecimalSeparator se utiliza para establecer el separador decimal para un Locale específico. El separador decimal es un carácter
      * usado para indicar la separación entre la parte entera y la parte fraccional de un número decimal.
      *
@@ -1074,6 +1125,8 @@ public abstract class Project extends AbstractArtifact implements ProjectBuilder
 
     private final Map<String, Display> _displays = new LinkedHashMap<>();
 
+    private final Map<Class<? extends Entity>, List<ProcessOperation>> _constructors = new LinkedHashMap<>();
+
     private final Set<Artifact> _artifacts = new LinkedHashSet<>();
 
     private final Set<Method> _addAttributesMethods = new LinkedHashSet<>();
@@ -1124,7 +1177,7 @@ public abstract class Project extends AbstractArtifact implements ProjectBuilder
 
     private String _helpFileAutoType = Constants.DEFAULT_HELP_FILE_TYPE;
 
-    private boolean _moduleClassDiagramGenEnabled = true;
+    private Kleenean _moduleClassDiagramGenEnabled = Kleenean.UNSPECIFIED;
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="instance fields public getters and setters">
@@ -1608,6 +1661,24 @@ public abstract class Project extends AbstractArtifact implements ProjectBuilder
      */
     public Map<String, ? extends Display> getDisplaysMap() {
         return _displays;
+    }
+
+    /**
+     * @return the constructors map
+     */
+    public Map<Class<? extends Entity>, List<ProcessOperation>> getConstructorsMap() {
+        return _constructors;
+    }
+
+    public void addConstructor(Class<? extends Entity> entityClass, ProcessOperation operation) {
+        List<ProcessOperation> list = _constructors.get(entityClass);
+        if (list != null) {
+            list.add(operation);
+        } else {
+            list = new ArrayList<>();
+            list.add(operation);
+            _constructors.put(entityClass, list);
+        }
     }
 
     Set<String> crossReferencedExpressionsSet;
@@ -2168,7 +2239,7 @@ public abstract class Project extends AbstractArtifact implements ProjectBuilder
      * @return the module class diagram generation indicator
      */
     public boolean isModuleClassDiagramGenEnabled() {
-        return _moduleClassDiagramGenEnabled;
+        return _moduleClassDiagramGenEnabled.toBoolean(_annotatedWithProjectModule);
     }
     // </editor-fold>
 
@@ -3297,7 +3368,7 @@ public abstract class Project extends AbstractArtifact implements ProjectBuilder
             ProjectModuleDocGen annotation = annotatedClass.getAnnotation(ProjectModuleDocGen.class);
             if (annotation != null) {
                 _annotatedWithProjectModuleDocGen = true;
-                _moduleClassDiagramGenEnabled = annotation.classDiagram().toBoolean(_moduleClassDiagramGenEnabled);
+                _moduleClassDiagramGenEnabled = annotation.classDiagram();
             }
         }
     }
@@ -3306,7 +3377,7 @@ public abstract class Project extends AbstractArtifact implements ProjectBuilder
         _annotatedWithProjectModuleDocGen = field.isAnnotationPresent(ProjectModuleDocGen.class);
         if (_annotatedWithProjectModuleDocGen) {
             ProjectModuleDocGen annotation = field.getAnnotation(ProjectModuleDocGen.class);
-            _moduleClassDiagramGenEnabled = annotation.classDiagram().toBoolean(_moduleClassDiagramGenEnabled);
+            _moduleClassDiagramGenEnabled = annotation.classDiagram();
         }
     }
     // </editor-fold>

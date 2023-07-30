@@ -23,7 +23,7 @@ import meta.entidad.base.PersistentEntityBase;
 /**
  * @author Jorge Campins
  */
-@EntityClass(independent = Kleenean.FALSE, resourceType = ResourceType.TESTING, resourceGender = ResourceGender.MASCULINE)
+@EntityClass(independent = Kleenean.FALSE, resourceType = ResourceType.TESTING, resourceGender = ResourceGender.FEMININE)
 @EntityCodeGen(bws = Kleenean.FALSE, fws = Kleenean.FALSE)
 @EntitySelectOperation(enabled = Kleenean.TRUE, onload = SelectOnloadOption.EXECUTE)
 @EntityInsertOperation(enabled = Kleenean.TRUE)

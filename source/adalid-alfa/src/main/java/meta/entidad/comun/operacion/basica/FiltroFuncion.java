@@ -102,10 +102,6 @@ public class FiltroFuncion extends AbstractPersistentEntity {
     protected void settleAttributes() {
         super.settleAttributes();
         /**/
-        setOrderBy(funcion, esPublico, nombreFiltroFuncion);
-        /*
-        setOrderBy(funcion, esPublico, esEspecial, nombreFiltroFuncion);
-        /**/
 //      setSchema(ProyectoBase.getEsquemaEntidadesComunes());
         /**/
         // <editor-fold defaultstate="collapsed" desc="localization of FiltroFuncion's attributes">
@@ -134,6 +130,9 @@ public class FiltroFuncion extends AbstractPersistentEntity {
     @Override
     protected void settleProperties() {
         super.settleProperties();
+        /**/
+//      setOrderBy(funcion, esPublico, esEspecial, nombreFiltroFuncion);
+        setOrderBy(funcion, esPublico, nombreFiltroFuncion);
         /**/
         codigoFiltroFuncion.setDefaultValue(funcion.dominio.codigoDominio.concat("-").concat(id));
         /**/

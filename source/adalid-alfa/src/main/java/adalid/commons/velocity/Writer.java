@@ -1152,6 +1152,7 @@ public class Writer {
          */
         putClass(context, adalid.commons.bundles.Bundle.class);
         putClass(context, adalid.commons.util.BitUtils.class);
+        putClass(context, adalid.commons.util.CSVUtils.class);
         putClass(context, adalid.commons.util.FilUtils.class);
         putClass(context, adalid.commons.util.IntUtils.class);
         putClass(context, adalid.commons.util.LongUtils.class);

@@ -90,6 +90,11 @@ public interface EntityReference extends Entity, Parameter, Property {
     MasterDetailView getMasterDetailView();
 
     /**
+     * @return the master/detail view sequence
+     */
+    int getMasterDetailViewSequence();
+
+    /**
      * @return the master sequence master field indicator
      */
     boolean isMasterSequenceMasterField();

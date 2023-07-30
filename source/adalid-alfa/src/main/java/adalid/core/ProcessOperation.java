@@ -91,6 +91,8 @@ public abstract class ProcessOperation extends Operation {
 
     private Class<? extends Entity> _constructionType;
 
+    private OnConstructionOperationSuccess _onConstructionSuccess = OnConstructionOperationSuccess.UNSPECIFIED;
+
     @Override
     public boolean finalise() {
         boolean ok = super.finalise();
@@ -108,7 +110,7 @@ public abstract class ProcessOperation extends Operation {
                 String message = "abstract class " + detail;
                 logger.error(message);
                 Project.increaseParserErrorCount();
-//          } else {
+            } else {
 //              Entity entity = TLC.getProject().getEntity(_constructionType);
 //              if (entity == null) { // the entity may be null here because it has not yet been referenced
 //                  String message = "invalid entity class " + detail;
@@ -119,6 +121,7 @@ public abstract class ProcessOperation extends Operation {
 //                  logger.error(message);
 //                  Project.increaseParserErrorCount();
 //              }
+                TLC.getProject().addConstructor(_constructionType, this);
             }
         }
     }
@@ -487,6 +490,10 @@ public abstract class ProcessOperation extends Operation {
         _validConstructionOperationLinkedPropertiesMap = true;
     }
 
+    public OnConstructionOperationSuccess getOnConstructionSuccess() {
+        return _constructionType != null ? _onConstructionSuccess : OnConstructionOperationSuccess.UNSPECIFIED;
+    }
+
     /**
      * El método addTransition se utiliza para agregar una transición a la lista de transiciones que lleva a cabo la operación.
      *
@@ -810,6 +817,7 @@ public abstract class ProcessOperation extends Operation {
             ConstructionOperationClass annotation = annotatedClass.getAnnotation(ConstructionOperationClass.class);
             if (annotation != null) {
                 _constructionType = annotation.type();
+                _onConstructionSuccess = annotation.onsuccess();
                 _annotatedWithConstructionOperationClass = true;
             }
         }

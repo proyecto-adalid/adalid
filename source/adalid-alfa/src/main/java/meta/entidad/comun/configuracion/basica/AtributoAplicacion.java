@@ -43,7 +43,6 @@ public class AtributoAplicacion extends AbstractPersistentEntity {
     @Override
     protected void settleAttributes() {
         super.settleAttributes();
-        setOrderBy(clave);
 //      setSchema(ProyectoBase.getEsquemaEntidadesComunes());
         // <editor-fold defaultstate="collapsed" desc="localization of AtributoAplicacion's attributes">
         setLocalizedLabel(ENGLISH, "application attribute");
@@ -84,6 +83,9 @@ public class AtributoAplicacion extends AbstractPersistentEntity {
     @Override
     protected void settleProperties() {
         super.settleProperties();
+        /**/
+        setOrderBy(clave);
+        /**/
         // <editor-fold defaultstate="collapsed" desc="localization of AtributoAplicacion's properties">
         clave.setLocalizedLabel(ENGLISH, "application attribute key");
         clave.setLocalizedLabel(SPANISH, "clave del atributo de la aplicación");

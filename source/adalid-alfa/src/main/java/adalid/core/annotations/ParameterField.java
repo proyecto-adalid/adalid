@@ -138,8 +138,7 @@ public @interface ParameterField {
      * sequence específica el número de secuencia o posición relativa en la que se muestra el parámetro en las vistas (páginas) de ejecución de
      * operaciones de negocio. Su valor debe ser un número entero entre 0 y 2.147.483.647. Alternativamente, omita el elemento para utilizar el valor
      * predeterminado del atributo. El valor predeterminado del atributo es 0. Si todas los parámetros tienen el mismo número de secuencia (0 o
-     * cualquier otro), entonces las vistas las muestran en el orden en el mismo orden en el que las meta parámetros están definidos en la meta
-     * operación.
+     * cualquier otro), entonces las vistas las muestran en el mismo orden en el que las meta parámetros están definidos en la meta operación.
      *
      * @return sequence
      */

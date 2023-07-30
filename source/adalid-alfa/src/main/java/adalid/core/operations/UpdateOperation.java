@@ -24,15 +24,14 @@ public class UpdateOperation extends BasicDatabaseProcessOperation {
         init();
     }
 
-    /* commented since 20200203
-    public UpdateOperation(Artifact declaringArtifact, Field declaringField) {
-        super(declaringArtifact, declaringField);
-        init();
-    }
-
-    /**/
     private void init() {
         _basicDatabaseOperationType = BasicDatabaseOperationType.UPDATE;
+        setOperationKind(OperationKind.INSTANCE);
+    }
+
+    @Override
+    public boolean isInstanceOperation() {
+        return true;
     }
 
 }

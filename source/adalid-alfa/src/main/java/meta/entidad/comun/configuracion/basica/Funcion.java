@@ -94,10 +94,15 @@ public class Funcion extends AbstractPersistentEntity {
     @ColumnField(nullable = Kleenean.FALSE)
     public BooleanProperty esHeredada;
 
+    @ColumnField(nullable = Kleenean.FALSE)
+    public BooleanProperty esMetodoClase;
+
+    @ColumnField(nullable = Kleenean.FALSE)
+    public BooleanProperty esMetodoInstancia;
+
     @Override
     protected void settleAttributes() {
         super.settleAttributes();
-        setOrderBy(codigoFuncion);
 //      setSchema(ProyectoBase.getEsquemaEntidadesComunes());
         // <editor-fold defaultstate="collapsed" desc="localization of Funcion's attributes">
         setLocalizedLabel(ENGLISH, "function");
@@ -122,6 +127,8 @@ public class Funcion extends AbstractPersistentEntity {
     protected void settleProperties() {
         super.settleProperties();
         /**/
+        setOrderBy(codigoFuncion);
+        /**/
         esPublica.setInitialValue(false);
         esPublica.setDefaultValue(false);
         esProgramatica.setInitialValue(false);
@@ -138,6 +145,10 @@ public class Funcion extends AbstractPersistentEntity {
         esConstructor.setDefaultValue(false);
         esHeredada.setInitialValue(false);
         esHeredada.setDefaultValue(false);
+        esMetodoClase.setInitialValue(false);
+        esMetodoClase.setDefaultValue(false);
+        esMetodoInstancia.setInitialValue(false);
+        esMetodoInstancia.setDefaultValue(false);
         /**/
         // <editor-fold defaultstate="collapsed" desc="localization of Funcion's properties">
         /**/
@@ -191,6 +202,12 @@ public class Funcion extends AbstractPersistentEntity {
         /**/
         esHeredada.setLocalizedLabel(ENGLISH, "inherited");
         esHeredada.setLocalizedLabel(SPANISH, "heredada");
+        /**/
+        esMetodoClase.setLocalizedLabel(ENGLISH, "class method");
+        esMetodoClase.setLocalizedLabel(SPANISH, "método de clase");
+        /**/
+        esMetodoInstancia.setLocalizedLabel(ENGLISH, "instance method");
+        esMetodoInstancia.setLocalizedLabel(SPANISH, "método de instancia");
         /**/
         // </editor-fold>
     }

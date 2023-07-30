@@ -76,4 +76,14 @@ public @interface OneToOne {
      */
     Kleenean detailView() default Kleenean.UNSPECIFIED; // FALSE
 
+    /**
+     * viewSequence específica el número de secuencia o posición relativa en la que se muestran las vistas (páginas) Maestro/Detalle de la entidad. Su
+     * valor debe ser un número entero entre 0 y 2.147.483.647. Alternativamente, omita el elemento para utilizar el valor predeterminado del
+     * atributo. El valor predeterminado del atributo es 0. Si todas las vistas tienen el mismo número de secuencia (0 o cualquier otro), entonces las
+     * vistas las muestran ordenadas por el nombre de la vista.
+     *
+     * @return viewSequence
+     */
+    int viewSequence() default 0;
+
 }

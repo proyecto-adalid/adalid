@@ -53,7 +53,7 @@ public class RolUsuario extends AbstractPersistentEntity {
     public LongProperty version;
 
     @ForeignKey(onDelete = OnDeleteAction.CASCADE, onUpdate = OnUpdateAction.CASCADE)
-    @ManyToOne(navigability = Navigability.BIDIRECTIONAL, view = MasterDetailView.TABLE, quickAdding = QuickAddingFilter.MISSING)
+    @ManyToOne(navigability = Navigability.BIDIRECTIONAL, view = MasterDetailView.TABLE, quickAdding = QuickAddingFilter.MISSING, viewSequence = 10)
     @ColumnField(nullable = Kleenean.FALSE)
     @PropertyField(required = Kleenean.TRUE, table = Kleenean.TRUE, report = Kleenean.TRUE)
     public Rol rol;
@@ -146,8 +146,8 @@ public class RolUsuario extends AbstractPersistentEntity {
         setInsertFilter(usuario.usuariosOrdinarios);
         setMasterDetailFilter(usuario.usuariosOrdinarios);
         /*
-//      rol.setSearchQueryFilter(rol.tipoRol.isNotNull().and(rol.tipoRol.isEqualTo(rol.tipoRol.OPERADOR)).implies(rol.esRolEspecial));
-        rol.setSearchQueryFilter(rol.tipoRol.isEqualTo(rol.tipoRol.OPERADOR).implies(rol.esRolEspecial));
+////    rol.setSearchQueryFilter(rol.tipoRol.isNotNull().and(rol.tipoRol.isEqualTo(rol.tipoRol.OPERADOR)).implies(rol.esRolEspecial));
+//      rol.setSearchQueryFilter(rol.tipoRol.isEqualTo(rol.tipoRol.OPERADOR).implies(rol.esRolEspecial));
         /**/
         usuario.setSearchQueryFilter(checkUsuarioOrdinario);
     }

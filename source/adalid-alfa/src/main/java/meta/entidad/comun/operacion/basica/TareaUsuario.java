@@ -112,7 +112,7 @@ public class TareaUsuario extends AbstractPersistentEntity {
     public LongProperty idRecursoValor;
 
     @ColumnField(indexed = Kleenean.FALSE)
-    @PropertyField(create = Kleenean.FALSE, update = Kleenean.FALSE, table = Kleenean.TRUE, report = Kleenean.TRUE, search = Kleenean.TRUE, heading = Kleenean.TRUE, overlay = Kleenean.TRUE)
+    @PropertyField(create = Kleenean.FALSE, update = Kleenean.FALSE, table = Kleenean.TRUE, report = Kleenean.TRUE, search = Kleenean.TRUE, heading = Kleenean.FALSE, overlay = Kleenean.TRUE)
     public StringProperty codigoRecursoValor;
 
     @ColumnField(indexed = Kleenean.FALSE)
@@ -456,7 +456,9 @@ public class TareaUsuario extends AbstractPersistentEntity {
         key1.newKeyField(tarea);
         key2.newKeyField(condicion, fechaHoraLimite, tarea, destinatario);
         key3.newKeyField(idClaseRecursoValor, recursoValor);
+        /**/
         setOrderBy(key2);
+        /**/
     }
 
     protected Tab descripcion, participantes, cronologia;

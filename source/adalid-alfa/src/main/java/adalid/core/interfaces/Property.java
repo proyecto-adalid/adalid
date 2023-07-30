@@ -200,6 +200,18 @@ public interface Property extends DataArtifact, ValuedArtifact {
     AnchorType getAnchorType();
 
     /**
+     * @return the anchor type of the first anchored field
+     */
+    AnchorType getFirstAnchoredFieldAnchorType();
+
+    /**
+     * Sets the first anchored field anchor type
+     *
+     * @param anchorType the anchor type of the first anchored field
+     */
+    void setFirstAnchoredFieldAnchorType(AnchorType anchorType);
+
+    /**
      * @return the anchoring linked detail fields indicator
      */
     boolean isAnchoringLinkedDetailFields();

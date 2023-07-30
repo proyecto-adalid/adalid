@@ -60,7 +60,6 @@ public class VistaFuncionCol extends AbstractPersistentEntity {
     protected void settleAttributes() {
         super.settleAttributes();
 //      setSchema(ProyectoBase.getEsquemaEntidadesComunes());
-        setOrderBy(vista, secuencia, id);
         // <editor-fold defaultstate="collapsed" desc="localization of VistaFuncionCol's attributes">
         setLocalizedLabel(ENGLISH, "view column");
         setLocalizedLabel(SPANISH, "columna de vista");
@@ -198,6 +197,8 @@ public class VistaFuncionCol extends AbstractPersistentEntity {
     protected void settleProperties() {
         super.settleProperties();
         /**/
+        setOrderBy(vista, secuencia, id);
+        /**/
         nombre.setDefaultValue(columna.nombreFuncionParametro);
         alias.setDefaultValue(columna.codigoFuncionParametro);
         /**/
@@ -250,6 +251,9 @@ public class VistaFuncionCol extends AbstractPersistentEntity {
         columna.setLocalizedLabel(ENGLISH, "column");
         columna.setLocalizedLabel(SPANISH, "columna");
         /**/
+        columna.nombreFuncionParametro.setLocalizedLabel(ENGLISH, "column name");
+        columna.nombreFuncionParametro.setLocalizedLabel(SPANISH, "nombre de la columna");
+        /**/
         alias.setLocalizedLabel(ENGLISH, "alias");
         alias.setLocalizedLabel(SPANISH, "alias");
         /**/
@@ -266,8 +270,14 @@ public class VistaFuncionCol extends AbstractPersistentEntity {
         agregacion.setLocalizedInitialValueTag(SPANISH, "Sí " + b("índice") + _de_ + b("columna") + " > 0"
             + " y " + b("tipo") + _de_ + b("parámetro") + _de_ + b("columna") + " = CODIGO entonces GRUPO");
         /**/
+        agregacion.nombre.setLocalizedLabel(ENGLISH, "aggregation name");
+        agregacion.nombre.setLocalizedLabel(SPANISH, "nombre de la agregación");
+        /**/
         grupo.setLocalizedLabel(ENGLISH, "group");
         grupo.setLocalizedLabel(SPANISH, "grupo");
+        /**/
+        grupo.nombre.setLocalizedLabel(ENGLISH, "group name");
+        grupo.nombre.setLocalizedLabel(SPANISH, "nombre del grupo");
         /**/
         orden.setLocalizedLabel(ENGLISH, "order");
         orden.setLocalizedLabel(SPANISH, "orden");
@@ -337,6 +347,8 @@ public class VistaFuncionCol extends AbstractPersistentEntity {
 
     protected Segment privadas;
 
+    protected BooleanExpression claim101, claim102, claim103;
+
     @Override
     protected void settleExpressions() {
         super.settleExpressions();
@@ -348,6 +360,10 @@ public class VistaFuncionCol extends AbstractPersistentEntity {
         conGrupo = agregacion.isEqualTo(agregacion.GRUPO).or(grupo.isNotNull());
         sinGrupo = agregacion.isNullOrNotEqualTo(agregacion.GRUPO).and(grupo.isNull());
         privadas = vista.publica.isFalse().and(vista.especial.isFalse());
+        /**/
+        claim101 = columna.funcion.isEqualTo(vista.funcion).and(columna.parametro.pixeles.isGreaterThan(0));
+        claim102 = agregacion.rangos.contains(columna.rangoAgregacion.numero);
+        claim103 = grupo.agregacion.isEqualTo(grupo.agregacion.GRUPO).and(grupo.vista.isEqualTo(vista));
         /**/
         // <editor-fold defaultstate="collapsed" desc="localization of VistaFuncionCol's expressions">
         /*
@@ -378,7 +394,29 @@ public class VistaFuncionCol extends AbstractPersistentEntity {
         privadas.setLocalizedErrorMessage(ENGLISH, "the view is public or special");
         privadas.setLocalizedErrorMessage(SPANISH, "la vista es pública o especial");
         /**/
+        claim101.setLocalizedLabel(ENGLISH, "verify column");
+        claim101.setLocalizedLabel(SPANISH, "chequear columna");
+        claim101.setLocalizedDescription(ENGLISH, "the column size (pixels) must be greater than 0 and its function must be equal to the function associated with the view");
+        claim101.setLocalizedDescription(SPANISH, "el tamaño (pixeles) de la columna debe ser mayor que 0 y su función debe ser igual a la función asociada a la vista");
+        claim101.setLocalizedErrorMessage(ENGLISH, "the column size (pixels) is 0 or its function is not equal to the function associated with the view");
+        claim101.setLocalizedErrorMessage(SPANISH, "el tamaño (pixeles) de la columna es 0 o su función no es igual a la función asociada a la vista");
+        /**/
+        claim102.setLocalizedLabel(ENGLISH, "verify aggregation");
+        claim102.setLocalizedLabel(SPANISH, "chequear agregación");
+        claim102.setLocalizedDescription(ENGLISH, "the aggregation is compatible with the column");
+        claim102.setLocalizedDescription(SPANISH, "la agregación es compatible con el columna");
+        claim102.setLocalizedErrorMessage(ENGLISH, "the aggregation is not compatible with the column");
+        claim102.setLocalizedErrorMessage(SPANISH, "la agregación es incompatible con el columna");
+        /**/
+        claim103.setLocalizedLabel(ENGLISH, "verify group");
+        claim103.setLocalizedLabel(SPANISH, "chequear grupo");
+        claim103.setLocalizedDescription(ENGLISH, "the group belongs to the view");
+        claim103.setLocalizedDescription(SPANISH, "el grupo pertenece a la vista");
+        claim103.setLocalizedErrorMessage(ENGLISH, "the group does not belong to the view");
+        claim103.setLocalizedErrorMessage(SPANISH, "el grupo no pertenece a la vista");
+        /**/
         // </editor-fold>
+        /**/
     }
 
     @Override
@@ -391,9 +429,9 @@ public class VistaFuncionCol extends AbstractPersistentEntity {
         /**/
         addSelectSegment(conGrupo, sinGrupo);
         /**/
-        columna.setSearchQueryFilter(columna.funcion.isEqualTo(vista.funcion).and(columna.parametro.pixeles.isGreaterThan(0)));
-        agregacion.setSearchQueryFilter(agregacion.rangos.contains(columna.rangoAgregacion.numero));
-        grupo.setSearchQueryFilter(grupo.agregacion.isEqualTo(grupo.agregacion.GRUPO).and(grupo.vista.isEqualTo(vista)));
+        columna.setSearchQueryFilter(claim101);
+        agregacion.setSearchQueryFilter(claim102);
+        grupo.setSearchQueryFilter(claim103);
     }
 
 }

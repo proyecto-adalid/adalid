@@ -12,6 +12,7 @@
  */
 package adalid.core;
 
+import adalid.commons.bundles.Bundle;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 
@@ -19,6 +20,8 @@ import org.apache.commons.lang.StringUtils;
  * @author Jorge Campins
  */
 public class TemporalAddend implements Comparable {
+
+    static final String CANONICAL_NAME = TemporalAddend.class.getCanonicalName();
 
     // <editor-fold defaultstate="collapsed" desc="static fields">
     static final char OTHER_YEARS_1 = 'y';
@@ -224,6 +227,14 @@ public class TemporalAddend implements Comparable {
                 return "years";
         }
         return null;
+    }
+
+    /**
+     * @return the localized unit name
+     */
+    public String getLocalizedUnitName() {
+        String key = CANONICAL_NAME + "." + getUnitName();
+        return Bundle.getString(key);
     }
 
     /**

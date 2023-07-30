@@ -172,8 +172,6 @@ public class VistaFuncion extends AbstractPersistentEntity {
     protected void settleAttributes() {
         super.settleAttributes();
         /**/
-        setOrderBy(funcion, publica, especial, nombre);
-        /**/
 //      setSchema(ProyectoBase.getEsquemaEntidadesComunes());
         // <editor-fold defaultstate="collapsed" desc="localization of VistaFuncion's attributes">
         setLocalizedLabel(ENGLISH, "view");
@@ -197,6 +195,8 @@ public class VistaFuncion extends AbstractPersistentEntity {
     @Override
     protected void settleProperties() {
         super.settleProperties();
+        /**/
+        setOrderBy(funcion, publica, especial, nombre);
         /**/
         codigo.setDefaultValue(funcion.dominio.codigoDominio.concat("-").concat(id));
         /**/
@@ -449,6 +449,9 @@ public class VistaFuncion extends AbstractPersistentEntity {
         anchoColumna.setLocalizedDescription(ENGLISH, "Width of the print area, in pixels; it is equal to: page width - left margin - right margin");
         anchoColumna.setLocalizedDescription(SPANISH, "Ancho del área de impresión, expresado en pixeles; es igual a: ancho de página - margen izquierdo - margen derecho");
         /**/
+        anchoColumna.setLocalizedInitialValueTag(ENGLISH, b("page width") + " minus " + b("left margin") + " minus " + b("right margin"));
+        anchoColumna.setLocalizedInitialValueTag(SPANISH, b("ancho de página") + " menos " + b("margen izquierdo") + " menos " + b("margen derecho"));
+        /**/
         largoColumna.setLocalizedLabel(ENGLISH, "print area height");
         largoColumna.setLocalizedLabel(SPANISH, "altura del área de impresión");
         largoColumna.setLocalizedShortLabel(SPANISH, "altura de impresión");
@@ -464,6 +467,9 @@ public class VistaFuncion extends AbstractPersistentEntity {
         anchoDisponible.setLocalizedLabel(SPANISH, "disponible en detalle");
         anchoDisponible.setLocalizedDescription(ENGLISH, "Available width for fields in detail group, in pixels; it is equal to: print area width - detail width");
         anchoDisponible.setLocalizedDescription(SPANISH, "Ancho disponible para campos en el grupo de detalle, en píxeles; es igual a: ancho de impresión - ancho del detalle");
+        /**/
+        anchoDisponible.setLocalizedInitialValueTag(ENGLISH, b("page width") + " minus " + b("left margin") + " minus " + b("right margin") + " minus " + b("detail width"));
+        anchoDisponible.setLocalizedInitialValueTag(SPANISH, b("ancho de página") + " menos " + b("margen izquierdo") + " menos " + b("margen derecho") + " menos " + b("ancho del detalle"));
         /**/
         anchoDisponible.setLocalizedGraphicImageTooltip(ENGLISH, imagenAnchoDisponible1, "unspecified value");
         anchoDisponible.setLocalizedGraphicImageTooltip(ENGLISH, imagenAnchoDisponible2, "the detail is wide enough");
@@ -586,6 +592,31 @@ public class VistaFuncion extends AbstractPersistentEntity {
 //      margenDerecho.setNullifyingFilter(not(formatoPersonalizado));
 //      margenDerecho.setRenderingFilter(formatoPersonalizado, true);
         margenDerecho.setRequiringFilter(formatoPersonalizado);
+        /**/
+        // <editor-fold defaultstate="collapsed" desc="localization of VistaFuncion's filters">
+        /**/
+        String english = "If " + b("format") + " is PERSONALIZADO";
+        String spanish = "Sí " + b("formato") + " es PERSONALIZADO";
+        /**/
+        anchoPagina.setLocalizedRequiringFilterTag(ENGLISH, english);
+        anchoPagina.setLocalizedRequiringFilterTag(SPANISH, spanish);
+        /**/
+        largoPagina.setLocalizedRequiringFilterTag(ENGLISH, english);
+        largoPagina.setLocalizedRequiringFilterTag(SPANISH, spanish);
+        /**/
+        margenSuperior.setLocalizedRequiringFilterTag(ENGLISH, english);
+        margenSuperior.setLocalizedRequiringFilterTag(SPANISH, spanish);
+        /**/
+        margenInferior.setLocalizedRequiringFilterTag(ENGLISH, english);
+        margenInferior.setLocalizedRequiringFilterTag(SPANISH, spanish);
+        /**/
+        margenIzquierdo.setLocalizedRequiringFilterTag(ENGLISH, english);
+        margenIzquierdo.setLocalizedRequiringFilterTag(SPANISH, spanish);
+        /**/
+        margenDerecho.setLocalizedRequiringFilterTag(ENGLISH, english);
+        margenDerecho.setLocalizedRequiringFilterTag(SPANISH, spanish);
+        /**/
+        // </editor-fold>
         /**/
     }
 

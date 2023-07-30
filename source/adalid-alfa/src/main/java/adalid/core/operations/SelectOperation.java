@@ -24,13 +24,6 @@ public class SelectOperation extends BasicDatabaseOperation {
         init();
     }
 
-    /* commented since 20200203
-    public SelectOperation(Artifact declaringArtifact, Field declaringField) {
-        super(declaringArtifact, declaringField);
-        init();
-    }
-
-    /**/
     private void init() {
         _basicDatabaseOperationType = BasicDatabaseOperationType.SELECT;
     }

@@ -857,6 +857,16 @@ public class Usuario extends meta.entidad.comun.control.acceso.Usuario {
         otraPagina.setLocalizedRequiringFilterTag(ENGLISH, "if " + b("start page") + " is \"Other page\"");
         otraPagina.setLocalizedRequiringFilterTag(SPANISH, "sí " + b("página de inicio") + " es \"Otra página\"");
         /**/
+        filtroPaginaMenu.setLocalizedDescription(ENGLISH, "the page is a menu page");
+        filtroPaginaMenu.setLocalizedDescription(SPANISH, "la página es una página del menú");
+        filtroPaginaMenu.setLocalizedErrorMessage(ENGLISH, "the page is not a menu page");
+        filtroPaginaMenu.setLocalizedErrorMessage(SPANISH, "la página no es una página del menú");
+        /**/
+        filtroOtraPagina.setLocalizedDescription(ENGLISH, "the page is active");
+        filtroOtraPagina.setLocalizedDescription(SPANISH, "la página está activa");
+        filtroOtraPagina.setLocalizedErrorMessage(ENGLISH, "the page is not active");
+        filtroOtraPagina.setLocalizedErrorMessage(SPANISH, "la página está inactiva");
+        /**/
         // </editor-fold>
         /**/
     }
@@ -982,7 +992,7 @@ public class Usuario extends meta.entidad.comun.control.acceso.Usuario {
 
     }
 
-    @ConstructionOperationClass(type = Usuario.class)
+    @ConstructionOperationClass(type = Usuario.class, onsuccess = OnConstructionOperationSuccess.DISPLAY_NEW_INSTANCE)
     public class Copiar extends ProcessOperation {
 
         @Override

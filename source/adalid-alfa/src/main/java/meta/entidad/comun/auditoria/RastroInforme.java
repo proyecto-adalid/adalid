@@ -36,7 +36,7 @@ import meta.entidad.comun.operacion.basica.RecursoValor;
 @EntityInsertOperation(enabled = Kleenean.FALSE)
 @EntityUpdateOperation(enabled = Kleenean.FALSE)
 @EntityDeleteOperation(enabled = Kleenean.FALSE)
-@EntityTableView(enabled = Kleenean.TRUE)
+@EntityTableView(enabled = Kleenean.TRUE, readingViewBelowTableSnippet = "/resources/snippets/base/entity/RastroInforme/overlayPanel")
 @EntityDetailView(enabled = Kleenean.TRUE)
 @EntityTreeView(enabled = Kleenean.FALSE)
 @EntityConsoleView(enabled = Kleenean.TRUE, menu = Kleenean.FALSE)
@@ -150,7 +150,7 @@ public class RastroInforme extends AbstractPersistentEntity {
     public LongProperty versionRecurso;
 
     @ColumnField(indexed = Kleenean.FALSE)
-    @PropertyField(sequence = 300, table = Kleenean.FALSE, report = Kleenean.TRUE, search = Kleenean.TRUE)
+    @PropertyField(sequence = 300, table = Kleenean.TRUE, report = Kleenean.TRUE, search = Kleenean.TRUE)
     public StringProperty codigoRecurso;
 
     @ColumnField(indexed = Kleenean.FALSE)
@@ -192,7 +192,8 @@ public class RastroInforme extends AbstractPersistentEntity {
     public CondicionEjeFun condicionEjeFun;
 
     @FileReference(loadField = "fechaHoraInicioEjecucion")
-    @PropertyField(sequence = 150, table = Kleenean.TRUE, report = Kleenean.FALSE, search = Kleenean.FALSE)
+    @PropertyField(sequence = 150, table = Kleenean.TRUE, report = Kleenean.FALSE, search = Kleenean.FALSE,
+        readingTableSnippet = "/resources/snippets/base/entity/RastroInforme/overlayPanelLink")
     public StringProperty nombreArchivo;
 
     @PropertyField(sequence = 500)

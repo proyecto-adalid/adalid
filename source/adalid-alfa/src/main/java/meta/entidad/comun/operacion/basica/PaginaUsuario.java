@@ -24,7 +24,7 @@ import meta.entidad.comun.control.acceso.Usuario;
 /**
  * @author Jorge Campins
  */
-@EntityClass(base = Kleenean.TRUE, independent = Kleenean.FALSE, resourceType = ResourceType.OPERATION, resourceGender = ResourceGender.FEMININE)
+@EntityClass(base = Kleenean.TRUE, independent = Kleenean.FALSE, resourceType = ResourceType.OPERATION, resourceGender = ResourceGender.MASCULINE)
 @EntityCodeGen(bws = Kleenean.FALSE, fws = Kleenean.FALSE)
 @EntitySelectOperation(enabled = Kleenean.TRUE)
 @EntityInsertOperation(enabled = Kleenean.FALSE)

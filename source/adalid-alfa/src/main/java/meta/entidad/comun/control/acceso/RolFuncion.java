@@ -87,7 +87,7 @@ public class RolFuncion extends AbstractPersistentEntity {
     public LongProperty version;
 
     @ForeignKey(onDelete = OnDeleteAction.NONE, onUpdate = OnUpdateAction.NONE) // CASCADE -> Mutatis mutandis
-    @ManyToOne(navigability = Navigability.BIDIRECTIONAL, view = MasterDetailView.TABLE)
+    @ManyToOne(navigability = Navigability.BIDIRECTIONAL, view = MasterDetailView.TABLE, viewSequence = 20)
     @ColumnField(nullable = Kleenean.FALSE)
     @PropertyField(required = Kleenean.TRUE, table = Kleenean.TRUE, report = Kleenean.TRUE, heading = Kleenean.TRUE, overlay = Kleenean.TRUE)
     public Rol rol;

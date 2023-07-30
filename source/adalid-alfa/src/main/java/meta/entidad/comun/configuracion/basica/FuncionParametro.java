@@ -74,7 +74,6 @@ public class FuncionParametro extends AbstractPersistentEntity {
     @Override
     protected void settleAttributes() {
         super.settleAttributes();
-//      setOrderBy(codigoFuncionParametro);
 //      setSchema(ProyectoBase.getEsquemaEntidadesComunes());
         // <editor-fold defaultstate="collapsed" desc="localization of FuncionParametro's attributes">
         setLocalizedLabel(ENGLISH, "function parameter");
@@ -102,6 +101,9 @@ public class FuncionParametro extends AbstractPersistentEntity {
     @Override
     protected void settleProperties() {
         super.settleProperties();
+        /*
+        setOrderBy(codigoFuncionParametro);
+        /**/
         // <editor-fold defaultstate="collapsed" desc="localization of FuncionParametro's properties">
         codigoFuncionParametro.setLocalizedLabel(ENGLISH, "function parameter code");
         codigoFuncionParametro.setLocalizedLabel(SPANISH, "código del parámetro de función");

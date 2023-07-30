@@ -246,7 +246,9 @@ public class EjecucionLineaPrueba extends PersistentEntityBase {
         super.settleKeys();
         key1.newKeyField(ejecucion, numero, id);
         key1.setUnique(true);
+        /**/
         setOrderBy(key1);
+        /**/
     }
 
     protected Tab tab1, tab2, tab3, tab4;

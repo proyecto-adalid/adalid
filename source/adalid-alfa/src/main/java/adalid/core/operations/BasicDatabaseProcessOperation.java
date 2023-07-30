@@ -23,17 +23,6 @@ public abstract class BasicDatabaseProcessOperation extends BasicDatabaseOperati
 
     public BasicDatabaseProcessOperation() {
         super();
-        init();
-    }
-
-    /* commented since 20200203
-    public BasicDatabaseProcessOperation(Artifact declaringArtifact, Field declaringField) {
-        super(declaringArtifact, declaringField);
-        init();
-    }
-
-    /**/
-    private void init() {
     }
 
     /**

@@ -76,8 +76,6 @@ public class MensajeAplicacion extends AbstractPersistentEntity {
         /**/
 //      setSchema(ProyectoBase.getEsquemaEntidadesComunes());
         /**/
-        setOrderBy(codigo);
-        /**/
         // <editor-fold defaultstate="collapsed" desc="localization of MensajeAplicacion's messages">
         setLocalizedLabel(ENGLISH, "application message");
         setLocalizedLabel(SPANISH, "mensaje de la aplicación");
@@ -139,6 +137,8 @@ public class MensajeAplicacion extends AbstractPersistentEntity {
     @Override
     protected void settleProperties() {
         super.settleProperties();
+        /**/
+        setOrderBy(codigo);
         /**/
         // <editor-fold defaultstate="collapsed" desc="localization of MensajeAplicacion's properties">
         /**/

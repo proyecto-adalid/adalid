@@ -24,15 +24,14 @@ public class DeleteOperation extends BasicDatabaseProcessOperation {
         init();
     }
 
-    /* commented since 20200203
-    public DeleteOperation(Artifact declaringArtifact, Field declaringField) {
-        super(declaringArtifact, declaringField);
-        init();
-    }
-
-    /**/
     private void init() {
         _basicDatabaseOperationType = BasicDatabaseOperationType.DELETE;
+        setOperationKind(OperationKind.INSTANCE);
+    }
+
+    @Override
+    public boolean isInstanceOperation() {
+        return true;
     }
 
 }

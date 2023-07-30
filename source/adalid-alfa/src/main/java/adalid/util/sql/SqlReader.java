@@ -917,6 +917,8 @@ public class SqlReader extends SqlUtil {
 
         protected abstract String literalOf(Object obj);
 
+        protected abstract String literalOf(SqlColumn sqlColumn, String string);
+
         protected String stringValueOf(SqlColumn sqlColumn, String string) {
             String ctype = sqlColumn.getType();
             String value = StringUtils.trimToNull(string);
@@ -1159,6 +1161,7 @@ public class SqlReader extends SqlUtil {
             // </editor-fold>
             sqlColumn.setDefault(string_default);
             sqlColumn.setSqlDefaultValue(column_default);
+            sqlColumn.setSqlDefaultValueLiteral(literalOf(sqlColumn, string_default));
             sqlColumn.setUpdatable(is_updatable);
             sqlColumn.setNullable(is_nullable);
             sqlColumn.setPrimary(is_primary_key);
@@ -1186,6 +1189,36 @@ public class SqlReader extends SqlUtil {
                 return "timestamp" + StrUtils.enclose(string, '\'');
             } else {
                 return StrUtils.enclose(string, '\'');
+            }
+        }
+
+        @Override
+        protected String literalOf(SqlColumn sqlColumn, String string) {
+            String type = sqlColumn.getType();
+            if (type == null || string == null) {
+                return "null";
+            }
+            switch (type) {
+                case "byte":
+                case "short":
+                case "integer":
+                case "long":
+                case "decimal":
+                case "float":
+                case "double":
+                    return string;
+                case "boolean":
+                case "char":
+                case "string":
+                    return StrUtils.enclose(string, '\'');
+                case "date":
+                    return "date" + StrUtils.enclose(string, '\'');
+                case "time":
+                    return "timestamp" + StrUtils.enclose(string, '\'');
+                case "timestamp":
+                    return "timestamp" + StrUtils.enclose(string, '\'');
+                default:
+                    return "null";
             }
         }
 
@@ -1578,6 +1611,7 @@ public class SqlReader extends SqlUtil {
             // </editor-fold>
             sqlColumn.setDefault(string_default);
             sqlColumn.setSqlDefaultValue(column_default);
+            sqlColumn.setSqlDefaultValueLiteral(literalOf(sqlColumn, string_default));
             sqlColumn.setUpdatable(is_updatable);
             sqlColumn.setNullable(is_nullable);
             sqlColumn.setPrimary(is_primary_key);
@@ -1607,6 +1641,36 @@ public class SqlReader extends SqlUtil {
                 return "timestamp" + StrUtils.enclose(string, '\'');
             } else {
                 return StrUtils.enclose(string, '\'');
+            }
+        }
+
+        @Override
+        protected String literalOf(SqlColumn sqlColumn, String string) {
+            String type = sqlColumn.getType();
+            if (type == null || string == null) {
+                return "null";
+            }
+            switch (type) {
+                case "boolean":
+                case "byte":
+                case "short":
+                case "integer":
+                case "long":
+                case "decimal":
+                case "float":
+                case "double":
+                    return string;
+                case "char":
+                case "string":
+                    return StrUtils.enclose(string, '\'');
+                case "date":
+                    return "date" + StrUtils.enclose(string, '\'');
+                case "time":
+                    return "time" + StrUtils.enclose(string, '\'');
+                case "timestamp":
+                    return "timestamp" + StrUtils.enclose(string, '\'');
+                default:
+                    return "null";
             }
         }
 

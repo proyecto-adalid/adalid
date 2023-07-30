@@ -45,10 +45,23 @@ public class DialogoDinamicoRemoto extends AbstractPersistentEntity {
         super.settleAttributes();
 //      setSchema(ProyectoBase.getEsquemaEntidadesComunes());
         // <editor-fold defaultstate="collapsed" desc="localization of DialogoDinamicoRemoto's attributes">
-        setLocalizedLabel(ENGLISH, "RDD");
-        setLocalizedLabel(SPANISH, "DDR");
+        setLocalizedLabel(ENGLISH, "remote dynamic dialog");
+        setLocalizedLabel(SPANISH, "diálogo dinámico remoto");
         setLocalizedCollectionLabel(ENGLISH, "Remote Dynamic Dialogs");
         setLocalizedCollectionLabel(SPANISH, "Diálogos Dinámicos Remotos");
+        /**/
+        setLocalizedDescription(ENGLISH, "Each instance of " + b("Remote Dynamic Dialogs") + " represents a "
+            + "dynamic search dialog that opens a page belonging to another application. "
+            + "The page of the other application updates its instance with the value to be returned to the application that initiates the dialog."
+            + "");
+        setLocalizedDescription(SPANISH, "Cada instancia de " + b("Diálogos Dinámicos Remotos") + " representa un "
+            + "diálogo dinámico de búsqueda que abre una página que pertenece a otra aplicación. "
+            + "La página de la otra aplicación actualiza su instancia con el valor a retornar a la aplicación que inicia el diálogo."
+            + "");
+        /**/
+        setLocalizedShortDescription(ENGLISH, "dynamic search dialog that opens a page belonging to another application");
+        setLocalizedShortDescription(SPANISH, "diálogo dinámico de búsqueda que abre una página que pertenece a otra aplicación");
+        /**/
         // </editor-fold>
     }
 

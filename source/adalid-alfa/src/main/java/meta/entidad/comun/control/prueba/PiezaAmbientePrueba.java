@@ -22,7 +22,7 @@ import meta.entidad.base.PersistentEntityBase;
 /**
  * @author Jorge Campins
  */
-@EntityClass(independent = Kleenean.TRUE, resourceType = ResourceType.TESTING, resourceGender = ResourceGender.MASCULINE)
+@EntityClass(independent = Kleenean.TRUE, resourceType = ResourceType.TESTING, resourceGender = ResourceGender.FEMININE)
 @EntityCodeGen(bws = Kleenean.FALSE, fws = Kleenean.FALSE)
 @EntitySelectOperation(enabled = Kleenean.TRUE, onload = SelectOnloadOption.EXECUTE)
 @EntityInsertOperation(enabled = Kleenean.TRUE)
@@ -82,17 +82,17 @@ public class PiezaAmbientePrueba extends PersistentEntityBase {
         tipo.setDefaultValue(tipo.SOFTWARE);
         // <editor-fold defaultstate="collapsed" desc="localization of PiezaAmbientePrueba's properties">
         codigo.setLocalizedLabel(ENGLISH, "test environment component code");
-        codigo.setLocalizedLabel(SPANISH, "código del pieza de ambiente de prueba");
+        codigo.setLocalizedLabel(SPANISH, "código de la pieza de ambiente de prueba");
         codigo.setLocalizedShortLabel(ENGLISH, "code");
         codigo.setLocalizedShortLabel(SPANISH, "código");
         /**/
         nombre.setLocalizedLabel(ENGLISH, "test environment component name");
-        nombre.setLocalizedLabel(SPANISH, "nombre del pieza de ambiente de prueba");
+        nombre.setLocalizedLabel(SPANISH, "nombre de la pieza de ambiente de prueba");
         nombre.setLocalizedShortLabel(ENGLISH, "name");
         nombre.setLocalizedShortLabel(SPANISH, "nombre");
         /**/
         descripcion.setLocalizedLabel(ENGLISH, "test environment component description");
-        descripcion.setLocalizedLabel(SPANISH, "descripción del pieza de ambiente de prueba");
+        descripcion.setLocalizedLabel(SPANISH, "descripción de la pieza de ambiente de prueba");
         descripcion.setLocalizedShortLabel(ENGLISH, "description");
         descripcion.setLocalizedShortLabel(SPANISH, "descripción");
         /**/

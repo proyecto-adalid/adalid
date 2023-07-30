@@ -132,16 +132,24 @@ public class UsuarioModulo extends AbstractPersistentEntity {
 
     protected Check checkUsuarioOrdinario;
 
+    protected Segment menusPredefinidos;
+
     @Override
     protected void settleExpressions() {
         super.settleExpressions();
         /**/
         checkUsuarioOrdinario = usuario.esUsuarioEspecial.isFalse();
+        menusPredefinidos = modulo.menusPredefinidos.isTrue();
         /**/
         checkUsuarioOrdinario.setLocalizedDescription(ENGLISH, "the user is not a special user");
         checkUsuarioOrdinario.setLocalizedDescription(SPANISH, "el usuario no es un usuario especial");
         checkUsuarioOrdinario.setLocalizedErrorMessage(ENGLISH, "the user is a special user");
         checkUsuarioOrdinario.setLocalizedErrorMessage(SPANISH, "el usuario es un usuario especial");
+        /**/
+        menusPredefinidos.setLocalizedDescription(ENGLISH, "the module has predefined menus");
+        menusPredefinidos.setLocalizedDescription(SPANISH, "el modulo tiene menús predefinidos");
+        menusPredefinidos.setLocalizedErrorMessage(ENGLISH, "the module does not have predefined menus");
+        menusPredefinidos.setLocalizedErrorMessage(SPANISH, "el modulo no tiene menús predefinidos");
         /**/
     }
 
@@ -152,7 +160,7 @@ public class UsuarioModulo extends AbstractPersistentEntity {
         setInsertFilter(usuario.usuariosOrdinarios);
         setMasterDetailFilter(usuario.usuariosOrdinarios);
         /**/
-        modulo.setSearchQueryFilter(modulo.menusPredefinidos);
+        modulo.setSearchQueryFilter(menusPredefinidos);
         /**/
     }
 

@@ -304,6 +304,19 @@ public @interface PropertyField {
     String defaultFunction() default "";
 
     /**
+     * masterHeadingSnippet especifica la ruta y el nombre del snippet de la propiedad en el encabezado del Maestro en las vistas (páginas)
+     * Maestro/Detalle.
+     *
+     * Si utiliza la plataforma jee2, los snippets se deben agregar en el subdirectorio resources/snippets/custom-made del directorio src/main/webapp
+     * del módulo Web, o en algún subdirectorio de resources/snippets/custom-made; si el valor de snippet no comienza por
+     * <b>/resources/snippets/custom-made/</b>, ese prefijo se le agrega automáticamente. Además, los snippets deben ser archivos xhtml; si el valor
+     * de snippet no termina con <b>.xhtml</b>, ese sufijo se le agrega automáticamente.
+     *
+     * @return masterHeadingSnippet
+     */
+    String masterHeadingSnippet() default "";
+
+    /**
      * readingTableSnippet especifica la ruta y el nombre del snippet de la propiedad en las vistas (páginas) de consulta de presentación tabular.
      *
      * Si utiliza la plataforma jee2, los snippets se deben agregar en el subdirectorio resources/snippets/custom-made del directorio src/main/webapp
@@ -376,7 +389,7 @@ public @interface PropertyField {
      * sequence específica el número de secuencia o posición relativa en la que se muestra la propiedad en las vistas (páginas) de consulta y
      * registro. Su valor debe ser un número entero entre 0 y 2.147.483.647. Alternativamente, omita el elemento para utilizar el valor predeterminado
      * del atributo. El valor predeterminado del atributo es 0. Si todas las propiedades tienen el mismo número de secuencia (0 o cualquier otro),
-     * entonces las vistas las muestran en el orden en el mismo orden en el que las meta propiedades están definidas en la meta entidad.
+     * entonces las vistas las muestran en el mismo orden en el que las meta propiedades están definidas en la meta entidad.
      *
      * @return sequence
      */

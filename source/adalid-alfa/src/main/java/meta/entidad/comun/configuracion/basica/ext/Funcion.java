@@ -47,11 +47,13 @@ public class Funcion extends meta.entidad.comun.configuracion.basica.Funcion {
     @ForeignKey(onDelete = OnDeleteAction.NONE, onUpdate = OnUpdateAction.NONE)
     @ManyToOne(navigability = Navigability.UNIDIRECTIONAL, view = MasterDetailView.NONE)
     @ColumnField(nullable = Kleenean.FALSE)
+    @PropertyField(overlay = Kleenean.TRUE)
     public TipoFuncion tipoFuncion;
 
     @ForeignKey(onDelete = OnDeleteAction.NONE, onUpdate = OnUpdateAction.NONE)
     @ManyToOne(navigability = Navigability.UNIDIRECTIONAL, view = MasterDetailView.NONE)
     @ColumnField(nullable = Kleenean.FALSE)
+    @PropertyField(overlay = Kleenean.TRUE)
     public TipoRastroFun tipoRastroFun;
 
     @ForeignKey(onDelete = OnDeleteAction.NONE, onUpdate = OnUpdateAction.NONE)
@@ -63,7 +65,7 @@ public class Funcion extends meta.entidad.comun.configuracion.basica.Funcion {
     @ColumnField(calculable = Kleenean.TRUE)
 //  @ForeignKey(onDelete = OnDeleteAction.NONE, onUpdate = OnUpdateAction.NONE)
     @ManyToOne(navigability = Navigability.UNIDIRECTIONAL, view = MasterDetailView.NONE)
-    @PropertyField(search = Kleenean.TRUE, table = Kleenean.TRUE, report = Kleenean.TRUE, export = Kleenean.TRUE)
+    @PropertyField(search = Kleenean.TRUE, table = Kleenean.TRUE, report = Kleenean.TRUE, export = Kleenean.TRUE, overlay = Kleenean.TRUE)
     public ClaseRecurso clase;
 
     @ForeignKey(onDelete = OnDeleteAction.NONE, onUpdate = OnUpdateAction.NONE)
@@ -73,6 +75,7 @@ public class Funcion extends meta.entidad.comun.configuracion.basica.Funcion {
 
     @ForeignKey(onDelete = OnDeleteAction.NONE, onUpdate = OnUpdateAction.CASCADE)
     @ManyToOne(navigability = Navigability.UNIDIRECTIONAL, view = MasterDetailView.NONE)
+    @PropertyField(overlay = Kleenean.TRUE)
     public GrupoProceso grupoProceso;
 
     @ColumnField(nullable = Kleenean.TRUE)
@@ -89,6 +92,7 @@ public class Funcion extends meta.entidad.comun.configuracion.basica.Funcion {
 
     @ColumnField(nullable = Kleenean.TRUE)
     @StringField(maxLength = 10)
+    @PropertyField(anchor = "cantidadNotificar", anchorType = AnchorType.INLINE)
     public StringProperty unidadNotificar;
 
     @ColumnField(nullable = Kleenean.TRUE)
@@ -123,6 +127,7 @@ public class Funcion extends meta.entidad.comun.configuracion.basica.Funcion {
 
     @ColumnField(nullable = Kleenean.TRUE)
     @StringField(maxLength = 10)
+    @PropertyField(anchor = "cantidadAdvertirAsignar1", anchorType = AnchorType.INLINE)
     public StringProperty unidadAdvertirAsignar1;
 
     @PropertyField(hidden = Kleenean.TRUE)
@@ -133,6 +138,7 @@ public class Funcion extends meta.entidad.comun.configuracion.basica.Funcion {
 
     @ColumnField(nullable = Kleenean.TRUE)
     @StringField(maxLength = 10)
+    @PropertyField(anchor = "cantidadAdvertirFinalizar1", anchorType = AnchorType.INLINE)
     public StringProperty unidadAdvertirFinalizar1;
 
     @PropertyField(hidden = Kleenean.TRUE)
@@ -143,6 +149,7 @@ public class Funcion extends meta.entidad.comun.configuracion.basica.Funcion {
 
     @ColumnField(nullable = Kleenean.TRUE)
     @StringField(maxLength = 10)
+    @PropertyField(anchor = "cantidadEscalarAsignar1", anchorType = AnchorType.INLINE)
     public StringProperty unidadEscalarAsignar1;
 
     @PropertyField(hidden = Kleenean.TRUE)
@@ -153,6 +160,7 @@ public class Funcion extends meta.entidad.comun.configuracion.basica.Funcion {
 
     @ColumnField(nullable = Kleenean.TRUE)
     @StringField(maxLength = 10)
+    @PropertyField(anchor = "cantidadEscalarFinalizar1", anchorType = AnchorType.INLINE)
     public StringProperty unidadEscalarFinalizar1;
 
     @PropertyField(hidden = Kleenean.TRUE)
@@ -163,6 +171,7 @@ public class Funcion extends meta.entidad.comun.configuracion.basica.Funcion {
 
     @ColumnField(nullable = Kleenean.TRUE)
     @StringField(maxLength = 10)
+    @PropertyField(anchor = "cantidadAdvertirAsignar2", anchorType = AnchorType.INLINE)
     public StringProperty unidadAdvertirAsignar2;
 
     @PropertyField(hidden = Kleenean.TRUE)
@@ -173,6 +182,7 @@ public class Funcion extends meta.entidad.comun.configuracion.basica.Funcion {
 
     @ColumnField(nullable = Kleenean.TRUE)
     @StringField(maxLength = 10)
+    @PropertyField(anchor = "cantidadAdvertirFinalizar2", anchorType = AnchorType.INLINE)
     public StringProperty unidadAdvertirFinalizar2;
 
     @PropertyField(hidden = Kleenean.TRUE)
@@ -183,6 +193,7 @@ public class Funcion extends meta.entidad.comun.configuracion.basica.Funcion {
 
     @ColumnField(nullable = Kleenean.TRUE)
     @StringField(maxLength = 10)
+    @PropertyField(anchor = "cantidadEscalarAsignar2", anchorType = AnchorType.INLINE)
     public StringProperty unidadEscalarAsignar2;
 
     @PropertyField(hidden = Kleenean.TRUE)
@@ -193,6 +204,7 @@ public class Funcion extends meta.entidad.comun.configuracion.basica.Funcion {
 
     @ColumnField(nullable = Kleenean.TRUE)
     @StringField(maxLength = 10)
+    @PropertyField(anchor = "cantidadEscalarFinalizar2", anchorType = AnchorType.INLINE)
     public StringProperty unidadEscalarFinalizar2;
 
     @Override
@@ -301,6 +313,9 @@ public class Funcion extends meta.entidad.comun.configuracion.basica.Funcion {
         rango.setLocalizedLabel(ENGLISH, "range");
         rango.setLocalizedLabel(SPANISH, "rango");
         /**/
+        rango.nombreClaseRecurso.setLocalizedLabel(ENGLISH, "range name");
+        rango.nombreClaseRecurso.setLocalizedLabel(SPANISH, "nombre del rango");
+        /**/
         grupoProceso.setLocalizedLabel(ENGLISH, "process group");
         grupoProceso.setLocalizedLabel(SPANISH, "grupo de procesos");
         grupoProceso.setLocalizedShortLabel(ENGLISH, "group");
@@ -312,14 +327,14 @@ public class Funcion extends meta.entidad.comun.configuracion.basica.Funcion {
         prioridad.setLocalizedLabel(ENGLISH, "priority");
         prioridad.setLocalizedLabel(SPANISH, "prioridad");
         /**/
-        minutosNotificar.setLocalizedLabel(ENGLISH, "next recipient notification minutes");
-        minutosNotificar.setLocalizedLabel(SPANISH, "minutos próxima notificación destinatario");
+        minutosNotificar.setLocalizedLabel(ENGLISH, "recipient notification minutes");
+        minutosNotificar.setLocalizedLabel(SPANISH, "minutos notificación destinatario");
         /**/
-        cantidadNotificar.setLocalizedLabel(ENGLISH, "next recipient notification");
-        cantidadNotificar.setLocalizedLabel(SPANISH, "próxima notificación destinatario");
+        cantidadNotificar.setLocalizedLabel(ENGLISH, "recipient notification");
+        cantidadNotificar.setLocalizedLabel(SPANISH, "notificación destinatario");
         /**/
-        unidadNotificar.setLocalizedLabel(ENGLISH, "next recipient notification unit");
-        unidadNotificar.setLocalizedLabel(SPANISH, "unidad próxima notificación destinatario");
+        unidadNotificar.setLocalizedLabel(ENGLISH, "recipient notification unit");
+        unidadNotificar.setLocalizedLabel(SPANISH, "unidad notificación destinatario");
         /**/
         notificarSupervisor.setLocalizedLabel(ENGLISH, "notify supervisor");
         notificarSupervisor.setLocalizedLabel(SPANISH, "notificar supervisor");
@@ -417,7 +432,88 @@ public class Funcion extends meta.entidad.comun.configuracion.basica.Funcion {
         unidadEscalarFinalizar2.setLocalizedLabel(ENGLISH, "next execution escalation unit");
         unidadEscalarFinalizar2.setLocalizedLabel(SPANISH, "unidad siguiente escalamiento finalización");
         /**/
+        cantidadNotificar.setLocalizedAnchorLabel(ENGLISH, "recipient notification");
+        cantidadNotificar.setLocalizedAnchorLabel(SPANISH, "notificación destinatario");
+        /**/
+        cantidadNotificar.setLocalizedAnchoredLabel(ENGLISH, "quantity");
+        cantidadNotificar.setLocalizedAnchoredLabel(SPANISH, "cantidad");
+        /**/
+        unidadNotificar.setLocalizedAnchoredLabel(ENGLISH, "unit");
+        unidadNotificar.setLocalizedAnchoredLabel(SPANISH, "unidad");
+        /**/
+        cantidadAdvertirAsignar1.setLocalizedAnchorLabel(ENGLISH, "first assignment reminder");
+        cantidadAdvertirAsignar1.setLocalizedAnchorLabel(SPANISH, "primer recordatorio asignación");
+        /**/
+        cantidadAdvertirAsignar1.setLocalizedAnchoredLabel(ENGLISH, "quantity");
+        cantidadAdvertirAsignar1.setLocalizedAnchoredLabel(SPANISH, "cantidad");
+        /**/
+        unidadAdvertirAsignar1.setLocalizedAnchoredLabel(ENGLISH, "unit");
+        unidadAdvertirAsignar1.setLocalizedAnchoredLabel(SPANISH, "unidad");
+        /**/
+        cantidadAdvertirFinalizar1.setLocalizedAnchorLabel(ENGLISH, "first execution reminder");
+        cantidadAdvertirFinalizar1.setLocalizedAnchorLabel(SPANISH, "primer recordatorio finalización");
+        /**/
+        cantidadAdvertirFinalizar1.setLocalizedAnchoredLabel(ENGLISH, "quantity");
+        cantidadAdvertirFinalizar1.setLocalizedAnchoredLabel(SPANISH, "cantidad");
+        /**/
+        unidadAdvertirFinalizar1.setLocalizedAnchoredLabel(ENGLISH, "unit");
+        unidadAdvertirFinalizar1.setLocalizedAnchoredLabel(SPANISH, "unidad");
+        /**/
+        cantidadEscalarAsignar1.setLocalizedAnchorLabel(ENGLISH, "first assignment escalation");
+        cantidadEscalarAsignar1.setLocalizedAnchorLabel(SPANISH, "primer escalamiento asignación");
+        /**/
+        cantidadEscalarAsignar1.setLocalizedAnchoredLabel(ENGLISH, "quantity");
+        cantidadEscalarAsignar1.setLocalizedAnchoredLabel(SPANISH, "cantidad");
+        /**/
+        unidadEscalarAsignar1.setLocalizedAnchoredLabel(ENGLISH, "unit");
+        unidadEscalarAsignar1.setLocalizedAnchoredLabel(SPANISH, "unidad");
+        /**/
+        cantidadEscalarFinalizar1.setLocalizedAnchorLabel(ENGLISH, "first execution escalation");
+        cantidadEscalarFinalizar1.setLocalizedAnchorLabel(SPANISH, "primer escalamiento finalización");
+        /**/
+        cantidadEscalarFinalizar1.setLocalizedAnchoredLabel(ENGLISH, "quantity");
+        cantidadEscalarFinalizar1.setLocalizedAnchoredLabel(SPANISH, "cantidad");
+        /**/
+        unidadEscalarFinalizar1.setLocalizedAnchoredLabel(ENGLISH, "unit");
+        unidadEscalarFinalizar1.setLocalizedAnchoredLabel(SPANISH, "unidad");
+        /**/
+        cantidadAdvertirAsignar2.setLocalizedAnchorLabel(ENGLISH, "next assignment reminder");
+        cantidadAdvertirAsignar2.setLocalizedAnchorLabel(SPANISH, "siguiente recordatorio asignación");
+        /**/
+        cantidadAdvertirAsignar2.setLocalizedAnchoredLabel(ENGLISH, "quantity");
+        cantidadAdvertirAsignar2.setLocalizedAnchoredLabel(SPANISH, "cantidad");
+        /**/
+        unidadAdvertirAsignar2.setLocalizedAnchoredLabel(ENGLISH, "unit");
+        unidadAdvertirAsignar2.setLocalizedAnchoredLabel(SPANISH, "unidad");
+        /**/
+        cantidadAdvertirFinalizar2.setLocalizedAnchorLabel(ENGLISH, "next execution reminder");
+        cantidadAdvertirFinalizar2.setLocalizedAnchorLabel(SPANISH, "siguiente recordatorio finalización");
+        /**/
+        cantidadAdvertirFinalizar2.setLocalizedAnchoredLabel(ENGLISH, "quantity");
+        cantidadAdvertirFinalizar2.setLocalizedAnchoredLabel(SPANISH, "cantidad");
+        /**/
+        unidadAdvertirFinalizar2.setLocalizedAnchoredLabel(ENGLISH, "unit");
+        unidadAdvertirFinalizar2.setLocalizedAnchoredLabel(SPANISH, "unidad");
+        /**/
+        cantidadEscalarAsignar2.setLocalizedAnchorLabel(ENGLISH, "next assignment escalation");
+        cantidadEscalarAsignar2.setLocalizedAnchorLabel(SPANISH, "siguiente escalamiento asignación");
+        /**/
+        cantidadEscalarAsignar2.setLocalizedAnchoredLabel(ENGLISH, "quantity");
+        cantidadEscalarAsignar2.setLocalizedAnchoredLabel(SPANISH, "cantidad");
+        /**/
+        unidadEscalarAsignar2.setLocalizedAnchoredLabel(ENGLISH, "unit");
+        unidadEscalarAsignar2.setLocalizedAnchoredLabel(SPANISH, "unidad");
+        /**/
+        cantidadEscalarFinalizar2.setLocalizedAnchorLabel(ENGLISH, "next execution escalation");
+        cantidadEscalarFinalizar2.setLocalizedAnchorLabel(SPANISH, "siguiente escalamiento finalización");
+        /**/
+        cantidadEscalarFinalizar2.setLocalizedAnchoredLabel(ENGLISH, "quantity");
+        cantidadEscalarFinalizar2.setLocalizedAnchoredLabel(SPANISH, "cantidad");
+        /**/
+        unidadEscalarFinalizar2.setLocalizedAnchoredLabel(ENGLISH, "unit");
+        unidadEscalarFinalizar2.setLocalizedAnchoredLabel(SPANISH, "unidad");
         // </editor-fold>
+        /**/
     }
 
     @Override
@@ -435,7 +531,7 @@ public class Funcion extends meta.entidad.comun.configuracion.basica.Funcion {
         tab110.newTabField(descripcionFuncion, tipoFuncion, tipoRastroFun, dominio, clase, rango, grupoProceso);
         /**/
         tab120.newTabField(nombreJava, nombreSql, clausulaWhere, clausulaOrder);
-        tab120.newTabField(esPublica, esProgramatica, esProtegida, esPersonalizable, esSegmentable, esSupervisable, esConstructor, esHeredada);
+        tab120.newTabField(esPublica, esProgramatica, esProtegida, esPersonalizable, esSegmentable, esSupervisable, esConstructor, esHeredada, esMetodoClase, esMetodoInstancia);
         /**/
         tab130.newTabField(minutos, prioridad);
         tab130.newTabField(asuncionAutomatica);

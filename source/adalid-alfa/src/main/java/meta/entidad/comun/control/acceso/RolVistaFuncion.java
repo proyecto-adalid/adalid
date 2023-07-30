@@ -59,7 +59,7 @@ public class RolVistaFuncion extends AbstractPersistentEntity {
     public LongProperty version;
 
     @ForeignKey(onDelete = OnDeleteAction.CASCADE, onUpdate = OnUpdateAction.CASCADE)
-    @ManyToOne(navigability = Navigability.BIDIRECTIONAL, view = MasterDetailView.TABLE)
+    @ManyToOne(navigability = Navigability.BIDIRECTIONAL, view = MasterDetailView.TABLE, viewSequence = 60)
     @ColumnField(nullable = Kleenean.FALSE)
     @PropertyField(required = Kleenean.TRUE, table = Kleenean.TRUE, report = Kleenean.TRUE)
     public Rol rol;

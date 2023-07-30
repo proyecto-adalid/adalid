@@ -102,7 +102,6 @@ public class ClaseRecurso extends AbstractPersistentEntity {
     @Override
     protected void settleAttributes() {
         super.settleAttributes();
-        setOrderBy(codigoClaseRecurso);
 //      setSchema(ProyectoBase.getEsquemaEntidadesComunes());
         // <editor-fold defaultstate="collapsed" desc="localization of ClaseRecurso's attributes">
         setLocalizedLabel(ENGLISH, "resource class");
@@ -130,6 +129,8 @@ public class ClaseRecurso extends AbstractPersistentEntity {
     @Override
     protected void settleProperties() {
         super.settleProperties();
+        /**/
+        setOrderBy(codigoClaseRecurso);
         /**/
         esClaseRecursoIndependiente.setInitialValue(false);
         esClaseRecursoIndependiente.setDefaultValue(false);

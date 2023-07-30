@@ -77,7 +77,6 @@ public class Aplicacion extends AbstractPersistentEntity {
     @Override
     protected void settleAttributes() {
         super.settleAttributes();
-        setOrderBy(codigoAplicacion);
 //      setSchema(ProyectoBase.getEsquemaEntidadesComunes());
         // <editor-fold defaultstate="collapsed" desc="localization of Aplicacion's attributes">
         setLocalizedLabel(ENGLISH, "application");
@@ -101,6 +100,9 @@ public class Aplicacion extends AbstractPersistentEntity {
     @Override
     protected void settleProperties() {
         super.settleProperties();
+        /**/
+        setOrderBy(codigoAplicacion);
+        /**/
         servidorAplicacion.setInitialValue("localhost");
         servidorAplicacion.setDefaultValue("localhost");
         puertoAplicacion.setInitialValue("8080");

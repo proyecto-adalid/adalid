@@ -29,6 +29,16 @@ public class BarraBotonesAccion2 extends AbstractHelpWriter {
     @Override
     public String getHelpPageText() {
         String str = ""
+            + "The first column of the table corresponds to the checkbox. "
+            + "The checkbox allows you to select rows to then execute an action on each one of them, "
+            + "by clicking any of the following buttons on the page toolbar: Edit, Delete, and Execute. "
+            + "Alternatively, these and other actions can be executed by clicking the buttons in the row toolbar, "
+            + "which appears in the second column. This row toolbar only shows the buttons of the actions available at the moment. "
+            + "The third column displays the row number; "
+            + "this number is not part of the record stored in the database; "
+            + "it is the position of the row within the set of rows that is obtained as a result of the query to the database. "
+            + "When querying, if a detail page exists for the entity, "
+            + "the row number is a hyperlink that opens that page to display the row. "
             + h3("Row toolbar")
             + "Each row of the table includes a toolbar, which can contain the following buttons:"
             + ul(

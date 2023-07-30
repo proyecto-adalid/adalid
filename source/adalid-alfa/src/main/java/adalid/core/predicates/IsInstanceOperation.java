@@ -13,7 +13,6 @@
 package adalid.core.predicates;
 
 import adalid.core.*;
-import adalid.core.enums.*;
 import org.apache.commons.collections.Predicate;
 
 /**
@@ -25,7 +24,7 @@ public class IsInstanceOperation implements Predicate {
     public boolean evaluate(Object object) {
         if (object instanceof Operation) {
             Operation operation = (Operation) object;
-            return OperationKind.INSTANCE.equals(operation.getOperationKind());
+            return operation.isInstanceOperation(); // OperationKind.INSTANCE.equals(operation.getOperationKind()) until 26/07/2023
         }
         return false;
     }

@@ -74,6 +74,17 @@ public class RecursoValor extends AbstractPersistentEntity {
         setLocalizedLabel(SPANISH, "recurso");
         setLocalizedCollectionLabel(ENGLISH, "Resources");
         setLocalizedCollectionLabel(SPANISH, "Recursos");
+        /**/
+        setLocalizedDescription(ENGLISH, "Each instance of " + b("Resources") + " represents a "
+            + "reference to a row of a table in the database."
+            + "");
+        setLocalizedDescription(SPANISH, "Cada instancia de " + b("Recursos") + " representa una "
+            + "referencia a una fila de una tabla en la base de datos."
+            + "");
+        /**/
+        setLocalizedShortDescription(ENGLISH, "reference to a row of a table in the database");
+        setLocalizedShortDescription(SPANISH, "referencia a una fila de una tabla en la base de datos");
+        /**/
         // </editor-fold>
     }
 

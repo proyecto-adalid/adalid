@@ -57,6 +57,8 @@ public class SqlColumn extends SqlArtifact {
     private String _default;
 
     private String _sqlDefaultValue;
+
+    private String _sqlDefaultValueLiteral;
     // </editor-fold>
 
     public SqlColumn(SqlTable table) {
@@ -345,6 +347,20 @@ public class SqlColumn extends SqlArtifact {
      */
     void setSqlDefaultValue(String sqlDefaultValue) {
         _sqlDefaultValue = sqlDefaultValue;
+    }
+
+    /**
+     * @return the sql default value literal
+     */
+    public String getSqlDefaultValueLiteral() {
+        return _sqlDefaultValueLiteral;
+    }
+
+    /**
+     * @param literal the sql default value literal to set
+     */
+    void setSqlDefaultValueLiteral(String literal) {
+        _sqlDefaultValueLiteral = literal;
     }
 
     /**

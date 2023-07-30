@@ -59,22 +59,22 @@ public class Rol extends AbstractPersistentEntity {
     public StringProperty descripcionRol;
 
     @ColumnField(nullable = Kleenean.FALSE)
-    @PropertyField(create = Kleenean.FALSE, update = Kleenean.FALSE, table = Kleenean.TRUE, report = Kleenean.TRUE)
+    @PropertyField(create = Kleenean.FALSE, update = Kleenean.FALSE, table = Kleenean.TRUE, report = Kleenean.TRUE, overlay = Kleenean.TRUE)
     public BooleanProperty esSuperRol;
 
     @ColumnField(nullable = Kleenean.FALSE)
-    @PropertyField(create = Kleenean.FALSE, update = Kleenean.FALSE, table = Kleenean.TRUE, report = Kleenean.TRUE)
+    @PropertyField(create = Kleenean.FALSE, update = Kleenean.FALSE, table = Kleenean.TRUE, report = Kleenean.TRUE, overlay = Kleenean.TRUE)
     public BooleanProperty esRolEspecial;
 
     @InactiveIndicator
     @ColumnField(nullable = Kleenean.FALSE)
-//  @PropertyField(create = Kleenean.FALSE, update = Kleenean.FALSE, table = Kleenean.TRUE, report = Kleenean.TRUE)
+//  @PropertyField(create = Kleenean.FALSE, update = Kleenean.FALSE, table = Kleenean.TRUE, report = Kleenean.TRUE, overlay = Kleenean.TRUE)
     @PropertyField(hidden = Kleenean.TRUE)
     public BooleanProperty esRolInactivo;
 
     @ForeignKey(onDelete = OnDeleteAction.NONE, onUpdate = OnUpdateAction.NONE)
     @ManyToOne(navigability = Navigability.UNIDIRECTIONAL, view = MasterDetailView.NONE)
-    @PropertyField(create = Kleenean.FALSE, update = Kleenean.FALSE, table = Kleenean.TRUE, report = Kleenean.TRUE)
+    @PropertyField(create = Kleenean.FALSE, update = Kleenean.FALSE, table = Kleenean.TRUE, report = Kleenean.TRUE, overlay = Kleenean.TRUE)
     public TipoRol tipoRol;
 
     @SegmentProperty
@@ -87,7 +87,6 @@ public class Rol extends AbstractPersistentEntity {
     @Override
     protected void settleAttributes() {
         super.settleAttributes();
-//      setOrderBy(codigoRol);
 //      setSchema(ProyectoBase.getEsquemaEntidadesComunes());
         // <editor-fold defaultstate="collapsed" desc="localization of Rol's attributes">
         setLocalizedLabel(ENGLISH, "role");
@@ -111,6 +110,8 @@ public class Rol extends AbstractPersistentEntity {
     @Override
     protected void settleProperties() {
         super.settleProperties();
+        /*
+        setOrderBy(codigoRol);
         /**/
         esSuperRol.setInitialValue(false);
         esSuperRol.setDefaultValue(false);
@@ -381,7 +382,7 @@ public class Rol extends AbstractPersistentEntity {
 
     // <editor-fold defaultstate="collapsed" desc="Operations">
     @ProcessOperationClass
-    @ConstructionOperationClass(type = Rol.class)
+    @ConstructionOperationClass(type = Rol.class, onsuccess = OnConstructionOperationSuccess.DISPLAY_NEW_INSTANCE)
     public class Copiar extends ProcessOperation {
 
         @Override

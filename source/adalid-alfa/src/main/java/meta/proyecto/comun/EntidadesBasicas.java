@@ -13,8 +13,6 @@
 package meta.proyecto.comun;
 
 import adalid.core.*;
-import adalid.core.annotations.*;
-import adalid.core.enums.*;
 import meta.entidad.comun.auditoria.ArchivoAdjunto;
 import meta.entidad.comun.auditoria.RastroFuncion;
 import meta.entidad.comun.auditoria.RastroFuncionPar;
@@ -96,7 +94,6 @@ import meta.entidad.comun.operacion.basica.VistaFuncionCol;
 /**
  * @author Jorge Campins
  */
-@ProjectModuleDocGen(classDiagram = Kleenean.FALSE)
 public class EntidadesBasicas extends Project {
 
     @Override
