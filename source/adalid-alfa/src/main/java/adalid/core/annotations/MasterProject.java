@@ -24,7 +24,7 @@ import java.lang.annotation.Target;
  * @author Jorge Campins
  */
 @Retention(RetentionPolicy.RUNTIME)
-@Target({ElementType.TYPE, ElementType.FIELD})
+@Target({ElementType.TYPE})
 public @interface MasterProject {
 
     /**

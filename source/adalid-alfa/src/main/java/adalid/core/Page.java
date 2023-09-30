@@ -17,7 +17,6 @@ import adalid.core.enums.*;
 import adalid.core.interfaces.Entity;
 import adalid.core.jee.JavaWebProject;
 import java.util.List;
-import java.util.Set;
 import org.apache.commons.lang.StringUtils;
 
 /**
@@ -118,6 +117,15 @@ public class Page extends Display {
      */
     @Override
     public List<PageField> getFields() {
+        return getFields(false);
+    }
+
+    /**
+     * @param hidden whether hidden fields should be included in the list or not
+     * @return the fields list
+     */
+    @Override
+    public List<PageField> getFields(boolean hidden) {
         return null;
     }
 
@@ -126,14 +134,15 @@ public class Page extends Display {
      */
     @Override
     public List<PageField> getMasterHeadingFields() {
-        return null;
+        return getMasterHeadingFields(false);
     }
 
     /**
-     * @return the list of entities referenced by fields
+     * @param hidden whether hidden fields should be included in the list or not
+     * @return the master heading fields list
      */
     @Override
-    public Set<Entity> getEntitiesReferencedByFields() {
+    public List<PageField> getMasterHeadingFields(boolean hidden) {
         return null;
     }
 

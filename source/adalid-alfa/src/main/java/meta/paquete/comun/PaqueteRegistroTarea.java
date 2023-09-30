@@ -41,26 +41,14 @@ public class PaqueteRegistroTarea extends PaqueteRegistroBase {
         // </editor-fold>
     }
 
-    // <editor-fold defaultstate="collapsed" desc="print">
-    @Override
-    public void print() {
-        super.print();
-        System.out.println(condicionTarea);
-        System.out.println(tareaUsuario);
-        System.out.println(tareaUsuarioCorreo);
-        System.out.println(tareaVirtual);
-        System.out.println(transicionTareaUsuario);
-    }
-    // </editor-fold>
+    protected CondicionTarea condicionTarea;
 
-    CondicionTarea condicionTarea;
+    protected TareaUsuario tareaUsuario;
 
-    TareaUsuario tareaUsuario;
+    protected TareaUsuarioCorreo tareaUsuarioCorreo;
 
-    TareaUsuarioCorreo tareaUsuarioCorreo;
+    protected TareaVirtual tareaVirtual;
 
-    TareaVirtual tareaVirtual;
-
-    TransicionTareaUsuario transicionTareaUsuario;
+    protected TransicionTareaUsuario transicionTareaUsuario;
 
 }

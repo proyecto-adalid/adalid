@@ -16,7 +16,7 @@ import adalid.jee2.constants.*;
 /**
  * @author ADALID meta-jee2-archetype
  */
-@MasterProject(alias = Maestro102.ALIAS) //, helpFile = Maestro102.ALIAS, helpFileAutoName = HelpFileAutoName.ENTITY, helpFileAutoType = "xhtml")
+@MasterProject(acronym = Maestro.ACRONYM, alias = Maestro102.ALIAS, helpFile = Maestro102.ALIAS)
 public class Maestro102 extends Maestro {
 
     public static final String ALIAS = "${artifactId.toLowerCase().replaceAll('^\Qmeta\E[\_\-\.]+', '').replaceAll('[\_\-\.]+\Qmeta\E$', '').replaceAll('[^a-z0-9]', '')}ap102";
@@ -57,6 +57,7 @@ public class Maestro102 extends Maestro {
 //      setDefaultPropertyFieldSerializableIUID(true);
 //      setDefaultStringFieldMaxLength(2000);
 //      setDefaultStringIndexMaxLength(1596);
+//      setDefaultInlineHelpType(InlineHelpType.DESCRIPTION);
     }
 
     @Override
@@ -88,10 +89,11 @@ public class Maestro102 extends Maestro {
 //      putEnvironmentVariable(POSTGRESQL_DRIVER_VERSION, "42.5.1");
 //
 //      putEnvironmentVariable(VERSION_POSTGRESQL, "15");
-//      putEnvironmentVariable(VERSION_WILDFLY, "26.1.2.Final");
-//      putEnvironmentVariable(VERSION_JAVA, "11.0.16.1");
+//      putEnvironmentVariable(VERSION_WILDFLY, "26.1.3.Final");
+//      putEnvironmentVariable(VERSION_JAVA, "11");
+//      putEnvironmentVariable(PLATAFORMA_JAVA, "javax");
 //      putEnvironmentVariable(VERSION_PRIMEFACES, "12.0.0");
-//      putEnvironmentVariable(VERSION_PRIMEFACES_EXTENSIONS, "12.0.3");
+//      putEnvironmentVariable(VERSION_PRIMEFACES_EXTENSIONS, "12.0.10");
 //      putEnvironmentVariable(VERSION_GOOGLE_GSON, "2.9.1");
 //      putEnvironmentVariable(VERSION_THIRD_PARTY_DIR, "4.0");
 //
@@ -149,6 +151,7 @@ public class Maestro102 extends Maestro {
 //      addAttribute(ProjectAttributeKeys.ALWAYS_OPEN_CONTENT_VIEWER_AS_DIALOG, false);
 //      addAttribute(ProjectAttributeKeys.CHECK_BOXES_ALLOWED, false);
 //      addAttribute(ProjectAttributeKeys.CUSTOM_LAYOUT, true);
+//      addAttribute(ProjectAttributeKeys.DATA_TABLE_SIZE, DataTableSize.SMALL);
 //      addAttribute(ProjectAttributeKeys.DISABLE_BPL_IMPL_GENERATION, true);
 //      addAttribute(ProjectAttributeKeys.DISABLE_PAGE_ASSISTANT_GENERATION, true);
 //      addAttribute(ProjectAttributeKeys.FACELETS_REFRESH_PERIOD, -1);

@@ -276,6 +276,10 @@ public class XB {
                 return x == null || y == null ? null : new BooleanComparisonX(x, ComparisonOp.IS_IN, y);
             }
 
+            public BooleanComparisonX isIn(EntityReference x, String y) {
+                return isIn(x, NativeQuery.of(y));
+            }
+
             public BooleanComparisonX isIn(EntityReference x, NativeQuery y) {
                 return x == null || y == null ? null : new BooleanComparisonX(x, ComparisonOp.IS_IN, y);
             }
@@ -286,6 +290,10 @@ public class XB {
 
             public BooleanComparisonX isNotIn(EntityReference x, Instance... y) {
                 return x == null || y == null ? null : new BooleanComparisonX(x, ComparisonOp.IS_NOT_IN, y);
+            }
+
+            public BooleanComparisonX isNotIn(EntityReference x, String y) {
+                return isNotIn(x, NativeQuery.of(y));
             }
 
             public BooleanComparisonX isNotIn(EntityReference x, NativeQuery y) {
@@ -300,6 +308,10 @@ public class XB {
                 return x == null || y == null ? null : new BooleanComparisonX(x, ComparisonOp.IS_NULL_OR_IN, y);
             }
 
+            public BooleanComparisonX isNullOrIn(EntityReference x, String y) {
+                return isNullOrIn(x, NativeQuery.of(y));
+            }
+
             public BooleanComparisonX isNullOrIn(EntityReference x, NativeQuery y) {
                 return x == null || y == null ? null : new BooleanComparisonX(x, ComparisonOp.IS_NULL_OR_IN, y);
             }
@@ -310,6 +322,10 @@ public class XB {
 
             public BooleanComparisonX isNullOrNotIn(EntityReference x, Instance... y) {
                 return x == null || y == null ? null : new BooleanComparisonX(x, ComparisonOp.IS_NULL_OR_NOT_IN, y);
+            }
+
+            public BooleanComparisonX isNullOrNotIn(EntityReference x, String y) {
+                return isNullOrNotIn(x, NativeQuery.of(y));
             }
 
             public BooleanComparisonX isNullOrNotIn(EntityReference x, NativeQuery y) {

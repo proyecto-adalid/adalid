@@ -45,6 +45,25 @@ public class ProjectAttributeKeys {
     public static final String NUMERIC_BOXES_ALLOWED = "numeric_boxes_allowed";
 
     /**
+     * true si las páginas de presentación tabular de la interfaz gráfica de la aplicación generada deben mostrar los bordes de las celdas de la
+     * tabla; de lo contrario, false. El valor predeterminado es false.
+     */
+    public static final String DATA_TABLE_SHOW_GRID_LINES = "primefaces_data_table_show_grid_lines";
+
+    /**
+     * true si las páginas de presentación tabular de la interfaz gráfica de la aplicación generada deben alternar el color de fondo de las filas de
+     * la tabla para separar visualmente el contenido; de lo contrario, false. El valor predeterminado es false.
+     */
+    public static final String DATA_TABLE_SHOW_STRIPED_ROWS = "primefaces_data_table_striped_rows";
+
+    /**
+     * tamaño de las filas de la tabla en las páginas de presentación tabular de la interfaz gráfica de la aplicación generada. Su valor es uno de los
+     * elementos de la enumeración DataTableSize. Especifique SMALL, MEDIUM o LARGE, para obtener filas pequeñas, medianas o grandes, respectivamente.
+     * El valor predeterminado es MEDIUM.
+     */
+    public static final String DATA_TABLE_SIZE = "primefaces_data_table_size";
+
+    /**
      * true si no desea generar plantillas de implementación de componentes de lógica de procesos de negocio; de lo contrario false. El valor por
      * omisión es false. Las plantillas se almacenan en subdirectorios del directorio srx del módulo EJB del proyecto generado; srx no es está entre
      * los directorios java ese módulo; copie las plantillas que necesite al correspondiente subdirectorio del directorio src del módulo EJB.

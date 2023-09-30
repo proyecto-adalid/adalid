@@ -318,9 +318,9 @@ public class Usuario extends meta.entidad.comun.control.acceso.Usuario {
         menusRegistrados.setLocalizedLabel(ENGLISH, "registered menus");
         menusRegistrados.setLocalizedLabel(SPANISH, "menús registrados");
         menusRegistrados.setLocalizedDescription(ENGLISH, "access only to menus of modules registered in the user's list of modules");
-        menusRegistrados.setLocalizedDescription(SPANISH, "acceso solo a los menús de los módulos registrados en la lista de módulos del usuario");
+        menusRegistrados.setLocalizedDescription(SPANISH, "acceso solo a los menús de los módulos registrados en la colección de módulos del usuario");
         menusRegistrados.setLocalizedTooltip(ENGLISH, "access only to menus of modules registered in the user's list of modules");
-        menusRegistrados.setLocalizedTooltip(SPANISH, "acceso solo a los menús de los módulos registrados en la lista de módulos del usuario");
+        menusRegistrados.setLocalizedTooltip(SPANISH, "acceso solo a los menús de los módulos registrados en la colección de módulos del usuario");
         /**/
         menusRestringidos.setLocalizedLabel(ENGLISH, "restricted menus");
         menusRestringidos.setLocalizedLabel(SPANISH, "menús restringidos");
@@ -440,7 +440,7 @@ public class Usuario extends meta.entidad.comun.control.acceso.Usuario {
         /**/
         modulos_count.setLocalizedMinimumValueTag(ENGLISH, "the user's module list must contain at least one module "
             + "if the user has access only to the menus of the registered modules");
-        modulos_count.setLocalizedMinimumValueTag(SPANISH, "la lista de módulos del usuario debe contener al menos un módulo "
+        modulos_count.setLocalizedMinimumValueTag(SPANISH, "la colección de módulos del usuario debe contener al menos un módulo "
             + "si el usuario tiene acceso solo a los menús de los módulos registrados");
         /**/
         roles.setLocalizedLabel(ENGLISH, "user roles");
@@ -493,13 +493,13 @@ public class Usuario extends meta.entidad.comun.control.acceso.Usuario {
         step40.setLocalizedShortLabel(ENGLISH, "restrictions");
         step40.setLocalizedShortLabel(SPANISH, "restricciones");
         /**/
-        step50.setLocalizedLabel(ENGLISH, "User Modules");
-        step50.setLocalizedLabel(SPANISH, "Módulos del Usuario");
+        step50.setLocalizedLabel(ENGLISH, "User Module List");
+        step50.setLocalizedLabel(SPANISH, "Colección de Módulos del Usuario");
         step50.setLocalizedShortLabel(ENGLISH, "modules");
         step50.setLocalizedShortLabel(SPANISH, "módulos");
         /**/
-        step60.setLocalizedLabel(ENGLISH, "User Roles");
-        step60.setLocalizedLabel(SPANISH, "Roles del Usuario");
+        step60.setLocalizedLabel(ENGLISH, "User Role List");
+        step60.setLocalizedLabel(SPANISH, "Colección de Roles del Usuario");
         step60.setLocalizedShortLabel(ENGLISH, "roles");
         step60.setLocalizedShortLabel(SPANISH, "roles");
         /**/
@@ -1040,15 +1040,15 @@ public class Usuario extends meta.entidad.comun.control.acceso.Usuario {
             codigo.setLocalizedLabel(SPANISH, "código");
             codigo.setLocalizedDescription(ENGLISH, "Code of the new user produced when copying; "
                 + "it is a required field and has no default value");
-            codigo.setLocalizedDescription(SPANISH, "Código del nuevo rol que produce la copia; "
+            codigo.setLocalizedDescription(SPANISH, "Código del nuevo usuario que produce la copia; "
                 + "es un dato obligatorio y no tiene valor por omisión");
             /**/
             nombre.setLocalizedLabel(ENGLISH, "name");
             nombre.setLocalizedLabel(SPANISH, "nombre");
             nombre.setLocalizedDescription(ENGLISH, "Name of the new user produced when copying; "
                 + "it is an optional field; by default, the name of the original user is used");
-            nombre.setLocalizedDescription(SPANISH, "Nombre del nuevo rol que produce la copia; "
-                + "es un dato opcional; por omisión se utiliza el nombre del rol original");
+            nombre.setLocalizedDescription(SPANISH, "Nombre del nuevo usuario que produce la copia; "
+                + "es un dato opcional; por omisión se utiliza el nombre del usuario original");
             /**/
             // </editor-fold>
         }

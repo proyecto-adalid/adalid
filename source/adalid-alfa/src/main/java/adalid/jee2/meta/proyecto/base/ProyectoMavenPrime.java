@@ -40,11 +40,19 @@ public abstract class ProyectoMavenPrime extends ProyectoMaven {
 
     protected static final String PRIMEFACES_EXTENSIONS_VERSION = "primefaces.extensions.version";
 
+    protected static final String PRIMEFACES_EXTENSIONS_RESOURCES_CKEDITOR_VERSION = "primefaces.extensions.resources.ckeditor.version";
+
+    protected static final String PRIMEFACES_EXTENSIONS_RESOURCES_MONACOEDITOR_VERSION = "primefaces.extensions.resources.monacoeditor.version";
+
     protected static final String GOOGLE_GSON_VERSION = "google.gson.version";
 
     protected static final String VERSION_PRIMEFACES = PRIMEFACES_VERSION;
 
     protected static final String VERSION_PRIMEFACES_EXTENSIONS = PRIMEFACES_EXTENSIONS_VERSION;
+
+    protected static final String VERSION_PRIMEFACES_EXTENSIONS_RESOURCES_CKEDITOR = PRIMEFACES_EXTENSIONS_RESOURCES_CKEDITOR_VERSION;
+
+    protected static final String VERSION_PRIMEFACES_EXTENSIONS_RESOURCES_MONACOEDITOR = PRIMEFACES_EXTENSIONS_RESOURCES_MONACOEDITOR_VERSION;
 
     protected static final String VERSION_GOOGLE_GSON = GOOGLE_GSON_VERSION;
 

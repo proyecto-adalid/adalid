@@ -67,122 +67,78 @@ public class ConfiguracionBasica extends Project {
         // </editor-fold>
     }
 
-    // <editor-fold defaultstate="collapsed" desc="print">
-    @Override
-    public void print() {
-        super.print();
-        System.out.println(AccionArchivoCargado);
-        System.out.println(Aplicacion);
-        System.out.println(AtributoAplicacion);
-        System.out.println(ClaseJava);
-        System.out.println(ClaseRecurso);
-        System.out.println(CondicionEjeFun);
-        System.out.println(Dominio);
-        System.out.println(DominioParametro);
-        System.out.println(Funcion);
-        System.out.println(FuncionParametro);
-        System.out.println(GrupoProceso);
-        System.out.println(MensajeAplicacion);
-        System.out.println(ModuloAplicacion);
-//      System.out.println(NivelOpcionMenu);
-//      System.out.println(OpcionMenu);
-        System.out.println(Pagina);
-        System.out.println(PaginaInicio);
-        System.out.println(Parametro);
-        System.out.println(RangoAgregacion);
-        System.out.println(RangoComparacion);
-        System.out.println(SeveridadMensaje);
-        System.out.println(SubtipoGrafico);
-        System.out.println(TipoClaseRecurso);
-        System.out.println(TipoComparacion);
-        System.out.println(TipoDatoPar);
-        System.out.println(TipoDominio);
-        System.out.println(TipoFuncion);
-        System.out.println(TipoGrafico);
-        System.out.println(TipoInforme);
-        System.out.println(TipoNodo);
-        System.out.println(TipoPagina);
-        System.out.println(TipoParametro);
-        System.out.println(TipoParametroDom);
-        System.out.println(TipoRastroFun);
-        System.out.println(TipoRecurso);
-        System.out.println(TipoValor);
-        System.out.println(VersionAdalid);
-    }
-    // </editor-fold>
+    protected AccionArchivoCargado AccionArchivoCargado;
 
-    AccionArchivoCargado AccionArchivoCargado;
+    protected Aplicacion Aplicacion;
 
-    Aplicacion Aplicacion;
+    protected AtributoAplicacion AtributoAplicacion;
 
-    AtributoAplicacion AtributoAplicacion;
+    protected ClaseJava ClaseJava;
 
-    ClaseJava ClaseJava;
+    protected ClaseRecurso ClaseRecurso;
 
-    ClaseRecurso ClaseRecurso;
+    protected CondicionEjeFun CondicionEjeFun;
 
-    CondicionEjeFun CondicionEjeFun;
+    protected Dominio Dominio;
 
-    Dominio Dominio;
+    protected DominioParametro DominioParametro;
 
-    DominioParametro DominioParametro;
+    protected Funcion Funcion;
 
-    Funcion Funcion;
+    protected FuncionParametro FuncionParametro;
 
-    FuncionParametro FuncionParametro;
+    protected GrupoProceso GrupoProceso;
 
-    GrupoProceso GrupoProceso;
+    protected MensajeAplicacion MensajeAplicacion;
 
-    MensajeAplicacion MensajeAplicacion;
+    protected ModuloAplicacion ModuloAplicacion;
 
-    ModuloAplicacion ModuloAplicacion;
-
-//  NivelOpcionMenu NivelOpcionMenu;
+//  protected NivelOpcionMenu NivelOpcionMenu;
 //
-//  OpcionMenu OpcionMenu;
+//  protected OpcionMenu OpcionMenu;
 //
-    Pagina Pagina;
+    protected Pagina Pagina;
 
-    PaginaInicio PaginaInicio;
+    protected PaginaInicio PaginaInicio;
 
-    Parametro Parametro;
+    protected Parametro Parametro;
 
-    RangoAgregacion RangoAgregacion;
+    protected RangoAgregacion RangoAgregacion;
 
-    RangoComparacion RangoComparacion;
+    protected RangoComparacion RangoComparacion;
 
-    SeveridadMensaje SeveridadMensaje;
+    protected SeveridadMensaje SeveridadMensaje;
 
-    SubtipoGrafico SubtipoGrafico;
+    protected SubtipoGrafico SubtipoGrafico;
 
-    TipoClaseRecurso TipoClaseRecurso;
+    protected TipoClaseRecurso TipoClaseRecurso;
 
-    TipoComparacion TipoComparacion;
+    protected TipoComparacion TipoComparacion;
 
-    TipoDatoPar TipoDatoPar;
+    protected TipoDatoPar TipoDatoPar;
 
-    TipoDominio TipoDominio;
+    protected TipoDominio TipoDominio;
 
-    TipoFuncion TipoFuncion;
+    protected TipoFuncion TipoFuncion;
 
-    TipoGrafico TipoGrafico;
+    protected TipoGrafico TipoGrafico;
 
-    TipoInforme TipoInforme;
+    protected TipoInforme TipoInforme;
 
-    TipoNodo TipoNodo;
+    protected TipoNodo TipoNodo;
 
-    TipoPagina TipoPagina;
+    protected TipoPagina TipoPagina;
 
-    TipoParametro TipoParametro;
+    protected TipoParametro TipoParametro;
 
-    TipoParametroDom TipoParametroDom;
+    protected TipoParametroDom TipoParametroDom;
 
-    TipoRastroFun TipoRastroFun;
+    protected TipoRastroFun TipoRastroFun;
 
-    TipoRecurso TipoRecurso;
+    protected TipoRecurso TipoRecurso;
 
-    TipoValor TipoValor;
+    protected TipoValor TipoValor;
 
-    VersionAdalid VersionAdalid;
+    protected VersionAdalid VersionAdalid;
 
 }

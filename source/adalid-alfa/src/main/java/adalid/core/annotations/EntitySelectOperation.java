@@ -59,8 +59,15 @@ public @interface EntitySelectOperation {
     /**
      * onload especifica la acción que las vistas de consulta y registro deben ejecutar al comenzar. Su valor es uno de los elementos de la
      * enumeración SelectOnloadOption. Seleccione EXECUTE para que las vistas ejecuten la operación select al comenzar; seleccione PROMPT para que las
-     * vistas soliciten criterios de búsqueda al comenzar. Alternativamente, omita el elemento o seleccione DEFAULT para utilizar el valor
-     * predeterminado del atributo. El valor predeterminado del atributo es PROMPT.
+     * vistas soliciten criterios de búsqueda al comenzar; seleccione NO_ACTION para no ejecutar ninguna de las acciones anteriores (la opción
+     * NO_ACTION suele utilizarse solo cuando se especifica algún snippet para suministrar criterios de búsqueda para la consulta como, por ejemplo,
+     * QUICK_FILTER_SNIPPET, en los elementos readingViewAboveTableSnippet y/o writingViewAboveTableSnippet de la anotación EntityTableView de la
+     * entidad). Alternativamente, omita el elemento o seleccione DEFAULT para utilizar el valor predeterminado del atributo. Si la entidad representa
+     * una enumeración, entonces el valor predeterminado del atributo es EXECUTE; de lo contrario, si la entidad tiene una clave de negocio (vea la
+     * anotación BusinessKey) y/o una propiedad nombre (vea la anotación NameProperty), y se especificó un snippet predeterminado para suministrar
+     * criterios de búsqueda en las vistas de las entidades del proyecto maestro (vea el método setProjectFilterSnippetPath), y no se especificó un
+     * snippet diferente en los elementos readingViewAboveTableSnippet y/o writingViewAboveTableSnippet de la anotación EntityTableView de la entidad,
+     * el valor predeterminado del atributo es NO_ACTION; en los demás casos, el valor predeterminado del atributo es PROMPT.
      *
      * @return onload
      */

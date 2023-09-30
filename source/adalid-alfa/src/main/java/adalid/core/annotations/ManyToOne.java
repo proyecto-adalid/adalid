@@ -83,6 +83,42 @@ public @interface ManyToOne {
     MasterDetailView view() default MasterDetailView.UNSPECIFIED;
 
     /**
+     * aboveHeadingSnippet especifica la ruta y el nombre del snippet ubicado encima del encabezado del Maestro.
+     *
+     * Si utiliza la plataforma jee2, los snippets se deben agregar en el subdirectorio resources/snippets/custom-made del directorio src/main/webapp
+     * del módulo Web, o en algún subdirectorio de resources/snippets/custom-made; si el valor de snippet no comienza por
+     * <b>/resources/snippets/custom-made/</b>, ese prefijo se le agrega automáticamente. Además, los snippets deben ser archivos xhtml; si el valor
+     * de snippet no termina con <b>.xhtml</b>, ese sufijo se le agrega automáticamente.
+     *
+     * @return aboveHeadingSnippet
+     */
+    String aboveMasterHeadingSnippet() default "";
+
+    /**
+     * belowHeadingSnippet especifica la ruta y el nombre del snippet ubicado debajo del encabezado del Maestro.
+     *
+     * Si utiliza la plataforma jee2, los snippets se deben agregar en el subdirectorio resources/snippets/custom-made del directorio src/main/webapp
+     * del módulo Web, o en algún subdirectorio de resources/snippets/custom-made; si el valor de snippet no comienza por
+     * <b>/resources/snippets/custom-made/</b>, ese prefijo se le agrega automáticamente. Además, los snippets deben ser archivos xhtml; si el valor
+     * de snippet no termina con <b>.xhtml</b>, ese sufijo se le agrega automáticamente.
+     *
+     * @return belowHeadingSnippet
+     */
+    String belowMasterHeadingSnippet() default "";
+
+    /**
+     * insideHeadingSnippet especifica la ruta y el nombre del snippet en ubicado dentro del encabezado del Maestro.
+     *
+     * Si utiliza la plataforma jee2, los snippets se deben agregar en el subdirectorio resources/snippets/custom-made del directorio src/main/webapp
+     * del módulo Web, o en algún subdirectorio de resources/snippets/custom-made; si el valor de snippet no comienza por
+     * <b>/resources/snippets/custom-made/</b>, ese prefijo se le agrega automáticamente. Además, los snippets deben ser archivos xhtml; si el valor
+     * de snippet no termina con <b>.xhtml</b>, ese sufijo se le agrega automáticamente.
+     *
+     * @return insideHeadingSnippet
+     */
+    String insideMasterHeadingSnippet() default "";
+
+    /**
      * menu especifica si las vistas (páginas) Maestro/Detalle generadas deben ser accesibles desde el menú de contexto de la entidad. Su valor es uno
      * de los elementos de la enumeración Kleenean. Seleccione TRUE si las vistas deben ser accesibles; en caso contrario, seleccione FALSE.
      * Alternativamente, omita el elemento o seleccione UNSPECIFIED para utilizar el valor predeterminado del atributo. El valor predeterminado del

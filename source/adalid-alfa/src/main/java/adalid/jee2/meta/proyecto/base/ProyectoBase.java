@@ -45,7 +45,9 @@ import meta.entidad.comun.configuracion.basica.ModuloAplicacion;
 import meta.entidad.comun.configuracion.basica.Pagina;
 import meta.entidad.comun.configuracion.basica.Parametro;
 import meta.entidad.comun.operacion.basica.CondicionTarea;
+import meta.proyecto.comun.ConfiguracionBasica;
 import meta.proyecto.comun.EntidadesBasicas;
+import meta.proyecto.comun.OperacionBasica;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
@@ -525,6 +527,14 @@ public class ProyectoBase extends Project implements SubjectProject, SpecialEnti
     @ProjectModule(menu = Kleenean.FALSE, role = Kleenean.FALSE)
     @ProjectModuleDocGen(classDiagram = Kleenean.FALSE)
     EntidadesBasicas entidadesBasicas;
+
+    @ProjectModule(menu = Kleenean.FALSE, role = Kleenean.FALSE)
+    @ProjectModuleDocGen(classDiagram = Kleenean.FALSE)
+    ConfiguracionBasica configuracionBasica;
+
+    @ProjectModule(menu = Kleenean.FALSE, role = Kleenean.FALSE)
+    @ProjectModuleDocGen(classDiagram = Kleenean.FALSE)
+    OperacionBasica operacionBasica;
 
     // <editor-fold defaultstate="collapsed" desc="private fields">
     private boolean _dictionaryEnabled;
@@ -1067,6 +1077,8 @@ public class ProyectoBase extends Project implements SubjectProject, SpecialEnti
     @Override
     public void print() {
         System.out.println(entidadesBasicas);
+        System.out.println(configuracionBasica);
+        System.out.println(operacionBasica);
     }
     // </editor-fold>
 

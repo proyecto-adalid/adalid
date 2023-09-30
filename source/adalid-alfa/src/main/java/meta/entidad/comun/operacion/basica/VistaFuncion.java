@@ -19,7 +19,6 @@ import adalid.core.interfaces.*;
 import adalid.core.properties.*;
 import adalid.jee2.constants.*;
 import java.lang.reflect.Field;
-import meta.entidad.comun.configuracion.basica.FormatoPaginaInforme;
 import meta.entidad.comun.configuracion.basica.ext.Funcion;
 import meta.entidad.comun.control.acceso.Usuario;
 

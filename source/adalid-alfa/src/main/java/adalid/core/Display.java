@@ -232,15 +232,21 @@ public abstract class Display extends AbstractArtifact implements Comparable<Dis
 
     private String helpFileAutoType() {
         if (_entity != null) {
-            HelpFileAutoName helpFileAutoName = _entity.getHelpFileAutoName();
-            if (helpFileAutoName != null && !helpFileAutoName.equals(HelpFileAutoName.NONE)) {
-                return _entity.getHelpFileAutoType();
+            String helpFileAutoType = _entity.getHelpFileAutoType();
+            if (StringUtils.isNotBlank(helpFileAutoType)) {
+                HelpFileAutoName helpFileAutoName = _entity.getHelpFileAutoName();
+                if (helpFileAutoName != null && !helpFileAutoName.equals(HelpFileAutoName.NONE)) {
+                    return helpFileAutoType;
+                }
             }
         }
         if (_module != null) {
-            HelpFileAutoName helpFileAutoName = _module.getHelpFileAutoName();
-            if (helpFileAutoName != null && !helpFileAutoName.equals(HelpFileAutoName.NONE)) {
-                return _module.getHelpFileAutoType();
+            String helpFileAutoType = _module.getHelpFileAutoType();
+            if (StringUtils.isNotBlank(helpFileAutoType)) {
+                HelpFileAutoName helpFileAutoName = _module.getHelpFileAutoName();
+                if (helpFileAutoName != null && !helpFileAutoName.equals(HelpFileAutoName.NONE)) {
+                    return helpFileAutoType;
+                }
             }
         }
         return TLC.getProject().getHelpFileAutoType();
@@ -537,14 +543,36 @@ public abstract class Display extends AbstractArtifact implements Comparable<Dis
     public abstract List<? extends DisplayField> getFields();
 
     /**
+     * @param hidden whether hidden fields should be included in the list or not
+     * @return the fields list
+     */
+    public abstract List<? extends DisplayField> getFields(boolean hidden);
+
+    /**
      * @return the master heading fields list
      */
     public abstract List<? extends DisplayField> getMasterHeadingFields();
 
     /**
+     * @param hidden whether hidden fields should be included in the list or not
+     * @return the master heading fields list
+     */
+    public abstract List<? extends DisplayField> getMasterHeadingFields(boolean hidden);
+
+    /**
      * @return the list of entities referenced by fields
      */
-    public abstract Set<Entity> getEntitiesReferencedByFields();
+    public Set<Entity> getEntitiesReferencedByFields() {
+        return getEntitiesReferencedByFields(false);
+    }
+
+    /**
+     * @param hidden whether hidden fields should be included in the set or not
+     * @return the list of entities referenced by fields
+     */
+    public Set<Entity> getEntitiesReferencedByFields(boolean hidden) {
+        return null;
+    }
 
     private final ByPropertyDisplaySortKey byPropertyDisplaySortKey = new ByPropertyDisplaySortKey();
 

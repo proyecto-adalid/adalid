@@ -87,6 +87,10 @@ public class Utility {
     }
 
     public static <T extends Utility> T instanceOf(Class<T> clazz) throws Exception {
+        return newInstance(clazz);
+    }
+
+    public static <T> T newInstance(Class<T> clazz) throws Exception {
         return clazz.getDeclaredConstructor().newInstance();
     }
 

@@ -698,7 +698,7 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
     /**
      *
      */
-    private String _helpFileAutoType = Constants.DEFAULT_HELP_FILE_TYPE;
+    private String _helpFileAutoType = ""; // Constants.DEFAULT_HELP_FILE_TYPE; until 10/09/2023
 
     /**
      *
@@ -1153,6 +1153,31 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
     /**
      *
      */
+    private String _consoleViewAboveProcessingPanelSnippetFileName = "";
+
+    /**
+     *
+     */
+    private String _consoleViewBelowProcessingPanelSnippetFileName = "";
+
+    /**
+     *
+     */
+    private String _aboveMasterHeadingSnippetFileName = "";
+
+    /**
+     *
+     */
+    private String _belowMasterHeadingSnippetFileName = "";
+
+    /**
+     *
+     */
+    private String _insideMasterHeadingSnippetFileName = "";
+
+    /**
+     *
+     */
     private boolean _warningsEnabled = true;
 
     /**
@@ -1309,6 +1334,11 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
      * annotated with EntityReferenceSearch
      */
     private int _radioColumns;
+
+    /**
+     * annotated with EntityReferenceSearch
+     */
+    private boolean _descendingOrder;
 
     /**
      * annotated with EntityReferenceSearch
@@ -1545,6 +1575,11 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
     private boolean _annotatedWithEntityConsoleView;
 
     /**
+     * annotated with EntityMasterView
+     */
+    private boolean _annotatedWithEntityMasterView;
+
+    /**
      * annotated with EntityWarnings
      */
     private boolean _annotatedWithEntityWarnings;
@@ -1563,6 +1598,11 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
      * annotated with EntityDocGen
      */
     private boolean _annotatedWithEntityDocGen;
+
+    /**
+     * annotated with EntityReferenceConversionValidation
+     */
+    private boolean _annotatedWithEntityReferenceConversionValidation;
 
     /**
      * annotated with EntityReferenceDisplay
@@ -3039,14 +3079,17 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
     }
 
     protected void setHelpFileAutoType(String helpFileAutoType) {
+        /* until 10/09/2023
         _helpFileAutoType = StringUtils.defaultIfBlank(helpFileAutoType, Constants.DEFAULT_HELP_FILE_TYPE);
+        /**/
+        _helpFileAutoType = StringUtils.trimToEmpty(helpFileAutoType);
     }
 
     private void checkHelpFileAutoType() {
         if (HelpFileAutoName.NONE.equals(_helpFileAutoName) || HelpFileAutoName.META.equals(_helpFileAutoName)) {
             _helpFileAutoType = "";
         } else if (StringUtils.isBlank(_helpFileAutoType)) {
-            _helpFileAutoType = Constants.DEFAULT_HELP_FILE_TYPE;
+            _helpFileAutoType = ""; // Constants.DEFAULT_HELP_FILE_TYPE; until 10/09/2023
         } else if (!ArrayUtils.contains(Project.getHelpFileTypes(), _helpFileAutoType)) {
             logger.error(getName() + " help file auto-type is invalid; valid types are: " + Project.getHelpFileTypesCSV());
             Project.increaseParserErrorCount();
@@ -3122,7 +3165,15 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
     @Override
     public SelectOnloadOption getSelectOnloadOption() {
         return _selectOnloadOption != null && !_selectOnloadOption.equals(SelectOnloadOption.DEFAULT) ? _selectOnloadOption
-            : isEnumerationEntity() ? SelectOnloadOption.EXECUTE : SelectOnloadOption.PROMPT;
+            : isEnumerationEntity() ? SelectOnloadOption.EXECUTE : defaultFilterSnippetPath() == null ? SelectOnloadOption.PROMPT : SelectOnloadOption.NO_ACTION;
+    }
+
+    private String defaultFilterSnippetPath() {
+        JavaWebProject jwp = getJavaWebProject();
+        String path = jwp == null ? null : jwp.getProjectFilterSnippetPath();
+        return path != null && !isEnumerationEntity() && (getBusinessKeyProperty() != null || getNameProperty() != null)
+            && (StringUtils.isBlank(_readingTableViewAboveTableSnippetFileName) || _readingTableViewAboveTableSnippetFileName.equals(path))
+            && (StringUtils.isBlank(_writingTableViewAboveTableSnippetFileName) || _writingTableViewAboveTableSnippetFileName.equals(path)) ? path : null;
     }
 
     /**
@@ -3643,7 +3694,7 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
      */
 //  @Override
     public String getReadingTableViewAboveTableSnippetFileName() {
-        return _readingTableViewAboveTableSnippetFileName;
+        return StringUtils.defaultIfBlank(_readingTableViewAboveTableSnippetFileName, defaultFilterSnippetPath());
     }
 
     protected void setReadingTableViewAboveTableSnippetFileName(String fileName) {
@@ -3743,7 +3794,7 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
      */
 //  @Override
     public String getWritingTableViewAboveTableSnippetFileName() {
-        return _writingTableViewAboveTableSnippetFileName;
+        return StringUtils.defaultIfBlank(_writingTableViewAboveTableSnippetFileName, defaultFilterSnippetPath());
     }
 
     protected void setWritingTableViewAboveTableSnippetFileName(String fileName) {
@@ -4465,6 +4516,106 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
     }
 
     /**
+     * @return the above processing panel snippet file name
+     */
+//  @Override
+    public String getConsoleViewAboveProcessingPanelSnippetFileName() {
+        return _consoleViewAboveProcessingPanelSnippetFileName;
+    }
+
+    protected void setConsoleViewAboveProcessingPanelSnippetFileName(String fileName) {
+        boolean log = depth() == 0;
+        if (StringUtils.isBlank(fileName)) {
+            _consoleViewAboveProcessingPanelSnippetFileName = "";
+        } else if (isValidSnippetFileName(fileName)) {
+            _consoleViewAboveProcessingPanelSnippetFileName = fileName;
+        } else if (log) {
+            logger.error(getName() + " above processing panel snippet is invalid ");
+            Project.increaseParserErrorCount();
+        }
+    }
+
+    /**
+     * @return the below processing panel snippet file name
+     */
+//  @Override
+    public String getConsoleViewBelowProcessingPanelSnippetFileName() {
+        return _consoleViewBelowProcessingPanelSnippetFileName;
+    }
+
+    protected void setConsoleViewBelowProcessingPanelSnippetFileName(String fileName) {
+        boolean log = depth() == 0;
+        if (StringUtils.isBlank(fileName)) {
+            _consoleViewBelowProcessingPanelSnippetFileName = "";
+        } else if (isValidSnippetFileName(fileName)) {
+            _consoleViewBelowProcessingPanelSnippetFileName = fileName;
+        } else if (log) {
+            logger.error(getName() + " below processing panel snippet is invalid ");
+            Project.increaseParserErrorCount();
+        }
+    }
+
+    /**
+     * @return the above master heading snippet file name
+     */
+//  @Override
+    public String getAboveMasterHeadingSnippetFileName() {
+        return _aboveMasterHeadingSnippetFileName;
+    }
+
+    protected void setAboveMasterHeadingSnippetFileName(String fileName) {
+        boolean log = depth() == 0;
+        if (StringUtils.isBlank(fileName)) {
+            _aboveMasterHeadingSnippetFileName = "";
+        } else if (isValidSnippetFileName(fileName)) {
+            _aboveMasterHeadingSnippetFileName = fileName;
+        } else if (log) {
+            logger.error(getName() + " above master heading snippet is invalid ");
+            Project.increaseParserErrorCount();
+        }
+    }
+
+    /**
+     * @return the below master heading snippet file name
+     */
+//  @Override
+    public String getBelowMasterHeadingSnippetFileName() {
+        return _belowMasterHeadingSnippetFileName;
+    }
+
+    protected void setBelowMasterHeadingSnippetFileName(String fileName) {
+        boolean log = depth() == 0;
+        if (StringUtils.isBlank(fileName)) {
+            _belowMasterHeadingSnippetFileName = "";
+        } else if (isValidSnippetFileName(fileName)) {
+            _belowMasterHeadingSnippetFileName = fileName;
+        } else if (log) {
+            logger.error(getName() + " below master heading snippet is invalid ");
+            Project.increaseParserErrorCount();
+        }
+    }
+
+    /**
+     * @return the inside master heading snippet file name
+     */
+//  @Override
+    public String getInsideMasterHeadingSnippetFileName() {
+        return _insideMasterHeadingSnippetFileName;
+    }
+
+    protected void setInsideMasterHeadingSnippetFileName(String fileName) {
+        boolean log = depth() == 0;
+        if (StringUtils.isBlank(fileName)) {
+            _insideMasterHeadingSnippetFileName = "";
+        } else if (isValidSnippetFileName(fileName)) {
+            _insideMasterHeadingSnippetFileName = fileName;
+        } else if (log) {
+            logger.error(getName() + " inside master heading snippet is invalid ");
+            Project.increaseParserErrorCount();
+        }
+    }
+
+    /**
      * @return the custom JSON serializer class name
      */
     public String getJsonSerializerClassName() {
@@ -5004,6 +5155,13 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
      */
     public int getRadioColumns() {
         return _radioColumns;
+    }
+
+    /**
+     * @return the descending order indicator
+     */
+    public boolean isDescendingOrder() {
+        return _descendingOrder;
     }
 
     /**
@@ -6635,7 +6793,7 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
      */
     @Override
     public boolean isMasterDetailViewMenuOptionEnabled() {
-        return _masterDetailViewMenuOptionEnabled.toBoolean(aggregateless());
+        return isMasterDetailViewMenuOptionEnabled(null);
     }
 
     /**
@@ -6644,7 +6802,7 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
      */
     @Override
     public boolean isMasterDetailViewMenuOptionEnabled(Display display) {
-        boolean unspecified = display == null ? aggregateless() : !DisplayMode.WRITING.equals(display.getDisplayMode()) || aggregateless();
+        boolean unspecified = _annotatedWithOneToOne || (display == null ? aggregateless() : !DisplayMode.WRITING.equals(display.getDisplayMode()) || aggregateless());
         return _masterDetailViewMenuOptionEnabled.toBoolean(unspecified);
     }
 
@@ -7219,6 +7377,13 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
     }
 
     /**
+     * @return the EntityMasterView annotation indicator
+     */
+    public boolean isAnnotatedWithEntityMasterView() {
+        return _annotatedWithEntityMasterView;
+    }
+
+    /**
      * @return the EntityWarnings annotation indicator
      */
     public boolean isAnnotatedWithEntityWarnings() {
@@ -7244,6 +7409,13 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
      */
     public boolean isAnnotatedWithEntityDocGen() {
         return _annotatedWithEntityDocGen;
+    }
+
+    /**
+     * @return the EntityReferenceConversionValidation annotation indicator
+     */
+    public boolean isAnnotatedWithEntityReferenceConversionValidation() {
+        return _annotatedWithEntityReferenceConversionValidation;
     }
 
     /**
@@ -9881,6 +10053,7 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
             annotateEntityDetailView(type);
             annotateEntityTreeView(type);
             annotateEntityConsoleView(type);
+            annotateEntityMasterView(type);
             annotateEntityWarnings(type);
             annotateEntityCodeGen(type);
             annotateEntityDocGen(type);
@@ -9927,6 +10100,7 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
         valid.add(EntityExportOperation.class);
         valid.add(EntityInsertOperation.class);
         valid.add(EntityJsonCustomization.class);
+        valid.add(EntityMasterView.class);
         valid.add(EntityReferenceConversionValidation.class);
         valid.add(EntityReferenceDisplay.class);
         valid.add(EntityReferenceSearch.class);
@@ -10470,6 +10644,44 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
                     setConsoleViewWesternToolbarSnippetFileName(fileName);
                 }
                 /**/
+                fileName = annotation.aboveProcessingPanelSnippet();
+                if (StringUtils.isNotBlank(fileName)) {
+                    setConsoleViewAboveProcessingPanelSnippetFileName(fileName);
+                }
+                /**/
+                fileName = annotation.belowProcessingPanelSnippet();
+                if (StringUtils.isNotBlank(fileName)) {
+                    setConsoleViewBelowProcessingPanelSnippetFileName(fileName);
+                }
+                /**/
+            }
+        }
+    }
+
+    private void annotateEntityMasterView(Class<?> type) {
+        Class<?> annotatedClass = XS1.getAnnotatedClass(type, EntityMasterView.class);
+        if (annotatedClass != null) {
+            EntityMasterView annotation = annotatedClass.getAnnotation(EntityMasterView.class);
+            if (annotation != null) {
+                _annotatedWithEntityMasterView = true;
+                /**/
+                String fileName;
+                /**/
+                fileName = annotation.aboveHeadingSnippet();
+                if (StringUtils.isNotBlank(fileName)) {
+                    setAboveMasterHeadingSnippetFileName(fileName);
+                }
+                /**/
+                fileName = annotation.belowHeadingSnippet();
+                if (StringUtils.isNotBlank(fileName)) {
+                    setBelowMasterHeadingSnippetFileName(fileName);
+                }
+                /**/
+                fileName = annotation.insideHeadingSnippet();
+                if (StringUtils.isNotBlank(fileName)) {
+                    setInsideMasterHeadingSnippetFileName(fileName);
+                }
+                /**/
             }
         }
     }
@@ -10572,13 +10784,15 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
             if (annotation != null) {
                 _customConverterEntityReference = annotation.customConverter().toBoolean(_customConverterEntityReference);
                 _restrictedAccessEntityReference = annotation.restrictedAccess().toBoolean(_restrictedAccessEntityReference);
+                _annotatedWithEntityReferenceConversionValidation = true;
             }
         }
     }
 
     private void annotateEntityReferenceConversionValidation(Field field) {
-        EntityReferenceConversionValidation annotation = field.getAnnotation(EntityReferenceConversionValidation.class);
-        if (annotation != null) {
+        _annotatedWithEntityReferenceConversionValidation = field.isAnnotationPresent(EntityReferenceConversionValidation.class);
+        if (_annotatedWithEntityReferenceConversionValidation) {
+            EntityReferenceConversionValidation annotation = field.getAnnotation(EntityReferenceConversionValidation.class);
             _customConverterEntityReference = annotation.customConverter().toBoolean(_customConverterEntityReference);
             _restrictedAccessEntityReference = annotation.restrictedAccess().toBoolean(_restrictedAccessEntityReference);
         }
@@ -10617,6 +10831,7 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
                 _searchType = annotation.searchType();
                 _listStyle = annotation.listStyle();
                 _radioColumns = Math.min(10, Math.max(0, annotation.radioColumns()));
+                _descendingOrder = annotation.descending();
                 _searchDisplayFormat = annotation.displayFormat();
                 _searchDisplayMode = annotation.displayMode();
                 _annotatedWithEntityReferenceSearch = true;
@@ -10631,6 +10846,7 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
             _searchType = annotation.searchType();
             _listStyle = annotation.listStyle();
             _radioColumns = Math.min(10, Math.max(0, annotation.radioColumns()));
+            _descendingOrder = annotation.descending();
             _searchDisplayFormat = annotation.displayFormat();
             _searchDisplayMode = annotation.displayMode();
         }
@@ -10672,6 +10888,7 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
             _navigability = annotation.navigability();
             _oneToOneDetailView = annotation.detailView().toBoolean(false);
             _masterDetailViewSequence = Math.max(_masterDetailViewSequence, annotation.viewSequence());
+            _masterDetailViewMenuOptionEnabled = annotation.menu();
         }
     }
 
@@ -10687,6 +10904,11 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
             _masterDetailViewSequence = Math.max(_masterDetailViewSequence, annotation.viewSequence());
             _masterDetailViewMenuOptionEnabled = annotation.menu();
             _quickAddingFilter = annotation.quickAdding();
+            /**/
+            _aboveMasterHeadingSnippetFileName = annotation.aboveMasterHeadingSnippet();
+            _belowMasterHeadingSnippetFileName = annotation.belowMasterHeadingSnippet();
+            _insideMasterHeadingSnippetFileName = annotation.insideMasterHeadingSnippet();
+            /**/
         }
     }
 
@@ -11436,6 +11658,11 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
     }
 
     @Override
+    public BooleanComparisonX isIn(String y) {
+        return XB.Entity.Comparison.isIn(this, y);
+    }
+
+    @Override
     public NativeQuerySegment isIn(NativeQuery y) {
         return NativeQuerySegment.of(XB.Entity.Comparison.isIn(this, y));
     }
@@ -11447,6 +11674,11 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
 
     @Override
     public BooleanComparisonX isNotIn(Instance... y) {
+        return XB.Entity.Comparison.isNotIn(this, y);
+    }
+
+    @Override
+    public BooleanComparisonX isNotIn(String y) {
         return XB.Entity.Comparison.isNotIn(this, y);
     }
 
@@ -11466,6 +11698,11 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
     }
 
     @Override
+    public BooleanComparisonX isNullOrIn(String y) {
+        return XB.Entity.Comparison.isNullOrIn(this, y);
+    }
+
+    @Override
     public NativeQuerySegment isNullOrIn(NativeQuery y) {
         return NativeQuerySegment.of(XB.Entity.Comparison.isNullOrIn(this, y));
     }
@@ -11477,6 +11714,11 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
 
     @Override
     public BooleanComparisonX isNullOrNotIn(Instance... y) {
+        return XB.Entity.Comparison.isNullOrNotIn(this, y);
+    }
+
+    @Override
+    public BooleanComparisonX isNullOrNotIn(String y) {
         return XB.Entity.Comparison.isNullOrNotIn(this, y);
     }
 
@@ -12024,6 +12266,7 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
                 string += fee + tab + "searchType" + faa + _searchType + foo;
                 string += fee + tab + "listStyle" + faa + _listStyle + foo;
                 string += fee + tab + "radioColumns" + faa + _radioColumns + foo;
+                string += fee + tab + "descendingOrder" + faa + _descendingOrder + foo;
                 string += fee + tab + "searchDisplayFormat" + faa + _searchDisplayFormat + foo;
                 string += fee + tab + "searchDisplayMode" + faa + _searchDisplayMode + foo;
             }

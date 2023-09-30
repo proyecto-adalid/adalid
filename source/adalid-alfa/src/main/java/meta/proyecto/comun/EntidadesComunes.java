@@ -31,7 +31,6 @@ import meta.entidad.comun.configuracion.basica.ClaseRecurso;
 import meta.entidad.comun.configuracion.basica.CondicionEjeFun;
 import meta.entidad.comun.configuracion.basica.Dominio;
 import meta.entidad.comun.configuracion.basica.DominioParametro;
-import meta.entidad.comun.configuracion.basica.FormatoPaginaInforme;
 import meta.entidad.comun.configuracion.basica.Funcion;
 import meta.entidad.comun.configuracion.basica.FuncionParametro;
 import meta.entidad.comun.configuracion.basica.GrupoProceso;
@@ -77,6 +76,7 @@ import meta.entidad.comun.control.acceso.TipoRestriccionFormatos;
 import meta.entidad.comun.control.acceso.TipoRol;
 import meta.entidad.comun.control.acceso.Usuario;
 import meta.entidad.comun.control.acceso.UsuarioFuncion;
+import meta.entidad.comun.control.acceso.UsuarioFuncionPar;
 import meta.entidad.comun.control.acceso.UsuarioModulo;
 import meta.entidad.comun.control.acceso.UsuarioSegmento;
 import meta.entidad.comun.control.prueba.AmbientePrueba;
@@ -105,6 +105,7 @@ import meta.entidad.comun.operacion.basica.CondicionTarea;
 import meta.entidad.comun.operacion.basica.DialogoDinamicoRemoto;
 import meta.entidad.comun.operacion.basica.FiltroFuncion;
 import meta.entidad.comun.operacion.basica.FiltroFuncionPar;
+import meta.entidad.comun.operacion.basica.FormatoPaginaInforme;
 import meta.entidad.comun.operacion.basica.OperadorCom;
 import meta.entidad.comun.operacion.basica.PaginaUsuario;
 import meta.entidad.comun.operacion.basica.RecursoValor;
@@ -209,311 +210,206 @@ public class EntidadesComunes extends Project implements SpecialEntityPack {
     }
     // </editor-fold>
 
-    // <editor-fold defaultstate="collapsed" desc="print">
-    @Override
-    public void print() {
-        super.print();
-        System.out.println(AccionArchivoCargado);
-        System.out.println(AmbientePrueba);
-        System.out.println(Aplicacion);
-        System.out.println(ArchivoAdjunto);
-        System.out.println(AtributoAplicacion);
-        System.out.println(CampoValorTemporal);
-        System.out.println(CasoPrueba);
-        System.out.println(ClaseJava);
-        System.out.println(ClaseRecurso);
-        System.out.println(ClaseFabricador);
-        System.out.println(CondicionEjeFun);
-        System.out.println(CondicionTarea);
-        System.out.println(ConjuntoSegmento);
-        System.out.println(DocumentoPrueba);
-        System.out.println(DocumentoPruebaX1);
-        System.out.println(DocumentoPruebaX2);
-        System.out.println(DocumentoPruebaX3);
-        System.out.println(DocumentoPruebaX4);
-        System.out.println(DocumentoPruebaX5);
-        System.out.println(DocumentoPruebaX6);
-        System.out.println(DialogoDinamicoRemoto);
-        System.out.println(Dominio);
-        System.out.println(DominioParametro);
-        System.out.println(EjecucionLineaPrueba);
-        System.out.println(EjecucionPrueba);
-        System.out.println(ElementoSegmento);
-        System.out.println(EscenarioPrueba);
-        System.out.println(FiltroFuncion);
-        System.out.println(FiltroFuncionPar);
-        System.out.println(FormatoPaginaInforme);
-        System.out.println(Funcion);
-        System.out.println(FuncionParametro);
-        System.out.println(GrupoProceso);
-        System.out.println(GrupoUsuario);
-        System.out.println(LineaPrueba);
-        System.out.println(MensajeAplicacion);
-        System.out.println(ModuloAplicacion);
-//      System.out.println(NivelOpcionMenu);
-//      System.out.println(OpcionMenu);
-        System.out.println(OperadorCom);
-        System.out.println(Pagina);
-        System.out.println(PaginaEspecial);
-        System.out.println(PaginaInicio);
-        System.out.println(PaginaUsuario);
-        System.out.println(PaquetePrueba);
-        System.out.println(Parametro);
-        System.out.println(ParametroLineaPrueba);
-        System.out.println(ParteAmbientePrueba);
-        System.out.println(PiezaAmbientePrueba);
-        System.out.println(ProgramaPrueba);
-        System.out.println(RangoAgregacion);
-        System.out.println(RangoComparacion);
-        System.out.println(RastroFuncion);
-        System.out.println(RastroFuncionPar);
-        System.out.println(RastroInforme);
-        System.out.println(RastroProceso);
-        System.out.println(RecursoValor);
-        System.out.println(Rol);
-        System.out.println(RolFiltroFuncion);
-        System.out.println(RolFuncion);
-        System.out.println(RolFuncionPar);
-        System.out.println(RolPagina);
-        System.out.println(RolPaginaEspecial);
-        System.out.println(RolUsuario);
-        System.out.println(RolVistaFuncion);
-        System.out.println(Segmento);
-        System.out.println(SeveridadMensaje);
-        System.out.println(SubtipoGrafico);
-        System.out.println(TareaUsuario);
-        System.out.println(TareaUsuarioCorreo);
-        System.out.println(TareaVirtual);
-        System.out.println(TipoAgregacion);
-        System.out.println(TipoClaseRecurso);
-        System.out.println(TipoComparacion);
-        System.out.println(TipoDatoPar);
-        System.out.println(TipoDocumentoPrueba);
-        System.out.println(TipoDominio);
-        System.out.println(TipoFuncion);
-        System.out.println(TipoGrafico);
-        System.out.println(TipoInforme);
-        System.out.println(TipoNodo);
-        System.out.println(TipoPagina);
-        System.out.println(TipoParametro);
-        System.out.println(TipoParametroDom);
-        System.out.println(TipoPiezaPrueba);
-        System.out.println(TipoRastroFun);
-        System.out.println(TipoRecurso);
-        System.out.println(TipoRestriccionFormatos);
-        System.out.println(TipoResultadoPrueba);
-        System.out.println(TipoRol);
-        System.out.println(TipoValor);
-        System.out.println(TipoValorCriterio);
-        System.out.println(TransicionTareaUsuario);
-        System.out.println(Usuario);
-        System.out.println(UsuarioFuncion);
-        System.out.println(UsuarioModulo);
-        System.out.println(UsuarioSegmento);
-        System.out.println(VersionAdalid);
-        System.out.println(VistaFuncion);
-        System.out.println(VistaFuncionCol);
-    }
-    // </editor-fold>
+    protected AccionArchivoCargado AccionArchivoCargado;
 
-    AccionArchivoCargado AccionArchivoCargado;
+    protected AmbientePrueba AmbientePrueba;
 
-    AmbientePrueba AmbientePrueba;
+    protected Aplicacion Aplicacion;
 
-    Aplicacion Aplicacion;
+    protected ArchivoAdjunto ArchivoAdjunto;
 
-    ArchivoAdjunto ArchivoAdjunto;
+    protected AtributoAplicacion AtributoAplicacion;
 
-    AtributoAplicacion AtributoAplicacion;
+    protected CampoValorTemporal CampoValorTemporal;
 
-    CampoValorTemporal CampoValorTemporal;
+    protected CasoPrueba CasoPrueba;
 
-    CasoPrueba CasoPrueba;
+    protected ClaseJava ClaseJava;
 
-    ClaseJava ClaseJava;
+    protected ClaseRecurso ClaseRecurso;
 
-    ClaseRecurso ClaseRecurso;
+    protected ClaseFabricador ClaseFabricador;
 
-    ClaseFabricador ClaseFabricador;
+    protected CondicionEjeFun CondicionEjeFun;
 
-    CondicionEjeFun CondicionEjeFun;
+    protected CondicionTarea CondicionTarea;
 
-    CondicionTarea CondicionTarea;
+    protected ConjuntoSegmento ConjuntoSegmento;
 
-    ConjuntoSegmento ConjuntoSegmento;
+    protected DocumentoPrueba DocumentoPrueba;
 
-    DocumentoPrueba DocumentoPrueba;
+    protected DocumentoPruebaX1 DocumentoPruebaX1;
 
-    DocumentoPruebaX1 DocumentoPruebaX1;
+    protected DocumentoPruebaX2 DocumentoPruebaX2;
 
-    DocumentoPruebaX2 DocumentoPruebaX2;
+    protected DocumentoPruebaX3 DocumentoPruebaX3;
 
-    DocumentoPruebaX3 DocumentoPruebaX3;
+    protected DocumentoPruebaX4 DocumentoPruebaX4;
 
-    DocumentoPruebaX4 DocumentoPruebaX4;
+    protected DocumentoPruebaX5 DocumentoPruebaX5;
 
-    DocumentoPruebaX5 DocumentoPruebaX5;
+    protected DocumentoPruebaX6 DocumentoPruebaX6;
 
-    DocumentoPruebaX6 DocumentoPruebaX6;
+    protected DialogoDinamicoRemoto DialogoDinamicoRemoto;
 
-    DialogoDinamicoRemoto DialogoDinamicoRemoto;
+    protected Dominio Dominio;
 
-    Dominio Dominio;
+    protected DominioParametro DominioParametro;
 
-    DominioParametro DominioParametro;
+    protected EjecucionLineaPrueba EjecucionLineaPrueba;
 
-    EjecucionLineaPrueba EjecucionLineaPrueba;
+    protected EjecucionPrueba EjecucionPrueba;
 
-    EjecucionPrueba EjecucionPrueba;
+    protected ElementoSegmento ElementoSegmento;
 
-    ElementoSegmento ElementoSegmento;
+    protected EscenarioPrueba EscenarioPrueba;
 
-    EscenarioPrueba EscenarioPrueba;
+    protected FiltroFuncion FiltroFuncion;
 
-    FiltroFuncion FiltroFuncion;
+    protected FiltroFuncionPar FiltroFuncionPar;
 
-    FiltroFuncionPar FiltroFuncionPar;
+    protected FormatoPaginaInforme FormatoPaginaInforme;
 
-    FormatoPaginaInforme FormatoPaginaInforme;
+    protected Funcion Funcion;
 
-    Funcion Funcion;
+    protected FuncionParametro FuncionParametro;
 
-    FuncionParametro FuncionParametro;
+    protected GrupoProceso GrupoProceso;
 
-    GrupoProceso GrupoProceso;
+    protected GrupoUsuario GrupoUsuario;
 
-    GrupoUsuario GrupoUsuario;
+    protected LineaPrueba LineaPrueba;
 
-    LineaPrueba LineaPrueba;
+    protected MensajeAplicacion MensajeAplicacion;
 
-    MensajeAplicacion MensajeAplicacion;
+    protected ModuloAplicacion ModuloAplicacion;
 
-    ModuloAplicacion ModuloAplicacion;
-
-//  NivelOpcionMenu NivelOpcionMenu;
+//  protected NivelOpcionMenu NivelOpcionMenu;
 //
-//  OpcionMenu OpcionMenu;
+//  protected OpcionMenu OpcionMenu;
 //
-    OperadorCom OperadorCom;
+    protected OperadorCom OperadorCom;
 
-    Pagina Pagina;
+    protected Pagina Pagina;
 
-    PaginaEspecial PaginaEspecial;
+    protected PaginaEspecial PaginaEspecial;
 
-    PaginaInicio PaginaInicio;
+    protected PaginaInicio PaginaInicio;
 
-    PaginaUsuario PaginaUsuario;
+    protected PaginaUsuario PaginaUsuario;
 
-    PaquetePrueba PaquetePrueba;
+    protected PaquetePrueba PaquetePrueba;
 
-    Parametro Parametro;
+    protected Parametro Parametro;
 
-    ParametroLineaPrueba ParametroLineaPrueba;
+    protected ParametroLineaPrueba ParametroLineaPrueba;
 
-    ParteAmbientePrueba ParteAmbientePrueba;
+    protected ParteAmbientePrueba ParteAmbientePrueba;
 
-    PiezaAmbientePrueba PiezaAmbientePrueba;
+    protected PiezaAmbientePrueba PiezaAmbientePrueba;
 
-    ProgramaPrueba ProgramaPrueba;
+    protected ProgramaPrueba ProgramaPrueba;
 
-    RangoAgregacion RangoAgregacion;
+    protected RangoAgregacion RangoAgregacion;
 
-    RangoComparacion RangoComparacion;
+    protected RangoComparacion RangoComparacion;
 
-    RastroFuncion RastroFuncion;
+    protected RastroFuncion RastroFuncion;
 
-    RastroFuncionPar RastroFuncionPar;
+    protected RastroFuncionPar RastroFuncionPar;
 
-    RastroInforme RastroInforme;
+    protected RastroInforme RastroInforme;
 
-    RastroProceso RastroProceso;
+    protected RastroProceso RastroProceso;
 
-    RecursoValor RecursoValor;
+    protected RecursoValor RecursoValor;
 
-    Rol Rol;
+    protected Rol Rol;
 
-    RolFiltroFuncion RolFiltroFuncion;
+    protected RolFiltroFuncion RolFiltroFuncion;
 
-    RolFuncion RolFuncion;
+    protected RolFuncion RolFuncion;
 
-    RolFuncionPar RolFuncionPar;
+    protected RolFuncionPar RolFuncionPar;
 
-    RolPagina RolPagina;
+    protected RolPagina RolPagina;
 
-    RolPaginaEspecial RolPaginaEspecial;
+    protected RolPaginaEspecial RolPaginaEspecial;
 
-    RolUsuario RolUsuario;
+    protected RolUsuario RolUsuario;
 
-    RolVistaFuncion RolVistaFuncion;
+    protected RolVistaFuncion RolVistaFuncion;
 
-    Segmento Segmento;
+    protected Segmento Segmento;
 
-    SeveridadMensaje SeveridadMensaje;
+    protected SeveridadMensaje SeveridadMensaje;
 
-    SubtipoGrafico SubtipoGrafico;
+    protected SubtipoGrafico SubtipoGrafico;
 
-    TareaUsuario TareaUsuario;
+    protected TareaUsuario TareaUsuario;
 
-    TareaUsuarioCorreo TareaUsuarioCorreo;
+    protected TareaUsuarioCorreo TareaUsuarioCorreo;
 
-    TareaVirtual TareaVirtual;
+    protected TareaVirtual TareaVirtual;
 
-    TipoAgregacion TipoAgregacion;
+    protected TipoAgregacion TipoAgregacion;
 
-    TipoClaseRecurso TipoClaseRecurso;
+    protected TipoClaseRecurso TipoClaseRecurso;
 
-    TipoComparacion TipoComparacion;
+    protected TipoComparacion TipoComparacion;
 
-    TipoDatoPar TipoDatoPar;
+    protected TipoDatoPar TipoDatoPar;
 
-    TipoDocumentoPrueba TipoDocumentoPrueba;
+    protected TipoDocumentoPrueba TipoDocumentoPrueba;
 
-    TipoDominio TipoDominio;
+    protected TipoDominio TipoDominio;
 
-    TipoFuncion TipoFuncion;
+    protected TipoFuncion TipoFuncion;
 
-    TipoGrafico TipoGrafico;
+    protected TipoGrafico TipoGrafico;
 
-    TipoInforme TipoInforme;
+    protected TipoInforme TipoInforme;
 
-    TipoNodo TipoNodo;
+    protected TipoNodo TipoNodo;
 
-    TipoPagina TipoPagina;
+    protected TipoPagina TipoPagina;
 
-    TipoParametro TipoParametro;
+    protected TipoParametro TipoParametro;
 
-    TipoParametroDom TipoParametroDom;
+    protected TipoParametroDom TipoParametroDom;
 
-    TipoPiezaPrueba TipoPiezaPrueba;
+    protected TipoPiezaPrueba TipoPiezaPrueba;
 
-    TipoRastroFun TipoRastroFun;
+    protected TipoRastroFun TipoRastroFun;
 
-    TipoRecurso TipoRecurso;
+    protected TipoRecurso TipoRecurso;
 
-    TipoRestriccionFormatos TipoRestriccionFormatos;
+    protected TipoRestriccionFormatos TipoRestriccionFormatos;
 
-    TipoResultadoPrueba TipoResultadoPrueba;
+    protected TipoResultadoPrueba TipoResultadoPrueba;
 
-    TipoRol TipoRol;
+    protected TipoRol TipoRol;
 
-    TipoValor TipoValor;
+    protected TipoValor TipoValor;
 
-    TipoValorCriterio TipoValorCriterio;
+    protected TipoValorCriterio TipoValorCriterio;
 
-    TransicionTareaUsuario TransicionTareaUsuario;
+    protected TransicionTareaUsuario TransicionTareaUsuario;
 
-    Usuario Usuario;
+    protected Usuario Usuario;
 
-    UsuarioFuncion UsuarioFuncion;
+    protected UsuarioFuncion UsuarioFuncion;
 
-    UsuarioModulo UsuarioModulo;
+    protected UsuarioFuncionPar UsuarioFuncionPar;
 
-    UsuarioSegmento UsuarioSegmento;
+    protected UsuarioModulo UsuarioModulo;
 
-    VersionAdalid VersionAdalid;
+    protected UsuarioSegmento UsuarioSegmento;
 
-    VistaFuncion VistaFuncion;
+    protected VersionAdalid VersionAdalid;
 
-    VistaFuncionCol VistaFuncionCol;
+    protected VistaFuncion VistaFuncion;
+
+    protected VistaFuncionCol VistaFuncionCol;
 
 }

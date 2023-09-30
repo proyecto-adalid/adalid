@@ -54,74 +54,46 @@ public class PaqueteProcesamientoControlPruebas extends PaqueteProcesamientoBase
         // </editor-fold>
     }
 
-    // <editor-fold defaultstate="collapsed" desc="print">
-    @Override
-    public void print() {
-        super.print();
-        System.out.println(ambientePrueba);
-        System.out.println(casoPrueba);
-        System.out.println(documentoPrueba);
-        System.out.println(documentoPruebaX1);
-        System.out.println(documentoPruebaX2);
-        System.out.println(documentoPruebaX3);
-        System.out.println(documentoPruebaX4);
-        System.out.println(documentoPruebaX5);
-        System.out.println(documentoPruebaX6);
-        System.out.println(ejecucionLineaPrueba);
-        System.out.println(ejecucionPrueba);
-        System.out.println(escenarioPrueba);
-        System.out.println(lineaPrueba);
-        System.out.println(paquetePrueba);
-        System.out.println(parametroLineaPrueba);
-        System.out.println(parteAmbientePrueba);
-        System.out.println(piezaAmbientePrueba);
-        System.out.println(programaPrueba);
-        System.out.println(tipoDocumentoPrueba);
-        System.out.println(tipoPiezaPrueba);
-        System.out.println(tipoResultadoPrueba);
-    }
-    // </editor-fold>
+    protected AmbientePrueba ambientePrueba;
 
-    AmbientePrueba ambientePrueba;
+    protected CasoPrueba casoPrueba;
 
-    CasoPrueba casoPrueba;
+    protected DocumentoPrueba documentoPrueba;
 
-    DocumentoPrueba documentoPrueba;
+    protected DocumentoPruebaX1 documentoPruebaX1;
 
-    DocumentoPruebaX1 documentoPruebaX1;
+    protected DocumentoPruebaX2 documentoPruebaX2;
 
-    DocumentoPruebaX2 documentoPruebaX2;
+    protected DocumentoPruebaX3 documentoPruebaX3;
 
-    DocumentoPruebaX3 documentoPruebaX3;
+    protected DocumentoPruebaX4 documentoPruebaX4;
 
-    DocumentoPruebaX4 documentoPruebaX4;
+    protected DocumentoPruebaX5 documentoPruebaX5;
 
-    DocumentoPruebaX5 documentoPruebaX5;
+    protected DocumentoPruebaX6 documentoPruebaX6;
 
-    DocumentoPruebaX6 documentoPruebaX6;
+    protected EjecucionLineaPrueba ejecucionLineaPrueba;
 
-    EjecucionLineaPrueba ejecucionLineaPrueba;
+    protected EjecucionPrueba ejecucionPrueba;
 
-    EjecucionPrueba ejecucionPrueba;
+    protected EscenarioPrueba escenarioPrueba;
 
-    EscenarioPrueba escenarioPrueba;
+    protected LineaPrueba lineaPrueba;
 
-    LineaPrueba lineaPrueba;
+    protected PaquetePrueba paquetePrueba;
 
-    PaquetePrueba paquetePrueba;
+    protected ParametroLineaPrueba parametroLineaPrueba;
 
-    ParametroLineaPrueba parametroLineaPrueba;
+    protected ParteAmbientePrueba parteAmbientePrueba;
 
-    ParteAmbientePrueba parteAmbientePrueba;
+    protected PiezaAmbientePrueba piezaAmbientePrueba;
 
-    PiezaAmbientePrueba piezaAmbientePrueba;
+    protected ProgramaPrueba programaPrueba;
 
-    ProgramaPrueba programaPrueba;
+    protected TipoDocumentoPrueba tipoDocumentoPrueba;
 
-    TipoDocumentoPrueba tipoDocumentoPrueba;
+    protected TipoPiezaPrueba tipoPiezaPrueba;
 
-    TipoPiezaPrueba tipoPiezaPrueba;
-
-    TipoResultadoPrueba tipoResultadoPrueba;
+    protected TipoResultadoPrueba tipoResultadoPrueba;
 
 }

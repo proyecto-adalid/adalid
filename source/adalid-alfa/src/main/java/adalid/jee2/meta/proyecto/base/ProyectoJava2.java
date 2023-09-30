@@ -36,6 +36,7 @@ public class ProyectoJava2 extends ProyectoJava1 {
         super();
     }
 
+    // <editor-fold defaultstate="collapsed" desc="static final arrays">
     private static final String[] NECESSARY_BPL_ENTITY_NAMES = {
         "Usuario"
     };
@@ -107,16 +108,17 @@ public class ProyectoJava2 extends ProyectoJava1 {
         "Personalizacion"
     };
 
-    public List<String> getSpecialHelpPageNamesList() {
-        return Arrays.asList(SPECIAL_HELP_PAGE_NAMES);
-    }
-
     private static final String[] SPECIAL_HELP_COMPONENT_NAMES = {
         "barraBotonesAccion1",
         "barraBotonesAccion2",
         "dialogoFiltrarConsulta",
         "dialogoGuardarConsulta"
     };
+    // </editor-fold>
+
+    public List<String> getSpecialHelpPageNamesList() {
+        return Arrays.asList(SPECIAL_HELP_PAGE_NAMES);
+    }
 
     public List<String> getSpecialHelpComponentNamesList() {
         return Arrays.asList(SPECIAL_HELP_COMPONENT_NAMES);
@@ -149,6 +151,8 @@ public class ProyectoJava2 extends ProyectoJava1 {
 //      addAttribute(ProjectAttributeKeys.SESSION_TIMEOUT, 30);
         addAttribute("primefaces_messages_escape", false);
         addAttribute("primefaces_inline_help_escape", false);
+        addAttribute("primefaces_output_label_escape", false);
+        addAttribute("primefaces_tooltip_escape", false);
         addAttribute("check_mailer_bean_session_before_each_delivery", false);
         /**/
         Entity entity;
@@ -300,20 +304,24 @@ public class ProyectoJava2 extends ProyectoJava1 {
 
     @Override
     protected void disablePrivateAndOtherContextEntitiesCodeGen() {
-        addEntitiesReferencedByPageFields();
+        addEntitiesReferencedByPageFields(true);
         super.disablePrivateAndOtherContextEntitiesCodeGen();
     }
 
     private final Set<String> _entitiesReferencedByLocalPageFields = new TreeSet<>();
 
     protected void addEntitiesReferencedByPageFields() {
+        addEntitiesReferencedByPageFields(false);
+    }
+
+    protected void addEntitiesReferencedByPageFields(boolean hidden) {
         Set<Entity> entities;
         for (Project module : getModulesList()) {
             if (module instanceof JavaWebModule) {
                 JavaWebModule jwm = (JavaWebModule) module;
                 for (Page page : jwm.getPagesList()) {
                     if (page.isApplicationDefaultLocation()) {
-                        entities = page.getEntitiesReferencedByFields();
+                        entities = page.getEntitiesReferencedByFields(hidden);
                         if (entities != null && !entities.isEmpty()) {
                             for (Entity entity : entities) {
                                 if (entity == null || entity instanceof EnumerationEntity) {

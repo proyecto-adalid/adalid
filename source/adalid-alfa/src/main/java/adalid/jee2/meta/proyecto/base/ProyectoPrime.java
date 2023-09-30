@@ -75,6 +75,10 @@ public abstract class ProyectoPrime extends ProyectoMavenPrime {
 
     protected static final String VERSION_ORACLE = ORACLE_VERSION;
 
+    protected static final String ECLIPSELINK_VERSION = "eclipselink.version";
+
+    protected static final String VERSION_ECLIPSELINK = ECLIPSELINK_VERSION;
+
     protected static final String GLASSFISH_HOME_DIR_LINUX = "glassfish.home.dir.linux";
 
     protected static final String GLASSFISH_HOME_DIR_WINDOWS = "glassfish.home.dir.windows";

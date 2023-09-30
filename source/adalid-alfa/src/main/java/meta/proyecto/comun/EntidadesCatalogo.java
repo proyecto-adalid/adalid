@@ -36,47 +36,28 @@ public class EntidadesCatalogo extends Project {
         // </editor-fold>
     }
 
-    // <editor-fold defaultstate="collapsed" desc="print">
-    @Override
-    public void print() {
-        super.print();
-        System.out.println(Aplicacion);
-        System.out.println(AtributoAplicacion);
-        System.out.println(ClaseRecurso);
-        System.out.println(Dominio);
-        System.out.println(DominioParametro);
-        System.out.println(Funcion);
-        System.out.println(FuncionParametro);
-        System.out.println(GrupoProceso);
-        System.out.println(ModuloAplicacion);
-//      System.out.println(OpcionMenu);
-        System.out.println(Pagina);
-        System.out.println(Parametro);
-    }
-    // </editor-fold>
+    protected Aplicacion Aplicacion;
 
-    Aplicacion Aplicacion;
+    protected AtributoAplicacion AtributoAplicacion;
 
-    AtributoAplicacion AtributoAplicacion;
+    protected ClaseRecurso ClaseRecurso;
 
-    ClaseRecurso ClaseRecurso;
+    protected Dominio Dominio;
 
-    Dominio Dominio;
+    protected DominioParametro DominioParametro;
 
-    DominioParametro DominioParametro;
+    protected Funcion Funcion;
 
-    Funcion Funcion;
+    protected FuncionParametro FuncionParametro;
 
-    FuncionParametro FuncionParametro;
+    protected GrupoProceso GrupoProceso;
 
-    GrupoProceso GrupoProceso;
+    protected ModuloAplicacion ModuloAplicacion;
 
-    ModuloAplicacion ModuloAplicacion;
-
-//  OpcionMenu OpcionMenu;
+//  protected OpcionMenu OpcionMenu;
 //
-    Pagina Pagina;
+    protected Pagina Pagina;
 
-    Parametro Parametro;
+    protected Parametro Parametro;
 
 }

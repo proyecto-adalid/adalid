@@ -27,6 +27,7 @@ public class Auditoria {
             + "The Audit module includes processing consoles and query pages for the following entity classes: "
             + ul(
                 "Attached Files",
+                "Process Groups (optional)",
                 "Function Audit Trails",
                 "Function Parameter Audit Trails",
                 "Report Audit Trails",

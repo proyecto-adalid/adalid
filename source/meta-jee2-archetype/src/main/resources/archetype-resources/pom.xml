@@ -43,7 +43,7 @@
         <dependency>
             <groupId>org.proyecto-adalid</groupId>
             <artifactId>adalid-alfa</artifactId>
-            <version>4.8.0</version><!--adalid-->
+            <version>4.9.0</version><!--adalid-->
         </dependency>
         <dependency>
             <groupId>com.oracle.database.jdbc</groupId>

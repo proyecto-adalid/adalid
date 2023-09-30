@@ -56,83 +56,52 @@ public class TestControl extends Project {
         // </editor-fold>
     }
 
-    // <editor-fold defaultstate="collapsed" desc="print">
-    @Override
-    public void print() {
-        super.print();
-        System.out.println(x010);
-        System.out.println(x030);
-        System.out.println(x080);
-        System.out.println(x08030);
-        System.out.println(x0803010);
-        System.out.println(x08040);
-        System.out.println(x0804010);
-        System.out.println(x08050);
-        System.out.println(x0805010);
-        System.out.println(x05010);
-        System.out.println(x050);
-        System.out.println(x03010);
-        System.out.println(x04010);
-        System.out.println(x020);
-        System.out.println(x0501010);
-        System.out.println(x01020);
-        System.out.println(x01010);
-        System.out.println(x040);
-        System.out.println(TipoDocumentoPrueba);
-        System.out.println(TipoPiezaPrueba);
-        System.out.println(TipoResultadoPrueba);
-        System.out.println(consulta);
-        System.out.println(procesamiento);
-        System.out.println(registro);
-    }
-    // </editor-fold>
+    protected AmbientePrueba x010;
 
-    AmbientePrueba x010;
+    protected CasoPrueba x030;
 
-    CasoPrueba x030;
+    protected DocumentoPrueba x080;
 
-    DocumentoPrueba x080;
+    protected DocumentoPruebaX1 x08030;
 
-    DocumentoPruebaX1 x08030;
+    protected DocumentoPruebaX2 x0803010;
 
-    DocumentoPruebaX2 x0803010;
+    protected DocumentoPruebaX3 x08040;
 
-    DocumentoPruebaX3 x08040;
+    protected DocumentoPruebaX4 x0804010;
 
-    DocumentoPruebaX4 x0804010;
+    protected DocumentoPruebaX5 x08050;
 
-    DocumentoPruebaX5 x08050;
+    protected DocumentoPruebaX6 x0805010;
 
-    DocumentoPruebaX6 x0805010;
+    protected EjecucionLineaPrueba x05010;
 
-    EjecucionLineaPrueba x05010;
+    protected EjecucionPrueba x050;
 
-    EjecucionPrueba x050;
+    protected EscenarioPrueba x03010;
 
-    EscenarioPrueba x03010;
+    protected LineaPrueba x04010;
 
-    LineaPrueba x04010;
+    protected PaquetePrueba x020;
 
-    PaquetePrueba x020;
+    protected ParametroLineaPrueba x0501010;
 
-    ParametroLineaPrueba x0501010;
+    protected ParteAmbientePrueba x01020;
 
-    ParteAmbientePrueba x01020;
+    protected PiezaAmbientePrueba x01010;
 
-    PiezaAmbientePrueba x01010;
+    protected ProgramaPrueba x040;
 
-    ProgramaPrueba x040;
+    protected TipoDocumentoPrueba TipoDocumentoPrueba;
 
-    TipoDocumentoPrueba TipoDocumentoPrueba;
+    protected TipoPiezaPrueba TipoPiezaPrueba;
 
-    TipoPiezaPrueba TipoPiezaPrueba;
+    protected TipoResultadoPrueba TipoResultadoPrueba;
 
-    TipoResultadoPrueba TipoResultadoPrueba;
+    protected PaqueteConsultaControlPruebas consulta;
 
-    PaqueteConsultaControlPruebas consulta;
+    protected PaqueteProcesamientoControlPruebas procesamiento;
 
-    PaqueteProcesamientoControlPruebas procesamiento;
-
-    PaqueteRegistroControlPruebas registro;
+    protected PaqueteRegistroControlPruebas registro;
 
 }

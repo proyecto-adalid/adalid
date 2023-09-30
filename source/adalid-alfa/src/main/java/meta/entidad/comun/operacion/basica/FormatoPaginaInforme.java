@@ -10,7 +10,7 @@
  *
  * Para mas detalles vea la licencia "GNU General Public License" en http://www.gnu.org/licenses
  */
-package meta.entidad.comun.configuracion.basica;
+package meta.entidad.comun.operacion.basica;
 
 import adalid.core.*;
 import adalid.core.annotations.*;

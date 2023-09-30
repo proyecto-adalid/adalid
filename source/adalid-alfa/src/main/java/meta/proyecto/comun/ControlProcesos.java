@@ -38,14 +38,6 @@ public class ControlProcesos extends Project {
         return super.isMenuModule() && !TLC.getProject().getProcessingGroups().isEmpty();
     }
 
-    // <editor-fold defaultstate="collapsed" desc="print">
-    @Override
-    public void print() {
-        super.print();
-        System.out.println(GrupoProceso);
-    }
-    // </editor-fold>
-
-    GrupoProceso GrupoProceso;
+    protected GrupoProceso GrupoProceso;
 
 }

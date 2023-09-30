@@ -17,6 +17,6 @@ package adalid.core.enums;
  */
 public enum SelectOnloadOption {
 
-    DEFAULT, EXECUTE, PROMPT;
+    DEFAULT, EXECUTE, PROMPT, NO_ACTION;
 
 }

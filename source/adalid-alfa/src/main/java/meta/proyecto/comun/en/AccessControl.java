@@ -31,6 +31,7 @@ import meta.entidad.comun.control.acceso.TipoRestriccionFormatos;
 import meta.entidad.comun.control.acceso.TipoRol;
 import meta.entidad.comun.control.acceso.Usuario;
 import meta.entidad.comun.control.acceso.UsuarioFuncion;
+import meta.entidad.comun.control.acceso.UsuarioFuncionPar;
 import meta.entidad.comun.control.acceso.UsuarioModulo;
 import meta.entidad.comun.control.acceso.UsuarioSegmento;
 import meta.paquete.comun.PaqueteConsultaControlAcceso;
@@ -55,80 +56,52 @@ public class AccessControl extends Project {
         // </editor-fold>
     }
 
-    // <editor-fold defaultstate="collapsed" desc="print">
-    @Override
-    public void print() {
-        super.print();
-        System.out.println(ClaseFabricador);
-        System.out.println(ConjuntoSegmento);
-        System.out.println(ElementoSegmento);
-        System.out.println(PaginaEspecial);
-        System.out.println(Rol);
-        System.out.println(RolFiltroFuncion);
-        System.out.println(RolFuncion);
-        System.out.println(RolFuncionPar);
-        System.out.println(RolPagina);
-        System.out.println(RolPaginaEspecial);
-        System.out.println(RolUsuario);
-        System.out.println(RolVistaFuncion);
-        System.out.println(Segmento);
-        System.out.println(TipoRestriccionFormatos);
-        System.out.println(TipoRol);
-        System.out.println(Usuario);
-        System.out.println(UsuarioFuncion);
-        System.out.println(UsuarioModulo);
-        System.out.println(UsuarioSegmento);
-        System.out.println(UsuarioX1);
-        System.out.println(consulta);
-        System.out.println(procesamiento);
-        System.out.println(registro);
-    }
-    // </editor-fold>
+    protected ClaseFabricador ClaseFabricador;
 
-    ClaseFabricador ClaseFabricador;
+    protected ConjuntoSegmento ConjuntoSegmento;
 
-    ConjuntoSegmento ConjuntoSegmento;
+    protected ElementoSegmento ElementoSegmento;
 
-    ElementoSegmento ElementoSegmento;
+    protected GrupoUsuario UsuarioX1;
 
-    GrupoUsuario UsuarioX1;
+    protected PaginaEspecial PaginaEspecial;
 
-    PaginaEspecial PaginaEspecial;
+    protected Rol Rol;
 
-    Rol Rol;
+    protected RolFiltroFuncion RolFiltroFuncion;
 
-    RolFiltroFuncion RolFiltroFuncion;
+    protected RolFuncion RolFuncion;
 
-    RolFuncion RolFuncion;
+    protected RolFuncionPar RolFuncionPar;
 
-    RolFuncionPar RolFuncionPar;
+    protected RolPagina RolPagina;
 
-    RolPagina RolPagina;
+    protected RolPaginaEspecial RolPaginaEspecial;
 
-    RolPaginaEspecial RolPaginaEspecial;
+    protected RolUsuario RolUsuario;
 
-    RolUsuario RolUsuario;
+    protected RolVistaFuncion RolVistaFuncion;
 
-    RolVistaFuncion RolVistaFuncion;
+    protected Segmento Segmento;
 
-    Segmento Segmento;
+    protected TipoRestriccionFormatos TipoRestriccionFormatos;
 
-    TipoRestriccionFormatos TipoRestriccionFormatos;
+    protected TipoRol TipoRol;
 
-    TipoRol TipoRol;
+    protected Usuario Usuario;
 
-    Usuario Usuario;
+    protected UsuarioFuncion UsuarioFuncion;
 
-    UsuarioFuncion UsuarioFuncion;
+    protected UsuarioFuncionPar UsuarioFuncionPar;
 
-    UsuarioModulo UsuarioModulo;
+    protected UsuarioModulo UsuarioModulo;
 
-    UsuarioSegmento UsuarioSegmento;
+    protected UsuarioSegmento UsuarioSegmento;
 
-    PaqueteConsultaControlAcceso consulta;
+    protected PaqueteConsultaControlAcceso consulta;
 
-    PaqueteProcesamientoControlAcceso procesamiento;
+    protected PaqueteProcesamientoControlAcceso procesamiento;
 
-    PaqueteRegistroControlAcceso registro;
+    protected PaqueteRegistroControlAcceso registro;
 
 }

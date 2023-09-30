@@ -1153,6 +1153,7 @@ public class EntityCollection extends AbstractArtifact implements AnnotatableArt
             _detailField = specified(annotation.detail(), _detailField);
             _propertyAccess = specified(annotation.access(), _propertyAccess);
             _dataEntryFormat = specified(annotation.format(), _dataEntryFormat);
+            setInlineHelpType(annotation.inlineHelp());
         }
     }
 

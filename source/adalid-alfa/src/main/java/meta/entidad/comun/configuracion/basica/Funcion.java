@@ -24,7 +24,7 @@ import java.lang.reflect.Field;
  */
 @EntityClass(catalog = Kleenean.TRUE, independent = Kleenean.TRUE, resourceType = ResourceType.CONFIGURATION, resourceGender = ResourceGender.FEMININE)
 @EntityCodeGen(bws = Kleenean.FALSE, fws = Kleenean.FALSE)
-@EntitySelectOperation(enabled = Kleenean.TRUE, access = OperationAccess.PUBLIC, rowsLimit = 0)
+@EntitySelectOperation(enabled = Kleenean.TRUE, access = OperationAccess.PUBLIC, rowsLimit = 500)
 @EntityInsertOperation(enabled = Kleenean.FALSE)
 @EntityUpdateOperation(enabled = Kleenean.FALSE)
 @EntityDeleteOperation(enabled = Kleenean.FALSE)

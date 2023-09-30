@@ -124,6 +124,8 @@ public abstract class Project extends AbstractArtifact implements ProjectBuilder
 
     private static int _defaultFileReferenceMaxLength = Constants.DEFAULT_FILE_REFERENCE_MAX_LENGTH;
 
+    private static InlineHelpType _defaultInlineHelpType = InlineHelpType.UNSPECIFIED;
+
     public static final int STRING_FIELD_MAX_LENGTH = -1000032767;
 
     public static final int STRING_INDEX_MAX_LENGTH = -1000001596;
@@ -494,6 +496,28 @@ public abstract class Project extends AbstractArtifact implements ProjectBuilder
             _defaultFileReferenceMaxLength = Constants.DEFAULT_FILE_REFERENCE_MAX_LENGTH;
             logger.warn(maxLength + " is outside the valid range of defaultFileReferenceMaxLength; it was set to " + _defaultFileReferenceMaxLength);
         }
+    }
+
+    /**
+     * @return the default inline help type
+     */
+    public static InlineHelpType getDefaultInlineHelpType() {
+        return _defaultInlineHelpType;
+    }
+
+    /**
+     * El método setDefaultInlineHelpType se utiliza para establecer el tipo de ayuda en línea predeterminado de los artefactos del proyecto, tales
+     * como colecciones y propiedades de entidades, parámetros de operaciones, etc.
+     *
+     * @param type atributo del artefacto que se debe utilizar como ayuda en línea. Su valor es uno de los elementos de la enumeración InlineHelpType.
+     * Seleccione SHORT_DESCRIPTION para utilizar la descripción corta del artefacto, establecida con el método setDefaultShortDescription o con el
+     * método setLocalizedShortDescription. Seleccione DESCRIPTION para utilizar la descripción corta del artefacto, si ésta fue establecida; o, de lo
+     * contrario, la descripción del artefacto, establecida con el método setDefaultDescription o con el método setLocalizedDescription. Seleccione
+     * NONE si desea que los artefactos no tengan ayuda en línea. Alternativamente, omita el elemento o seleccione UNSPECIFIED para utilizar el valor
+     * predeterminado del atributo. El valor predeterminado del atributo es DESCRIPTION.
+     */
+    public static void setDefaultInlineHelpType(InlineHelpType type) {
+        _defaultInlineHelpType = type == null ? InlineHelpType.UNSPECIFIED : type;
     }
 
     /**
@@ -2231,8 +2255,11 @@ public abstract class Project extends AbstractArtifact implements ProjectBuilder
     }
 
     private String fixedHelpFileAutoType() {
+        /* until 10/09/2023
         return HelpFileAutoName.NONE.equals(_helpFileAutoName) || HelpFileAutoName.META.equals(_helpFileAutoName) ? ""
             : (StringUtils.defaultIfBlank(_helpFileAutoType, Constants.DEFAULT_HELP_FILE_TYPE));
+        /**/
+        return StringUtils.defaultIfBlank(_helpFileAutoType, Constants.DEFAULT_HELP_FILE_TYPE);
     }
 
     /**
@@ -2463,6 +2490,16 @@ public abstract class Project extends AbstractArtifact implements ProjectBuilder
         }
     }
 
+    private Boolean _moduleForeignEntityClass;
+
+    public Boolean getForeignEntityClass() {
+        return _moduleForeignEntityClass;
+    }
+
+    private void setForeignEntityClass(Boolean b) {
+        _moduleForeignEntityClass = b;
+    }
+
     /**
      * El método setForeignEntityClass se utiliza para especificar un conjunto de entidades que se debe agregar, o no, al conjunto de entidades
      * foráneas de la aplicación. Las entidades foráneas son entidades cuyas correspondientes tablas no están definidas en la base de datos de la
@@ -2478,6 +2515,7 @@ public abstract class Project extends AbstractArtifact implements ProjectBuilder
         if (moduleClass != null) {
             Project module = getModule(moduleClass);
             if (module != null) {
+                module.setForeignEntityClass(foreignEntityClass);
                 for (Entity entity : module.getEntitiesList()) {
                     entity.setForeignEntityClass(foreignEntityClass);
                 }
@@ -2511,6 +2549,16 @@ public abstract class Project extends AbstractArtifact implements ProjectBuilder
         }
     }
 
+    private Boolean _modulePrivateEntityClass;
+
+    public Boolean getPrivateEntityClass() {
+        return _modulePrivateEntityClass;
+    }
+
+    private void setPrivateEntityClass(Boolean b) {
+        _modulePrivateEntityClass = b;
+    }
+
     /**
      * El método setPrivateEntityClass se utiliza para especificar un conjunto de entidades que se debe agregar, o no, al conjunto de entidades
      * privadas de la aplicación. Las entidades privadas son entidades para las que no se deben generar vistas.
@@ -2525,6 +2573,7 @@ public abstract class Project extends AbstractArtifact implements ProjectBuilder
         if (moduleClass != null) {
             Project module = getModule(moduleClass);
             if (module != null) {
+                module.setPrivateEntityClass(privateEntityClass);
                 for (Entity entity : module.getEntitiesList()) {
                     entity.setPrivateEntityClass(privateEntityClass);
                 }
@@ -2557,6 +2606,16 @@ public abstract class Project extends AbstractArtifact implements ProjectBuilder
         }
     }
 
+    private String _moduleApplicationOrigin;
+
+    public String getApplicationOrigin() {
+        return _moduleApplicationOrigin;
+    }
+
+    private void setApplicationOrigin(String origin) {
+        _moduleApplicationOrigin = origin;
+    }
+
     /**
      * El método setApplicationOrigin se utiliza para establecer el origen de la aplicación empresarial que contiene las vistas (páginas) de un
      * conjunto de entidades.
@@ -2575,6 +2634,7 @@ public abstract class Project extends AbstractArtifact implements ProjectBuilder
         if (moduleClass != null) {
             Project module = getModule(moduleClass);
             if (module != null) {
+                module.setApplicationOrigin(origin);
                 for (Entity entity : module.getEntitiesList()) {
                     entity.setApplicationOrigin(origin);
                 }
@@ -2611,6 +2671,16 @@ public abstract class Project extends AbstractArtifact implements ProjectBuilder
         }
     }
 
+    private String _moduleApplicationContextRoot;
+
+    public String getApplicationContextRoot() {
+        return _moduleApplicationContextRoot;
+    }
+
+    private void setApplicationContextRoot(String contextRoot) {
+        _moduleApplicationContextRoot = contextRoot;
+    }
+
     /**
      * El método setApplicationContextRoot se utiliza para establecer la raíz de contexto del módulo Web de la aplicación empresarial que contiene las
      * vistas (páginas) de un conjunto de entidades.
@@ -2629,6 +2699,7 @@ public abstract class Project extends AbstractArtifact implements ProjectBuilder
         if (moduleClass != null) {
             Project module = getModule(moduleClass);
             if (module != null) {
+                module.setApplicationContextRoot(contextRoot);
                 for (Entity entity : module.getEntitiesList()) {
                     entity.setApplicationContextRoot(contextRoot);
                 }

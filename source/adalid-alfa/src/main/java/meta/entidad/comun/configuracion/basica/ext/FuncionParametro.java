@@ -32,7 +32,7 @@ import meta.entidad.comun.configuracion.basica.TipoValor;
  */
 @EntityClass(catalog = Kleenean.TRUE, independent = Kleenean.FALSE, resourceType = ResourceType.CONFIGURATION, resourceGender = ResourceGender.MASCULINE)
 @EntityCodeGen(bws = Kleenean.FALSE, fws = Kleenean.FALSE)
-@EntitySelectOperation(enabled = Kleenean.TRUE, access = OperationAccess.PUBLIC, rowsLimit = 0)
+@EntitySelectOperation(enabled = Kleenean.TRUE, access = OperationAccess.PUBLIC, rowsLimit = 500)
 @EntityInsertOperation(enabled = Kleenean.FALSE)
 @EntityUpdateOperation(enabled = Kleenean.FALSE)
 @EntityDeleteOperation(enabled = Kleenean.FALSE)
@@ -110,13 +110,13 @@ public class FuncionParametro extends meta.entidad.comun.configuracion.basica.Fu
     @ForeignKey(onDelete = OnDeleteAction.CASCADE, onUpdate = OnUpdateAction.CASCADE)
     @ManyToOne(navigability = Navigability.BIDIRECTIONAL, view = MasterDetailView.TABLE_AND_DETAIL)
     @ColumnField(nullable = Kleenean.FALSE)
-    @PropertyField(table = Kleenean.FALSE)
+    @PropertyField(table = Kleenean.FALSE, search = Kleenean.TRUE)
     public Funcion funcion;
 
     @ForeignKey(onDelete = OnDeleteAction.NONE, onUpdate = OnUpdateAction.CASCADE)
     @ManyToOne(navigability = Navigability.UNIDIRECTIONAL, view = MasterDetailView.NONE)
     @ColumnField(nullable = Kleenean.FALSE)
-    @PropertyField(table = Kleenean.FALSE)
+    @PropertyField(table = Kleenean.FALSE, search = Kleenean.TRUE)
     public Parametro parametro;
 
     @ForeignKey(onDelete = OnDeleteAction.NONE, onUpdate = OnUpdateAction.NONE)

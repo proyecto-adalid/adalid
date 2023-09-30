@@ -48,9 +48,14 @@ public class ControlAcceso {
                 "Funciones por Rol",
                 "Parámetros de Funciones por Rol",
                 "Favoritos por Rol",
+                "Páginas Especiales por Rol",
                 "Usuarios por Rol",
+                "Vistas por Rol",
                 "Usuarios",
-                "Roles por Usuario"
+                "Funciones por Usuario",
+                "Parámetros de Funciones por Usuario",
+                "Roles por Usuario",
+                "Grupos de Usuarios"
             )
             + "";
         /**/

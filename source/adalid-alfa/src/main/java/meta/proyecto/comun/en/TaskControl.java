@@ -35,20 +35,10 @@ public class TaskControl extends Project {
         // </editor-fold>
     }
 
-    // <editor-fold defaultstate="collapsed" desc="print">
-    @Override
-    public void print() {
-        super.print();
-        System.out.println(x010);
-        System.out.println(x01010);
-        System.out.println(x01020);
-    }
-    // </editor-fold>
+    protected TareaUsuario x010;
 
-    TareaUsuario x010;
+    protected TareaUsuarioCorreo x01010;
 
-    TareaUsuarioCorreo x01010;
-
-    TransicionTareaUsuario x01020;
+    protected TransicionTareaUsuario x01020;
 
 }

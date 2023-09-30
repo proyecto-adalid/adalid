@@ -117,7 +117,7 @@ public class TareaVirtual extends AbstractPersistentEntity {
         idSegmento.setLocalizedLabel(SPANISH, "segmento");
         /**/
         listaFunciones.setLocalizedLabel(ENGLISH, "function list");
-        listaFunciones.setLocalizedLabel(SPANISH, "lista funciones");
+        listaFunciones.setLocalizedLabel(SPANISH, "lista de funciones");
         /**/
         idUsuario.setLocalizedLabel(ENGLISH, "user");
         idUsuario.setLocalizedLabel(SPANISH, "usuario");

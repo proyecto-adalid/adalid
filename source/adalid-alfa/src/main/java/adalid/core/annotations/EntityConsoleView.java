@@ -118,4 +118,30 @@ public @interface EntityConsoleView {
      */
     String westernToolbarSnippet() default "";
 
+    /**
+     * aboveProcessingPanelSnippet especifica la ruta y el nombre del snippet ubicado encima del panel de procesamiento en las vistas (páginas) de
+     * ejecución de operaciones de negocio de la entidad.
+     *
+     * Si utiliza la plataforma jee2, los snippets se deben agregar en el subdirectorio resources/snippets/custom-made del directorio src/main/webapp
+     * del módulo Web, o en algún subdirectorio de resources/snippets/custom-made; si el valor de snippet no comienza por
+     * <b>/resources/snippets/custom-made/</b>, ese prefijo se le agrega automáticamente. Además, los snippets deben ser archivos xhtml; si el valor
+     * de snippet no termina con <b>.xhtml</b>, ese sufijo se le agrega automáticamente.
+     *
+     * @return aboveProcessingPanelSnippet
+     */
+    String aboveProcessingPanelSnippet() default "";
+
+    /**
+     * belowProcessingPanelSnippet especifica la ruta y el nombre del snippet ubicado debajo del panel de procesamiento en las vistas (páginas) de
+     * ejecución de operaciones de negocio de la entidad.
+     *
+     * Si utiliza la plataforma jee2, los snippets se deben agregar en el subdirectorio resources/snippets/custom-made del directorio src/main/webapp
+     * del módulo Web, o en algún subdirectorio de resources/snippets/custom-made; si el valor de snippet no comienza por
+     * <b>/resources/snippets/custom-made/</b>, ese prefijo se le agrega automáticamente. Además, los snippets deben ser archivos xhtml; si el valor
+     * de snippet no termina con <b>.xhtml</b>, ese sufijo se le agrega automáticamente.
+     *
+     * @return belowProcessingPanelSnippet
+     */
+    String belowProcessingPanelSnippet() default "";
+
 }

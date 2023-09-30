@@ -77,6 +77,16 @@ public @interface OneToOne {
     Kleenean detailView() default Kleenean.UNSPECIFIED; // FALSE
 
     /**
+     * menu especifica si las vistas (páginas) Maestro/Detalle generadas deben ser accesibles desde el menú de contexto de la entidad. Su valor es uno
+     * de los elementos de la enumeración Kleenean. Seleccione TRUE si las vistas deben ser accesibles; en caso contrario, seleccione FALSE.
+     * Alternativamente, omita el elemento o seleccione UNSPECIFIED para utilizar el valor predeterminado del atributo. El valor predeterminado del
+     * atributo es TRUE.
+     *
+     * @return menu
+     */
+    Kleenean menu() default Kleenean.UNSPECIFIED;
+
+    /**
      * viewSequence específica el número de secuencia o posición relativa en la que se muestran las vistas (páginas) Maestro/Detalle de la entidad. Su
      * valor debe ser un número entero entre 0 y 2.147.483.647. Alternativamente, omita el elemento para utilizar el valor predeterminado del
      * atributo. El valor predeterminado del atributo es 0. Si todas las vistas tienen el mismo número de secuencia (0 o cualquier otro), entonces las

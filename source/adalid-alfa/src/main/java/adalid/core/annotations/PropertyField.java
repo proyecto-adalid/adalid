@@ -395,4 +395,16 @@ public @interface PropertyField {
      */
     int sequence() default 0;
 
+    /**
+     * inlineHelp especifica el atributo de la propiedad que se debe utilizar como ayuda en línea. Su valor es uno de los elementos de la enumeración
+     * InlineHelpType. Seleccione SHORT_DESCRIPTION para utilizar la descripción corta de la propiedad, establecida con el método
+     * setDefaultShortDescription o con el método setLocalizedShortDescription. Seleccione DESCRIPTION para utilizar la descripción corta de la
+     * propiedad, si ésta fue establecida; o, de lo contrario, la descripción de la propiedad, establecida con el método setDefaultDescription o con
+     * el método setLocalizedDescription. Seleccione NONE si desea que la propiedad no tenga ayuda en línea. Alternativamente, omita el elemento o
+     * seleccione UNSPECIFIED para utilizar el valor predeterminado del atributo. El valor predeterminado del atributo es DESCRIPTION.
+     *
+     * @return access
+     */
+    InlineHelpType inlineHelp() default InlineHelpType.UNSPECIFIED;
+
 }

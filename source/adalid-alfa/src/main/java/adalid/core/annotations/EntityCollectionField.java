@@ -80,4 +80,16 @@ public @interface EntityCollectionField {
      */
     Kleenean detail() default Kleenean.UNSPECIFIED; // FALSE
 
+    /**
+     * inlineHelp especifica el atributo de la colección que se debe utilizar como ayuda en línea. Su valor es uno de los elementos de la enumeración
+     * InlineHelpType. Seleccione SHORT_DESCRIPTION para utilizar la descripción corta de la colección, establecida con el método
+     * setDefaultShortDescription o con el método setLocalizedShortDescription. Seleccione DESCRIPTION para utilizar la descripción corta de la
+     * colección, si ésta fue establecida; o, de lo contrario, la descripción de la colección, establecida con el método setDefaultDescription o con
+     * el método setLocalizedDescription. Seleccione NONE si desea que la colección no tenga ayuda en línea. Alternativamente, omita el elemento o
+     * seleccione UNSPECIFIED para utilizar el valor predeterminado del atributo. El valor predeterminado del atributo es DESCRIPTION.
+     *
+     * @return access
+     */
+    InlineHelpType inlineHelp() default InlineHelpType.UNSPECIFIED;
+
 }

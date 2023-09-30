@@ -12,7 +12,7 @@
  */
 package meta.paquete.comun;
 
-import meta.entidad.comun.configuracion.basica.FormatoPaginaInforme;
+import meta.entidad.comun.operacion.basica.FormatoPaginaInforme;
 import meta.entidad.comun.operacion.basica.TipoAgregacion;
 import meta.entidad.comun.operacion.basica.VistaFuncion;
 import meta.entidad.comun.operacion.basica.VistaFuncionCol;
@@ -42,23 +42,12 @@ public class PaqueteConsultaVista extends PaqueteConsultaBase {
         // </editor-fold>
     }
 
-    // <editor-fold defaultstate="collapsed" desc="print">
-    @Override
-    public void print() {
-        super.print();
-        System.out.println(formatoPaginaInforme);
-        System.out.println(tipoAgregacion);
-        System.out.println(vistaFuncion);
-        System.out.println(vistaFuncionCol);
-    }
-    // </editor-fold>
+    protected FormatoPaginaInforme formatoPaginaInforme;
 
-    FormatoPaginaInforme formatoPaginaInforme;
+    protected TipoAgregacion tipoAgregacion;
 
-    TipoAgregacion tipoAgregacion;
+    protected VistaFuncion vistaFuncion;
 
-    VistaFuncion vistaFuncion;
-
-    VistaFuncionCol vistaFuncionCol;
+    protected VistaFuncionCol vistaFuncionCol;
 
 }

@@ -13,12 +13,12 @@
 package meta.proyecto.comun;
 
 import adalid.core.*;
-import meta.entidad.comun.configuracion.basica.FormatoPaginaInforme;
 import meta.entidad.comun.operacion.basica.CampoValorTemporal;
 import meta.entidad.comun.operacion.basica.CondicionTarea;
 import meta.entidad.comun.operacion.basica.DialogoDinamicoRemoto;
 import meta.entidad.comun.operacion.basica.FiltroFuncion;
 import meta.entidad.comun.operacion.basica.FiltroFuncionPar;
+import meta.entidad.comun.operacion.basica.FormatoPaginaInforme;
 import meta.entidad.comun.operacion.basica.OperadorCom;
 import meta.entidad.comun.operacion.basica.PaginaUsuario;
 import meta.entidad.comun.operacion.basica.RecursoValor;
@@ -49,62 +49,38 @@ public class OperacionBasica extends Project {
         // </editor-fold>
     }
 
-    // <editor-fold defaultstate="collapsed" desc="print">
-    @Override
-    public void print() {
-        super.print();
-        System.out.println(CampoValorTemporal);
-        System.out.println(CondicionTarea);
-        System.out.println(DialogoDinamicoRemoto);
-        System.out.println(FiltroFuncion);
-        System.out.println(FiltroFuncionPar);
-        System.out.println(FormatoPaginaInforme);
-        System.out.println(OperadorCom);
-        System.out.println(Favoritos);
-        System.out.println(RecursoValor);
-        System.out.println(TareaUsuario);
-        System.out.println(TareaUsuarioCorreo);
-        System.out.println(TareaVirtual);
-        System.out.println(TipoAgregacion);
-        System.out.println(TipoValorCriterio);
-        System.out.println(TransicionTareaUsuario);
-        System.out.println(VistaFuncion);
-        System.out.println(VistaFuncionPar);
-    }
-    // </editor-fold>
+    protected CampoValorTemporal CampoValorTemporal;
 
-    CampoValorTemporal CampoValorTemporal;
+    protected CondicionTarea CondicionTarea;
 
-    CondicionTarea CondicionTarea;
+    protected DialogoDinamicoRemoto DialogoDinamicoRemoto;
 
-    DialogoDinamicoRemoto DialogoDinamicoRemoto;
+    protected FiltroFuncion FiltroFuncion;
 
-    FiltroFuncion FiltroFuncion;
+    protected FiltroFuncionPar FiltroFuncionPar;
 
-    FiltroFuncionPar FiltroFuncionPar;
+    protected FormatoPaginaInforme FormatoPaginaInforme;
 
-    FormatoPaginaInforme FormatoPaginaInforme;
+    protected OperadorCom OperadorCom;
 
-    OperadorCom OperadorCom;
+    protected PaginaUsuario Favoritos;
 
-    PaginaUsuario Favoritos;
+    protected RecursoValor RecursoValor;
 
-    RecursoValor RecursoValor;
+    protected TareaUsuario TareaUsuario;
 
-    TareaUsuario TareaUsuario;
+    protected TareaUsuarioCorreo TareaUsuarioCorreo;
 
-    TareaUsuarioCorreo TareaUsuarioCorreo;
+    protected TareaVirtual TareaVirtual;
 
-    TareaVirtual TareaVirtual;
+    protected TipoAgregacion TipoAgregacion;
 
-    TipoAgregacion TipoAgregacion;
+    protected TipoValorCriterio TipoValorCriterio;
 
-    TipoValorCriterio TipoValorCriterio;
+    protected TransicionTareaUsuario TransicionTareaUsuario;
 
-    TransicionTareaUsuario TransicionTareaUsuario;
+    protected VistaFuncion VistaFuncion;
 
-    VistaFuncion VistaFuncion;
-
-    VistaFuncionCol VistaFuncionPar;
+    protected VistaFuncionCol VistaFuncionPar;
 
 }

@@ -365,7 +365,7 @@ public class TimeUtils {
                 _dateFormatMap.remove(locale);
             } else {
                 _dateFormatMap.put(locale, format);
-                logger.info(sample(locale, format, "Date-only"));
+                logger.trace(sample(locale, format, "Date-only"));
             }
         }
     }
@@ -388,7 +388,7 @@ public class TimeUtils {
                 _timeFormatMap.remove(locale);
             } else {
                 _timeFormatMap.put(locale, format);
-                logger.info(sample(locale, format, "Time-only"));
+                logger.trace(sample(locale, format, "Time-only"));
             }
         }
     }
@@ -411,7 +411,7 @@ public class TimeUtils {
                 _timestampFormatMap.remove(locale);
             } else {
                 _timestampFormatMap.put(locale, format);
-                logger.info(sample(locale, format, "Date+time"));
+                logger.trace(sample(locale, format, "Date+time"));
             }
         }
     }

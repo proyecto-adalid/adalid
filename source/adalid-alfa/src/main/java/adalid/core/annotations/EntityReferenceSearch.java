@@ -61,6 +61,15 @@ public @interface EntityReferenceSearch {
     int radioColumns() default 0;
 
     /**
+     * descending especifica si las opciones se muestran ordenadas de forma descendente. Este elemento es relevante solo cuando se selecciona mediante
+     * una lista desplegable (drop-down list) o un grupo de botones de radio (radio buttons). El valor predeterminado del atributo es false (orden
+     * ascendente).
+     *
+     * @return descending
+     */
+    boolean descending() default false;
+
+    /**
      * displayFormat especifica el tipo de vista (página) que se utiliza para la búsqueda y selección. Este elemento es relevante solo cuando se busca
      * y selecciona mediante una vista (página). Su valor es uno de los elementos de la enumeración SearchDisplayFormat. Seleccione TABLE o TREE para
      * utilizar una vista (página) de presentación tabular o jerárquica (árbol), respectivamente. Alternativamente, omita el elemento o seleccione

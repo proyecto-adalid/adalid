@@ -338,14 +338,14 @@ public class RastroFuncion extends AbstractPersistentEntity {
         super.settleExpressions();
         /**/
         biz = tipoFuncion.isIn(
-            (tipoFuncion.PROCEDIMIENTO_PARAMETROS),
-            (tipoFuncion.PROCESO)
+            tipoFuncion.PROCEDIMIENTO_PARAMETROS,
+            tipoFuncion.PROCESO
         );
         /**/
         dml = tipoFuncion.isIn(
-            (tipoFuncion.CREACION),
-            (tipoFuncion.MODIFICACION),
-            (tipoFuncion.ELIMINACION)
+            tipoFuncion.CREACION,
+            tipoFuncion.MODIFICACION,
+            tipoFuncion.ELIMINACION
         );
         /**/
         // <editor-fold defaultstate="collapsed" desc="localization of RastroFuncion's expressions">

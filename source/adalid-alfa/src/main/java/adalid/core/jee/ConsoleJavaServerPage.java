@@ -38,10 +38,11 @@ public class ConsoleJavaServerPage extends JavaServerPage {
     private Set<Entity> _entitiesReferencedByFields;
 
     /**
+     * @param hidden whether hidden fields should be included in the list or not
      * @return the fields list
      */
     @Override
-    public List<PageField> getFields() {
+    public List<PageField> getFields(boolean hidden) {
         if (_fields == null) {
             _fields = new ArrayList<>();
         }
@@ -49,10 +50,11 @@ public class ConsoleJavaServerPage extends JavaServerPage {
     }
 
     /**
+     * @param hidden whether hidden fields should be included in the list or not
      * @return the fields list
      */
     @Override
-    public List<PageField> getMasterHeadingFields() {
+    public List<PageField> getMasterHeadingFields(boolean hidden) {
         if (_masterFields == null) {
             _masterFields = new ArrayList<>();
         }
@@ -60,10 +62,11 @@ public class ConsoleJavaServerPage extends JavaServerPage {
     }
 
     /**
+     * @param hidden whether hidden fields should be included in the set or not
      * @return the list of entities referenced by fields
      */
     @Override
-    public Set<Entity> getEntitiesReferencedByFields() {
+    public Set<Entity> getEntitiesReferencedByFields(boolean hidden) {
         if (_entitiesReferencedByFields == null) {
             _entitiesReferencedByFields = new LinkedHashSet<>();
             Entity entity = getEntity();

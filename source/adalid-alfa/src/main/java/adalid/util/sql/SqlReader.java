@@ -1767,10 +1767,11 @@ public class SqlReader extends SqlUtil {
         @Override
         protected SqlRoutine getSqlRoutine(ResultSet resultSet, SqlTable sqlTable) throws SQLException {
             String routine_name = resultSet.getString(1);
-//          String routine_type = resultSet.getString(2);
+            String routine_type = resultSet.getString(2);
             /**/
             SqlRoutine sqlRoutine = new SqlRoutine(sqlTable);
             sqlRoutine.setName(routine_name);
+            sqlRoutine.setOperationType(routine_type);
             return getSqlRoutine(resultSet, sqlRoutine);
         }
 

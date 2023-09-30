@@ -3277,7 +3277,13 @@ public abstract class AbstractDataArtifact extends AbstractArtifact implements A
         annotateBusinessKey(field);
         annotateDiscriminatorColumn(field);
         annotateStateProperty(field);
-        initializeKeyPropertyAnnotations();
+        if (!casting(field)) {
+            initializeKeyPropertyAnnotations();
+        }
+    }
+
+    private boolean casting(Field field) {
+        return field.isAnnotationPresent(CastingField.class);
     }
 
     private void annotatePrimaryKey(Field field) {
@@ -3876,6 +3882,13 @@ public abstract class AbstractDataArtifact extends AbstractArtifact implements A
     }
 
     private void annotateBigDecimalField(Field field) {
+        String fieldName = fullFieldName(field);
+        Class<? extends Annotation> annotationClass = BigDecimalField.class;
+        Class<?>[] validTypes = new Class<?>[]{BigDecimalParameter.class, BigDecimalProperty.class};
+        boolean log = isParameter() || depth() == 0;
+        boolean aye = field.isAnnotationPresent(annotationClass)
+            && XS1.checkFieldAnnotation(log, field, annotationClass, validTypes);
+        /**/
         BigDecimalData data = null;
         int precision = -1;
         int scale = -1;
@@ -3884,12 +3897,6 @@ public abstract class AbstractDataArtifact extends AbstractArtifact implements A
             precision = data.getRawPrecision();
             scale = data.getRawScale();
         }
-        String fieldName = fullFieldName(field);
-        Class<? extends Annotation> annotationClass = BigDecimalField.class;
-        Class<?>[] validTypes = new Class<?>[]{BigDecimalParameter.class, BigDecimalProperty.class};
-        boolean log = isParameter() || depth() == 0;
-        boolean aye = field.isAnnotationPresent(annotationClass)
-            && XS1.checkFieldAnnotation(log, field, annotationClass, validTypes);
         /**/
         if (aye) {
             _annotatedWithBigDecimalField = true;
@@ -3897,7 +3904,7 @@ public abstract class AbstractDataArtifact extends AbstractArtifact implements A
             precision = specified(annotation.precision(), precision);
             scale = specified(annotation.scale(), scale);
         }
-        if (data != null) {
+        if (data != null && (aye || !casting(field))) {
             if (precision < 1) {
                 precision = Constants.DEFAULT_DECIMAL_PRECISION;
             } else if (precision > Constants.MAX_DECIMAL_PRECISION) {
@@ -3922,12 +3929,6 @@ public abstract class AbstractDataArtifact extends AbstractArtifact implements A
     }
 
     private void annotateBigIntegerField(Field field) {
-        BigIntegerData data = null;
-        int precision = -1;
-        if (this instanceof BigIntegerData) {
-            data = (BigIntegerData) this;
-            precision = data.getRawPrecision();
-        }
         String fieldName = fullFieldName(field);
         Class<? extends Annotation> annotationClass = BigIntegerField.class;
         Class<?>[] validTypes = new Class<?>[]{BigIntegerParameter.class, BigIntegerProperty.class};
@@ -3935,12 +3936,19 @@ public abstract class AbstractDataArtifact extends AbstractArtifact implements A
         boolean aye = field.isAnnotationPresent(annotationClass)
             && XS1.checkFieldAnnotation(log, field, annotationClass, validTypes);
         /**/
+        BigIntegerData data = null;
+        int precision = -1;
+        if (this instanceof BigIntegerData) {
+            data = (BigIntegerData) this;
+            precision = data.getRawPrecision();
+        }
+        /**/
         if (aye) {
             _annotatedWithBigIntegerField = true;
             BigIntegerField annotation = field.getAnnotation(BigIntegerField.class);
             precision = specified(annotation.precision(), precision);
         }
-        if (data != null) {
+        if (data != null && (aye || !casting(field))) {
             if (precision < 1) {
                 precision = Constants.DEFAULT_DECIMAL_PRECISION;
             } else if (precision > Constants.MAX_DECIMAL_PRECISION) {
@@ -3955,29 +3963,38 @@ public abstract class AbstractDataArtifact extends AbstractArtifact implements A
     }
 
     private void annotateBooleanField(Field field) {
-        BooleanData data = null;
-        BooleanDisplayType displayType = BooleanDisplayType.UNSPECIFIED;
-        if (this instanceof BooleanData) {
-            data = (BooleanData) this;
-            displayType = data.rawBooleanDisplayType();
-        }
+//      String fieldName = fullFieldName(field);
         Class<? extends Annotation> annotationClass = BooleanField.class;
         Class<?>[] validTypes = new Class<?>[]{BooleanParameter.class, BooleanProperty.class};
         boolean log = isParameter() || depth() == 0;
         boolean aye = field.isAnnotationPresent(annotationClass)
             && XS1.checkFieldAnnotation(log, field, annotationClass, validTypes);
         /**/
+        BooleanData data = null;
+        BooleanDisplayType displayType = BooleanDisplayType.UNSPECIFIED;
+        if (this instanceof BooleanData) {
+            data = (BooleanData) this;
+            displayType = data.rawBooleanDisplayType();
+        }
+        /**/
         if (aye) {
             _annotatedWithBooleanField = true;
             BooleanField annotation = field.getAnnotation(BooleanField.class);
             displayType = specified(annotation.displayType(), displayType);
         }
-        if (data != null) {
+        if (data != null && (aye || !casting(field))) {
             data.setBooleanDisplayType(displayType);
         }
     }
 
     private void annotateNumericField(Field field) {
+        String fieldName = fullFieldName(field);
+        Class<? extends Annotation> annotationClass = NumericField.class;
+        Class<?>[] validTypes = new Class<?>[]{NumericPrimitive.class};
+        boolean log = isParameter() || depth() == 0;
+        boolean aye = field.isAnnotationPresent(annotationClass)
+            && XS1.checkFieldAnnotation(log, field, annotationClass, validTypes);
+        /**/
         NumericPrimitive data = null;
         NumericFieldType type = null;
         int divisor = -1;
@@ -3998,12 +4015,6 @@ public abstract class AbstractDataArtifact extends AbstractArtifact implements A
             converter = data.getSpecialConverterName();
             validator = data.getSpecialValidatorName();
         }
-        String fieldName = fullFieldName(field);
-        Class<? extends Annotation> annotationClass = NumericField.class;
-        Class<?>[] validTypes = new Class<?>[]{NumericPrimitive.class};
-        boolean log = isParameter() || depth() == 0;
-        boolean aye = field.isAnnotationPresent(annotationClass)
-            && XS1.checkFieldAnnotation(log, field, annotationClass, validTypes);
         /**/
         if (aye) {
             _annotatedWithNumericField = true;
@@ -4017,7 +4028,7 @@ public abstract class AbstractDataArtifact extends AbstractArtifact implements A
             converter = specified(annotation.converter(), converter);
             validator = specified(annotation.validator(), validator);
         }
-        if (data != null) {
+        if (data != null && (aye || !casting(field))) {
             if (divisorRule == null || divisorRule.equals(DivisorRule.UNSPECIFIED)) {
                 divisor = 0;
             } else if (divisor < 0) {
@@ -4076,6 +4087,13 @@ public abstract class AbstractDataArtifact extends AbstractArtifact implements A
     }
 
     private void annotateStringField(Field field) {
+        String fieldName = fullFieldName(field);
+        Class<? extends Annotation> annotationClass = StringField.class;
+        Class<?>[] validTypes = new Class<?>[]{StringParameter.class, StringProperty.class};
+        boolean log = isParameter() || depth() == 0;
+        boolean aye = field.isAnnotationPresent(annotationClass)
+            && XS1.checkFieldAnnotation(log, field, annotationClass, validTypes);
+        /**/
         StringData data = null;
         int maxLength = -1;
         int minLength = -1;
@@ -4102,12 +4120,6 @@ public abstract class AbstractDataArtifact extends AbstractArtifact implements A
             allowDiacritics = data.getAllowDiacritics();
             richTextFormat = data.getRichTextFormat();
         }
-        String fieldName = fullFieldName(field);
-        Class<? extends Annotation> annotationClass = StringField.class;
-        Class<?>[] validTypes = new Class<?>[]{StringParameter.class, StringProperty.class};
-        boolean log = isParameter() || depth() == 0;
-        boolean aye = field.isAnnotationPresent(annotationClass)
-            && XS1.checkFieldAnnotation(log, field, annotationClass, validTypes);
         /**/
         if (aye) {
             _annotatedWithStringField = true;
@@ -4138,7 +4150,7 @@ public abstract class AbstractDataArtifact extends AbstractArtifact implements A
                 }
             }
         }
-        if (data != null) {
+        if (data != null && (aye || !casting(field))) {
             int projectMaximumStringFieldMaxLength = Project.getMaximumStringFieldMaxLength();
             int projectMaximumStringIndexMaxLength = Project.getMaximumStringIndexMaxLength();
             if (maxLength < 0) {
@@ -4253,6 +4265,13 @@ public abstract class AbstractDataArtifact extends AbstractArtifact implements A
     }
 
     private void annotateDateField(Field field) {
+        String fieldName = fullFieldName(field);
+        Class<? extends Annotation> annotationClass = DateField.class;
+        Class<?>[] validTypes = new Class<?>[]{DateParameter.class, DateProperty.class};
+        boolean log = isParameter() || depth() == 0;
+        boolean aye = field.isAnnotationPresent(annotationClass)
+            && XS1.checkFieldAnnotation(log, field, annotationClass, validTypes);
+        /**/
         DateData data = null;
         boolean disabledWeekends = false;
         boolean disabledWeekdays = false;
@@ -4269,12 +4288,6 @@ public abstract class AbstractDataArtifact extends AbstractArtifact implements A
             converter = data.getSpecialConverterName();
             validator = data.getSpecialValidatorName();
         }
-        String fieldName = fullFieldName(field);
-        Class<? extends Annotation> annotationClass = DateField.class;
-        Class<?>[] validTypes = new Class<?>[]{DateParameter.class, DateProperty.class};
-        boolean log = isParameter() || depth() == 0;
-        boolean aye = field.isAnnotationPresent(annotationClass)
-            && XS1.checkFieldAnnotation(log, field, annotationClass, validTypes);
         /**/
         if (aye) {
             _annotatedWithDateField = true;
@@ -4286,7 +4299,7 @@ public abstract class AbstractDataArtifact extends AbstractArtifact implements A
             converter = specified(annotation.converter(), converter);
             validator = specified(annotation.validator(), validator);
         }
-        if (data != null) {
+        if (data != null && (aye || !casting(field))) {
             if (yearRange < 0) {
                 yearRange = Constants.DEFAULT_YEAR_RANGE;
             } else if (yearRange < 1 || yearRange > Constants.MAX_YEAR_RANGE) {
@@ -4324,6 +4337,13 @@ public abstract class AbstractDataArtifact extends AbstractArtifact implements A
     }
 
     private void annotateTimeField(Field field) {
+        String fieldName = fullFieldName(field);
+        Class<? extends Annotation> annotationClass = TimeField.class;
+        Class<?>[] validTypes = new Class<?>[]{TimeParameter.class, TimeProperty.class};
+        boolean log = isParameter() || depth() == 0;
+        boolean aye = field.isAnnotationPresent(annotationClass)
+            && XS1.checkFieldAnnotation(log, field, annotationClass, validTypes);
+        /**/
         TimeData data = null;
         int precision = -1;
         int minHour = -1;
@@ -4352,12 +4372,6 @@ public abstract class AbstractDataArtifact extends AbstractArtifact implements A
             converter = data.getSpecialConverterName();
             validator = data.getSpecialValidatorName();
         }
-        String fieldName = fullFieldName(field);
-        Class<? extends Annotation> annotationClass = TimeField.class;
-        Class<?>[] validTypes = new Class<?>[]{TimeParameter.class, TimeProperty.class};
-        boolean log = isParameter() || depth() == 0;
-        boolean aye = field.isAnnotationPresent(annotationClass)
-            && XS1.checkFieldAnnotation(log, field, annotationClass, validTypes);
         /**/
         if (aye) {
             _annotatedWithTimeField = true;
@@ -4483,7 +4497,7 @@ public abstract class AbstractDataArtifact extends AbstractArtifact implements A
                 }
             }
         }
-        if (data != null) {
+        if (data != null && (aye || !casting(field))) {
             data.setPrecision(precision);
             data.setMinHour(minHour);
             data.setMaxHour(maxHour);
@@ -4500,6 +4514,13 @@ public abstract class AbstractDataArtifact extends AbstractArtifact implements A
     }
 
     private void annotateTimestampField(Field field) {
+        String fieldName = fullFieldName(field);
+        Class<? extends Annotation> annotationClass = TimestampField.class;
+        Class<?>[] validTypes = new Class<?>[]{TimestampParameter.class, TimestampProperty.class};
+        boolean log = isParameter() || depth() == 0;
+        boolean aye = field.isAnnotationPresent(annotationClass)
+            && XS1.checkFieldAnnotation(log, field, annotationClass, validTypes);
+        /**/
         TimestampData data = null;
         boolean disabledWeekends = false;
         boolean disabledWeekdays = false;
@@ -4536,12 +4557,6 @@ public abstract class AbstractDataArtifact extends AbstractArtifact implements A
             converter = data.getSpecialConverterName();
             validator = data.getSpecialValidatorName();
         }
-        String fieldName = fullFieldName(field);
-        Class<? extends Annotation> annotationClass = TimestampField.class;
-        Class<?>[] validTypes = new Class<?>[]{TimestampParameter.class, TimestampProperty.class};
-        boolean log = isParameter() || depth() == 0;
-        boolean aye = field.isAnnotationPresent(annotationClass)
-            && XS1.checkFieldAnnotation(log, field, annotationClass, validTypes);
         /**/
         if (aye) {
             _annotatedWithTimestampField = true;
@@ -4680,7 +4695,7 @@ public abstract class AbstractDataArtifact extends AbstractArtifact implements A
                 }
             }
         }
-        if (data != null) {
+        if (data != null && (aye || !casting(field))) {
             data.setDisabledWeekends(disabledWeekends);
             data.setDisabledWeekdays(disabledWeekdays);
             data.setDisabledHolidays(disabledHolidays);
@@ -5262,6 +5277,7 @@ public abstract class AbstractDataArtifact extends AbstractArtifact implements A
             setAnchorParameter(annotation);
 //          _sequenceNumber = Math.max(0, annotation.sequence());
             _sequenceNumber = annotation.sequence();
+            setInlineHelpType(annotation.inlineHelp());
             linkField(namesakable() ? getName() : _linkedFieldName);
             String fileName = annotation.snippet();
             if (StringUtils.isNotBlank(fileName)) {
@@ -5385,6 +5401,7 @@ public abstract class AbstractDataArtifact extends AbstractArtifact implements A
             setAnchorProperty(annotation);
 //          _sequenceNumber = Math.max(0, annotation.sequence());
             _sequenceNumber = annotation.sequence();
+            setInlineHelpType(annotation.inlineHelp());
             /**/
             fileName = annotation.masterHeadingSnippet();
             if (StringUtils.isNotBlank(fileName)) {

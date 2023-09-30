@@ -43,29 +43,16 @@ public class RoutineControl extends Project {
         return super.isMenuModule() && !TLC.getProject().getUserFlows().isEmpty();
     }
 
-    // <editor-fold defaultstate="collapsed" desc="print">
-    @Override
-    public void print() {
-        super.print();
-        System.out.println(x010);
-        System.out.println(x01010);
-        System.out.println(x01020);
-        System.out.println(consulta);
-        System.out.println(procesamiento);
-        System.out.println(registro);
-    }
-    // </editor-fold>
+    protected RutinaUsuario x010;
 
-    RutinaUsuario x010;
+    protected VariableRutina x01010;
 
-    VariableRutina x01010;
+    protected PasoRutina x01020;
 
-    PasoRutina x01020;
+    protected PaqueteConsultaControlRutinas consulta;
 
-    PaqueteConsultaControlRutinas consulta;
+    protected PaqueteProcesamientoControlRutinas procesamiento;
 
-    PaqueteProcesamientoControlRutinas procesamiento;
-
-    PaqueteRegistroControlRutinas registro;
+    protected PaqueteRegistroControlRutinas registro;
 
 }

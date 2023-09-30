@@ -45,26 +45,14 @@ public class PaqueteConsultaFiltro extends PaqueteConsultaBase {
         // </editor-fold>
     }
 
-    // <editor-fold defaultstate="collapsed" desc="print">
-    @Override
-    public void print() {
-        super.print();
-        System.out.println(campoValorTemporal);
-        System.out.println(filtroFuncion);
-        System.out.println(filtroFuncionPar);
-        System.out.println(operadorCom);
-        System.out.println(tipoValorCriterio);
-    }
-    // </editor-fold>
+    protected CampoValorTemporal campoValorTemporal;
 
-    CampoValorTemporal campoValorTemporal;
+    protected FiltroFuncion filtroFuncion;
 
-    FiltroFuncion filtroFuncion;
+    protected FiltroFuncionPar filtroFuncionPar;
 
-    FiltroFuncionPar filtroFuncionPar;
+    protected OperadorCom operadorCom;
 
-    OperadorCom operadorCom;
-
-    TipoValorCriterio tipoValorCriterio;
+    protected TipoValorCriterio tipoValorCriterio;
 
 }

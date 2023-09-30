@@ -133,6 +133,8 @@ public class Constants {
 
     public static final int MAX_ENTITY_SERIES_STEP = 1000000; // 1000000000
 
+    public static final String QUICK_FILTER_SNIPPET = "/resources/snippets/base/panel/quickFilterPanel";
+
     public static final String SERIES_BY_AGGREGATE = "seriesByAggregate";
 
     public static final String SERIES_BY_GROUP = "seriesByGroup";

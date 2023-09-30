@@ -115,6 +115,11 @@ public abstract class AbstractArtifact implements Artifact, Wrappable {
     /**
      *
      */
+    private InlineHelpType _inlineHelpType;
+
+    /**
+     *
+     */
 //  private String _defaultLabel;
     private final Map<Locale, String> _localizedLabel = new LinkedHashMap<>();
 
@@ -459,6 +464,16 @@ public abstract class AbstractArtifact implements Artifact, Wrappable {
             return _declaringArtifact.getDefaultLocale();
         }
         return Bundle.getLocale();
+    }
+
+    public InlineHelpType getInlineHelpType() {
+        return _inlineHelpType != null ? _inlineHelpType : Project.getDefaultInlineHelpType();
+    }
+
+    public void setInlineHelpType(InlineHelpType type) {
+        if (!InlineHelpType.UNSPECIFIED.equals(type)) {
+            _inlineHelpType = type;
+        }
     }
 
     /**

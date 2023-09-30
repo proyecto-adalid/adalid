@@ -28,7 +28,7 @@ import adalid.util.*;
  * acabado. Generalmente los desarrolladores de las versiones betas de software gratuito o de código abierto las entregan al público en general,
  * mientras que las versiones beta de software propietario van a un grupo relativamente pequeño de probadores.
  *
- * @author ADALID ${artifactId}-archetype
+ * @author ADALID meta-jee2-archetype
  */
 @RunnableClass
 public class MetaDataUmlClass extends adalid.util.Utility {

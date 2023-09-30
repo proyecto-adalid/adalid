@@ -65,158 +65,102 @@ public class PaqueteRegistroRecursosBasicos extends PaqueteRegistroBase {
         // </editor-fold>
     }
 
-    // <editor-fold defaultstate="collapsed" desc="print">
-    @Override
-    public void print() {
-        super.print();
-        System.out.println(Aplicacion);
-        System.out.println(AtributoAplicacion);
-//      System.out.println(CampoValorTemporal);
-        System.out.println(ClaseJava);
-        System.out.println(ClaseRecurso);
-        System.out.println(CondicionEjeFun);
-//      System.out.println(CondicionTarea);
-        System.out.println(DialogoDinamicoRemoto);
-        System.out.println(Dominio);
-        System.out.println(DominioParametro);
-//      System.out.println(FiltroFuncion);
-//      System.out.println(FiltroFuncionPar);
-//      System.out.println(FormatoPaginaInforme);
-        System.out.println(Funcion);
-        System.out.println(FuncionParametro);
-        System.out.println(GrupoProceso);
-        System.out.println(MensajeAplicacion);
-        System.out.println(ModuloAplicacion);
-//      System.out.println(NivelOpcionMenu);
-//      System.out.println(OpcionMenu);
-//      System.out.println(OperadorCom);
-        System.out.println(Pagina);
-        System.out.println(PaginaInicio);
-        System.out.println(Favoritos);
-        System.out.println(Parametro);
-        System.out.println(RecursoValor);
-//      System.out.println(Tarea);
-//      System.out.println(TareaUsuario);
-//      System.out.println(TareaUsuarioCorreo);
-//      System.out.println(TipoAgregacion);
-        System.out.println(TipoClaseRecurso);
-        System.out.println(TipoComparacion);
-        System.out.println(TipoDatoPar);
-        System.out.println(TipoDominio);
-        System.out.println(TipoFuncion);
-        System.out.println(TipoNodo);
-        System.out.println(TipoPagina);
-        System.out.println(TipoParametro);
-        System.out.println(TipoParametroDom);
-        System.out.println(TipoRastroFun);
-        System.out.println(TipoRecurso);
-        System.out.println(TipoValor);
-//      System.out.println(TipoValorCriterio);
-        System.out.println(VersionAdalid);
-//      System.out.println(VistaFuncion);
-//      System.out.println(VistaFuncionPar);
-        System.out.println(registroFiltro);
-//      System.out.println(registroTarea);
-        System.out.println(registroVista);
-    }
-    // </editor-fold>
+    protected Aplicacion Aplicacion;
 
-    Aplicacion Aplicacion;
+    protected AtributoAplicacion AtributoAplicacion;
 
-    AtributoAplicacion AtributoAplicacion;
-
-//  CampoValorTemporal CampoValorTemporal;
+//  protected CampoValorTemporal CampoValorTemporal;
 //
-    ClaseJava ClaseJava;
+    protected ClaseJava ClaseJava;
 
-    ClaseRecurso ClaseRecurso;
+    protected ClaseRecurso ClaseRecurso;
 
-    CondicionEjeFun CondicionEjeFun;
+    protected CondicionEjeFun CondicionEjeFun;
 
-//  CondicionTarea CondicionTarea;
+//  protected CondicionTarea CondicionTarea;
 //
-    DialogoDinamicoRemoto DialogoDinamicoRemoto;
+    protected DialogoDinamicoRemoto DialogoDinamicoRemoto;
 
-    Dominio Dominio;
+    protected Dominio Dominio;
 
-    DominioParametro DominioParametro;
+    protected DominioParametro DominioParametro;
 
-//  FiltroFuncion FiltroFuncion;
+//  protected FiltroFuncion FiltroFuncion;
 //
-//  FiltroFuncionPar FiltroFuncionPar;
+//  protected FiltroFuncionPar FiltroFuncionPar;
 //
-//  FormatoPaginaInforme FormatoPaginaInforme;
+//  protected FormatoPaginaInforme FormatoPaginaInforme;
 //
-    Funcion Funcion;
+    protected Funcion Funcion;
 
-    FuncionParametro FuncionParametro;
+    protected FuncionParametro FuncionParametro;
 
-    GrupoProceso GrupoProceso;
+    protected GrupoProceso GrupoProceso;
 
-    MensajeAplicacion MensajeAplicacion;
+    protected MensajeAplicacion MensajeAplicacion;
 
-    ModuloAplicacion ModuloAplicacion;
+    protected ModuloAplicacion ModuloAplicacion;
 
-//  NivelOpcionMenu NivelOpcionMenu;
+//  protected NivelOpcionMenu NivelOpcionMenu;
 //
-//  OpcionMenu OpcionMenu;
+//  protected OpcionMenu OpcionMenu;
 //
-//  OperadorCom OperadorCom;
+//  protected OperadorCom OperadorCom;
 //
-    Pagina Pagina;
+    protected Pagina Pagina;
 
-    PaginaInicio PaginaInicio;
+    protected PaginaInicio PaginaInicio;
 
-    PaginaUsuario Favoritos;
+    protected PaginaUsuario Favoritos;
 
-    Parametro Parametro;
+    protected Parametro Parametro;
 
-    RecursoValor RecursoValor;
+    protected RecursoValor RecursoValor;
 
-//  Tarea Tarea;
+//  protected Tarea Tarea;
 //
-//  TareaUsuario TareaUsuario;
+//  protected TareaUsuario TareaUsuario;
 //
-//  TareaUsuarioCorreo TareaUsuarioCorreo;
+//  protected TareaUsuarioCorreo TareaUsuarioCorreo;
 //
-//  TipoAgregacion TipoAgregacion;
+//  protected TipoAgregacion TipoAgregacion;
 //
-    TipoClaseRecurso TipoClaseRecurso;
+    protected TipoClaseRecurso TipoClaseRecurso;
 
-    TipoComparacion TipoComparacion;
+    protected TipoComparacion TipoComparacion;
 
-    TipoDatoPar TipoDatoPar;
+    protected TipoDatoPar TipoDatoPar;
 
-    TipoDominio TipoDominio;
+    protected TipoDominio TipoDominio;
 
-    TipoFuncion TipoFuncion;
+    protected TipoFuncion TipoFuncion;
 
-    TipoNodo TipoNodo;
+    protected TipoNodo TipoNodo;
 
-    TipoPagina TipoPagina;
+    protected TipoPagina TipoPagina;
 
-    TipoParametro TipoParametro;
+    protected TipoParametro TipoParametro;
 
-    TipoParametroDom TipoParametroDom;
+    protected TipoParametroDom TipoParametroDom;
 
-    TipoRastroFun TipoRastroFun;
+    protected TipoRastroFun TipoRastroFun;
 
-    TipoRecurso TipoRecurso;
+    protected TipoRecurso TipoRecurso;
 
-    TipoValor TipoValor;
+    protected TipoValor TipoValor;
 //
-//  TipoValorCriterio TipoValorCriterio;
+//  protected TipoValorCriterio TipoValorCriterio;
 
-    VersionAdalid VersionAdalid;
+    protected VersionAdalid VersionAdalid;
 
-//  VistaFuncion VistaFuncion;
+//  protected VistaFuncion VistaFuncion;
 //
-//  VistaFuncionCol VistaFuncionPar;
+//  protected VistaFuncionCol VistaFuncionPar;
 //
-    PaqueteRegistroFiltro registroFiltro;
+    protected PaqueteRegistroFiltro registroFiltro;
 
-//  PaqueteRegistroTarea registroTarea;
+//  protected PaqueteRegistroTarea registroTarea;
 //
-    PaqueteRegistroVista registroVista;
+    protected PaqueteRegistroVista registroVista;
 
 }

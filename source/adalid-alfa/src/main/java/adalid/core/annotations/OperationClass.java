@@ -58,7 +58,8 @@ public @interface OperationClass {
     /**
      * asynchronous indica si la operación se debe ejecutar de manera síncrona o asíncrona. Su valor es uno de los elementos de la enumeración
      * Kleenean. Seleccione TRUE si se debe ejecutar de manera asíncrona; en caso contrario, seleccione FALSE. Alternativamente, omita el elemento o
-     * seleccione UNSPECIFIED para utilizar el valor predeterminado del atributo. El valor predeterminado del atributo es FALSE.
+     * seleccione UNSPECIFIED para utilizar el valor predeterminado del atributo. El valor predeterminado del atributo es TRUE para operaciones de
+     * clase y FALSE para operaciones de instancia.
      * <p>
      * Este elemento no es relevante si la operación es un proceso de exportación (extensión de ExportOperation), un informe (extensión de
      * ReportOperation), o un procedimiento almacenado en la base de datos (extensión de ProcedureOperation) de tipo VOID, ya que tales operaciones

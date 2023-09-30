@@ -262,14 +262,14 @@ public class RastroFuncionPar extends AbstractPersistentEntity {
         super.settleExpressions();
         /**/
         biz = rastroFuncion.tipoFuncion.isIn(
-            (rastroFuncion.tipoFuncion.PROCEDIMIENTO_PARAMETROS),
-            (rastroFuncion.tipoFuncion.PROCESO)
+            rastroFuncion.tipoFuncion.PROCEDIMIENTO_PARAMETROS,
+            rastroFuncion.tipoFuncion.PROCESO
         );
         /**/
         dml = rastroFuncion.tipoFuncion.isIn(
-            (rastroFuncion.tipoFuncion.CREACION),
-            (rastroFuncion.tipoFuncion.MODIFICACION),
-            (rastroFuncion.tipoFuncion.ELIMINACION)
+            rastroFuncion.tipoFuncion.CREACION,
+            rastroFuncion.tipoFuncion.MODIFICACION,
+            rastroFuncion.tipoFuncion.ELIMINACION
         );
         /**/
         // <editor-fold defaultstate="collapsed" desc="localization of RastroFuncionPar's expressions">

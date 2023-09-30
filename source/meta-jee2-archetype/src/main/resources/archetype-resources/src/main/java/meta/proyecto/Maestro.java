@@ -20,6 +20,8 @@ import meta.proyecto.comun.*;
  */
 public abstract class Maestro extends ProyectoPrime {
 
+    public static final String ACRONYM = "jee2";
+
     @Override
     protected void settleAttributes() {
         super.settleAttributes();
@@ -39,6 +41,9 @@ public abstract class Maestro extends ProyectoPrime {
             + "it is a management information system that integrates and manages many of the aspects associated with the "
             + "production and distribution operations of companies in the production of goods and/or services. "
             + "");
+        /**/
+        setHelpFileAutoName(HelpFileAutoName.ENTITY);
+        setHelpFileAutoType("xhtml");
         /**/
     }
 

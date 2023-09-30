@@ -93,6 +93,16 @@ public abstract class ProyectoJava1 extends ProyectoBase implements JavaWebProje
     protected static final String JAVA_HOME_DIR_WINDOWS = "java.home.dir.windows";
 
     /**
+     * Plataforma de Java EE (javax o jakarta)
+     */
+    protected static final String JAVA_PLATFORM = "java.platform";
+
+    /**
+     * Plataforma de Java EE (javax o jakarta)
+     */
+    protected static final String PLATAFORMA_JAVA = JAVA_PLATFORM;
+
+    /**
      * Versión de Java
      */
     protected static final String JAVA_VERSION = "java.version";
@@ -101,6 +111,11 @@ public abstract class ProyectoJava1 extends ProyectoBase implements JavaWebProje
      * Versión de Java
      */
     protected static final String VERSION_JAVA = JAVA_VERSION;
+
+    /**
+     * quick filter snippet path
+     */
+    protected static final String QUICK_FILTER_SNIPPET = Constants.QUICK_FILTER_SNIPPET;
 
     protected static final WebLoginAuthMethod[] SUPPORTED_WEB_API_AUTH_METHODS = {
         WebLoginAuthMethod.BASIC,
@@ -321,6 +336,8 @@ public abstract class ProyectoJava1 extends ProyectoBase implements JavaWebProje
     private String _googleRecaptchaSiteKey;
 
     private String _googleRecaptchaSecretKey;
+
+    private String _projectFilterSnippetPath;
 
     private int _projectChangeForgottenPasswordTimeout = 15;
 
@@ -658,6 +675,21 @@ public abstract class ProyectoJava1 extends ProyectoBase implements JavaWebProje
      */
     public void setGoogleRecaptchaSecretKey(String key) {
         _googleRecaptchaSecretKey = key;
+    }
+
+    /**
+     * @return the project filter snippet path
+     */
+    @Override
+    public String getProjectFilterSnippetPath() {
+        return _projectFilterSnippetPath;
+    }
+
+    /**
+     * @param path the project filter snippet path to set
+     */
+    public void setProjectFilterSnippetPath(String path) {
+        _projectFilterSnippetPath = StringUtils.trimToNull(path);
     }
 
     /**

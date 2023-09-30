@@ -48,9 +48,14 @@ public class ControlAcceso {
                 "Functions by Role",
                 "Parameters of Functions by Role",
                 "Favorites by Role",
+                "Special Pages by Role",
                 "Users by Role",
+                "Views by Role",
                 "Users",
-                "Roles per User"
+                "Functions by User",
+                "Parameters of Functions by User",
+                "Roles by User",
+                "User Groups"
             )
             + "";
         /**/

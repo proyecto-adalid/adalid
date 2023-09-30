@@ -12,28 +12,36 @@
         </filterchain>
     </loadresource>
     <property name="adalid.nbm.name" value="${adalid.project.name}.nbm"/>
-    <property name="adalid.lib.dir"  value="${basedir}/../../lib"/>
-    <property name="adalid.nbm.file" value="${adalid.lib.dir}/${adalid.nbm.name}"/>
+    <property name="adalid.lib.dir"  value="${basedir}\..\..\lib"/>
+    <property name="adalid.nbm.file" value="${adalid.lib.dir}\${adalid.nbm.name}"/>
     <available file="${adalid.lib.dir}"  type="dir"  property="adalid.lib.dir.available"/>
     <available file="${adalid.nbm.file}" type="file" property="adalid.nbm.file.available"/>
     <!--
     <echo level="info" message="${ant.version}"/>
-    <echo level="info" message="${ant.project.name}"/>
-    <echo level="info" message="${ant.project.default-target}"/>
-    <echo level="info" message="${basedir}"/>
-    <echo level="info" message="${adalid.lib.dir}"/>
-    <echo level="info" message="${adalid.nbm.file}"/>
-    <echo level="info" message="${harness.dir}"/>
+    <echo level="info" message="ant.project.name=${ant.project.name}"/>
+    <echo level="info" message="ant.project.default-target=${ant.project.default-target}"/>
+    <echo level="info" message="basedir=${basedir}"/>
+    <echo level="info" message="adalid.project.name=${adalid.project.name}"/>
+    <echo level="info" message="adalid.nbm.name=${adalid.nbm.name}"/>
+    <echo level="info" message="adalid.lib.dir=${adalid.lib.dir}"/>
+    <echo level="info" message="adalid.lib.nbm=${adalid.nbm.file}"/>
+    <echo level="info" message="adalid.lib.dir.available=${adalid.lib.dir.available}"/>
+    <echo level="info" message="adalid.lib.nbm.available=${adalid.nbm.file.available}"/>
     -->
-    <echo level="warn" message="THIS BUILD REQUIRES THE FOLLOWING MODIFICATIONS TO FILE ${harness.dir}/common.xml"/>
+    <echo level="warn" message="THIS BUILD REQUIRES THE FOLLOWING MODIFICATIONS TO FILE ${harness.dir}\common.xml"/>
     <echo level="info" message="1. Add an antcall to target -post-build-nbm as last task of target -do-nbm"/>
     <echo level="info" message="2. Add an antcall to target -post-clean-nbm as last task of target clean"/>
-    <!-- Add <antcall target="-post-build-nbm"/> as last task of target name="-do-nbm" -->
+    <!-- Add the following antcall as last task of target name="-do-nbm"
+        <antcall target="-post-build-nbm"/>
+
+    -->
     <target name="-post-build-nbm" if="adalid.lib.dir.available">
         <echo level="warn" message="***Copy /build/${adalid.nbm.name} to ${adalid.lib.dir}"/>
         <copy file="${basedir}/build/${adalid.nbm.name}" todir="${adalid.lib.dir}" failonerror="false" overwrite="true"/>
     </target>
-    <!-- Add <antcall target="-post-clean-nbm"/> as last task of target name="clean" -->
+    <!-- Add the following antcall as last task of target name="clean"
+        <antcall target="-post-clean-nbm"/>
+    -->
     <target name="-post-clean-nbm" if="adalid.nbm.file.available">
         <echo level="warn" message="***Delete ${adalid.nbm.file}"/>
         <delete file="${adalid.nbm.file}"/>

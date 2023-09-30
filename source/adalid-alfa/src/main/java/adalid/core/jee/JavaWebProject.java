@@ -63,4 +63,11 @@ public interface JavaWebProject {
         return "faces";
     }
 
+    /**
+     * @return the project filter snippet path
+     */
+    default String getProjectFilterSnippetPath() {
+        return null;
+    }
+
 }
