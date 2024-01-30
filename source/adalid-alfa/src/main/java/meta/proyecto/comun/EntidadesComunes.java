@@ -59,6 +59,7 @@ import meta.entidad.comun.configuracion.basica.TipoRecurso;
 import meta.entidad.comun.configuracion.basica.TipoValor;
 import meta.entidad.comun.configuracion.basica.VersionAdalid;
 import meta.entidad.comun.control.acceso.ClaseFabricador;
+import meta.entidad.comun.control.acceso.ColumnasOcultas;
 import meta.entidad.comun.control.acceso.ConjuntoSegmento;
 import meta.entidad.comun.control.acceso.ElementoSegmento;
 import meta.entidad.comun.control.acceso.GrupoUsuario;
@@ -226,9 +227,11 @@ public class EntidadesComunes extends Project implements SpecialEntityPack {
 
     protected ClaseJava ClaseJava;
 
+    protected ClaseFabricador ClaseFabricador;
+
     protected ClaseRecurso ClaseRecurso;
 
-    protected ClaseFabricador ClaseFabricador;
+    protected ColumnasOcultas ColumnasOcultas;
 
     protected CondicionEjeFun CondicionEjeFun;
 

@@ -31,7 +31,6 @@ import java.sql.Date;
 import java.sql.Time;
 import java.sql.Timestamp;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
@@ -309,6 +308,36 @@ public abstract class AbstractDataArtifact extends AbstractArtifact implements A
      *
      */
     private boolean _indexed;
+
+    /**
+     *
+     */
+    private String _transitionUserFieldName;
+
+    /**
+     *
+     */
+    private Field _transitionUserField;
+
+    /**
+     *
+     */
+    private Entity _transitionUserEntity;
+
+    /**
+     *
+     */
+    private String _transitionDateTimeFieldName;
+
+    /**
+     *
+     */
+    private Field _transitionDateTimeField;
+
+    /**
+     *
+     */
+    private Property _transitionDateTimeProperty;
 
     /**
      *
@@ -1654,9 +1683,8 @@ public abstract class AbstractDataArtifact extends AbstractArtifact implements A
     @Override
     protected void copyLocalizedStrings(Artifact artifact) {
         super.copyLocalizedStrings(artifact);
-        if (artifact instanceof AbstractDataArtifact) {
-            if (artifact != this) {
-                AbstractDataArtifact that = (AbstractDataArtifact) artifact;
+        if (artifact != this) {
+            if (artifact instanceof AbstractDataArtifact that) {
                 _localizedAnchorLabel.clear();
                 _localizedAnchorLabel.putAll(that._localizedAnchorLabel);
                 _localizedAnchoredLabel.clear();
@@ -1837,15 +1865,13 @@ public abstract class AbstractDataArtifact extends AbstractArtifact implements A
         }
         if (StringUtils.isNotBlank(getDefaultFunction()) || getDefaultValue() != null) {
             switch (getDefaultCheckpoint()) {
-                case DATABASE_TRIGGER:
-                case WHEREVER_POSSIBLE:
+                case DATABASE_TRIGGER, WHEREVER_POSSIBLE -> {
                     switch (getDefaultCondition()) {
-                        case IF_NULL:
-                        case IF_NULL_ON_INSERT:
-                        case UNCONDITIONALLY:
-                        case UNCONDITIONALLY_ON_INSERT:
+                        case IF_NULL, IF_NULL_ON_INSERT, UNCONDITIONALLY, UNCONDITIONALLY_ON_INSERT -> {
                             return true;
+                        }
                     }
+                }
             }
             return true;
         }
@@ -1969,6 +1995,48 @@ public abstract class AbstractDataArtifact extends AbstractArtifact implements A
     @Override
     public boolean isVariantStringField() {
         return _annotatedWithVariantString;
+    }
+
+    /**
+     * @return the transition user field name
+     */
+    public String getTransitionUserFieldName() {
+        return _transitionUserFieldName;
+    }
+
+    /**
+     * @return the transition user field
+     */
+    public Field getTransitionUserField() {
+        return _transitionUserField;
+    }
+
+    /**
+     * @return the transition user entity reference
+     */
+    public Entity getTransitionUserEntity() {
+        return _transitionUserEntity;
+    }
+
+    /**
+     * @return the transition date/time field name
+     */
+    public String getTransitionDateTimeFieldName() {
+        return _transitionDateTimeFieldName;
+    }
+
+    /**
+     * @return the transition date/time field
+     */
+    public Field getTransitionDateTimeField() {
+        return _transitionDateTimeField;
+    }
+
+    /**
+     * @return the transition date/time property
+     */
+    public Property getTransitionDateTimeProperty() {
+        return _transitionDateTimeProperty;
     }
 
     /**
@@ -3439,8 +3507,15 @@ public abstract class AbstractDataArtifact extends AbstractArtifact implements A
                 int avatarWidth = greaterThanZero(annotation.avatarWidth(), data.getAvatarWidth());
                 int avatarHeight = greaterThanZero(annotation.avatarHeight(), data.getAvatarHeight());
                 /**/
+                // <editor-fold defaultstate="collapsed" desc="until 23/01/2024">
+                /*
                 int[] displayWidth = Arrays.copyOf(annotation.displayWidth(), COMPONENT_DISPLAY_SIZE.length);
                 int[] displayHeight = Arrays.copyOf(annotation.displayHeight(), COMPONENT_DISPLAY_SIZE.length);
+                /**/
+                // </editor-fold>
+                /**/
+                int[] displayWidth = specified(annotation.displayWidth(), data.getDisplayWidth());
+                int[] displayHeight = specified(annotation.displayHeight(), data.getDisplayHeight());
                 boolean resizable = annotation.resizable().toBoolean(data.isResizable());
                 /**/
                 WHR whrL = new WHR(fieldName, log, L, displayWidth[L], displayHeight[L], MIN_IMG_W, MIN_IMG_H, DEF_IMG_W[L], DEF_IMG_H[L]);
@@ -3677,8 +3752,71 @@ public abstract class AbstractDataArtifact extends AbstractArtifact implements A
                 Field previous = getDeclaringArtifact().put(annotationClass, field);
                 if (previous == null) {
                     _annotatedWithStateProperty = true;
+                    setTransitionUserEntity(annotation);
+                    setTransitionDateTimeProperty(annotation);
                 } else if (log) {
                     XS1.logDuplicateAnnotation(field, annotationClass, previous);
+                }
+            }
+        }
+    }
+
+    private void setTransitionUserEntity(StateProperty annotation) {
+        String fieldName = annotation.transitionUser();
+        if (StringUtils.isNotBlank(fieldName)) {
+            _transitionUserFieldName = fieldName;
+            boolean log = isLoggableProperty();
+            Entity declaringEntity = getDeclaringEntity();
+            String[] strings = {declaringEntity.getName(), getName(), "transitionUserField"};
+            String role = StringUtils.join(strings, ".");
+            Class<? extends Entity> userEntityClass = TLC.getProject().getUserEntityClass();
+            Class<?>[] validTypes = new Class<?>[]{userEntityClass};
+            Field field = userEntityClass == null ? null : XS1.getField(log, role, fieldName, declaringEntity.getClass(), Entity.class, validTypes);
+            if (field != null) {
+                _transitionUserField = field;
+                Property property = XS1.getProperty(field, declaringEntity);
+                if (property instanceof Entity entity) {
+                    if (!property.isCalculatedProperty()) {
+                        _transitionUserEntity = entity;
+                    } else if (log) {
+                        String message = getFullName() + " has an calculable transitionUser field name in its StateProperty annotation";
+                        logger.error(message);
+                        Project.increaseParserErrorCount();
+                    }
+                } else if (log) {
+                    String message = getFullName() + " has an invalid transitionUser field name in its StateProperty annotation";
+                    logger.error(message);
+                    Project.increaseParserErrorCount();
+                }
+            }
+        }
+    }
+
+    private void setTransitionDateTimeProperty(StateProperty annotation) {
+        String fieldName = annotation.transitionDateTime();
+        if (StringUtils.isNotBlank(fieldName)) {
+            _transitionDateTimeFieldName = fieldName;
+            boolean log = isLoggableProperty();
+            Entity declaringEntity = getDeclaringEntity();
+            String[] strings = {declaringEntity.getName(), getName(), "transitionDateTimeField"};
+            String role = StringUtils.join(strings, ".");
+            Class<?>[] validTypes = new Class<?>[]{DateProperty.class, TimestampProperty.class};
+            Field field = XS1.getField(log, role, fieldName, declaringEntity.getClass(), Entity.class, validTypes);
+            if (field != null) {
+                _transitionDateTimeField = field;
+                Property property = XS1.getProperty(field, declaringEntity);
+                if (property != null) {
+                    if (!property.isCalculatedProperty()) {
+                        _transitionDateTimeProperty = property;
+                    } else if (log) {
+                        String message = getFullName() + " has a calculable transitionDateTime field name in its StateProperty annotation";
+                        logger.error(message);
+                        Project.increaseParserErrorCount();
+                    }
+                } else if (log) {
+                    String message = getFullName() + " has an invalid transitionDateTime field name in its StateProperty annotation";
+                    logger.error(message);
+                    Project.increaseParserErrorCount();
                 }
             }
         }
@@ -3869,8 +4007,7 @@ public abstract class AbstractDataArtifact extends AbstractArtifact implements A
                 Project.increaseParserErrorCount();
             }
             if (_indexed) {
-                if (this instanceof StringData) {
-                    StringData data = (StringData) this;
+                if (this instanceof StringData data) {
                     int maxLength = IntUtils.valueOf(data.getMaxLength());
                     if (maxLength < 1) {
                         logger.error(fieldName + " is a CLOB property and therefore cannot be indexed");
@@ -3892,8 +4029,8 @@ public abstract class AbstractDataArtifact extends AbstractArtifact implements A
         BigDecimalData data = null;
         int precision = -1;
         int scale = -1;
-        if (this instanceof BigDecimalData) {
-            data = (BigDecimalData) this;
+        if (this instanceof BigDecimalData bigDecimalData) {
+            data = bigDecimalData;
             precision = data.getRawPrecision();
             scale = data.getRawScale();
         }
@@ -3938,8 +4075,8 @@ public abstract class AbstractDataArtifact extends AbstractArtifact implements A
         /**/
         BigIntegerData data = null;
         int precision = -1;
-        if (this instanceof BigIntegerData) {
-            data = (BigIntegerData) this;
+        if (this instanceof BigIntegerData bigIntegerData) {
+            data = bigIntegerData;
             precision = data.getRawPrecision();
         }
         /**/
@@ -3972,8 +4109,8 @@ public abstract class AbstractDataArtifact extends AbstractArtifact implements A
         /**/
         BooleanData data = null;
         BooleanDisplayType displayType = BooleanDisplayType.UNSPECIFIED;
-        if (this instanceof BooleanData) {
-            data = (BooleanData) this;
+        if (this instanceof BooleanData booleanData) {
+            data = booleanData;
             displayType = data.rawBooleanDisplayType();
         }
         /**/
@@ -4004,8 +4141,8 @@ public abstract class AbstractDataArtifact extends AbstractArtifact implements A
         Boolean symbolSeparator = null;
         String converter = "";
         String validator = "";
-        if (this instanceof NumericPrimitive) {
-            data = (NumericPrimitive) this;
+        if (this instanceof NumericPrimitive numericPrimitive) {
+            data = numericPrimitive;
             type = data.getConverterType();
             divisor = data.getDivisor();
             divisorRule = data.getDivisorRule();
@@ -4106,8 +4243,9 @@ public abstract class AbstractDataArtifact extends AbstractArtifact implements A
         LetterCase letterCase = LetterCase.UNSPECIFIED;
         boolean allowDiacritics = false;
         boolean richTextFormat = false;
-        if (this instanceof StringData) {
-            data = (StringData) this;
+        boolean translatable = false;
+        if (this instanceof StringData stringData) {
+            data = stringData;
             maxLength = IntUtils.valueOf(data.getMaxLength(), -1);
             minLength = data.getMinLength();
             mask = data.getInputMask();
@@ -4117,8 +4255,9 @@ public abstract class AbstractDataArtifact extends AbstractArtifact implements A
             validator = data.getSpecialValidatorName();
             autoComplete = data.getAutoComplete();
             letterCase = data.getLetterCase();
-            allowDiacritics = data.getAllowDiacritics();
-            richTextFormat = data.getRichTextFormat();
+            allowDiacritics = data.isAllowDiacritics();
+            richTextFormat = data.isRichTextFormat();
+            translatable = data.isTranslatable();
         }
         /**/
         if (aye) {
@@ -4142,6 +4281,7 @@ public abstract class AbstractDataArtifact extends AbstractArtifact implements A
             letterCase = specified(annotation.letterCase(), letterCase);
             allowDiacritics = annotation.allowDiacritics().toBoolean(allowDiacritics);
             richTextFormat = annotation.richTextFormat().toBoolean(richTextFormat);
+            translatable = annotation.translatable().toBoolean(translatable);
             if (richTextFormat) {
                 maxLength = 0;
                 if (log && aml > 0) {
@@ -4234,6 +4374,7 @@ public abstract class AbstractDataArtifact extends AbstractArtifact implements A
             data.setLetterCase(letterCase);
             data.setAllowDiacritics(allowDiacritics);
             data.setRichTextFormat(richTextFormat);
+            data.setTranslatable(translatable);
             data.setPattern(pattern);
             data.setSpecialConverterName(converter);
             data.setSpecialValidatorName(validator);
@@ -4279,8 +4420,8 @@ public abstract class AbstractDataArtifact extends AbstractArtifact implements A
         int yearRange = -1;
         String converter = "";
         String validator = "";
-        if (this instanceof DateData) {
-            data = (DateData) this;
+        if (this instanceof DateData dateData) {
+            data = dateData;
             disabledWeekends = data.isDisabledWeekends();
             disabledWeekdays = data.isDisabledWeekdays();
             disabledHolidays = data.isDisabledHolidays();
@@ -4357,8 +4498,8 @@ public abstract class AbstractDataArtifact extends AbstractArtifact implements A
         int stepSecond = -1;
         String converter = "";
         String validator = "";
-        if (this instanceof TimeData) {
-            data = (TimeData) this;
+        if (this instanceof TimeData timeData) {
+            data = timeData;
             precision = data.getPrecision();
             minHour = data.getMinHour();
             maxHour = data.getMaxHour();
@@ -4538,8 +4679,8 @@ public abstract class AbstractDataArtifact extends AbstractArtifact implements A
         int stepSecond = -1;
         String converter = "";
         String validator = "";
-        if (this instanceof TimestampData) {
-            data = (TimestampData) this;
+        if (this instanceof TimestampData timestampData) {
+            data = timestampData;
             disabledWeekends = data.isDisabledWeekends();
             disabledWeekdays = data.isDisabledWeekdays();
             disabledHolidays = data.isDisabledHolidays();
@@ -4740,8 +4881,15 @@ public abstract class AbstractDataArtifact extends AbstractArtifact implements A
             /**/
             // </editor-fold>
             /**/
+            // <editor-fold defaultstate="collapsed" desc="until 23/01/2024">
+            /*
             int[] displayWidth = Arrays.copyOf(annotation.displayWidth(), COMPONENT_DISPLAY_SIZE.length);
             int[] displayHeight = Arrays.copyOf(annotation.displayHeight(), COMPONENT_DISPLAY_SIZE.length);
+            /**/
+            // </editor-fold>
+            /**/
+            int[] displayWidth = specified(annotation.displayWidth(), data.getDisplayWidth());
+            int[] displayHeight = specified(annotation.displayHeight(), data.getDisplayHeight());
             boolean resizable = annotation.resizable().toBoolean(data.isResizable());
             /**/
             Boolean frameBorder = annotation.frameBorder().toBoolean(data.getFrameBorder());
@@ -4841,27 +4989,39 @@ public abstract class AbstractDataArtifact extends AbstractArtifact implements A
             _annotatedWithFileReference = true;
             StringData data = (StringData) this;
             FileReference annotation = field.getAnnotation(FileReference.class);
-            boolean autoStart = annotation.autoStart().toBoolean(data.isFileUploadAutoStart());
+            Boolean autoStart = annotation.autoStart().toBoolean(data.fileUploadAutoStart());
+            Boolean virusScan = annotation.virusScan().toBoolean(data.fileUploadVirusScan());
             int fileLimit = specified(annotation.fileLimit(), data.getFileUploadFileLimit());
-            int max = specified(annotation.max(), data.getMaxInputFileSize());
+            int undoLimit = specified(annotation.undoLimit(), data.getFileUploadUndoLimit());
+            int maxInputFileSize = specified(annotation.max(), data.getMaxInputFileSize());
             MimeType[] types = specified(annotation.types(), data.getValidInputFileTypes());
             String regex = specified(annotation.regex(), data.getValidInputFilePatternRegex());
             UploadStorageOption uploadStorageOption = specified(annotation.storage(), data.getUploadStorageOption());
+            String pathTemplate = specified(annotation.pathTemplate(), data.getPathTemplate());
             String blobFieldName = specified(annotation.blobField(), data.getBlobFieldName());
             String joinFieldName = specified(annotation.joinField(), data.getJoinFieldName());
             String loadFieldName = specified(annotation.loadField(), data.getLoadFieldName());
             String textFieldName = specified(annotation.textField(), data.getTextFieldName());
             if (fileLimit < 0) {
-                fileLimit = 1;
+                fileLimit = -1;
             } else if (fileLimit < 1 || fileLimit > Constants.MAX_UPLOAD_FILE_LIMIT) {
-                fileLimit = 1;
+                fileLimit = -1;
                 if (log) {
                     logger.error(fieldName + " has an invalid file limit");
                     Project.increaseParserErrorCount();
                 }
             }
-            if (max < 0) {
-                max = Constants.DEFAULT_MAX_INPUT_FILE_SIZE;
+            if (undoLimit < 0) {
+                undoLimit = -1;
+            } else if (undoLimit > Constants.MAX_UPLOAD_UNDO_LIMIT) {
+                undoLimit = -1;
+                if (log) {
+                    logger.error(fieldName + " has an invalid undo limit");
+                    Project.increaseParserErrorCount();
+                }
+            }
+            if (maxInputFileSize < 0) {
+                maxInputFileSize = -1;
             }
             Pattern pattern = null;
             if (StringUtils.isNotBlank(regex)) {
@@ -4881,12 +5041,19 @@ public abstract class AbstractDataArtifact extends AbstractArtifact implements A
                     Project.increaseParserErrorCount();
                 }
             }
-            data.setFileUploadAutoStart(autoStart);
+            if (autoStart != null) {
+                data.setFileUploadAutoStart(autoStart);
+            }
+            if (virusScan != null) {
+                data.setFileUploadVirusScan(virusScan);
+            }
             data.setFileUploadFileLimit(fileLimit);
-            data.setMaxInputFileSize(max);
+            data.setFileUploadUndoLimit(undoLimit);
+            data.setMaxInputFileSize(maxInputFileSize);
             data.setValidInputFileTypes(types);
             data.setValidInputFilePattern(pattern);
             data.setUploadStorageOption(uploadStorageOption);
+            data.setPathTemplate(pathTemplate);
             setFieldReferenceBlobProperty(blobFieldName, fieldName);
             setFieldReferenceJoinProperty(joinFieldName, fieldName);
             setFieldReferenceLoadProperty(loadFieldName, fieldName);
@@ -5036,18 +5203,17 @@ public abstract class AbstractDataArtifact extends AbstractArtifact implements A
         Operation declaringOperation = getDeclaringOperation();
         if (declaringOperation != null) {
             Parameter instanceParameter = declaringOperation.getInstanceParameter();
-            if (instanceParameter instanceof Entity) {
-                Entity instanceEntity = (Entity) instanceParameter;
+            if (instanceParameter instanceof Entity instanceEntity) {
                 Property loadProperty = data.getLoadProperty();
                 if (loadProperty != null) {
                     String loadFieldName = loadProperty.getName();
                     if (StringUtils.isNotBlank(loadFieldName)) {
                         for (Property instanceProperty : instanceEntity.getPropertiesList()) {
                             if (loadFieldName.equals(instanceProperty.getName())) {
-                                if (instanceProperty instanceof DateProperty) {
-                                    ((DateProperty) instanceProperty).setCurrentValue(SpecialTemporalValue.CURRENT_DATE);
-                                } else if (instanceProperty instanceof TimestampProperty) {
-                                    ((TimestampProperty) instanceProperty).setCurrentValue(SpecialTemporalValue.CURRENT_TIMESTAMP);
+                                if (instanceProperty instanceof DateProperty dateProperty) {
+                                    dateProperty.setCurrentValue(SpecialTemporalValue.CURRENT_DATE);
+                                } else if (instanceProperty instanceof TimestampProperty timestampProperty) {
+                                    timestampProperty.setCurrentValue(SpecialTemporalValue.CURRENT_TIMESTAMP);
                                 }
                                 break;
                             }
@@ -5117,8 +5283,15 @@ public abstract class AbstractDataArtifact extends AbstractArtifact implements A
             /**/
             // </editor-fold>
             /**/
+            // <editor-fold defaultstate="collapsed" desc="until 23/01/2024">
+            /*
             int[] displayWidth = Arrays.copyOf(annotation.displayWidth(), COMPONENT_DISPLAY_SIZE.length);
             int[] displayHeight = Arrays.copyOf(annotation.displayHeight(), COMPONENT_DISPLAY_SIZE.length);
+            /**/
+            // </editor-fold>
+            /**/
+            int[] displayWidth = specified(annotation.displayWidth(), data.getDisplayWidth());
+            int[] displayHeight = specified(annotation.displayHeight(), data.getDisplayHeight());
             boolean resizable = annotation.resizable().toBoolean(data.isResizable());
             /**/
             WHR whrL = new WHR(fieldName, log, L, displayWidth[L], displayHeight[L], MIN_IMG_W, MIN_IMG_H, DEF_IMG_W[L], DEF_IMG_H[L]);
@@ -5170,9 +5343,9 @@ public abstract class AbstractDataArtifact extends AbstractArtifact implements A
             Field masterField = XS1.getField(log, role, masterFieldName, declaringEntity.getClass(), Entity.class, validTypes);
             if (masterField != null) {
                 property.setMasterSequenceMasterField(masterField);
+                property.setMasterSequenceMasterEntity(declaringEntity);
                 Property masterProperty = XS1.getProperty(masterField, declaringEntity);
-                if (masterProperty instanceof EntityReference) {
-                    EntityReference masterEntityReference = (EntityReference) masterProperty;
+                if (masterProperty instanceof EntityReference masterEntityReference) {
                     MasterDetailView masterDetailView = masterEntityReference.getMasterDetailView();
                     if (MasterDetailView.TABLE.equals(masterDetailView) || MasterDetailView.TABLE_AND_DETAIL.equals(masterDetailView)) {
                         property.setMasterSequenceMasterProperty(masterProperty);
@@ -5330,12 +5503,10 @@ public abstract class AbstractDataArtifact extends AbstractArtifact implements A
     private boolean namesakable() {
         if (StringUtils.isBlank(_linkedFieldName) && StringUtils.isBlank(_linkedColumnName)) {
             Operation declaringOperation = getDeclaringOperation();
-            if (declaringOperation instanceof ExportOperation) {
-                ExportOperation export = (ExportOperation) declaringOperation;
+            if (declaringOperation instanceof ExportOperation export) {
                 return ExportQueryType.DYNAMIC.equals(export.getQueryType());
             }
-            if (declaringOperation instanceof ReportOperation) {
-                ReportOperation report = (ReportOperation) declaringOperation;
+            if (declaringOperation instanceof ReportOperation report) {
                 return ReportQueryType.DYNAMIC.equals(report.getQueryType());
             }
         }
@@ -5473,15 +5644,14 @@ public abstract class AbstractDataArtifact extends AbstractArtifact implements A
     private void checkPropertyFieldElements() {
         if (_defaultFunction != null && _defaultFunction.matches("^.*\\bold\\..*$")) {
             switch (_defaultCondition) {
-                case IF_NULL_ON_UPDATE:
-                case UNCONDITIONALLY_ON_UPDATE:
-                    break;
-                default:
+                case IF_NULL_ON_UPDATE, UNCONDITIONALLY_ON_UPDATE -> {
+                }
+                default -> {
                     String message = getFullName() + " default function cannot reference \"old\" pseudo-record "
                         + "due to its default condition; old is valid only for IF_NULL_ON_UPDATE and UNCONDITIONALLY_ON_UPDATE";
                     logger.error(message);
                     Project.increaseParserErrorCount();
-                    break;
+                }
             }
         }
         if (restrictedReadingAccess()) {
@@ -5528,10 +5698,9 @@ public abstract class AbstractDataArtifact extends AbstractArtifact implements A
         }
         if (isTemporalPrimitive()) {
             switch (_aggregateFunction) {
-                case COUNT:
-                case MINIMUM:
-                case MAXIMUM:
+                case COUNT, MINIMUM, MAXIMUM -> {
                     return _aggregateFunction;
+                }
             }
             logUsingCountAggregation();
             return AggregateFunction.COUNT;
@@ -6063,6 +6232,14 @@ public abstract class AbstractDataArtifact extends AbstractArtifact implements A
     @Override
     public boolean isEnumerationEntity() {
         return this instanceof EnumerationEntity;
+    }
+
+    /**
+     * @return true if is a boolean enumeration entity; otherwise false
+     */
+    @Override
+    public boolean isBooleanEnumerationEntity() {
+        return this instanceof BooleanEnumerationEntity;
     }
 
     /**
@@ -6685,8 +6862,7 @@ public abstract class AbstractDataArtifact extends AbstractArtifact implements A
     }
 
     private Expression maxValueExpression(DataArtifact da) {
-        if (da instanceof IntervalizedArtifact) {
-            IntervalizedArtifact ia = (IntervalizedArtifact) da;
+        if (da instanceof IntervalizedArtifact ia) {
             Object maxValueObject = ia.getMaxValue();
             return maxValueObject instanceof Expression ? (Expression) maxValueObject
                 : (maxValueObject instanceof Entity) ? ((Entity) maxValueObject).self() : null;
@@ -6781,8 +6957,7 @@ public abstract class AbstractDataArtifact extends AbstractArtifact implements A
     }
 
     private Expression minValueExpression(DataArtifact da) {
-        if (da instanceof IntervalizedArtifact) {
-            IntervalizedArtifact ia = (IntervalizedArtifact) da;
+        if (da instanceof IntervalizedArtifact ia) {
             Object minValueObject = ia.getMinValue();
             return minValueObject instanceof Expression ? (Expression) minValueObject
                 : (minValueObject instanceof Entity) ? ((Entity) minValueObject).self() : null;
@@ -7809,14 +7984,12 @@ public abstract class AbstractDataArtifact extends AbstractArtifact implements A
         if (TLC.getProject().isDatabaseDefaultValuesMustBeSingleEntityExpression()) {
             Entity thisDeclaringEntity = getDeclaringEntity();
             if (thisDeclaringEntity != null) {
-                if (object instanceof Primitive) {
-                    Primitive primitive = (Primitive) object;
+                if (object instanceof Primitive primitive) {
                     Entity thatDeclaringEntity = primitive.getDeclaringEntity();
                     if (thatDeclaringEntity != null && thatDeclaringEntity != thisDeclaringEntity) {
                         setDefaultCheckpointToUserInterface(log);
                     }
-                } else if (object instanceof Expression) {
-                    Expression expression = (Expression) object;
+                } else if (object instanceof Expression expression) {
                     if (!expression.isSingleEntityExpression(thisDeclaringEntity)) {
                         setDefaultCheckpointToUserInterface(log);
                     }
@@ -7901,16 +8074,16 @@ public abstract class AbstractDataArtifact extends AbstractArtifact implements A
     }
 
     protected boolean validSpecialTemporalValue(SpecialTemporalValue value) {
-        switch (value) {
-            case CURRENT_DATE:
-                return isDateData() || isTimestampData();
-            case CURRENT_TIME:
-                return isTimeData() || isTimestampData();
-            case CURRENT_TIMESTAMP:
-                return isTimestampData();
-            default:
-                return isTemporalPrimitive();
-        }
+        return switch (value) {
+            case CURRENT_DATE ->
+                isDateData() || isTimestampData();
+            case CURRENT_TIME ->
+                isTimeData() || isTimestampData();
+            case CURRENT_TIMESTAMP ->
+                isTimestampData();
+            default ->
+                isTemporalPrimitive();
+        };
     }
 
     private boolean incompatibleValueType(Object object) { // since 20201208
@@ -7976,8 +8149,7 @@ public abstract class AbstractDataArtifact extends AbstractArtifact implements A
             return 48; // 50/1000
         } else if (this instanceof CharacterData) {
             return 48; // 50/1000
-        } else if (this instanceof StringData) {
-            StringData data = (StringData) this;
+        } else if (this instanceof StringData data) {
             EncodingType encoding = data.getEncodingType();
             if (encoding != null && !encoding.equals(EncodingType.UNSPECIFIED)) {
                 return 0;
@@ -8026,6 +8198,7 @@ public abstract class AbstractDataArtifact extends AbstractArtifact implements A
     }
 
     public boolean isSinglePropertyOfUniqueKey() {
+        /* until 05/12/2023
         Entity root = getDeclaringEntityRoot();
         if (root != null) {
             List<Key> keys = root.getKeysList();
@@ -8036,6 +8209,22 @@ public abstract class AbstractDataArtifact extends AbstractArtifact implements A
             }
         }
         return false;
+        /**/
+        Key key = getSinglePropertyUniqueKey();
+        return key != null;
+    }
+
+    public Key getSinglePropertyUniqueKey() {
+        Entity root = getDeclaringEntityRoot();
+        if (root != null) {
+            List<Key> keys = root.getKeysList();
+            for (Key key : keys) {
+                if (key.isUnique() && key.isSingleProperty() && this.equals(key.getTheProperty())) {
+                    return key;
+                }
+            }
+        }
+        return null;
     }
 
     // <editor-fold defaultstate="collapsed" desc="aggregates">
@@ -8161,8 +8350,7 @@ public abstract class AbstractDataArtifact extends AbstractArtifact implements A
                                 logger.warn(warning + hint);
                                 Project.increaseParserWarningCount();
                             }
-                        } else if (this instanceof NumericPrimitive) {
-                            NumericPrimitive numericPrimitive = (NumericPrimitive) this;
+                        } else if (this instanceof NumericPrimitive numericPrimitive) {
                             Number maxNumber1 = numericPrimitive.getMaxNumber();
                             Number minNumber1 = numericPrimitive.getMinNumber();
                             if (maxNumber1 != null && minNumber1 != null) {

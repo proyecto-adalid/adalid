@@ -90,10 +90,10 @@ public class CondicionTarea extends AbstractPersistentEnumerationEntity {
     protected void settleInstances() {
         super.settleInstances();
         /**/
-        ASIGNADA.setCustomTag(InstanceTag.LIGHT_GREEN.setPillShaped(true));
-        DISPONIBLE.setCustomTag(InstanceTag.BLUE.setPillShaped(true));
-        EJECUTADA.setCustomTag(InstanceTag.GREEN.setPillShaped(true));
-        CANCELADA.setCustomTag(InstanceTag.YELLOW.setPillShaped(true));
+        ASIGNADA.setCustomTag(InstanceTag.LIGHT_GREEN.copy().setPillShaped(true));
+        DISPONIBLE.setCustomTag(InstanceTag.BLUE.copy().setPillShaped(true));
+        EJECUTADA.setCustomTag(InstanceTag.GREEN.copy().setPillShaped(true));
+        CANCELADA.setCustomTag(InstanceTag.YELLOW.copy().setPillShaped(true));
         /**/
         // <editor-fold defaultstate="collapsed" desc="localization of CondicionTarea's instances">
         ASIGNADA.newInstanceField(codigo, "Assigned", ENGLISH);
@@ -105,7 +105,7 @@ public class CondicionTarea extends AbstractPersistentEnumerationEntity {
         EJECUTADA.newInstanceField(codigo, "Executed", ENGLISH);
         EJECUTADA.newInstanceField(codigo, "Ejecutada", SPANISH);
         /**/
-        CANCELADA.newInstanceField(codigo, "Canceled", ENGLISH);
+        CANCELADA.newInstanceField(codigo, "Cancelled", ENGLISH);
         CANCELADA.newInstanceField(codigo, "Cancelada", SPANISH);
         // </editor-fold>
     }

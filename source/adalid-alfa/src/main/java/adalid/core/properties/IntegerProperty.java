@@ -26,9 +26,13 @@ import java.util.List;
  */
 public class IntegerProperty extends IntegerData implements NumericProperty {
 
+    private static final boolean experimenting = false;
+
     private String _masterSequenceMasterFieldName;
 
     private Field _masterSequenceMasterField;
+
+    private Entity _masterSequenceMasterEntity;
 
     private Property _masterSequenceMasterProperty;
 
@@ -71,10 +75,23 @@ public class IntegerProperty extends IntegerData implements NumericProperty {
     }
 
     /**
+     * @param entity the MasterSequence master entity to set
+     */
+    public void setMasterSequenceMasterEntity(Entity entity) {
+        XS2.checkAccess();
+        _masterSequenceMasterEntity = entity;
+    }
+
+    /**
      * @return the MasterSequence master property
      */
 //  @Override -- Implements method from: MasterSequence
     public Property getMasterSequenceMasterProperty() {
+        if (experimenting) {
+            if (_masterSequenceMasterProperty == null && _masterSequenceMasterField != null && _masterSequenceMasterEntity != null) {
+                _masterSequenceMasterProperty = XS2.getProperty(_masterSequenceMasterField, _masterSequenceMasterEntity, true);
+            }
+        }
         return _masterSequenceMasterProperty;
     }
 

@@ -95,6 +95,7 @@ public class UsuarioModulo extends AbstractPersistentEntity {
     @ManyToOne(navigability = Navigability.UNIDIRECTIONAL, view = MasterDetailView.NONE, quickAdding = QuickAddingFilter.MISSING)
     @ColumnField(nullable = Kleenean.FALSE)
     @PropertyField(table = Kleenean.TRUE, detail = Kleenean.TRUE, report = Kleenean.TRUE, export = Kleenean.TRUE)
+    @EntityReferenceSearch(searchType = SearchType.LIST, listStyle = ListStyle.NAME)
     public ModuloAplicacion modulo;
 
     @Override

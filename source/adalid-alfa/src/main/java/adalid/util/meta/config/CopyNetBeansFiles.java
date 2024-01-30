@@ -18,11 +18,11 @@ package adalid.util.meta.config;
  * Los archivos del directorio src/main/resources/configuration/NetBeans son ejemplos de archivos de configuración de NetBeans. Puede copiarlos al
  * directorio raíz del proyecto y modificar las copias si fuese necesario.
  *
- * Este proyecto requiere JDK 11. Aun cuando la plataforma Java predeterminada de NetBeans sea JDK 11, se recomienda definir la plataforma "JDK 11" y
- * configurar el proyecto para que utilice esa plataforma en lugar de la plataforma "JDK 11 (Default)". La plataforma se define con el "Java Platform
+ * Este proyecto requiere JDK 17. Aun cuando la plataforma Java predeterminada de NetBeans sea JDK 17, se recomienda definir la plataforma "JDK 17" y
+ * configurar el proyecto para que utilice esa plataforma en lugar de la plataforma "JDK 17 (Default)". La plataforma se define con el "Java Platform
  * Manager" de NetBeans. La configuración se suele hacer en la ventana de propiedades del proyecto, con el elemento "Java Platform" de la categoría
  * "Build/Compile". Al configurar el proyecto, se agrega el elemento netbeans.hint.jdkPlatform al archivo nb-configuration.xml; el valor de
- * netbeans.hint.jdkPlatform es el nombre de la plataforma, con un guion bajo en lugar del espacio en blanco; es decir, JDK_11. En el archivo de
+ * netbeans.hint.jdkPlatform es el nombre de la plataforma, con un guion bajo en lugar del espacio en blanco; es decir, JDK_17. En el archivo de
  * ejemplo nb-configuration.xml se define el valor del elemento netbeans.hint.jdkPlatform. Copiar el archivo equivale solo a la configuración; no
  * tendrá efecto si la plataforma no está definida.
  *
@@ -41,14 +41,14 @@ public class CopyNetBeansFiles extends CopyConfigFiles {
     public static void copy() {
         /**/
         final String file1 = "nb-configuration.xml";
-        final String text1 = "Este proyecto requiere JDK 11. Aun cuando la plataforma Java predeterminada de NetBeans sea JDK 11,\n"
-            + "se recomienda definir la plataforma \"JDK 11\" y configurar el proyecto para que utilice esa plataforma en\n"
-            + "lugar de la plataforma \"JDK 11 (Default)\".\n\n"
+        final String text1 = "Este proyecto requiere JDK 17. Aun cuando la plataforma Java predeterminada de NetBeans sea JDK 17,\n"
+            + "se recomienda definir la plataforma \"JDK 17\" y configurar el proyecto para que utilice esa plataforma en\n"
+            + "lugar de la plataforma \"JDK 17 (Default)\".\n\n"
             + "La plataforma se define con el \"Java Platform Manager\" de NetBeans. La configuración se suele hacer en\n"
             + "la ventana de propiedades del proyecto, con el elemento \"Java Platform\" de la categoría \"Build/Compile\".\n\n"
             + "Al configurar el proyecto, se agrega el elemento netbeans.hint.jdkPlatform al archivo nb-configuration.xml;\n"
             + "el valor de netbeans.hint.jdkPlatform es el nombre de la plataforma, con un guion bajo en lugar del espacio\n"
-            + "en blanco; es decir, JDK_11.\n\n"
+            + "en blanco; es decir, JDK_17.\n\n"
             + "En el archivo de ejemplo nb-configuration.xml se define el valor del elemento netbeans.hint.jdkPlatform.\n"
             + "Copiar el archivo equivale solo a la configuración; no tendrá efecto si la plataforma no está definida.\n\n";
         /**/

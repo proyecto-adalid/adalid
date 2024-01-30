@@ -315,14 +315,26 @@ public class SqlUtil {
         return _host != null && !_host.equals("127.0.0.1") && !_host.equalsIgnoreCase("localhost");
     }
 
+    protected boolean isSlowConnection() {
+        return _dbms.equals("oracle") || isRemoteConnection();
+    }
+
     protected boolean executeStatement(String statement) throws SQLException {
+        return executeStatement(statement, true);
+    }
+
+    protected boolean executeStatement(String statement, boolean rethrow) throws SQLException {
         try {
             logger.debug(_url + " " + statement);
             PreparedStatement prepareStatement = _connection.prepareStatement(statement);
             return prepareStatement.execute();
         } catch (SQLException ex) {
-            logger.fatal(statement, ex);
-            throw ex;
+            if (rethrow) {
+                logger.fatal(statement, ex);
+                throw ex;
+            }
+            logger.warn(statement);
+            return false;
         }
     }
 

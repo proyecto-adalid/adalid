@@ -97,14 +97,14 @@ public class UsuarioSegmento extends AbstractPersistentEntity {
         // </editor-fold>
     }
 
-    Key key101;
+    protected Key ix_usuario_segmento_0001;
 
     @Override
     protected void settleKeys() {
         super.settleKeys();
         /**/
-        key101.setUnique(false);
-        key101.newKeyField(usuario, conjunto);
+        ix_usuario_segmento_0001.setUnique(false);
+        ix_usuario_segmento_0001.newKeyField(usuario, conjunto);
         /**/
     }
 
@@ -112,6 +112,7 @@ public class UsuarioSegmento extends AbstractPersistentEntity {
 
     @ProcessOperationClass
     @OperationClass(access = OperationAccess.PRIVATE)
+    @ConstructionOperationClass(type = UsuarioSegmento.class)
     public class Agregar extends ProcessOperation {
 
         @Override

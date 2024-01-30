@@ -24,7 +24,7 @@ public class ProjectReference {
 
     private Project _project;
 
-    private Class<?> _projectClass;
+    private final Class<?> _projectClass;
 
     private Artifact _declaringArtifact;
 
@@ -35,16 +35,6 @@ public class ProjectReference {
     private final Map<String, Class<?>> _declaringTypes = new TreeMap<>();
 
     private final Project _outer;
-
-    ProjectReference(final Project outer) {
-        _outer = outer;
-    }
-
-    ProjectReference(Project project, final Project outer) {
-        _outer = outer;
-        _project = project;
-        _projectClass = project.getClass();
-    }
 
     ProjectReference(Class<?> projectClass, final Project outer) {
         _outer = outer;
@@ -74,10 +64,7 @@ public class ProjectReference {
     }
 
     void putDeclaredType(Class<?> declaredType) {
-        //          if (declaredType == null) {
-        //          } else {
         _declaredTypes.put(declaredType.getName(), declaredType);
-        //          }
     }
 
     public Map<String, Class<?>> getDeclaredTypes() {

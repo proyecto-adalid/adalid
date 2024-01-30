@@ -12,6 +12,7 @@
  */
 package adalid.core;
 
+import adalid.commons.bundles.Bundle;
 import adalid.core.interfaces.*;
 import adalid.core.properties.*;
 import java.math.BigDecimal;
@@ -33,7 +34,7 @@ public class InstanceField extends AbstractArtifact {
 
     private final Property _property;
 
-    private final Object _value;
+    private Object _value;
 
     /**
      * @return the primitive property
@@ -149,7 +150,6 @@ public class InstanceField extends AbstractArtifact {
     InstanceField(Instance instance, StringProperty property, String value, Locale locale) {
         super();
         _property = property;
-        _value = value;
         setLocalizedValue(locale, value);
         init(instance);
     }
@@ -189,6 +189,9 @@ public class InstanceField extends AbstractArtifact {
             _localizedValue.remove(l);
         } else {
             _localizedValue.put(l, value);
+            if (_value == null && l.equals(Bundle.getLocale())) {
+                _value = value;
+            }
         }
     }
 

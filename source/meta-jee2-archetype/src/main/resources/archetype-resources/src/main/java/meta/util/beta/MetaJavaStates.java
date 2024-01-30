@@ -45,10 +45,10 @@ public class MetaJavaStates extends adalid.util.Utility {
     /**
      * PLATFORM almacena el nombre de la plataforma que genera meta-java de máquinas de estado de su aplicación.
      */
-    private static final String PLATFORM = "meta-java-states";
+    private static final String PLATFORM = adalid.util.Platform.META_JAVA_STATES;
 
     public static void main(String[] args) throws Exception {
-        MASTER_CLASS.getDeclaredConstructor().newInstance().build(PLATFORM);
+        newInstance(MASTER_CLASS).build(PLATFORM);
     }
 
 }

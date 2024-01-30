@@ -58,6 +58,8 @@ public class SqlMerger extends SqlUtil {
 
     private String _oldDataFolder;
 
+    private String _selectTemplatesPath;
+
     private SqlReader _reader1, _reader2;
 //
 //  private Project _masterProject;
@@ -389,6 +391,14 @@ public class SqlMerger extends SqlUtil {
         return folder;
     }
 
+    public String getSelectTemplatesPath() {
+        return _selectTemplatesPath;
+    }
+
+    public void setSelectTemplatesPath(String selectTemplatesPath) {
+        _selectTemplatesPath = selectTemplatesPath;
+    }
+
     public Set<String> getTableNames() {
         return _tableNames;
     }
@@ -533,7 +543,7 @@ public class SqlMerger extends SqlUtil {
                 _catalogTablesMap = _masterProject.getCatalogTablesMap();
             }
         }
-         */
+        /**/
     }
 
     protected boolean read1() {
@@ -567,7 +577,7 @@ public class SqlMerger extends SqlUtil {
     private boolean initReader1() {
         String[] args = reader1_args();
         _reader1 = new SqlReader(args);
-        _reader1.setSelectTemplatesPath("templates/meta/sql");
+        _reader1.setSelectTemplatesPath(StringUtils.defaultIfBlank(_selectTemplatesPath, "templates/meta/sql"));
 //      _reader1.setMasterProject(_masterProject);
         _reader1.setTablesLoadMap(_tablesLoadMap);
         _reader1.setCatalogTablesMap(_catalogTablesMap);
@@ -586,7 +596,7 @@ public class SqlMerger extends SqlUtil {
     private boolean initReader2() {
         String[] args = reader2_args();
         _reader2 = new SqlReader(args);
-        _reader2.setSelectTemplatesPath("templates/meta/sql");
+        _reader2.setSelectTemplatesPath(StringUtils.defaultIfBlank(_selectTemplatesPath, "templates/meta/sql"));
 //      _reader2.setMasterProject(_masterProject);
         _reader2.setTablesLoadMap(_tablesLoadMap);
         _reader2.setCatalogTablesMap(_catalogTablesMap);
@@ -759,13 +769,13 @@ public class SqlMerger extends SqlUtil {
                 if (upgradeable) {
                     _oddColumns.add(columnPair);
                     if (columnPair.casts()) {
-                        text = name1 + " now is a not nullable " + sqlx1 + " column with no default value" + DATA_CONV_REQD;
+                        text = name1 + " is now a non-nullable " + sqlx1 + " column with no default value" + DATA_CONV_REQD;
                     } else if (type1.equals(type2) && columnPair.refers()) {
-                        text = name1 + " now is " + sqlx1 + "; it previously was " + sqlx2 + DATA_CONV_REQD;
+                        text = name1 + " is now " + sqlx1 + "; it previously was " + sqlx2 + DATA_CONV_REQD;
                     } else if (type1.equals(type2)) {
                         text = name1 + " now references " + xref1 + "; it previously referenced " + xref3 + DATA_CONV_REQD;
                     } else {
-                        text = name1 + " now is " + sqlx1 + "; it previously was " + sqlx2 + DATA_CONV_REQD;
+                        text = name1 + " is now " + sqlx1 + "; it previously was " + sqlx2 + DATA_CONV_REQD;
                     }
                     logWarning(tableName, text);
                 }
@@ -781,7 +791,7 @@ public class SqlMerger extends SqlUtil {
                     columnPair = sharedTable.addColumnPair(column1, null);
                     if (upgradeable) {
                         _oddColumns.add(columnPair);
-                        text = name1 + " is a new not nullable " + sqlx1 + " column with no default value";
+                        text = name1 + " is a new non-nullable " + sqlx1 + " column with no default value";
                         logWarning(tableName, text);
                     }
                 }
@@ -1128,7 +1138,7 @@ public class SqlMerger extends SqlUtil {
         int scale2 = column2.getScale();
         int characters2 = characters(type2, length2);
         int digits2 = digits(type2, precision2, scale2);
-        /**/
+        /*
         switch (type1) {
 //          case "blob":
 //          case "boolean":
@@ -1152,6 +1162,17 @@ public class SqlMerger extends SqlUtil {
             default:
                 return type2.equals(type1);
         }
+        /**/
+        return switch (type1) {
+            case "char", "string" ->
+                characters1 >= characters2 && characters2 > 0;
+            case "byte", "short", "integer", "long", "decimal", "float", "double" ->
+                digits1 >= digits2 && digits2 > 0;
+            case "timestamp" ->
+                type2.equals(type1) || type2.equals("date") || type2.equals("time");
+            default ->
+                type2.equals(type1);
+        };
     }
 
     static boolean refers(SqlColumn column1, SqlColumn column2) {
@@ -1166,6 +1187,7 @@ public class SqlMerger extends SqlUtil {
     }
 
     private static int characters(String type, int length) {
+        /*
         switch (type) {
             case "char":
             case "string":
@@ -1173,9 +1195,18 @@ public class SqlMerger extends SqlUtil {
             default:
                 return 0;
         }
+        /**/
+        return switch (type) {
+            case "char", "string" ->
+                length == 0 ? Integer.MAX_VALUE : length;
+            default ->
+                0;
+        };
+        /**/
     }
 
     private static int digits(String type, int precision, int scale) {
+        /*
         switch (type) {
             case "byte":
                 return 3;
@@ -1192,6 +1223,22 @@ public class SqlMerger extends SqlUtil {
             default:
                 return 0;
         }
+        /**/
+        return switch (type) {
+            case "byte" ->
+                3;
+            case "short" ->
+                5;
+            case "integer" ->
+                10;
+            case "long" ->
+                19;
+            case "decimal", "float", "double" ->
+                precision == 0 ? Integer.MAX_VALUE : precision - scale;
+            default ->
+                0;
+        };
+        /**/
     }
 
     private boolean logDetails(String name, String text) {

@@ -686,6 +686,11 @@ public interface Property extends DataArtifact, ValuedArtifact {
     boolean isEnumerationEntity();
 
     /**
+     * @return true if it is a boolean enumeration entity; otherwise false
+     */
+    boolean isBooleanEnumerationEntity();
+
+    /**
      * @return true if it is a non-enumeration entity; otherwise false
      */
     boolean isNonEnumerationEntity();

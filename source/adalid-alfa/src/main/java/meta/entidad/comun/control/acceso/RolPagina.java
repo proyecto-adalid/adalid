@@ -152,12 +152,10 @@ public class RolPagina extends AbstractPersistentEntity {
     protected void settleExpressions() {
         super.settleExpressions();
         /**/
-        check101 = and(pagina.esEspecial.isFalse(),
-            pagina.tipoPagina.isNotEqualTo(pagina.tipoPagina.DETALLE),
-            pagina.tipoPagina.isNotEqualTo(pagina.tipoPagina.CONSULTA_DETALLE),
-            pagina.dominio.isNotNull(),
-            pagina.dominioMaestro.isNull(),
-            pagina.parametro.isNull()
+        check101 = and(
+            pagina.esExterna.isFalse(),
+            pagina.tipoPagina.isNullOrNotIn(pagina.tipoPagina.DETALLE, pagina.tipoPagina.CONSULTA_DETALLE),
+            or(pagina.esEspecial.isTrue(), and(pagina.dominio.isNotNull(), pagina.dominioMaestro.isNull(), pagina.parametro.isNull()))
         );
         /**/
         tipoPagina.setCalculableValueEntityReference(pagina.tipoPagina);

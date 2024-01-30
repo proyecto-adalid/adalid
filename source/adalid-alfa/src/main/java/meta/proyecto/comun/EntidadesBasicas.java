@@ -54,6 +54,7 @@ import meta.entidad.comun.configuracion.basica.ext.Dominio;
 import meta.entidad.comun.configuracion.basica.ext.Funcion;
 import meta.entidad.comun.configuracion.basica.ext.FuncionParametro;
 import meta.entidad.comun.control.acceso.ClaseFabricador;
+import meta.entidad.comun.control.acceso.ColumnasOcultas;
 import meta.entidad.comun.control.acceso.ConjuntoSegmento;
 import meta.entidad.comun.control.acceso.ElementoSegmento;
 import meta.entidad.comun.control.acceso.GrupoUsuario;
@@ -120,11 +121,13 @@ public class EntidadesBasicas extends Project {
 
     protected CampoValorTemporal CampoValorTemporal;
 
+    protected ClaseFabricador ClaseFabricador;
+
     protected ClaseJava ClaseJava;
 
     protected ClaseRecurso ClaseRecurso;
 
-    protected ClaseFabricador ClaseFabricador;
+    protected ColumnasOcultas ColumnasOcultas;
 
     protected CondicionEjeFun CondicionEjeFun;
 

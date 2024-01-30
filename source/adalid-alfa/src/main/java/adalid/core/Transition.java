@@ -14,6 +14,7 @@ package adalid.core;
 
 import adalid.commons.util.*;
 import adalid.core.interfaces.*;
+import java.util.Objects;
 
 /**
  * @author Jorge Campins
@@ -63,6 +64,22 @@ public class Transition extends AbstractArtifact {
     public void settle(State x, State y) {
         _x = x;
         _y = y;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof Transition that) {
+            return Objects.equals(_x, that._x) && Objects.equals(_y, that._y);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 37 * hash + Objects.hashCode(_x);
+        hash = 37 * hash + Objects.hashCode(_y);
+        return hash;
     }
 
     // <editor-fold defaultstate="collapsed" desc="toString">

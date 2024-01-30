@@ -16,6 +16,7 @@ import adalid.commons.util.*;
 import adalid.core.enums.*;
 import adalid.core.expressions.*;
 import adalid.core.interfaces.*;
+import adalid.core.properties.*;
 import adalid.core.sql.*;
 import adalid.core.wrappers.*;
 import java.lang.reflect.Field;
@@ -23,6 +24,7 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import org.apache.commons.lang.StringUtils;
@@ -58,12 +60,7 @@ public abstract class AbstractExpression extends AbstractArtifact implements Nar
     /**
      *
      */
-    private final List<ExpressionUsage> _verifiedUsages = new ArrayList<>();
-
-    /**
-     *
-     */
-    private boolean _logicalTautology;
+    private final Map<ExpressionUsage, Set<Artifact>> _verifiedUsages = new LinkedHashMap<>();
 
     public List<Operation> getInitialStateBusinessOperationsList() {
         List<Operation> list = new ArrayList<>();
@@ -111,6 +108,7 @@ public abstract class AbstractExpression extends AbstractArtifact implements Nar
         return list;
     }
 
+    // <editor-fold defaultstate="collapsed" desc="commented out">
     /**
      *
      */
@@ -135,6 +133,7 @@ public abstract class AbstractExpression extends AbstractArtifact implements Nar
 //  public Map<String, Expression> getExpressionsMap() {
 //      return _expressions;
 //  }
+//  </editor-fold>
 //
     /**
      * @return the data type
@@ -165,12 +164,10 @@ public abstract class AbstractExpression extends AbstractArtifact implements Nar
     private void setParentExpression(Expression parentExpression) {
         if (parentExpression == null || getDeclaringArtifact() == null) {
             _parentExpression = parentExpression;
-            AbstractExpression childExpression;
             Object[] operands = getOperands();
             if (operands != null) {
                 for (Object operand : operands) {
-                    if (operand instanceof AbstractExpression) {
-                        childExpression = (AbstractExpression) operand;
+                    if (operand instanceof AbstractExpression childExpression) {
                         childExpression.setParentExpression(this);
                     }
                 }
@@ -211,8 +208,49 @@ public abstract class AbstractExpression extends AbstractArtifact implements Nar
      */
     @Override
     public List<ExpressionUsage> getVerifiedUsages() {
+        return new ArrayList<>(_verifiedUsages.keySet());
+    }
+
+    /**
+     * @return the verified usages
+     */
+    @Override
+    public Map<ExpressionUsage, Set<Artifact>> getVerifiedUsageMap() {
         return _verifiedUsages;
     }
+
+    /**
+     * @param usage the expression usage
+     * @return the verified user list
+     */
+    @Override
+    public Set<Artifact> getVerifiedUsers(ExpressionUsage usage) {
+        Set<Artifact> users = _verifiedUsages.get(usage);
+        if (users == null) {
+            users = new LinkedHashSet<>();
+            _verifiedUsages.put(usage, users);
+        }
+        return users;
+    }
+
+    /**
+     * @param usage the expression usage
+     * @param user the artifact that makes use of this expression
+     * @return the verified user list
+     */
+    @Override
+    public Set<Artifact> addVerifiedUsage(ExpressionUsage usage, Artifact user) {
+        Set<Artifact> users = getVerifiedUsers(usage);
+        if (user != null) {
+            users.add(user);
+        }
+        return users;
+    }
+
+    /**
+     *
+     */
+    private boolean _logicalTautology;
 
 //  @Override
     public boolean isLogicalTautology() {
@@ -226,20 +264,35 @@ public abstract class AbstractExpression extends AbstractArtifact implements Nar
         }
     }
 
+    private Property _transitionTimestamp;
+
+//  @Override
+    public Property getTransitionTimestamp() {
+        return _transitionTimestamp;
+    }
+
+//  @Override
+    public void setTransitionTimestamp(TimestampProperty timestamp) {
+        _transitionTimestamp = timestamp;
+    }
+
+//  @Override
+    public void setTransitionDate(DateProperty date) {
+        _transitionTimestamp = date;
+    }
+
     /**
      * @return the strings set
      */
     @Override
     public Set<String> getStringsSet() {
         Set<String> set = new LinkedHashSet<>();
-        Expression expression;
         Object[] operands = getOperands();
         if (operands != null) {
             for (Object operand : operands) {
                 if (operand instanceof String) {
                     set.add(operand.toString());
-                } else if (operand instanceof Expression) {
-                    expression = (Expression) operand;
+                } else if (operand instanceof Expression expression) {
                     set.addAll(expression.getStringsSet());
                 }
             }
@@ -279,16 +332,12 @@ public abstract class AbstractExpression extends AbstractArtifact implements Nar
     @Override
     public Map<String, Property> getReferencedColumnsMap() {
         Map<String, Property> map = new LinkedHashMap<>();
-        Property property;
-        Expression expression;
         Object[] operands = getOperands();
         if (operands != null) {
             for (Object operand : operands) {
-                if (operand instanceof Property) {
-                    property = (Property) operand;
+                if (operand instanceof Property property) {
                     map.put(property.getPathString(), property);
-                } else if (operand instanceof Expression) {
-                    expression = (Expression) operand;
+                } else if (operand instanceof Expression expression) {
                     map.putAll(expression.getReferencedColumnsMap());
                 }
             }
@@ -319,8 +368,7 @@ public abstract class AbstractExpression extends AbstractArtifact implements Nar
     @Override
     public Map<String, QueryJoin> getReferencedJoinsMap() {
         Entity declaringEntity = getDeclaringEntity();
-        if (declaringEntity instanceof PersistentEntity) {
-            PersistentEntity pent = (PersistentEntity) declaringEntity;
+        if (declaringEntity instanceof PersistentEntity pent) {
             QueryTable queryTable = pent.getQueryTable();
             return getReferencedJoinsMap(queryTable);
         }
@@ -358,15 +406,13 @@ public abstract class AbstractExpression extends AbstractArtifact implements Nar
             if (declaringEntity != null) {
                 Object[] operands = getOperands();
                 if (operands != null) {
-                    Expression expression;
                     Entity expressionDeclaringEntity;
                     String key;
                     for (Object operand : operands) {
                         if (operand instanceof Primitive) {
                             continue;
                         }
-                        if (operand instanceof Expression) {
-                            expression = (Expression) operand;
+                        if (operand instanceof Expression expression) {
                             expressionDeclaringEntity = expression.getDeclaringEntity();
                             if (expressionDeclaringEntity == null || expressionDeclaringEntity.equals(declaringEntity)) {
                                 crossReferencedExpressionsSet.addAll(expression.getCrossReferencedExpressionsSet(declaringEntity));
@@ -416,14 +462,12 @@ public abstract class AbstractExpression extends AbstractArtifact implements Nar
         } else {
             Object[] operands = getOperands();
             if (operands != null) {
-                Expression expression;
                 Entity expressionDeclaringEntity;
                 for (Object operand : operands) {
-                    if (operand instanceof Expression) {
+                    if (operand instanceof Expression expression) {
                         if (operand instanceof RowsAggregateX) {
                             return false;
                         }
-                        expression = (Expression) operand;
                         expressionDeclaringEntity = expression.getDeclaringEntity();
                         if (expressionDeclaringEntity == null || expressionDeclaringEntity.equals(declaringEntity)) {
                             if (expression.isSingleEntityExpression(declaringEntity)) {
@@ -528,6 +572,7 @@ public abstract class AbstractExpression extends AbstractArtifact implements Nar
         if (ok) {
 //          finaliseFields();
             checkArguments();
+            checkStateAttributes();
             setParentExpression(null);
         }
         return ok;
@@ -550,10 +595,10 @@ public abstract class AbstractExpression extends AbstractArtifact implements Nar
 
     protected void checkUnusualArguments(String expression, Level level) {
         for (Object operand : getOperands()) {
-            if (operand instanceof Instance) {
-                checkUnusualInstance(expression, level, (Instance) operand);
-            } else if (operand instanceof AbstractExpression) {
-                ((AbstractExpression) operand).checkUnusualArguments(expression, level);
+            if (operand instanceof Instance instance) {
+                checkUnusualInstance(expression, level, instance);
+            } else if (operand instanceof AbstractExpression abstractExpression) {
+                abstractExpression.checkUnusualArguments(expression, level);
             }
         }
     }
@@ -571,6 +616,27 @@ public abstract class AbstractExpression extends AbstractArtifact implements Nar
         }
     }
 
+    protected void checkStateAttributes() {
+        if (this instanceof State) {
+            if (_transitionTimestamp != null) {
+                Artifact myDA = getDeclaringArtifact();
+                if (myDA instanceof Entity myEntity && myEntity.depth() == 0) {
+                    String myEntityName = myEntity.getName();
+                    if (myEntityName != null) {
+                        Artifact tsDA = _transitionTimestamp.getDeclaringArtifact();
+                        if (!(tsDA instanceof Entity tsEntity && tsEntity.depth() == 0 && tsEntity.isAssignableFrom(myEntity))) {
+                            String me = toString("State");
+                            String ts = _transitionTimestamp.getDataType().getSimpleName();
+                            String message = "transition " + ts + " of " + me + " is not a property of " + myEntityName;
+                            logger.error(message);
+                            Project.increaseParserErrorCount();
+                        }
+                    }
+                }
+            }
+        }
+    }
+
     protected void copyDataType(Object object) {
         setDataType(getObjectDataType(object));
     }
@@ -578,15 +644,12 @@ public abstract class AbstractExpression extends AbstractArtifact implements Nar
     protected Class<?> getObjectDataType(Object object) {
         if (object == null) {
             return Object.class;
-        } else if (object instanceof TypedArtifact) {
-            TypedArtifact artifact = (TypedArtifact) object;
+        } else if (object instanceof TypedArtifact artifact) {
             return artifact.getDataType();
-        } else if (object instanceof Instance) { // since 20201209
-            Instance instance = (Instance) object;
+        } else if (object instanceof Instance instance) { // since 20201209
             Entity entity = instance.getDeclaringEntity();
             return entity != null ? entity.getDataType() : object.getClass();
-        } else if (object instanceof SpecialValue) {
-            SpecialValue special = (SpecialValue) object;
+        } else if (object instanceof SpecialValue special) {
             return special.getDataType();
         } else {
             return object.getClass();
@@ -612,8 +675,8 @@ public abstract class AbstractExpression extends AbstractArtifact implements Nar
         } else {
             try {
                 Object foreignExpression = _foreignExpressionField.get(foreignEntity);
-                if (foreignExpression instanceof Expression) {
-                    return (Expression) foreignExpression;
+                if (foreignExpression instanceof Expression expression) {
+                    return expression;
                 }
                 logger.error(errmsg);
                 logger.error(TAB + _foreignExpressionField + " = " + foreignExpression);
@@ -705,6 +768,132 @@ public abstract class AbstractExpression extends AbstractArtifact implements Nar
         return ExpressionWrapper.class;
     }
 
+    @Override
+    public String getLocalizedLabel(Locale locale) {
+        String localizedLabel = super.getLocalizedLabel(locale);
+        if (localizedLabel == null) {
+            Instance instance = getMatchingInstance();
+            if (instance != null) {
+                localizedLabel = instance.getLocalizedLabel(locale);
+                if (localizedLabel == null) {
+                    instance = getStateInstance();
+                    if (instance != null) {
+                        localizedLabel = instance.getInstanceKeyLabel(locale);
+                    }
+                }
+            }
+        }
+        return localizedLabel;
+    }
+
+    @Override
+    public String getLocalizedShortLabel(Locale locale) {
+        String localizedShortLabel = super.getLocalizedShortLabel(locale);
+        if (localizedShortLabel == null) {
+            Instance instance = getMatchingInstance();
+            if (instance != null) {
+                localizedShortLabel = instance.getLocalizedShortLabel(locale);
+                if (localizedShortLabel == null) {
+                    instance = getStateInstance();
+                    if (instance != null) {
+                        localizedShortLabel = instance.getInstanceKeyLabel(locale);
+                    }
+                }
+            }
+        }
+        return localizedShortLabel;
+    }
+
+    @Override
+    public String getLocalizedCollectionLabel(Locale locale) {
+        String localizedCollectionLabel = super.getLocalizedCollectionLabel(locale);
+        if (localizedCollectionLabel == null) {
+            Instance instance = getMatchingInstance();
+            if (instance != null) {
+                localizedCollectionLabel = instance.getLocalizedCollectionLabel(locale);
+            }
+        }
+        return localizedCollectionLabel;
+    }
+
+    @Override
+    public String getLocalizedCollectionShortLabel(Locale locale) {
+        String localizedCollectionShortLabel = super.getLocalizedCollectionShortLabel(locale);
+        if (localizedCollectionShortLabel == null) {
+            Instance instance = getMatchingInstance();
+            if (instance != null) {
+                localizedCollectionShortLabel = instance.getLocalizedCollectionShortLabel(locale);
+            }
+        }
+        return localizedCollectionShortLabel;
+    }
+
+    @Override
+    public String getLocalizedDescription(Locale locale) {
+        String localizedDescription = super.getLocalizedDescription(locale);
+        if (localizedDescription == null) {
+            Instance instance = getMatchingInstance();
+            if (instance != null) {
+                localizedDescription = instance.getLocalizedDescription(locale);
+                if (localizedDescription == null) {
+                    localizedDescription = instance.getInstanceKeyDescription(locale);
+                }
+            }
+        }
+        return localizedDescription;
+    }
+
+    @Override
+    public String getLocalizedShortDescription(Locale locale) {
+        String localizedShortDescription = super.getLocalizedShortDescription(locale);
+        if (localizedShortDescription == null) {
+            Instance instance = getMatchingInstance();
+            if (instance != null) {
+                localizedShortDescription = instance.getLocalizedShortDescription(locale);
+                if (localizedShortDescription == null) {
+                    localizedShortDescription = instance.getInstanceKeyDescription(locale);
+                }
+            }
+        }
+        return localizedShortDescription;
+    }
+
+    private Instance _matchingInstance;
+
+    private Instance getMatchingInstance() {
+        if (_matchingInstance == null) {
+            if (this instanceof BooleanComparisonX bcx) {
+                if (ComparisonOp.EQ.equals(bcx.getOperator()) && bcx.getX() instanceof Entity entity && bcx.getY() instanceof Instance instance) {
+                    if (sameDataTypeSimpleName(entity, instance.getDeclaringEntity())) {
+                        _matchingInstance = instance;
+                    }
+                }
+            }
+        }
+        return _matchingInstance;
+    }
+
+    private Instance _stateInstance;
+
+    private Instance getStateInstance() {
+        if (_stateInstance == null) {
+            if (this instanceof BooleanComparisonX bcx) {
+                Entity declaringEntity = getDeclaringEntity();
+                if (declaringEntity != null) {
+                    Entity stateProperty = declaringEntity.getStateProperty();
+                    if (stateProperty != null) {
+                        if (ComparisonOp.EQ.equals(bcx.getOperator()) && bcx.getX() == stateProperty && bcx.getY() instanceof Instance instance) {
+                            if (sameDataTypeSimpleName(stateProperty, instance.getDeclaringEntity())) {
+                                _stateInstance = instance;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return _stateInstance;
+    }
+
     /**
      * @return the pseudo-expression
      */
@@ -730,12 +919,12 @@ public abstract class AbstractExpression extends AbstractArtifact implements Nar
             return ((Artifact) operand).getFullName();
         } else if (operand instanceof Instance) {
             return ((Artifact) operand).getFullName();
-        } else if (operand instanceof NamedValue) {
-            return ((NamedValue) operand).name();
-        } else if (operand instanceof Expression) {
-            return ((Expression) operand).getExpressionString();
-        } else if (operand instanceof Artifact) {
-            return ((Artifact) operand).getFullName();
+        } else if (operand instanceof NamedValue namedValue) {
+            return namedValue.name();
+        } else if (operand instanceof Expression expression) {
+            return expression.getExpressionString();
+        } else if (operand instanceof Artifact artifact) {
+            return artifact.getFullName();
         } else {
             return "" + operand;
         }
@@ -759,6 +948,7 @@ public abstract class AbstractExpression extends AbstractArtifact implements Nar
     }
     // </editor-fold>
 
+    /*
     private void track(String method) {
         track(method, this);
     }
@@ -767,4 +957,5 @@ public abstract class AbstractExpression extends AbstractArtifact implements Nar
         TLC.getProject().getParser().track(depth(), round(), getClassPath(), method, parameters);
     }
 
+    /**/
 }

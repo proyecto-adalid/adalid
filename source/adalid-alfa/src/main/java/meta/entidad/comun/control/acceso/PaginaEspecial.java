@@ -90,6 +90,16 @@ public class PaginaEspecial extends AbstractPersistentEntity {
     @ColumnField(nullable = Kleenean.FALSE)
 //  @PropertyField(create = Kleenean.FALSE, update = Kleenean.FALSE, table = Kleenean.TRUE, report = Kleenean.TRUE)
     @PropertyField(hidden = Kleenean.TRUE)
+    public BooleanProperty externa;
+
+    @ColumnField(nullable = Kleenean.FALSE)
+//  @PropertyField(create = Kleenean.FALSE, update = Kleenean.FALSE, table = Kleenean.TRUE, report = Kleenean.TRUE)
+    @PropertyField(hidden = Kleenean.TRUE)
+    public BooleanProperty opcionInicio;
+
+    @ColumnField(nullable = Kleenean.FALSE)
+//  @PropertyField(create = Kleenean.FALSE, update = Kleenean.FALSE, table = Kleenean.TRUE, report = Kleenean.TRUE)
+    @PropertyField(hidden = Kleenean.TRUE)
     public BooleanProperty opcionMenu;
 
     @InactiveIndicator
@@ -105,8 +115,14 @@ public class PaginaEspecial extends AbstractPersistentEntity {
         /**/
         codigo.setDefaultValue(concat("@", id.toZeroPaddedString(19)));
         /**/
-        publica.setInitialValue(true);
-        publica.setDefaultValue(true);
+        publica.setInitialValue(false);
+        publica.setDefaultValue(false);
+        /**/
+        externa.setInitialValue(false);
+        externa.setDefaultValue(false);
+        /**/
+        opcionInicio.setInitialValue(false);
+        opcionInicio.setDefaultValue(false);
         /**/
         opcionMenu.setInitialValue(false);
         opcionMenu.setDefaultValue(false);
@@ -136,13 +152,23 @@ public class PaginaEspecial extends AbstractPersistentEntity {
         publica.setLocalizedDescription(ENGLISH, "public page indicator");
         publica.setLocalizedDescription(SPANISH, "indicador de página pública");
         /**/
+        externa.setLocalizedLabel(ENGLISH, "external");
+        externa.setLocalizedLabel(SPANISH, "externa");
+        externa.setLocalizedDescription(ENGLISH, "external page indicator");
+        externa.setLocalizedDescription(SPANISH, "indicador de página externa");
+        /**/
+        opcionInicio.setLocalizedLabel(ENGLISH, "start option");
+        opcionInicio.setLocalizedLabel(SPANISH, "opción de inicio");
+        opcionInicio.setLocalizedDescription(ENGLISH, "start option indicator");
+        opcionInicio.setLocalizedDescription(SPANISH, "indicador de opción de inicio");
+        /**/
         opcionMenu.setLocalizedLabel(ENGLISH, "menu option");
         opcionMenu.setLocalizedLabel(SPANISH, "opción de menú");
+        opcionMenu.setLocalizedDescription(ENGLISH, "menu option indicator");
+        opcionMenu.setLocalizedDescription(SPANISH, "indicador de opción de menú");
         /**/
-        inactiva.setLocalizedLabel(ENGLISH, "inactive special page");
-        inactiva.setLocalizedLabel(SPANISH, "página especial inactiva");
-        inactiva.setLocalizedShortLabel(ENGLISH, "inactive");
-        inactiva.setLocalizedShortLabel(SPANISH, "inactiva");
+        inactiva.setLocalizedLabel(ENGLISH, "inactive");
+        inactiva.setLocalizedLabel(SPANISH, "inactiva");
         inactiva.setLocalizedDescription(ENGLISH, "inactive page indicator");
         inactiva.setLocalizedDescription(SPANISH, "indicador de página inactiva");
         /**/
@@ -152,7 +178,6 @@ public class PaginaEspecial extends AbstractPersistentEntity {
     @Override
     protected void settleFilters() {
         super.settleFilters();
-        uri.setModifyingFilter(opcionMenu.isFalse());
     }
 
     protected Desactivar desactivar;

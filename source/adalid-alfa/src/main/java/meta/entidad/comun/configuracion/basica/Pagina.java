@@ -24,11 +24,11 @@ import java.lang.reflect.Field;
  */
 @EntityClass(catalog = Kleenean.TRUE, independent = Kleenean.TRUE, resourceType = ResourceType.CONFIGURATION, resourceGender = ResourceGender.FEMININE)
 @EntityCodeGen(bws = Kleenean.FALSE, fws = Kleenean.FALSE)
-@EntitySelectOperation(enabled = Kleenean.TRUE, access = OperationAccess.PUBLIC, rowsLimit = 500)
+@EntitySelectOperation(enabled = Kleenean.TRUE, access = OperationAccess.PUBLIC, onload = SelectOnloadOption.EXECUTE, rowsLimit = 500)
 @EntityInsertOperation(enabled = Kleenean.FALSE)
 @EntityUpdateOperation(enabled = Kleenean.TRUE)
 @EntityDeleteOperation(enabled = Kleenean.FALSE)
-@EntityTableView(enabled = Kleenean.TRUE)
+@EntityTableView(enabled = Kleenean.TRUE, quickFilter = Kleenean.TRUE)
 @EntityDetailView(enabled = Kleenean.TRUE)
 @EntityTreeView(enabled = Kleenean.FALSE)
 @EntityConsoleView(enabled = Kleenean.FALSE)
@@ -71,6 +71,16 @@ public class Pagina extends AbstractPersistentEntity {
     @ColumnField(nullable = Kleenean.FALSE)
     @PropertyField(update = Kleenean.FALSE, table = Kleenean.TRUE, report = Kleenean.TRUE)
     public BooleanProperty esEspecial;
+
+    @ColumnField(nullable = Kleenean.FALSE)
+//  @PropertyField(update = Kleenean.FALSE, table = Kleenean.TRUE, report = Kleenean.TRUE)
+    @PropertyField(hidden = Kleenean.TRUE)
+    public BooleanProperty esExterna;
+
+    @ColumnField(nullable = Kleenean.FALSE)
+//  @PropertyField(update = Kleenean.FALSE, table = Kleenean.TRUE, report = Kleenean.TRUE)
+    @PropertyField(hidden = Kleenean.TRUE)
+    public BooleanProperty opcionInicio;
 
     @ColumnField(nullable = Kleenean.FALSE)
     @PropertyField(update = Kleenean.FALSE, table = Kleenean.TRUE, report = Kleenean.TRUE)
@@ -141,6 +151,12 @@ public class Pagina extends AbstractPersistentEntity {
         esEspecial.setInitialValue(false);
         esEspecial.setDefaultValue(false);
         /**/
+        esExterna.setInitialValue(false);
+        esExterna.setDefaultValue(false);
+        /**/
+        opcionInicio.setInitialValue(false);
+        opcionInicio.setDefaultValue(false);
+        /**/
         opcionMenu.setInitialValue(false);
         opcionMenu.setDefaultValue(false);
         /**/
@@ -171,6 +187,12 @@ public class Pagina extends AbstractPersistentEntity {
         /**/
         esEspecial.setLocalizedLabel(ENGLISH, "special");
         esEspecial.setLocalizedLabel(SPANISH, "especial");
+        /**/
+        esExterna.setLocalizedLabel(ENGLISH, "external");
+        esExterna.setLocalizedLabel(SPANISH, "externa");
+        /**/
+        opcionInicio.setLocalizedLabel(ENGLISH, "start option");
+        opcionInicio.setLocalizedLabel(SPANISH, "opción de inicio");
         /**/
         opcionMenu.setLocalizedLabel(ENGLISH, "menu option");
         opcionMenu.setLocalizedLabel(SPANISH, "opción de menú");

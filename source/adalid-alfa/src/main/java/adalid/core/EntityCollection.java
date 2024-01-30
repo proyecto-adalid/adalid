@@ -150,6 +150,36 @@ public class EntityCollection extends AbstractArtifact implements AnnotatableArt
     /**
      *
      */
+    private String _readingViewRowActionSnippetFileName = "";
+
+    /**
+     *
+     */
+    private String _readingViewRowStatusSnippetFileName = "";
+
+    /**
+     *
+     */
+    private String _readingViewRowNumberSnippetFileName = "";
+
+    /**
+     *
+     */
+    private String _writingViewRowActionSnippetFileName = "";
+
+    /**
+     *
+     */
+    private String _writingViewRowStatusSnippetFileName = "";
+
+    /**
+     *
+     */
+    private String _writingViewRowNumberSnippetFileName = "";
+
+    /**
+     *
+     */
     private Step _step;
 
     /**
@@ -581,6 +611,126 @@ public class EntityCollection extends AbstractArtifact implements AnnotatableArt
      */
     public void setDataEntryFormat(DataEntryFormat format) {
         _dataEntryFormat = format == null ? DataEntryFormat.UNSPECIFIED : format;
+    }
+
+    /**
+     * @return the reading table view collection row action snippet file name
+     */
+//  @Override
+    public String getReadingViewRowActionSnippetFileName() {
+        return _readingViewRowActionSnippetFileName;
+    }
+
+    protected void setReadingViewRowActionSnippetFileName(String fileName) {
+        boolean log = depth() == 0;
+        if (StringUtils.isBlank(fileName)) {
+            _readingViewRowActionSnippetFileName = "";
+        } else if (isValidSnippetFileName(fileName)) {
+            _readingViewRowActionSnippetFileName = fileName;
+        } else if (log) {
+            logger.error(getName() + " reading table view collection row action snippet is invalid ");
+            Project.increaseParserErrorCount();
+        }
+    }
+
+    /**
+     * @return the reading table view collection row status snippet file name
+     */
+//  @Override
+    public String getReadingViewRowStatusSnippetFileName() {
+        return _readingViewRowStatusSnippetFileName;
+    }
+
+    protected void setReadingViewRowStatusSnippetFileName(String fileName) {
+        boolean log = depth() == 0;
+        if (StringUtils.isBlank(fileName)) {
+            _readingViewRowStatusSnippetFileName = "";
+        } else if (isValidSnippetFileName(fileName)) {
+            _readingViewRowStatusSnippetFileName = fileName;
+        } else if (log) {
+            logger.error(getName() + " reading table view collection row status snippet is invalid ");
+            Project.increaseParserErrorCount();
+        }
+    }
+
+    /**
+     * @return the reading table view collection row number snippet file name
+     */
+//  @Override
+    public String getReadingViewRowNumberSnippetFileName() {
+        return _readingViewRowNumberSnippetFileName;
+    }
+
+    protected void setReadingViewRowNumberSnippetFileName(String fileName) {
+        boolean log = depth() == 0;
+        if (StringUtils.isBlank(fileName)) {
+            _readingViewRowNumberSnippetFileName = "";
+        } else if (isValidSnippetFileName(fileName)) {
+            _readingViewRowNumberSnippetFileName = fileName;
+        } else if (log) {
+            logger.error(getName() + " reading table view collection row number snippet is invalid ");
+            Project.increaseParserErrorCount();
+        }
+    }
+
+    /**
+     * @return the writing table view collection row action snippet file name
+     */
+//  @Override
+    public String getWritingViewRowActionSnippetFileName() {
+        return _writingViewRowActionSnippetFileName;
+    }
+
+    protected void setWritingViewRowActionSnippetFileName(String fileName) {
+        boolean log = depth() == 0;
+        if (StringUtils.isBlank(fileName)) {
+            _writingViewRowActionSnippetFileName = "";
+        } else if (isValidSnippetFileName(fileName)) {
+            _writingViewRowActionSnippetFileName = fileName;
+        } else if (log) {
+            logger.error(getName() + " writing table view collection row action snippet is invalid ");
+            Project.increaseParserErrorCount();
+        }
+    }
+
+    /**
+     * @return the writing table view collection row status snippet file name
+     */
+//  @Override
+    public String getWritingViewRowStatusSnippetFileName() {
+        return _writingViewRowStatusSnippetFileName;
+    }
+
+    protected void setWritingViewRowStatusSnippetFileName(String fileName) {
+        boolean log = depth() == 0;
+        if (StringUtils.isBlank(fileName)) {
+            _writingViewRowStatusSnippetFileName = "";
+        } else if (isValidSnippetFileName(fileName)) {
+            _writingViewRowStatusSnippetFileName = fileName;
+        } else if (log) {
+            logger.error(getName() + " writing table view collection row status snippet is invalid ");
+            Project.increaseParserErrorCount();
+        }
+    }
+
+    /**
+     * @return the writing table view collection row number snippet file name
+     */
+//  @Override
+    public String getWritingViewRowNumberSnippetFileName() {
+        return _writingViewRowNumberSnippetFileName;
+    }
+
+    protected void setWritingViewRowNumberSnippetFileName(String fileName) {
+        boolean log = depth() == 0;
+        if (StringUtils.isBlank(fileName)) {
+            _writingViewRowNumberSnippetFileName = "";
+        } else if (isValidSnippetFileName(fileName)) {
+            _writingViewRowNumberSnippetFileName = fileName;
+        } else if (log) {
+            logger.error(getName() + " writing table view collection row number snippet is invalid ");
+            Project.increaseParserErrorCount();
+        }
     }
 
     /**
@@ -1153,6 +1303,39 @@ public class EntityCollection extends AbstractArtifact implements AnnotatableArt
             _detailField = specified(annotation.detail(), _detailField);
             _propertyAccess = specified(annotation.access(), _propertyAccess);
             _dataEntryFormat = specified(annotation.format(), _dataEntryFormat);
+            /**/
+            String fileName;
+            /**/
+            fileName = annotation.readingViewRowActionSnippet();
+            if (StringUtils.isNotBlank(fileName)) {
+                setReadingViewRowActionSnippetFileName(fileName);
+            }
+            /**/
+            fileName = annotation.readingViewRowStatusSnippet();
+            if (StringUtils.isNotBlank(fileName)) {
+                setReadingViewRowStatusSnippetFileName(fileName);
+            }
+            /**/
+            fileName = annotation.readingViewRowNumberSnippet();
+            if (StringUtils.isNotBlank(fileName)) {
+                setReadingViewRowNumberSnippetFileName(fileName);
+            }
+            /**/
+            fileName = annotation.writingViewRowActionSnippet();
+            if (StringUtils.isNotBlank(fileName)) {
+                setWritingViewRowActionSnippetFileName(fileName);
+            }
+            /**/
+            fileName = annotation.writingViewRowStatusSnippet();
+            if (StringUtils.isNotBlank(fileName)) {
+                setWritingViewRowStatusSnippetFileName(fileName);
+            }
+            /**/
+            fileName = annotation.writingViewRowNumberSnippet();
+            if (StringUtils.isNotBlank(fileName)) {
+                setWritingViewRowNumberSnippetFileName(fileName);
+            }
+            /**/
             setInlineHelpType(annotation.inlineHelp());
         }
     }

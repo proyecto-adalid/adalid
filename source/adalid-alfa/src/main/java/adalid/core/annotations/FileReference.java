@@ -28,13 +28,23 @@ import java.lang.annotation.Target;
 public @interface FileReference {
 
     /**
-     * autoStart específica si la operación de carga debe, o no, comenzar automáticamente al seleccionar los archivos. Especifique true si desea que
-     * la operación de carga comience automáticamente; de lo contrario false. Alternativamente, omita el elemento para utilizar el valor
-     * predeterminado del atributo. El valor predeterminado es false.
+     * autoStart específica si la operación de carga debe, o no, comenzar automáticamente al seleccionar los archivos. Su valor es uno de los
+     * elementos de la enumeración Kleenean. Seleccione TRUE para comenzar la carga automáticamente; en caso contrario, seleccione FALSE.
+     * Alternativamente, omita el elemento o seleccione UNSPECIFIED para utilizar el valor predeterminado del atributo. El valor predeterminado del
+     * atributo es FALSE.
      *
      * @return autoStart
      */
     Kleenean autoStart() default Kleenean.UNSPECIFIED; // false;
+
+    /**
+     * virusScan específica si la operación de carga debe, o no, escanear los archivos cargados. Su valor es uno de los elementos de la enumeración
+     * Kleenean. Seleccione TRUE para escanear los archivos cargados; en caso contrario, seleccione FALSE. Alternativamente, omita el elemento o
+     * seleccione UNSPECIFIED para utilizar el valor predeterminado del atributo. El valor predeterminado del atributo es FALSE.
+     *
+     * @return autoStart
+     */
+    Kleenean virusScan() default Kleenean.UNSPECIFIED; // false;
 
     /**
      * fileLimit específica el número máximo de archivos que se pueden cargar en una misma operación. Su valor debe ser un número entero, mayor o
@@ -43,6 +53,14 @@ public @interface FileReference {
      * @return fileLimit
      */
     int fileLimit() default -1; // 1;
+
+    /**
+     * undoLimit específica el número máximo de veces que se puede eliminar y volver a cargar los archivos en una misma operación. Su valor debe ser
+     * un número entero, mayor o igual a 0 y menor o igual a 4. El valor predeterminado es 2.
+     *
+     * @return undoLimit
+     */
+    int undoLimit() default -1; // 2;
 
     /**
      * max específica el tamaño máximo (en bytes) de los archivos que se pueden cargar. Su valor debe ser un número entero, mayor o igual a 0.
@@ -80,6 +98,36 @@ public @interface FileReference {
      * @return storage
      */
     UploadStorageOption storage() default UploadStorageOption.UNSPECIFIED;
+
+    /**
+     * pathTemplate especifica la plantilla de ruta de los archivos cargados en el servidor de aplicaciones. La ruta del archivo se personaliza
+     * mediante esta plantilla, la cual puede contener secuencias de letras, números, guiones y guiones bajos (underscores), y una o más claves de
+     * elementos de datos. Las claves se deben encerrar entre llaves. La plantilla también puede contener nombres de propiedades de la entidad,
+     * encerrados entre corchetes; estos nombres son reemplazados por el valor que tiene la propiedad en la instancia de la entidad que corresponde al
+     * archivo cargado. Los elementos de la plantilla se pueden separar con puntos; esos puntos son reemplazados por el carácter de separación de
+     * rutas propio del sistema operativo: barra diagonal para Linux y barra diagonal invertida para Windows.
+     * <p>
+     * Las claves de elementos de datos válidas son:
+     * <p>
+     * <ul>
+     * <li><b>EntityName</b>: nombre de la entidad que corresponde al archivo cargado.</li>
+     * <li><b>References</b>: nombre de la propiedad de la entidad, o de la operación y el parámetro, que corresponde al archivo cargado.</li>
+     * <li><b>InstancePK</b>: clave primaria (id) de la instancia de la entidad que corresponde al archivo cargado.</li>
+     * <li><b>InstanceBK</b>: clave de negocio (código) de la instancia de la entidad que corresponde al archivo cargado.</li>
+     * <li><b>UploadDate</b>: fecha (yyyyMMdd) de carga del archivo.</li>
+     * <li><b>UploadYear</b>: año (yyyy) de carga del archivo.</li>
+     * <li><b>UploadMonth</b>: mes (MM) de carga del archivo.</li>
+     * <li><b>UploadDay</b>: dia del mes (dd) de carga del archivo.</li>
+     * <li><b>UploadTime</b>: hora (HHmm) de carga del archivo.</li>
+     * <li><b>UploadUserPK</b>: clave primaria (id) del usuario que ejecuta la carga del archivo.</li>
+     * <li><b>UploadUserBK</b>: clave de negocio (código) del usuario que ejecuta la carga del archivo.</li>
+     * </ul>
+     * <p>
+     * La plantilla predeterminada es <b>{EntityName}.{References}.{UploadDate}</b>
+     *
+     * @return path
+     */
+    String pathTemplate() default "";
 
     /**
      * blobField especifica el nombre de la propiedad donde se almacena el contenido del archivo. Este elemento es relevante solo si el valor

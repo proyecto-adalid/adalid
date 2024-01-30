@@ -13,6 +13,7 @@
 package adalid.core.wrappers;
 
 import adalid.commons.util.*;
+import adalid.core.AbstractEntity;
 import adalid.core.interfaces.*;
 import org.apache.commons.lang.StringUtils;
 
@@ -23,14 +24,41 @@ public class EntityWrapper extends DataArtifactWrapper {
 
     private final Entity _entity;
 
+    private final AbstractEntity _abstractEntity;
+
     public EntityWrapper(Entity entity) {
         super(entity);
         _entity = entity;
+        _abstractEntity = _entity instanceof AbstractEntity ? (AbstractEntity) _entity : null;
     }
 
     @Override
     public Entity getWrapped() {
         return _entity;
+    }
+
+    public String getSelectFilterTag() {
+        return _abstractEntity == null ? null : artifactTag(_abstractEntity.getSelectFilterTag(), _abstractEntity.getSelectFilter());
+    }
+
+    public String getInsertFilterTag(EntityReference reference) {
+        return _abstractEntity == null ? null : artifactTag(_abstractEntity.getInsertFilterTag(), _abstractEntity.getInsertFilter(reference));
+    }
+
+    public String getUpdateFilterTag() {
+        return _abstractEntity == null ? null : artifactTag(_abstractEntity.getUpdateFilterTag(), _abstractEntity.getUpdateFilter());
+    }
+
+    public String getDeleteFilterTag() {
+        return _abstractEntity == null ? null : artifactTag(_abstractEntity.getDeleteFilterTag(), _abstractEntity.getDeleteFilter());
+    }
+
+    public String getSearchQueryFilterTag() {
+        return _abstractEntity == null ? null : artifactTag(_abstractEntity.getSearchQueryFilterTag(), _abstractEntity.getSearchQueryFilter());
+    }
+
+    public String getMasterDetailFilterTag(EntityReference reference) {
+        return _abstractEntity == null ? null : artifactTag(_abstractEntity.getMasterDetailFilterTag(), _abstractEntity.getMasterDetailFilter(reference));
     }
 
     public String getValidDefaultLabel(EntityReference reference) {

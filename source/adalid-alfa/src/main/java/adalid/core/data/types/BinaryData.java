@@ -54,7 +54,7 @@ public class BinaryData extends BinaryPrimitive {
     }
     /**/
     // </editor-fold>
-/**/
+    /**/
     // <editor-fold defaultstate="collapsed" desc="since 06/06/2022">
     private int _largeDisplayWidth = Constants.DEFAULT_LARGE_IMAGE_WIDTH;
 
@@ -120,6 +120,16 @@ public class BinaryData extends BinaryPrimitive {
     public void setSmallDisplayHeight(int height) {
         XS2.checkAccess();
         _smallDisplayHeight = height;
+    }
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="since 23/01/2024">
+    public int[] getDisplayWidth() {
+        return new int[]{_largeDisplayWidth, _mediumDisplayWidth, _smallDisplayWidth};
+    }
+
+    public int[] getDisplayHeight() {
+        return new int[]{_largeDisplayHeight, _mediumDisplayHeight, _smallDisplayHeight};
     }
     // </editor-fold>
 

@@ -23,7 +23,7 @@ import meta.entidad.comun.configuracion.basica.TipoDominio;
  */
 @EntityClass(catalog = Kleenean.TRUE, independent = Kleenean.TRUE, resourceType = ResourceType.CONFIGURATION, resourceGender = ResourceGender.MASCULINE)
 @EntityCodeGen(bws = Kleenean.FALSE, fws = Kleenean.FALSE)
-@EntitySelectOperation(enabled = Kleenean.TRUE, access = OperationAccess.PUBLIC, rowsLimit = 0)
+@EntitySelectOperation(enabled = Kleenean.TRUE, access = OperationAccess.PUBLIC)
 @EntityInsertOperation(enabled = Kleenean.FALSE)
 @EntityUpdateOperation(enabled = Kleenean.FALSE)
 @EntityDeleteOperation(enabled = Kleenean.FALSE)
@@ -40,15 +40,29 @@ public class Dominio extends meta.entidad.comun.configuracion.basica.Dominio {
     }
     // </editor-fold>
 
+    @Override
+    protected void addAllocationStrings() {
+        super.addAllocationStrings();
+        super.addAllocationStrings("claseRecurso.claseRecursoSegmento");
+    }
+
     @ForeignKey(onDelete = OnDeleteAction.NONE, onUpdate = OnUpdateAction.CASCADE)
     @ManyToOne(navigability = Navigability.UNIDIRECTIONAL, view = MasterDetailView.NONE)
     @ColumnField(nullable = Kleenean.FALSE)
+    @PropertyField(search = Kleenean.TRUE, overlay = Kleenean.TRUE)
     public TipoDominio tipoDominio;
 
     @ForeignKey(onDelete = OnDeleteAction.NONE, onUpdate = OnUpdateAction.NONE)
     @ManyToOne(navigability = Navigability.UNIDIRECTIONAL, view = MasterDetailView.NONE)
     @ColumnField(nullable = Kleenean.FALSE)
+    @PropertyField(search = Kleenean.TRUE, overlay = Kleenean.TRUE)
     public ClaseRecurso claseRecurso;
+
+    @ColumnField(calculable = Kleenean.TRUE)
+//  @ForeignKey(onDelete = OnDeleteAction.NONE, onUpdate = OnUpdateAction.NONE)
+    @ManyToOne(navigability = Navigability.UNIDIRECTIONAL, view = MasterDetailView.NONE)
+    @PropertyField(search = Kleenean.TRUE, overlay = Kleenean.TRUE)
+    public ClaseRecurso claseRecursoSegmento;
 
     @ForeignKey(onDelete = OnDeleteAction.NONE, onUpdate = OnUpdateAction.NONE)
     @ManyToOne(navigability = Navigability.UNIDIRECTIONAL, view = MasterDetailView.NONE)
@@ -91,6 +105,11 @@ public class Dominio extends meta.entidad.comun.configuracion.basica.Dominio {
         claseRecurso.setLocalizedShortLabel(ENGLISH, "class");
         claseRecurso.setLocalizedShortLabel(SPANISH, "clase");
         /**/
+        claseRecursoSegmento.setLocalizedLabel(ENGLISH, "segment resource class");
+        claseRecursoSegmento.setLocalizedLabel(SPANISH, "clase de recurso segmento");
+        claseRecursoSegmento.setLocalizedShortLabel(ENGLISH, "segment class");
+        claseRecursoSegmento.setLocalizedShortLabel(SPANISH, "clase de segmento");
+        /**/
         funcionSeleccion.setLocalizedLabel(ENGLISH, "select function");
         funcionSeleccion.setLocalizedLabel(SPANISH, "función de selección");
         /**/
@@ -100,6 +119,12 @@ public class Dominio extends meta.entidad.comun.configuracion.basica.Dominio {
         dominioSegmento.setLocalizedShortLabel(SPANISH, "segmento");
         /**/
         // </editor-fold>
+    }
+
+    @Override
+    protected void settleLinks() {
+        super.settleLinks();
+        claseRecursoSegmento.linkCalculableValueEntityReference(claseRecurso.claseRecursoSegmento);
     }
 
 }

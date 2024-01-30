@@ -17,6 +17,7 @@ import adalid.core.annotations.*;
 import adalid.core.enums.*;
 import adalid.core.interfaces.*;
 import adalid.core.properties.*;
+import adalid.core.properties.ext.*;
 import java.lang.reflect.Field;
 
 /**
@@ -50,7 +51,7 @@ public class Usuario extends AbstractPersistentEntity {
 
     @BusinessKey
     @PropertyField(update = Kleenean.FALSE, overlay = Kleenean.FALSE)
-    @StringField(maxLength = 36) // A UUID is made up of hex digits along with 4 hyphens, which make its length equal to 36 characters
+    @StringField(maxLength = MAX_EMAIL_ADDRESS_LENGTH) // maxLength = 36 until 01/12/2023
     public StringProperty codigoUsuario;
 
     @NameProperty
@@ -68,9 +69,25 @@ public class Usuario extends AbstractPersistentEntity {
     @PropertyField(create = Kleenean.TRUE, update = Kleenean.TRUE, table = Kleenean.FALSE, report = Kleenean.FALSE)
     public StringProperty archivo;
 
-    @StringField(maxLength = 100, regex = EMAIL_REGEX)
+    /*
+    @StringField(maxLength = MAX_EMAIL_ADDRESS_LENGTH, regex = EMAIL_REGEX) // maxLength = 100 until 01/12/2023
     @PropertyField(create = Kleenean.TRUE, overlay = Kleenean.TRUE, table = Kleenean.FALSE, report = Kleenean.FALSE)
     public StringProperty correoElectronico;
+
+    /**/
+    @PropertyField(create = Kleenean.TRUE, overlay = Kleenean.TRUE, table = Kleenean.FALSE, report = Kleenean.FALSE)
+    public EmailAddressProperty correoElectronico;
+
+    /*
+    private static final String BWA = "/resources/snippets/base/entity/Usuario/botonWhatsApp";
+
+    @StringField(maxLength = 20, regex = PHONE_REGEX, validator = PHONE_NUMBER_VALIDATOR)
+    @PropertyField(create = Kleenean.TRUE, table = Kleenean.FALSE, report = Kleenean.FALSE, readingDetailSnippet = BWA, writingDetailSnippet = BWA)
+    public StringProperty numeroTelefonoInteligente;
+
+    /**/
+    @PropertyField(create = Kleenean.TRUE, table = Kleenean.FALSE, report = Kleenean.FALSE)
+    public InternationalSmartphoneNumberProperty numeroTelefonoInteligente;
 
     @StringField(maxLength = 20, regex = PHONE_REGEX, validator = PHONE_NUMBER_VALIDATOR)
     @PropertyField(create = Kleenean.TRUE, table = Kleenean.FALSE, report = Kleenean.FALSE)
@@ -193,6 +210,18 @@ public class Usuario extends AbstractPersistentEntity {
         correoElectronico.setLocalizedRegexErrorMessage(ENGLISH, "e-mail does not meet the required pattern");
         correoElectronico.setLocalizedRegexErrorMessage(SPANISH, "correo electrónico no cumple con el patrón requerido");
         /**/
+        numeroTelefonoInteligente.setLocalizedLabel(ENGLISH, "WhatsApp phone number");
+        numeroTelefonoInteligente.setLocalizedLabel(SPANISH, "número de teléfono WhatsApp");
+        numeroTelefonoInteligente.setLocalizedDescription(ENGLISH, "mobile phone number capable of running WhatsApp; " + PHONE_REGEX_ENGLISH_DESCRIPTION);
+        numeroTelefonoInteligente.setLocalizedDescription(SPANISH, "número de teléfono móvil capaz de ejecutar WhatsApp; " + PHONE_REGEX_SPANISH_DESCRIPTION);
+        numeroTelefonoInteligente.setLocalizedShortDescription(ENGLISH, "mobile phone number capable of running WhatsApp; " + PHONE_REGEX_ENGLISH_DESCRIPTION);
+        numeroTelefonoInteligente.setLocalizedShortDescription(SPANISH, "número de teléfono móvil capaz de ejecutar WhatsApp; " + PHONE_REGEX_SPANISH_DESCRIPTION);
+        /*
+        numeroTelefonoInteligente.setLocalizedRegexErrorMessage(ENGLISH, PHONE_REGEX_ENGLISH_ERROR_MESSAGE);
+        numeroTelefonoInteligente.setLocalizedRegexErrorMessage(SPANISH, PHONE_REGEX_SPANISH_ERROR_MESSAGE);
+        /**/
+        numeroTelefonoMovil.setDefaultValue(numeroTelefonoInteligente);
+        /**/
         numeroTelefonoMovil.setLocalizedLabel(ENGLISH, "SMS phone number");
         numeroTelefonoMovil.setLocalizedLabel(SPANISH, "número de teléfono SMS");
         numeroTelefonoMovil.setLocalizedDescription(ENGLISH, "mobile phone number capable of receiving SMS messages; "
@@ -269,6 +298,17 @@ public class Usuario extends AbstractPersistentEntity {
         grupo.setLocalizedTooltip(SPANISH, "código del grupo al que pertenece este usuario");
         /**/
         // </editor-fold>
+    }
+
+    protected Key ix_usuario_0001;
+
+    @Override
+    protected void settleKeys() {
+        super.settleKeys();
+        /**/
+        ix_usuario_0001.setUnique(false);
+        ix_usuario_0001.newKeyField(correoElectronico);
+        /**/
     }
 
     public Instance ADMINISTRADOR;

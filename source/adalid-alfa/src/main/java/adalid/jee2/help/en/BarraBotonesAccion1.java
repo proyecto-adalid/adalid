@@ -29,6 +29,7 @@ public class BarraBotonesAccion1 extends AbstractHelpWriter {
     @Override
     public String getHelpPageText() {
         String str = ""
+            /*
             + h3("Pages for entity management")
             + "Each entity in the application can have multiple types of inquiry and registration pages. "
             + "These can be any combination of the modes, formats and layouts available. "
@@ -53,6 +54,7 @@ public class BarraBotonesAccion1 extends AbstractHelpWriter {
             + "Additionally, each entity can also have a page for the execution of business and other kind of processes, "
             + "such as report generation, file upload and download, etc. "
             + "These pages are known as " + b("Processing Consoles") + "."
+            /**/
             + h3("Toolbar")
             + "The buttons that appear on the toolbar vary depending on the type of the current page; "
             + "those buttons that cannot be used at a given time will be disabled. "

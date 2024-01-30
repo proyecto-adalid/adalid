@@ -76,8 +76,6 @@ public class DominioParametro extends AbstractPersistentEntity {
     @ColumnField(nullable = Kleenean.FALSE)
     public TipoParametroDom tipoParametroDom;
 
-    protected Key uk_dominio_parametro_0001;
-
     @Override
     protected void settleAttributes() {
         super.settleAttributes();
@@ -138,6 +136,8 @@ public class DominioParametro extends AbstractPersistentEntity {
         tipoParametroDom.setLocalizedShortLabel(SPANISH, "tipo de parámetro");
         // </editor-fold>
     }
+
+    protected Key uk_dominio_parametro_0001;
 
     @Override
     protected void settleKeys() {

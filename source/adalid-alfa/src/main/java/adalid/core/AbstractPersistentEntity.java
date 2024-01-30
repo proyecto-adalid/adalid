@@ -174,12 +174,10 @@ public abstract class AbstractPersistentEntity extends AbstractDatabaseEntity im
     }
 
     private void finishProperties() {
-        PersistentEntity entity;
         BooleanExpression filter;
         List<Property> properties = getPropertiesList();
         for (Property property : properties) {
-            if (property instanceof PersistentEntity) {
-                entity = (PersistentEntity) property;
+            if (property instanceof PersistentEntity entity) {
                 filter = entity.getSearchQueryFilter();
                 if (filter != null) {
                     entity.getSearchQueryPropertiesMap();
@@ -318,8 +316,8 @@ public abstract class AbstractPersistentEntity extends AbstractDatabaseEntity im
 
     private boolean collectable() {
         for (Property property : getPropertiesList()) {
-            if (property instanceof EntityReference) {
-                if (((EntityReference) property).getMappedCollection() != null) {
+            if (property instanceof EntityReference entityReference) {
+                if (entityReference.getMappedCollection() != null) {
                     return true;
                 }
             }
@@ -341,13 +339,12 @@ public abstract class AbstractPersistentEntity extends AbstractDatabaseEntity im
         } else if (_inheritanceMappingStrategy.equals(InheritanceMappingStrategy.UNSPECIFIED)) {
         } else if (_discriminatorProperty == null) {
             switch (_inheritanceMappingStrategy) {
-                case SINGLE_TABLE:
-                case JOINED:
+                case SINGLE_TABLE, JOINED -> {
                     String message = getName() + " inheritance mapping strategy is " + _inheritanceMappingStrategy
                         + " but it does not have a discriminator property";
                     logger.error(message);
                     Project.increaseParserErrorCount();
-                    break;
+                }
             }
         } else if (_inheritanceMappingStrategy.equals(InheritanceMappingStrategy.TABLE_PER_CLASS)) {
             String message = getName() + " inheritance mapping strategy is TABLE_PER_CLASS and it has a discriminator property";
@@ -380,13 +377,12 @@ public abstract class AbstractPersistentEntity extends AbstractDatabaseEntity im
         } else if (_inheritanceMappingStrategy.equals(InheritanceMappingStrategy.UNSPECIFIED)) {
         } else if (_discriminatorValue == null) {
             switch (_inheritanceMappingStrategy) {
-                case SINGLE_TABLE:
-                case JOINED:
+                case SINGLE_TABLE, JOINED -> {
                     String message = getName() + " inheritance mapping strategy is " + _inheritanceMappingStrategy
                         + " but it does not have a discriminator value";
                     logger.error(message);
                     Project.increaseParserErrorCount();
-                    break;
+                }
             }
         } else if (_inheritanceMappingStrategy.equals(InheritanceMappingStrategy.TABLE_PER_CLASS)) {
             String message = getName() + " inheritance mapping strategy is TABLE_PER_CLASS and it has a discriminator  value";
@@ -663,8 +659,8 @@ public abstract class AbstractPersistentEntity extends AbstractDatabaseEntity im
     void setKeyProperties() {
         super.setKeyProperties();
         Object keyProperty = getKeyProperty(_discriminatorField);
-        if (keyProperty instanceof Property) {
-            _discriminatorProperty = (Property) keyProperty;
+        if (keyProperty instanceof Property property) {
+            _discriminatorProperty = property;
         }
     }
 
@@ -803,7 +799,6 @@ public abstract class AbstractPersistentEntity extends AbstractDatabaseEntity im
     void initializeInheritanceFields() {
         super.initializeInheritanceFields();
         Class<?> type = getDataType();
-        PersistentEntity pent;
         if (isRootInstance()) {
             logger.debug(StringUtils.rightPad("initializeInheritanceFields", 32)
                 + "\t" + StringUtils.rightPad(getFullName(), 32)
@@ -812,8 +807,7 @@ public abstract class AbstractPersistentEntity extends AbstractDatabaseEntity im
             Class<?> baseClass = getBaseClass();
             if (baseClass != null) {
                 Entity base = getDeclaringProject().getEntity(baseClass);
-                if (base instanceof PersistentEntity) {
-                    pent = (PersistentEntity) base;
+                if (base instanceof PersistentEntity pent) {
                     if (pent.isTable()) {
                         _baseTableClass = baseClass;
                     } else {
@@ -826,8 +820,7 @@ public abstract class AbstractPersistentEntity extends AbstractDatabaseEntity im
             }
         } else {
             Entity root = getDeclaringProject().getEntity(type);
-            if (root instanceof PersistentEntity) {
-                pent = (PersistentEntity) root;
+            if (root instanceof PersistentEntity pent) {
                 _baseTableClass = pent.getBaseTableClass();
                 _inheritanceMappingStrategy = pent.getInheritanceMappingStrategy();
             }
@@ -1112,15 +1105,13 @@ public abstract class AbstractPersistentEntity extends AbstractDatabaseEntity im
 //  @Override
     public List<Expression> getChecksList(Checkpoint checkpoint, boolean inheritedless) {
         List<Expression> list = new ArrayList<>();
-        Check check;
         Checkpoint point;
         Field field;
         Class<?> clazz;
         Class<?> baseTableClass = getBaseTableClass();
         boolean joinedTable = isJoinedTable();
         for (Expression expression : getExpressionsList()) {
-            if (expression instanceof Check) {
-                check = (Check) expression;
+            if (expression instanceof Check check) {
                 point = check.getCheckpoint();
                 if (checkpoint == null || checkpoint.equals(point) || Checkpoint.WHEREVER_POSSIBLE.equals(point)) {
                     field = expression.getDeclaringField();
@@ -1297,13 +1288,11 @@ public abstract class AbstractPersistentEntity extends AbstractDatabaseEntity im
         if (_searchQueryTable != null && sp.equals(_searchQueryTable.getSqlProgrammer())) {
             return _searchQueryTable;
         }
-        PersistentEntity reference;
         QueryTable queryTable;
         _searchQueryTable = new QueryTable(this, -1, null);
         List<Property> properties = getReferencesList();
         for (Property property : properties) {
-            if (property instanceof PersistentEntity) {
-                reference = (PersistentEntity) property;
+            if (property instanceof PersistentEntity reference) {
                 queryTable = reference.getQueryTable();
                 if (queryTable != null && reference.getSearchQueryFilter() != null) {
                     _searchQueryTable.merge(queryTable);
@@ -1312,8 +1301,7 @@ public abstract class AbstractPersistentEntity extends AbstractDatabaseEntity im
         }
         List<Parameter> parameters = getParameterReferencesList();
         for (Parameter parameter : parameters) {
-            if (parameter instanceof PersistentEntity) {
-                reference = (PersistentEntity) parameter;
+            if (parameter instanceof PersistentEntity reference) {
                 queryTable = reference.getQueryTable();
                 if (queryTable != null && reference.getSearchQueryFilter() != null) {
                     _searchQueryTable.merge(queryTable);
@@ -1339,8 +1327,7 @@ public abstract class AbstractPersistentEntity extends AbstractDatabaseEntity im
         Map<String, Property> map = new LinkedHashMap<>();
         String fullName = getFullName();
         Entity root = getRoot();
-        if (root instanceof PersistentEntity) {
-            PersistentEntity pent = (PersistentEntity) root;
+        if (root instanceof PersistentEntity pent) {
             QueryTable rootQueryTable = pent.getQueryTable();
             List<Property> rootQueryPropertiesList = pent.getQueryPropertiesList();
             QueryTable thisSearchQueryTable = getSearchQueryTable();
@@ -1480,16 +1467,12 @@ public abstract class AbstractPersistentEntity extends AbstractDatabaseEntity im
     public Map<String, Property> getInitialValueColumnsMap() {
         Map<String, Property> map = new LinkedHashMap<>();
         Object initialValue;
-        Property initialProperty;
-        Expression initialExpression;
         List<Property> columns = getColumnsList();
         for (Property column : columns) {
             initialValue = column.getInitialValue();
-            if (initialValue instanceof Property) {
-                initialProperty = (Property) initialValue;
+            if (initialValue instanceof Property initialProperty) {
                 map.put(initialProperty.getPathString(), initialProperty);
-            } else if (initialValue instanceof Expression) {
-                initialExpression = (Expression) initialValue;
+            } else if (initialValue instanceof Expression initialExpression) {
                 map.putAll(initialExpression.getReferencedColumnsMap());
             }
         }
@@ -1512,16 +1495,12 @@ public abstract class AbstractPersistentEntity extends AbstractDatabaseEntity im
         Map<String, QueryJoin> map = new TreeMap<>();
         QueryTable queryTable = getQueryTable();
         Object initialValue;
-        Property initialProperty;
-        Expression initialExpression;
         List<Property> columns = getColumnsList();
         for (Property column : columns) {
             initialValue = column.getInitialValue();
-            if (initialValue instanceof Property) {
-                initialProperty = (Property) initialValue;
+            if (initialValue instanceof Property initialProperty) {
                 map.putAll(queryTable.getReferencedJoinsMap(initialProperty));
-            } else if (initialValue instanceof Expression) {
-                initialExpression = (Expression) initialValue;
+            } else if (initialValue instanceof Expression initialExpression) {
                 map.putAll(initialExpression.getReferencedJoinsMap(queryTable));
             }
         }
@@ -1563,8 +1542,6 @@ public abstract class AbstractPersistentEntity extends AbstractDatabaseEntity im
     public Map<String, Property> getDefaultValueColumnsMap(String checkpoints, String conditions) {
         Map<String, Property> map = new LinkedHashMap<>();
         Object defaultValue;
-        Property defaultProperty;
-        Expression defaultExpression;
         String[] checkpointsArray = StringUtils.split(StringUtils.remove(StringUtils.upperCase(checkpoints), ' '), ',');
         String[] conditionsArray = StringUtils.split(StringUtils.remove(StringUtils.upperCase(conditions), ' '), ',');
 //      List<Property> columns = getColumnsList();
@@ -1573,11 +1550,9 @@ public abstract class AbstractPersistentEntity extends AbstractDatabaseEntity im
             if (checkpointsArray == null || ArrayUtils.contains(checkpointsArray, column.getDefaultCheckpoint().name())) {
                 if (conditionsArray == null || ArrayUtils.contains(conditionsArray, column.getDefaultCondition().name())) {
                     defaultValue = column.getDefaultValue();
-                    if (defaultValue instanceof Property) {
-                        defaultProperty = (Property) defaultValue;
+                    if (defaultValue instanceof Property defaultProperty) {
                         map.put(defaultProperty.getPathString(), defaultProperty);
-                    } else if (defaultValue instanceof Expression) {
-                        defaultExpression = (Expression) defaultValue;
+                    } else if (defaultValue instanceof Expression defaultExpression) {
                         map.putAll(defaultExpression.getReferencedColumnsMap());
                     }
                 }
@@ -1644,8 +1619,6 @@ public abstract class AbstractPersistentEntity extends AbstractDatabaseEntity im
         Map<String, QueryJoin> map = new TreeMap<>();
         QueryTable queryTable = getQueryTable();
         Object defaultValue;
-        Property defaultProperty;
-        Expression defaultExpression;
         String[] checkpointsArray = StringUtils.split(StringUtils.remove(StringUtils.upperCase(checkpoints), ' '), ',');
         String[] conditionsArray = StringUtils.split(StringUtils.remove(StringUtils.upperCase(conditions), ' '), ',');
 //      List<Property> columns = getColumnsList();
@@ -1654,13 +1627,11 @@ public abstract class AbstractPersistentEntity extends AbstractDatabaseEntity im
             if (checkpointsArray == null || ArrayUtils.contains(checkpointsArray, column.getDefaultCheckpoint().name())) {
                 if (conditionsArray == null || ArrayUtils.contains(conditionsArray, column.getDefaultCondition().name())) {
                     defaultValue = column.getDefaultValue();
-                    if (defaultValue instanceof Property) {
-                        defaultProperty = (Property) defaultValue;
+                    if (defaultValue instanceof Property defaultProperty) {
                         if (!(calculableless && calculatedProperty(defaultProperty))) {
                             map.putAll(queryTable.getReferencedJoinsMap(defaultProperty));
                         }
-                    } else if (defaultValue instanceof Expression) {
-                        defaultExpression = (Expression) defaultValue;
+                    } else if (defaultValue instanceof Expression defaultExpression) {
                         map.putAll(defaultExpression.getReferencedJoinsMap(queryTable));
                     }
                 }
@@ -1753,17 +1724,14 @@ public abstract class AbstractPersistentEntity extends AbstractDatabaseEntity im
                 crossReferencedExpressionsSet.addAll(expression.getCrossReferencedExpressionsSet(this));
             }
             Object value;
-            Expression expression;
             List<Property> properties = getColumnsList();
             for (Property property : properties) {
                 value = property.getInitialValue();
-                if (value instanceof Expression) {
-                    expression = (Expression) value;
+                if (value instanceof Expression expression) {
                     crossReferencedExpressionsSet.addAll(expression.getCrossReferencedExpressionsSet(this));
                 }
                 value = property.getDefaultValue();
-                if (value instanceof Expression) {
-                    expression = (Expression) value;
+                if (value instanceof Expression expression) {
                     crossReferencedExpressionsSet.addAll(expression.getCrossReferencedExpressionsSet(this));
                 }
             }

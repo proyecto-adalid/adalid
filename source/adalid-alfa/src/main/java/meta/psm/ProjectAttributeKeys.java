@@ -308,6 +308,18 @@ public class ProjectAttributeKeys {
     public static final String TASK_TEXT_PER_TYPE = "task_text_per_type";
 
     /**
+     * true si desea que la aplicación envíe una notificación al usuario cada vez que se detecta un intento fallido de inicio de sesión de trabajo con
+     * su código de usuario; de lo contrario false. El valor predeterminado es false.
+     */
+    public static final String INVALID_LOGIN_NOTIFICATION = "invalid_login_notification";
+
+    /**
+     * true si desea que la aplicación envíe una notificación al usuario cada vez que se da inicio a una sesión de trabajo con su código de usuario;
+     * de lo contrario false. El valor predeterminado es false.
+     */
+    public static final String LOGIN_NOTIFICATION = "login_notification";
+
+    /**
      * Especifique el protocolo que se usa para comunicarse con la aplicación (normalmente http o https). El valor predeterminado es http.
      */
     public static final String URI_SCHEME = "uri_scheme";

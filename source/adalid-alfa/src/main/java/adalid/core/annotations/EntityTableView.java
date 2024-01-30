@@ -82,6 +82,18 @@ public @interface EntityTableView {
     Kleenean heading() default Kleenean.UNSPECIFIED; // FALSE
 
     /**
+     * quickFilter indica si las vistas generadas incluyen, o no, un snippet para suministrar criterios de búsqueda. Este elemento es relevante solo
+     * si se especificó la ruta del snippet mediante el método setProjectFilterSnippetPath o si la entidad tiene una clave de negocio (vea la
+     * anotación BusinessKey) y/o una propiedad nombre (vea la anotación NameProperty), en cuyo caso se incluye el snippet predeterminado
+     * Constants.QUICK_FILTER_SNIPPET. Su valor es uno de los elementos de la enumeración Kleenean. Seleccione TRUE para incluir el snippet; en caso
+     * contrario, seleccione FALSE. Alternativamente, omita el elemento o seleccione UNSPECIFIED para utilizar el valor predeterminado del atributo.
+     * El valor predeterminado del atributo es FALSE.
+     *
+     * @return quickFilter
+     */
+    Kleenean quickFilter() default Kleenean.UNSPECIFIED; // FALSE
+
+    /**
      * rowsLimit específica el máximo número de filas por página que muestra la vista. Este elemento es relevante solo si el valor especificado, o
      * determinado, para el elemento enabled es TRUE. Su valor debe ser un número entero entre 5 y 1000. El valor predeterminado es 100.
      *
@@ -204,6 +216,45 @@ public @interface EntityTableView {
     String readingViewBelowTableSnippet() default "";
 
     /**
+     * readingViewRowActionSnippet especifica la ruta y el nombre del snippet de la columna de botones de acción de las filas de la tabla en las
+     * vistas (páginas) de consulta tabular de la entidad.
+     *
+     * Si utiliza la plataforma jee2, los snippets se deben agregar en el subdirectorio resources/snippets/custom-made del directorio src/main/webapp
+     * del módulo Web, o en algún subdirectorio de resources/snippets/custom-made; si el valor de snippet no comienza por
+     * <b>/resources/snippets/custom-made/</b>, ese prefijo se le agrega automáticamente. Además, los snippets deben ser archivos xhtml; si el valor
+     * de snippet no termina con <b>.xhtml</b>, ese sufijo se le agrega automáticamente.
+     *
+     * @return readingViewRowActionSnippet
+     */
+    String readingViewRowActionSnippet() default "";
+
+    /**
+     * readingViewRowStatusSnippet especifica la ruta y el nombre del snippet de la columna de iconos de estado de las filas de la tabla en las vistas
+     * (páginas) de consulta tabular de la entidad.
+     *
+     * Si utiliza la plataforma jee2, los snippets se deben agregar en el subdirectorio resources/snippets/custom-made del directorio src/main/webapp
+     * del módulo Web, o en algún subdirectorio de resources/snippets/custom-made; si el valor de snippet no comienza por
+     * <b>/resources/snippets/custom-made/</b>, ese prefijo se le agrega automáticamente. Además, los snippets deben ser archivos xhtml; si el valor
+     * de snippet no termina con <b>.xhtml</b>, ese sufijo se le agrega automáticamente.
+     *
+     * @return readingViewRowStatusSnippet
+     */
+    String readingViewRowStatusSnippet() default "";
+
+    /**
+     * readingViewRowNumberSnippet especifica la ruta y el nombre del snippet de la columna de números de secuencia de las filas de la tabla en las
+     * vistas (páginas) de consulta tabular de la entidad.
+     *
+     * Si utiliza la plataforma jee2, los snippets se deben agregar en el subdirectorio resources/snippets/custom-made del directorio src/main/webapp
+     * del módulo Web, o en algún subdirectorio de resources/snippets/custom-made; si el valor de snippet no comienza por
+     * <b>/resources/snippets/custom-made/</b>, ese prefijo se le agrega automáticamente. Además, los snippets deben ser archivos xhtml; si el valor
+     * de snippet no termina con <b>.xhtml</b>, ese sufijo se le agrega automáticamente.
+     *
+     * @return readingViewRowNumberSnippet
+     */
+    String readingViewRowNumberSnippet() default "";
+
+    /**
      * writingViewHeadSnippet especifica la ruta y el nombre del snippet del encabezado en las vistas (páginas) de registro tabular de la entidad.
      *
      * Si utiliza la plataforma jee2, los snippets se deben agregar en el subdirectorio resources/snippets/custom-made del directorio src/main/webapp
@@ -266,5 +317,44 @@ public @interface EntityTableView {
      * @return writingViewBelowTableSnippet
      */
     String writingViewBelowTableSnippet() default "";
+
+    /**
+     * writingViewRowActionSnippet especifica la ruta y el nombre del snippet de la columna de botones de acción de las filas de la tabla en las
+     * vistas (páginas) de registro tabular de la entidad.
+     *
+     * Si utiliza la plataforma jee2, los snippets se deben agregar en el subdirectorio resources/snippets/custom-made del directorio src/main/webapp
+     * del módulo Web, o en algún subdirectorio de resources/snippets/custom-made; si el valor de snippet no comienza por
+     * <b>/resources/snippets/custom-made/</b>, ese prefijo se le agrega automáticamente. Además, los snippets deben ser archivos xhtml; si el valor
+     * de snippet no termina con <b>.xhtml</b>, ese sufijo se le agrega automáticamente.
+     *
+     * @return writingViewRowActionSnippet
+     */
+    String writingViewRowActionSnippet() default "";
+
+    /**
+     * writingViewRowStatusSnippet especifica la ruta y el nombre del snippet de la columna de iconos de estado de las filas de la tabla en las vistas
+     * (páginas) de registro tabular de la entidad.
+     *
+     * Si utiliza la plataforma jee2, los snippets se deben agregar en el subdirectorio resources/snippets/custom-made del directorio src/main/webapp
+     * del módulo Web, o en algún subdirectorio de resources/snippets/custom-made; si el valor de snippet no comienza por
+     * <b>/resources/snippets/custom-made/</b>, ese prefijo se le agrega automáticamente. Además, los snippets deben ser archivos xhtml; si el valor
+     * de snippet no termina con <b>.xhtml</b>, ese sufijo se le agrega automáticamente.
+     *
+     * @return writingViewRowStatusSnippet
+     */
+    String writingViewRowStatusSnippet() default "";
+
+    /**
+     * writingViewRowNumberSnippet especifica la ruta y el nombre del snippet de la columna de números de secuencia de las filas de la tabla en las
+     * vistas (páginas) de registro tabular de la entidad.
+     *
+     * Si utiliza la plataforma jee2, los snippets se deben agregar en el subdirectorio resources/snippets/custom-made del directorio src/main/webapp
+     * del módulo Web, o en algún subdirectorio de resources/snippets/custom-made; si el valor de snippet no comienza por
+     * <b>/resources/snippets/custom-made/</b>, ese prefijo se le agrega automáticamente. Además, los snippets deben ser archivos xhtml; si el valor
+     * de snippet no termina con <b>.xhtml</b>, ese sufijo se le agrega automáticamente.
+     *
+     * @return writingViewRowNumberSnippet
+     */
+    String writingViewRowNumberSnippet() default "";
 
 }

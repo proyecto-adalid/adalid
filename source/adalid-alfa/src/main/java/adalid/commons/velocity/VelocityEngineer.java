@@ -332,7 +332,7 @@ public class VelocityEngineer {
     }
 
     /**/
-    private static String getTemplateEncoding(String filename) {
+    static String getTemplateEncoding(String filename) {
         String extension = StringUtils.substringAfterLast(filename, ".");
         if (StringUtils.isBlank(extension)) {
             return VELOCITY_TEMPLATE_DEFAULT_ENCODING;
@@ -342,7 +342,7 @@ public class VelocityEngineer {
         return StringUtils.isBlank(property) ? VELOCITY_TEMPLATE_DEFAULT_ENCODING : property;
     }
 
-    private static String getDocumentEncoding(String filename) {
+    static String getDocumentEncoding(String filename) {
         String extension = StringUtils.substringAfterLast(filename, ".");
         if (StringUtils.isBlank(extension)) {
             return VELOCITY_DOCUMENT_DEFAULT_ENCODING;
@@ -352,7 +352,7 @@ public class VelocityEngineer {
         return StringUtils.isBlank(property) ? VELOCITY_DOCUMENT_DEFAULT_ENCODING : property;
     }
 
-    private static String getDocumentEndOfLine(String filename) {
+    static String getDocumentEndOfLine(String filename) {
         String extension = StringUtils.substringAfterLast(filename, ".");
         if (StringUtils.isBlank(extension)) {
             return LINE_SEPARATOR;

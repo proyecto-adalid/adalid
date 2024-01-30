@@ -62,8 +62,6 @@ public class PaginaUsuario extends AbstractPersistentEntity {
     @PropertyField(table = Kleenean.TRUE, detail = Kleenean.TRUE, report = Kleenean.TRUE, export = Kleenean.TRUE) //, defaultCheckpoint = Checkpoint.USER_INTERFACE)
     public Usuario usuario;
 
-    protected Key uk_pagina_usuario_0001;
-
     @Override
     protected void settleAttributes() {
         super.settleAttributes();
@@ -98,6 +96,8 @@ public class PaginaUsuario extends AbstractPersistentEntity {
         usuario.setLocalizedLabel(SPANISH, "usuario");
         // </editor-fold>
     }
+
+    protected Key uk_pagina_usuario_0001;
 
     @Override
     protected void settleKeys() {

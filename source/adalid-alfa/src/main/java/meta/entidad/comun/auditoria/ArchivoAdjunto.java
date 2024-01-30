@@ -89,14 +89,15 @@ public class ArchivoAdjunto extends AbstractPersistentEntity {
     @OwnerProperty
     @SegmentProperty
     @ColumnField(nullable = Kleenean.TRUE)
-    @ForeignKey(onDelete = OnDeleteAction.NONE, onUpdate = OnUpdateAction.NONE)
+//  20231209: remove foreign-key referring to Usuario because it might cause ARJUNA012117 and/or ARJUNA012121
+//  @ForeignKey(onDelete = OnDeleteAction.NONE, onUpdate = OnUpdateAction.NONE)
     @ManyToOne(navigability = Navigability.UNIDIRECTIONAL, view = MasterDetailView.NONE)
-    @PropertyField(hidden = Kleenean.TRUE) //, defaultCheckpoint = Checkpoint.USER_INTERFACE)
+    @PropertyField(hidden = Kleenean.TRUE)
     @QueryMapping(mapKeyProperties = Kleenean.FALSE)
     public Usuario propietario;
 
     @PropertyField(table = Kleenean.TRUE, search = Kleenean.TRUE, report = Kleenean.TRUE)
-    @StringField(maxLength = 36)
+    @StringField(maxLength = MAX_EMAIL_ADDRESS_LENGTH) // maxLength = 36 until 01/12/2023
     public StringProperty codigoUsuarioPropietario;
 
     @PropertyField(table = Kleenean.FALSE, search = Kleenean.TRUE, report = Kleenean.TRUE)

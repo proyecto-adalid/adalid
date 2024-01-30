@@ -168,14 +168,14 @@ public class VariableRutina extends AbstractPersistentEntity {
         // </editor-fold>
     }
 
-    Key key101;
+    Key key1;
 
     @Override
     protected void settleKeys() {
         super.settleKeys();
         /**/
-        key101.setUnique(true);
-        key101.newKeyField(rutina, nombre);
+        key1.setUnique(true);
+        key1.newKeyField(rutina, nombre);
         /**/
     }
 

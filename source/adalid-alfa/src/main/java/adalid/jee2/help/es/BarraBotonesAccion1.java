@@ -29,6 +29,7 @@ public class BarraBotonesAccion1 extends AbstractHelpWriter {
     @Override
     public String getHelpPageText() {
         String str = ""
+            /*
             + h3("Páginas para gestión de entidades")
             + "Cada entidad de la aplicación puede tener varios tipos de páginas de consulta y registro. "
             + "Éstos pueden ser cualquier combinación de las modalidades, formatos y presentaciones disponibles. "
@@ -53,6 +54,7 @@ public class BarraBotonesAccion1 extends AbstractHelpWriter {
             + "Adicionalmente, cada entidad también puede tener una página para la ejecución de procesos de negocio y otros procesos, "
             + "tales como generación de informes, carga y descarga de archivos, etc. "
             + "Estas páginas son conocidas como " + b("Consolas de Procesamiento") + "."
+            /**/
             + h3("Barra de Botones de Acción")
             + "Los botones que aparecen en la barra varían dependiendo del tipo de la página actual; "
             + "aquellos botones que no puedan ser utilizados en un momento dado estarán inhabilitados. "

@@ -13,6 +13,7 @@
 package adalid.core.wrappers;
 
 import adalid.commons.util.*;
+import adalid.core.AbstractDataArtifact;
 import adalid.core.data.types.*;
 import adalid.core.enums.*;
 import adalid.core.interfaces.*;
@@ -29,6 +30,8 @@ public class DataArtifactWrapper extends ArtifactWrapper {
 
     private final DataArtifact _dataArtifact;
 
+    private final AbstractDataArtifact _abstractDataArtifact;
+
     private final Property _propertyArtifact;
 
     private final Parameter _parameterArtifact;
@@ -40,6 +43,7 @@ public class DataArtifactWrapper extends ArtifactWrapper {
     public DataArtifactWrapper(DataArtifact dataArtifact) {
         super(dataArtifact);
         _dataArtifact = dataArtifact;
+        _abstractDataArtifact = _dataArtifact instanceof AbstractDataArtifact ? (AbstractDataArtifact) _dataArtifact : null;
         _propertyArtifact = _dataArtifact == null ? null : _dataArtifact.isProperty() ? (Property) _dataArtifact : null;
         _parameterArtifact = _dataArtifact == null ? null : _dataArtifact.isParameter() ? (Parameter) _dataArtifact : null;
         _stringDataArtifact = _dataArtifact instanceof StringData ? (StringData) _dataArtifact : null;
@@ -49,6 +53,40 @@ public class DataArtifactWrapper extends ArtifactWrapper {
     @Override
     public DataArtifact getWrapped() {
         return _dataArtifact;
+    }
+
+    public String getModifyingFilterTag() {
+        return _abstractDataArtifact == null ? null : artifactTag(_abstractDataArtifact.getModifyingFilterTag(), _abstractDataArtifact.getModifyingFilter());
+    }
+
+    @Override
+    public String getNullifyingFilterTag() {
+        return _abstractDataArtifact == null ? null : artifactTag(_abstractDataArtifact.getNullifyingFilterTag(), _abstractDataArtifact.getNullifyingFilter());
+    }
+
+    @Override
+    public String getRenderingFilterTag() {
+        return _abstractDataArtifact == null ? null : artifactTag(_abstractDataArtifact.getRenderingFilterTag(), _abstractDataArtifact.getRenderingFilter());
+    }
+
+    public String getRequiringFilterTag() {
+        return _abstractDataArtifact == null ? null : artifactTag(_abstractDataArtifact.getRequiringFilterTag(), _abstractDataArtifact.getRequiringFilter());
+    }
+
+    public String getCalculableValueTag() {
+        return _abstractDataArtifact == null ? null : artifactTag(_abstractDataArtifact.getCalculableValueTag(), _abstractDataArtifact.getCalculableValue());
+    }
+
+    public String getCurrentValueTag() {
+        return _abstractDataArtifact == null ? null : artifactTag(_abstractDataArtifact.getCurrentValueTag(), _abstractDataArtifact.getCurrentValue());
+    }
+
+    public String getDefaultValueTag() {
+        return _abstractDataArtifact == null ? null : artifactTag(_abstractDataArtifact.getDefaultValueTag(), _abstractDataArtifact.getDefaultValue());
+    }
+
+    public String getInitialValueTag() {
+        return _abstractDataArtifact == null ? null : artifactTag(_abstractDataArtifact.getInitialValueTag(), _abstractDataArtifact.getInitialValue());
     }
 
     public String getBundleDefaultAnchorLabel() {

@@ -32,6 +32,8 @@ import java.lang.reflect.Field;
 @EntityDetailView(enabled = Kleenean.FALSE)
 @EntityTreeView(enabled = Kleenean.FALSE)
 @EntityConsoleView(enabled = Kleenean.FALSE)
+@EntityReferenceDisplay(style = EntityReferenceStyle.CHARACTER_KEY)
+@EntityReferenceSearch(searchType = SearchType.LIST, listStyle = ListStyle.CHARACTER_KEY)
 public class CondicionEjeFun extends AbstractPersistentEnumerationEntity {
 
     // <editor-fold defaultstate="collapsed" desc="class constructors">
@@ -45,6 +47,9 @@ public class CondicionEjeFun extends AbstractPersistentEnumerationEntity {
 
     @BusinessKey
     public StringProperty codigo;
+
+    @NameProperty
+    public StringProperty nombre;
 
     @ColumnField(nullable = Kleenean.FALSE)
     @ForeignKey(onDelete = OnDeleteAction.NONE, onUpdate = OnUpdateAction.NONE)
@@ -109,6 +114,12 @@ public class CondicionEjeFun extends AbstractPersistentEnumerationEntity {
     protected void settleInstances() {
         super.settleInstances();
         /**/
+        EJECUCION_PENDIENTE.setCustomTag(InstanceTag.GREENISH.copy().setLetterCase(LetterCase.UNSPECIFIED).setPillShaped(true));
+        EJECUCION_EN_PROGRESO.setCustomTag(InstanceTag.GREEN.copy().setLetterCase(LetterCase.UNSPECIFIED).setPillShaped(true));
+        EJECUTADO_SIN_ERRORES.setCustomTag(InstanceTag.LIGHT_GREEN.copy().setLetterCase(LetterCase.UNSPECIFIED).setPillShaped(true));
+        EJECUTADO_CON_ERRORES.setCustomTag(InstanceTag.RED.copy().setLetterCase(LetterCase.UNSPECIFIED).setPillShaped(true));
+        EJECUCION_CANCELADA.setCustomTag(InstanceTag.RED.copy().setLetterCase(LetterCase.UPPER).setPillShaped(true));
+        /**/
         EJECUCION_PENDIENTE.newInstanceField(numero, 11);
         EJECUCION_PENDIENTE.newInstanceField(severidadMensaje, severidadMensaje.INFORMATIVO);
         /**/
@@ -126,20 +137,35 @@ public class CondicionEjeFun extends AbstractPersistentEnumerationEntity {
         /**/
         // <editor-fold defaultstate="collapsed" desc="localization of CondicionEjeFun's instances">
         /**/
-        EJECUCION_PENDIENTE.newInstanceField(codigo, "Waiting to run", ENGLISH);
-        EJECUCION_PENDIENTE.newInstanceField(codigo, "Ejecución pendiente", SPANISH);
+        EJECUCION_PENDIENTE.newInstanceField(codigo, "Pending", ENGLISH);
+        EJECUCION_PENDIENTE.newInstanceField(codigo, "Pendiente", SPANISH);
         /**/
         EJECUCION_EN_PROGRESO.newInstanceField(codigo, "Running", ENGLISH);
-        EJECUCION_EN_PROGRESO.newInstanceField(codigo, "Ejecución en progreso", SPANISH);
+        EJECUCION_EN_PROGRESO.newInstanceField(codigo, "Ejecutando", SPANISH);
         /**/
-        EJECUTADO_SIN_ERRORES.newInstanceField(codigo, "Finished without errors", ENGLISH);
-        EJECUTADO_SIN_ERRORES.newInstanceField(codigo, "Ejecutado sin errores", SPANISH);
+        EJECUTADO_SIN_ERRORES.newInstanceField(codigo, "Without errors", ENGLISH);
+        EJECUTADO_SIN_ERRORES.newInstanceField(codigo, "Sin errores", SPANISH);
         /**/
-        EJECUTADO_CON_ERRORES.newInstanceField(codigo, "Finished with errors", ENGLISH);
-        EJECUTADO_CON_ERRORES.newInstanceField(codigo, "Ejecutado con errores", SPANISH);
+        EJECUTADO_CON_ERRORES.newInstanceField(codigo, "With errors", ENGLISH);
+        EJECUTADO_CON_ERRORES.newInstanceField(codigo, "Con errores", SPANISH);
         /**/
-        EJECUCION_CANCELADA.newInstanceField(codigo, "Canceled", ENGLISH);
-        EJECUCION_CANCELADA.newInstanceField(codigo, "Ejecución cancelada", SPANISH);
+        EJECUCION_CANCELADA.newInstanceField(codigo, "Cancelled", ENGLISH);
+        EJECUCION_CANCELADA.newInstanceField(codigo, "Cancelada", SPANISH);
+        /**/
+        EJECUCION_PENDIENTE.newInstanceField(nombre, "Pending execution", ENGLISH);
+        EJECUCION_PENDIENTE.newInstanceField(nombre, "Ejecución pendiente", SPANISH);
+        /**/
+        EJECUCION_EN_PROGRESO.newInstanceField(nombre, "Execution in progress", ENGLISH);
+        EJECUCION_EN_PROGRESO.newInstanceField(nombre, "Ejecución en progreso", SPANISH);
+        /**/
+        EJECUTADO_SIN_ERRORES.newInstanceField(nombre, "Finished without errors", ENGLISH);
+        EJECUTADO_SIN_ERRORES.newInstanceField(nombre, "Ejecutado sin errores", SPANISH);
+        /**/
+        EJECUTADO_CON_ERRORES.newInstanceField(nombre, "Finished with errors", ENGLISH);
+        EJECUTADO_CON_ERRORES.newInstanceField(nombre, "Ejecutado con errores", SPANISH);
+        /**/
+        EJECUCION_CANCELADA.newInstanceField(nombre, "Execution canceled", ENGLISH);
+        EJECUCION_CANCELADA.newInstanceField(nombre, "Ejecución cancelada", SPANISH);
         /**/
         // </editor-fold>
     }

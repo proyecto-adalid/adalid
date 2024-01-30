@@ -312,14 +312,14 @@ public class PasoRutina extends AbstractPersistentEntity {
         super.settleLinks();
     }
 
-    Key key101;
+    Key key1;
 
     @Override
     protected void settleKeys() {
         super.settleKeys();
         /**/
-        key101.setUnique(false);
-        key101.newKeyField(rutina, numero);
+        key1.setUnique(false);
+        key1.newKeyField(rutina, numero);
         /**/
     }
 

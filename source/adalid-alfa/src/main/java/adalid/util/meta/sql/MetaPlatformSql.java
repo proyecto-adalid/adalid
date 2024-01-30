@@ -18,6 +18,7 @@ import adalid.commons.interfaces.*;
 import adalid.commons.properties.*;
 import adalid.commons.util.*;
 import adalid.commons.velocity.*;
+import adalid.util.Platform;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.StringWriter;
@@ -895,7 +896,7 @@ public class MetaPlatformSql {
     public void write() {
         log(Level.INFO, "write", "platform=" + platform);
         Writer writer = new Writer(platformBean, "root");
-        writer.write("meta-platform-sql");
+        writer.write(Platform.META_PLATFORM_SQL);
     }
 
 }

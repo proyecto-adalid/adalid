@@ -15,29 +15,20 @@ package adalid.core.predicates;
 import adalid.core.*;
 import adalid.core.enums.*;
 import org.apache.commons.collections.Predicate;
+import org.apache.commons.lang.ArrayUtils;
+
+import static adalid.core.enums.OperationAccess.*;
 
 /**
  * @author Jorge Campins
  */
 public class IsAccesibleOperation implements Predicate {
 
+    private static final OperationAccess[] ACCESIBLES = {PUBLIC, PROTECTED, RESTRICTED};
+
     @Override
     public boolean evaluate(Object object) {
-        if (object instanceof Operation) {
-            Operation operation = (Operation) object;
-            OperationAccess access = operation.getOperationAccess();
-            if (access != null) {
-                switch (access) {
-                    case PUBLIC:
-                    case PROTECTED:
-                    case RESTRICTED:
-                        return true;
-                    default:
-                        return false;
-                }
-            }
-        }
-        return false;
+        return object instanceof Operation operation && ArrayUtils.contains(ACCESIBLES, operation.getOperationAccess());
     }
 
 }

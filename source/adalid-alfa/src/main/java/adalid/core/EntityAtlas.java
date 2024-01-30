@@ -379,13 +379,13 @@ class EntityAtlas {
 //  private boolean isPrepared() {
 //      return _prepared;
 //  }
-
-    void prepare() {
-        /*
-        _prepared = true;
-        prepareFields(); // TODO: check all annotations using field lists, etc.
-        /**/
-    }
+//
+//  void prepare() {
+//      /*
+//      _prepared = true;
+//      prepareFields(); // TODO: check all annotations using field lists, etc.
+//      /**/
+//  }
 
     void finalise() {
         finaliseFields();
@@ -393,32 +393,41 @@ class EntityAtlas {
 
     void checkOperationClasses() {
         track("checkOperationClasses");
-        String key;
-        String pattern;
-        String remarks;
-        Class<?> operationClass;
         Class<?> dac = _declaringArtifact.getClass();
         Class<?>[] classArray = dac.getClasses();
         for (Class<?> clazz : classArray) {
             if (Operation.class.isAssignableFrom(clazz)) {
-                key = clazz.getSimpleName();
-                if (_operationClasses.containsKey(key)) {
-                    operationClass = _operationClasses.get(key);
-                    if (operationClass.equals(clazz)) {
-                    } else if (operationClass.isAssignableFrom(clazz)) {
-                        _operationClasses.put(key, clazz);
-                    } else if (clazz.isAssignableFrom(operationClass)) {
-                    } else {
-                        pattern = "{0} is not assignable from {1}";
-                        remarks = MessageFormat.format(pattern, operationClass.getName(), clazz.getName());
-                        logOperationReferenceOverride(Level.ERROR, clazz, operationClass, dac, remarks);
-                        Project.increaseParserErrorCount();
-                    }
-                } else {
-                    _operationClasses.put(key, clazz);
-                    _operationFields.put(key, null);
-                }
+                checkOperationClass(dac, clazz);
             }
+        }
+        for (Field field : XS1.getFields(dac, Entity.class, Operation.class)) {
+            checkOperationClass(dac, field.getType());
+        }
+    }
+
+    private void checkOperationClass(Class<?> dac, Class<?> clazz) {
+        String key;
+        String pattern = "{0} is not assignable from {1}";
+        String remarks;
+        Class<?> operationClass;
+        key = clazz.getSimpleName();
+        if (_operationClasses.containsKey(key)) {
+            operationClass = _operationClasses.get(key);
+            if (operationClass.equals(clazz)) {
+//              logger.debug(operationClass + " equals " + clazz);
+            } else if (operationClass.isAssignableFrom(clazz)) {
+//              logger.debug(operationClass + " isAssignableFrom " + clazz);
+                _operationClasses.put(key, clazz);
+            } else if (clazz.isAssignableFrom(operationClass)) {
+//              logger.debug(clazz + " isAssignableFrom " + operationClass);
+            } else {
+                remarks = MessageFormat.format(pattern, operationClass.getName(), clazz.getName());
+                logOperationReferenceOverride(Level.ERROR, clazz, operationClass, dac, remarks);
+                Project.increaseParserErrorCount();
+            }
+        } else {
+            _operationClasses.put(key, clazz);
+            _operationFields.put(key, null);
         }
     }
 
@@ -518,6 +527,7 @@ class EntityAtlas {
                 if (restricted) {
                     continue;
                 }
+                operationClass = null;
                 if (Operation.class.isAssignableFrom(type)) {
                     key = type.getSimpleName();
                     operationClass = _operationClasses.get(key);
@@ -537,7 +547,17 @@ class EntityAtlas {
                     o = field.get(_declaringArtifact);
                     if (o == null) {
                         logger.debug(message(type, name, o, depth, round));
-                        o = XS1.initialiseField(_declaringArtifact, field);
+                        if (operationClass == null || operationClass.isAssignableFrom(type)) {
+                            o = XS1.initialiseField(_declaringArtifact, field);
+                        } else if (type.isAssignableFrom(operationClass)) {
+//                          logger.debug(type.getCanonicalName() + " is assignable from " + operationClass.getCanonicalName());
+                            o = XS1.initialiseField(_declaringArtifact, field, operationClass); // extended operation class since 17/12/2023
+                        } else {
+                            pattern = errmsg + "; {0} is not assignable from {1}";
+                            message = MessageFormat.format(pattern, type.getName(), operationClass.getName());
+                            logger.error(message);
+                            Project.increaseParserErrorCount();
+                        }
                         if (o == null) {
                             logger.debug(message(type, name, o, depth, round));
 //                          throw new RuntimeException(message(type, name, o, depth, round));
@@ -626,7 +646,7 @@ class EntityAtlas {
         }
     }
     /**/
-    char prepareFields;
+    protected final char prepareFields = 0;
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="prepareProperty">
@@ -654,7 +674,7 @@ class EntityAtlas {
         }
     }
     /**/
-    char prepareProperty;
+    protected final char prepareProperty = 0;
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="prepareKey">
@@ -672,7 +692,7 @@ class EntityAtlas {
         }
     }
     /**/
-    char prepareKey;
+    protected final char prepareKey = 0;
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="prepareStep">
@@ -690,7 +710,7 @@ class EntityAtlas {
         }
     }
     /**/
-    char prepareStep;
+    protected final char prepareStep = 0;
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="prepareTab">
@@ -708,7 +728,7 @@ class EntityAtlas {
         }
     }
     /**/
-    char prepareTab;
+    protected final char prepareTab = 0;
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="prepareView">
@@ -726,7 +746,7 @@ class EntityAtlas {
         }
     }
     /**/
-    char prepareView;
+    protected final char prepareView = 0;
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="prepareInstance">
@@ -745,7 +765,7 @@ class EntityAtlas {
         }
     }
     /**/
-    char prepareInstance;
+    protected final char prepareInstance = 0;
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="prepareExpression">
@@ -764,7 +784,7 @@ class EntityAtlas {
         }
     }
     /**/
-    char prepareExpression;
+    protected final char prepareExpression = 0;
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="prepareTransition">
@@ -782,7 +802,7 @@ class EntityAtlas {
         }
     }
     /**/
-    char prepareTransition;
+    protected final char prepareTransition = 0;
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="prepareOperation">
@@ -802,7 +822,7 @@ class EntityAtlas {
         }
     }
     /**/
-    char prepareOperation;
+    protected final char prepareOperation = 0;
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="prepareTrigger">
@@ -820,7 +840,7 @@ class EntityAtlas {
         }
     }
     /**/
-    char prepareTrigger;
+    protected final char prepareTrigger = 0;
     // </editor-fold>
     // </editor-fold>
 
@@ -865,30 +885,30 @@ class EntityAtlas {
                     o = field.get(_declaringArtifact);
                     if (o == null) {
                         logger.debug(message(type, name, o, depth, round));
-                    } else if (o instanceof Property) {
-                        finaliseProperty(field, (Property) o);
-                    } else if (o instanceof EntityCollection) {
-                        finaliseEntityCollection(field, (EntityCollection) o);
-                    } else if (o instanceof Key) {
-                        finaliseKey(field, (Key) o);
-                    } else if (o instanceof Step) {
-                        finaliseStep(field, (Step) o);
-                    } else if (o instanceof Tab) {
-                        finaliseTab(field, (Tab) o);
-                    } else if (o instanceof View) {
-                        finaliseView(field, (View) o);
-                    } else if (o instanceof Instance) {
-                        finaliseInstance(field, (Instance) o, index++);
-                    } else if (o instanceof NamedValue) {
-                        finaliseNamedValue(field, (NamedValue) o);
-                    } else if (o instanceof Expression) {
-                        finaliseExpression(field, (Expression) o);
-                    } else if (o instanceof Transition) {
-                        finaliseTransition(field, (Transition) o);
-                    } else if (o instanceof Operation) {
-                        finaliseOperation(field, (Operation) o);
-                    } else if (o instanceof Trigger) {
-                        finaliseTrigger(field, (Trigger) o);
+                    } else if (o instanceof Property property) {
+                        finaliseProperty(field, property);
+                    } else if (o instanceof EntityCollection entityCollection) {
+                        finaliseEntityCollection(field, entityCollection);
+                    } else if (o instanceof Key key) {
+                        finaliseKey(field, key);
+                    } else if (o instanceof Step step) {
+                        finaliseStep(field, step);
+                    } else if (o instanceof Tab tab) {
+                        finaliseTab(field, tab);
+                    } else if (o instanceof View view) {
+                        finaliseView(field, view);
+                    } else if (o instanceof Instance instance) {
+                        finaliseInstance(field, instance, index++);
+                    } else if (o instanceof NamedValue namedValue) {
+                        finaliseNamedValue(field, namedValue);
+                    } else if (o instanceof Expression expression) {
+                        finaliseExpression(field, expression);
+                    } else if (o instanceof Transition transition) {
+                        finaliseTransition(field, transition);
+                    } else if (o instanceof Operation operation) {
+                        finaliseOperation(field, operation);
+                    } else if (o instanceof Trigger trigger) {
+                        finaliseTrigger(field, trigger);
                     }
                 } catch (IllegalArgumentException | IllegalAccessException ex) {
                     logger.error(errmsg, ThrowableUtils.getCause(ex));
@@ -924,8 +944,7 @@ class EntityAtlas {
 //          property.setDeclared(key, _declaringArtifact, field);
             XS1.declare(property, _declaringArtifact, field);
         }
-        if (property instanceof Entity) {
-            Entity entity = (Entity) property;
+        if (property instanceof Entity entity) {
             referenceIndex++;
             XS1.setReferenceIndex(entity, referenceIndex);
             if (!entity.isFinalised()) {
@@ -938,8 +957,7 @@ class EntityAtlas {
                     root.getReferencesMap().put(property.getPathString(), property);
                 }
             }
-        } else if (property instanceof Primitive) {
-            Primitive primitive = (Primitive) property;
+        } else if (property instanceof Primitive primitive) {
             if (!primitive.isFinalised()) {
                 primitive.finalise();
             }
@@ -1186,8 +1204,7 @@ class EntityAtlas {
         if (maps || verbose) {
             for (String clave : _properties.keySet()) {
                 Property p = _properties.get(clave);
-                if (p instanceof Entity) {
-                    Entity e = (Entity) p;
+                if (p instanceof Entity e) {
                     string += e.toString(n + 1, clave, verbose && d0, fields, maps & e.round() == 0);
                 } else if (p != null) {
                     string += p.toString(n + 1, clave, verbose && d0, fields, maps);
@@ -1235,8 +1252,7 @@ class EntityAtlas {
             }
             for (String clave : _references.keySet()) {
                 Property p = _references.get(clave);
-                if (p instanceof Entity) {
-                    Entity e = (Entity) p;
+                if (p instanceof Entity e) {
                     string += e.toString(n + 1, "<" + clave + ">", false, false, false);
                 } else if (p != null) {
                     string += p.toString(n + 1, "¿" + clave + "?", false, false, false);

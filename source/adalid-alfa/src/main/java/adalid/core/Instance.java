@@ -166,7 +166,11 @@ public class Instance extends AbstractArtifact {
         return field == null ? null : field.getValue();
     }
 
-    public Object getInstanceKeyLabel() {
+    public String getInstanceKeyLabel() {
+        return getInstanceKeyLabel(null);
+    }
+
+    public String getInstanceKeyLabel(Locale locale) {
         /**/
         // <editor-fold defaultstate="collapsed" desc="until 01/04/2022">
         /* commented on 01/04/2022
@@ -187,12 +191,21 @@ public class Instance extends AbstractArtifact {
         return null;
         // </editor-fold>
         /**/
+        // <editor-fold defaultstate="collapsed" desc="until 30/12/2023">
+        /* commented on 30/12/2023
         Entity declaringEntity = getDeclaringEntity();
         Property property = declaringEntity == null ? null : declaringEntity.getCharacterKeyProperty();
         return property == null ? null : getInstanceFieldValue(property.getName());
+        // </editor-fold>
+        /**/
+        return code(locale);
     }
 
-    public Object getInstanceKeyDescription() {
+    public String getInstanceKeyDescription() {
+        return getInstanceKeyDescription(null);
+    }
+
+    public String getInstanceKeyDescription(Locale locale) {
         /**/
         // <editor-fold defaultstate="collapsed" desc="until 01/04/2022">
         /* commented on 01/04/2022
@@ -213,14 +226,49 @@ public class Instance extends AbstractArtifact {
         return null;
         // </editor-fold>
         /**/
+        // <editor-fold defaultstate="collapsed" desc="until 30/12/2023">
+        /* commented on 30/12/2023
         Entity declaringEntity = getDeclaringEntity();
         Property property = declaringEntity == null ? null : declaringEntity.getNameProperty();
         return declaringEntity == null ? null : property == null ? descriptionValueOf(declaringEntity) : getInstanceFieldValue(property.getName());
+        // </editor-fold>
+        /**/
+        String name = name(locale);
+        return name != null ? name : description(locale);
     }
 
+    /**/
+    // <editor-fold defaultstate="collapsed" desc="until 30/12/2023">
+    /* commented on 30/12/2023
     private Object descriptionValueOf(Entity declaringEntity) {
         Property property = declaringEntity.getDescriptionProperty();
         return property == null ? null : getInstanceFieldValue(property.getName());
+    }
+
+    // </editor-fold>
+    /**/
+    private String code(Locale locale) {
+        Entity declaringEntity = getDeclaringEntity();
+        Property property = declaringEntity == null ? null : declaringEntity.getCharacterKeyProperty();
+        return string(property, locale);
+    }
+
+    private String name(Locale locale) {
+        Entity declaringEntity = getDeclaringEntity();
+        Property property = declaringEntity == null ? null : declaringEntity.getNameProperty();
+        return string(property, locale);
+    }
+
+    private String description(Locale locale) {
+        Entity declaringEntity = getDeclaringEntity();
+        Property property = declaringEntity == null ? null : declaringEntity.getDescriptionProperty();
+        return string(property, locale);
+    }
+
+    private String string(Property property, Locale locale) {
+        String name = property == null ? null : property.getName();
+        Object object = name == null ? null : getInstanceFieldValue(name, locale);
+        return object == null ? null : object.toString();
     }
 
     public Object getInstanceFieldValue(String name) {
@@ -459,7 +507,7 @@ public class Instance extends AbstractArtifact {
 /**/
     private void finaliseInstanceMissingFields() {
         Entity declaringEntity = getDeclaringEntity();
-        if (declaringEntity instanceof PersistentEntity) {
+        if (declaringEntity instanceof PersistentEntity pent) {
             if (depth() == 0 && round() == 0) {
                 Class<?> dataType;
                 boolean keyField;
@@ -470,7 +518,6 @@ public class Instance extends AbstractArtifact {
                 Date date;
                 Time time;
                 Timestamp timestamp;
-                PersistentEntity pent = (PersistentEntity) declaringEntity;
 //              String name = WordUtils.capitalize(StrUtils.getWordyString(getName()));
                 String name = StringUtils.capitalize(StrUtils.getWordyString(getName()));
 //              String code = pent instanceof PersistentEnumerationEntity ? name : getName();
@@ -479,6 +526,22 @@ public class Instance extends AbstractArtifact {
                 Time currentTime = TimeUtils.currentTime();
                 Timestamp currentTimestamp = TimeUtils.currentTimestamp();
                 List<Property> columnsList = pent.getColumnsList();
+                for (Property property : columnsList) {
+                    if (property.isNullable() || property.getDefaultValue() != null) {
+                        continue;
+                    }
+                    if (String.class.isAssignableFrom(property.getDataType())) {
+                        for (InstanceField f : _instanceFieldsList) {
+                            if (f.getProperty().equals(property)) {
+                                if (f.getValue() == null) {
+                                    dpv = property.isKeyField() ? code : pent.getDefaultPropertyValueOf(this, property);
+                                    f.addLocalizedValue(null, dpv instanceof String ? (String) dpv : name);
+                                }
+                                break;
+                            }
+                        }
+                    }
+                }
                 for (Property property : columnsList) {
                     if (property.isNullable() || property.getDefaultValue() != null || propertyAlreadyAdded(property)) {
                         continue;
@@ -551,7 +614,7 @@ public class Instance extends AbstractArtifact {
      * @param property propiedad de la entidad
      * @param value valor de la propiedad
      */
-    public void newInstanceField(Property property, BigDecimal value) {
+    public void newInstanceField(BooleanProperty property, Boolean value) {
         InstanceField instanceField = new InstanceField(this, property, value);
         _instanceFieldsList.add(instanceField);
     }
@@ -562,7 +625,7 @@ public class Instance extends AbstractArtifact {
      * @param property propiedad de la entidad
      * @param value valor de la propiedad
      */
-    public void newInstanceField(Property property, BigInteger value) {
+    public void newInstanceField(CharacterProperty property, Character value) {
         InstanceField instanceField = new InstanceField(this, property, value);
         _instanceFieldsList.add(instanceField);
     }
@@ -573,123 +636,366 @@ public class Instance extends AbstractArtifact {
      * @param property propiedad de la entidad
      * @param value valor de la propiedad
      */
-    public void newInstanceField(Property property, Boolean value) {
-        InstanceField instanceField = new InstanceField(this, property, value);
-        _instanceFieldsList.add(instanceField);
-    }
-
-    /**
-     * El método newInstanceField se utiliza para especificar el valor de propiedades de la instancia.
-     *
-     * @param property propiedad de la entidad
-     * @param value valor de la propiedad
-     */
-    public void newInstanceField(Property property, Byte value) {
-        InstanceField instanceField = new InstanceField(this, property, value);
-        _instanceFieldsList.add(instanceField);
-    }
-
-    /**
-     * El método newInstanceField se utiliza para especificar el valor de propiedades de la instancia.
-     *
-     * @param property propiedad de la entidad
-     * @param value valor de la propiedad
-     */
-    public void newInstanceField(Property property, Character value) {
-        InstanceField instanceField = new InstanceField(this, property, value);
-        _instanceFieldsList.add(instanceField);
-    }
-
-    /**
-     * El método newInstanceField se utiliza para especificar el valor de propiedades de la instancia.
-     *
-     * @param property propiedad de la entidad
-     * @param value valor de la propiedad
-     */
-    public void newInstanceField(Property property, Date value) {
-        InstanceField instanceField = new InstanceField(this, property, value);
-        _instanceFieldsList.add(instanceField);
-    }
-
-    /**
-     * El método newInstanceField se utiliza para especificar el valor de propiedades de la instancia.
-     *
-     * @param property propiedad de la entidad
-     * @param value valor de la propiedad
-     */
-    public void newInstanceField(Property property, Double value) {
-        InstanceField instanceField = new InstanceField(this, property, value);
-        _instanceFieldsList.add(instanceField);
-    }
-
-    /**
-     * El método newInstanceField se utiliza para especificar el valor de propiedades de la instancia.
-     *
-     * @param property propiedad de la entidad
-     * @param value valor de la propiedad
-     */
-    public void newInstanceField(Property property, Float value) {
-        InstanceField instanceField = new InstanceField(this, property, value);
-        _instanceFieldsList.add(instanceField);
-    }
-
-    /**
-     * El método newInstanceField se utiliza para especificar el valor de propiedades de la instancia.
-     *
-     * @param property propiedad de la entidad
-     * @param value valor de la propiedad
-     */
-    public void newInstanceField(Property property, Integer value) {
-        InstanceField instanceField = new InstanceField(this, property, value);
-        _instanceFieldsList.add(instanceField);
-    }
-
-    /**
-     * El método newInstanceField se utiliza para especificar el valor de propiedades de la instancia.
-     *
-     * @param property propiedad de la entidad
-     * @param value valor de la propiedad
-     */
-    public void newInstanceField(Property property, Long value) {
-        InstanceField instanceField = new InstanceField(this, property, value);
-        _instanceFieldsList.add(instanceField);
-    }
-
-    /**
-     * El método newInstanceField se utiliza para especificar el valor de propiedades de la instancia.
-     *
-     * @param property propiedad de la entidad
-     * @param value valor de la propiedad
-     */
-    public void newInstanceField(Property property, Short value) {
-        InstanceField instanceField = new InstanceField(this, property, value);
-        _instanceFieldsList.add(instanceField);
-    }
-
-    /**
-     * El método newInstanceField se utiliza para especificar el valor de propiedades de la instancia.
-     *
-     * @param property propiedad de la entidad
-     * @param value valor de la propiedad
-     */
-    public void newInstanceField(Property property, String value) {
-        Class<?> dataType = property.getDataType();
-        if (java.util.Date.class.isAssignableFrom(dataType)) {
-            java.util.Date valor = TimeUtils.jdbcObject(value, (Class<? extends java.util.Date>) dataType);
-            if (valor instanceof Date) {
-                newInstanceField(property, (Date) valor);
-            } else if (valor instanceof Time) {
-                newInstanceField(property, (Time) valor);
-            } else if (valor instanceof Timestamp) {
-                newInstanceField(property, (Timestamp) valor);
-            } else {
-                logger.error("invalid date/time value for field " + getFullName() + "." + property.getName());
-                Project.increaseParserErrorCount();
-            }
-        } else {
+    public void newInstanceField(CharacterProperty property, String value) {
+        if (value != null && value.length() == 1) {
             InstanceField instanceField = new InstanceField(this, property, value);
             _instanceFieldsList.add(instanceField);
+        } else {
+            logger.error("invalid char value for field " + getFullName() + "." + property.getName());
+            Project.increaseParserErrorCount();
         }
+    }
+
+    /**
+     * El método newInstanceField se utiliza para especificar el valor de propiedades de la instancia.
+     *
+     * @param property propiedad de la entidad
+     * @param value valor de la propiedad
+     */
+    public void newInstanceField(BigDecimalProperty property, BigDecimal value) {
+        InstanceField instanceField = new InstanceField(this, property, value);
+        _instanceFieldsList.add(instanceField);
+    }
+
+    /**
+     * El método newInstanceField se utiliza para especificar el valor de propiedades de la instancia.
+     *
+     * @param property propiedad de la entidad
+     * @param value valor de la propiedad
+     */
+    public void newInstanceField(BigDecimalProperty property, BigInteger value) {
+        InstanceField instanceField = new InstanceField(this, property, value);
+        _instanceFieldsList.add(instanceField);
+    }
+
+    /**
+     * El método newInstanceField se utiliza para especificar el valor de propiedades de la instancia.
+     *
+     * @param property propiedad de la entidad
+     * @param value valor de la propiedad
+     */
+    public void newInstanceField(BigDecimalProperty property, Long value) {
+        InstanceField instanceField = new InstanceField(this, property, value);
+        _instanceFieldsList.add(instanceField);
+    }
+
+    /**
+     * El método newInstanceField se utiliza para especificar el valor de propiedades de la instancia.
+     *
+     * @param property propiedad de la entidad
+     * @param value valor de la propiedad
+     */
+    public void newInstanceField(BigDecimalProperty property, Integer value) {
+        InstanceField instanceField = new InstanceField(this, property, value);
+        _instanceFieldsList.add(instanceField);
+    }
+
+    /**
+     * El método newInstanceField se utiliza para especificar el valor de propiedades de la instancia.
+     *
+     * @param property propiedad de la entidad
+     * @param value valor de la propiedad
+     */
+    public void newInstanceField(BigDecimalProperty property, Short value) {
+        InstanceField instanceField = new InstanceField(this, property, value);
+        _instanceFieldsList.add(instanceField);
+    }
+
+    /**
+     * El método newInstanceField se utiliza para especificar el valor de propiedades de la instancia.
+     *
+     * @param property propiedad de la entidad
+     * @param value valor de la propiedad
+     */
+    public void newInstanceField(BigDecimalProperty property, Byte value) {
+        InstanceField instanceField = new InstanceField(this, property, value);
+        _instanceFieldsList.add(instanceField);
+    }
+
+    /**
+     * El método newInstanceField se utiliza para especificar el valor de propiedades de la instancia.
+     *
+     * @param property propiedad de la entidad
+     * @param value valor de la propiedad
+     */
+    public void newInstanceField(BigIntegerProperty property, BigInteger value) {
+        InstanceField instanceField = new InstanceField(this, property, value);
+        _instanceFieldsList.add(instanceField);
+    }
+
+    /**
+     * El método newInstanceField se utiliza para especificar el valor de propiedades de la instancia.
+     *
+     * @param property propiedad de la entidad
+     * @param value valor de la propiedad
+     */
+    public void newInstanceField(BigIntegerProperty property, Long value) {
+        InstanceField instanceField = new InstanceField(this, property, value);
+        _instanceFieldsList.add(instanceField);
+    }
+
+    /**
+     * El método newInstanceField se utiliza para especificar el valor de propiedades de la instancia.
+     *
+     * @param property propiedad de la entidad
+     * @param value valor de la propiedad
+     */
+    public void newInstanceField(BigIntegerProperty property, Integer value) {
+        InstanceField instanceField = new InstanceField(this, property, value);
+        _instanceFieldsList.add(instanceField);
+    }
+
+    /**
+     * El método newInstanceField se utiliza para especificar el valor de propiedades de la instancia.
+     *
+     * @param property propiedad de la entidad
+     * @param value valor de la propiedad
+     */
+    public void newInstanceField(BigIntegerProperty property, Short value) {
+        InstanceField instanceField = new InstanceField(this, property, value);
+        _instanceFieldsList.add(instanceField);
+    }
+
+    /**
+     * El método newInstanceField se utiliza para especificar el valor de propiedades de la instancia.
+     *
+     * @param property propiedad de la entidad
+     * @param value valor de la propiedad
+     */
+    public void newInstanceField(BigIntegerProperty property, Byte value) {
+        InstanceField instanceField = new InstanceField(this, property, value);
+        _instanceFieldsList.add(instanceField);
+    }
+
+    /**
+     * El método newInstanceField se utiliza para especificar el valor de propiedades de la instancia.
+     *
+     * @param property propiedad de la entidad
+     * @param value valor de la propiedad
+     */
+    public void newInstanceField(DoubleProperty property, Double value) {
+        InstanceField instanceField = new InstanceField(this, property, value);
+        _instanceFieldsList.add(instanceField);
+    }
+
+    /**
+     * El método newInstanceField se utiliza para especificar el valor de propiedades de la instancia.
+     *
+     * @param property propiedad de la entidad
+     * @param value valor de la propiedad
+     */
+    public void newInstanceField(DoubleProperty property, Float value) {
+        InstanceField instanceField = new InstanceField(this, property, value);
+        _instanceFieldsList.add(instanceField);
+    }
+
+    /**
+     * El método newInstanceField se utiliza para especificar el valor de propiedades de la instancia.
+     *
+     * @param property propiedad de la entidad
+     * @param value valor de la propiedad
+     */
+    public void newInstanceField(DoubleProperty property, Long value) {
+        InstanceField instanceField = new InstanceField(this, property, value);
+        _instanceFieldsList.add(instanceField);
+    }
+
+    /**
+     * El método newInstanceField se utiliza para especificar el valor de propiedades de la instancia.
+     *
+     * @param property propiedad de la entidad
+     * @param value valor de la propiedad
+     */
+    public void newInstanceField(DoubleProperty property, Integer value) {
+        InstanceField instanceField = new InstanceField(this, property, value);
+        _instanceFieldsList.add(instanceField);
+    }
+
+    /**
+     * El método newInstanceField se utiliza para especificar el valor de propiedades de la instancia.
+     *
+     * @param property propiedad de la entidad
+     * @param value valor de la propiedad
+     */
+    public void newInstanceField(DoubleProperty property, Short value) {
+        InstanceField instanceField = new InstanceField(this, property, value);
+        _instanceFieldsList.add(instanceField);
+    }
+
+    /**
+     * El método newInstanceField se utiliza para especificar el valor de propiedades de la instancia.
+     *
+     * @param property propiedad de la entidad
+     * @param value valor de la propiedad
+     */
+    public void newInstanceField(DoubleProperty property, Byte value) {
+        InstanceField instanceField = new InstanceField(this, property, value);
+        _instanceFieldsList.add(instanceField);
+    }
+
+    /**
+     * El método newInstanceField se utiliza para especificar el valor de propiedades de la instancia.
+     *
+     * @param property propiedad de la entidad
+     * @param value valor de la propiedad
+     */
+    public void newInstanceField(FloatProperty property, Float value) {
+        InstanceField instanceField = new InstanceField(this, property, value);
+        _instanceFieldsList.add(instanceField);
+    }
+
+    /**
+     * El método newInstanceField se utiliza para especificar el valor de propiedades de la instancia.
+     *
+     * @param property propiedad de la entidad
+     * @param value valor de la propiedad
+     */
+    public void newInstanceField(FloatProperty property, Long value) {
+        InstanceField instanceField = new InstanceField(this, property, value);
+        _instanceFieldsList.add(instanceField);
+    }
+
+    /**
+     * El método newInstanceField se utiliza para especificar el valor de propiedades de la instancia.
+     *
+     * @param property propiedad de la entidad
+     * @param value valor de la propiedad
+     */
+    public void newInstanceField(FloatProperty property, Integer value) {
+        InstanceField instanceField = new InstanceField(this, property, value);
+        _instanceFieldsList.add(instanceField);
+    }
+
+    /**
+     * El método newInstanceField se utiliza para especificar el valor de propiedades de la instancia.
+     *
+     * @param property propiedad de la entidad
+     * @param value valor de la propiedad
+     */
+    public void newInstanceField(FloatProperty property, Short value) {
+        InstanceField instanceField = new InstanceField(this, property, value);
+        _instanceFieldsList.add(instanceField);
+    }
+
+    /**
+     * El método newInstanceField se utiliza para especificar el valor de propiedades de la instancia.
+     *
+     * @param property propiedad de la entidad
+     * @param value valor de la propiedad
+     */
+    public void newInstanceField(FloatProperty property, Byte value) {
+        InstanceField instanceField = new InstanceField(this, property, value);
+        _instanceFieldsList.add(instanceField);
+    }
+
+    /**
+     * El método newInstanceField se utiliza para especificar el valor de propiedades de la instancia.
+     *
+     * @param property propiedad de la entidad
+     * @param value valor de la propiedad
+     */
+    public void newInstanceField(LongProperty property, Long value) {
+        InstanceField instanceField = new InstanceField(this, property, value);
+        _instanceFieldsList.add(instanceField);
+    }
+
+    /**
+     * El método newInstanceField se utiliza para especificar el valor de propiedades de la instancia.
+     *
+     * @param property propiedad de la entidad
+     * @param value valor de la propiedad
+     */
+    public void newInstanceField(LongProperty property, Integer value) {
+        InstanceField instanceField = new InstanceField(this, property, value);
+        _instanceFieldsList.add(instanceField);
+    }
+
+    /**
+     * El método newInstanceField se utiliza para especificar el valor de propiedades de la instancia.
+     *
+     * @param property propiedad de la entidad
+     * @param value valor de la propiedad
+     */
+    public void newInstanceField(LongProperty property, Short value) {
+        InstanceField instanceField = new InstanceField(this, property, value);
+        _instanceFieldsList.add(instanceField);
+    }
+
+    /**
+     * El método newInstanceField se utiliza para especificar el valor de propiedades de la instancia.
+     *
+     * @param property propiedad de la entidad
+     * @param value valor de la propiedad
+     */
+    public void newInstanceField(LongProperty property, Byte value) {
+        InstanceField instanceField = new InstanceField(this, property, value);
+        _instanceFieldsList.add(instanceField);
+    }
+
+    /**
+     * El método newInstanceField se utiliza para especificar el valor de propiedades de la instancia.
+     *
+     * @param property propiedad de la entidad
+     * @param value valor de la propiedad
+     */
+    public void newInstanceField(IntegerProperty property, Integer value) {
+        InstanceField instanceField = new InstanceField(this, property, value);
+        _instanceFieldsList.add(instanceField);
+    }
+
+    /**
+     * El método newInstanceField se utiliza para especificar el valor de propiedades de la instancia.
+     *
+     * @param property propiedad de la entidad
+     * @param value valor de la propiedad
+     */
+    public void newInstanceField(IntegerProperty property, Short value) {
+        InstanceField instanceField = new InstanceField(this, property, value);
+        _instanceFieldsList.add(instanceField);
+    }
+
+    /**
+     * El método newInstanceField se utiliza para especificar el valor de propiedades de la instancia.
+     *
+     * @param property propiedad de la entidad
+     * @param value valor de la propiedad
+     */
+    public void newInstanceField(IntegerProperty property, Byte value) {
+        InstanceField instanceField = new InstanceField(this, property, value);
+        _instanceFieldsList.add(instanceField);
+    }
+
+    /**
+     * El método newInstanceField se utiliza para especificar el valor de propiedades de la instancia.
+     *
+     * @param property propiedad de la entidad
+     * @param value valor de la propiedad
+     */
+    public void newInstanceField(ShortProperty property, Short value) {
+        InstanceField instanceField = new InstanceField(this, property, value);
+        _instanceFieldsList.add(instanceField);
+    }
+
+    /**
+     * El método newInstanceField se utiliza para especificar el valor de propiedades de la instancia.
+     *
+     * @param property propiedad de la entidad
+     * @param value valor de la propiedad
+     */
+    public void newInstanceField(ShortProperty property, Byte value) {
+        InstanceField instanceField = new InstanceField(this, property, value);
+        _instanceFieldsList.add(instanceField);
+    }
+
+    /**
+     * El método newInstanceField se utiliza para especificar el valor de propiedades de la instancia.
+     *
+     * @param property propiedad de la entidad
+     * @param value valor de la propiedad
+     */
+    public void newInstanceField(ByteProperty property, Byte value) {
+        InstanceField instanceField = new InstanceField(this, property, value);
+        _instanceFieldsList.add(instanceField);
     }
 
     /**
@@ -726,7 +1032,7 @@ public class Instance extends AbstractArtifact {
      * @param property propiedad de la entidad
      * @param value valor de la propiedad
      */
-    public void newInstanceField(Property property, Time value) {
+    public void newInstanceField(DateProperty property, Date value) {
         InstanceField instanceField = new InstanceField(this, property, value);
         _instanceFieldsList.add(instanceField);
     }
@@ -737,9 +1043,94 @@ public class Instance extends AbstractArtifact {
      * @param property propiedad de la entidad
      * @param value valor de la propiedad
      */
-    public void newInstanceField(Property property, Timestamp value) {
+    public void newInstanceField(DateProperty property, String value) {
+        java.util.Date valor = TimeUtils.jdbcObject(value, (Class<? extends java.util.Date>) property.getDataType());
+        if (valor instanceof Date date) {
+            newInstanceField(property, date);
+        } else {
+            logger.error("invalid date value for field " + getFullName() + "." + property.getName());
+            Project.increaseParserErrorCount();
+        }
+    }
+
+    /**
+     * El método newInstanceField se utiliza para especificar el valor de propiedades de la instancia.
+     *
+     * @param property propiedad de la entidad
+     * @param value valor de la propiedad
+     */
+    public void newInstanceField(TimeProperty property, Time value) {
         InstanceField instanceField = new InstanceField(this, property, value);
         _instanceFieldsList.add(instanceField);
+    }
+
+    /**
+     * El método newInstanceField se utiliza para especificar el valor de propiedades de la instancia.
+     *
+     * @param property propiedad de la entidad
+     * @param value valor de la propiedad
+     */
+    public void newInstanceField(TimeProperty property, String value) {
+        java.util.Date valor = TimeUtils.jdbcObject(value, (Class<? extends java.util.Date>) property.getDataType());
+        if (valor instanceof Time time) {
+            newInstanceField(property, time);
+        } else {
+            logger.error("invalid time value for field " + getFullName() + "." + property.getName());
+            Project.increaseParserErrorCount();
+        }
+    }
+
+    /**
+     * El método newInstanceField se utiliza para especificar el valor de propiedades de la instancia.
+     *
+     * @param property propiedad de la entidad
+     * @param value valor de la propiedad
+     */
+    public void newInstanceField(TimestampProperty property, Timestamp value) {
+        InstanceField instanceField = new InstanceField(this, property, value);
+        _instanceFieldsList.add(instanceField);
+    }
+
+    /**
+     * El método newInstanceField se utiliza para especificar el valor de propiedades de la instancia.
+     *
+     * @param property propiedad de la entidad
+     * @param value valor de la propiedad
+     */
+    public void newInstanceField(TimestampProperty property, Time value) {
+        InstanceField instanceField = new InstanceField(this, property, value);
+        _instanceFieldsList.add(instanceField);
+    }
+
+    /**
+     * El método newInstanceField se utiliza para especificar el valor de propiedades de la instancia.
+     *
+     * @param property propiedad de la entidad
+     * @param value valor de la propiedad
+     */
+    public void newInstanceField(TimestampProperty property, Date value) {
+        InstanceField instanceField = new InstanceField(this, property, value);
+        _instanceFieldsList.add(instanceField);
+    }
+
+    /**
+     * El método newInstanceField se utiliza para especificar el valor de propiedades de la instancia.
+     *
+     * @param property propiedad de la entidad
+     * @param value valor de la propiedad
+     */
+    public void newInstanceField(TimestampProperty property, String value) {
+        java.util.Date valor = TimeUtils.jdbcObject(value, (Class<? extends java.util.Date>) property.getDataType());
+        if (valor instanceof Timestamp timestamp) {
+            newInstanceField(property, timestamp);
+        } else if (valor instanceof Time time) {
+            newInstanceField(property, time);
+        } else if (valor instanceof Date date) {
+            newInstanceField(property, date);
+        } else {
+            logger.error("invalid date/time value for field " + getFullName() + "." + property.getName());
+            Project.increaseParserErrorCount();
+        }
     }
 
     // <editor-fold defaultstate="collapsed" desc="toString">

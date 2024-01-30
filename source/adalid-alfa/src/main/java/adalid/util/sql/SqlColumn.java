@@ -59,6 +59,8 @@ public class SqlColumn extends SqlArtifact {
     private String _sqlDefaultValue;
 
     private String _sqlDefaultValueLiteral;
+
+    private String _sqlPrimalDefaultValue;
     // </editor-fold>
 
     public SqlColumn(SqlTable table) {
@@ -364,6 +366,20 @@ public class SqlColumn extends SqlArtifact {
     }
 
     /**
+     * @return the sql primal default value
+     */
+    public String getSqlPrimalDefaultValue() {
+        return _sqlPrimalDefaultValue;
+    }
+
+    /**
+     * @param defaultValue the sql primal default value to set
+     */
+    void setSqlPrimalDefaultValue(String defaultValue) {
+        _sqlPrimalDefaultValue = defaultValue;
+    }
+
+    /**
      * @return the version indicator
      */
     public boolean isVersion() {
@@ -427,6 +443,7 @@ public class SqlColumn extends SqlArtifact {
         } else {
             return _foreignTable.getCapitalizedJavaName();
         }
+        /*
         switch (_type) {
             case "blob":
                 return "BinaryProperty";
@@ -457,6 +474,37 @@ public class SqlColumn extends SqlArtifact {
             default:
                 return "Property";
         }
+        /**/
+        return switch (_type) {
+            case "blob" ->
+                "BinaryProperty";
+            case "boolean" ->
+                "BooleanProperty";
+            case "char" ->
+                "CharacterProperty";
+            case "string" ->
+                "StringProperty";
+            case "short" ->
+                "ShortProperty";
+            case "integer" ->
+                "IntegerProperty";
+            case "long" ->
+                "LongProperty";
+            case "decimal" ->
+                "BigDecimalProperty";
+            case "float" ->
+                "FloatProperty";
+            case "double" ->
+                "DoubleProperty";
+            case "date" ->
+                "DateProperty";
+            case "time" ->
+                "TimeProperty";
+            case "timestamp" ->
+                "TimestampProperty";
+            default ->
+                "Property";
+        };
     }
 
     public String getQualifiedName() {

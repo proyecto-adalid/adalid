@@ -18,6 +18,7 @@ import adalid.core.enums.*;
 import adalid.core.interfaces.*;
 import adalid.core.properties.*;
 import java.lang.reflect.Field;
+import meta.entidad.comun.configuracion.basica.ext.ClaseRecurso;
 import meta.entidad.comun.configuracion.basica.ext.Funcion;
 
 /**
@@ -57,6 +58,7 @@ public class RolFuncion extends AbstractPersistentEntity {
         super.settleAttributes();
 //      setSchema(ProyectoBase.getEsquemaEntidadesComunes());
         // <editor-fold defaultstate="collapsed" desc="localization of RolFuncion's attributes">
+        /**/
         setLocalizedLabel(ENGLISH, "role/function association");
         setLocalizedLabel(SPANISH, "asociación Rol/Función");
         setLocalizedCollectionLabel(ENGLISH, "Role/Function Associations");
@@ -92,16 +94,25 @@ public class RolFuncion extends AbstractPersistentEntity {
     @PropertyField(required = Kleenean.TRUE, table = Kleenean.TRUE, report = Kleenean.TRUE, heading = Kleenean.TRUE, overlay = Kleenean.TRUE)
     public Rol rol;
 
+    @ColumnField(calculable = Kleenean.TRUE)
+//  @ForeignKey(onDelete = OnDeleteAction.NONE, onUpdate = OnUpdateAction.NONE)
+    @ManyToOne(navigability = Navigability.UNIDIRECTIONAL, view = MasterDetailView.NONE)
+    @PropertyField(search = Kleenean.TRUE, create = Kleenean.TRUE, update = Kleenean.TRUE, table = Kleenean.TRUE, report = Kleenean.TRUE, export = Kleenean.TRUE, overlay = Kleenean.TRUE)
+//  @EntityReferenceSearch(searchType = SearchType.LIST, listStyle = ListStyle.NAME)
+    public ClaseRecurso clase;
+
 //  20171213: remove foreign-key referring to Funcion
 //  @ForeignKey(onDelete = OnDeleteAction.NONE, onUpdate = OnUpdateAction.NONE)
     @ManyToOne(navigability = Navigability.UNIDIRECTIONAL, view = MasterDetailView.NONE, quickAdding = QuickAddingFilter.MISSING)
     @ColumnField(nullable = Kleenean.FALSE)
     @PropertyField(required = Kleenean.TRUE, table = Kleenean.TRUE, report = Kleenean.TRUE, heading = Kleenean.TRUE, overlay = Kleenean.TRUE, access = PropertyAccess.RESTRICTED_WRITING)
+    @EntityReferenceSearch(searchType = SearchType.LIST, listStyle = ListStyle.NAME)
     public Funcion funcion;
 
     @ForeignKey(onDelete = OnDeleteAction.CASCADE, onUpdate = OnUpdateAction.CASCADE)
     @ManyToOne(navigability = Navigability.UNIDIRECTIONAL, view = MasterDetailView.NONE)
     @PropertyField(required = Kleenean.FALSE, table = Kleenean.TRUE, report = Kleenean.TRUE, create = Kleenean.TRUE, access = PropertyAccess.RESTRICTED_WRITING)
+    @EntityReferenceSearch(searchType = SearchType.LIST, listStyle = ListStyle.NAME)
     public ConjuntoSegmento conjuntoSegmento;
 
     @ColumnField(nullable = Kleenean.FALSE)
@@ -121,8 +132,14 @@ public class RolFuncion extends AbstractPersistentEntity {
         esTarea.setDefaultValue(false);
         /**/
         // <editor-fold defaultstate="collapsed" desc="localization of RolFuncion's properties">
+        /**/
         rol.setLocalizedLabel(ENGLISH, "role");
         rol.setLocalizedLabel(SPANISH, "rol");
+        /**/
+        clase.setLocalizedLabel(ENGLISH, "resource class");
+        clase.setLocalizedLabel(SPANISH, "clase de recurso");
+        clase.setLocalizedShortLabel(ENGLISH, "class");
+        clase.setLocalizedShortLabel(SPANISH, "clase");
         /**/
         funcion.setLocalizedLabel(ENGLISH, "function");
         funcion.setLocalizedLabel(SPANISH, "función");
@@ -137,6 +154,7 @@ public class RolFuncion extends AbstractPersistentEntity {
         /**/
         esTarea.setLocalizedLabel(ENGLISH, "task");
         esTarea.setLocalizedLabel(SPANISH, "tarea");
+        /**/
         // </editor-fold>
     }
 
@@ -144,6 +162,7 @@ public class RolFuncion extends AbstractPersistentEntity {
     protected void settleLinks() {
         super.settleLinks();
         linkForeignSegmentProperty(rol.grupo);
+        clase.linkCalculableValueEntityReference(funcion.dominio.claseRecurso);
     }
 
     protected Key ix_rol_funcion_0001;
@@ -176,6 +195,7 @@ public class RolFuncion extends AbstractPersistentEntity {
     @Override
     protected void settleExpressions() {
         super.settleExpressions();
+        /**/
         modificables = rol.id.isGreaterOrEqualTo(10000L);
         conjuntables = conjuntoSegmento.claseRecurso.isEqualTo(funcion.dominio.claseRecurso.claseRecursoSegmento);
         checkAccesoUsuario = funcion.esProgramatica.isFalse();
@@ -183,7 +203,9 @@ public class RolFuncion extends AbstractPersistentEntity {
         checkFuncionSegmentada = funcion.esSegmentable.isFalse().implies(conjuntoSegmento.isNull());
         checkConjuntoSegmentos = conjuntoSegmento.isNull().or(conjuntables);
         checkTipoFuncionTarea = funcion.tipoFuncion.isNullOrNotEqualTo(funcion.tipoFuncion.PROCESO).implies(esTarea.isNotTrue());
+        /**/
         // <editor-fold defaultstate="collapsed" desc="localization of RolFuncion's expressions">
+        /**/
         modificables.setLocalizedDescription(ENGLISH, "the role is not a basic configuration role");
         modificables.setLocalizedDescription(SPANISH, "el rol no es un rol de configuración básica del sistema");
         modificables.setLocalizedErrorMessage(ENGLISH, "the role is a basic configuration role; "
@@ -220,6 +242,7 @@ public class RolFuncion extends AbstractPersistentEntity {
         checkTipoFuncionTarea.setLocalizedDescription(SPANISH, "solo los procesos de negocio pueden ser tareas");
         checkTipoFuncionTarea.setLocalizedErrorMessage(ENGLISH, "only business processes can be tasks");
         checkTipoFuncionTarea.setLocalizedErrorMessage(SPANISH, "solo los procesos de negocio pueden ser tareas");
+        /**/
         // </editor-fold>
     }
 
@@ -232,8 +255,8 @@ public class RolFuncion extends AbstractPersistentEntity {
         setUpdateFilter(modificables);
         setDeleteFilter(modificables);
         /**/
-//      idFuncion.setSearchQueryFilter(checkAccesoExtremo);
-        funcion.setSearchQueryFilter(checkAccesoUsuario);
+//      funcion.setSearchQueryFilter(checkAccesoUsuario);
+        funcion.setSearchQueryFilter(checkAccesoUsuario.and(clase.isNull().or(funcion.dominio.claseRecurso.isEqualTo(clase))));
         conjuntoSegmento.setSearchQueryFilter(conjuntables);
         conjuntoSegmento.setModifyingFilter(funcion.dominio.claseRecurso.claseRecursoSegmento.isNotNull());
         conjuntoSegmento.setNullifyingFilter(funcion.dominio.claseRecurso.claseRecursoSegmento.isNull());

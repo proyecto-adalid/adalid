@@ -15,9 +15,12 @@ package adalid.jee2;
 import adalid.commons.bundles.Bundle;
 import adalid.commons.util.StrUtils;
 import adalid.core.Constants;
+import adalid.core.Project;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
@@ -30,6 +33,8 @@ public class SpecialPage {
 
     private static final String CODE = SpecialPage.class.getSimpleName();
 
+    private static final String SERVLET_VIEW_FOLDER = "/faces/views/";
+
     private static final String DEFAULT_VIEW_FOLDER = "/faces/views/custom-made/";
 
     private static final String DEFAULT_VIEW_EXTENSION = ".xhtml";
@@ -37,6 +42,10 @@ public class SpecialPage {
     private static int next;
 
     private final String _code, _view;
+
+    private boolean _publicView, _startOption, _menuOption, _inactiveOption;
+
+    private final Set<Project> _menuModuleSet = new LinkedHashSet<>();
 
     private String _helpDocument, _helpFileName, _helpFileBookmark, _iconClass;
 
@@ -61,8 +70,24 @@ public class SpecialPage {
     }
 
     private SpecialPage(String code, String view) {
-        _code = StringUtils.defaultIfBlank(code, CODE + ++next);
+        code = StringUtils.trimToEmpty(code);
+        if (code.isEmpty()) {
+            _code = CODE + ++next;
+            logger.warn("special page code is missing; \"" + _code + "\" will be used");
+            Project.increaseWriterErrorCount();
+        } else if (code.length() > 30) {
+            _code = CODE + ++next;
+            logger.warn("special page code \"" + code + "\" exceeds 30 characters; \"" + _code + "\" will be used instead");
+            Project.increaseWriterErrorCount();
+        } else if (!code.matches("^[A-Za-z][A-Za-z0-9]*$")) {
+            _code = CODE + ++next;
+            logger.warn("special page code \"" + code + "\" is invalid; \"" + _code + "\" will be used instead");
+            Project.increaseWriterErrorCount();
+        } else {
+            _code = code;
+        }
         _view = StringUtils.defaultIfBlank(view, DEFAULT_VIEW_FOLDER + _code + DEFAULT_VIEW_EXTENSION);
+        _startOption = _view.startsWith(SERVLET_VIEW_FOLDER);
     }
 
     public static String view(String partialView) {
@@ -88,7 +113,62 @@ public class SpecialPage {
     }
 
     public boolean isInternalView() {
-        return _view.startsWith("/");
+        return _view.startsWith(SERVLET_VIEW_FOLDER);
+    }
+
+    public boolean isPublicView() {
+        return _publicView;
+    }
+
+    public boolean isStartOption() {
+        return _startOption;
+    }
+
+    /**
+     * El método setStartOption se utiliza para establecer si la página especial puede, o no, ser utilizada por los usuarios como página de inicio.
+     *
+     * @param b true para permitir el uso de la página especial como página de inicio. Su valor predeterminado es true, si la página es interna (es
+     * decir, si view comienza con <b>/faces/views/</b>); y false, si es externa.
+     */
+    public void setStartOption(boolean b) {
+        _startOption = b;
+    }
+
+    public boolean isMenuOption() {
+        return _menuOption;
+    }
+
+    /**
+     * El método addToModuleMenu se utiliza para agregar la página especial al menú de uno o mas módulos de la aplicación.
+     *
+     * @param modules uno o mas módulos de la aplicación.
+     */
+    public void addToModuleMenu(Project... modules) {
+        if (modules != null) {
+            for (Project module : modules) {
+                if (module.isMenuModule()) {
+                    _menuModuleSet.add(module);
+                    _menuOption = true;
+                }
+            }
+        }
+    }
+
+    public Set<Project> getMenuModuleSet() {
+        return _menuModuleSet;
+    }
+
+    public boolean isInactiveOption() {
+        return _inactiveOption;
+    }
+
+    /**
+     * El método setInactiveOption se utiliza para establecer el estado inicial de la página especial como inactivo.
+     *
+     * @param b true para establecer el estado inicial de la página especial como inactivo. Su valor predeterminado es false.
+     */
+    public void setInactiveOption(boolean b) {
+        _inactiveOption = b;
     }
 
     /**
@@ -155,7 +235,7 @@ public class SpecialPage {
     }
 
     /**
-     * El método setIconClass se utiliza para establecer la clase CSS de la página.
+     * El método setIconClass se utiliza para establecer la clase CSS del icono de la página.
      *
      * @param iconClass clase CSS de la página.
      */

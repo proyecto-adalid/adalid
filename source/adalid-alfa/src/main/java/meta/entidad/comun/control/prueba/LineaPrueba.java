@@ -148,7 +148,7 @@ public class LineaPrueba extends PersistentEntityBase {
         linkForeignOwnerProperty(programa.propietario);
     }
 
-    protected Key key1;
+    Key key1;
 
     @Override
     protected void settleKeys() {

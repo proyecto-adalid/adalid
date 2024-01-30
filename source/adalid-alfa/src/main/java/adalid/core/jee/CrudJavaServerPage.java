@@ -41,30 +41,23 @@ public class CrudJavaServerPage extends JavaServerPage {
      */
     @Override
     public List<PageField> getFields(boolean hidden) {
-        Entity entity, reference;
-        PersistentEntity persistentEntity;
-        QueryTable queryTable;
-        List<Property> columns;
-        List<EntityCollection> collections;
         Property keyProperty;
         PageField field, child;
         boolean excludeHiddenFields = !hidden;
         if (_fields == null) {
             _fields = new ArrayList<>();
-            entity = getEntity();
-            if (entity instanceof PersistentEntity) {
-                persistentEntity = (PersistentEntity) entity;
-                queryTable = persistentEntity.getQueryTable();
+            Entity entity = getEntity();
+            if (entity instanceof PersistentEntity persistentEntity) {
+                QueryTable queryTable = persistentEntity.getQueryTable();
                 setQueryTable(queryTable);
-                columns = persistentEntity.getDataProviderColumnsList();
+                List<Property> columns = persistentEntity.getDataProviderColumnsList();
                 for (Property column : columns) {
                     if (column.isHiddenField() && excludeHiddenFields) {
                         continue;
                     }
                     field = new PageField(this, column);
                     _fields.add(field);
-                    if (column instanceof Entity) {
-                        reference = (Entity) column;
+                    if (column instanceof Entity reference) {
                         keyProperty = reference.getBusinessKeyProperty();
                         child = addChildField(_fields, queryTable, keyProperty, field);
                         if (child != null) {
@@ -77,7 +70,7 @@ public class CrudJavaServerPage extends JavaServerPage {
                         }
                     }
                 }
-                collections = persistentEntity.getEntityCollectionsList();
+                List<EntityCollection> collections = persistentEntity.getEntityCollectionsList();
                 for (EntityCollection collection : collections) {
                     field = new PageField(this, collection);
                     _fields.add(field);
@@ -93,26 +86,20 @@ public class CrudJavaServerPage extends JavaServerPage {
      */
     @Override
     public List<PageField> getMasterHeadingFields(boolean hidden) {
-        Entity master, reference;
-        PersistentEntity persistentEntity;
-        QueryTable queryTable;
-        List<Property> columns;
         Property keyProperty;
         PageField field, child;
         if (_masterFields == null) {
             _masterFields = new ArrayList<>();
-            master = getMaster();
-            if (master instanceof PersistentEntity) {
-                persistentEntity = (PersistentEntity) master;
-                queryTable = persistentEntity.getQueryTable();
+            Entity master = getMaster();
+            if (master instanceof PersistentEntity persistentEntity) {
+                QueryTable queryTable = persistentEntity.getQueryTable();
                 setMasterQueryTable(queryTable);
-                columns = persistentEntity.getDataProviderColumnsList();
+                List<Property> columns = persistentEntity.getDataProviderColumnsList();
                 for (Property column : columns) {
                     if (column.isHeadingField()) {
                         field = new PageField(this, column);
                         _masterFields.add(field);
-                        if (column instanceof Entity) {
-                            reference = (Entity) column;
+                        if (column instanceof Entity reference) {
                             keyProperty = reference.getBusinessKeyProperty();
                             child = addChildField(_masterFields, queryTable, keyProperty, field);
                             if (child != null) {
@@ -157,8 +144,8 @@ public class CrudJavaServerPage extends JavaServerPage {
     private void addEntitiesReferencedByFields(List<PageField> fields) {
         for (PageField field : fields) {
             DataArtifact dataArtifact = field.getDataArtifact();
-            if (dataArtifact instanceof Entity) {
-                _entitiesReferencedByFields.add((Entity) dataArtifact);
+            if (dataArtifact instanceof Entity reference) {
+                _entitiesReferencedByFields.add(reference);
             }
         }
     }

@@ -25,7 +25,7 @@ import org.apache.log4j.Logger;
 /**
  * @author Jorge Campins
  */
-public class EntityCollectionAggregate extends AbstractArtifact {
+public class EntityCollectionAggregate extends AbstractArtifact implements BoundedArtifact {
 
     private static final Logger logger = Logger.getLogger(EntityCollection.class);
 
@@ -96,6 +96,7 @@ public class EntityCollectionAggregate extends AbstractArtifact {
     /**
      * @return the minimum value
      */
+    @Override
     public Object getMinValue() {
         return _minValue;
     }
@@ -117,6 +118,7 @@ public class EntityCollectionAggregate extends AbstractArtifact {
     /**
      * @return the maximum value
      */
+    @Override
     public Object getMaxValue() {
         return _maxValue;
     }
@@ -139,7 +141,7 @@ public class EntityCollectionAggregate extends AbstractArtifact {
     /**
      * @return the maximum value tag
      */
-//  @Override
+    @Override
     public String getMaximumValueTag() {
         return getLocalizedMaximumValueTag(null);
     }
@@ -151,7 +153,7 @@ public class EntityCollectionAggregate extends AbstractArtifact {
      *
      * @param tag una o más oraciones que describen muy brevemente el valor máximo de la agregación
      */
-//  @Override
+    @Override
     public void setMaximumValueTag(String tag) {
         setLocalizedMaximumValueTag(null, tag);
     }
@@ -159,7 +161,7 @@ public class EntityCollectionAggregate extends AbstractArtifact {
     /**
      * @return the minimum value tag
      */
-//  @Override
+    @Override
     public String getMinimumValueTag() {
         return getLocalizedMinimumValueTag(null);
     }
@@ -171,7 +173,7 @@ public class EntityCollectionAggregate extends AbstractArtifact {
      *
      * @param tag una o más oraciones que describen muy brevemente el valor mínimo de la agregación
      */
-//  @Override
+    @Override
     public void setMinimumValueTag(String tag) {
         setLocalizedMinimumValueTag(null, tag);
     }

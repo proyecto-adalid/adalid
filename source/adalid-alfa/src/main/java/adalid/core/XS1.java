@@ -299,12 +299,14 @@ class XS1 {
     }
 
     static List<Field> getFields(Class<?> clazz, Class<?> top, Class<?> fieldType) throws SecurityException {
+        return getFields(clazz, top, fieldType, null);
+    }
+
+    static List<Field> getFields(Class<?> clazz, Class<?> top, Class<?> fieldType, Class<? extends Annotation> annotationClass) throws SecurityException {
         List<Field> fields = new ArrayList<>();
         if (clazz == null || top == null || fieldType == null || !top.isAssignableFrom(clazz)) {
             return fields;
         }
-        int modifiers;
-        boolean restricted;
         Class<?> superClazz = clazz.getSuperclass();
         if (superClazz == null) {
             logger.trace(clazz.getName());
@@ -312,14 +314,9 @@ class XS1 {
             logger.trace(clazz.getName() + " extends " + superClazz.getName());
             if (top.isAssignableFrom(superClazz)) {
 //              fields.addAll(getFields(superClazz, top));
-                List<Field> superFields = getFields(superClazz, top);
+                List<Field> superFields = getFields(superClazz, top, fieldType);
                 for (Field field : superFields) {
-                    modifiers = field.getModifiers();
-                    restricted = Modifier.isStatic(modifiers) || Modifier.isFinal(modifiers);
-                    if (restricted) {
-                        continue;
-                    }
-                    if (fieldType.isAssignableFrom(field.getType())) {
+                    if (valid(field, fieldType, annotationClass)) {
                         fields.add(field);
                     }
                 }
@@ -330,17 +327,23 @@ class XS1 {
 //          fields.addAll(Arrays.asList(clazz.getDeclaredFields()));
             Field[] declaredFields = clazz.getDeclaredFields();
             for (Field field : declaredFields) {
-                modifiers = field.getModifiers();
-                restricted = Modifier.isStatic(modifiers) || Modifier.isFinal(modifiers);
-                if (restricted) {
-                    continue;
-                }
-                if (fieldType.isAssignableFrom(field.getType())) {
+                if (valid(field, fieldType, annotationClass)) {
                     fields.add(field);
                 }
             }
         }
         return getRidOfDupFields(fields);
+    }
+
+    private static boolean valid(Field field, Class<?> fieldType, Class<? extends Annotation> annotationClass) {
+        if (fieldType.isAssignableFrom(field.getType())) {
+            if (annotationClass == null || field.isAnnotationPresent(annotationClass)) {
+                int modifiers = field.getModifiers();
+                boolean restricted = Modifier.isStatic(modifiers) || Modifier.isFinal(modifiers);
+                return !restricted;
+            }
+        }
+        return false;
     }
 
     private static List<Field> getRidOfDupFields(List<Field> fields) {
@@ -374,15 +377,19 @@ class XS1 {
     }
 
     static Object initialiseField(Object declaringObject, Field declaringField) {
-        return initialiseField(declaringObject, declaringField, true);
+        return initialiseField(declaringObject, declaringField, null, true);
     }
 
-    private static Object initialiseField(Object declaringObject, Field declaringField, boolean casting) {
+    static Object initialiseField(Object declaringObject, Field declaringField, Class<?> declaringFieldClass) {
+        return initialiseField(declaringObject, declaringField, declaringFieldClass, true);
+    }
+
+    private static Object initialiseField(Object declaringObject, Field declaringField, Class<?> declaringFieldClass, boolean casting) {
         if (declaringObject == null || declaringField == null) {
             return null;
         }
         String declaringFieldName = declaringField.getName();
-        Class<?> declaringFieldType = declaringField.getType();
+        Class<?> declaringFieldType = declaringFieldClass != null ? declaringFieldClass : declaringField.getType();
         if (NamedValue.class.equals(declaringFieldType)) {
             return NamedValueCache.getInstance(declaringFieldName);
         }
@@ -398,8 +405,7 @@ class XS1 {
         Entity declaringEntity = declaringObject instanceof Entity ? (Entity) declaringObject : null;
         Artifact declaringArtifact = declaringObject instanceof Artifact ? (Artifact) declaringObject : null;
         boolean declaringArtifactIsParameter = false;
-        if (declaringObject instanceof DataArtifact) {
-            DataArtifact declaringDataArtifact = (DataArtifact) declaringObject;
+        if (declaringObject instanceof DataArtifact declaringDataArtifact) {
             declaringArtifactIsParameter = declaringDataArtifact.isParameter();
         }
         String errmsg = "failed to create a new instance of field " + declaringField + " at " + declaringObject;
@@ -411,20 +417,18 @@ class XS1 {
                 if (field != null) {
                     errmsg = "failed to set casting field " + declaringField + " at " + declaringObject;
                     instance = field.get(declaringObject);
-                    if (instance instanceof Artifact) {
-                        Artifact castedArtifact = (Artifact) instance;
+                    if (instance instanceof Artifact castedArtifact) {
                         Class<? extends Object> castedArtifactClass = castedArtifact.getClass();
                         if (fieldType.isAssignableFrom(castedArtifactClass)) {
                             // can return instance
                         } else {
                             instance = null;
                             if (castedArtifactClass.isAssignableFrom(fieldType)) {
-                                Object castingInstance = initialiseField(declaringObject, declaringField, false);
-                                if (castingInstance instanceof AbstractArtifact) {
+                                Object castingInstance = initialiseField(declaringObject, declaringField, declaringFieldType, false);
+                                if (castingInstance instanceof AbstractArtifact castingArtifact) {
                                     Field castedArtifactDeclaringField = castedArtifact.getDeclaringField();
                                     Artifact castedArtifactDeclaringArtifact = castedArtifact.getDeclaringArtifact();
                                     // do not declare here; it will be declared at the corresponding finalise method
-                                    AbstractArtifact castingArtifact = (AbstractArtifact) castingInstance;
                                     castingArtifact.setName(castedArtifact.getName());
                                     castingArtifact.setDeclaringArtifact(castedArtifactDeclaringArtifact);
                                     castingArtifact.setDeclaringField(castedArtifactDeclaringField);
@@ -486,13 +490,6 @@ class XS1 {
                         boolean fair = settings.isAllocatable(fullName);
                         int maxDepth = settings.getMaxDepth();
                         int maxRound = settings.getMaxRound();
-                        /*
-                        if (!ALLOCATION_STRINGS_LOGGING) {
-                        } else if (declaringArtifactIsParameter || declaringArtifact.depth() == 0 || (depth <= maxDepth && round <= maxRound)) {
-                        } else if (fair) {
-                            logger.info(fair + " " + fullName + " " + depth + "/" + round); // + " " + settings.getAllocationStrings());
-                        }
-                        /**/
                         String method1 = "allocate(maxDepth={0}, maxRound={1})";
                         String method2 = MessageFormat.format(method1, maxDepth, maxRound);
                         String remarks = fieldType.equals(trueType) ? null : "fieldType=" + fieldType.getName() + ", trueType=" + trueType.getName();
@@ -501,21 +498,6 @@ class XS1 {
                             TLC.getProject().getParser().track(depth, round, path, type, fieldName, method2, remarks);
                             instance = type.getConstructor(Artifact.class, Field.class).newInstance(declaringObject, declaringField);
                             TLC.getProject().getParser().addEntity((Entity) instance, fullName, depth, round, maxDepth, maxRound);
-                        } else {
-                            /*
-                            String pattern = "{1}, {0} not allocated";
-                            String remark1 = "maxDepth<" + depth;
-                            String remark2 = "maxRound<" + round;
-                            String remarks;
-                            if (depth > maxDepth) {
-                                remarks = MessageFormat.format(pattern, fieldName, remark1);
-                                TLC.getProject().getParser().alert(depth, round, path, type, fieldName, method2, remarks);
-                            }
-                            if (round > maxRound) {
-                                remarks = MessageFormat.format(pattern, fieldName, remark2);
-                                TLC.getProject().getParser().alert(depth, round, path, type, fieldName, method2, remarks);
-                            }
-                            **/
                         }
                     }
                 } else {
@@ -530,14 +512,12 @@ class XS1 {
                     }
                 }
             }
-            if (instance instanceof AbstractArtifact) {
+            if (instance instanceof AbstractArtifact abstractArtifact) {
                 // do not declare here; it will be declared at the corresponding finalise method
-                AbstractArtifact abstractArtifact = (AbstractArtifact) instance;
                 abstractArtifact.setName(fieldName);
                 abstractArtifact.setDeclaringArtifact(declaringArtifact);
                 abstractArtifact.setDeclaringField(declaringField);
-                if (instance instanceof VariantX) {
-                    VariantX variantX = (VariantX) instance;
+                if (instance instanceof VariantX variantX) {
                     variantX.setDataType(declaringFieldType);
                 }
             }
@@ -894,14 +874,12 @@ class XS1 {
             return false;
         }
         if (artifact.isNotDeclared()) {
-            if (artifact instanceof AbstractArtifact) {
-                AbstractArtifact a = (AbstractArtifact) artifact;
+            if (artifact instanceof AbstractArtifact a) {
                 a.setDeclared(declaringField.getName(), declaringArtifact, declaringField);
-                if (artifact instanceof AnnotatableArtifact) { // AbstractDataArtifact (AbstractEntity or Primitive), EntityCollection
-                    ((AnnotatableArtifact) artifact).annotate(); // 2020/07/28 - do not annotate while instantiating
+                if (artifact instanceof AnnotatableArtifact annotatableArtifact) { // AbstractDataArtifact (AbstractEntity or Primitive), EntityCollection
+                    annotatableArtifact.annotate(); // 2020/07/28 - do not annotate while instantiating
                 }
-                if (artifact instanceof AbstractEntity) {
-                    AbstractEntity e = (AbstractEntity) artifact;
+                if (artifact instanceof AbstractEntity e) {
                     e.initializeInheritanceFields(); // 2020/07/28 - do not initialize inheritance fields while instantiating
                 }
                 return true;
@@ -911,8 +889,7 @@ class XS1 {
     }
 
     static boolean postConstruct(Entity entity) {
-        if (entity instanceof AbstractEntity) {
-            AbstractEntity e = (AbstractEntity) entity;
+        if (entity instanceof AbstractEntity e) {
             e.annotate(); // 2020/07/28 - do not annotate while instantiating
             e.initializeInheritanceFields(); // 2020/07/28 - do not initialize inheritance fields while instantiating
             return true;
@@ -921,8 +898,7 @@ class XS1 {
     }
 
     static boolean setReferenceIndex(Entity entity, int referenceIndex) {
-        if (entity instanceof AbstractEntity) {
-            AbstractEntity e = (AbstractEntity) entity;
+        if (entity instanceof AbstractEntity e) {
             e.setReferenceIndex(referenceIndex);
             return true;
         }

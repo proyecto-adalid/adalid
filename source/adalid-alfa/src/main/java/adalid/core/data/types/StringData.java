@@ -62,6 +62,8 @@ public class StringData extends CharacterPrimitive {
 
     private boolean _richTextFormat = false;
 
+    private boolean _translatable = true;
+
     private String _specialConverterName;
 
     private String _specialValidatorName;
@@ -82,9 +84,13 @@ public class StringData extends CharacterPrimitive {
 
     private String[] _fileViewerDialogReturnUpdate;
 
-    private boolean _fileUploadAutoStart = false;
+    private Boolean _fileUploadAutoStart;
+
+    private Boolean _fileUploadVirusScan;
 
     private int _fileUploadFileLimit = 1;
+
+    private int _fileUploadUndoLimit = 2;
 
     private int _maxInputFileSize = -1; // Constants.DEFAULT_MAX_INPUT_FILE_SIZE;
 
@@ -93,6 +99,8 @@ public class StringData extends CharacterPrimitive {
     private Pattern _validInputFilePattern;
 
     private UploadStorageOption _uploadStorageOption = UploadStorageOption.UNSPECIFIED;
+
+    private String _pathTemplate;
 
     private String _blobFieldName;
 
@@ -141,17 +149,17 @@ public class StringData extends CharacterPrimitive {
     // </editor-fold>
 /**/
     // <editor-fold defaultstate="collapsed" desc="since 06/06/2022">
-    private int _largeDisplayWidth = Constants.DEFAULT_LARGE_IMAGE_WIDTH;
+    private int _largeDisplayWidth = Constants.DEFAULT_LARGE_DOCUMENT_WIDTH;
 
-    private int _largeDisplayHeight = Constants.DEFAULT_LARGE_IMAGE_HEIGHT;
+    private int _largeDisplayHeight = Constants.DEFAULT_LARGE_DOCUMENT_HEIGHT;
 
-    private int _mediumDisplayWidth = Constants.DEFAULT_MEDIUM_IMAGE_WIDTH;
+    private int _mediumDisplayWidth = Constants.DEFAULT_MEDIUM_DOCUMENT_WIDTH;
 
-    private int _mediumDisplayHeight = Constants.DEFAULT_MEDIUM_IMAGE_HEIGHT;
+    private int _mediumDisplayHeight = Constants.DEFAULT_MEDIUM_DOCUMENT_HEIGHT;
 
-    private int _smallDisplayWidth = Constants.DEFAULT_SMALL_IMAGE_WIDTH;
+    private int _smallDisplayWidth = Constants.DEFAULT_SMALL_DOCUMENT_WIDTH;
 
-    private int _smallDisplayHeight = Constants.DEFAULT_SMALL_IMAGE_HEIGHT;
+    private int _smallDisplayHeight = Constants.DEFAULT_SMALL_DOCUMENT_HEIGHT;
     // </editor-fold>
 
     private boolean _resizable = true;
@@ -196,8 +204,7 @@ public class StringData extends CharacterPrimitive {
         if (SpecialCharacterValue.CURRENT_USER_CODE.equals(defaultValue)) {
             return string_codigo_usuario;
         }
-        if (defaultValue instanceof ScalarX) {
-            ScalarX scalarX = (ScalarX) defaultValue;
+        if (defaultValue instanceof ScalarX scalarX) {
             if (scalarX.getOperator() == null && SpecialCharacterValue.CURRENT_USER_CODE.equals(scalarX.getOperand())) {
                 return string_codigo_usuario;
             }
@@ -295,7 +302,7 @@ public class StringData extends CharacterPrimitive {
     }
 
     public boolean isLargeObject() {
-        return _maxLength == null;
+        return getMaxLength() == null;
     }
 
     /**
@@ -426,7 +433,7 @@ public class StringData extends CharacterPrimitive {
     /**
      * @return the allow diacritics indicator
      */
-    public boolean getAllowDiacritics() {
+    public boolean isAllowDiacritics() {
         return _allowDiacritics;
     }
 
@@ -441,7 +448,7 @@ public class StringData extends CharacterPrimitive {
     /**
      * @return the rich text format indicator
      */
-    public boolean getRichTextFormat() {
+    public boolean isRichTextFormat() {
         return _richTextFormat;
     }
 
@@ -451,6 +458,30 @@ public class StringData extends CharacterPrimitive {
     public void setRichTextFormat(boolean richTextFormat) {
         XS2.checkAccess();
         _richTextFormat = richTextFormat;
+    }
+
+    /**
+     * @return the allow translatation indicator
+     */
+    public boolean isTranslatable() {
+        return _translatable && isTranslationAllowed();
+    }
+
+    public boolean isTranslationAllowed() {
+        return !(isLargeObject()
+            || isEmbeddedDocumentField()
+            || isFileReferenceField()
+            || isPassword()
+            || isUniformResourceLocatorField()
+            || isUrlProperty()
+            || isVariantStringField());
+    }
+
+    /**
+     * @param translatable the allow translatation indicator to set
+     */
+    public void setTranslatable(boolean translatable) {
+        _translatable = translatable;
     }
 
     /**
@@ -624,6 +655,10 @@ public class StringData extends CharacterPrimitive {
                         : _encodingType;
     }
 
+    protected EncodingType encodingType() {
+        return _encodingType;
+    }
+
     /**
      * El método setEncodingType se utiliza para establecer el tipo de codificación del valor de la propiedad para almacenarlo en la base de datos. El
      * algoritmo de codificación utilizado es Base64. Su valor es uno de los elementos de la enumeración EncodingType.
@@ -688,11 +723,15 @@ public class StringData extends CharacterPrimitive {
      */
 //  @Override -- Implements method from: FileReference (StringProperty/StringParameter)
     public boolean isFileUploadAutoStart() {
+        return _fileUploadAutoStart != null && _fileUploadAutoStart;
+    }
+
+    public Boolean fileUploadAutoStart() {
         return _fileUploadAutoStart;
     }
 
     /**
-     * @param autoStart the the file-upload auto-start indicator to set
+     * @param autoStart the file-upload auto-start indicator to set
      */
     public void setFileUploadAutoStart(boolean autoStart) {
         XS2.checkAccess();
@@ -700,15 +739,39 @@ public class StringData extends CharacterPrimitive {
     }
 
     /**
+     * @return the file-upload virus-scan indicator
+     */
+//  @Override -- Implements method from: FileReference (StringProperty/StringParameter)
+    public boolean isFileUploadVirusScan() {
+        return _fileUploadVirusScan != null && _fileUploadVirusScan;
+    }
+
+    public Boolean fileUploadVirusScan() {
+        return _fileUploadVirusScan;
+    }
+
+    /**
+     * @param virusScan the file-upload virus-scan indicator to set
+     */
+    public void setFileUploadVirusScan(boolean virusScan) {
+        XS2.checkAccess();
+        _fileUploadVirusScan = virusScan;
+    }
+
+    /**
      * @return the file-upload file limit
      */
 //  @Override -- Implements method from: FileReference (StringProperty/StringParameter)
     public int getFileUploadFileLimit() {
+        return _fileUploadFileLimit < 1 || _fileUploadFileLimit > Constants.MAX_UPLOAD_FILE_LIMIT ? 1 : _fileUploadFileLimit;
+    }
+
+    protected int fileUploadFileLimit() {
         return _fileUploadFileLimit;
     }
 
     /**
-     * @param fileLimit the the file-upload file limit indicator to set
+     * @param fileLimit the file-upload file limit indicator to set
      */
     public void setFileUploadFileLimit(int fileLimit) {
         XS2.checkAccess();
@@ -716,10 +779,34 @@ public class StringData extends CharacterPrimitive {
     }
 
     /**
+     * @return the file-upload file limit
+     */
+//  @Override -- Implements method from: FileReference (StringProperty/StringParameter)
+    public int getFileUploadUndoLimit() {
+        return _fileUploadUndoLimit < 0 || _fileUploadUndoLimit > Constants.MAX_UPLOAD_UNDO_LIMIT ? 2 : _fileUploadUndoLimit;
+    }
+
+    protected int fileUploadUndoLimit() {
+        return _fileUploadUndoLimit;
+    }
+
+    /**
+     * @param undoLimit the file-upload retry limit indicator to set
+     */
+    public void setFileUploadUndoLimit(int undoLimit) {
+        XS2.checkAccess();
+        _fileUploadUndoLimit = undoLimit;
+    }
+
+    /**
      * @return the max input file size
      */
 //  @Override -- Implements method from: FileReference (StringProperty/StringParameter)
     public int getMaxInputFileSize() {
+        return _maxInputFileSize < 0 ? Constants.DEFAULT_MAX_INPUT_FILE_SIZE : _maxInputFileSize;
+    }
+
+    protected int maxInputFileSize() {
         return _maxInputFileSize;
     }
 
@@ -729,10 +816,6 @@ public class StringData extends CharacterPrimitive {
     public void setMaxInputFileSize(int size) {
         XS2.checkAccess();
         _maxInputFileSize = size;
-    }
-
-    protected int maxInputFileSize() {
-        return _maxInputFileSize;
     }
 
     /**
@@ -755,6 +838,9 @@ public class StringData extends CharacterPrimitive {
 
     private final static String MIME_TYPES_REGEX_SUFFIX = "$";
 
+    /**
+     * @return the valid input file regex
+     */
 //  @Override -- Implements method from: FileReference (StringProperty/StringParameter)
     public String getValidInputFileTypesRegex() {
         MimeType[] validInputFileTypes = getValidInputFileTypes();
@@ -803,6 +889,22 @@ public class StringData extends CharacterPrimitive {
     public void setUploadStorageOption(UploadStorageOption option) {
         XS2.checkAccess();
         _uploadStorageOption = option == null ? UploadStorageOption.UNSPECIFIED : option;
+    }
+
+    /**
+     * @return the path template
+     */
+//  @Override -- Implements method from: FileReference (StringProperty/StringParameter)
+    public String getPathTemplate() {
+        return _pathTemplate;
+    }
+
+    /**
+     * @param fieldName the path template to set
+     */
+    public void setPathTemplate(String fieldName) {
+        XS2.checkAccess();
+        _pathTemplate = fieldName;
     }
 
     /**
@@ -1129,18 +1231,18 @@ public class StringData extends CharacterPrimitive {
             type = EmbeddedDocumentType.UNSPECIFIED;
         }
         switch (type) {
-            case IFRAME:
+            case IFRAME -> {
                 _embeddedDocumentType = type;
                 regex = Constants.IFRAME_REGEX;
-                break;
-            case URL:
+            }
+            case URL -> {
                 _embeddedDocumentType = type;
                 regex = Constants.URL_REGEX;
-                break;
-            default:
+            }
+            default -> {
                 _embeddedDocumentType = EmbeddedDocumentType.BOTH;
                 regex = Constants.EMBEDDED_DOCUMENT_REGEX;
-                break;
+            }
         }
         _pattern = Pattern.compile(regex);
     }
@@ -1229,6 +1331,16 @@ public class StringData extends CharacterPrimitive {
     public void setSmallDisplayHeight(int height) {
         XS2.checkAccess();
         _smallDisplayHeight = height;
+    }
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="since 23/01/2024">
+    public int[] getDisplayWidth() {
+        return new int[]{_largeDisplayWidth, _mediumDisplayWidth, _smallDisplayWidth};
+    }
+
+    public int[] getDisplayHeight() {
+        return new int[]{_largeDisplayHeight, _mediumDisplayHeight, _smallDisplayHeight};
     }
     // </editor-fold>
 
@@ -1332,7 +1444,7 @@ public class StringData extends CharacterPrimitive {
     }
 
     public CharacterOrderedPairX toZeroPaddedString() {
-        int l = IntUtils.valueOf(_maxLength, 0); // _maxLength == null ? 0 : _maxLength;
+        int l = IntUtils.valueOf(getMaxLength(), 0);
         return toZeroPaddedString(l);
     }
 
@@ -1347,7 +1459,7 @@ public class StringData extends CharacterPrimitive {
         if (fields || verbose) {
             if (verbose) {
                 string += fee + tab + "minLength" + faa + _minLength + foo;
-                if (_maxLength != null) {
+                if (getMaxLength() != null) {
                     string += fee + tab + "maxLength" + faa + _maxLength + foo;
                 }
             }

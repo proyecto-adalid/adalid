@@ -77,15 +77,16 @@ public class RastroInforme extends AbstractPersistentEntity {
     @OwnerProperty
     @SegmentProperty
     @ColumnField(nullable = Kleenean.TRUE)
-    @ForeignKey(onDelete = OnDeleteAction.NONE, onUpdate = OnUpdateAction.NONE)
+//  20231209: remove foreign-key referring to Usuario because it might cause ARJUNA012117 and/or ARJUNA012121
+//  @ForeignKey(onDelete = OnDeleteAction.NONE, onUpdate = OnUpdateAction.NONE)
     @ManyToOne(navigability = Navigability.UNIDIRECTIONAL, view = MasterDetailView.NONE)
-    @PropertyField(sequence = 250, hidden = Kleenean.TRUE)
+    @PropertyField(hidden = Kleenean.TRUE)
     @QueryMapping(mapKeyProperties = Kleenean.FALSE)
     public Usuario usuario;
 
     @ColumnField(indexed = Kleenean.TRUE)
     @PropertyField(sequence = 250, table = Kleenean.TRUE, search = Kleenean.TRUE, report = Kleenean.TRUE)
-    @StringField(maxLength = 36)
+    @StringField(maxLength = MAX_EMAIL_ADDRESS_LENGTH) // maxLength = 36 until 01/12/2023
     public StringProperty codigoUsuario;
 
     @ColumnField(indexed = Kleenean.TRUE)
@@ -219,15 +220,16 @@ public class RastroInforme extends AbstractPersistentEntity {
     public SubtipoGrafico subtipoGrafico;
 
     @ColumnField(nullable = Kleenean.TRUE)
-    @ForeignKey(onDelete = OnDeleteAction.NONE, onUpdate = OnUpdateAction.NONE)
+//  20231209: remove foreign-key referring to Usuario because it might cause ARJUNA012117 and/or ARJUNA012121
+//  @ForeignKey(onDelete = OnDeleteAction.NONE, onUpdate = OnUpdateAction.NONE)
     @ManyToOne(navigability = Navigability.UNIDIRECTIONAL, view = MasterDetailView.NONE)
-    @PropertyField(sequence = 250, hidden = Kleenean.TRUE)
+    @PropertyField(hidden = Kleenean.TRUE)
     @QueryMapping(mapKeyProperties = Kleenean.FALSE)
     public Usuario remitente;
 
     @ColumnField(indexed = Kleenean.TRUE)
     @PropertyField(sequence = 250, table = Kleenean.TRUE, search = Kleenean.TRUE, report = Kleenean.TRUE)
-    @StringField(maxLength = 36)
+    @StringField(maxLength = MAX_EMAIL_ADDRESS_LENGTH) // maxLength = 36 until 01/12/2023
     public StringProperty codigoRemitente;
 
     @ColumnField(indexed = Kleenean.TRUE)
@@ -300,7 +302,7 @@ public class RastroInforme extends AbstractPersistentEntity {
         /**/
         condicionEjeFun.setInitialValue(condicionEjeFun.EJECUCION_PENDIENTE);
         condicionEjeFun.setDefaultValue(condicionEjeFun.EJECUCION_PENDIENTE);
-        /**/
+        /*
         RastroUtils.setGraphicImageExpressions(condicionEjeFun);
         /**/
         // <editor-fold defaultstate="collapsed" desc="localization of RastroInforme's properties">
@@ -447,12 +449,13 @@ public class RastroInforme extends AbstractPersistentEntity {
     }
 
     /**/
-    protected Key key1;
+    protected Key ix_rastro_informe_0001;
 
     @Override
     protected void settleKeys() {
         super.settleKeys();
-        key1.newKeyField(idClaseRecursoValor, recursoValor);
+        ix_rastro_informe_0001.setUnique(false);
+        ix_rastro_informe_0001.newKeyField(idClaseRecursoValor, recursoValor);
     }
 
     /**/
@@ -565,7 +568,7 @@ public class RastroInforme extends AbstractPersistentEntity {
             /**/
         }
 
-        Check check101, check102, check103;
+        protected Check check101, check102, check103;
 
         @Override
         protected void settleExpressions() {
@@ -645,7 +648,7 @@ public class RastroInforme extends AbstractPersistentEntity {
             /**/
         }
 
-        Check check101, check102, check103;
+        protected Check check101, check102, check103;
 
         @Override
         protected void settleExpressions() {

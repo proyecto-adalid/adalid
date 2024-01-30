@@ -75,8 +75,8 @@ public class ConsoleJavaServerPage extends JavaServerPage {
                 if (operations != null && !operations.isEmpty()) {
                     for (Operation operation : operations) {
                         for (Parameter parameter : operation.getParametersList()) {
-                            if (parameter instanceof Entity) {
-                                _entitiesReferencedByFields.add((Entity) parameter);
+                            if (parameter instanceof Entity reference) {
+                                _entitiesReferencedByFields.add(reference);
                             }
                         }
 

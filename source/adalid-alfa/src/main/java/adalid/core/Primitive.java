@@ -57,14 +57,50 @@ public abstract class Primitive extends AbstractDataArtifact implements Expressi
     /**
      *
      */
-    private final List<ExpressionUsage> _verifiedUsages = new ArrayList<>();
+    private final Map<ExpressionUsage, Set<Artifact>> _verifiedUsages = new LinkedHashMap<>();
 
     /**
      * @return the verified usages
      */
     @Override
     public List<ExpressionUsage> getVerifiedUsages() {
+        return new ArrayList<>(_verifiedUsages.keySet());
+    }
+
+    /**
+     * @return the verified usages
+     */
+    @Override
+    public Map<ExpressionUsage, Set<Artifact>> getVerifiedUsageMap() {
         return _verifiedUsages;
+    }
+
+    /**
+     * @param usage the expression usage
+     * @return the verified user list
+     */
+    @Override
+    public Set<Artifact> getVerifiedUsers(ExpressionUsage usage) {
+        Set<Artifact> users = _verifiedUsages.get(usage);
+        if (users == null) {
+            users = new LinkedHashSet<>();
+            _verifiedUsages.put(usage, users);
+        }
+        return users;
+    }
+
+    /**
+     * @param usage the expression usage
+     * @param user the artifact that makes use of this expression
+     * @return the verified user list
+     */
+    @Override
+    public Set<Artifact> addVerifiedUsage(ExpressionUsage usage, Artifact user) {
+        Set<Artifact> users = getVerifiedUsers(usage);
+        if (user != null) {
+            users.add(user);
+        }
+        return users;
     }
 
     @Override

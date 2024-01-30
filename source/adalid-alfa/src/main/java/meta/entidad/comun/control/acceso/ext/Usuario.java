@@ -38,7 +38,7 @@ import meta.entidad.comun.control.acceso.UsuarioModulo;
 @EntityInsertOperation(enabled = Kleenean.TRUE)
 @EntityUpdateOperation(enabled = Kleenean.TRUE)
 @EntityDeleteOperation(enabled = Kleenean.TRUE)
-@EntityTableView(enabled = Kleenean.TRUE, inserts = Kleenean.FALSE, updates = Kleenean.TRUE)
+@EntityTableView(enabled = Kleenean.TRUE, inserts = Kleenean.FALSE, updates = Kleenean.TRUE, quickFilter = Kleenean.TRUE)
 @EntityDetailView(enabled = Kleenean.TRUE)
 @EntityTreeView(enabled = Kleenean.TRUE)
 @EntityConsoleView(enabled = Kleenean.TRUE)
@@ -133,7 +133,7 @@ public class Usuario extends meta.entidad.comun.control.acceso.Usuario {
     @ColumnField(nullable = Kleenean.TRUE)
     @ForeignKey(onDelete = OnDeleteAction.NONE, onUpdate = OnUpdateAction.NONE)
     @ManyToOne(navigability = Navigability.UNIDIRECTIONAL, view = MasterDetailView.NONE)
-    @PropertyField(create = Kleenean.TRUE, update = Kleenean.TRUE)
+    @PropertyField(create = Kleenean.TRUE, update = Kleenean.TRUE, required = Kleenean.TRUE, table = Kleenean.FALSE)
     public PaginaInicio paginaInicio;
 
     @ColumnField(nullable = Kleenean.TRUE)
@@ -459,7 +459,7 @@ public class Usuario extends meta.entidad.comun.control.acceso.Usuario {
     protected void settleSteps() {
         super.settleSteps();
         /**/
-        step10.newStepField(codigoUsuario, nombreUsuario, archivo, correoElectronico, numeroTelefonoMovil, grupo);
+        step10.newStepField(codigoUsuario, nombreUsuario, archivo, correoElectronico, numeroTelefonoInteligente, numeroTelefonoMovil, grupo);
         /**/
         step20.newStepField(paginaInicio, paginaMenu, otraPagina, temaInterfaz, filasPorPagina, ayudaPorCampos, confirmarAlDescartar, confirmarAlFinalizar);
         /**/
@@ -513,7 +513,7 @@ public class Usuario extends meta.entidad.comun.control.acceso.Usuario {
         super.settleTabs();
         /**/
         tab10.copy(step10, false); // false para una copia superficial, excluyendo los campos del paso.
-        tab10.newTabField(octetos, archivo, correoElectronico, numeroTelefonoMovil);
+        tab10.newTabField(octetos, archivo, correoElectronico, numeroTelefonoInteligente, numeroTelefonoMovil);
         tab10.newTabField(esSuperUsuario, esSuperAuditor, esUsuarioEspecial, esUsuarioInactivo, esUsuarioAutomatico);
         tab10.newTabField(grupo, usuarioSupervisor, fechaHoraRegistro, fechaHoraSincronizacion);
         /**/
@@ -585,7 +585,7 @@ public class Usuario extends meta.entidad.comun.control.acceso.Usuario {
         /**/
         filtroPaginaMenu = paginaMenu.opcionMenu.isTrue();
         /**/
-        filtroOtraPagina = otraPagina.inactiva.isFalse();
+        filtroOtraPagina = and(otraPagina.opcionInicio.isTrue(), otraPagina.inactiva.isFalse());
         /*
         check100 = esUsuarioEspecial.xnor(grupo.isEqualTo(grupo.USUARIOS_ESPECIALES));
         /**/
@@ -836,13 +836,13 @@ public class Usuario extends meta.entidad.comun.control.acceso.Usuario {
         paginaInicio.setSearchQueryFilter(paginaInicio.isEqualTo(paginaInicio.OTRA_PAGINA).implies(existe_pagina_especial));
         /**/
         paginaMenu.setModifyingFilter(conPaginaMenu);
-        paginaMenu.setRenderingFilter(conPaginaMenu);
+        paginaMenu.setRenderingFilter(conPaginaMenu, true);
         paginaMenu.setRequiringFilter(conPaginaMenu);
         paginaMenu.setNullifyingFilter(not(conPaginaMenu));
         paginaMenu.setSearchQueryFilter(filtroPaginaMenu);
         /**/
         otraPagina.setModifyingFilter(conOtraPagina);
-        otraPagina.setRenderingFilter(conOtraPagina);
+        otraPagina.setRenderingFilter(conOtraPagina, true);
         otraPagina.setRequiringFilter(conOtraPagina);
         otraPagina.setNullifyingFilter(not(conOtraPagina));
         otraPagina.setSearchQueryFilter(filtroOtraPagina);
@@ -862,10 +862,10 @@ public class Usuario extends meta.entidad.comun.control.acceso.Usuario {
         filtroPaginaMenu.setLocalizedErrorMessage(ENGLISH, "the page is not a menu page");
         filtroPaginaMenu.setLocalizedErrorMessage(SPANISH, "la página no es una página del menú");
         /**/
-        filtroOtraPagina.setLocalizedDescription(ENGLISH, "the page is active");
-        filtroOtraPagina.setLocalizedDescription(SPANISH, "la página está activa");
-        filtroOtraPagina.setLocalizedErrorMessage(ENGLISH, "the page is not active");
-        filtroOtraPagina.setLocalizedErrorMessage(SPANISH, "la página está inactiva");
+        filtroOtraPagina.setLocalizedDescription(ENGLISH, "the page is a start option and it is active");
+        filtroOtraPagina.setLocalizedDescription(SPANISH, "la página es una opción de inicio y está activa");
+        filtroOtraPagina.setLocalizedErrorMessage(ENGLISH, "the page is not a start option or it is not active");
+        filtroOtraPagina.setLocalizedErrorMessage(SPANISH, "la página no es una opción de inicio o está inactiva");
         /**/
         // </editor-fold>
         /**/
@@ -915,6 +915,8 @@ public class Usuario extends meta.entidad.comun.control.acceso.Usuario {
 
     protected CambiarPreferencias cambiarPreferencias;
 
+    protected CambiarCorreo cambiarCorreo;
+
     protected CambiarPassword cambiarPassword;
 
     protected AlterarPassword alterarPassword;
@@ -933,9 +935,11 @@ public class Usuario extends meta.entidad.comun.control.acceso.Usuario {
     public class Agregar extends ProcessOperation {
 
         @ParameterField(required = Kleenean.TRUE)
+        @StringField(maxLength = MAX_EMAIL_ADDRESS_LENGTH) // maxLength = 36 until 01/12/2023
         protected StringParameter codigo;
 
         @ParameterField(required = Kleenean.FALSE)
+        @StringField(maxLength = 100)
         protected StringParameter nombre;
 
         @Override
@@ -1018,7 +1022,7 @@ public class Usuario extends meta.entidad.comun.control.acceso.Usuario {
         protected meta.entidad.comun.control.acceso.Usuario usuario;
 
         @ParameterField(required = Kleenean.TRUE)
-        @StringField(maxLength = 100)
+        @StringField(maxLength = MAX_EMAIL_ADDRESS_LENGTH) // maxLength = 36 until 01/12/2023
         protected StringParameter codigo;
 
         @ParameterField(required = Kleenean.FALSE)
@@ -1330,6 +1334,11 @@ public class Usuario extends meta.entidad.comun.control.acceso.Usuario {
         @Override
         protected void settleParameters() {
             super.settleParameters();
+            /*
+            confirmacionPassword.setModifyingFilter(nuevoPassword.isNotNull());
+            confirmacionPassword.setRequiringFilter(nuevoPassword.isNotNull());
+            confirmacionPassword.setNullifyingFilter(nuevoPassword.isNull());
+            /**/
             // <editor-fold defaultstate="collapsed" desc="localization of AsignarPassword's parameters">
             /**/
             usuario.setLocalizedLabel(ENGLISH, "user");
@@ -1352,6 +1361,13 @@ public class Usuario extends meta.entidad.comun.control.acceso.Usuario {
                 + "it is a required field and has no default value");
             confirmacionPassword.setLocalizedDescription(SPANISH, "La confirmación de la contraseña debe coincidir con la nueva contraseña; "
                 + "es un dato obligatorio y no tiene valor por omisión");
+            /**/
+            confirmacionPassword.setLocalizedModifyingFilterTag(ENGLISH, "new password is not null");
+            confirmacionPassword.setLocalizedModifyingFilterTag(SPANISH, "la nueva contraseña tiene valor");
+            confirmacionPassword.setLocalizedRequiringFilterTag(ENGLISH, "new password is not null");
+            confirmacionPassword.setLocalizedRequiringFilterTag(SPANISH, "la nueva contraseña tiene valor");
+            confirmacionPassword.setLocalizedNullifyingFilterTag(ENGLISH, "new password is null");
+            confirmacionPassword.setLocalizedNullifyingFilterTag(SPANISH, "la nueva contraseña no tiene valor");
             /**/
             // </editor-fold>
         }
@@ -1686,6 +1702,88 @@ public class Usuario extends meta.entidad.comun.control.acceso.Usuario {
 
     @OperationClass(access = OperationAccess.PRIVATE)
     @ProcessOperationClass(builtIn = true)
+    public class CambiarCorreo extends ProcessOperation {
+
+        @Override
+        protected void settleAttributes() {
+            super.settleAttributes();
+            // <editor-fold defaultstate="collapsed" desc="localization of CambiarCorreo's attributes">
+            setLocalizedLabel(ENGLISH, "change e-mail");
+            setLocalizedLabel(SPANISH, "cambiar correo");
+            setLocalizedDescription(ENGLISH, "change user e-mail");
+            setLocalizedDescription(SPANISH, "cambiar el correo electrónico del usuario");
+            setLocalizedSuccessMessage(ENGLISH, "e-mail successfully updated");
+            setLocalizedSuccessMessage(SPANISH, "correo actualizado con éxito");
+            // </editor-fold>
+        }
+
+        @InstanceReference
+        protected meta.entidad.comun.control.acceso.Usuario usuario;
+
+        @ParameterField(auditable = Kleenean.FALSE, password = Kleenean.TRUE, required = Kleenean.TRUE)
+        @StringField(maxLength = 128, autoComplete = AutoComplete.OFF)
+        protected StringParameter password;
+
+        @ParameterField(required = Kleenean.TRUE)
+        @StringField(maxLength = MAX_EMAIL_ADDRESS_LENGTH, regex = EMAIL_REGEX) // maxLength = 100 until 01/12/2023
+        protected StringParameter nuevoCorreo;
+
+        @ParameterField(required = Kleenean.TRUE)
+        @StringField(maxLength = MAX_EMAIL_ADDRESS_LENGTH, regex = EMAIL_REGEX) // maxLength = 100 until 01/12/2023
+        protected StringParameter confirmacionCorreo;
+
+        @Override
+        protected void settleParameters() {
+            super.settleParameters();
+            /*
+            confirmacionCorreo.setModifyingFilter(nuevoCorreo.isNotNull());
+            confirmacionCorreo.setRequiringFilter(nuevoCorreo.isNotNull());
+            confirmacionCorreo.setNullifyingFilter(nuevoCorreo.isNull());
+            /**/
+            // <editor-fold defaultstate="collapsed" desc="localization of CambiarCorreo's parameters">
+            /**/
+            usuario.setLocalizedLabel(ENGLISH, "user");
+            usuario.setLocalizedLabel(SPANISH, "usuario");
+            usuario.setLocalizedDescription(ENGLISH, "Code of the user you want to assign a new e-mail; "
+                + "it is a required field and has no default value");
+            usuario.setLocalizedDescription(SPANISH, "Código del usuario al que desea asignar un nuevo correo electrónico; "
+                + "es un dato obligatorio y no tiene valor por omisión");
+            /**/
+            password.setLocalizedLabel(ENGLISH, "password");
+            password.setLocalizedLabel(SPANISH, "contraseña");
+            password.setLocalizedDescription(ENGLISH, "The user's current password; "
+                + "it is a required field and has no default value");
+            password.setLocalizedDescription(SPANISH, "La contraseña actual del usuario; "
+                + "es un dato obligatorio y no tiene valor por omisión");
+            /**/
+            nuevoCorreo.setLocalizedLabel(ENGLISH, "new e-mail");
+            nuevoCorreo.setLocalizedLabel(SPANISH, "nuevo correo");
+            nuevoCorreo.setLocalizedDescription(ENGLISH, "The new e-mail must be a string of up to 100 characters; "
+                + "it is a required field and has no default value");
+            nuevoCorreo.setLocalizedDescription(SPANISH, "El nuevo correo debe ser una secuencia de hasta 100 caracteres; "
+                + "es un dato obligatorio y no tiene valor por omisión");
+            /**/
+            confirmacionCorreo.setLocalizedLabel(ENGLISH, "e-mail confirmation");
+            confirmacionCorreo.setLocalizedLabel(SPANISH, "confirmación del correo");
+            confirmacionCorreo.setLocalizedDescription(ENGLISH, "The e-mail confirmation must match the new e-mail; "
+                + "it is a required field and has no default value");
+            confirmacionCorreo.setLocalizedDescription(SPANISH, "La confirmación del correo debe coincidir con el nuevo correo; "
+                + "es un dato obligatorio y no tiene valor por omisión");
+            /**/
+            confirmacionCorreo.setLocalizedModifyingFilterTag(ENGLISH, "new e-mail is not null");
+            confirmacionCorreo.setLocalizedModifyingFilterTag(SPANISH, "el nuevo correo tiene valor");
+            confirmacionCorreo.setLocalizedRequiringFilterTag(ENGLISH, "new e-mail is not null");
+            confirmacionCorreo.setLocalizedRequiringFilterTag(SPANISH, "el nuevo correo tiene valor");
+            confirmacionCorreo.setLocalizedNullifyingFilterTag(ENGLISH, "new e-mail is null");
+            confirmacionCorreo.setLocalizedNullifyingFilterTag(SPANISH, "el nuevo correo no tiene valor");
+            /**/
+            // </editor-fold>
+        }
+
+    }
+
+    @OperationClass(access = OperationAccess.PRIVATE)
+    @ProcessOperationClass(builtIn = true)
     public class CambiarPassword extends ProcessOperation {
 
         @Override
@@ -1719,6 +1817,11 @@ public class Usuario extends meta.entidad.comun.control.acceso.Usuario {
         @Override
         protected void settleParameters() {
             super.settleParameters();
+            /*
+            confirmacionPassword.setModifyingFilter(nuevoPassword.isNotNull());
+            confirmacionPassword.setRequiringFilter(nuevoPassword.isNotNull());
+            confirmacionPassword.setNullifyingFilter(nuevoPassword.isNull());
+            /**/
             // <editor-fold defaultstate="collapsed" desc="localization of CambiarPassword's parameters">
             /**/
             usuario.setLocalizedLabel(ENGLISH, "user");
@@ -1749,6 +1852,13 @@ public class Usuario extends meta.entidad.comun.control.acceso.Usuario {
             confirmacionPassword.setLocalizedDescription(SPANISH, "La confirmación de la contraseña debe coincidir con la nueva contraseña; "
                 + "es un dato obligatorio y no tiene valor por omisión");
             /**/
+            confirmacionPassword.setLocalizedModifyingFilterTag(ENGLISH, "new password is not null");
+            confirmacionPassword.setLocalizedModifyingFilterTag(SPANISH, "la nueva contraseña tiene valor");
+            confirmacionPassword.setLocalizedRequiringFilterTag(ENGLISH, "new password is not null");
+            confirmacionPassword.setLocalizedRequiringFilterTag(SPANISH, "la nueva contraseña tiene valor");
+            confirmacionPassword.setLocalizedNullifyingFilterTag(ENGLISH, "new password is null");
+            confirmacionPassword.setLocalizedNullifyingFilterTag(SPANISH, "la nueva contraseña no tiene valor");
+            /**/
             // </editor-fold>
         }
 
@@ -1763,17 +1873,23 @@ public class Usuario extends meta.entidad.comun.control.acceso.Usuario {
         private final String english_tooltip = ""
             + "Click the " + b("Send e-mail") + " button; "
             + "if that button is disabled, type your user code in the " + b("user") + " field and press the "
-            + a(english_key_url, "Enter key") + " to enable it and then click it; "
+            + a(english_key_url, "Enter key") + " to enable it so you can click it; "
+            /*
             + "an e-mail with a hyperlink to set your new password will be sent to your e-mail account."
             + BR + BR
             + b("Keep this browser window open so that your current work session remains valid.")
             + BR + BR
             + b("Open the hyperlink sent by e-mail in this or in another window of this same browser") + "; "
-            + "that hyperlink will open this very page, displaying the other fields and buttons needed to change your password."
+            /**/
+            + "an e-mail with a hyperlink to set your new password will be sent to your e-mail account; "
+            + "that hyperlink will open this very page, displaying the fields and buttons needed to change your password."
+            + " "
+            /*
             + BR + BR
             + "Type your new password in the " + b("new password") + " and " + b("password confirmation") + " fields "
             + "and then click the " + b("Change password") + " button. "
             + BR + BR
+            /**/
             + b("The validity of the hyperlink expires ${timeout} minutes after sending the e-mail") + "; "
             + "if necessary, you can send another e-mail by clicking the " + b("Send e-mail") + " button again. "
             + "";
@@ -1783,17 +1899,23 @@ public class Usuario extends meta.entidad.comun.control.acceso.Usuario {
         private final String spanish_tooltip = ""
             + "Haga clic en el botón " + b("Enviar correo") + "; "
             + "si ese botón está inhabilitado, escriba su código de usuario en el campo " + b("usuario") + " y presione la "
-            + a(spanish_key_url, "tecla Entrar") + " para habilitarlo y luego hacer clic en él; "
+            + a(spanish_key_url, "tecla Entrar") + " para habilitarlo y poder hacer clic en él; "
+            /*
             + "se enviará un correo electrónico con un hipervínculo para establecer su nueva contraseña a su cuenta de correo electrónico."
             + BR + BR
             + b("Mantenga abierta esta ventana del navegador para que su sesión de trabajo actual siga siendo válida.")
             + BR + BR
             + b("Abra el hipervínculo enviado por correo en ésta o en otra ventana de este mismo navegador") + "; "
-            + "ese hipervínculo abrirá esta misma página, mostrando los demás campos y botones necesarios para cambiar su contraseña."
+            /**/
+            + "se enviará un correo con un hipervínculo para establecer su nueva contraseña a su cuenta de correo electrónico; "
+            + "ese hipervínculo abrirá esta misma página, mostrando los campos y botones necesarios para cambiar su contraseña."
+            + " "
+            /*
             + BR + BR
             + "Escriba su nueva contraseña en los campos " + b("nueva contraseña") + " y " + b("confirmación de la contraseña") + " "
             + "y luego haga clic en el botón " + b("Cambiar contraseña") + ". "
             + BR + BR
+            /**/
             + b("La validez del hipervínculo caduca ${timeout} minutos después de enviar el correo") + "; "
             + "si fuese necesario, puede enviar otro correo haciendo nuevamente clic en el botón " + b("Enviar correo") + ". "
             + "";
@@ -1827,6 +1949,11 @@ public class Usuario extends meta.entidad.comun.control.acceso.Usuario {
         @Override
         protected void settleParameters() {
             super.settleParameters();
+            /*
+            confirmacionPassword.setModifyingFilter(nuevoPassword.isNotNull());
+            confirmacionPassword.setRequiringFilter(nuevoPassword.isNotNull());
+            confirmacionPassword.setNullifyingFilter(nuevoPassword.isNull());
+            /**/
             // <editor-fold defaultstate="collapsed" desc="localization of AlterarPassword's parameters">
             /**/
             usuario.setLocalizedLabel(ENGLISH, "user");
@@ -1843,6 +1970,13 @@ public class Usuario extends meta.entidad.comun.control.acceso.Usuario {
             confirmacionPassword.setLocalizedLabel(SPANISH, "confirmación de la contraseña");
             confirmacionPassword.setLocalizedDescription(ENGLISH, "The password confirmation must match the new password");
             confirmacionPassword.setLocalizedDescription(SPANISH, "La confirmación de la contraseña debe coincidir con la nueva contraseña");
+            /**/
+            confirmacionPassword.setLocalizedModifyingFilterTag(ENGLISH, "new password is not null");
+            confirmacionPassword.setLocalizedModifyingFilterTag(SPANISH, "la nueva contraseña tiene valor");
+            confirmacionPassword.setLocalizedRequiringFilterTag(ENGLISH, "new password is not null");
+            confirmacionPassword.setLocalizedRequiringFilterTag(SPANISH, "la nueva contraseña tiene valor");
+            confirmacionPassword.setLocalizedNullifyingFilterTag(ENGLISH, "new password is null");
+            confirmacionPassword.setLocalizedNullifyingFilterTag(SPANISH, "la nueva contraseña no tiene valor");
             /**/
             // </editor-fold>
         }
@@ -1867,7 +2001,7 @@ public class Usuario extends meta.entidad.comun.control.acceso.Usuario {
         @InstanceReference
         protected meta.entidad.comun.control.acceso.Usuario usuario;
 
-        @FileReference(max = 100000000)
+        @FileReference
         @ParameterField(required = Kleenean.TRUE, linkedField = "archivo")
         protected StringParameter archivo;
 

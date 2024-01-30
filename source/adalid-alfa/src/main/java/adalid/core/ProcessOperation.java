@@ -126,6 +126,11 @@ public abstract class ProcessOperation extends Operation {
         }
     }
 
+    @Override
+    boolean implicitlySynchronous() {
+        return isConstructor() || OperationKind.INSTANCE.equals(getOperationKind());
+    }
+
     /**
      * @return true if annotated with ProcessOperationClass; false otherwise
      */
@@ -520,7 +525,20 @@ public abstract class ProcessOperation extends Operation {
                 if (map.containsKey(key)) {
                 } else {
                     map.put(key, transition);
+                    putEntityTransition(transition);
                 }
+            }
+        }
+    }
+
+    private void putEntityTransition(Transition transition) {
+        Entity root = getDeclaringEntityRoot();
+        if (root != null) {
+            String key = transition.getName();
+            Map<String, Transition> map = root.getTransitionsMap();
+            if (map.containsValue(transition)) {
+            } else {
+                map.put(key, transition);
             }
         }
     }

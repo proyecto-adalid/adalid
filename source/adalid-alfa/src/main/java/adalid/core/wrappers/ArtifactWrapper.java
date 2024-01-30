@@ -31,19 +31,53 @@ public class ArtifactWrapper implements Wrapper {
 
     private final Artifact _artifact;
 
+    private final BoundedArtifact _boundedArtifact;
+
     private final DataArtifact _dataArtifact;
+
+    private final EntityCollection _entityCollection;
 
     private final Property _property;
 
     public ArtifactWrapper(Artifact artifact) {
         _artifact = artifact;
+        _boundedArtifact = _artifact instanceof BoundedArtifact ? (BoundedArtifact) _artifact : null;
         _dataArtifact = _artifact instanceof DataArtifact ? (DataArtifact) _artifact : null;
+        _entityCollection = _artifact instanceof EntityCollection ? (EntityCollection) _artifact : null;
         _property = _artifact instanceof Property ? (Property) _artifact : null;
     }
 
     @Override
     public Artifact getWrapped() {
         return _artifact;
+    }
+
+    public String getMaximumValueTag() {
+        return _boundedArtifact == null ? null : artifactTag(_boundedArtifact.getMaximumValueTag(), _boundedArtifact.getMaxValue());
+    }
+
+    public String getMinimumValueTag() {
+        return _boundedArtifact == null ? null : artifactTag(_boundedArtifact.getMinimumValueTag(), _boundedArtifact.getMinValue());
+    }
+
+    public String getNullifyingFilterTag() {
+        return _entityCollection == null ? null : artifactTag(_entityCollection.getNullifyingFilterTag(), _entityCollection.getNullifyingFilter());
+    }
+
+    public String getRenderingFilterTag() {
+        return _entityCollection == null ? null : artifactTag(_entityCollection.getRenderingFilterTag(), _entityCollection.getRenderingFilter());
+    }
+
+    protected String artifactTag(String tag, Object value) {
+        if (StringUtils.isNotBlank(tag)) {
+            return tag;
+        }
+        if (value instanceof Artifact artifact) {
+            String description = artifact.getDefaultShortDescription();
+            String label = artifact.getDefaultLabel();
+            return StringUtils.defaultIfBlank(description, label);
+        }
+        return null;
     }
 
     public String getDottedName() {

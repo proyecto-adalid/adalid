@@ -22,6 +22,11 @@ public abstract class Maestro extends ProyectoPrime {
 
     public static final String ACRONYM = "jee2";
 
+    /**
+     * Guía de Operación, Proyecto Adalid, Plataforma jee2, versión 5.0
+     */
+    public static final String HELP_DOCUMENT_URL = "https://drive.google.com/file/d/1FOy-n_gHPo3rjWVLttWvJ2kErot8uw0L/view?usp=sharing"; // 5.0
+
     @Override
     protected void settleAttributes() {
         super.settleAttributes();
@@ -42,6 +47,7 @@ public abstract class Maestro extends ProyectoPrime {
             + "production and distribution operations of companies in the production of goods and/or services. "
             + "");
         /**/
+//      setHelpDocument(iframe("https://www.youtube.com/embed/yyF1rWcYYiA", 960, 540)); // URL del video tutorial almacenado en YouTube
         setHelpFileAutoName(HelpFileAutoName.ENTITY);
         setHelpFileAutoType("xhtml");
         /**/

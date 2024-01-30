@@ -14,6 +14,7 @@ package adalid.util.meta.sql;
 
 import adalid.commons.properties.*;
 import adalid.commons.velocity.*;
+import adalid.util.Platform;
 import adalid.util.io.*;
 import java.io.File;
 import java.nio.file.Path;
@@ -421,7 +422,7 @@ public class MetaFolderSql {
     public void write() {
         logger.info("write");
         Writer writer = new Writer(this, "root");
-        writer.write("meta-folder-sql");
+        writer.write(Platform.META_FOLDER_SQL);
     }
 
 }

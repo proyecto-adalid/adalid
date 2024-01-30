@@ -15,6 +15,7 @@ package adalid.core;
 import adalid.commons.util.*;
 import adalid.core.annotations.*;
 import adalid.core.comparators.*;
+import adalid.core.constants.*;
 import adalid.core.data.types.*;
 import adalid.core.enums.*;
 import adalid.core.exceptions.*;
@@ -452,11 +453,10 @@ public abstract class Operation extends AbstractArtifact implements Comparable<O
         Class<?> clazz;
         List<Check> list = new ArrayList<>();
         for (Expression expression : _expressions.values()) {
-            if (expression instanceof Check) {
+            if (expression instanceof Check check) {
                 field = expression.getDeclaringField();
                 clazz = field.getType();
                 if (Check.class.isAssignableFrom(clazz)) {
-                    Check check = (Check) expression;
                     list.add(check);
                 }
             }
@@ -469,11 +469,10 @@ public abstract class Operation extends AbstractArtifact implements Comparable<O
         Class<?> clazz;
         List<Check> list = new ArrayList<>();
         for (Expression expression : _expressions.values()) {
-            if (expression instanceof Check) {
+            if (expression instanceof Check check) {
                 field = expression.getDeclaringField();
                 clazz = field.getType();
                 if (Check.class.isAssignableFrom(clazz)) {
-                    Check check = (Check) expression;
                     if (Checkpoint.USER_INTERFACE.equals(check.getCheckpoint())) {
                         continue;
                     }
@@ -489,11 +488,10 @@ public abstract class Operation extends AbstractArtifact implements Comparable<O
         Class<?> clazz;
         List<Check> list = new ArrayList<>();
         for (Expression expression : _expressions.values()) {
-            if (expression instanceof Check) {
+            if (expression instanceof Check check) {
                 field = expression.getDeclaringField();
                 clazz = field.getType();
                 if (Check.class.isAssignableFrom(clazz)) {
-                    Check check = (Check) expression;
                     if (Checkpoint.DATABASE_TRIGGER.equals(check.getCheckpoint())) {
                         continue;
                     }
@@ -511,11 +509,10 @@ public abstract class Operation extends AbstractArtifact implements Comparable<O
         Parameter instanceParameter = getInstanceParameter();
         if (instanceParameter != null) {
             for (Expression expression : _expressions.values()) {
-                if (expression instanceof Check) {
+                if (expression instanceof Check check) {
                     field = expression.getDeclaringField();
                     clazz = field.getType();
                     if (Check.class.isAssignableFrom(clazz)) {
-                        Check check = (Check) expression;
                         if (Checkpoint.DATABASE_TRIGGER.equals(check.getCheckpoint())) {
                             continue;
                         }
@@ -531,12 +528,12 @@ public abstract class Operation extends AbstractArtifact implements Comparable<O
 
     private boolean isSingleParameterExpression(Parameter parameter, Expression expression) {
         for (Object operand : expression.getOperands()) {
-            if (operand instanceof Property) {
-                if (!isPropertyWithinParameterScope(parameter, (Property) operand)) {
+            if (operand instanceof Property property) {
+                if (!isPropertyWithinParameterScope(parameter, property)) {
                     return false;
                 }
-            } else if (operand instanceof Expression) {
-                if (!isSingleParameterExpression(parameter, (Expression) operand)) {
+            } else if (operand instanceof Expression e) {
+                if (!isSingleParameterExpression(parameter, e)) {
                     return false;
                 }
             }
@@ -648,7 +645,11 @@ public abstract class Operation extends AbstractArtifact implements Comparable<O
      * @return the asynchronous execution indicator
      */
     public boolean isAsynchronous() {
-        return _asynchronous.toBoolean(!OperationKind.INSTANCE.equals(_operationKind));
+        return _asynchronous.toBoolean(!implicitlySynchronous());
+    }
+
+    boolean implicitlySynchronous() {
+        return OperationKind.INSTANCE.equals(_operationKind);
     }
 
     /**
@@ -927,9 +928,8 @@ public abstract class Operation extends AbstractArtifact implements Comparable<O
             Project project = TLC.getProject();
             if (project != null) {
                 Entity entity = project.getEntity(type);
-                if (entity instanceof EntityReferenceContainer) {
-                    EntityReferenceContainer container = (EntityReferenceContainer) entity;
-                    Set<String> strings = container.getAllocationStrings();
+                if (entity != null) {
+                    Set<String> strings = entity.getAllocationStrings();
                     for (String string : strings) {
                         addAllocationStrings(name + "." + StringUtils.substringAfter(string, "."));
                     }
@@ -981,6 +981,7 @@ public abstract class Operation extends AbstractArtifact implements Comparable<O
 //      verifyNames(Operation.class);
         verifyParameters();
         _settler = '?';
+        localize();
     }
 
     private void verifyParameters() {
@@ -1012,6 +1013,31 @@ public abstract class Operation extends AbstractArtifact implements Comparable<O
     protected void settleFilters() {
         track("settleFilters");
         _settler = 'F';
+    }
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="localize">
+    protected void localize() {
+        localizeAttributes();
+        localizeParameters();
+        localizeExpressions();
+        localizeFilters();
+    }
+
+    protected void localizeAttributes() {
+        track("localizeAttributes");
+    }
+
+    protected void localizeParameters() {
+        track("localizeParameters");
+    }
+
+    protected void localizeExpressions() {
+        track("localizeExpressions");
+    }
+
+    protected void localizeFilters() {
+        track("localizeFilters");
     }
     // </editor-fold>
 
@@ -1222,10 +1248,10 @@ public abstract class Operation extends AbstractArtifact implements Comparable<O
                     o = field.get(this);
                     if (o == null) {
                         logger.debug(message(type, name, o, depth, round));
-                    } else if (o instanceof Parameter) {
-                        finaliseParameter(field, (Parameter) o);
-                    } else if (o instanceof Expression) {
-                        finaliseExpression(field, (Expression) o);
+                    } else if (o instanceof Parameter parameter) {
+                        finaliseParameter(field, parameter);
+                    } else if (o instanceof Expression expression) {
+                        finaliseExpression(field, expression);
                     }
                 } catch (IllegalArgumentException | IllegalAccessException ex) {
                     logger.error(errmsg, ThrowableUtils.getCause(ex));
@@ -1254,8 +1280,7 @@ public abstract class Operation extends AbstractArtifact implements Comparable<O
 //          parameter.setDeclared(key, this, field);
             XS1.declare(parameter, this, field);
         }
-        if (parameter instanceof Entity) {
-            Entity entity = (Entity) parameter;
+        if (parameter instanceof Entity entity) {
             if (!entity.isFinalised()) {
                 entity.finalise();
             }
@@ -1263,8 +1288,7 @@ public abstract class Operation extends AbstractArtifact implements Comparable<O
             if (root != null) {
                 root.getParameterReferencesMap().put(parameter.getPathString(), parameter);
             }
-        } else if (parameter instanceof Primitive) {
-            Primitive primitive = (Primitive) parameter;
+        } else if (parameter instanceof Primitive primitive) {
             if (!primitive.isFinalised()) {
                 primitive.finalise();
             }
@@ -1295,11 +1319,9 @@ public abstract class Operation extends AbstractArtifact implements Comparable<O
     // </editor-fold>
 
     private void finishParameters() {
-        PersistentEntity entity;
         BooleanExpression filter;
         for (Parameter parameter : _parameters.values()) {
-            if (parameter instanceof PersistentEntity) {
-                entity = (PersistentEntity) parameter;
+            if (parameter instanceof PersistentEntity entity) {
                 filter = entity.getSearchQueryFilter();
                 if (filter != null) {
                     entity.getSearchQueryPropertiesMap();
@@ -1412,27 +1434,35 @@ public abstract class Operation extends AbstractArtifact implements Comparable<O
             if (e != null) {
                 verifyExpression(e, parameter, ExpressionUsage.NULLIFYING_FILTER, false);
             }
-            if (parameter instanceof Entity) {
-                Entity entity = (Entity) parameter;
+            if (parameter instanceof Entity entity) {
                 e = entity.getSearchQueryFilter();
                 if (e != null) {
                     verifyExpression(e, parameter, ExpressionUsage.SEARCH_QUERY_FILTER, false);
                 }
             }
             o = parameter.getInitialValue();
-            if (o instanceof Expression) {
-                e = (Expression) o;
-                verifyExpression(e, parameter, ExpressionUsage.INITIAL_VALUE, false);
+            if (o instanceof Expression expression) {
+                verifyExpression(expression, parameter, ExpressionUsage.INITIAL_VALUE, false);
             }
             o = parameter.getDefaultValue();
-            if (o instanceof Expression) {
-                e = (Expression) o;
-                verifyExpression(e, parameter, ExpressionUsage.DEFAULT_VALUE);
+            if (o instanceof Expression expression) {
+                verifyExpression(expression, parameter, ExpressionUsage.DEFAULT_VALUE);
             }
             o = parameter.getCurrentValue();
-            if (o instanceof Expression) {
-                e = (Expression) o;
-                verifyExpression(e, parameter, ExpressionUsage.CURRENT_VALUE);
+            if (o instanceof Expression expression) {
+                verifyExpression(expression, parameter, ExpressionUsage.CURRENT_VALUE);
+            }
+            if (parameter instanceof IntervalizedArtifact ia) {
+                o = ia.getMaxValue();
+                if (o instanceof Expression expression) {
+                    e = expression;
+                    verifyExpression(e, parameter, ExpressionUsage.MAX_VALUE);
+                }
+                o = ia.getMinValue();
+                if (o instanceof Expression expression) {
+                    e = expression;
+                    verifyExpression(e, parameter, ExpressionUsage.MIN_VALUE);
+                }
             }
         }
         for (Expression expression : _expressions.values()) {
@@ -1537,14 +1567,16 @@ public abstract class Operation extends AbstractArtifact implements Comparable<O
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Special Converters and Validators">
-    protected static final String GOOGLE_MAPS_EMBED_CONVERTER = "convertidorGoogleMapsEmbed";
+    protected static final String GOOGLE_MAPS_EMBED_CONVERTER = GoogleMapsConstants.GOOGLE_MAPS_EMBED_CONVERTER;
 
-    protected static final String PHONE_NUMBER_VALIDATOR = "phoneNumberValidator";
+    protected static final String PHONE_NUMBER_VALIDATOR = PhoneConstants.PHONE_NUMBER_VALIDATOR;
 
-    protected static final String LOCAL_PHONE_NUMBER_VALIDATOR = "localPhoneNumberValidator";
+    protected static final String LOCAL_PHONE_NUMBER_VALIDATOR = PhoneConstants.LOCAL_PHONE_NUMBER_VALIDATOR;
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Special Fields">
+    protected static final int MAX_EMAIL_ADDRESS_LENGTH = Constants.MAX_EMAIL_ADDRESS_LENGTH;
+
     protected static final String EMAIL_REGEX = Constants.EMAIL_REGEX;
 
     protected static final String PHONE_REGEX = Constants.PHONE_REGEX;
@@ -1595,115 +1627,37 @@ public abstract class Operation extends AbstractArtifact implements Comparable<O
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Special Fields">
-    protected static final String EMAIL_REGEX_ENGLISH_DESCRIPTION = ""
-        + "an e-mail address must start with a user name, followed by an @ sign and a domain name; "
-        + "for example: john.doe@gmail.com"
-        + "";
+    protected static final String EMAIL_REGEX_ENGLISH_DESCRIPTION = EmailConstants.EMAIL_REGEX_ENGLISH_DESCRIPTION;
 
-    protected static final String EMAIL_REGEX_SPANISH_DESCRIPTION = ""
-        + "una dirección de correo electrónico debe comenzar con un nombre de usuario, seguido de un signo @ y un nombre de dominio; "
-        + "por ejemplo: juan.bimba@gmail.com"
-        + "";
+    protected static final String EMAIL_REGEX_SPANISH_DESCRIPTION = EmailConstants.EMAIL_REGEX_SPANISH_DESCRIPTION;
 
-    protected static final String EMAIL_REGEX_ENGLISH_ERROR_MESSAGE = ""
-        + "the e-mail address does not meet the required pattern; "
-        + "it must start with a user name, followed by an @ sign and a domain name."
-        + "";
+    protected static final String EMAIL_REGEX_ENGLISH_ERROR_MESSAGE = EmailConstants.EMAIL_REGEX_ENGLISH_ERROR_MESSAGE;
 
-    protected static final String EMAIL_REGEX_SPANISH_ERROR_MESSAGE = ""
-        + "la dirección de correo electrónico no cumple con el patrón requerido; "
-        + "debe comenzar con un nombre de usuario, seguido de un signo @ y un nombre de dominio."
-        + "";
+    protected static final String EMAIL_REGEX_SPANISH_ERROR_MESSAGE = EmailConstants.EMAIL_REGEX_SPANISH_ERROR_MESSAGE;
 
-    protected static final String PHONE_REGEX_ENGLISH_DESCRIPTION = ""
-        + "this is an international phone number; "
-        + "it must start with a country code, "
-        + "followed by a global subscriber number or an area code and a subscriber number; "
-        + "for example: +58 4121234567, +58-412-1234567"
-        + "";
+    protected static final String PHONE_REGEX_ENGLISH_DESCRIPTION = PhoneConstants.PHONE_REGEX_ENGLISH_DESCRIPTION;
 
-    protected static final String PHONE_REGEX_SPANISH_DESCRIPTION = ""
-        + "este es un número de teléfono internacional; "
-        + "debe comenzar con un código de país, "
-        + "seguido de un número de suscriptor global o un código de área y un número de suscriptor; "
-        + "por ejemplo: +58 4121234567, +58-412-1234567"
-        + "";
+    protected static final String PHONE_REGEX_SPANISH_DESCRIPTION = PhoneConstants.PHONE_REGEX_SPANISH_DESCRIPTION;
 
-    protected static final String PHONE_REGEX_ENGLISH_ERROR_MESSAGE = ""
-        + "the phone number does not meet the required pattern; "
-        + "it must start with a country code, i.e. a plus sign and a group of 1 to 3 digits, "
-        + "followed by a global subscriber number, i.e. a group of 7 to 14 digits; "
-        + "country code and global subscriber number must be separated by a single white space or hyphen; "
-        + "global subscriber number can be divided into area code, a group of 1 to 4 digits, and subscriber number, a group of 6 to 10 digits; "
-        + "the area code and subscriber number must be separated by a single blank space or hyphen; "
-        + "whatever their distribution among the groups, the total number of digits must be between 8 and 15."
-        + "";
+    protected static final String PHONE_REGEX_ENGLISH_ERROR_MESSAGE = PhoneConstants.PHONE_REGEX_ENGLISH_ERROR_MESSAGE;
 
-    protected static final String PHONE_REGEX_SPANISH_ERROR_MESSAGE = ""
-        + "el número de teléfono no cumple con el patrón requerido; "
-        + "éste debe comenzar con un código de país, es decir, un signo más y un grupo de 1 hasta 3 dígitos, "
-        + "seguido de un número de suscriptor global, es decir, un grupo de 7 hasta 14 dígitos; "
-        + "el código de país y el número de suscriptor global deben estar separados por un solo espacio en blanco o guión; "
-        + "el número de suscriptor global se puede dividir en código de área, un grupo de 1 hasta 4 dígitos, y número de suscriptor, un grupo de 6 a 10 dígitos; "
-        + "el código de área y el número de suscriptor deben estar separados por un solo espacio en blanco o guión; "
-        + "cualquiera que sea su distribución entre los grupos, el número total de dígitos debe estar entre 8 y 15."
-        + "";
+    protected static final String PHONE_REGEX_SPANISH_ERROR_MESSAGE = PhoneConstants.PHONE_REGEX_SPANISH_ERROR_MESSAGE;
 
-    protected static final String LOCAL_PHONE_REGEX_ENGLISH_DESCRIPTION = ""
-        + "this is a local phone number; "
-        + "it must be a global subscriber number or an area code and a subscriber number; "
-        + "for example: 4121234567, 412-1234567"
-        + "";
+    protected static final String LOCAL_PHONE_REGEX_ENGLISH_DESCRIPTION = PhoneConstants.LOCAL_PHONE_REGEX_ENGLISH_DESCRIPTION;
 
-    protected static final String LOCAL_PHONE_REGEX_SPANISH_DESCRIPTION = ""
-        + "este es un número de teléfono local; "
-        + "debe ser un número de suscriptor global o un código de área y un número de suscriptor; "
-        + "por ejemplo: 4121234567, 412-1234567"
-        + "";
+    protected static final String LOCAL_PHONE_REGEX_SPANISH_DESCRIPTION = PhoneConstants.LOCAL_PHONE_REGEX_SPANISH_DESCRIPTION;
 
-    protected static final String LOCAL_PHONE_REGEX_ENGLISH_ERROR_MESSAGE = ""
-        + "the phone number does not meet the required pattern; "
-        + "it must be a global subscriber number, i.e. a group of 7 to 14 digits; "
-        + "or it can be divided into area code, a group of 1 to 4 digits, and subscriber number, a group of 6 to 10 digits; "
-        + "the area code and subscriber number must be separated by a single blank space or hyphen; "
-        + "whatever their distribution among the groups, the total number of digits must be between 7 and 14."
-        + "";
+    protected static final String LOCAL_PHONE_REGEX_ENGLISH_ERROR_MESSAGE = PhoneConstants.LOCAL_PHONE_REGEX_ENGLISH_ERROR_MESSAGE;
 
-    protected static final String LOCAL_PHONE_REGEX_SPANISH_ERROR_MESSAGE = ""
-        + "el número de teléfono no cumple con el patrón requerido; "
-        + "éste debe ser un número de suscriptor global, es decir, un grupo de 7 hasta 14 dígitos; "
-        + "o se puede dividir en código de área, un grupo de 1 hasta 4 dígitos, y número de suscriptor, un grupo de 6 a 10 dígitos; "
-        + "el código de área y el número de suscriptor deben estar separados por un solo espacio en blanco o guión; "
-        + "cualquiera que sea su distribución entre los grupos, el número total de dígitos debe estar entre 7 y 14."
-        + "";
+    protected static final String LOCAL_PHONE_REGEX_SPANISH_ERROR_MESSAGE = PhoneConstants.LOCAL_PHONE_REGEX_SPANISH_ERROR_MESSAGE;
 
-    protected static final String URL_REGEX_ENGLISH_DESCRIPTION = ""
-        + "this is a website URL, i.e. the location of a specific website, page, or file on the Internet; "
-        + "it must start with a protocol (usually http:// or https://), followed by / and a domain name; "
-        + "optionally, after the domain name, the URL can include a \"path\", "
-        + "to direct the browser to a specific page on the website; "
-        + "for example: https://en.wikipedia.org/wiki/URL"
-        + "";
+    protected static final String URL_REGEX_ENGLISH_DESCRIPTION = URLConstants.URL_REGEX_ENGLISH_DESCRIPTION;
 
-    protected static final String URL_REGEX_SPANISH_DESCRIPTION = ""
-        + "esta es una URL de un sitio web, es decir, la ubicación de un sitio web, página o archivo específico en Internet; "
-        + "debe comenzar con un protocolo (generalmente http:// o https://), seguido de / y un nombre de dominio; "
-        + "opcionalmente, después del nombre de dominio, la URL puede incluir una \"ruta\", "
-        + "para dirigir al navegador a una página específica en el sitio web; "
-        + "por ejemplo: https://es.wikipedia.org/wiki/Localizador_de_recursos_uniforme"
-        + "";
+    protected static final String URL_REGEX_SPANISH_DESCRIPTION = URLConstants.URL_REGEX_SPANISH_DESCRIPTION;
 
-    protected static final String URL_REGEX_ENGLISH_ERROR_MESSAGE = ""
-        + "the URL does not meet the required pattern; "
-        + "it must start with a protocol, followed by / and a domain name; "
-        + "optionally, after the domain name, the URL can include a \"path\"."
-        + "";
+    protected static final String URL_REGEX_ENGLISH_ERROR_MESSAGE = URLConstants.URL_REGEX_ENGLISH_ERROR_MESSAGE;
 
-    protected static final String URL_REGEX_SPANISH_ERROR_MESSAGE = ""
-        + "la URL no cumple con el patrón requerido; "
-        + "debe comenzar con un protocolo, seguido de / y un nombre de dominio; "
-        + "opcionalmente, después del nombre de dominio, la URL puede incluir una \"ruta\"."
-        + "";
+    protected static final String URL_REGEX_SPANISH_ERROR_MESSAGE = URLConstants.URL_REGEX_SPANISH_ERROR_MESSAGE;
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Special Expressions">
@@ -1799,6 +1753,30 @@ public abstract class Operation extends AbstractArtifact implements Comparable<O
 
     protected static TemporalDataAggregateX coalesce(TemporalExpression operand1, TemporalExpression operand2, TemporalExpression... extraOperands) {
         return XB.Temporal.DataAggregate.coalesce(operand1, operand2, extraOperands);
+    }
+
+    protected static CharacterDataAggregateX max(CharacterExpression operand1, CharacterExpression operand2, CharacterExpression... extraOperands) {
+        return XB.Character.DataAggregate.max(operand1, operand2, extraOperands);
+    }
+
+    protected static NumericDataAggregateX max(NumericExpression operand1, NumericExpression operand2, NumericExpression... extraOperands) {
+        return XB.Numeric.DataAggregate.max(operand1, operand2, extraOperands);
+    }
+
+    protected static TemporalDataAggregateX max(TemporalExpression operand1, TemporalExpression operand2, TemporalExpression... extraOperands) {
+        return XB.Temporal.DataAggregate.max(operand1, operand2, extraOperands);
+    }
+
+    protected static CharacterDataAggregateX min(CharacterExpression operand1, CharacterExpression operand2, CharacterExpression... extraOperands) {
+        return XB.Character.DataAggregate.min(operand1, operand2, extraOperands);
+    }
+
+    protected static NumericDataAggregateX min(NumericExpression operand1, NumericExpression operand2, NumericExpression... extraOperands) {
+        return XB.Numeric.DataAggregate.min(operand1, operand2, extraOperands);
+    }
+
+    protected static TemporalDataAggregateX min(TemporalExpression operand1, TemporalExpression operand2, TemporalExpression... extraOperands) {
+        return XB.Temporal.DataAggregate.min(operand1, operand2, extraOperands);
     }
     // </editor-fold>
 

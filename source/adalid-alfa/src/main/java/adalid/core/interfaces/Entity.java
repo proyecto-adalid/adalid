@@ -28,6 +28,17 @@ import java.util.Map;
 public interface Entity extends Comparable<Entity>, DataArtifact, EntityReferenceContainer {
 
     /**
+     * Determina si la clase de esta entidad es la misma o es una superclase de la clase de la entidad especificada en el parámetro {@code entity}.
+     *
+     * @param entity la entidad a examinar.
+     * @return el valor {@code boolean} que indica si la clase de {@code entity} se puede asignar a la clase de esta entidad.
+     * @throws NullPointerException si el parámetro {@code entity} especificado es nulo.
+     */
+    default boolean isAssignableFrom(Entity entity) {
+        return (getClass().isAssignableFrom(entity.getClass()));
+    }
+
+    /**
      * @return the initialised indicator
      */
     boolean isInitialised();
@@ -622,6 +633,11 @@ public interface Entity extends Comparable<Entity>, DataArtifact, EntityReferenc
     boolean isEnumerationEntity();
 
     /**
+     * @return true if it is a boolean enumeration entity; otherwise false
+     */
+    boolean isBooleanEnumerationEntity();
+
+    /**
      * @return true if it is a non-enumeration entity; otherwise false
      */
     boolean isNonEnumerationEntity();
@@ -973,6 +989,16 @@ public interface Entity extends Comparable<Entity>, DataArtifact, EntityReferenc
      * @return the table-view-with-master-heading indicator
      */
     boolean isTableViewWithMasterHeading();
+
+    /**
+     * @return the table-view-with-quick-filter-snippet indicator
+     */
+    boolean isTableViewWithQuickFilterSnippet();
+
+    /**
+     * @return the quick-filter-snippet path
+     */
+    String getTableViewQuickFilterSnippetPath();
 
     /**
      * @return the table view help document

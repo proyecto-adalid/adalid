@@ -239,7 +239,7 @@ public class EjecucionLineaPrueba extends PersistentEntityBase {
         linkForeignOwnerProperty(ejecucion.responsable);
     }
 
-    protected Key key1;
+    Key key1;
 
     @Override
     protected void settleKeys() {

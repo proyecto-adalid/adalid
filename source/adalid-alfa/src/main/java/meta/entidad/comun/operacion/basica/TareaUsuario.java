@@ -20,19 +20,19 @@ import adalid.core.properties.*;
 import java.lang.reflect.Field;
 import meta.entidad.comun.auditoria.RastroProceso;
 import meta.entidad.comun.configuracion.basica.Funcion;
-import meta.entidad.comun.control.acceso.Usuario;
+import meta.entidad.comun.control.acceso.ext.Usuario;
 
 /**
  * @author Jorge Campins
  */
 @EntityClass(base = Kleenean.TRUE, independent = Kleenean.TRUE, resourceType = ResourceType.OPERATION, resourceGender = ResourceGender.FEMININE)
 @EntityCodeGen(bws = Kleenean.FALSE, fws = Kleenean.FALSE)
-@EntityDocGen(stateDiagram = Kleenean.FALSE)
+@EntityDocGen(stateDiagram = Kleenean.TRUE)
 @EntitySelectOperation(enabled = Kleenean.TRUE, onload = SelectOnloadOption.EXECUTE, sortOption = SortOption.ASC)
 @EntityInsertOperation(enabled = Kleenean.FALSE)
 @EntityUpdateOperation(enabled = Kleenean.FALSE)
 @EntityDeleteOperation(enabled = Kleenean.FALSE)
-@EntityTableView(enabled = Kleenean.TRUE)
+@EntityTableView(enabled = Kleenean.TRUE, readingViewWesternToolbarSnippet = "/resources/snippets/base/entity/TareaUsuario/botonOpenDistribucionTareas")
 @EntityDetailView(enabled = Kleenean.TRUE)
 @EntityTreeView(enabled = Kleenean.FALSE)
 @EntityConsoleView(enabled = Kleenean.FALSE)
@@ -48,11 +48,7 @@ public class TareaUsuario extends AbstractPersistentEntity {
     @Override
     protected void addAllocationStrings() {
         super.addAllocationStrings();
-        /*
-        super.addAllocationStrings(
-            "rastroProceso.condicionEjeFun"
-        );
-        /**/
+        super.addAllocationStrings("destinatario.usuarioSupervisor");
     }
 
     @PrimaryKey
@@ -68,10 +64,16 @@ public class TareaUsuario extends AbstractPersistentEntity {
     @OwnerProperty
     @SegmentProperty
     @ColumnField(nullable = Kleenean.FALSE)
-    @ForeignKey(onDelete = OnDeleteAction.NONE, onUpdate = OnUpdateAction.NONE)
+//  20231209: remove foreign-key referring to Usuario because it might cause ARJUNA012117 and/or ARJUNA012121
+//  @ForeignKey(onDelete = OnDeleteAction.NONE, onUpdate = OnUpdateAction.NONE)
     @ManyToOne(navigability = Navigability.UNIDIRECTIONAL, view = MasterDetailView.NONE)
-    @PropertyField(table = Kleenean.TRUE, report = Kleenean.TRUE, search = Kleenean.TRUE, heading = Kleenean.TRUE, overlay = Kleenean.TRUE) //, defaultCheckpoint = Checkpoint.USER_INTERFACE)
+    @PropertyField(table = Kleenean.TRUE, report = Kleenean.TRUE, search = Kleenean.TRUE, heading = Kleenean.TRUE, overlay = Kleenean.TRUE)
     public Usuario destinatario;
+
+    @ColumnField(calculable = Kleenean.TRUE)
+    @ManyToOne(navigability = Navigability.UNIDIRECTIONAL, view = MasterDetailView.NONE)
+    @PropertyField(hidden = Kleenean.TRUE)
+    public Usuario supervisorDestinatario;
 
     @ColumnField(nullable = Kleenean.FALSE)
 //  20171213: remove foreign-key referring to Funcion
@@ -99,7 +101,7 @@ public class TareaUsuario extends AbstractPersistentEntity {
     public StringProperty codigoClaseRecursoValor;
 
     @ColumnField(indexed = Kleenean.TRUE)
-    @PropertyField(create = Kleenean.FALSE, update = Kleenean.FALSE, table = Kleenean.FALSE, report = Kleenean.FALSE, search = Kleenean.TRUE, heading = Kleenean.FALSE, overlay = Kleenean.FALSE)
+    @PropertyField(create = Kleenean.FALSE, update = Kleenean.FALSE, table = Kleenean.FALSE, report = Kleenean.FALSE, search = Kleenean.TRUE, heading = Kleenean.FALSE, overlay = Kleenean.TRUE)
     @StringField(maxLength = 100)
     public StringProperty nombreClaseRecursoValor;
 
@@ -128,35 +130,30 @@ public class TareaUsuario extends AbstractPersistentEntity {
     public StringProperty paginaRecurso;
 
     @ColumnField(nullable = Kleenean.TRUE)
-    @ForeignKey(onDelete = OnDeleteAction.NONE, onUpdate = OnUpdateAction.NONE)
+//  20231209: remove foreign-key referring to Usuario because it might cause ARJUNA012117 and/or ARJUNA012121
+//  @ForeignKey(onDelete = OnDeleteAction.NONE, onUpdate = OnUpdateAction.NONE)
     @ManyToOne(navigability = Navigability.UNIDIRECTIONAL, view = MasterDetailView.NONE)
     public Usuario responsable;
 
     @ColumnField(nullable = Kleenean.TRUE)
-    @ForeignKey(onDelete = OnDeleteAction.NONE, onUpdate = OnUpdateAction.NONE)
+//  20231209: remove foreign-key referring to Usuario because it might cause ARJUNA012117 and/or ARJUNA012121
+//  @ForeignKey(onDelete = OnDeleteAction.NONE, onUpdate = OnUpdateAction.NONE)
     @ManyToOne(navigability = Navigability.UNIDIRECTIONAL, view = MasterDetailView.NONE)
     public Usuario supervisor;
 
     @ColumnField(nullable = Kleenean.TRUE)
-    @ForeignKey(onDelete = OnDeleteAction.NONE, onUpdate = OnUpdateAction.NONE)
+//  20231209: remove foreign-key referring to Usuario because it might cause ARJUNA012117 and/or ARJUNA012121
+//  @ForeignKey(onDelete = OnDeleteAction.NONE, onUpdate = OnUpdateAction.NONE)
     @ManyToOne(navigability = Navigability.UNIDIRECTIONAL, view = MasterDetailView.NONE)
     public Usuario finalizador;
 
-    @StateProperty
+    @StateProperty(transitionUser = "usuarioCondicion", transitionDateTime = "fechaHoraCondicion")
     @ColumnField(nullable = Kleenean.FALSE)
     @ForeignKey(onDelete = OnDeleteAction.NONE, onUpdate = OnUpdateAction.NONE)
     @ManyToOne(navigability = Navigability.UNIDIRECTIONAL, view = MasterDetailView.NONE)
-    @PropertyField(table = Kleenean.TRUE, report = Kleenean.TRUE, search = Kleenean.TRUE, heading = Kleenean.TRUE, overlay = Kleenean.TRUE)
+    @PropertyField(table = Kleenean.TRUE, report = Kleenean.TRUE, search = Kleenean.TRUE, heading = Kleenean.TRUE, overlay = Kleenean.TRUE, defaultCondition = DefaultCondition.IF_NULL_ON_INSERT)
     public CondicionTarea condicion;
 
-    /*
-    @ColumnField(calculable = Kleenean.TRUE)
-//  @ForeignKey(onDelete = OnDeleteAction.NONE, onUpdate = OnUpdateAction.NONE)
-    @ManyToOne(navigability = Navigability.UNIDIRECTIONAL, view = MasterDetailView.NONE)
-    @PropertyField(table = Kleenean.FALSE, report = Kleenean.FALSE)
-    public CondicionEjeFun condicionEjeFun;
-
-    /**/
     @ColumnField(nullable = Kleenean.TRUE)
 //  do not add a foreign-key referring to RastroProceso
 //  @ForeignKey(onDelete = OnDeleteAction.NONE, onUpdate = OnUpdateAction.NONE)
@@ -172,8 +169,16 @@ public class TareaUsuario extends AbstractPersistentEntity {
     public Usuario usuarioCondicion;
 
     @ColumnField(nullable = Kleenean.FALSE, indexed = Kleenean.TRUE)
-    @PropertyField(table = Kleenean.TRUE, report = Kleenean.TRUE, search = Kleenean.TRUE, heading = Kleenean.TRUE, overlay = Kleenean.TRUE)
+    @PropertyField(table = Kleenean.TRUE, report = Kleenean.TRUE, search = Kleenean.TRUE, heading = Kleenean.FALSE, overlay = Kleenean.TRUE, defaultCondition = DefaultCondition.IF_NULL_ON_INSERT)
     public TimestampProperty fechaHoraCondicion;
+
+    @ColumnField(calculable = Kleenean.TRUE)
+    @PropertyField(hidden = Kleenean.TRUE)
+    public TimestampProperty fechaHoraDisponible;
+
+    @ColumnField(calculable = Kleenean.TRUE)
+    @PropertyField(hidden = Kleenean.TRUE)
+    public TimestampProperty fechaHoraAtribucion;
 
     @ColumnField(nullable = Kleenean.TRUE)
     public TimestampProperty fechaHoraAsignacion;
@@ -194,11 +199,20 @@ public class TareaUsuario extends AbstractPersistentEntity {
     public TimestampProperty fechaHoraFinalizacion;
 
     @ColumnField(nullable = Kleenean.FALSE)
+    @PropertyField(defaultCondition = DefaultCondition.IF_NULL_ON_INSERT)
     public TimestampProperty fechaHoraRegistro;
 
     @ColumnField(nullable = Kleenean.TRUE)
 //  @PropertyField(hidden = Kleenean.TRUE)
     public TimestampProperty fechaHoraLimite;
+
+    @ColumnField(nullable = Kleenean.FALSE)
+    @PropertyField(hidden = Kleenean.TRUE)
+    public IntegerProperty condicionAsignacion;
+
+    @ColumnField(nullable = Kleenean.FALSE)
+    @PropertyField(hidden = Kleenean.TRUE)
+    public IntegerProperty condicionFinalizacion;
 
     @ColumnField(nullable = Kleenean.TRUE)
 //  @PropertyField(hidden = Kleenean.TRUE)
@@ -231,20 +245,29 @@ public class TareaUsuario extends AbstractPersistentEntity {
     protected void settleProperties() {
         super.settleProperties();
         /**/
+        supervisorDestinatario.setCalculableValueEntityReference(destinatario.usuarioSupervisor);
+        /**/
         descripcionFuncion.setCalculableValueExpression(funcion.descripcionFuncion);
         /**/
         condicion.setInitialValue(condicion.DISPONIBLE);
         condicion.setDefaultValue(condicion.DISPONIBLE);
-        /*
-        condicionEjeFun.setCalculableValueEntityReference(rastroProceso.condicionEjeFun);
-        RastroUtils.setGraphicImageExpressions(condicionEjeFun);
         /**/
         fechaHoraCondicion.setInitialValue(SpecialTemporalValue.CURRENT_TIMESTAMP);
         fechaHoraCondicion.setDefaultValue(SpecialTemporalValue.CURRENT_TIMESTAMP);
+        /**/
         fechaHoraRegistro.setInitialValue(SpecialTemporalValue.CURRENT_TIMESTAMP);
         fechaHoraRegistro.setDefaultValue(SpecialTemporalValue.CURRENT_TIMESTAMP);
         /**/
+        fechaHoraDisponible.setCalculableValueExpression(max(fechaHoraRelevacion, fechaHoraAbandono, fechaHoraRegistro));
+        fechaHoraAtribucion.setCalculableValueExpression(condicion.isNotEqualTo(condicion.DISPONIBLE).then(max(fechaHoraAsignacion, fechaHoraAsuncion)));
+        /**/
         setGraphicImageExpressions();
+        /**/
+        condicionAsignacion.setInitialValue(0);
+        condicionAsignacion.setDefaultValue(0);
+        /**/
+        condicionFinalizacion.setInitialValue(0);
+        condicionFinalizacion.setDefaultValue(0);
         /**/
         // <editor-fold defaultstate="collapsed" desc="localization of TareaUsuario's properties">
         /**/
@@ -262,6 +285,9 @@ public class TareaUsuario extends AbstractPersistentEntity {
         /**/
         destinatario.codigoUsuario.setLocalizedShortLabel(ENGLISH, "recipient code");
         destinatario.codigoUsuario.setLocalizedShortLabel(SPANISH, "destinatario");
+        /**/
+        supervisorDestinatario.setLocalizedLabel(ENGLISH, "recipient's supervisor");
+        supervisorDestinatario.setLocalizedLabel(SPANISH, "supervisor del destinatario");
         /**/
         funcion.setLocalizedLabel(ENGLISH, "function");
         funcion.setLocalizedLabel(SPANISH, "función");
@@ -344,13 +370,6 @@ public class TareaUsuario extends AbstractPersistentEntity {
         /**/
         condicion.setLocalizedLabel(ENGLISH, "condition");
         condicion.setLocalizedLabel(SPANISH, "condición");
-        /*
-        condicionEjeFun.setLocalizedDescription(ENGLISH, "condition of the execution of the business process corresponding to the task");
-        condicionEjeFun.setLocalizedDescription(SPANISH, "condición de la ejecución del proceso de negocio correspondiente a la tarea");
-        condicionEjeFun.setLocalizedLabel(ENGLISH, "process execution condition");
-        condicionEjeFun.setLocalizedLabel(SPANISH, "condición de ejecución del proceso");
-        condicionEjeFun.setLocalizedShortLabel(ENGLISH, "process condition");
-        condicionEjeFun.setLocalizedShortLabel(SPANISH, "condición del proceso");
         /**/
         rastroProceso.setLocalizedDescription(ENGLISH, "audit trail of the execution of the business process corresponding to the task");
         rastroProceso.setLocalizedDescription(SPANISH, "rastro de auditoría de la ejecución del proceso de negocio correspondiente a la tarea");
@@ -372,6 +391,16 @@ public class TareaUsuario extends AbstractPersistentEntity {
         fechaHoraCondicion.setLocalizedShortLabel(SPANISH, "fecha/hora");
         fechaHoraCondicion.setLocalizedDescription(ENGLISH, "timestamp of the last condition change");
         fechaHoraCondicion.setLocalizedDescription(SPANISH, "fecha y hora del último cambio de condición");
+        /**/
+        fechaHoraDisponible.setLocalizedLabel(ENGLISH, "registration, relief or abandonment timestamp");
+        fechaHoraDisponible.setLocalizedLabel(SPANISH, "fecha/hora registro, relevación o abandono");
+        fechaHoraDisponible.setLocalizedShortLabel(ENGLISH, "registration, relief or abandonment");
+        fechaHoraDisponible.setLocalizedShortLabel(SPANISH, "registro, relevación o abandono");
+        /**/
+        fechaHoraAtribucion.setLocalizedLabel(ENGLISH, "assignment or assumption timestamp");
+        fechaHoraAtribucion.setLocalizedLabel(SPANISH, "fecha/hora asignación o asunción");
+        fechaHoraAtribucion.setLocalizedShortLabel(ENGLISH, "assignment or assumption");
+        fechaHoraAtribucion.setLocalizedShortLabel(SPANISH, "asignación o asunción");
         /**/
         fechaHoraAsignacion.setLocalizedLabel(ENGLISH, "assignment timestamp");
         fechaHoraAsignacion.setLocalizedLabel(SPANISH, "fecha/hora asignación");
@@ -413,6 +442,12 @@ public class TareaUsuario extends AbstractPersistentEntity {
         fechaHoraLimite.setLocalizedShortLabel(ENGLISH, "deadline");
         fechaHoraLimite.setLocalizedShortLabel(SPANISH, "fecha/hora límite");
         /**/
+        condicionAsignacion.setLocalizedLabel(ENGLISH, "assignment status");
+        condicionAsignacion.setLocalizedLabel(SPANISH, "condición asignación");
+        /**/
+        condicionFinalizacion.setLocalizedLabel(ENGLISH, "execution status");
+        condicionFinalizacion.setLocalizedLabel(SPANISH, "condición finalización");
+        /**/
         prioridad.setLocalizedLabel(ENGLISH, "priority");
         prioridad.setLocalizedLabel(SPANISH, "prioridad");
         /**/
@@ -448,16 +483,22 @@ public class TareaUsuario extends AbstractPersistentEntity {
         super.settleLinks();
     }
 
-    protected Key key1, key2, key3;
+    protected Key ix_tarea_usuario_0001, ix_tarea_usuario_0002, ix_tarea_usuario_0003;
 
     @Override
     protected void settleKeys() {
         super.settleKeys();
-        key1.newKeyField(tarea);
-        key2.newKeyField(condicion, fechaHoraLimite, tarea, destinatario);
-        key3.newKeyField(idClaseRecursoValor, recursoValor);
         /**/
-        setOrderBy(key2);
+        ix_tarea_usuario_0001.setUnique(false);
+        ix_tarea_usuario_0001.newKeyField(tarea);
+        /**/
+        ix_tarea_usuario_0002.setUnique(false);
+        ix_tarea_usuario_0002.newKeyField(condicion, fechaHoraLimite, tarea, destinatario);
+        /**/
+        ix_tarea_usuario_0003.setUnique(false);
+        ix_tarea_usuario_0003.newKeyField(idClaseRecursoValor, recursoValor);
+        /**/
+        setOrderBy(ix_tarea_usuario_0002);
         /**/
     }
 
@@ -467,20 +508,14 @@ public class TareaUsuario extends AbstractPersistentEntity {
     protected void settleTabs() {
         super.settleTabs();
         /**/
-        descripcion.newTabField(funcion, descripcionFuncion, paginaFuncion, codigoClaseRecursoValor, nombreClaseRecursoValor, recursoValor, codigoRecursoValor, nombreRecursoValor, descripcionRecursoValor, paginaRecurso);
-        descripcion.newTabField(condicion);
-//      descripcion.newTabField(condicionEjeFun);
-        descripcion.newTabField(rastroProceso);
-        descripcion.newTabField(fechaHoraCondicion);
-        descripcion.newTabField(fechaHoraLimite, prioridad);
+        descripcion.newTabField(funcion, descripcionFuncion, paginaFuncion, codigoClaseRecursoValor, nombreClaseRecursoValor,
+            recursoValor, codigoRecursoValor, nombreRecursoValor, descripcionRecursoValor, paginaRecurso);
         /**/
         participantes.newTabField(responsable, supervisor, finalizador);
         /**/
-        cronologia.newTabField(condicion);
-//      cronologia.newTabField(condicionEjeFun);
-        cronologia.newTabField(rastroProceso);
-        cronologia.newTabField(usuarioCondicion,
-            fechaHoraCondicion, fechaHoraRegistro, fechaHoraAsignacion, fechaHoraAsuncion, fechaHoraRelevacion, fechaHoraAbandono, fechaHoraCancelacion, fechaHoraFinalizacion);
+        cronologia.newTabField(rastroProceso, usuarioCondicion, fechaHoraCondicion, fechaHoraRegistro, fechaHoraDisponible, fechaHoraAtribucion,
+            fechaHoraAsignacion, fechaHoraAsuncion, fechaHoraRelevacion, fechaHoraAbandono, fechaHoraCancelacion, fechaHoraFinalizacion,
+            fechaHoraLimite, prioridad);
         /**/
         // <editor-fold defaultstate="collapsed" desc="localization of TareaUsuario's tabs">
         descripcion.setLocalizedLabel(ENGLISH, "description");
@@ -495,32 +530,46 @@ public class TareaUsuario extends AbstractPersistentEntity {
         // </editor-fold>
     }
 
-    protected Segment propiedadUsuarioActual, responsabilidadUsuarioActual;
+    protected State disponible, asignada, ejecutada, cancelada;
 
-    protected Segment pendienteUsuarioActual;
+    protected Segment pendiente, asumible, abandonable, asignable, relevable, finalizada;
 
-    protected State disponible, asignada, asumible, abandonable, pendiente, ejecutada, cancelada, finalizada;
+    protected Segment propiedadUsuarioActual, responsabilidadUsuarioActual, pendienteUsuarioActual;
+
+    protected Segment propiedadSubordinadoUsuarioActual, responsabilidadSubordinadoUsuarioActual, pendienteSubordinadoUsuarioActual;
 
     @Override
     protected void settleExpressions() {
         super.settleExpressions();
-        /*
-        propiedadUsuarioActual = destinatario.codigoUsuario.isEqualTo(SpecialCharacterValue.CURRENT_USER_CODE);
-        responsabilidadUsuarioActual = responsable.isNotNull().and(responsable.codigoUsuario.isEqualTo(SpecialCharacterValue.CURRENT_USER_CODE));
-        /**/
-        propiedadUsuarioActual = destinatario.id.isEqualTo(CURRENT_USER_ID);
-        responsabilidadUsuarioActual = responsable.isNotNull().and(responsable.id.isEqualTo(CURRENT_USER_ID));
         /**/
         disponible = condicion.isEqualTo(condicion.DISPONIBLE);
         asignada = condicion.isEqualTo(condicion.ASIGNADA);
-        asumible = disponible.and(propiedadUsuarioActual);
-        abandonable = asignada.and(propiedadUsuarioActual).and(responsabilidadUsuarioActual);
-        pendiente = condicion.isIn(condicion.DISPONIBLE, condicion.ASIGNADA);
         ejecutada = condicion.isEqualTo(condicion.EJECUTADA);
         cancelada = condicion.isEqualTo(condicion.CANCELADA);
+        /**/
+        disponible.setTransitionTimestamp(fechaHoraDisponible);
+        asignada.setTransitionTimestamp(fechaHoraAtribucion);
+        ejecutada.setTransitionTimestamp(fechaHoraFinalizacion);
+        cancelada.setTransitionTimestamp(fechaHoraCancelacion);
+        /**/
+        propiedadUsuarioActual = destinatario.id.isEqualTo(CURRENT_USER_ID);
+        responsabilidadUsuarioActual = propiedadUsuarioActual.and(responsable.isEqualTo(destinatario));
+        /**/
+        propiedadSubordinadoUsuarioActual = destinatario.usuarioSupervisor.id.isEqualTo(CURRENT_USER_ID);
+        responsabilidadSubordinadoUsuarioActual = propiedadSubordinadoUsuarioActual.and(responsable.isEqualTo(destinatario));
+        /**/
+        pendiente = condicion.isIn(condicion.DISPONIBLE, condicion.ASIGNADA);
+        asumible = disponible.and(propiedadUsuarioActual);
+        abandonable = asignada.and(responsabilidadUsuarioActual);
+        asignable = disponible.and(propiedadSubordinadoUsuarioActual);
+        relevable = asignada.and(responsabilidadSubordinadoUsuarioActual);
         finalizada = condicion.isIn(condicion.EJECUTADA, condicion.CANCELADA);
         /**/
-        pendienteUsuarioActual = propiedadUsuarioActual.and(pendiente);
+        pendienteUsuarioActual = pendiente.and(propiedadUsuarioActual);
+        pendienteSubordinadoUsuarioActual = pendiente.and(propiedadSubordinadoUsuarioActual);
+        /**/
+        setHappyPath(disponible, asignada, ejecutada);
+        setHappyPathDisplaySpots(HappyPathDisplaySpots.DETAIL_VIEW);
         /**/
         // <editor-fold defaultstate="collapsed" desc="localization of TareaUsuario's expressions">
         /**/
@@ -537,9 +586,9 @@ public class TareaUsuario extends AbstractPersistentEntity {
         pendienteUsuarioActual.setLocalizedCollectionLabel(SPANISH, "todas las notificaciones de tareas pendientes dirigidas al usuario actual");
         pendienteUsuarioActual.setLocalizedCollectionShortLabel(ENGLISH, "My pending tasks");
         pendienteUsuarioActual.setLocalizedCollectionShortLabel(SPANISH, "Mis tareas pendientes");
-        pendienteUsuarioActual.setLocalizedDescription(ENGLISH, "the notification is addressed to the current user and the task has not been executed or canceled");
+        pendienteUsuarioActual.setLocalizedDescription(ENGLISH, "the notification is addressed to the current user and the task has not been executed or cancelled");
         pendienteUsuarioActual.setLocalizedDescription(SPANISH, "la notificación está dirigida al usuario actual y la tarea está pendiente");
-        pendienteUsuarioActual.setLocalizedErrorMessage(ENGLISH, "the notification is addressed to another user or the task has already been executed or canceled");
+        pendienteUsuarioActual.setLocalizedErrorMessage(ENGLISH, "the notification is addressed to another user or the task has already been executed or cancelled");
         pendienteUsuarioActual.setLocalizedErrorMessage(SPANISH, "la notificación está dirigida a otro usuario o la tarea está ejecutada o cancelada");
         /**/
         responsabilidadUsuarioActual.setLocalizedCollectionLabel(ENGLISH, "all task notifications for which the current user is or was responsible");
@@ -551,51 +600,158 @@ public class TareaUsuario extends AbstractPersistentEntity {
         responsabilidadUsuarioActual.setLocalizedErrorMessage(ENGLISH, "the current user is not responsible for carrying out the task");
         responsabilidadUsuarioActual.setLocalizedErrorMessage(SPANISH, "el usuario actual no es el responsable de la ejecución de la tarea");
         /**/
-        disponible.setLocalizedDescription(ENGLISH, "the task is available");
-        disponible.setLocalizedDescription(SPANISH, "la tarea está disponible");
+        propiedadSubordinadoUsuarioActual.setLocalizedCollectionLabel(ENGLISH, "all task notifications addressed to a subordinate of the current user");
+        propiedadSubordinadoUsuarioActual.setLocalizedCollectionLabel(SPANISH, "todas las notificaciones de tareas dirigidas a un subordinado del usuario actual");
+        propiedadSubordinadoUsuarioActual.setLocalizedCollectionShortLabel(ENGLISH, "Tasks of my subordinates");
+        propiedadSubordinadoUsuarioActual.setLocalizedCollectionShortLabel(SPANISH, "Tareas de mis subordinados");
+        propiedadSubordinadoUsuarioActual.setLocalizedDescription(ENGLISH, "the notification is addressed to a subordinate of the current user");
+        propiedadSubordinadoUsuarioActual.setLocalizedDescription(SPANISH, "la notificación está dirigida a un subordinado del usuario actual");
+        propiedadSubordinadoUsuarioActual.setLocalizedErrorMessage(ENGLISH, "the notification is not addressed to a subordinate of the current user");
+        propiedadSubordinadoUsuarioActual.setLocalizedErrorMessage(SPANISH, "la notificación no está dirigida a un subordinado del usuario actual");
+        /**/
+        pendienteSubordinadoUsuarioActual.setLocalizedCollectionLabel(ENGLISH, "all pending task notifications addressed to a subordinate of the current user");
+        pendienteSubordinadoUsuarioActual.setLocalizedCollectionLabel(SPANISH, "todas las notificaciones de tareas pendientes dirigidas a un subordinado del usuario actual");
+        pendienteSubordinadoUsuarioActual.setLocalizedCollectionShortLabel(ENGLISH, "Pending tasks of my subordinates");
+        pendienteSubordinadoUsuarioActual.setLocalizedCollectionShortLabel(SPANISH, "Tareas pendientes de mis subordinados");
+        pendienteSubordinadoUsuarioActual.setLocalizedDescription(ENGLISH, "the notification is addressed to a subordinate of the current user and the task has not been executed or cancelled");
+        pendienteSubordinadoUsuarioActual.setLocalizedDescription(SPANISH, "la notificación está dirigida a un subordinado del usuario actual y la tarea está pendiente");
+        pendienteSubordinadoUsuarioActual.setLocalizedErrorMessage(ENGLISH, "the notification is not addressed to a subordinate of the current user or the task has already been executed or cancelled");
+        pendienteSubordinadoUsuarioActual.setLocalizedErrorMessage(SPANISH, "la notificación no está dirigida a un subordinado del usuario actual o la tarea está ejecutada o cancelada");
+        /**/
+        responsabilidadSubordinadoUsuarioActual.setLocalizedCollectionLabel(ENGLISH, "all task notifications for which a subordinate of the current user is or was responsible");
+        responsabilidadSubordinadoUsuarioActual.setLocalizedCollectionLabel(SPANISH, "todas las notificaciones de tareas de las que un subordinado del usuario actual es o fue el responsable");
+        responsabilidadSubordinadoUsuarioActual.setLocalizedCollectionShortLabel(ENGLISH, "Responsibilities of my subordinates");
+        responsabilidadSubordinadoUsuarioActual.setLocalizedCollectionShortLabel(SPANISH, "Responsabilidades de mis subordinados");
+        responsabilidadSubordinadoUsuarioActual.setLocalizedDescription(ENGLISH, "a subordinate of the current user is responsible for carrying out the task");
+        responsabilidadSubordinadoUsuarioActual.setLocalizedDescription(SPANISH, "un subordinado del usuario actual es el responsable de la ejecución de la tarea");
+        responsabilidadSubordinadoUsuarioActual.setLocalizedErrorMessage(ENGLISH, "a subordinate of the current user is not responsible for carrying out the task");
+        responsabilidadSubordinadoUsuarioActual.setLocalizedErrorMessage(SPANISH, "un subordinado del usuario actual no es el responsable de la ejecución de la tarea");
+        /**/
+        disponible.setLocalizedCollectionLabel(ENGLISH, "all notifications of tasks that are available");
+        disponible.setLocalizedCollectionLabel(SPANISH, "todas las notificaciones de tareas que están disponibles");
+        disponible.setLocalizedCollectionShortLabel(ENGLISH, "Available tasks");
+        disponible.setLocalizedCollectionShortLabel(SPANISH, "Tareas disponibles");
+        disponible.setLocalizedDescription(ENGLISH, "the responsibility for carrying out the task is not assigned and therefore "
+            + "the task is available to be assigned or assumed by any of the notified users");
+        disponible.setLocalizedDescription(SPANISH, "la responsabilidad de realizar la tarea no está asignada y, por lo tanto, "
+            + "la tarea está disponible para ser asignada o asumida por cualquiera de los usuarios notificados");
         disponible.setLocalizedErrorMessage(ENGLISH, "the task is not available");
         disponible.setLocalizedErrorMessage(SPANISH, "la tarea no está disponible");
+        disponible.setLocalizedLabel(ENGLISH, "available");
+        disponible.setLocalizedLabel(SPANISH, "disponible");
         /**/
-        asignada.setLocalizedDescription(ENGLISH, "the task is assigned");
-        asignada.setLocalizedDescription(SPANISH, "la tarea está asignada");
-        asignada.setLocalizedErrorMessage(ENGLISH, "the task is not assigned or it has already been executed or canceled");
-        asignada.setLocalizedErrorMessage(SPANISH, "la tarea no está asignada o está ejecutada o cancelada");
+        asignada.setLocalizedCollectionLabel(ENGLISH, "all notifications of tasks that are assigned");
+        asignada.setLocalizedCollectionLabel(SPANISH, "todas las notificaciones de tareas que están asignadas");
+        asignada.setLocalizedCollectionShortLabel(ENGLISH, "Assigned tasks");
+        asignada.setLocalizedCollectionShortLabel(SPANISH, "Tareas asignadas");
+        asignada.setLocalizedDescription(ENGLISH, "the responsibility for carrying out the task is assigned to one of the notified users");
+        asignada.setLocalizedDescription(SPANISH, "la responsabilidad de llevar a cabo la tarea está asignada a uno de los usuarios notificados");
+        asignada.setLocalizedErrorMessage(ENGLISH, "the task is not assigned or it was executed or cancelled");
+        asignada.setLocalizedErrorMessage(SPANISH, "la tarea no está asignada o fue ejecutada o cancelada");
+        asignada.setLocalizedLabel(ENGLISH, "assigned");
+        asignada.setLocalizedLabel(SPANISH, "asignada");
         /**/
-        asumible.setLocalizedDescription(ENGLISH, "the task is available and the notification is addressed to the current user");
-        asumible.setLocalizedDescription(SPANISH, "la tarea está disponible y la notificación está dirigida al usuario actual");
-        /**/
-        abandonable.setLocalizedDescription(ENGLISH, "the task is assigned and the notification is addressed to the current user and "
-            + "the current user is responsible for carrying out the task");
-        abandonable.setLocalizedDescription(SPANISH, "la tarea está asignada y la notificación está dirigida al usuario actual y "
-            + "el usuario actual es el responsable de la ejecución de la tarea");
-        /**/
-        pendiente.setLocalizedCollectionLabel(ENGLISH, "all notifications of tasks that have not been executed or canceled");
-        pendiente.setLocalizedCollectionLabel(SPANISH, "todas las notificaciones de tareas que no se han ejecutado o cancelado");
-        pendiente.setLocalizedCollectionShortLabel(ENGLISH, "Pending tasks");
-        pendiente.setLocalizedCollectionShortLabel(SPANISH, "Tareas pendientes");
-        pendiente.setLocalizedDescription(ENGLISH, "the task has not been executed or canceled");
-        pendiente.setLocalizedDescription(SPANISH, "la tarea no está ejecutada ni cancelada");
-        pendiente.setLocalizedErrorMessage(ENGLISH, "the task has already been executed or canceled");
-        pendiente.setLocalizedErrorMessage(SPANISH, "la tarea está ejecutada o cancelada");
-        /**/
-        ejecutada.setLocalizedDescription(ENGLISH, "the task is executed");
-        ejecutada.setLocalizedDescription(SPANISH, "la tarea está ejecutada");
+        ejecutada.setLocalizedCollectionLabel(ENGLISH, "all notifications of tasks that are executed");
+        ejecutada.setLocalizedCollectionLabel(SPANISH, "todas las notificaciones de tareas que están ejecutadas");
+        ejecutada.setLocalizedCollectionShortLabel(ENGLISH, "Executed tasks");
+        ejecutada.setLocalizedCollectionShortLabel(SPANISH, "Tareas ejecutadas");
+        ejecutada.setLocalizedDescription(ENGLISH, "the task was executed; "
+            + "this state is reached regardless of the result of the execution, that is, it does not imply that it was executed without errors");
+        ejecutada.setLocalizedDescription(SPANISH, "la tarea fue ejecutada; "
+            + "este estado se alcanza independientemente del resultado de la ejecución, es decir, no implica que se haya ejecutado sido sin errores");
         ejecutada.setLocalizedErrorMessage(ENGLISH, "the task is not executed");
         ejecutada.setLocalizedErrorMessage(SPANISH, "la tarea no está ejecutada");
+        ejecutada.setLocalizedLabel(ENGLISH, "executed");
+        ejecutada.setLocalizedLabel(SPANISH, "ejecutada");
         /**/
-        cancelada.setLocalizedDescription(ENGLISH, "the task is canceled");
-        cancelada.setLocalizedDescription(SPANISH, "la tarea está cancelada");
-        cancelada.setLocalizedErrorMessage(ENGLISH, "the task is not canceled");
+        cancelada.setLocalizedCollectionLabel(ENGLISH, "all notifications of tasks that are cancelled");
+        cancelada.setLocalizedCollectionLabel(SPANISH, "todas las notificaciones de tareas que están canceladas");
+        cancelada.setLocalizedCollectionShortLabel(ENGLISH, "Cancelled tasks");
+        cancelada.setLocalizedCollectionShortLabel(SPANISH, "Tareas canceladas");
+        cancelada.setLocalizedDescription(ENGLISH, "the task was cancelled; this state is not reached as a consequence of an error; "
+            + "a task can be canceled by an authorized user or automatically by the system, "
+            + "if the resource is deleted or modified in such a way that this task should no longer be executed");
+        cancelada.setLocalizedDescription(SPANISH, "la tarea fue cancelada; este estado no se alcanza como consecuencia de un error; "
+            + "una tarea puede ser cancelada por un usuario autorizado o automáticamente por el sistema, "
+            + "si el recurso es eliminado o modificado de tal forma que esta tarea ya no deba ser ejecutada");
+        cancelada.setLocalizedErrorMessage(ENGLISH, "the task is not cancelled");
         cancelada.setLocalizedErrorMessage(SPANISH, "la tarea no está cancelada");
+        cancelada.setLocalizedLabel(ENGLISH, "cancelled");
+        cancelada.setLocalizedLabel(SPANISH, "cancelada");
         /**/
-        finalizada.setLocalizedCollectionLabel(ENGLISH, "all notifications of tasks that have been executed or canceled");
+        pendiente.setLocalizedCollectionLabel(ENGLISH, "all notifications of tasks that are available or assigned");
+        pendiente.setLocalizedCollectionLabel(SPANISH, "todas las notificaciones de tareas que están disponibles o asignadas");
+        pendiente.setLocalizedCollectionShortLabel(ENGLISH, "Pending tasks");
+        pendiente.setLocalizedCollectionShortLabel(SPANISH, "Tareas pendientes");
+        pendiente.setLocalizedDescription(ENGLISH, "pseudo-state that includes tasks in state \"Available\" or \"Assigned\"");
+        pendiente.setLocalizedDescription(SPANISH, "pseudo-estado que incluye tareas en estado \"Disponible\" o \"Asignada\"");
+        pendiente.setLocalizedErrorMessage(ENGLISH, "the task was executed or cancelled");
+        pendiente.setLocalizedErrorMessage(SPANISH, "la tarea fue ejecutada o cancelada");
+        pendiente.setLocalizedLabel(ENGLISH, "pending");
+        pendiente.setLocalizedLabel(SPANISH, "pendiente");
+        /**/
+        asumible.setLocalizedCollectionLabel(ENGLISH, "all notifications of tasks that are available and addressed to the current user");
+        asumible.setLocalizedCollectionLabel(SPANISH, "todas las notificaciones de tareas que están disponibles y dirigidas al usuario actual");
+        asumible.setLocalizedCollectionShortLabel(ENGLISH, "Assumable tasks");
+        asumible.setLocalizedCollectionShortLabel(SPANISH, "Tareas asumibles");
+        asumible.setLocalizedDescription(ENGLISH, "the task is available and the notification is addressed to the current user; "
+            + "\"Assumable\" is a pseudo-state derived from \"Available\", which is used to determine whether the \"Assign\" and \"Assume\" operations are enabled or not");
+        asumible.setLocalizedDescription(SPANISH, "la tarea está disponible y la notificación está dirigida al usuario actual; "
+            + "\"Asumible\" es un pseudo-estado derivado de \"Disponible\", que se usa para determinar si las operaciones \"Asignar\" y \"Asumir\" están, o no, habilitadas");
+        asumible.setLocalizedErrorMessage(ENGLISH, "the task is not available or not addressed to the current user");
+        asumible.setLocalizedErrorMessage(SPANISH, "la tarea no está disponible o no está dirigida al usuario actual");
+        asumible.setLocalizedLabel(ENGLISH, "assumable");
+        asumible.setLocalizedLabel(SPANISH, "asumible");
+        /**/
+        abandonable.setLocalizedCollectionLabel(ENGLISH, "all notifications of tasks that are assigned to the current user");
+        abandonable.setLocalizedCollectionLabel(SPANISH, "todas las notificaciones de tareas que están asignadas al usuario actual");
+        abandonable.setLocalizedCollectionShortLabel(ENGLISH, "Abandonable tasks");
+        abandonable.setLocalizedCollectionShortLabel(SPANISH, "Tareas abandonables");
+        abandonable.setLocalizedDescription(ENGLISH, "the task is assigned to the current user; "
+            + "\"Abandonable\" is a pseudo-state derived from \"Assigned\", which is used to determine whether the \"Relieve\" and  \"Abandon\" operations are enabled or not");
+        abandonable.setLocalizedDescription(SPANISH, "la tarea está asignada al usuario actual y la notificación está dirigida al usuario actual; "
+            + "\"Abandonable\" es un pseudo-estado derivado de \"Asignada\", que se usa para determinar si las operaciones \"Relevar\" y  \"Abandonar\" están, o no, habilitadas");
+        abandonable.setLocalizedErrorMessage(ENGLISH, "the task is not assigned to the current user");
+        abandonable.setLocalizedErrorMessage(SPANISH, "la tarea no está asignada al usuario actual");
+        abandonable.setLocalizedLabel(ENGLISH, "abandonable");
+        abandonable.setLocalizedLabel(SPANISH, "abandonable");
+        /**/
+        asignable.setLocalizedCollectionLabel(ENGLISH, "all notifications of tasks that are available but not addressed to the current user");
+        asignable.setLocalizedCollectionLabel(SPANISH, "todas las notificaciones de tareas que están disponibles pero no dirigidas al usuario actual");
+        asignable.setLocalizedCollectionShortLabel(ENGLISH, "Assignable tasks");
+        asignable.setLocalizedCollectionShortLabel(SPANISH, "Tareas asignables");
+        asignable.setLocalizedDescription(ENGLISH, "the task is available and the notification is addressed to a subordinate of the current user; "
+            + "\"Assignable\" is a pseudo-state derived from \"Available\", which is used to determine whether the \"Assign\" and \"Assume\" operations are enabled or not");
+        asignable.setLocalizedDescription(SPANISH, "la tarea está disponible y la notificación está dirigida a un subordinado del usuario actual; "
+            + "\"Asignable\" es un pseudo-estado derivado de \"Disponible\", que se usa para determinar si las operaciones \"Asignar\" y \"Asumir\" están, o no, habilitadas");
+        asignable.setLocalizedErrorMessage(ENGLISH, "the task is not available or it is addressed to the current user");
+        asignable.setLocalizedErrorMessage(SPANISH, "la tarea no está disponible o está dirigida al usuario actual");
+        asignable.setLocalizedLabel(ENGLISH, "assignable");
+        asignable.setLocalizedLabel(SPANISH, "asignable");
+        /**/
+        relevable.setLocalizedCollectionLabel(ENGLISH, "all notifications of tasks that are assigned to another user");
+        relevable.setLocalizedCollectionLabel(SPANISH, "todas las notificaciones de tareas que están asignadas a otro usuario");
+        relevable.setLocalizedCollectionShortLabel(ENGLISH, "Relieveable tasks");
+        relevable.setLocalizedCollectionShortLabel(SPANISH, "Tareas relevables");
+        relevable.setLocalizedDescription(ENGLISH, "the task is assigned to a subordinate of the current user; "
+            + "\"Relieveable\" is a pseudo-state derived from \"Assigned\", which is used to determine whether the \"Relieve\" and  \"Abandon\" operations are enabled or not");
+        relevable.setLocalizedDescription(SPANISH, "la tarea está asignada al usuario actual y la notificación está dirigida al usuario actual; "
+            + "\"Relevable\" es un pseudo-estado derivado de \"Asignada\", que se usa para determinar si las operaciones \"Relevar\" y  \"Abandonar\" están, o no, habilitadas");
+        relevable.setLocalizedErrorMessage(ENGLISH, "the task is not assigned or it is assigned to the current user");
+        relevable.setLocalizedErrorMessage(SPANISH, "la tarea no está asignada o está asignada al usuario actual");
+        relevable.setLocalizedLabel(ENGLISH, "relieveable");
+        relevable.setLocalizedLabel(SPANISH, "relevable");
+        /**/
+        finalizada.setLocalizedCollectionLabel(ENGLISH, "all notifications of tasks that have been executed or cancelled");
         finalizada.setLocalizedCollectionLabel(SPANISH, "todas las notificaciones de tareas que se han ejecutado o cancelado");
         finalizada.setLocalizedCollectionShortLabel(ENGLISH, "Finished tasks");
         finalizada.setLocalizedCollectionShortLabel(SPANISH, "Tareas finalizadas");
-        finalizada.setLocalizedDescription(ENGLISH, "the task is executed or canceled");
-        finalizada.setLocalizedDescription(SPANISH, "la tarea está ejecutada o cancelada");
-        finalizada.setLocalizedErrorMessage(ENGLISH, "the task is not executed or canceled");
+        finalizada.setLocalizedDescription(ENGLISH, "pseudo-state that includes tasks in state \"Executed\" or \"Cancelled\"");
+        finalizada.setLocalizedDescription(SPANISH, "pseudo-estado que incluye tareas en estado \"Ejecutada\" o \"Cancelada\"");
+        finalizada.setLocalizedErrorMessage(ENGLISH, "the task is not executed or cancelled");
         finalizada.setLocalizedErrorMessage(SPANISH, "la tarea no está ejecutada ni cancelada");
+        finalizada.setLocalizedLabel(ENGLISH, "finished");
+        finalizada.setLocalizedLabel(SPANISH, "finalizada");
         /**/
         // </editor-fold>
     }
@@ -604,10 +760,15 @@ public class TareaUsuario extends AbstractPersistentEntity {
     protected void settleFilters() {
         super.settleFilters();
         /**/
-        addSelectSegment(pendiente, true);
-        addSelectSegment(finalizada);
-        addSelectSegment(propiedadUsuarioActual, pendienteUsuarioActual, responsabilidadUsuarioActual);
         setSelectFilter(responsable.isNullOrEqualTo(destinatario));
+        /**/
+        addSelectSegment(pendienteUsuarioActual, true);
+        addSelectSegment(pendienteSubordinadoUsuarioActual);
+        addSelectSegment(responsabilidadUsuarioActual);
+        addSelectSegment(responsabilidadSubordinadoUsuarioActual);
+        addSelectSegment(propiedadUsuarioActual);
+        addSelectSegment(propiedadSubordinadoUsuarioActual);
+        addSelectSegment(pendiente, asumible, abandonable, asignable, relevable, finalizada);
         /**/
         rastroProceso.setRenderingFilter(rastroProceso.isNotNull());
         /**/
@@ -622,6 +783,8 @@ public class TareaUsuario extends AbstractPersistentEntity {
     protected Asignar asignar;
 
     protected Relevar relevar;
+
+    protected Ejecutar ejecutar;
 
     protected Cancelar cancelar;
 
@@ -681,23 +844,25 @@ public class TareaUsuario extends AbstractPersistentEntity {
             // </editor-fold>
         }
 
-        /*
         protected Check check101;
 
         @Override
         protected void settleExpressions() {
             super.settleExpressions();
+            /**/
             check101 = tarea.destinatario.id.isEqualTo(CURRENT_USER_ID);
-            check101.setCheckpoint(Checkpoint.USER_INTERFACE);
+//          check101.setCheckpoint(Checkpoint.USER_INTERFACE);
+            /**/
             // <editor-fold defaultstate="collapsed" desc="localization of Asumir's expressions">
+            /**/
             check101.setLocalizedDescription(ENGLISH, "to assume a task, notification must be addressed to the user");
             check101.setLocalizedDescription(SPANISH, "para asumir una tarea, la notificacion debe estar dirigida al usuario");
             check101.setLocalizedErrorMessage(ENGLISH, "notification is addressed to another user");
             check101.setLocalizedErrorMessage(SPANISH, "la notificación esta dirigida a otro usuario");
+            /**/
             // </editor-fold>
         }
 
-        /**/
     }
 
     @OperationClass(access = OperationAccess.RESTRICTED)
@@ -733,23 +898,32 @@ public class TareaUsuario extends AbstractPersistentEntity {
             // </editor-fold>
         }
 
-        /*
-        protected Check check101;
+        protected Check check101, check102;
 
         @Override
         protected void settleExpressions() {
             super.settleExpressions();
+            /**/
             check101 = tarea.destinatario.id.isEqualTo(CURRENT_USER_ID);
-            check101.setCheckpoint(Checkpoint.USER_INTERFACE);
+//          check101.setCheckpoint(Checkpoint.USER_INTERFACE);
+            /**/
+            check102 = tarea.responsable.isEqualTo(tarea.destinatario);
+            /**/
             // <editor-fold defaultstate="collapsed" desc="localization of Abandonar's expressions">
+            /**/
             check101.setLocalizedDescription(ENGLISH, "to abandon a task, notification must be addressed to the user");
             check101.setLocalizedDescription(SPANISH, "para abandonar una tarea, la notificacion debe estar dirigida al usuario");
             check101.setLocalizedErrorMessage(ENGLISH, "notification is addressed to another user");
             check101.setLocalizedErrorMessage(SPANISH, "la notificación esta dirigida a otro usuario");
+            /**/
+            check102.setLocalizedDescription(ENGLISH, "to abandon a task, notification must be addressed to the user responsible for carrying it out");
+            check102.setLocalizedDescription(SPANISH, "para abandonar una tarea, la notificacion debe estar dirigida al usuario responsable de ejecutarla");
+            check102.setLocalizedErrorMessage(ENGLISH, "the notification is not addressed to the user responsible for carrying out the task");
+            check102.setLocalizedErrorMessage(SPANISH, "la notificacion no está dirigida al usuario responsable de ejecutar la tarea");
+            /**/
             // </editor-fold>
         }
 
-        /**/
     }
 
     @OperationClass(access = OperationAccess.PROTECTED)
@@ -791,13 +965,17 @@ public class TareaUsuario extends AbstractPersistentEntity {
         @Override
         protected void settleExpressions() {
             super.settleExpressions();
+            /**/
             check101 = tarea.destinatario.id.isNotEqualTo(CURRENT_USER_ID);
-            check101.setCheckpoint(Checkpoint.USER_INTERFACE);
+//          check101.setCheckpoint(Checkpoint.USER_INTERFACE);
+            /**/
             // <editor-fold defaultstate="collapsed" desc="localization of Asignar's expressions">
+            /**/
             check101.setLocalizedDescription(ENGLISH, "to assign a task, notification must not be addressed to the user");
             check101.setLocalizedDescription(SPANISH, "para asignar una tarea, la notificacion no debe estar dirigida al usuario");
             check101.setLocalizedErrorMessage(ENGLISH, "notification is addressed to your user");
             check101.setLocalizedErrorMessage(SPANISH, "la notificación está dirigida a su usuario");
+            /**/
             // </editor-fold>
         }
 
@@ -838,22 +1016,62 @@ public class TareaUsuario extends AbstractPersistentEntity {
         }
 
         /**/
-        protected Check check101;
+        protected Check check101, check102;
 
         @Override
         protected void settleExpressions() {
             super.settleExpressions();
+            /**/
             check101 = tarea.destinatario.id.isNotEqualTo(CURRENT_USER_ID);
-            check101.setCheckpoint(Checkpoint.USER_INTERFACE);
+//          check101.setCheckpoint(Checkpoint.USER_INTERFACE);
+            /**/
+            check102 = tarea.responsable.isEqualTo(tarea.destinatario);
+            /**/
             // <editor-fold defaultstate="collapsed" desc="localization of Relevar's expressions">
+            /**/
             check101.setLocalizedDescription(ENGLISH, "to relieve a task, notification must not be addressed to the user");
             check101.setLocalizedDescription(SPANISH, "para relevar una tarea, la notificacion no debe estar dirigida al usuario");
             check101.setLocalizedErrorMessage(ENGLISH, "notification is addressed to your user");
             check101.setLocalizedErrorMessage(SPANISH, "la notificación está dirigida a su usuario");
+            /**/
+            check102.setLocalizedDescription(ENGLISH, "to relieve a task, notification must be addressed to the user responsible for carrying it out");
+            check102.setLocalizedDescription(SPANISH, "para relevar una tarea, la notificacion debe estar dirigida al usuario responsable de ejecutarla");
+            check102.setLocalizedErrorMessage(ENGLISH, "the notification is not addressed to the user responsible for carrying out the task");
+            check102.setLocalizedErrorMessage(SPANISH, "la notificacion no está dirigida al usuario responsable de ejecutar la tarea");
+            /**/
             // </editor-fold>
         }
 
         /**/
+    }
+
+    @OperationClass(access = OperationAccess.PRIVATE)
+    @ProcessOperationClass(bpl = Kleenean.FALSE, sql = Kleenean.FALSE)
+    public class Ejecutar extends ProcessOperation {
+
+        @InstanceReference
+        protected TareaUsuario tarea;
+
+        @Override
+        protected void settleAttributes() {
+            super.settleAttributes();
+            // <editor-fold defaultstate="collapsed" desc="localization of Ejecutar's attributes">
+            /**/
+            setLocalizedLabel(ENGLISH, "cancel");
+            setLocalizedLabel(SPANISH, "ejecutar");
+            /**/
+            // </editor-fold>
+        }
+
+        @Override
+        protected void settleParameters() {
+            super.settleParameters();
+            // <editor-fold defaultstate="collapsed" desc="localization of Ejecutar's parameters">
+            tarea.setLocalizedLabel(ENGLISH, "task");
+            tarea.setLocalizedLabel(SPANISH, "tarea");
+            // </editor-fold>
+        }
+
     }
 
     @OperationClass(access = OperationAccess.PROTECTED, confirmation = Kleenean.TRUE)
@@ -874,7 +1092,7 @@ public class TareaUsuario extends AbstractPersistentEntity {
             setLocalizedDescription(ENGLISH, "cancel all notifications of a task");
             setLocalizedDescription(SPANISH, "cancelar todas las notificaciones de una tarea");
             /**/
-            setLocalizedSuccessMessage(ENGLISH, "all task's notifications were canceled");
+            setLocalizedSuccessMessage(ENGLISH, "all task's notifications were cancelled");
             setLocalizedSuccessMessage(SPANISH, "se cancelaron todas las notificaciones de la tarea");
             /**/
             // </editor-fold>
@@ -895,11 +1113,14 @@ public class TareaUsuario extends AbstractPersistentEntity {
     protected void settleOperations() {
         super.settleOperations();
 //      insert.addTransition(null, disponible);
+        asumir.addTransition(disponible, asignada);
         asignar.addTransition(disponible, asignada);
+        abandonar.addTransition(asignada, disponible);
         relevar.addTransition(asignada, disponible);
-        asumir.addTransition(asumible, abandonable);
-        abandonar.addTransition(abandonable, disponible);
-        cancelar.addTransition(pendiente, cancelada);
+        ejecutar.addTransition(disponible, ejecutada);
+        ejecutar.addTransition(asignada, ejecutada);
+        cancelar.addTransition(disponible, cancelada);
+        cancelar.addTransition(asignada, cancelada);
     }
 
 }

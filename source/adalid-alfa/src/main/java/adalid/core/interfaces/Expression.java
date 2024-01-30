@@ -49,6 +49,24 @@ public interface Expression extends TypedArtifact {
     List<ExpressionUsage> getVerifiedUsages();
 
     /**
+     * @return the verified usages
+     */
+    Map<ExpressionUsage, Set<Artifact>> getVerifiedUsageMap();
+
+    /**
+     * @param usage the expression usage
+     * @return the verified user list
+     */
+    Set<Artifact> getVerifiedUsers(ExpressionUsage usage);
+
+    /**
+     * @param usage the expression usage
+     * @param user the artifact that makes use of this expression
+     * @return the verified user list
+     */
+    Set<Artifact> addVerifiedUsage(ExpressionUsage usage, Artifact user);
+
+    /**
      * @return the strings set
      */
     Set<String> getStringsSet();

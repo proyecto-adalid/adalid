@@ -12,6 +12,7 @@ package ${package}.meta.proyecto;
 import adalid.commons.enums.*;
 import adalid.core.annotations.*;
 import adalid.jee2.constants.*;
+import meta.psm.ProjectAttributeKeys;
 
 /**
  * @author ADALID meta-jee2-archetype
@@ -22,7 +23,7 @@ public class Maestro101 extends Maestro {
     public static final String ALIAS = "${artifactId.toLowerCase().replaceAll('^\Qmeta\E[\_\-\.]+', '').replaceAll('[\_\-\.]+\Qmeta\E$', '').replaceAll('[^a-z0-9]', '')}ap101";
 
     public static void main(String[] args) throws Exception {
-        Maestro101.class.getDeclaredConstructor().newInstance().build(PLATAFORMA_MAVEN_POSTGRESQL_GLASSFISH);
+        newInstance(Maestro101.class).build(PLATAFORMA_MAVEN_POSTGRESQL_GLASSFISH);
     }
 
     @Override
@@ -85,17 +86,20 @@ public class Maestro101 extends Maestro {
 //      putEnvironmentVariable(CONTENT_ROOT_DIR_WINDOWS, "%SystemDrive%/content-root");
 //
 //      putEnvironmentVariable(POSTGRESQL_DRIVER_ID, "pgjdbc4");
-//      putEnvironmentVariable(POSTGRESQL_DRIVER_JAR, "postgresql-42.5.1.jar");
-//      putEnvironmentVariable(POSTGRESQL_DRIVER_VERSION, "42.5.1");
+//      putEnvironmentVariable(POSTGRESQL_DRIVER_JAR, "postgresql-42.6.0.jar");
+//      putEnvironmentVariable(POSTGRESQL_DRIVER_VERSION, "42.6.0");
 //
-//      putEnvironmentVariable(VERSION_POSTGRESQL, "15");
-//      putEnvironmentVariable(VERSION_GLASSFISH, "5.1.0");
-        putEnvironmentVariable(VERSION_JAVA, "1.8.0_333");
-        putEnvironmentVariable(PLATAFORMA_JAVA, "javax");
-//      putEnvironmentVariable(VERSION_PRIMEFACES, "12.0.0");
-//      putEnvironmentVariable(VERSION_PRIMEFACES_EXTENSIONS, "12.0.10");
-//      putEnvironmentVariable(VERSION_GOOGLE_GSON, "2.9.1");
-//      putEnvironmentVariable(VERSION_THIRD_PARTY_DIR, "4.0");
+//      putEnvironmentVariable(PLATAFORMA_JAVA, "jakarta");
+//      putEnvironmentVariable(VERSION_ECLIPSELINK, "4.0.2");
+//      putEnvironmentVariable(VERSION_POSTGRESQL, "16");
+//      putEnvironmentVariable(VERSION_GLASSFISH, "7.0.6");
+//      putEnvironmentVariable(VERSION_JAVA, "17");
+//      putEnvironmentVariable(VERSION_PRIMEFACES, "13.0.1");
+//      putEnvironmentVariable(VERSION_PRIMEFACES_EXTENSIONS, "13.0.1");
+//      putEnvironmentVariable(VERSION_PRIMEFACES_EXTENSIONS_RESOURCES_CKEDITOR, "12.0.4");
+//      putEnvironmentVariable(VERSION_PRIMEFACES_EXTENSIONS_RESOURCES_MONACOEDITOR, "13.0.1");
+//      putEnvironmentVariable(VERSION_GOOGLE_GSON, "2.10.1");
+//      putEnvironmentVariable(VERSION_THIRD_PARTY_DIR, "5.0");
 //
 //      loadPrivateProperties(LoggingLevel.INFO);
 //      setTheme(PrimeFacesThemes.SAGA);
@@ -107,6 +111,7 @@ public class Maestro101 extends Maestro {
 //      setDefaultSMSProvider(ShortMessageServiceProvider.TWILIO);
 //      setProjectRecaptchaEnabled(true);
 //      setProjectRecaptchaSiteVerificationEnabled(true);
+//      setGoogleRecaptchaSiteKey("su_clave_de_sitio_de_Google_reCAPTCHA");
 //      setProjectStage(ProjectStage.PRODUCTION);
 //      setDatabaseName(ALIAS);
 //      setWebAuthMethod(WebLoginAuthMethod.FORM);
@@ -155,6 +160,7 @@ public class Maestro101 extends Maestro {
 //      addAttribute(ProjectAttributeKeys.DISABLE_BPL_IMPL_GENERATION, true);
 //      addAttribute(ProjectAttributeKeys.DISABLE_PAGE_ASSISTANT_GENERATION, true);
 //      addAttribute(ProjectAttributeKeys.FACELETS_REFRESH_PERIOD, -1);
+        addAttribute(ProjectAttributeKeys.HELP_DOCUMENT_URL, HELP_DOCUMENT_URL);
 //      addAttribute(ProjectAttributeKeys.HELP_WINDOW_WIDTH_KEY, 3);
 //      addAttribute(ProjectAttributeKeys.HCB_RENDERING, true);
 //      addAttribute(ProjectAttributeKeys.HLB_RENDERING, true);

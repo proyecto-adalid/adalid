@@ -156,7 +156,7 @@ public class VistaFuncion extends AbstractPersistentEntity {
     /**/
     @EntityCollectionField() // set element values with setters so they can be easily overriden
     @OneToMany(targetEntity = VistaFuncionCol.class, mappedBy = "vista") // set other element values with setters so they can be easily overriden
-    EntityCollection columnas;
+    public EntityCollection columnas;
 
     /**/
     @Override

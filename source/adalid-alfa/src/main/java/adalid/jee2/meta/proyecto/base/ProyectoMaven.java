@@ -146,6 +146,10 @@ public abstract class ProyectoMaven extends ProyectoJava2 {
         }
     }
 
+    public Map<ProjectModuleType, Map<String, ProjectDependency>> getProjectDependencies() {
+        return _projectDependencies;
+    }
+
     public List<ProjectDependency> getProjectDependencies(String moduleType) {
         return getProjectDependencies(ProjectModuleType.of(moduleType));
     }

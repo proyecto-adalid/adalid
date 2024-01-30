@@ -12,16 +12,18 @@
  */
 package meta.psm;
 
+import adalid.core.Project;
+
 /**
  * @author Jorge Campins
  */
 public class PageAttributeKeys {
 
-    public static final String ABSTRACT = "abstract";
+    public static final String ABSTRACT = Project.PAGE_ABSTRACT_ATTRIBUTE;
 
-    public static final String HELP_EMBEDDED_DOCUMENT = "help.embedded.document";
+    public static final String HELP_EMBEDDED_DOCUMENT = Project.PAGE_HELP_EMBEDDED_DOCUMENT_ATTRIBUTE;
 
-    public static final String HELP_FILE_NAME = "help.file.name";
+    public static final String HELP_FILE_NAME = Project.PAGE_HELP_FILE_NAME_ATTRIBUTE;
 
     public static final String HELP_PAGE_TEXT = "help.page.text";
 

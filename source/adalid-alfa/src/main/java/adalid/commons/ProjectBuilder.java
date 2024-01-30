@@ -17,6 +17,10 @@ package adalid.commons;
  */
 public interface ProjectBuilder {
 
+    boolean build();
+
     boolean build(String platform);
+
+    boolean build(String... platform);
 
 }

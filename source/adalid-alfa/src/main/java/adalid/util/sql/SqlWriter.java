@@ -14,6 +14,7 @@ package adalid.util.sql;
 
 import adalid.commons.util.*;
 import adalid.commons.velocity.*;
+import adalid.util.Platform;
 import java.sql.SQLException;
 import java.util.Collection;
 import java.util.LinkedHashSet;
@@ -261,7 +262,7 @@ public class SqlWriter extends SqlReader {
         if (ok) {
             if (read(true)) {
                 Writer writer = new Writer(this, "reader");
-                writer.write("meta-java-sql");
+                writer.write(Platform.META_JAVA_SQL);
                 return true;
             }
         }

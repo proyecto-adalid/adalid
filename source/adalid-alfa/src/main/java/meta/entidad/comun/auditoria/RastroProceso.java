@@ -36,7 +36,7 @@ import meta.entidad.comun.operacion.basica.RecursoValor;
 @EntityInsertOperation(enabled = Kleenean.FALSE)
 @EntityUpdateOperation(enabled = Kleenean.FALSE)
 @EntityDeleteOperation(enabled = Kleenean.FALSE)
-@EntityTableView(enabled = Kleenean.TRUE)
+@EntityTableView(enabled = Kleenean.TRUE, readingViewWesternToolbarSnippet = "/resources/snippets/base/entity/RastroProceso/botonOpenCalendarioProcesos")
 @EntityDetailView(enabled = Kleenean.TRUE)
 @EntityTreeView(enabled = Kleenean.FALSE)
 @EntityConsoleView(enabled = Kleenean.FALSE)
@@ -74,15 +74,16 @@ public class RastroProceso extends AbstractPersistentEntity {
     @OwnerProperty
     @SegmentProperty
     @ColumnField(nullable = Kleenean.TRUE)
-    @ForeignKey(onDelete = OnDeleteAction.NONE, onUpdate = OnUpdateAction.NONE)
+//  20231209: remove foreign-key referring to Usuario because it might cause ARJUNA012117 and/or ARJUNA012121
+//  @ForeignKey(onDelete = OnDeleteAction.NONE, onUpdate = OnUpdateAction.NONE)
     @ManyToOne(navigability = Navigability.UNIDIRECTIONAL, view = MasterDetailView.NONE)
-    @PropertyField(hidden = Kleenean.TRUE) //, defaultCheckpoint = Checkpoint.USER_INTERFACE)
+    @PropertyField(hidden = Kleenean.TRUE)
     @QueryMapping(mapKeyProperties = Kleenean.FALSE)
     public Usuario usuario;
 
     @ColumnField(indexed = Kleenean.TRUE)
     @PropertyField(table = Kleenean.TRUE, search = Kleenean.TRUE, report = Kleenean.TRUE)
-    @StringField(maxLength = 36)
+    @StringField(maxLength = MAX_EMAIL_ADDRESS_LENGTH) // maxLength = 36 until 01/12/2023
     public StringProperty codigoUsuario;
 
     @ColumnField(indexed = Kleenean.TRUE)
@@ -273,6 +274,10 @@ public class RastroProceso extends AbstractPersistentEntity {
 
     @ColumnField(nullable = Kleenean.FALSE)
 //  @PropertyField(search = Kleenean.TRUE)
+    public BooleanProperty procesoCalendarizado;
+
+    @ColumnField(nullable = Kleenean.FALSE)
+//  @PropertyField(search = Kleenean.TRUE)
     public BooleanProperty procesoNativo;
 
     @ColumnField(nullable = Kleenean.FALSE)
@@ -349,7 +354,7 @@ public class RastroProceso extends AbstractPersistentEntity {
         /**/
         condicionEjeFun.setInitialValue(condicionEjeFun.EJECUCION_PENDIENTE);
         condicionEjeFun.setDefaultValue(condicionEjeFun.EJECUCION_PENDIENTE);
-        /**/
+        /*
         RastroUtils.setGraphicImageExpressions(condicionEjeFun);
         /*
         BooleanExpression condicionEjeFunX = or(
@@ -393,6 +398,9 @@ public class RastroProceso extends AbstractPersistentEntity {
         /**/
         procesoAsincrono.setInitialValue(false);
         procesoAsincrono.setDefaultValue(false);
+        /**/
+        procesoCalendarizado.setInitialValue(false);
+        procesoCalendarizado.setDefaultValue(false);
         /**/
         procesoNativo.setInitialValue(false);
         procesoNativo.setDefaultValue(false);
@@ -605,6 +613,9 @@ public class RastroProceso extends AbstractPersistentEntity {
         procesoAsincrono.setLocalizedLabel(ENGLISH, "asynchronous process");
         procesoAsincrono.setLocalizedLabel(SPANISH, "proceso asíncrono");
         /**/
+        procesoCalendarizado.setLocalizedLabel(ENGLISH, "scheduled process");
+        procesoCalendarizado.setLocalizedLabel(SPANISH, "proceso calendarizado");
+        /**/
         procesoNativo.setLocalizedLabel(ENGLISH, "native process");
         procesoNativo.setLocalizedLabel(SPANISH, "proceso nativo");
         /**/
@@ -626,7 +637,7 @@ public class RastroProceso extends AbstractPersistentEntity {
         subprocesosConErrores.setLocalizedLabel(ENGLISH, "subprocesses with errors");
         subprocesosConErrores.setLocalizedLabel(SPANISH, "subprocesos con errores");
         /**/
-        subprocesosCancelados.setLocalizedLabel(ENGLISH, "canceled subprocesses");
+        subprocesosCancelados.setLocalizedLabel(ENGLISH, "cancelled subprocesses");
         subprocesosCancelados.setLocalizedLabel(SPANISH, "subprocesos cancelados");
         /**/
         procedimientoAfterUpdate.setLocalizedLabel(ENGLISH, "final procedure");
@@ -635,12 +646,13 @@ public class RastroProceso extends AbstractPersistentEntity {
     }
 
     /**/
-    protected Key key1;
+    protected Key ix_rastro_proceso_0001;
 
     @Override
     protected void settleKeys() {
         super.settleKeys();
-        key1.newKeyField(idClaseRecursoValor, recursoValor);
+        ix_rastro_proceso_0001.setUnique(false);
+        ix_rastro_proceso_0001.newKeyField(idClaseRecursoValor, recursoValor);
     }
 
     /**/
@@ -659,7 +671,7 @@ public class RastroProceso extends AbstractPersistentEntity {
             condicionEjeFun, codigoError, descripcionError, severidadMensaje, paginaRecursoObtenido, nombreArchivo, etiquetaLenguaje); //, mensajeAplicacion);
         /**/
         tab120.newTabField(funcion, codigoFuncion, nombreFuncion, descripcionFuncion, paginaFuncion,
-            tipoFuncion, tipoRastroFun, grupo, procesoAsincrono, procesoNativo, procesoWeb, subprocesos);
+            tipoFuncion, tipoRastroFun, grupo, procesoAsincrono, procesoCalendarizado, procesoNativo, procesoWeb, subprocesos);
         /**/
         tab130.newTabField(subprocesos, subprocesosPendientes, subprocesosEnProgreso,
             subprocesosSinErrores, subprocesosConErrores, subprocesosCancelados, procedimientoAfterUpdate);
@@ -678,9 +690,9 @@ public class RastroProceso extends AbstractPersistentEntity {
         // </editor-fold>
     }
 
-    Segment finalizado, pendiente, pendienteActual;
+    protected Segment finalizado, pendiente, pendienteActual;
 
-    Segment sinSuperior, conSuperior, sinSubprocesos, conSubprocesos;
+    protected Segment sinSuperior, conSuperior, sinSubprocesos, conSubprocesos;
 
     @Override
     protected void settleExpressions() {
@@ -817,7 +829,7 @@ public class RastroProceso extends AbstractPersistentEntity {
             /**/
         }
 
-        Check check101, check102, check103, check104, check105;
+        protected Check check101, check102, check103, check104, check105;
 
         @Override
         protected void settleExpressions() {
@@ -909,7 +921,7 @@ public class RastroProceso extends AbstractPersistentEntity {
             /**/
         }
 
-        Check check101, check102, check103, check104, check105;
+        protected Check check101, check102, check103, check104, check105;
 
         @Override
         protected void settleExpressions() {

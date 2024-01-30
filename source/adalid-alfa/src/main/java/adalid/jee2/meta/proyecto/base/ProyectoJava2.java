@@ -12,10 +12,12 @@
  */
 package adalid.jee2.meta.proyecto.base;
 
+import adalid.commons.bundles.Bundle;
 import adalid.commons.util.*;
 import adalid.core.*;
 import adalid.core.interfaces.*;
 import adalid.core.jee.JavaWebModule;
+import adalid.jee2.SpecialPage;
 import java.awt.Component;
 import java.util.Arrays;
 import java.util.List;
@@ -46,6 +48,7 @@ public class ProyectoJava2 extends ProyectoJava1 {
     private static final String[] NECESSARY_DAF_ENTITY_NAMES = {
         "ArchivoAdjunto",
         "ClaseRecurso",
+        "ColumnasOcultas",
         "ConjuntoSegmento",
         "DialogoDinamicoRemoto",
         "Dominio",
@@ -303,6 +306,50 @@ public class ProyectoJava2 extends ProyectoJava1 {
     }
 
     @Override
+    public void configureGenerator() {
+        super.configureGenerator();
+        addSpecialPageCalendarioProcesos();
+        addSpecialPageDistribucionTareas();
+        addSpecialPageIndicadoresGestion();
+    }
+
+    protected final SpecialPage paginaCalendarioProcesos = SpecialPage.of("CalendarioProcesos", "/faces/views/base/code/CalendarioProcesos.xhtml");
+
+    private void addSpecialPageCalendarioProcesos() {
+        paginaCalendarioProcesos.setIconClass("fa fa-calendar-check-o");
+        paginaCalendarioProcesos.setLocalizedLabel(Bundle.ENGLISH, "Scheduled processes");
+        paginaCalendarioProcesos.setLocalizedLabel(Bundle.SPANISH, "Procesos calendarizados");
+        paginaCalendarioProcesos.setLocalizedShortDescription(Bundle.ENGLISH, "Execution of scheduled processes");
+        paginaCalendarioProcesos.setLocalizedShortDescription(Bundle.SPANISH, "Ejecución de procesos calendarizados");
+        paginaCalendarioProcesos.setStartOption(false);
+        addSpecialPage(paginaCalendarioProcesos);
+    }
+
+    protected final SpecialPage paginaDistribucionTareas = SpecialPage.of("DistribucionTareas", "/faces/views/base/code/DistribucionTareas.xhtml");
+
+    private void addSpecialPageDistribucionTareas() {
+        paginaDistribucionTareas.setIconClass("fa fa-bar-chart");
+        paginaDistribucionTareas.setLocalizedLabel(Bundle.ENGLISH, "Task distribution");
+        paginaDistribucionTareas.setLocalizedLabel(Bundle.SPANISH, "Distribución de tareas");
+        paginaDistribucionTareas.setLocalizedShortDescription(Bundle.ENGLISH, "Task distribution charts");
+        paginaDistribucionTareas.setLocalizedShortDescription(Bundle.SPANISH, "Gráficos de distribución de tareas");
+        paginaDistribucionTareas.setStartOption(false);
+        addSpecialPage(paginaDistribucionTareas);
+    }
+
+    protected final SpecialPage paginaIndicadoresGestion = SpecialPage.of("IndicadoresGestion", "/faces/views/base/code/IndicadoresGestion.xhtml");
+
+    private void addSpecialPageIndicadoresGestion() {
+        paginaIndicadoresGestion.setIconClass("fa fa-dashboard");
+        paginaIndicadoresGestion.setLocalizedLabel(Bundle.ENGLISH, "Dashboard");
+        paginaIndicadoresGestion.setLocalizedLabel(Bundle.SPANISH, "Tablero");
+        paginaIndicadoresGestion.setLocalizedShortDescription(Bundle.ENGLISH, "Dashboard of management indicators");
+        paginaIndicadoresGestion.setLocalizedShortDescription(Bundle.SPANISH, "Tablero de indicadores de gestión");
+        paginaIndicadoresGestion.setStartOption(true);
+        addSpecialPage(paginaIndicadoresGestion);
+    }
+
+    @Override
     protected void disablePrivateAndOtherContextEntitiesCodeGen() {
         addEntitiesReferencedByPageFields(true);
         super.disablePrivateAndOtherContextEntitiesCodeGen();
@@ -317,8 +364,7 @@ public class ProyectoJava2 extends ProyectoJava1 {
     protected void addEntitiesReferencedByPageFields(boolean hidden) {
         Set<Entity> entities;
         for (Project module : getModulesList()) {
-            if (module instanceof JavaWebModule) {
-                JavaWebModule jwm = (JavaWebModule) module;
+            if (module instanceof JavaWebModule jwm) {
                 for (Page page : jwm.getPagesList()) {
                     if (page.isApplicationDefaultLocation()) {
                         entities = page.getEntitiesReferencedByFields(hidden);

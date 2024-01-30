@@ -13,6 +13,7 @@
 package meta.paquete.comun;
 
 import meta.entidad.comun.control.acceso.ClaseFabricador;
+import meta.entidad.comun.control.acceso.ColumnasOcultas;
 import meta.entidad.comun.control.acceso.ConjuntoSegmento;
 import meta.entidad.comun.control.acceso.ElementoSegmento;
 import meta.entidad.comun.control.acceso.GrupoUsuario;
@@ -55,6 +56,8 @@ public class PaqueteRegistroControlAcceso extends PaqueteRegistroBase {
     }
 
     protected ClaseFabricador ClaseFabricador;
+
+    protected ColumnasOcultas ColumnasOcultas;
 
     protected ConjuntoSegmento ConjuntoSegmento;
 

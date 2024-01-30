@@ -30,15 +30,6 @@ public class BooleanData extends BooleanPrimitive {
         XS2.setDataType(this, Boolean.class);
     }
 
-    @Override
-    public boolean isLogicalTautology() {
-        return false;
-    }
-
-    @Override
-    public void setLogicalTautology(boolean tautology) {
-    }
-
     private BooleanDisplayType _booleanDisplayType = BooleanDisplayType.UNSPECIFIED;
 
     /**

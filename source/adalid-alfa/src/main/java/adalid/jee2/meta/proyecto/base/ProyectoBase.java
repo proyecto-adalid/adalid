@@ -379,10 +379,9 @@ public class ProyectoBase extends Project implements SubjectProject, SpecialEnti
     public List<NativeQuerySegment> getSpecialNativeQuerySegments(Entity entity) {
         if (entity != null && entity.depth() == 0) {
             Property pk = entity.getPrimaryKeyProperty();
-            if (pk instanceof NumericPrimitive) {
+            if (pk instanceof NumericPrimitive np) {
                 List<Trigger> triggers = entity.getTriggersList();
                 if (triggers != null && !triggers.isEmpty()) {
-                    NumericPrimitive np = (NumericPrimitive) pk;
                     String usuario = specialValueOf(SpecialNumericValue.CURRENT_USER_ID);
                     String dominio = getEntityNumber(entity);
                     List<Entity> extensions = entity.getExtensionsList();
@@ -868,16 +867,14 @@ public class ProyectoBase extends Project implements SubjectProject, SpecialEnti
             return "?";
         }
         Artifact declaringArtifact = artifact.getDeclaringArtifact();
-        if (declaringArtifact instanceof Entity) {
+        if (declaringArtifact instanceof Entity declaringEntity) {
             if (artifact instanceof Property || artifact instanceof EntityCollection) {
                 String name = artifact.getName();
-                Entity declaringEntity = (Entity) declaringArtifact;
                 return getParameterNumber(name, declaringEntity);
             }
-        } else if (declaringArtifact instanceof Operation) {
+        } else if (declaringArtifact instanceof Operation declaringOperation) {
             if (artifact instanceof Parameter) {
                 String name = artifact.getName();
-                Operation declaringOperation = (Operation) declaringArtifact;
                 return getParameterNumber(name, declaringOperation);
             }
         }

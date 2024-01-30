@@ -29,4 +29,20 @@ public @interface StateProperty {
 
     boolean value() default true;
 
+    /**
+     * transitionUser especifica el nombre de la propiedad donde se almacena la referencia al usuario que ejecutó la operación de negocio que produjo
+     * la última transición. La clase de la propiedad especificada debe ser la clase de la entidad <b>Usuario</b> del proyecto.
+     *
+     * @return transitionUser
+     */
+    String transitionUser() default "";
+
+    /**
+     * transitionDateTime especifica el nombre de la propiedad donde se almacena la fecha, o fecha y hora, de la última transición. La clase de la
+     * propiedad especificada debe ser DateProperty o TimestampProperty.
+     *
+     * @return transitionDateTime
+     */
+    String transitionDateTime() default "";
+
 }

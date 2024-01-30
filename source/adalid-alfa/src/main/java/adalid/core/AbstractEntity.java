@@ -18,6 +18,7 @@ import adalid.commons.properties.*;
 import adalid.commons.util.*;
 import adalid.core.annotations.*;
 import adalid.core.comparators.*;
+import adalid.core.constants.*;
 import adalid.core.data.types.*;
 import adalid.core.enums.*;
 import adalid.core.exceptions.*;
@@ -893,6 +894,11 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
     /**
      *
      */
+    private boolean _tableViewWithQuickFilterSnippet = false;
+
+    /**
+     *
+     */
     private int _tableViewRowsLimit = Constants.DEFAULT_ROWS_PER_PAGE_LIMIT;
 
     /**
@@ -943,6 +949,21 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
     /**
      *
      */
+    private String _readingTableViewRowActionSnippetFileName = "";
+
+    /**
+     *
+     */
+    private String _readingTableViewRowStatusSnippetFileName = "";
+
+    /**
+     *
+     */
+    private String _readingTableViewRowNumberSnippetFileName = "";
+
+    /**
+     *
+     */
     private String _writingTableViewHeadSnippetFileName = "";
 
     /**
@@ -964,6 +985,21 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
      *
      */
     private String _writingTableViewBelowTableSnippetFileName = "";
+
+    /**
+     *
+     */
+    private String _writingTableViewRowActionSnippetFileName = "";
+
+    /**
+     *
+     */
+    private String _writingTableViewRowStatusSnippetFileName = "";
+
+    /**
+     *
+     */
+    private String _writingTableViewRowNumberSnippetFileName = "";
 
     /**
      *
@@ -2245,8 +2281,8 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
             if (property.isCalculable()) {
                 continue;
             }
-            if (property instanceof EntityReference) {
-                mapReferenceQueryProperties(map, (EntityReference) property);
+            if (property instanceof EntityReference entityReference) {
+                mapReferenceQueryProperties(map, entityReference);
             }
         }
         if (_inactiveIndicatorProperty != null) {
@@ -2260,9 +2296,9 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
             mapQueryProperty(map, _userProperty);
             mapReferenceQueryProperties(map, _userProperty);
         }
-        if (_segmentProperty instanceof EntityReference) { // since 20210218
-            mapQueryProperty(map, (EntityReference) _segmentProperty);
-            mapReferenceQueryProperties(map, (EntityReference) _segmentProperty);
+        if (_segmentProperty instanceof EntityReference entityReference) { // since 20210218
+            mapQueryProperty(map, entityReference);
+            mapReferenceQueryProperties(map, entityReference);
         }
         if (_orderBy != null) {
             Property orderByProperty = getOrderByProperty();
@@ -2313,8 +2349,8 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
         String key = property.getPathString();
         if (map.containsKey(key)) {
         } else if (property.isCalculable()) {
-            if (property instanceof CalculableProperty) {
-                mapCalculableQueryProperty(map, (CalculableProperty) property);
+            if (property instanceof CalculableProperty calculableProperty) {
+                mapCalculableQueryProperty(map, calculableProperty);
             }
         } else {
             map.put(key, property);
@@ -2323,32 +2359,28 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
 
     private void mapCalculableQueryProperty(Map<String, Property> map, CalculableProperty calculableProperty) {
         Object calculableValue = calculableProperty.getCalculableValue();
-        if (calculableValue != null) {
-            if (calculableValue instanceof Property) {
-                boolean ok = true;
-                Property property = (Property) calculableValue;
-                List<Artifact> pathList = property.getPathList();
-                for (Artifact artifact : pathList) {
-                    if (artifact instanceof Property && ((Property) artifact).isCalculable()) {
-                        ok = false;
-                        break;
-                    }
+        if (calculableValue instanceof Property property) {
+            boolean ok = true;
+            List<Artifact> pathList = property.getPathList();
+            for (Artifact artifact : pathList) {
+                if (artifact instanceof Property && ((Property) artifact).isCalculable()) {
+                    ok = false;
+                    break;
                 }
-                if (ok) {
-                    String key = calculableProperty.getPathString();
-                    map.put(key, calculableProperty);
+            }
+            if (ok) {
+                String key = calculableProperty.getPathString();
+                map.put(key, calculableProperty);
+                mapQueryProperty(map, property);
+            }
+        } else if (calculableValue instanceof Expression calculableValueExpression) {
+            boolean ok = verifyExpression(calculableValueExpression, calculableProperty, ExpressionUsage.CALCULABLE_QUERY_PROPERTY_VALUE);
+            if (ok) {
+                String key = calculableProperty.getPathString();
+                map.put(key, calculableProperty);
+                List<Property> referencedColumnsList = calculableValueExpression.getReferencedColumnsList();
+                for (Property property : referencedColumnsList) {
                     mapQueryProperty(map, property);
-                }
-            } else if (calculableValue instanceof Expression) {
-                Expression calculableValueExpression = (Expression) calculableValue;
-                boolean ok = verifyExpression(calculableValueExpression, calculableProperty, ExpressionUsage.CALCULABLE_QUERY_PROPERTY_VALUE);
-                if (ok) {
-                    String key = calculableProperty.getPathString();
-                    map.put(key, calculableProperty);
-                    List<Property> referencedColumnsList = calculableValueExpression.getReferencedColumnsList();
-                    for (Property property : referencedColumnsList) {
-                        mapQueryProperty(map, property);
-                    }
                 }
             }
         }
@@ -3165,15 +3197,7 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
     @Override
     public SelectOnloadOption getSelectOnloadOption() {
         return _selectOnloadOption != null && !_selectOnloadOption.equals(SelectOnloadOption.DEFAULT) ? _selectOnloadOption
-            : isEnumerationEntity() ? SelectOnloadOption.EXECUTE : defaultFilterSnippetPath() == null ? SelectOnloadOption.PROMPT : SelectOnloadOption.NO_ACTION;
-    }
-
-    private String defaultFilterSnippetPath() {
-        JavaWebProject jwp = getJavaWebProject();
-        String path = jwp == null ? null : jwp.getProjectFilterSnippetPath();
-        return path != null && !isEnumerationEntity() && (getBusinessKeyProperty() != null || getNameProperty() != null)
-            && (StringUtils.isBlank(_readingTableViewAboveTableSnippetFileName) || _readingTableViewAboveTableSnippetFileName.equals(path))
-            && (StringUtils.isBlank(_writingTableViewAboveTableSnippetFileName) || _writingTableViewAboveTableSnippetFileName.equals(path)) ? path : null;
+            : isEnumerationEntity() ? SelectOnloadOption.EXECUTE : getTableViewQuickFilterSnippetPath() == null ? SelectOnloadOption.PROMPT : SelectOnloadOption.NO_ACTION;
     }
 
     /**
@@ -3561,6 +3585,27 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
     }
 
     /**
+     * @return the table-view-with-quick-filter-snippet indicator
+     */
+    @Override
+    public boolean isTableViewWithQuickFilterSnippet() {
+        return _tableViewWithQuickFilterSnippet;
+    }
+
+    /**
+     * @return the quick-filter-snippet path
+     */
+    @Override
+    public String getTableViewQuickFilterSnippetPath() {
+        if (isTableViewWithQuickFilterSnippet()) {
+            JavaWebProject jwp = getJavaWebProject();
+            String path = jwp == null ? null : jwp.getProjectFilterSnippetPath();
+            return path != null ? path : getBusinessKeyProperty() != null || getNameProperty() != null ? Constants.QUICK_FILTER_SNIPPET : null;
+        }
+        return null;
+    }
+
+    /**
      * @return the table view rows limit
      */
 //  @Override
@@ -3694,7 +3739,7 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
      */
 //  @Override
     public String getReadingTableViewAboveTableSnippetFileName() {
-        return StringUtils.defaultIfBlank(_readingTableViewAboveTableSnippetFileName, defaultFilterSnippetPath());
+        return _readingTableViewAboveTableSnippetFileName;
     }
 
     protected void setReadingTableViewAboveTableSnippetFileName(String fileName) {
@@ -3725,6 +3770,66 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
             _readingTableViewBelowTableSnippetFileName = fileName;
         } else if (log) {
             logger.error(getName() + " reading table view below table snippet is invalid ");
+            Project.increaseParserErrorCount();
+        }
+    }
+
+    /**
+     * @return the reading table view row action snippet file name
+     */
+//  @Override
+    public String getReadingTableViewRowActionSnippetFileName() {
+        return _readingTableViewRowActionSnippetFileName;
+    }
+
+    protected void setReadingTableViewRowActionSnippetFileName(String fileName) {
+        boolean log = depth() == 0;
+        if (StringUtils.isBlank(fileName)) {
+            _readingTableViewRowActionSnippetFileName = "";
+        } else if (isValidSnippetFileName(fileName)) {
+            _readingTableViewRowActionSnippetFileName = fileName;
+        } else if (log) {
+            logger.error(getName() + " reading table view row action snippet is invalid ");
+            Project.increaseParserErrorCount();
+        }
+    }
+
+    /**
+     * @return the reading table view row status snippet file name
+     */
+//  @Override
+    public String getReadingTableViewRowStatusSnippetFileName() {
+        return _readingTableViewRowStatusSnippetFileName;
+    }
+
+    protected void setReadingTableViewRowStatusSnippetFileName(String fileName) {
+        boolean log = depth() == 0;
+        if (StringUtils.isBlank(fileName)) {
+            _readingTableViewRowStatusSnippetFileName = "";
+        } else if (isValidSnippetFileName(fileName)) {
+            _readingTableViewRowStatusSnippetFileName = fileName;
+        } else if (log) {
+            logger.error(getName() + " reading table view row status snippet is invalid ");
+            Project.increaseParserErrorCount();
+        }
+    }
+
+    /**
+     * @return the reading table view row number snippet file name
+     */
+//  @Override
+    public String getReadingTableViewRowNumberSnippetFileName() {
+        return _readingTableViewRowNumberSnippetFileName;
+    }
+
+    protected void setReadingTableViewRowNumberSnippetFileName(String fileName) {
+        boolean log = depth() == 0;
+        if (StringUtils.isBlank(fileName)) {
+            _readingTableViewRowNumberSnippetFileName = "";
+        } else if (isValidSnippetFileName(fileName)) {
+            _readingTableViewRowNumberSnippetFileName = fileName;
+        } else if (log) {
+            logger.error(getName() + " reading table view row number snippet is invalid ");
             Project.increaseParserErrorCount();
         }
     }
@@ -3794,7 +3899,7 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
      */
 //  @Override
     public String getWritingTableViewAboveTableSnippetFileName() {
-        return StringUtils.defaultIfBlank(_writingTableViewAboveTableSnippetFileName, defaultFilterSnippetPath());
+        return _writingTableViewAboveTableSnippetFileName;
     }
 
     protected void setWritingTableViewAboveTableSnippetFileName(String fileName) {
@@ -3825,6 +3930,66 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
             _writingTableViewBelowTableSnippetFileName = fileName;
         } else if (log) {
             logger.error(getName() + " writing table view below table snippet is invalid ");
+            Project.increaseParserErrorCount();
+        }
+    }
+
+    /**
+     * @return the writing table view row action snippet file name
+     */
+//  @Override
+    public String getWritingTableViewRowActionSnippetFileName() {
+        return _writingTableViewRowActionSnippetFileName;
+    }
+
+    protected void setWritingTableViewRowActionSnippetFileName(String fileName) {
+        boolean log = depth() == 0;
+        if (StringUtils.isBlank(fileName)) {
+            _writingTableViewRowActionSnippetFileName = "";
+        } else if (isValidSnippetFileName(fileName)) {
+            _writingTableViewRowActionSnippetFileName = fileName;
+        } else if (log) {
+            logger.error(getName() + " writing table view row action snippet is invalid ");
+            Project.increaseParserErrorCount();
+        }
+    }
+
+    /**
+     * @return the writing table view row status snippet file name
+     */
+//  @Override
+    public String getWritingTableViewRowStatusSnippetFileName() {
+        return _writingTableViewRowStatusSnippetFileName;
+    }
+
+    protected void setWritingTableViewRowStatusSnippetFileName(String fileName) {
+        boolean log = depth() == 0;
+        if (StringUtils.isBlank(fileName)) {
+            _writingTableViewRowStatusSnippetFileName = "";
+        } else if (isValidSnippetFileName(fileName)) {
+            _writingTableViewRowStatusSnippetFileName = fileName;
+        } else if (log) {
+            logger.error(getName() + " writing table view row status snippet is invalid ");
+            Project.increaseParserErrorCount();
+        }
+    }
+
+    /**
+     * @return the writing table view row number snippet file name
+     */
+//  @Override
+    public String getWritingTableViewRowNumberSnippetFileName() {
+        return _writingTableViewRowNumberSnippetFileName;
+    }
+
+    protected void setWritingTableViewRowNumberSnippetFileName(String fileName) {
+        boolean log = depth() == 0;
+        if (StringUtils.isBlank(fileName)) {
+            _writingTableViewRowNumberSnippetFileName = "";
+        } else if (isValidSnippetFileName(fileName)) {
+            _writingTableViewRowNumberSnippetFileName = fileName;
+        } else if (log) {
+            logger.error(getName() + " writing table view row number snippet is invalid ");
             Project.increaseParserErrorCount();
         }
     }
@@ -4819,7 +4984,7 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
      */
     @Override
     public boolean isEntityStateDiagramGenEnabled() {
-        return _entityStateDiagramGenEnabled && !getStatesMap().isEmpty();
+        return _entityStateDiagramGenEnabled && !getTransitionsMap().isEmpty();
     }
 
     /**
@@ -4934,34 +5099,36 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
         Property name = getNameProperty();
         Property code = getBusinessKeyProperty();
         EntityReferenceStyle defaultStyle = defaultReferenceStyle(code, name, EntityReferenceStyle.UNSPECIFIED);
-        switch (_referenceStyle) {
-            case NAME:
-                return nameOrCodeStyle(code, name, defaultStyle);
-            case CHARACTER_KEY:
-                return codeOrNameStyle(code, name, defaultStyle);
-            case NAME_AND_CHARACTER_KEY:
-                return nameAndOrCodeStyle(code, name, defaultStyle);
-            case CHARACTER_KEY_AND_NAME:
-                return codeAndOrNameStyle(code, name, defaultStyle);
-            default:
-                return defaultStyle;
-        }
+        return switch (_referenceStyle) {
+            case NAME ->
+                nameOrCodeStyle(code, name, defaultStyle);
+            case CHARACTER_KEY ->
+                codeOrNameStyle(code, name, defaultStyle);
+            case NAME_AND_CHARACTER_KEY ->
+                nameAndOrCodeStyle(code, name, defaultStyle);
+            case CHARACTER_KEY_AND_NAME ->
+                codeAndOrNameStyle(code, name, defaultStyle);
+            default ->
+                defaultStyle;
+        };
     }
 
     private EntityReferenceStyle defaultReferenceStyle(Property code, Property name, EntityReferenceStyle defaultStyle) {
         SearchType searchType = getSearchType();
         if (SearchType.LIST.equals(searchType) || SearchType.RADIO.equals(searchType)) {
             switch (_listStyle) {
-                case NAME:
-                case PRIMARY_KEY_AND_NAME:
+                case NAME, PRIMARY_KEY_AND_NAME -> {
                     return nameOrCodeStyle(code, name, defaultStyle);
-                case CHARACTER_KEY:
-                case PRIMARY_KEY_AND_CHARACTER_KEY:
+                }
+                case CHARACTER_KEY, PRIMARY_KEY_AND_CHARACTER_KEY -> {
                     return codeOrNameStyle(code, name, defaultStyle);
-                case NAME_AND_CHARACTER_KEY:
+                }
+                case NAME_AND_CHARACTER_KEY -> {
                     return nameAndOrCodeStyle(code, name, defaultStyle);
-                case CHARACTER_KEY_AND_NAME:
+                }
+                case CHARACTER_KEY_AND_NAME -> {
                     return codeAndOrNameStyle(code, name, defaultStyle);
+                }
             }
         }
         return isEnumerationEntity() ? codeAndOrNameStyle(code, name, defaultStyle) : nameOrCodeStyle(code, name, defaultStyle);
@@ -4991,14 +5158,14 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
         Property name = getNameProperty();
         Property code = getBusinessKeyProperty();
         EntityReferenceProperty defaultProperty = defaultReferenceProperty(code, name, EntityReferenceProperty.UNSPECIFIED);
-        switch (_referenceFilterBy) {
-            case NAME:
-                return nameOrCodeProperty(code, name, defaultProperty);
-            case CHARACTER_KEY:
-                return codeOrNameProperty(code, name, defaultProperty);
-            default:
-                return defaultProperty;
-        }
+        return switch (_referenceFilterBy) {
+            case NAME ->
+                nameOrCodeProperty(code, name, defaultProperty);
+            case CHARACTER_KEY ->
+                codeOrNameProperty(code, name, defaultProperty);
+            default ->
+                defaultProperty;
+        };
     }
 
     /**
@@ -5007,14 +5174,14 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
     @Override
     public Property getReferenceFilterByProperty() {
         EntityReferenceProperty referenceFilterBy = getReferenceFilterBy();
-        switch (referenceFilterBy) {
-            case NAME:
-                return getNameProperty();
-            case CHARACTER_KEY:
-                return getBusinessKeyProperty();
-            default:
-                return null;
-        }
+        return switch (referenceFilterBy) {
+            case NAME ->
+                getNameProperty();
+            case CHARACTER_KEY ->
+                getBusinessKeyProperty();
+            default ->
+                null;
+        };
     }
 
     /**
@@ -5025,14 +5192,14 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
         Property name = getNameProperty();
         Property code = getBusinessKeyProperty();
         EntityReferenceProperty defaultProperty = defaultReferenceProperty(code, name, EntityReferenceProperty.UNSPECIFIED);
-        switch (_referenceSortBy) {
-            case NAME:
-                return nameOrCodeProperty(code, name, defaultProperty);
-            case CHARACTER_KEY:
-                return codeOrNameProperty(code, name, defaultProperty);
-            default:
-                return defaultProperty;
-        }
+        return switch (_referenceSortBy) {
+            case NAME ->
+                nameOrCodeProperty(code, name, defaultProperty);
+            case CHARACTER_KEY ->
+                codeOrNameProperty(code, name, defaultProperty);
+            default ->
+                defaultProperty;
+        };
     }
 
     /**
@@ -5041,28 +5208,26 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
     @Override
     public Property getReferenceSortByProperty() {
         EntityReferenceProperty referenceSortBy = getReferenceSortBy();
-        switch (referenceSortBy) {
-            case NAME:
-                return getNameProperty();
-            case CHARACTER_KEY:
-                return getBusinessKeyProperty();
-            default:
-                return null;
-        }
+        return switch (referenceSortBy) {
+            case NAME ->
+                getNameProperty();
+            case CHARACTER_KEY ->
+                getBusinessKeyProperty();
+            default ->
+                null;
+        };
     }
 
     private EntityReferenceProperty defaultReferenceProperty(Property code, Property name, EntityReferenceProperty defaultProperty) {
         EntityReferenceStyle referenceStyle = getReferenceStyle();
-        switch (referenceStyle) {
-            case NAME:
-            case NAME_AND_CHARACTER_KEY:
-                return nameOrCodeProperty(code, name, defaultProperty);
-            case CHARACTER_KEY:
-            case CHARACTER_KEY_AND_NAME:
-                return codeOrNameProperty(code, name, defaultProperty);
-            default:
-                return EntityReferenceProperty.UNSPECIFIED;
-        }
+        return switch (referenceStyle) {
+            case NAME, NAME_AND_CHARACTER_KEY ->
+                nameOrCodeProperty(code, name, defaultProperty);
+            case CHARACTER_KEY, CHARACTER_KEY_AND_NAME ->
+                codeOrNameProperty(code, name, defaultProperty);
+            default ->
+                EntityReferenceProperty.UNSPECIFIED;
+        };
     }
 
     private EntityReferenceProperty nameOrCodeProperty(Property code, Property name, EntityReferenceProperty defaultProperty) {
@@ -5099,39 +5264,39 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
             Property name = getNameProperty();
             Property code = getBusinessKeyProperty();
             ListStyle defaultStyle = defaultListStyle(code, name, ListStyle.UNSPECIFIED);
-            switch (_listStyle) {
-                case NAME:
-                    return nameOrCodeListStyle(code, name, defaultStyle);
-                case CHARACTER_KEY:
-                    return codeOrNameListStyle(code, name, defaultStyle);
-                case NAME_AND_CHARACTER_KEY:
-                    return nameAndOrCodeListStyle(code, name, defaultStyle);
-                case CHARACTER_KEY_AND_NAME:
-                    return codeAndOrNameListStyle(code, name, defaultStyle);
-                case PRIMARY_KEY_AND_NAME:
-                    return name == null ? defaultStyle : ListStyle.PRIMARY_KEY_AND_NAME;
-                case PRIMARY_KEY_AND_CHARACTER_KEY:
-                    return code == null ? defaultStyle : ListStyle.PRIMARY_KEY_AND_CHARACTER_KEY;
-                default:
-                    return defaultStyle;
-            }
+            return switch (_listStyle) {
+                case NAME ->
+                    nameOrCodeListStyle(code, name, defaultStyle);
+                case CHARACTER_KEY ->
+                    codeOrNameListStyle(code, name, defaultStyle);
+                case NAME_AND_CHARACTER_KEY ->
+                    nameAndOrCodeListStyle(code, name, defaultStyle);
+                case CHARACTER_KEY_AND_NAME ->
+                    codeAndOrNameListStyle(code, name, defaultStyle);
+                case PRIMARY_KEY_AND_NAME ->
+                    name == null ? defaultStyle : ListStyle.PRIMARY_KEY_AND_NAME;
+                case PRIMARY_KEY_AND_CHARACTER_KEY ->
+                    code == null ? defaultStyle : ListStyle.PRIMARY_KEY_AND_CHARACTER_KEY;
+                default ->
+                    defaultStyle;
+            };
         }
         return ListStyle.UNSPECIFIED;
     }
 
     private ListStyle defaultListStyle(Property code, Property name, ListStyle defaultStyle) {
-        switch (_referenceStyle) {
-            case NAME:
-                return nameOrCodeListStyle(code, name, defaultStyle);
-            case CHARACTER_KEY:
-                return codeOrNameListStyle(code, name, defaultStyle);
-            case NAME_AND_CHARACTER_KEY:
-                return nameAndOrCodeListStyle(code, name, defaultStyle);
-            case CHARACTER_KEY_AND_NAME:
-                return codeAndOrNameListStyle(code, name, defaultStyle);
-            default:
-                return defaultStyle;
-        }
+        return switch (_referenceStyle) {
+            case NAME ->
+                nameOrCodeListStyle(code, name, defaultStyle);
+            case CHARACTER_KEY ->
+                codeOrNameListStyle(code, name, defaultStyle);
+            case NAME_AND_CHARACTER_KEY ->
+                nameAndOrCodeListStyle(code, name, defaultStyle);
+            case CHARACTER_KEY_AND_NAME ->
+                codeAndOrNameListStyle(code, name, defaultStyle);
+            default ->
+                defaultStyle;
+        };
     }
 
     private ListStyle nameOrCodeListStyle(Property code, Property name, ListStyle defaultStyle) {
@@ -5364,20 +5529,20 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
         int i = 0;
         for (State state : list) {
             exp = map.get(state.getName());
-            if (exp instanceof State) {
-                array[i++] = (State) exp;
+            if (exp instanceof State s) {
+                array[i++] = s;
             }
         }
-        switch (i) {
-            case 0:
-                return null;
-            case 1:
-                return array[0];
-            case 2:
-                return or(array[0], array[1]);
-            default:
-                return or(array[0], array[1], (State[]) ArrayUtils.subarray(array, 2, i));
-        }
+        return switch (i) {
+            case 0 ->
+                null;
+            case 1 ->
+                array[0];
+            case 2 ->
+                or(array[0], array[1]);
+            default ->
+                or(array[0], array[1], (State[]) ArrayUtils.subarray(array, 2, i));
+        };
     }
 
     private BooleanExpression instanceParameterChecksConjunction() {
@@ -5393,20 +5558,20 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
         int i = 0;
         for (Check check : list) {
             exp = map.get(check.getName());
-            if (exp instanceof Check) {
-                array[i++] = (Check) exp;
+            if (exp instanceof Check c) {
+                array[i++] = c;
             }
         }
-        switch (i) {
-            case 0:
-                return null;
-            case 1:
-                return array[0];
-            case 2:
-                return and(array[0], array[1]);
-            default:
-                return and(array[0], array[1], (Check[]) ArrayUtils.subarray(array, 2, i));
-        }
+        return switch (i) {
+            case 0 ->
+                null;
+            case 1 ->
+                array[0];
+            case 2 ->
+                and(array[0], array[1]);
+            default ->
+                and(array[0], array[1], (Check[]) ArrayUtils.subarray(array, 2, i));
+        };
     }
 
     /**
@@ -5441,18 +5606,16 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
      */
     public Set<Entity> getSearchValueFilterPropertyReferences() {
         Object object;
-        Property property;
         Artifact artifact;
         List<Artifact> pathList;
         Set<Entity> set = new LinkedHashSet<>();
         for (Property key : _searchValueFilter.keySet()) {
             object = _searchValueFilter.get(key);
-            if (object instanceof Property) {
-                property = (Property) object;
+            if (object instanceof Property property) {
                 pathList = property.getPropertyPathList();
                 artifact = pathList.get(0);
-                if (artifact instanceof Entity) {
-                    set.add((Entity) artifact);
+                if (artifact instanceof Entity entity) {
+                    set.add(entity);
                 }
             }
         }
@@ -6164,8 +6327,7 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
     }
 
     private boolean setSearchValueFilter(Object operand, Object originalValue) {
-        if (operand instanceof Property) {
-            Property property = (Property) operand;
+        if (operand instanceof Property property) {
             Object value
                 = operand instanceof BigDecimalProperty ? ObjUtils.toBigDecimal(originalValue)
                     : operand instanceof BigIntegerProperty ? ObjUtils.toBigInteger(originalValue)
@@ -6464,8 +6626,8 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
             return;
         }
         EntityReference reference;
-        if (master instanceof EntityReference) {
-            reference = (EntityReference) master;
+        if (master instanceof EntityReference entityReference) {
+            reference = entityReference;
         } else {
             message += "; supplied expression declaring entity is not an entity reference";
             logger.error(message);
@@ -6586,8 +6748,8 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
             return;
         }
         EntityReference reference;
-        if (master instanceof EntityReference) {
-            reference = (EntityReference) master;
+        if (master instanceof EntityReference entityReference) {
+            reference = entityReference;
         } else {
             message += "; supplied expression declaring entity is not an entity reference";
             logger.error(message);
@@ -7091,15 +7253,16 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
         Class<? extends Entity> userEntityClass;
         if (value != null) {
             switch (value) {
-                case CURRENT_USER:
+                case CURRENT_USER -> {
                     Project project = TLC.getProject();
                     userEntityClass = project == null ? null : project.getUserEntityClass();
                     if (userEntityClass != null && userEntityClass.isAssignableFrom(getClass())) {
                         return true;
                     }
-                    break;
-                default:
+                }
+                default -> {
                     return true;
+                }
             }
         }
         String message = value + " is not a valid value for " + getFullName();
@@ -7253,8 +7416,7 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
             if (reference.isManyToOne()) {
                 masterDetailView = reference.getMasterDetailView();
                 switch (masterDetailView) {
-                    case TABLE:
-                    case TABLE_AND_DETAIL:
+                    case TABLE, TABLE_AND_DETAIL -> {
                         declaring = reference.getDeclaringEntity().getClass();
                         if (declaring != null) {
                             detail = _project.getEntity(declaring);
@@ -7264,7 +7426,7 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
                                 }
                             }
                         }
-                        break;
+                    }
                 }
             }
         }
@@ -7854,8 +8016,7 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
 
         @Override
         public boolean equals(Object obj) {
-            if (obj instanceof LocaleEntityReference) {
-                LocaleEntityReference ler = (LocaleEntityReference) obj;
+            if (obj instanceof LocaleEntityReference ler) {
                 return loc.equals(ler.loc) && ref.equals(ler.ref);
             }
             return false;
@@ -7902,8 +8063,7 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
 
         @Override
         public boolean equals(Object obj) {
-            if (obj instanceof LocaleDisplayFormat) {
-                LocaleDisplayFormat ldf = (LocaleDisplayFormat) obj;
+            if (obj instanceof LocaleDisplayFormat ldf) {
                 return loc.equals(ldf.loc) && fmt.equals(ldf.fmt);
             }
             return false;
@@ -7951,8 +8111,8 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
         String fieldName = declaringField == null ? className : declaringField.getName();
         setDataClass(namedClass);
         setDataType(namedClass);
-        if (declaringArtifact instanceof Project) {
-            _project = (Project) declaringArtifact;
+        if (declaringArtifact instanceof Project project) {
+            _project = project;
             _rootInstance = true;
             setDeclaredIndicators();
             /*
@@ -8171,6 +8331,7 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
             verifyDescriptions();
         }
         _settler = '?';
+        localize();
     }
 
     private void verifyProperties() {
@@ -8286,7 +8447,6 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
         track("clinchOperations");
 //      Class<?> type;
         Object o;
-        Operation operation;
         Class<?> clazz = getClass();
         Class<?> top = Entity.class;
         for (Field field : XS1.getFields(clazz, top, Operation.class)) {
@@ -8296,8 +8456,7 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
                 String errmsg = "failed to get field \"" + field + "\" at " + this;
                 try {
                     o = field.get(this);
-                    if (o instanceof Operation) {
-                        operation = (Operation) o;
+                    if (o instanceof Operation operation) {
                         operation.settle();
                     }
                 } catch (IllegalArgumentException | IllegalAccessException ex) {
@@ -8311,6 +8470,88 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
     protected void settleTriggers() {
         track("settleTriggers");
         _settler = 'G';
+    }
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="localize">
+    protected void localize() {
+        Artifact declaringArtifact = getDeclaringArtifact();
+        localizeAttributes();
+        if (declaringArtifact == null) {
+            localizeProperties();
+            localizeCollections();
+            localizeLinks();
+            localizeKeys();
+            localizeSteps();
+            localizeTabs();
+            localizeViews();
+            localizeInstances();
+            localizeExpressions();
+            localizeFilters();
+            localizeTransitions();
+            localizeOperations();
+            localizeTriggers();
+        } else {
+            if (declaringArtifact instanceof Operation) {
+                localizeExpressions();
+            }
+        }
+    }
+
+    protected void localizeAttributes() {
+        track("localizeAttributes");
+    }
+
+    protected void localizeProperties() {
+        track("localizeProperties");
+    }
+
+    protected void localizeCollections() {
+        track("localizeCollections");
+    }
+
+    protected void localizeLinks() {
+        track("localizeLinks");
+    }
+
+    protected void localizeKeys() {
+        track("localizeKeys");
+    }
+
+    protected void localizeSteps() {
+        track("localizeSteps");
+    }
+
+    protected void localizeTabs() {
+        track("localizeTabs");
+    }
+
+    protected void localizeViews() {
+        track("localizeViews");
+    }
+
+    protected void localizeInstances() {
+        track("localizeInstances");
+    }
+
+    protected void localizeExpressions() {
+        track("localizeExpressions");
+    }
+
+    protected void localizeFilters() {
+        track("localizeFilters");
+    }
+
+    protected void localizeTransitions() {
+        track("localizeTransitions");
+    }
+
+    protected void localizeOperations() {
+        track("localizeOperations");
+    }
+
+    protected void localizeTriggers() {
+        track("localizeTriggers");
     }
     // </editor-fold>
 
@@ -8787,44 +9028,44 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
     void setKeyProperties() {
         Object keyProperty;
         keyProperty = getKeyProperty(_primaryKeyField);
-        if (keyProperty instanceof Property) {
-            _primaryKeyProperty = (Property) keyProperty;
+        if (keyProperty instanceof Property property) {
+            _primaryKeyProperty = property;
         }
         keyProperty = getKeyProperty(_sequenceField);
-        if (keyProperty instanceof LongProperty) {
-            _sequenceProperty = (LongProperty) keyProperty;
+        if (keyProperty instanceof LongProperty longProperty) {
+            _sequenceProperty = longProperty;
         }
         keyProperty = getKeyProperty(_versionField);
-        if (keyProperty instanceof LongProperty) {
-            _versionProperty = (LongProperty) keyProperty;
+        if (keyProperty instanceof LongProperty longProperty) {
+            _versionProperty = longProperty;
         }
         keyProperty = getKeyProperty(_numericKeyField);
-        if (keyProperty instanceof IntegerProperty) {
-            _numericKeyProperty = (IntegerProperty) keyProperty;
+        if (keyProperty instanceof IntegerProperty integerProperty) {
+            _numericKeyProperty = integerProperty;
         }
         keyProperty = getKeyProperty(_characterKeyField);
-        if (keyProperty instanceof StringProperty) {
-            _characterKeyProperty = (StringProperty) keyProperty;
+        if (keyProperty instanceof StringProperty stringProperty) {
+            _characterKeyProperty = stringProperty;
         }
         keyProperty = getKeyProperty(_nameField);
-        if (keyProperty instanceof StringProperty) {
-            _nameProperty = (StringProperty) keyProperty;
+        if (keyProperty instanceof StringProperty stringProperty) {
+            _nameProperty = stringProperty;
         }
         keyProperty = getKeyProperty(_descriptionField);
-        if (keyProperty instanceof StringProperty) {
-            _descriptionProperty = (StringProperty) keyProperty;
+        if (keyProperty instanceof StringProperty stringProperty) {
+            _descriptionProperty = stringProperty;
         }
         keyProperty = getKeyProperty(_imageField);
-        if (keyProperty instanceof BinaryProperty) {
-            _imageProperty = (BinaryProperty) keyProperty;
+        if (keyProperty instanceof BinaryProperty binaryProperty) {
+            _imageProperty = binaryProperty;
         }
         keyProperty = getKeyProperty(_inactiveIndicatorField);
-        if (keyProperty instanceof BooleanProperty) {
-            _inactiveIndicatorProperty = (BooleanProperty) keyProperty;
+        if (keyProperty instanceof BooleanProperty booleanProperty) {
+            _inactiveIndicatorProperty = booleanProperty;
         }
         keyProperty = getKeyProperty(_urlField);
-        if (keyProperty instanceof StringProperty) {
-            _urlProperty = (StringProperty) keyProperty;
+        if (keyProperty instanceof StringProperty stringProperty) {
+            _urlProperty = stringProperty;
         }
         keyProperty = getKeyProperty(_parentField);
         if (keyProperty instanceof Entity) {
@@ -8841,12 +9082,12 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
         keyProperty = getKeyProperty(_segmentField);
         if (keyProperty instanceof Entity) {
             _segmentProperty = (EntityReference) keyProperty;
-        } else if (keyProperty instanceof LongProperty) { // since20210218
-            _segmentProperty = (LongProperty) keyProperty;
+        } else if (keyProperty instanceof LongProperty longProperty) { // since20210218
+            _segmentProperty = longProperty;
         }
         keyProperty = getKeyProperty(_businessKeyField);
-        if (keyProperty instanceof Property) {
-            _businessKeyProperty = (Property) keyProperty;
+        if (keyProperty instanceof Property property) {
+            _businessKeyProperty = property;
         }
         keyProperty = getKeyProperty(_stateField);
         if (keyProperty instanceof Entity) {
@@ -9160,27 +9401,38 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
             if (e != null) {
                 verifyExpression(e, property, ExpressionUsage.NULLIFYING_FILTER, false);
             }
-            if (property instanceof Entity) {
-                Entity entity = (Entity) property;
+            if (property instanceof Entity entity) {
                 e = entity.getSearchQueryFilter();
                 if (e != null) {
                     verifyExpression(e, property, ExpressionUsage.SEARCH_QUERY_FILTER, false);
                 }
             }
             o = property.getInitialValue();
-            if (o instanceof Expression) {
-                e = (Expression) o;
+            if (o instanceof Expression expression) {
+                e = expression;
                 verifyExpression(e, property, ExpressionUsage.INITIAL_VALUE, false);
             }
             o = property.getDefaultValue();
-            if (o instanceof Expression) {
-                e = (Expression) o;
+            if (o instanceof Expression expression) {
+                e = expression;
                 verifyExpression(e, property, ExpressionUsage.DEFAULT_VALUE);
             }
             o = property.getCurrentValue();
-            if (o instanceof Expression) {
-                e = (Expression) o;
+            if (o instanceof Expression expression) {
+                e = expression;
                 verifyExpression(e, property, ExpressionUsage.CURRENT_VALUE);
+            }
+            if (property instanceof IntervalizedArtifact ia) {
+                o = ia.getMaxValue();
+                if (o instanceof Expression expression) {
+                    e = expression;
+                    verifyExpression(e, property, ExpressionUsage.MAX_VALUE);
+                }
+                o = ia.getMinValue();
+                if (o instanceof Expression expression) {
+                    e = expression;
+                    verifyExpression(e, property, ExpressionUsage.MIN_VALUE);
+                }
             }
         }
         /*
@@ -9425,9 +9677,7 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
         final String msg4 = " is calculable but not assignable from ";
         Set<String> annotations = new TreeSet<>();
 //      EntityReference reference;
-        PersistentEntityReference persistentEntityReference;
         Object calculableValue;
-        DataArtifact dataArtifact;
         List<Artifact> pathList;
         boolean b1, b2;
         Class<?> class1, class2;
@@ -9499,8 +9749,7 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
                     }
                 }
                 /**/
-                if (property instanceof PersistentEntityReference) {
-                    persistentEntityReference = (PersistentEntityReference) property;
+                if (property instanceof PersistentEntityReference persistentEntityReference) {
                     if (persistentEntityReference.isForeignKey()) {
                         annotations.add("ForeignKey");
                     }
@@ -9509,13 +9758,12 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
                     logger.error(property.getFullName() + msg1 + StringUtils.join(annotations, ", "));
                     Project.increaseParserErrorCount();
                 }
-                if (property instanceof CalculableProperty) {
-                    calculableValue = ((CalculableProperty) property).getCalculableValue();
+                if (property instanceof CalculableProperty calculableProperty) {
+                    calculableValue = calculableProperty.getCalculableValue();
                     if (calculableValue == null) {
                         logger.error(property.getFullName() + msg2);
                         Project.increaseParserErrorCount();
-                    } else if (calculableValue instanceof DataArtifact) {
-                        dataArtifact = (DataArtifact) calculableValue;
+                    } else if (calculableValue instanceof DataArtifact dataArtifact) {
                         pathList = dataArtifact.getPathList();
                         for (Artifact artifact : pathList) {
                             if (artifact instanceof Property && ((Property) artifact).isCalculable()) {
@@ -9534,8 +9782,8 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
                             logger.error(property.getFullName() + msg4 + dataArtifact.getFullName());
                             Project.increaseParserErrorCount();
                         }
-                    } else if (calculableValue instanceof Expression) {
-                        verifyExpression((Expression) calculableValue, property, ExpressionUsage.CALCULABLE_FIELD_VALUE);
+                    } else if (calculableValue instanceof Expression expression) {
+                        verifyExpression(expression, property, ExpressionUsage.CALCULABLE_FIELD_VALUE);
                     }
                 }
             }
@@ -9617,8 +9865,8 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
         for (String key : queryPropertiesMap.keySet()) {
             property = queryPropertiesMap.get(key);
             if (property.isCalculable()) {
-                if (property instanceof CalculableProperty) {
-                    calculableValue = ((CalculableProperty) property).getCalculableValue();
+                if (property instanceof CalculableProperty calculableProperty) {
+                    calculableValue = calculableProperty.getCalculableValue();
                     if (calculableValue == null) {
                         logger.error(message + "; " + property.getFullName() + " is a calculable property with no calculable value expression");
                         Project.increaseParserErrorCount();
@@ -9653,7 +9901,6 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
 
     private void checkInstances() {
         Property property;
-        StringProperty stringProperty;
         Object object;
         String string;
         for (Instance instance : getInstancesList()) {
@@ -9664,8 +9911,7 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
             } else {
                 for (InstanceField field : fields) {
                     property = field.getProperty();
-                    if (property instanceof StringProperty) {
-                        stringProperty = (StringProperty) property;
+                    if (property instanceof StringProperty stringProperty) {
                         object = field.getValue();
                         string = object instanceof String ? (String) object : null;
                         if (string == null) {
@@ -9953,9 +10199,8 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
                     if (property.equals(reference)) {
                         continue;
                     }
-                    if (property instanceof EntityReference) {
-                        entityReference = (EntityReference) property;
-                        if (MasterDetailView.NONE.equals(entityReference.getMasterDetailView())) {
+                    if (property instanceof EntityReference er) {
+                        if (MasterDetailView.NONE.equals(er.getMasterDetailView())) {
                             continue;
                         }
                         size++;
@@ -10213,19 +10458,19 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
     private void setBusinessKey() {
         if (_businessKeyFieldName == null || _businessKeyField == null) {
             switch (_businessKeyType) {
-                case CHARACTER_KEY_PROPERTY:
+                case CHARACTER_KEY_PROPERTY -> {
                     if (_characterKeyField != null) {
                         _businessKeyFieldName = _characterKeyFieldName;
                         _businessKeyField = _characterKeyField;
                     }
-                    break;
-                case NUMERIC_KEY_PROPERTY:
+                }
+                case NUMERIC_KEY_PROPERTY -> {
                     if (_numericKeyField != null) {
                         _businessKeyFieldName = _numericKeyFieldName;
                         _businessKeyField = _numericKeyField;
                     }
-                    break;
-                case UNSPECIFIED:
+                }
+                case UNSPECIFIED -> {
                     if (_characterKeyField != null) {
                         _businessKeyFieldName = _characterKeyFieldName;
                         _businessKeyField = _characterKeyField;
@@ -10233,7 +10478,7 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
                         _businessKeyFieldName = _numericKeyFieldName;
                         _businessKeyField = _numericKeyField;
                     }
-                    break;
+                }
             }
         }
     }
@@ -10391,6 +10636,7 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
                 _tableViewWithUpdateEnabled = annotation.updates().toBoolean(_tableViewWithUpdateEnabled);
                 _tableViewWithDeleteEnabled = annotation.deletes().toBoolean(_tableViewWithDeleteEnabled);
                 _tableViewWithMasterHeading = annotation.heading().toBoolean(_tableViewWithMasterHeading);
+                _tableViewWithQuickFilterSnippet = annotation.quickFilter().toBoolean(_tableViewWithQuickFilterSnippet);
                 _tableViewRowsLimit = Math.min(MAX, Math.max(MIN, annotation.rowsLimit()));
                 _tableViewRowsLimit = (_tableViewRowsLimit + 9) / 10 * 10;
                 _tableViewRows = Math.min(_tableViewRowsLimit, Math.max(1, annotation.rows()));
@@ -10433,6 +10679,21 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
                     setReadingTableViewBelowTableSnippetFileName(fileName);
                 }
                 /**/
+                fileName = annotation.readingViewRowActionSnippet();
+                if (StringUtils.isNotBlank(fileName)) {
+                    setReadingTableViewRowActionSnippetFileName(fileName);
+                }
+                /**/
+                fileName = annotation.readingViewRowStatusSnippet();
+                if (StringUtils.isNotBlank(fileName)) {
+                    setReadingTableViewRowStatusSnippetFileName(fileName);
+                }
+                /**/
+                fileName = annotation.readingViewRowNumberSnippet();
+                if (StringUtils.isNotBlank(fileName)) {
+                    setReadingTableViewRowNumberSnippetFileName(fileName);
+                }
+                /**/
                 fileName = annotation.writingViewHeadSnippet();
                 if (StringUtils.isNotBlank(fileName)) {
                     setWritingTableViewHeadSnippetFileName(fileName);
@@ -10456,6 +10717,21 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
                 fileName = annotation.writingViewBelowTableSnippet();
                 if (StringUtils.isNotBlank(fileName)) {
                     setWritingTableViewBelowTableSnippetFileName(fileName);
+                }
+                /**/
+                fileName = annotation.writingViewRowActionSnippet();
+                if (StringUtils.isNotBlank(fileName)) {
+                    setWritingTableViewRowActionSnippetFileName(fileName);
+                }
+                /**/
+                fileName = annotation.writingViewRowStatusSnippet();
+                if (StringUtils.isNotBlank(fileName)) {
+                    setWritingTableViewRowStatusSnippetFileName(fileName);
+                }
+                /**/
+                fileName = annotation.writingViewRowNumberSnippet();
+                if (StringUtils.isNotBlank(fileName)) {
+                    setWritingTableViewRowNumberSnippetFileName(fileName);
                 }
                 /**/
             }
@@ -11156,6 +11432,23 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
         return list;
     }
 
+    public List<State> getEnumStates() {
+        List<State> list = new ArrayList<>();
+        Entity stateProperty = getStateProperty();
+        if (stateProperty instanceof EnumerationEntity) {
+            for (State state : getStatesList()) {
+                if (state instanceof BooleanComparisonX bcx) {
+                    if (ComparisonOp.EQ.equals(bcx.getOperator()) && bcx.getX() == stateProperty && bcx.getY() instanceof Instance instance) {
+                        if (sameDataTypeSimpleName(stateProperty, instance.getDeclaringEntity())) {
+                            list.add(state);
+                        }
+                    }
+                }
+            }
+        }
+        return list;
+    }
+
     public Map<String, State> getStatesMap() {
         Map<String, State> map = new LinkedHashMap<>();
         Map<String, Expression> expressions = _atlas.getExpressionsMap();
@@ -11163,14 +11456,100 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
         Class<?> fieldType;
         for (String key : expressions.keySet()) {
             value = expressions.get(key);
-            if (value instanceof State) {
+            if (value instanceof State state) {
                 fieldType = value.getDeclaringField().getType();
                 if (State.class.isAssignableFrom(fieldType)) {
-                    map.put(value.getName(), (State) value);
+                    map.put(value.getName(), state);
                 }
             }
         }
         return map;
+    }
+
+    private final List<State> _happyPath = new ArrayList<>();
+
+    public List<State> getHappyPath() {
+        return _happyPath;
+    }
+
+    /**
+     * El método setHappyPath se utiliza para establecer la secuencia de estados que están en el camino feliz de la entidad. En el contexto del
+     * modelado de información, el camino feliz (a veces llamado flujo feliz) es un escenario predeterminado que no presenta condiciones excepcionales
+     * o de error. La interfaz de usuario muestra el camino feliz mediante una línea de tiempo en el campo que corresponde a la propiedad estado de la
+     * entidad, en las vistas (páginas) de consulta detallada y en el encabezado de vistas Maestro/Detalle, en las que la entidad es el Maestro,
+     * dependiendo de lo establecido con el método setHappyPathDisplaySpots. La línea de tiempo podría incluir la fecha, o fecha y hora, de la
+     * transición para llegar a cada estado; para incluirla se utilizan los métodos setTransitionDate y setTransitionTimestamp de la expresión que
+     * define el estado.
+     *
+     * El método setHappyPath debe ejecutarse en el método settleExpressions, después de haber definido las expresiones correspondientes a los
+     * estados.
+     *
+     * @param states dos o más estados previamente definidos. dos o más estados previamente definidos. Solo se pueden incluir estados definidos con el
+     * método isEqualTo de igualdad de la propiedad estado de la entidad.
+     */
+    protected void setHappyPath(State... states) {
+        if (depth() == 0) {
+            _happyPath.clear();
+            if (states == null || states.length == 0) {
+                logger.trace(getName() + "'s list of happy states has been deleted");
+            } else if (states.length < 2) {
+                logger.error(getName() + "'s list of happy states has only one element");
+                Project.increaseParserErrorCount();
+            } else {
+                List<Field> fields = XS1.getFields(getClass(), Entity.class, EnumerationEntity.class, StateProperty.class);
+                Field field = fields.size() == 1 ? fields.get(0) : null;
+                Object keyProperty = field == null ? null : getKeyProperty(field);
+                if (keyProperty instanceof Entity stateProperty) {
+                    boolean error = false;
+                    for (State state : states) {
+                        if (state instanceof BooleanComparisonX bcx) {
+                            if (ComparisonOp.EQ.equals(bcx.getOperator()) && bcx.getX() == stateProperty && bcx.getY() instanceof Instance instance) {
+                                if (sameDataTypeSimpleName(stateProperty, instance.getDeclaringEntity())) {
+                                    _happyPath.add(state);
+                                } else {
+                                    error = true;
+                                }
+                            } else {
+                                error = true;
+                            }
+                        } else {
+                            error = true;
+                        }
+                    }
+                    if (error) {
+                        logger.error(getName() + "'s list of happy states has one or more elements that cannot be used as a happy state");
+                        Project.increaseParserErrorCount();
+                    } else {
+                        logger.trace(getName() + "'s list of happy states has been set");
+                    }
+                } else {
+                    logger.error(getName() + " does not have a state property; therefore a list of happy states can't be set");
+                    Project.increaseParserErrorCount();
+                }
+            }
+        }
+    }
+
+    private HappyPathDisplaySpots _happyPathDisplaySpots = HappyPathDisplaySpots.DETAIL_VIEW;
+
+    public HappyPathDisplaySpots getHappyPathDisplaySpots() {
+        return _happyPathDisplaySpots;
+    }
+
+    /**
+     * El método setHappyPathDisplaySpots se utiliza para establecer los puntos donde la interfaz de usuario muestra el camino feliz de la entidad. De
+     * forma predeterminada, el camino feliz se muestra mediante una línea de tiempo en el campo que corresponde a la propiedad estado de la entidad,
+     * en vistas (páginas) de consulta detallada.
+     *
+     * El método setHappyPathDisplaySpots debe ejecutarse en el método settleExpressions, conjuntamente con el método setHappyPath.
+     *
+     * @param spots puntos donde la interfaz de usuario muestra el camino feliz de la entidad. Su valor es uno de los elementos de la enumeración
+     * HappyPathDisplaySpots. Seleccione DETAIL_VIEW o DETAIL_VIEW_AND_MASTER_HEADING para mostrarlo solo en vistas (páginas) de consulta detallada de
+     * la entidad (este es su valor predeterminado), o en vistas de consulta detallada y en el encabezado de vistas Maestro/Detalle, en las que la
+     * entidad es el Maestro, respectivamente. Seleccione NONE para no mostrar el camino feliz.
+     */
+    public void setHappyPathDisplaySpots(HappyPathDisplaySpots spots) {
+        _happyPathDisplaySpots = spots == null ? HappyPathDisplaySpots.UNSPECIFIED : spots;
     }
 
     private Entity getClassMainInstance() {
@@ -11366,12 +11745,8 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
         for (Operation operation : getOperationsList()) {
             operationType = operation.getOperationType();
             switch (operationType) {
-                case EXPORT:
-                case REPORT:
-                case PROCEDURE:
-                case PROCESS:
+                case EXPORT, REPORT, PROCEDURE, PROCESS ->
                     list.add(operation);
-                    break;
             }
         }
         return list;
@@ -11729,78 +12104,30 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Special Converters and Validators">
-    protected static final String GOOGLE_MAPS_EMBED_CONVERTER = "convertidorGoogleMapsEmbed";
+    protected static final String GOOGLE_MAPS_EMBED_CONVERTER = GoogleMapsConstants.GOOGLE_MAPS_EMBED_CONVERTER;
 
-    protected static final String PHONE_NUMBER_VALIDATOR = "phoneNumberValidator";
+    protected static final String PHONE_NUMBER_VALIDATOR = PhoneConstants.PHONE_NUMBER_VALIDATOR;
 
-    protected static final String LOCAL_PHONE_NUMBER_VALIDATOR = "localPhoneNumberValidator";
+    protected static final String LOCAL_PHONE_NUMBER_VALIDATOR = PhoneConstants.LOCAL_PHONE_NUMBER_VALIDATOR;
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Special Converters and Validators">
-    protected static final String GOOGLE_MAPS_EMBED_ENGLISH_SHORT_DESCRIPTION = ""
-        + "Map provided by Google. "
-        + "";
+    protected static final String GOOGLE_MAPS_EMBED_ENGLISH_SHORT_DESCRIPTION = GoogleMapsConstants.GOOGLE_MAPS_EMBED_ENGLISH_SHORT_DESCRIPTION;
 
-    protected static final String GOOGLE_MAPS_EMBED_SPANISH_SHORT_DESCRIPTION = ""
-        + "Mapa provisto por Google. "
-        + "";
+    protected static final String GOOGLE_MAPS_EMBED_SPANISH_SHORT_DESCRIPTION = GoogleMapsConstants.GOOGLE_MAPS_EMBED_SPANISH_SHORT_DESCRIPTION;
 
-    protected static final String GOOGLE_MAPS_EMBED_ENGLISH_TOOLTIP = ""
-        + "To insert a map, write the name of the place, its address or geographic coordinates. "
-        + "You can also click the Search button of this field to open Google Maps and search for the place. "
-        + "If the place is marked on the map, click on its name or its mark to open the side panel with its information. "
-        + "If the address is in that panel, click the \"Copy address\" icon and return to this page to paste it. "
-        + "If the place is not marked, or if the address is not in the panel, right-click the point on the map where the place is located; "
-        + "in the context menu click on the coordinates to copy them to the clipboard and return to this page to paste them. "
-        + "Alternatively, on the map you want to insert, click the menu in the upper left corner; "
-        + "select the option \"Share or embed map\" and then click \"Embed a map\"; "
-        + "finally click \"COPY HTML\" to copy the code and return to this page to paste it. "
-        + "";
+    protected static final String GOOGLE_MAPS_EMBED_ENGLISH_TOOLTIP = GoogleMapsConstants.GOOGLE_MAPS_EMBED_ENGLISH_TOOLTIP;
 
-    protected static final String GOOGLE_MAPS_EMBED_SPANISH_TOOLTIP = ""
-        + "Para insertar un mapa, escriba el nombre del lugar, su dirección o coordenadas geográficas. "
-        + "También puede hacer clic en el botón Buscar de este campo para abrir Google Maps y buscar el lugar. "
-        + "Si el lugar está señalado en el mapa, haga clic en su nombre o su señal para abrir el panel lateral con su información. "
-        + "Si en ese panel está la dirección; haga clic en el icono \"Copiar la dirección\" y regrese a esta página para pegarla. "
-        + "Si el lugar no está señalado, o si la dirección no está en el panel, haga clic con el botón derecho en el punto del mapa donde se encuentra el lugar; "
-        + "en el menú de contexto haga clic en las coordenadas para copiarlas al portapapeles y regrese a esta página para pegarlas. "
-        + "Alternativamente, en el mapa que desea insertar, haga clic en el menú que está en la esquina superior izquierda; "
-        + "seleccione la opción \"Compartir o insertar el mapa\" y luego haga clic en \"Insertar un mapa\"; "
-        + "finalmente haga clic en \"COPIAR HTML\" para copiar el código y regrese a esta página para pegarlo. "
-        + "";
+    protected static final String GOOGLE_MAPS_EMBED_SPANISH_TOOLTIP = GoogleMapsConstants.GOOGLE_MAPS_EMBED_SPANISH_TOOLTIP;
 
-    protected static final String GOOGLE_MAPS_EMBED_ENGLISH_DESCRIPTION = ""
-        + "Map provided by Google. "
-        + "To insert a map, write the name of the place, its address or its geographical coordinates. "
-        + "You can also search for the place on Google Maps and then paste its address or coordinates into this field. "
-        + "To open Google Maps, click the Search button of this field. "
-        + "In Google Maps, find the place whose map you want to insert. "
-        + "If the place is marked on the map, click on its name or its mark to open the side panel with the place information. "
-        + "In that panel you will usually find the address; click the \"Copy address\" icon and return to this page to paste it. "
-        + "If the place is not marked, or if the address is not in the panel, right-click the point on the map where the place is located; "
-        + "in the context menu click on the coordinates to copy them to the clipboard and return to this page to paste them. "
-        + "Alternatively, on the map you want to insert, click the menu in the upper left corner; "
-        + "select the option \"Share or embed map\" and then click \"Embed a map\"; "
-        + "finally click \"COPY HTML\" to copy the code and return to this page to paste it. "
-        + "";
+    protected static final String GOOGLE_MAPS_EMBED_ENGLISH_DESCRIPTION = GoogleMapsConstants.GOOGLE_MAPS_EMBED_ENGLISH_DESCRIPTION;
 
-    protected static final String GOOGLE_MAPS_EMBED_SPANISH_DESCRIPTION = ""
-        + "Mapa provisto por Google. "
-        + "Para insertar un mapa, escriba el nombre del lugar, su dirección o sus coordenadas geográficas. "
-        + "También puede buscar el lugar en Google Maps y luego pegar su dirección o sus coordenadas en este campo. "
-        + "Para abrir Google Maps, haga clic en el botón Buscar de este campo. "
-        + "En Google Maps, busque el lugar cuyo mapa desea insertar. "
-        + "Si el lugar está señalado en el mapa, haga clic en su nombre o su señal para abrir el panel lateral con la información del lugar. "
-        + "En ese panel generalmente se encuentra la dirección; haga clic en el icono \"Copiar la dirección\" y regrese a esta página para pegarla. "
-        + "Si el lugar no está señalado, o si la dirección no está en el panel, haga clic con el botón derecho en el punto del mapa donde se encuentra el lugar; "
-        + "en el menú de contexto haga clic en las coordenadas para copiarlas al portapapeles y regrese a esta página para pegarlas. "
-        + "Alternativamente, en el mapa que desea insertar, haga clic en el menú que está en la esquina superior izquierda; "
-        + "seleccione la opción \"Compartir o insertar el mapa\" y luego haga clic en \"Insertar un mapa\"; "
-        + "finalmente haga clic en \"COPIAR HTML\" para copiar el código y regrese a esta página para pegarlo. "
-        + "";
+    protected static final String GOOGLE_MAPS_EMBED_SPANISH_DESCRIPTION = GoogleMapsConstants.GOOGLE_MAPS_EMBED_SPANISH_DESCRIPTION;
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Special Fields">
+    protected static final int MAX_EMAIL_ADDRESS_LENGTH = Constants.MAX_EMAIL_ADDRESS_LENGTH;
+
     protected static final String EMAIL_REGEX = Constants.EMAIL_REGEX;
 
     protected static final String PHONE_REGEX = Constants.PHONE_REGEX;
@@ -11851,115 +12178,37 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Special Fields">
-    protected static final String EMAIL_REGEX_ENGLISH_DESCRIPTION = ""
-        + "an e-mail address must start with a user name, followed by an @ sign and a domain name; "
-        + "for example: john.doe@gmail.com"
-        + "";
+    protected static final String EMAIL_REGEX_ENGLISH_DESCRIPTION = EmailConstants.EMAIL_REGEX_ENGLISH_DESCRIPTION;
 
-    protected static final String EMAIL_REGEX_SPANISH_DESCRIPTION = ""
-        + "una dirección de correo electrónico debe comenzar con un nombre de usuario, seguido de un signo @ y un nombre de dominio; "
-        + "por ejemplo: juan.bimba@gmail.com"
-        + "";
+    protected static final String EMAIL_REGEX_SPANISH_DESCRIPTION = EmailConstants.EMAIL_REGEX_SPANISH_DESCRIPTION;
 
-    protected static final String EMAIL_REGEX_ENGLISH_ERROR_MESSAGE = ""
-        + "the e-mail address does not meet the required pattern; "
-        + "it must start with a user name, followed by an @ sign and a domain name."
-        + "";
+    protected static final String EMAIL_REGEX_ENGLISH_ERROR_MESSAGE = EmailConstants.EMAIL_REGEX_ENGLISH_ERROR_MESSAGE;
 
-    protected static final String EMAIL_REGEX_SPANISH_ERROR_MESSAGE = ""
-        + "la dirección de correo electrónico no cumple con el patrón requerido; "
-        + "debe comenzar con un nombre de usuario, seguido de un signo @ y un nombre de dominio."
-        + "";
+    protected static final String EMAIL_REGEX_SPANISH_ERROR_MESSAGE = EmailConstants.EMAIL_REGEX_SPANISH_ERROR_MESSAGE;
 
-    protected static final String PHONE_REGEX_ENGLISH_DESCRIPTION = ""
-        + "this is an international phone number; "
-        + "it must start with a country code, "
-        + "followed by a global subscriber number or an area code and a subscriber number; "
-        + "for example: +58 4121234567, +58-412-1234567"
-        + "";
+    protected static final String PHONE_REGEX_ENGLISH_DESCRIPTION = PhoneConstants.PHONE_REGEX_ENGLISH_DESCRIPTION;
 
-    protected static final String PHONE_REGEX_SPANISH_DESCRIPTION = ""
-        + "este es un número de teléfono internacional; "
-        + "debe comenzar con un código de país, "
-        + "seguido de un número de suscriptor global o un código de área y un número de suscriptor; "
-        + "por ejemplo: +58 4121234567, +58-412-1234567"
-        + "";
+    protected static final String PHONE_REGEX_SPANISH_DESCRIPTION = PhoneConstants.PHONE_REGEX_SPANISH_DESCRIPTION;
 
-    protected static final String PHONE_REGEX_ENGLISH_ERROR_MESSAGE = ""
-        + "the phone number does not meet the required pattern; "
-        + "it must start with a country code, i.e. a plus sign and a group of 1 to 3 digits, "
-        + "followed by a global subscriber number, i.e. a group of 7 to 14 digits; "
-        + "country code and global subscriber number must be separated by a single white space or hyphen; "
-        + "global subscriber number can be divided into area code, a group of 1 to 4 digits, and subscriber number, a group of 6 to 10 digits; "
-        + "the area code and subscriber number must be separated by a single blank space or hyphen; "
-        + "whatever their distribution among the groups, the total number of digits must be between 8 and 15."
-        + "";
+    protected static final String PHONE_REGEX_ENGLISH_ERROR_MESSAGE = PhoneConstants.PHONE_REGEX_ENGLISH_ERROR_MESSAGE;
 
-    protected static final String PHONE_REGEX_SPANISH_ERROR_MESSAGE = ""
-        + "el número de teléfono no cumple con el patrón requerido; "
-        + "éste debe comenzar con un código de país, es decir, un signo más y un grupo de 1 hasta 3 dígitos, "
-        + "seguido de un número de suscriptor global, es decir, un grupo de 7 hasta 14 dígitos; "
-        + "el código de país y el número de suscriptor global deben estar separados por un solo espacio en blanco o guión; "
-        + "el número de suscriptor global se puede dividir en código de área, un grupo de 1 hasta 4 dígitos, y número de suscriptor, un grupo de 6 a 10 dígitos; "
-        + "el código de área y el número de suscriptor deben estar separados por un solo espacio en blanco o guión; "
-        + "cualquiera que sea su distribución entre los grupos, el número total de dígitos debe estar entre 8 y 15."
-        + "";
+    protected static final String PHONE_REGEX_SPANISH_ERROR_MESSAGE = PhoneConstants.PHONE_REGEX_SPANISH_ERROR_MESSAGE;
 
-    protected static final String LOCAL_PHONE_REGEX_ENGLISH_DESCRIPTION = ""
-        + "this is a local phone number; "
-        + "it must be a global subscriber number or an area code and a subscriber number; "
-        + "for example: 4121234567, 412-1234567"
-        + "";
+    protected static final String LOCAL_PHONE_REGEX_ENGLISH_DESCRIPTION = PhoneConstants.LOCAL_PHONE_REGEX_ENGLISH_DESCRIPTION;
 
-    protected static final String LOCAL_PHONE_REGEX_SPANISH_DESCRIPTION = ""
-        + "este es un número de teléfono local; "
-        + "debe ser un número de suscriptor global o un código de área y un número de suscriptor; "
-        + "por ejemplo: 4121234567, 412-1234567"
-        + "";
+    protected static final String LOCAL_PHONE_REGEX_SPANISH_DESCRIPTION = PhoneConstants.LOCAL_PHONE_REGEX_SPANISH_DESCRIPTION;
 
-    protected static final String LOCAL_PHONE_REGEX_ENGLISH_ERROR_MESSAGE = ""
-        + "the phone number does not meet the required pattern; "
-        + "it must be a global subscriber number, i.e. a group of 7 to 14 digits; "
-        + "or it can be divided into area code, a group of 1 to 4 digits, and subscriber number, a group of 6 to 10 digits; "
-        + "the area code and subscriber number must be separated by a single blank space or hyphen; "
-        + "whatever their distribution among the groups, the total number of digits must be between 7 and 14."
-        + "";
+    protected static final String LOCAL_PHONE_REGEX_ENGLISH_ERROR_MESSAGE = PhoneConstants.LOCAL_PHONE_REGEX_ENGLISH_ERROR_MESSAGE;
 
-    protected static final String LOCAL_PHONE_REGEX_SPANISH_ERROR_MESSAGE = ""
-        + "el número de teléfono no cumple con el patrón requerido; "
-        + "éste debe ser un número de suscriptor global, es decir, un grupo de 7 hasta 14 dígitos; "
-        + "o se puede dividir en código de área, un grupo de 1 hasta 4 dígitos, y número de suscriptor, un grupo de 6 a 10 dígitos; "
-        + "el código de área y el número de suscriptor deben estar separados por un solo espacio en blanco o guión; "
-        + "cualquiera que sea su distribución entre los grupos, el número total de dígitos debe estar entre 7 y 14."
-        + "";
+    protected static final String LOCAL_PHONE_REGEX_SPANISH_ERROR_MESSAGE = PhoneConstants.LOCAL_PHONE_REGEX_SPANISH_ERROR_MESSAGE;
 
-    protected static final String URL_REGEX_ENGLISH_DESCRIPTION = ""
-        + "this is a website URL, i.e. the location of a specific website, page, or file on the Internet; "
-        + "it must start with a protocol (usually http:// or https://), followed by / and a domain name; "
-        + "optionally, after the domain name, the URL can include a \"path\", "
-        + "to direct the browser to a specific page on the website; "
-        + "for example: https://en.wikipedia.org/wiki/URL"
-        + "";
+    protected static final String URL_REGEX_ENGLISH_DESCRIPTION = URLConstants.URL_REGEX_ENGLISH_DESCRIPTION;
 
-    protected static final String URL_REGEX_SPANISH_DESCRIPTION = ""
-        + "esta es una URL de un sitio web, es decir, la ubicación de un sitio web, página o archivo específico en Internet; "
-        + "debe comenzar con un protocolo (generalmente http:// o https://), seguido de / y un nombre de dominio; "
-        + "opcionalmente, después del nombre de dominio, la URL puede incluir una \"ruta\", "
-        + "para dirigir al navegador a una página específica en el sitio web; "
-        + "por ejemplo: https://es.wikipedia.org/wiki/Localizador_de_recursos_uniforme"
-        + "";
+    protected static final String URL_REGEX_SPANISH_DESCRIPTION = URLConstants.URL_REGEX_SPANISH_DESCRIPTION;
 
-    protected static final String URL_REGEX_ENGLISH_ERROR_MESSAGE = ""
-        + "the URL does not meet the required pattern; "
-        + "it must start with a protocol, followed by / and a domain name; "
-        + "optionally, after the domain name, the URL can include a \"path\"."
-        + "";
+    protected static final String URL_REGEX_ENGLISH_ERROR_MESSAGE = URLConstants.URL_REGEX_ENGLISH_ERROR_MESSAGE;
 
-    protected static final String URL_REGEX_SPANISH_ERROR_MESSAGE = ""
-        + "la URL no cumple con el patrón requerido; "
-        + "debe comenzar con un protocolo, seguido de / y un nombre de dominio; "
-        + "opcionalmente, después del nombre de dominio, la URL puede incluir una \"ruta\"."
-        + "";
+    protected static final String URL_REGEX_SPANISH_ERROR_MESSAGE = URLConstants.URL_REGEX_SPANISH_ERROR_MESSAGE;
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Special Expressions">
@@ -12085,6 +12334,30 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
 
     protected static TemporalDataAggregateX coalesce(TemporalExpression operand1, TemporalExpression operand2, TemporalExpression... extraOperands) {
         return XB.Temporal.DataAggregate.coalesce(operand1, operand2, extraOperands);
+    }
+
+    protected static CharacterDataAggregateX max(CharacterExpression operand1, CharacterExpression operand2, CharacterExpression... extraOperands) {
+        return XB.Character.DataAggregate.max(operand1, operand2, extraOperands);
+    }
+
+    protected static NumericDataAggregateX max(NumericExpression operand1, NumericExpression operand2, NumericExpression... extraOperands) {
+        return XB.Numeric.DataAggregate.max(operand1, operand2, extraOperands);
+    }
+
+    protected static TemporalDataAggregateX max(TemporalExpression operand1, TemporalExpression operand2, TemporalExpression... extraOperands) {
+        return XB.Temporal.DataAggregate.max(operand1, operand2, extraOperands);
+    }
+
+    protected static CharacterDataAggregateX min(CharacterExpression operand1, CharacterExpression operand2, CharacterExpression... extraOperands) {
+        return XB.Character.DataAggregate.min(operand1, operand2, extraOperands);
+    }
+
+    protected static NumericDataAggregateX min(NumericExpression operand1, NumericExpression operand2, NumericExpression... extraOperands) {
+        return XB.Numeric.DataAggregate.min(operand1, operand2, extraOperands);
+    }
+
+    protected static TemporalDataAggregateX min(TemporalExpression operand1, TemporalExpression operand2, TemporalExpression... extraOperands) {
+        return XB.Temporal.DataAggregate.min(operand1, operand2, extraOperands);
     }
     // </editor-fold>
 
@@ -12285,8 +12558,7 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
     protected String getValueString(Object value) {
         if (value == null) {
             return null;
-        } else if (value instanceof Instance) {
-            Instance instance = (Instance) value;
+        } else if (value instanceof Instance instance) {
             return getValueString(instance.getDeclaringArtifact(), instance.getName());
         } else {
             return super.getValueString(value);

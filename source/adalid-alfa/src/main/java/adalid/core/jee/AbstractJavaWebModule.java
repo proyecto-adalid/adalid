@@ -282,24 +282,22 @@ public abstract class AbstractJavaWebModule extends AbstractJavaModule implement
                     MasterDetailView masterDetailView = reference.getMasterDetailView();
                     if (detail.isSelectEnabled()) {
                         switch (masterDetailView) {
-                            case TABLE:
+                            case TABLE ->
                                 put |= putPage(detail, reference, master, DisplayMode.READING, DisplayFormat.TABLE);
-                                break;
-                            case TABLE_AND_DETAIL:
+                            case TABLE_AND_DETAIL -> {
                                 put |= putPage(detail, reference, master, DisplayMode.READING, DisplayFormat.TABLE);
                                 put |= putPage(detail, reference, master, DisplayMode.READING, DisplayFormat.DETAIL);
-                                break;
+                            }
                         }
                     }
                     if (detail.isInsertEnabled() || detail.isUpdateEnabled() || detail.isDeleteEnabled()) {
                         switch (masterDetailView) {
-                            case TABLE:
+                            case TABLE ->
                                 put |= putPage(detail, reference, master, DisplayMode.WRITING, DisplayFormat.TABLE);
-                                break;
-                            case TABLE_AND_DETAIL:
+                            case TABLE_AND_DETAIL -> {
                                 put |= putPage(detail, reference, master, DisplayMode.WRITING, DisplayFormat.TABLE);
                                 put |= putPage(detail, reference, master, DisplayMode.WRITING, DisplayFormat.DETAIL);
-                                break;
+                            }
                         }
                     }
                 }
@@ -314,20 +312,14 @@ public abstract class AbstractJavaWebModule extends AbstractJavaModule implement
 
     private boolean putPage(Entity entity, EntityReference reference, Entity master, DisplayMode mode, DisplayFormat format) {
         String pageName = pageName(entity, reference, mode, format);
-        Page page;
-        switch (format) {
-            case TABLE:
-            case DETAIL:
-            case TREE:
-                page = new CrudJavaServerPage(pageName);
-                break;
-            case CONSOLE:
-                page = new ConsoleJavaServerPage(pageName);
-                break;
-            default:
-                page = new Page(pageName);
-                break;
-        }
+        Page page = switch (format) {
+            case TABLE, DETAIL, TREE ->
+                new CrudJavaServerPage(pageName);
+            case CONSOLE ->
+                new ConsoleJavaServerPage(pageName);
+            default ->
+                new Page(pageName);
+        };
         page.setModule(this);
         page.setEntity(entity);
         page.setReference(reference);

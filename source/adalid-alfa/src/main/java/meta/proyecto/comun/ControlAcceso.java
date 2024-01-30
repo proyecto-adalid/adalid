@@ -14,6 +14,7 @@ package meta.proyecto.comun;
 
 import adalid.core.*;
 import meta.entidad.comun.control.acceso.ClaseFabricador;
+import meta.entidad.comun.control.acceso.ColumnasOcultas;
 import meta.entidad.comun.control.acceso.ConjuntoSegmento;
 import meta.entidad.comun.control.acceso.ElementoSegmento;
 import meta.entidad.comun.control.acceso.GrupoUsuario;
@@ -57,6 +58,8 @@ public class ControlAcceso extends Project {
     }
 
     protected ClaseFabricador ClaseFabricador;
+
+    protected ColumnasOcultas ColumnasOcultas;
 
     protected ConjuntoSegmento ConjuntoSegmento;
 

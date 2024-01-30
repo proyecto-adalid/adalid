@@ -32,11 +32,13 @@ public class MavenDependencies {
 
         public ProjectDependency freya() {
             return ProjectDependency.of(groupId, "freya", "4.0.0").
+                setClassifier("jakarta").
                 setScope(ProjectDependencyScope.RUNTIME);
         }
 
         public ProjectDependency mirage() {
             return ProjectDependency.of(groupId, "mirage", "4.0.0").
+                setClassifier("jakarta").
                 setScope(ProjectDependencyScope.RUNTIME);
         }
 
@@ -47,16 +49,19 @@ public class MavenDependencies {
 
         public ProjectDependency prestige() {
             return ProjectDependency.of(groupId, "prestige", "6.0.0").
+                setClassifier("jakarta").
                 setScope(ProjectDependencyScope.RUNTIME);
         }
 
         public ProjectDependency serenity() {
             return ProjectDependency.of(groupId, "serenity", "5.0.0").
+                setClassifier("jakarta").
                 setScope(ProjectDependencyScope.RUNTIME);
         }
 
         public ProjectDependency ultima() {
             return ProjectDependency.of(groupId, "ultima", "5.0.0").
+                setClassifier("jakarta").
                 setScope(ProjectDependencyScope.RUNTIME);
         }
 

@@ -215,7 +215,7 @@ public class GrupoProceso extends AbstractPersistentEntity {
             setLocalizedDescription(ENGLISH, "cancel the lock set by the last process");
             setLocalizedDescription(SPANISH, "cancelar el bloqueo establecido por el último proceso");
             /**/
-            setLocalizedSuccessMessage(ENGLISH, "the lock set by the last process was canceled");
+            setLocalizedSuccessMessage(ENGLISH, "the lock set by the last process was cancelled");
             setLocalizedSuccessMessage(SPANISH, "el bloqueo establecido por el último proceso fue cancelado");
             /**/
             // </editor-fold>

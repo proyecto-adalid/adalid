@@ -21,6 +21,7 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.util.List;
 import java.util.regex.Pattern;
+import org.apache.commons.lang.StringUtils;
 
 /**
  * @author Jorge Campins
@@ -34,6 +35,66 @@ public class StringParameter extends StringData implements AlphanumericParameter
         valid.add(ParameterField.class);
         valid.add(StringField.class);
         return valid;
+    }
+
+    /**
+     * @return the file-upload auto-start indicator
+     */
+    @Override // Implements method from: FileReference (StringProperty/StringParameter)
+    public boolean isFileUploadAutoStart() {
+        Boolean fileUploadAutoStart = fileUploadAutoStart();
+        if (fileUploadAutoStart == null) {
+            StringProperty linkedProperty = getParameterLinkedProperty();
+            if (linkedProperty != null) {
+                return linkedProperty.isFileUploadAutoStart();
+            }
+        }
+        return super.isFileUploadAutoStart();
+    }
+
+    /**
+     * @return the file-upload virus-scan indicator
+     */
+    @Override // Implements method from: FileReference (StringProperty/StringParameter)
+    public boolean isFileUploadVirusScan() {
+        Boolean fileUploadVirusScan = fileUploadVirusScan();
+        if (fileUploadVirusScan == null) {
+            StringProperty linkedProperty = getParameterLinkedProperty();
+            if (linkedProperty != null) {
+                return linkedProperty.isFileUploadVirusScan();
+            }
+        }
+        return super.isFileUploadVirusScan();
+    }
+
+    /**
+     * @return the file-upload file limit
+     */
+    @Override // Implements method from: FileReference (StringProperty/StringParameter)
+    public int getFileUploadFileLimit() {
+        int fileUploadFileLimit = fileUploadFileLimit();
+        if (fileUploadFileLimit < 0) {
+            StringProperty linkedProperty = getParameterLinkedProperty();
+            if (linkedProperty != null) {
+                return linkedProperty.getFileUploadFileLimit();
+            }
+        }
+        return super.getFileUploadFileLimit();
+    }
+
+    /**
+     * @return the file-upload file limit
+     */
+    @Override // Implements method from: FileReference (StringProperty/StringParameter)
+    public int getFileUploadUndoLimit() {
+        int fileUploadUndoLimit = fileUploadUndoLimit();
+        if (fileUploadUndoLimit < 0) {
+            StringProperty linkedProperty = getParameterLinkedProperty();
+            if (linkedProperty != null) {
+                return linkedProperty.getFileUploadUndoLimit();
+            }
+        }
+        return super.getFileUploadUndoLimit();
     }
 
     /**
@@ -100,9 +161,24 @@ public class StringParameter extends StringData implements AlphanumericParameter
      * @return the blob field name
      */
     @Override // Implements method from: FileReference (StringProperty/StringParameter)
+    public String getPathTemplate() {
+        String pathTemplate = super.getPathTemplate();
+        if (StringUtils.isBlank(pathTemplate)) {
+            StringProperty linkedProperty = getParameterLinkedProperty();
+            if (linkedProperty != null) {
+                return linkedProperty.getPathTemplate();
+            }
+        }
+        return pathTemplate;
+    }
+
+    /**
+     * @return the blob field name
+     */
+    @Override // Implements method from: FileReference (StringProperty/StringParameter)
     public String getBlobFieldName() {
         String blobFieldName = super.getBlobFieldName();
-        if (blobFieldName == null || blobFieldName.length() == 0) {
+        if (StringUtils.isBlank(blobFieldName)) {
             StringProperty linkedProperty = getParameterLinkedProperty();
             if (linkedProperty != null) {
                 return linkedProperty.getBlobFieldName();
@@ -147,7 +223,7 @@ public class StringParameter extends StringData implements AlphanumericParameter
     @Override // Implements method from: FileReference (StringProperty/StringParameter)
     public String getJoinFieldName() {
         String joinFieldName = super.getJoinFieldName();
-        if (joinFieldName == null || joinFieldName.length() == 0) {
+        if (StringUtils.isBlank(joinFieldName)) {
             StringProperty linkedProperty = getParameterLinkedProperty();
             if (linkedProperty != null) {
                 return linkedProperty.getJoinFieldName();
@@ -192,7 +268,7 @@ public class StringParameter extends StringData implements AlphanumericParameter
     @Override // Implements method from: FileReference (StringProperty/StringParameter)
     public String getLoadFieldName() {
         String loadFieldName = super.getLoadFieldName();
-        if (loadFieldName == null || loadFieldName.length() == 0) {
+        if (StringUtils.isBlank(loadFieldName)) {
             StringProperty linkedProperty = getParameterLinkedProperty();
             if (linkedProperty != null) {
                 return linkedProperty.getLoadFieldName();
@@ -237,7 +313,7 @@ public class StringParameter extends StringData implements AlphanumericParameter
     @Override // Implements method from: FileReference (StringProperty/StringParameter)
     public String getTextFieldName() {
         String textFieldName = super.getTextFieldName();
-        if (textFieldName == null || textFieldName.length() == 0) {
+        if (StringUtils.isBlank(textFieldName)) {
             StringProperty linkedProperty = getParameterLinkedProperty();
             if (linkedProperty != null) {
                 return linkedProperty.getTextFieldName();

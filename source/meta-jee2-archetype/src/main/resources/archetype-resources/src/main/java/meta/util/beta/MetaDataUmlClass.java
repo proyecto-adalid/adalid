@@ -43,10 +43,10 @@ public class MetaDataUmlClass extends adalid.util.Utility {
     /**
      * PLATFORM almacena el nombre de la plataforma que genera los diagramas de clase UML de su aplicación.
      */
-    private static final String PLATFORM = "meta-data-uml-class";
+    private static final String PLATFORM = adalid.util.Platform.META_DATA_UML_CLASS;
 
     public static void main(String[] args) throws Exception {
-        MASTER_CLASS.getDeclaredConstructor().newInstance().build(PLATFORM);
+        newInstance(MASTER_CLASS).build(PLATFORM);
     }
 
 }

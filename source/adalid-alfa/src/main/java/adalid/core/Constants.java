@@ -111,6 +111,12 @@ public class Constants {
 
     public static final int MAX_STRING_INDEX_LENGTH = 6384;
 
+    public static final int MAX_EMAIL_ADDRESS_LENGTH = 254; // https://www.rfc-editor.org/errata/eid1690
+
+    public static final int MAX_PHONE_NUMBER_LENGTH = 20;
+
+    public static final int MAX_LOCAL_PHONE_NUMBER_LENGTH = 20;
+
     public static final int MAX_TIME_PRECISION = 6;
 
     public static final int MAX_YEAR_RANGE = 100;
@@ -120,6 +126,8 @@ public class Constants {
     public static final int MAX_DISPLAY_HEIGHT = 1080; // 2160;
 
     public static final int MAX_UPLOAD_FILE_LIMIT = 100;
+
+    public static final int MAX_UPLOAD_UNDO_LIMIT = 4;
 
     public static final int MAX_SERIES_START = 2000000000; // 1000000000
 

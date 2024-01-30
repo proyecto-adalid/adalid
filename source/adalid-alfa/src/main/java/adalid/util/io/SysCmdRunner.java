@@ -129,7 +129,7 @@ public class SysCmdRunner extends Utility {
             filters.add(new FileNameExtensionFilter("*.sh", "sh"));
             command = chooseFile(dir.getAbsolutePath(), filters);
             if (StringUtils.isBlank(command)) {
-                logger.warn("no file selected; execution canceled");
+                logger.warn("no file selected; execution cancelled");
                 return null;
             }
         }

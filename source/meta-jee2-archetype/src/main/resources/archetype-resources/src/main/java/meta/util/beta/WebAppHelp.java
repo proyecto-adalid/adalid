@@ -51,10 +51,10 @@ public class WebAppHelp extends adalid.util.Utility {
     /**
      * PLATFORM almacena el nombre de la plataforma que genera los archivos de ayuda en-línea de su aplicación.
      */
-    private static final String PLATFORM = "webapp-help";
+    private static final String PLATFORM = adalid.util.Platform.WEBAPP_HELP;
 
     public static void main(String[] args) throws Exception {
-        MASTER_CLASS.getDeclaredConstructor().newInstance().build(PLATFORM);
+        newInstance(MASTER_CLASS).build(PLATFORM);
     }
 
 }

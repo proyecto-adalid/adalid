@@ -117,6 +117,18 @@ public @interface StringField {
     Kleenean richTextFormat() default Kleenean.UNSPECIFIED;
 
     /**
+     * translatable indica si el valor de la propiedad puede, o no, ser traducido a otros idiomas. Su valor es uno de los elementos de la enumeración
+     * Kleenean. Seleccione TRUE si el valor se puede traducir; en caso contrario, seleccione FALSE. Alternativamente, omita el elemento o seleccione
+     * UNSPECIFIED para utilizar el valor predeterminado del atributo. El valor predeterminado del atributo es TRUE. Si el valor de la propiedad es
+     * una contraseña, un texto grande (maxLength = 0), un texto variante (@VariantString), un documento incrustado (@EmbeddedDocument), una
+     * referencia a un archivo cargado (@FileReference), o una URL (@UniformResourceLocator o @UrlProperty) este elemento no es relevante ya que tales
+     * valores no deben ser traducidos.
+     *
+     * @return translatable
+     */
+    Kleenean translatable() default Kleenean.UNSPECIFIED;
+
+    /**
      * converter específica el nombre de un componente personalizado que permite convertir el valor de la propiedad o parámetro.
      *
      * @return converter

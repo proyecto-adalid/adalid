@@ -311,11 +311,17 @@ public class Writer {
 
     private static final String VC_TEMPLATE_PATH = "templatePath";
 
+    private static final String VC_TEMPLATE_TYPE = "templateType";
+
     private static final String VC_PATH = "path";
 
     private static final String VC_PACKAGE = "package";
 
     private static final String VC_FILE = "file";
+
+    private static final String VC_FILE_ENCODING = "fileEncoding";
+
+    private static final String VC_FILE_PRESERVE = "filePreserve";
 
     private static final String VC_BOOTSTRAPPING = "bootstrapping";
 
@@ -906,10 +912,14 @@ public class Writer {
         String templatePathString = pathString(template);
         String templateName = StringUtils.substringAfterLast(templatePathString, FILE_SEPARATOR);
         String templatePath = StringUtils.substringBeforeLast(templatePathString, FILE_SEPARATOR);
+        boolean preservar = BitUtils.valueOf(preserve);
         fileContext.put(VC_TEMPLATE, StringEscapeUtils.escapeJava(templatePathString));
         fileContext.put(VC_TEMPLATE_NAME, StringEscapeUtils.escapeJava(templateName));
         fileContext.put(VC_TEMPLATE_PATH, StringUtils.replace(templatePath, FILE_SEPARATOR, SLASH));
+        fileContext.put(VC_TEMPLATE_TYPE, temptype);
         fileContext.put(VC_FILE, fileName);
+        fileContext.put(VC_FILE_ENCODING, charset2 == null ? VelocityEngineer.getDocumentEncoding(fileName) : charset2);
+        fileContext.put(VC_FILE_PRESERVE, preservar + " -> file will" + (preservar ? " not " : " ") + "be replaced when regenerating the project");
         if (filePath == null) {
 //          filePath = rootPath;
             filePath = userPath;
@@ -967,7 +977,7 @@ public class Writer {
                     }
                 }
             }
-            if (BitUtils.valueOf(preserve)) {
+            if (preservar) {
                 preservedFiles++;
                 pattern = "file {2} will not be replaced" + hint;
                 message = MessageFormat.format(pattern, TP_PRESERVE, templatePropertiesFile, fullname);

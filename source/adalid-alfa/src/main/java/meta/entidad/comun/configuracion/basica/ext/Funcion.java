@@ -27,11 +27,11 @@ import meta.entidad.comun.configuracion.basica.TipoRastroFun;
  */
 @EntityClass(catalog = Kleenean.TRUE, independent = Kleenean.TRUE, resourceType = ResourceType.CONFIGURATION, resourceGender = ResourceGender.FEMININE)
 @EntityCodeGen(bws = Kleenean.FALSE, fws = Kleenean.FALSE)
-@EntitySelectOperation(enabled = Kleenean.TRUE, access = OperationAccess.PUBLIC, rowsLimit = 500)
+@EntitySelectOperation(enabled = Kleenean.TRUE, access = OperationAccess.PUBLIC, onload = SelectOnloadOption.EXECUTE, rowsLimit = 500)
 @EntityInsertOperation(enabled = Kleenean.FALSE)
 @EntityUpdateOperation(enabled = Kleenean.FALSE)
 @EntityDeleteOperation(enabled = Kleenean.FALSE)
-@EntityTableView(enabled = Kleenean.TRUE, menu = ViewMenuOption.READING)
+@EntityTableView(enabled = Kleenean.TRUE, menu = ViewMenuOption.READING, quickFilter = Kleenean.TRUE)
 @EntityDetailView(enabled = Kleenean.TRUE)
 @EntityTreeView(enabled = Kleenean.FALSE)
 @EntityConsoleView(enabled = Kleenean.FALSE)
@@ -77,6 +77,9 @@ public class Funcion extends meta.entidad.comun.configuracion.basica.Funcion {
     @ManyToOne(navigability = Navigability.UNIDIRECTIONAL, view = MasterDetailView.NONE)
     @PropertyField(overlay = Kleenean.TRUE)
     public GrupoProceso grupoProceso;
+
+    @ColumnField(nullable = Kleenean.FALSE)
+    public IntegerProperty transiciones;
 
     @ColumnField(nullable = Kleenean.TRUE)
     public IntegerProperty minutos;
@@ -239,6 +242,9 @@ public class Funcion extends meta.entidad.comun.configuracion.basica.Funcion {
         tipoRastroFun.setInitialValue(tipoRastroFun.NINGUNO);
         tipoRastroFun.setDefaultValue(tipoRastroFun.NINGUNO);
         /**/
+        transiciones.setDefaultValue(0);
+        transiciones.setInitialValue(0);
+        /**/
         // <editor-fold defaultstate="collapsed" desc="localization of Funcion's properties">
         /**/
         codigoFuncion.setLocalizedLabel(ENGLISH, "function code");
@@ -320,6 +326,9 @@ public class Funcion extends meta.entidad.comun.configuracion.basica.Funcion {
         grupoProceso.setLocalizedLabel(SPANISH, "grupo de procesos");
         grupoProceso.setLocalizedShortLabel(ENGLISH, "group");
         grupoProceso.setLocalizedShortLabel(SPANISH, "grupo");
+        /**/
+        transiciones.setLocalizedLabel(ENGLISH, "transition count");
+        transiciones.setLocalizedLabel(SPANISH, "transiciones");
         /**/
         minutos.setLocalizedLabel(ENGLISH, "task duration in minutes");
         minutos.setLocalizedLabel(SPANISH, "duración de la tarea en minutos");
@@ -530,7 +539,7 @@ public class Funcion extends meta.entidad.comun.configuracion.basica.Funcion {
         /**/
         tab110.newTabField(descripcionFuncion, tipoFuncion, tipoRastroFun, dominio, clase, rango, grupoProceso);
         /**/
-        tab120.newTabField(nombreJava, nombreSql, clausulaWhere, clausulaOrder);
+        tab120.newTabField(nombreJava, nombreSql, clausulaWhere, clausulaOrder, transiciones);
         tab120.newTabField(esPublica, esProgramatica, esProtegida, esPersonalizable, esSegmentable, esSupervisable, esConstructor, esHeredada, esMetodoClase, esMetodoInstancia);
         /**/
         tab130.newTabField(minutos, prioridad);

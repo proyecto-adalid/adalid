@@ -335,7 +335,7 @@ public class SqlReader extends SqlUtil {
         String tableName;
         Object[] executeQueryArgs;
         ResultSet tablesResultSet, columnsResultSet, indexesResultSet, tabsResultSet, rowsResultSet, routinesResultSet;
-        Level tableNameLogLevel = isRemoteConnection() ? Level.INFO : Level.TRACE;
+        Level tableNameLogLevel = isSlowConnection() ? Level.INFO : Level.TRACE;
         int tables = 0, columns = 0, indexes = 0, tabs = 0, rows = 0, routines = 0;
 //      int type1 = 0, type2 = 0, enum1 = 0, enum2 = 0, enum3 = 0, load1 = 0, load2 = 0;
         int enum2 = 0, enum3 = 0, load2 = 0;
@@ -347,6 +347,7 @@ public class SqlReader extends SqlUtil {
                 return false;
             }
             select = selectTables;
+            logger.trace(select);
             tablesResultSet = selectTables.executeQuery();
             boolean next = tablesResultSet.next();
             if (!next) {
@@ -387,6 +388,7 @@ public class SqlReader extends SqlUtil {
                 /**/
                 // <editor-fold defaultstate="collapsed" desc="read columns">
                 select = selectColumns;
+                logger.trace(select);
                 columnsResultSet = selectColumns.executeQuery(executeQueryArgs);
                 if (columnsResultSet.next()) {
                     SqlColumn sqlColumn;
@@ -403,6 +405,7 @@ public class SqlReader extends SqlUtil {
                 // <editor-fold defaultstate="collapsed" desc="read indexes">
                 if (selectIndexes != null) {
                     select = selectIndexes;
+                    logger.trace(select);
                     indexesResultSet = selectIndexes.executeQuery(executeQueryArgs);
                     if (indexesResultSet.next()) {
                         SqlIndex sqlIndex = null;
@@ -427,6 +430,7 @@ public class SqlReader extends SqlUtil {
                 // <editor-fold defaultstate="collapsed" desc="read tabs">
                 if (selectTabs != null) {
                     select = selectTabs;
+                    logger.trace(select);
                     tabsResultSet = selectTabs.executeQuery(executeQueryArgs);
                     if (tabsResultSet.next()) {
                         SqlTab sqlTab = null;
@@ -451,6 +455,7 @@ public class SqlReader extends SqlUtil {
                 // <editor-fold defaultstate="collapsed" desc="read routines">
                 if (selectRoutines != null) {
                     select = selectRoutines;
+                    logger.trace(select);
                     routinesResultSet = selectRoutines.executeQuery(executeQueryArgs);
                     if (routinesResultSet.next()) {
                         SqlRoutine sqlRoutine = null;
@@ -477,6 +482,7 @@ public class SqlReader extends SqlUtil {
                     selectRows = aid.getSelectRowsStatement(sqlTable);
                     if (selectRows != null) {
                         select = selectRows;
+                        logger.trace(select);
                         try {
                             int n = 0;
                             rowsResultSet = selectRows.executeQuery();
@@ -919,6 +925,8 @@ public class SqlReader extends SqlUtil {
 
         protected abstract String literalOf(SqlColumn sqlColumn, String string);
 
+        protected abstract String defaultOf(SqlColumn sqlColumn);
+
         protected String stringValueOf(SqlColumn sqlColumn, String string) {
             String ctype = sqlColumn.getType();
             String value = StringUtils.trimToNull(string);
@@ -973,13 +981,13 @@ public class SqlReader extends SqlUtil {
         @Override
         protected boolean createDefaults() throws SQLException {
             String statement = "call " + _schema + "." + "create_defaults()";
-            return executeStatement(statement);
+            return executeStatement(statement, false);
         }
 
         @Override
         protected boolean dropDefaults() throws SQLException {
             String statement = "call " + _schema + "." + "drop_defaults()";
-            return executeStatement(statement);
+            return executeStatement(statement, false);
         }
 
         @Override
@@ -1162,6 +1170,7 @@ public class SqlReader extends SqlUtil {
             sqlColumn.setDefault(string_default);
             sqlColumn.setSqlDefaultValue(column_default);
             sqlColumn.setSqlDefaultValueLiteral(literalOf(sqlColumn, string_default));
+            sqlColumn.setSqlPrimalDefaultValue(defaultOf(sqlColumn));
             sqlColumn.setUpdatable(is_updatable);
             sqlColumn.setNullable(is_nullable);
             sqlColumn.setPrimary(is_primary_key);
@@ -1217,6 +1226,36 @@ public class SqlReader extends SqlUtil {
                     return "timestamp" + StrUtils.enclose(string, '\'');
                 case "timestamp":
                     return "timestamp" + StrUtils.enclose(string, '\'');
+                default:
+                    return "null";
+            }
+        }
+
+        @Override
+        protected String defaultOf(SqlColumn sqlColumn) {
+            String type = sqlColumn.getType();
+            if (type == null) {
+                return "null";
+            }
+            switch (type) {
+                case "byte":
+                case "short":
+                case "integer":
+                case "long":
+                case "decimal":
+                case "float":
+                case "double":
+                    return "0";
+                case "boolean":
+                case "char":
+                case "string":
+                    return "'?'";
+                case "date":
+                    return "current_date";
+                case "time":
+                    return "localtimestamp";
+                case "timestamp":
+                    return "localtimestamp";
                 default:
                     return "null";
             }
@@ -1449,13 +1488,13 @@ public class SqlReader extends SqlUtil {
         @Override
         protected boolean createDefaults() throws SQLException {
             String statement = "select " + _schema + "." + "create_defaults()" + ";";
-            return executeStatement(statement);
+            return executeStatement(statement, false);
         }
 
         @Override
         protected boolean dropDefaults() throws SQLException {
             String statement = "select " + _schema + "." + "drop_defaults()" + ";";
-            return executeStatement(statement);
+            return executeStatement(statement, false);
         }
 
         @Override
@@ -1612,6 +1651,7 @@ public class SqlReader extends SqlUtil {
             sqlColumn.setDefault(string_default);
             sqlColumn.setSqlDefaultValue(column_default);
             sqlColumn.setSqlDefaultValueLiteral(literalOf(sqlColumn, string_default));
+            sqlColumn.setSqlPrimalDefaultValue(defaultOf(sqlColumn));
             sqlColumn.setUpdatable(is_updatable);
             sqlColumn.setNullable(is_nullable);
             sqlColumn.setPrimary(is_primary_key);
@@ -1669,6 +1709,37 @@ public class SqlReader extends SqlUtil {
                     return "time" + StrUtils.enclose(string, '\'');
                 case "timestamp":
                     return "timestamp" + StrUtils.enclose(string, '\'');
+                default:
+                    return "null";
+            }
+        }
+
+        @Override
+        protected String defaultOf(SqlColumn sqlColumn) {
+            String type = sqlColumn.getType();
+            if (type == null) {
+                return "null";
+            }
+            switch (type) {
+                case "boolean":
+                    return "false";
+                case "byte":
+                case "short":
+                case "integer":
+                case "long":
+                case "decimal":
+                case "float":
+                case "double":
+                    return "0";
+                case "char":
+                case "string":
+                    return "'?'";
+                case "date":
+                    return "current_date";
+                case "time":
+                    return "localtime";
+                case "timestamp":
+                    return "localtimestamp";
                 default:
                     return "null";
             }

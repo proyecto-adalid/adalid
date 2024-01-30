@@ -59,15 +59,16 @@ public class RastroFuncion extends AbstractPersistentEntity {
     @OwnerProperty
     @SegmentProperty
     @ColumnField(nullable = Kleenean.TRUE)
-    @ForeignKey(onDelete = OnDeleteAction.NONE, onUpdate = OnUpdateAction.NONE)
+//  20231209: remove foreign-key referring to Usuario because it might cause ARJUNA012117 and/or ARJUNA012121
+//  @ForeignKey(onDelete = OnDeleteAction.NONE, onUpdate = OnUpdateAction.NONE)
     @ManyToOne(navigability = Navigability.UNIDIRECTIONAL, view = MasterDetailView.NONE)
-    @PropertyField(hidden = Kleenean.TRUE) //, defaultCheckpoint = Checkpoint.USER_INTERFACE)
+    @PropertyField(hidden = Kleenean.TRUE)
     @QueryMapping(mapKeyProperties = Kleenean.FALSE)
     public Usuario usuario;
 
     @ColumnField(indexed = Kleenean.TRUE)
     @PropertyField(table = Kleenean.TRUE, search = Kleenean.TRUE, report = Kleenean.TRUE, heading = Kleenean.TRUE)
-    @StringField(maxLength = 36)
+    @StringField(maxLength = MAX_EMAIL_ADDRESS_LENGTH) // maxLength = 36 until 01/12/2023
     public StringProperty codigoUsuario;
 
     @ColumnField(indexed = Kleenean.TRUE)
@@ -200,7 +201,7 @@ public class RastroFuncion extends AbstractPersistentEntity {
         /**/
         condicionEjeFun.setInitialValue(condicionEjeFun.EJECUTADO_SIN_ERRORES);
         condicionEjeFun.setDefaultValue(condicionEjeFun.EJECUTADO_SIN_ERRORES);
-        /**/
+        /*
         RastroUtils.setGraphicImageExpressions(condicionEjeFun);
         /**/
         // <editor-fold defaultstate="collapsed" desc="localization of RastroFuncion's properties">
@@ -322,12 +323,13 @@ public class RastroFuncion extends AbstractPersistentEntity {
     }
 
     /**/
-    protected Key key1;
+    protected Key ix_rastro_funcion_0001;
 
     @Override
     protected void settleKeys() {
         super.settleKeys();
-        key1.newKeyField(idClaseRecursoValor, recursoValor);
+        ix_rastro_funcion_0001.setUnique(false);
+        ix_rastro_funcion_0001.newKeyField(idClaseRecursoValor, recursoValor);
     }
 
     /**/

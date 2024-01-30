@@ -6,17 +6,19 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.proyecto-adalid</groupId>
     <artifactId>adalid-alfa</artifactId>
-    <version>4.9.0</version><!--adalid-->
+    <version>5.0.0</version><!--adalid-->
     <packaging>jar</packaging>
     <name>adalid-alfa</name>
     <description>Adalid Alfa Library</description>
     <url>http://www.proyecto-adalid.org/</url>
+
     <licenses>
         <license>
             <name>GNU General Public License, version 2 (GPL-2.0)</name>
             <url>https://opensource.org/licenses/gpl-2.0.php</url>
         </license>
     </licenses>
+
     <developers>
         <developer>
             <name>Jorge Campins</name>
@@ -25,6 +27,7 @@
             <organizationUrl>http://www.proyecto-adalid.org/</organizationUrl>
         </developer>
     </developers>
+
     <scm>
         <connection>scm:git:https://github.com/proyecto-adalid/adalid.git</connection>
         <developerConnection>scm:git:https://github.com/proyecto-adalid/adalid.git</developerConnection>
@@ -44,13 +47,29 @@
 
     <properties>
         <maven.build.timestamp.format>yyyyMMdd-HHmm</maven.build.timestamp.format>
-        <maven.compiler.source>11</maven.compiler.source>
-        <maven.compiler.target>11</maven.compiler.target>
+        <maven.compiler.source>17</maven.compiler.source>
+        <maven.compiler.target>17</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.build.timestamp>${maven.build.timestamp}</project.build.timestamp>
     </properties>
 
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>com.google.cloud</groupId>
+                <artifactId>libraries-bom</artifactId>
+                <version>26.28.0</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
     <dependencies>
+        <dependency>
+            <groupId>com.google.cloud</groupId>
+            <artifactId>google-cloud-translate</artifactId>
+        </dependency>
         <dependency>
             <groupId>commons-collections</groupId>
             <artifactId>commons-collections</artifactId>
@@ -229,9 +248,9 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-javadoc-plugin</artifactId>
-                        <version>3.2.0</version>
+                        <version>3.5.0</version>
                         <configuration>
-                            <source>8</source>
+                            <source>17</source>
                             <detectJavaApiLink>false</detectJavaApiLink>
                             <maxmemory>4096</maxmemory>
                             <minmemory>1024</minmemory>

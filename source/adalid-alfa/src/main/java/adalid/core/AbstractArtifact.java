@@ -28,6 +28,7 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
@@ -638,9 +639,8 @@ public abstract class AbstractArtifact implements Artifact, Wrappable {
     }
 
     protected void copyLocalizedStrings(Artifact artifact) {
-        if (artifact instanceof AbstractArtifact) {
+        if (artifact instanceof AbstractArtifact that) {
             if (artifact != this) {
-                AbstractArtifact that = (AbstractArtifact) artifact;
                 _localizedLabel.clear();
                 _localizedLabel.putAll(that._localizedLabel);
                 _localizedShortLabel.clear();
@@ -923,10 +923,12 @@ public abstract class AbstractArtifact implements Artifact, Wrappable {
         return _declaringArtifact;
     }
 
+    /*
     String getDeclaringArtifactClassName() {
         return _declaringArtifact == null ? null : _declaringArtifact.getClass().getName();
     }
 
+    /**/
     String getDeclaringArtifactClassSimpleName() {
         return _declaringArtifact == null ? null : _declaringArtifact.getClass().getSimpleName();
     }
@@ -1225,6 +1227,7 @@ public abstract class AbstractArtifact implements Artifact, Wrappable {
     }
 
     private void init() {
+        _defaultLocale = defaultLocale();
         setStaticAttributes();
     }
 
@@ -1232,7 +1235,6 @@ public abstract class AbstractArtifact implements Artifact, Wrappable {
     }
 
     private void add() {
-        _defaultLocale = defaultLocale();
         Project project = TLC.getProject();
         if (project != null) {
             project.addArtifact(this);
@@ -1580,8 +1582,7 @@ public abstract class AbstractArtifact implements Artifact, Wrappable {
     protected String getValueString(Object value) {
         if (value == null) {
             return null;
-        } else if (value instanceof Artifact) {
-            Artifact artifact = (Artifact) value;
+        } else if (value instanceof Artifact artifact) {
             return getValueString(value, artifact.getPathString());
         } else {
 //          return getValueString(value, value);
@@ -1706,7 +1707,7 @@ public abstract class AbstractArtifact implements Artifact, Wrappable {
             Project.increaseParserErrorCount();
             ok = false;
         } else {
-            expression.getVerifiedUsages().add(usage);
+            expression.addVerifiedUsage(usage, artifact);
             String expname = StringUtils.isBlank(expression.getName()) ? "" : expression.getName() + " ";
             String message = "invalid expression " + expname + "defined " + locator;
             if (expression instanceof VariantX) {
@@ -1732,7 +1733,6 @@ public abstract class AbstractArtifact implements Artifact, Wrappable {
             Artifact artifact;
             Entity declaringEntity;
             List<Artifact> pathList;
-            Expression operandExpression;
             String fullName;
             Level level;
             String text1, text2;
@@ -1798,8 +1798,7 @@ public abstract class AbstractArtifact implements Artifact, Wrappable {
                         logger.error(message + "; operand " + fullName + " is out of scope");
                         Project.increaseParserErrorCount();
                         ok = false;
-                    } else if (operand instanceof Expression) {
-                        operandExpression = (Expression) operand;
+                    } else if (operand instanceof Expression operandExpression) {
                         ok &= verifyExpression(container, operandExpression, message, usage, calculableless);
                     }
                 }
@@ -1809,8 +1808,8 @@ public abstract class AbstractArtifact implements Artifact, Wrappable {
     }
 
     private boolean calculableProperty(Artifact artifact) {
-        if (artifact instanceof DataArtifact) {
-            if (((DataArtifact) artifact).isProperty()) {
+        if (artifact instanceof DataArtifact dataArtifact) {
+            if (dataArtifact.isProperty()) {
                 return ((Property) artifact).isCalculable();
             }
         }
@@ -1818,8 +1817,8 @@ public abstract class AbstractArtifact implements Artifact, Wrappable {
     }
 
     boolean calculatedProperty(Artifact artifact) {
-        if (artifact instanceof DataArtifact) {
-            if (((DataArtifact) artifact).isProperty()) {
+        if (artifact instanceof DataArtifact dataArtifact) {
+            if (dataArtifact.isProperty()) {
                 return ((Property) artifact).isCalculable() || calculatedProperty(artifact.getDeclaringArtifact());
             }
         }
@@ -1838,7 +1837,6 @@ public abstract class AbstractArtifact implements Artifact, Wrappable {
         String message;
         String fieldName, artifactName;
         Object object;
-        AbstractArtifact artifact;
 //      Class<?> fieldType;
         Class<?> dac = getClass();
         for (Field field : XS1.getFields(dac, top, clazz)) {
@@ -1848,8 +1846,7 @@ public abstract class AbstractArtifact implements Artifact, Wrappable {
             if (isNotRestricted(field)) { // && isAssignableFrom(clazz, fieldType)
                 try {
                     object = field.get(this);
-                    if (object instanceof AbstractArtifact) {
-                        artifact = (AbstractArtifact) object;
+                    if (object instanceof AbstractArtifact artifact) {
                         artifactName = artifact.getName();
                         if (artifactName == null) {
                             artifact.setName(fieldName);
@@ -1966,6 +1963,16 @@ public abstract class AbstractArtifact implements Artifact, Wrappable {
         return false;
     }
 
+    protected int[] specified(int[] a1, int[] a2) {
+        int[] a3 = new int[a1.length > a2.length ? a1.length : a2.length];
+        int[] c1 = Arrays.copyOf(a1, a3.length);
+        int[] c2 = Arrays.copyOf(a2, a3.length);
+        for (int i = 0; i < a3.length; i++) {
+            a3[i] = c1[i] > 0 ? c1[i] : c2[i];
+        }
+        return a3;
+    }
+
     protected Integer specified(Integer... values) {
         if (values != null && values.length > 0) {
             for (Integer v : values) {
@@ -2037,6 +2044,12 @@ public abstract class AbstractArtifact implements Artifact, Wrappable {
     @Override
     public Class<? extends ArtifactWrapper> getDefaultWrapperClass() {
         return ArtifactWrapper.class;
+    }
+
+    boolean sameDataTypeSimpleName(TypedArtifact x, TypedArtifact y) {
+        return x != null && y != null
+            && x.getDataType() != null && y.getDataType() != null
+            && x.getDataType().getSimpleName().equals(y.getDataType().getSimpleName());
     }
 
     // <editor-fold defaultstate="collapsed" desc="MarkupUtils">
@@ -2274,6 +2287,10 @@ public abstract class AbstractArtifact implements Artifact, Wrappable {
     @Override
     public String toString() {
         String simpleName = getNamedClass().getSimpleName();
+        return toString(simpleName);
+    }
+
+    protected String toString(String simpleName) {
         return simpleName + (_name == null ? "@" + hashCodeHexString() : _name.equals(simpleName) ? "" : "[" + _name + "]");
     }
 

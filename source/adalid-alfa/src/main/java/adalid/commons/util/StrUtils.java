@@ -1362,6 +1362,26 @@ public class StrUtils {
         return getCamelCase('_' + string.trim(), " ");
     }
 
+    public static String getSnakeCase(String string) {
+        return getHumplessCase(string);
+    }
+
+    public static String getSnakeCase(String string, char hump) {
+        return getHumplessCase(string, hump);
+    }
+
+    public static String getSnakeCase(String string, String hump) {
+        return getHumplessCase(string, hump);
+    }
+
+    public static String getLowerSnakeCase(String string) {
+        return getLowerHumplessCase(string);
+    }
+
+    public static String getUpperSnakeCase(String string) {
+        return getUpperHumplessCase(string);
+    }
+
     public static String getHumplessCase(String string) {
         return getHumplessCase(string, '_');
     }
@@ -1468,8 +1488,20 @@ public class StrUtils {
         return string;
     }
 
+    private static final String BS = "\b", HT = "\t", LF = "\n", FF = "\f", CR = "\r", DQ = "\"";
+
+    private static final String bs = "\\b", ht = "\\t", lf = "\\n", ff = "\\f", cr = "\\r", dq = "\\\"";
+
+    private static final String[] slashedChars = {BS, HT, LF, FF, CR, DQ};
+
+    private static final String[] replacements = {bs, ht, lf, ff, cr, dq};
+
     public static String escapeDoubleQuotes(String string) {
-        return StringUtils.replace(string, "\"", "\\\"");
+        return StringUtils.replace(string, DQ, dq);
+    }
+
+    public static String escapeSlashedChars(String string) {
+        return StringUtils.isBlank(string) ? string : StringUtils.replaceEach(string, slashedChars, replacements).trim();
     }
 
     public static String getToken(String string) {

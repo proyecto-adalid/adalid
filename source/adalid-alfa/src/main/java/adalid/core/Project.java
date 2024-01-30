@@ -1713,11 +1713,9 @@ public abstract class Project extends AbstractArtifact implements ProjectBuilder
     public Set<String> getCrossReferencedExpressionsSet() {
         if (crossReferencedExpressionsSet == null) {
             crossReferencedExpressionsSet = new LinkedHashSet<>();
-            PersistentEntity pent;
             List<Entity> entities = getEntitiesList();
             for (Entity entity : entities) {
-                if (entity instanceof PersistentEntity) {
-                    pent = (PersistentEntity) entity;
+                if (entity instanceof PersistentEntity pent) {
                     crossReferencedExpressionsSet.addAll(pent.getCrossReferencedExpressionsSet());
                 }
             }
@@ -1736,11 +1734,9 @@ public abstract class Project extends AbstractArtifact implements ProjectBuilder
         String schema;
         if (schemasSet == null) {
             schemasSet = new LinkedHashSet<>();
-            PersistentEntity pent;
             List<Entity> entities = getEntitiesList();
             for (Entity entity : entities) {
-                if (entity instanceof PersistentEntity) {
-                    pent = (PersistentEntity) entity;
+                if (entity instanceof PersistentEntity pent) {
                     schema = pent.getSchema();
                     if (StringUtils.isNotBlank(schema)) {
                         schemasSet.add(schema.trim());
@@ -1757,12 +1753,10 @@ public abstract class Project extends AbstractArtifact implements ProjectBuilder
         String table;
         if (tablesMap == null) {
             tablesMap = new LinkedHashMap<>();
-            PersistentEntity pent;
             PersistentEntityWrapper wrapper;
             List<Entity> entities = getEntitiesList();
             for (Entity entity : entities) {
-                if (entity instanceof PersistentEntity) {
-                    pent = (PersistentEntity) entity;
+                if (entity instanceof PersistentEntity pent) {
                     wrapper = new PersistentEntityWrapper(pent);
                     table = wrapper.getSqlName();
                     if (StringUtils.isNotBlank(table)) {
@@ -2459,7 +2453,7 @@ public abstract class Project extends AbstractArtifact implements ProjectBuilder
             clazz = method.getDeclaringClass();
             name = method.getName();
             parameterType = method.getParameterTypes()[0];
-            for (Artifact artifact : _artifacts) {
+            for (Artifact artifact : _artifacts.toArray(Artifact[]::new)) { // copy set to array to prevent java.util.ConcurrentModificationException
                 if (parameterType.isAssignableFrom(artifact.getClass())) {
                     if (Entity.class.isAssignableFrom(artifact.getClass()) && artifact.depth() != 0) {
                         continue;
@@ -2488,6 +2482,27 @@ public abstract class Project extends AbstractArtifact implements ProjectBuilder
                 entity.addAttribute(attributeName, attributeValue);
             }
         }
+    }
+
+    public static final String PAGE_ABSTRACT_ATTRIBUTE = "abstract";
+
+    public Object addPageAbstractAttribute(String pageName) {
+        return pageName == null ? null
+            : addAttribute(Page.class, pageName, KVP.join(PAGE_ABSTRACT_ATTRIBUTE, true));
+    }
+
+    public static final String PAGE_HELP_EMBEDDED_DOCUMENT_ATTRIBUTE = "help.embedded.document";
+
+    public Object addPageHelpEmbeddedDocumentAttribute(String pageName, String document) {
+        return pageName == null || document == null ? null
+            : addAttribute(Page.class, pageName, KVP.join(PAGE_HELP_EMBEDDED_DOCUMENT_ATTRIBUTE, document));
+    }
+
+    public static final String PAGE_HELP_FILE_NAME_ATTRIBUTE = "help.file.name";
+
+    public Object addPageHelpFileNameAttribute(String pageName, String fileName) {
+        return pageName == null || fileName == null ? null
+            : addAttribute(Page.class, pageName, KVP.join(PAGE_HELP_FILE_NAME_ATTRIBUTE, fileName));
     }
 
     private Boolean _moduleForeignEntityClass;
@@ -2956,8 +2971,7 @@ public abstract class Project extends AbstractArtifact implements ProjectBuilder
             entity.setBplCodeGenEnabled(enabled);
             if (!updateOnlyEntities) {
                 for (Operation operation : entity.getOperationsList()) {
-                    if (operation instanceof ProcessOperation) {
-                        ProcessOperation processOperation = (ProcessOperation) operation;
+                    if (operation instanceof ProcessOperation processOperation) {
                         processOperation.setBplCodeGenEnabled(enabled);
                     }
                 }
@@ -3135,8 +3149,7 @@ public abstract class Project extends AbstractArtifact implements ProjectBuilder
                 String string = not ? predicateName.substring(1) : predicateName;
                 String prefix = string.contains(".") ? "" : "adalid.core.predicates.";
                 Object object = XS1.newInstance(prefix + string);
-                if (object instanceof org.apache.commons.collections.Predicate) {
-                    org.apache.commons.collections.Predicate predicate = (org.apache.commons.collections.Predicate) object;
+                if (object instanceof org.apache.commons.collections.Predicate predicate) {
                     boolean b = predicate.evaluate(entity);
                     return not ? !b : b;
                 }
@@ -3163,6 +3176,10 @@ public abstract class Project extends AbstractArtifact implements ProjectBuilder
         return null;
     }
     // </editor-fold>
+
+    public static <T> T newInstance(Class<T> clazz) throws Exception {
+        return clazz.getDeclaredConstructor().newInstance();
+    }
 
     public Project() {
         super();
@@ -3458,21 +3475,38 @@ public abstract class Project extends AbstractArtifact implements ProjectBuilder
         /* until 24/02/2023
         return build() && generate(platform);
         /**/
+        if (StringUtils.isBlank(platform)) {
+            logger.error("invalid platform argument");
+            return false;
+        }
+        return build(new String[]{platform});
+    }
+
+    @Override
+    public boolean build(String... platforms) {
+        if (platforms == null || platforms.length == 0) {
+            logger.error("invalid platform argument");
+            return false;
+        }
+        String plataformas = (platforms.length == 1 ? "platform" : "platforms") + " " + Arrays.toString(platforms);
         Class<? extends Project> clazz = getClass();
         long millis1 = System.currentTimeMillis();
-        logger.warn("build and generate platform " + platform + " for project " + RunUtils.starting(clazz));
+        logger.warn("build and generate " + plataformas + " for project " + RunUtils.starting(clazz));
         boolean built = build();
         logger.warn("build project " + RunUtils.finished(clazz, millis1));
         boolean generated = false;
         if (built) {
-            long millis2 = System.currentTimeMillis();
-            generated = generate(platform);
-            logger.warn("generate platform " + platform + " for project " + RunUtils.finished(clazz, millis2));
+            for (String platform : platforms) {
+                long millis2 = System.currentTimeMillis();
+                generated = generate(platform);
+                logger.warn("generate platform " + platform + " for project " + RunUtils.finished(clazz, millis2));
+            }
         }
-        logger.warn("build and generate platform " + platform + " for project " + RunUtils.finished(clazz, millis1));
+        logger.warn("build and generate " + plataformas + " for project " + RunUtils.finished(clazz, millis1));
         return built && generated;
     }
 
+    @Override
     public boolean build() {
         logger.info(signature("build", getClass().getName()));
         getBuildTimestamp();
@@ -3568,6 +3602,10 @@ public abstract class Project extends AbstractArtifact implements ProjectBuilder
     }
 
     public boolean generate(String platform) {
+        if (StringUtils.isBlank(platform)) {
+            logger.error("invalid platform argument");
+            return false;
+        }
         logger.info(signature("generate", "platform=" + platform));
         TLC.setProject(this);
         boolean fee = readyToWrite(platform);
@@ -3726,7 +3764,7 @@ public abstract class Project extends AbstractArtifact implements ProjectBuilder
             logger.info("unspecified project acronym" + instead);
             setAcronym(ALIAS);
         } else if (!acronym.matches("^[A-Za-z][A-Za-z0-9]*$")) {
-            logger.warn(acronym + " is an invalid project acronym; acronym" + instead);
+            logger.warn(acronym + " is an invalid project acronym" + instead);
             setAcronym(ALIAS);
         } else if (acronym.equalsIgnoreCase("meta") || acronym.equalsIgnoreCase("workspace")) {
             logger.warn(acronym + " is a restricted project acronym" + instead);
@@ -3877,6 +3915,7 @@ public abstract class Project extends AbstractArtifact implements ProjectBuilder
         }
         Entity displayEntity = display.getEntity();
         Entity displayMaster = display.getMaster();
+        EntityReference displayReference = display.getReference();
         if (displayEntity == null) {
             return null;
         }
@@ -3891,6 +3930,7 @@ public abstract class Project extends AbstractArtifact implements ProjectBuilder
         /**/
         Entity siblingEntity;
         Entity siblingMaster;
+        EntityReference siblingReference;
         DisplayMode siblingMode;
         DisplayFormat siblingFormat;
         List<? extends Display> siblings = getDisplaysList();
@@ -3900,6 +3940,7 @@ public abstract class Project extends AbstractArtifact implements ProjectBuilder
             }
             siblingEntity = sibling.getEntity();
             siblingMaster = sibling.getMaster();
+            siblingReference = sibling.getReference();
             siblingMode = sibling.getDisplayMode();
             siblingFormat = sibling.getDisplayFormat();
             if (displayEntity.equals(siblingEntity)) {
@@ -3910,8 +3951,10 @@ public abstract class Project extends AbstractArtifact implements ProjectBuilder
                             return sibling;
                         }
                         if (siblingMaster != null && siblingMaster.equals(displayMaster)) {
-                            logger.debug(display.getName() + " " + format + " sibling is " + sibling.getName() + " @ " + getName());
-                            return sibling;
+                            if (siblingReference != null && siblingReference.equals(displayReference)) {
+                                logger.debug(display.getName() + " " + format + " sibling is " + sibling.getName() + " @ " + getName());
+                                return sibling;
+                            }
                         }
                     }
                 }
@@ -4086,17 +4129,14 @@ public abstract class Project extends AbstractArtifact implements ProjectBuilder
             thatFormat = that.getDisplayFormat();
             thatMode = that.getDisplayMode();
             if (entity.equals(thatEntity) && format.equals(thatFormat) && mode.equals(thatMode)) {
-                switch (qualifier) {
-                    case "explicit":
-                        fair = explicitSwitch(kinship, someEntity, thatMaster, thatReference);
-                        break;
-                    case "implicit":
-                        fair = implicitSwitch(kinship, someEntity, thatMaster, thatReference, thisReference);
-                        break;
-                    default:
-                        fair = thatMaster == null;
-                        break;
-                }
+                fair = switch (qualifier) {
+                    case "explicit" ->
+                        explicitSwitch(kinship, someEntity, thatMaster, thatReference);
+                    case "implicit" ->
+                        implicitSwitch(kinship, someEntity, thatMaster, thatReference, thisReference);
+                    default ->
+                        thatMaster == null;
+                };
                 if (fair) {
                     logger.log(level, parameters + " alternative is " + that.getName() + " @ " + getName());
                     return new AlternativeDisplay(that, display, entity, mode, format, qualifier, kinship, someEntity);
@@ -4107,35 +4147,34 @@ public abstract class Project extends AbstractArtifact implements ProjectBuilder
     }
 
     private boolean explicitSwitch(String kinship, Entity someEntity, Entity thatMaster, EntityReference thatReference) {
-        switch (kinship) {
-            case "dependent":
-            case "collateral":
-                return equalEntity(thatMaster, someEntity) && mainReference(thatReference);
-            default:
-                return false;
-        }
+        return switch (kinship) {
+            case "dependent", "collateral" ->
+                equalEntity(thatMaster, someEntity) && mainReference(thatReference);
+            default ->
+                false;
+        };
     }
 
     private boolean implicitSwitch(String kinship, Entity someEntity, Entity thatMaster, EntityReference thatReference, EntityReference thisReference) {
-        switch (kinship) {
-            case "dependent":
-                return equalEntity(thatMaster, someEntity) && alikeName(thatReference, someEntity);
-            case "collateral":
-                return equalEntity(thatMaster, someEntity) && equalName(thatReference, thisReference);
-            default:
-                return false;
-        }
+        return switch (kinship) {
+            case "dependent" ->
+                equalEntity(thatMaster, someEntity) && alikeName(thatReference, someEntity);
+            case "collateral" ->
+                equalEntity(thatMaster, someEntity) && equalName(thatReference, thisReference);
+            default ->
+                false;
+        };
     }
 
     private List<Entity> someEntityList(Display display, String kinship) {
-        switch (kinship) {
-            case "dependent":
-                return someEntityList(display.getEntity());
-            case "collateral":
-                return someEntityList(display.getMaster());
-            default:
-                return null;
-        }
+        return switch (kinship) {
+            case "dependent" ->
+                someEntityList(display.getEntity());
+            case "collateral" ->
+                someEntityList(display.getMaster());
+            default ->
+                null;
+        };
     }
 
     private List<Entity> someEntityList(Entity entity) {
@@ -4154,17 +4193,6 @@ public abstract class Project extends AbstractArtifact implements ProjectBuilder
         return that.equals(thiz);
     }
 
-    // <editor-fold defaultstate="collapsed" desc="superEntity">
-    /*
-    private boolean superEntity(Entity that, Entity thiz) {
-        if (that == null || thiz == null) {
-            return false;
-        }
-        return that.getDataClass().isAssignableFrom(thiz.getDataClass());
-    }
-    /**/
-    // </editor-fold>
-/**/
     private boolean mainReference(EntityReference thatReference) {
         return thatReference != null && thatReference.isMainRelationship();
     }

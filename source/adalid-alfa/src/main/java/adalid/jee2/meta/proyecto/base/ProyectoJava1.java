@@ -154,6 +154,7 @@ public abstract class ProyectoJava1 extends ProyectoBase implements JavaWebProje
 
     public ProyectoJava1() {
         super();
+        initializeContextParameters();
         initializeImageFiles();
         initializeJobSchedules();
     }
@@ -197,6 +198,33 @@ public abstract class ProyectoJava1 extends ProyectoBase implements JavaWebProje
     private final List<JobSchedule> _jobScheduleList = new ArrayList<>();
 
     private final List<String> _predefinedJobScheduleNames = new ArrayList<>();
+
+    private final Map<ProjectModuleType, Map<String, String>> _contextParameters = new LinkedHashMap<>();
+
+    private void initializeContextParameters() {
+        _contextParameters.put(ProjectModuleType.WEB, new LinkedHashMap<>());
+        _contextParameters.put(ProjectModuleType.WEB_API, new LinkedHashMap<>());
+    }
+
+    public void addWebContextParameter(String key, String value) {
+        if (StringUtils.isNotBlank(key) && StringUtils.isNotBlank(value)) {
+            _contextParameters.get(ProjectModuleType.WEB).put(key, value);
+        }
+    }
+
+    public Map<String, String> getWebContextParameters() {
+        return _contextParameters.get(ProjectModuleType.WEB);
+    }
+
+    public void addWebApiContextParameter(String key, String value) {
+        if (StringUtils.isNotBlank(key) && StringUtils.isNotBlank(value)) {
+            _contextParameters.get(ProjectModuleType.WEB_API).put(key, value);
+        }
+    }
+
+    public Map<String, String> getWebApiContextParameters() {
+        return _contextParameters.get(ProjectModuleType.WEB_API);
+    }
 
     private void initializeImageFiles() {
         addImageFile(pageBookmarkIcon);
@@ -371,6 +399,8 @@ public abstract class ProyectoJava1 extends ProyectoBase implements JavaWebProje
 
     private boolean _projectChangeForgottenPasswordEnabled = true;
 
+    private boolean _projectChangeOwnEmailEnabled = true;
+
     private boolean _exporterShellEnabled;
 
     private boolean _reporterShellEnabled;
@@ -442,19 +472,16 @@ public abstract class ProyectoJava1 extends ProyectoBase implements JavaWebProje
                 ok = false;
             } else {
                 switch (tipo) {
-                    case CONSULTA:
+                    case CONSULTA ->
                         allNames = consultas;
-                        break;
-                    case PROCESAMIENTO:
+                    case PROCESAMIENTO ->
                         allNames = procesos;
-                        break;
-                    case REGISTRO:
+                    case REGISTRO ->
                         allNames = registros;
-                        break;
-                    default:
+                    default -> {
                         logger.error(paquete + " is invalid; its type is " + tipo);
                         ok = false;
-                        break;
+                    }
                 }
             }
             if (allNames == null || names.isEmpty()) {
@@ -472,12 +499,10 @@ public abstract class ProyectoJava1 extends ProyectoBase implements JavaWebProje
     }
 
     private List<? extends PaqueteBase> getPackages() {
-        PaqueteBase paquete;
         List<PaqueteBase> packages = new ArrayList<>();
         List<Project> modules = getModulesList();
         for (Project module : modules) {
-            if (module instanceof PaqueteBase) {
-                paquete = (PaqueteBase) module;
+            if (module instanceof PaqueteBase paquete) {
                 packages.add(paquete);
             }
         }
@@ -899,6 +924,13 @@ public abstract class ProyectoJava1 extends ProyectoBase implements JavaWebProje
     }
 
     /**
+     * @return true if project recaptcha should be disabled; false otherwise
+     */
+    public boolean isProjectRecaptchaDisabled() {
+        return !isProjectRecaptchaEnabled();
+    }
+
+    /**
      * El método setProjectRecaptchaEnabled se utiliza para especificar si el proyecto generado utiliza, o no, Google reCAPTCHA. El valor
      * predeterminado de esta propiedad es false (no se utiliza Google reCAPTCHA).
      *
@@ -916,7 +948,7 @@ public abstract class ProyectoJava1 extends ProyectoBase implements JavaWebProje
     }
 
     /**
-     * @return true if project recaptcha site verification should be enabled; false otherwise
+     * @return true if project recaptcha site verification should be disabled; false otherwise
      */
     public boolean isProjectRecaptchaSiteVerificationDisabled() {
         return !isProjectRecaptchaSiteVerificationEnabled();
@@ -1008,6 +1040,26 @@ public abstract class ProyectoJava1 extends ProyectoBase implements JavaWebProje
      */
     public void setProjectChangeForgottenPasswordTimeout(int timeout) {
         _projectChangeForgottenPasswordTimeout = timeout < 5 ? 5 : timeout > 60 ? 60 : timeout;
+    }
+
+    /**
+     * @return true if project change own email feature should be enabled; false otherwise
+     */
+    public boolean isProjectChangeOwnEmailEnabled() {
+        return _projectChangeOwnEmailEnabled && SecurityRealmType.JDBC.equals(getSecurityRealmType());
+    }
+
+    /**
+     * El método setProjectChangeOwnEmailEnabled se utiliza para especificar si el proyecto generado debe tener habilitada, o no, la función de cambio
+     * de los propios correos electrónicos de usuario. Esa función permite a cada usuario cambiar su propio correo electrónico, pero solo si recuerda
+     * su contraseña actual. Este atributo es relevante solo si el tipo de dominio de seguridad del proyecto es JDBC, en cuyo caso su valor
+     * predeterminado es true (función habilitada).
+     *
+     * @param enabled true, si el proyecto generado debe tener habilitada la función de cambio de los propios correos electrónicos de usuario; de lo
+     * contrario false.
+     */
+    public void setProjectChangeOwnEmailEnabled(boolean enabled) {
+        _projectChangeOwnEmailEnabled = enabled;
     }
 
     /**

@@ -23,7 +23,7 @@ public class ProjectEntityReference {
 
     private Entity _entity;
 
-    private Class<?> _entityClass;
+    private final Class<?> _entityClass;
 
     private boolean _explicit;
 
@@ -34,16 +34,6 @@ public class ProjectEntityReference {
     private final Map<String, Class<?>> _declaringTypes = new TreeMap<>();
 
     private final Project _outer;
-
-    ProjectEntityReference(final Project outer) {
-        _outer = outer;
-    }
-
-    ProjectEntityReference(Entity entity, final Project outer) {
-        _outer = outer;
-        _entity = entity;
-        _entityClass = entity.getClass();
-    }
 
     ProjectEntityReference(Class<?> entityClass, final Project outer) {
         _outer = outer;

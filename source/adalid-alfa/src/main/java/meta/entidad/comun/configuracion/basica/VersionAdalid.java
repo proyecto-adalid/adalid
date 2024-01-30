@@ -61,6 +61,8 @@ public class VersionAdalid extends AbstractPersistentEnumerationEntity {
 
     public Instance V4R0, V4R1, V4R2, V4R3, V4R4, V4R5, V4R6, V4R7, V4R8, V4R9;
 
+    public Instance V5R0;
+
     @Override
     protected void settleAttributes() {
         super.settleAttributes();
@@ -116,6 +118,7 @@ public class VersionAdalid extends AbstractPersistentEnumerationEntity {
         V4R7.newInstanceField(codigo, "V4R7");
         V4R8.newInstanceField(codigo, "V4R8");
         V4R9.newInstanceField(codigo, "V4R9");
+        V5R0.newInstanceField(codigo, "V5R0");
     }
 
 }

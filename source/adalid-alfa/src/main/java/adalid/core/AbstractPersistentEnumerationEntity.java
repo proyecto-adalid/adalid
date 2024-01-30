@@ -110,6 +110,27 @@ public abstract class AbstractPersistentEnumerationEntity extends AbstractPersis
                             }
                     }
             }
+            // BooleanEnumeration since 04/10/2023
+            if (this instanceof BooleanEnumerationEntity booleanEnumeration) {
+                String name = getFullName();
+                Instance trueInstance = booleanEnumeration.getTrueInstance();
+                if (trueInstance == null) {
+                    logger.error(name + " implements BooleanEnumeration but does not have a TRUE instance");
+                    Project.increaseParserErrorCount();
+                }
+                Instance falseInstance = booleanEnumeration.getFalseInstance();
+                if (falseInstance == null) {
+                    logger.error(name + " implements BooleanEnumeration but does not have a FALSE instance");
+                    Project.increaseParserErrorCount();
+                } else if (falseInstance == trueInstance) {
+                    logger.error(name + " implements BooleanEnumeration but its TRUE and FALSE instances are the same");
+                    Project.increaseParserErrorCount();
+                }
+                if (instances.size() > 2) {
+                    logger.error(name + " implements BooleanEnumeration but has more than 2 instances");
+                    Project.increaseParserErrorCount();
+                }
+            }
             // tagging since 22/08/2022
             _customTagging = true;
             for (Instance instance : instances) {
@@ -159,6 +180,32 @@ public abstract class AbstractPersistentEnumerationEntity extends AbstractPersis
         return false;
     }
 
+    // <editor-fold defaultstate="collapsed" desc="annotate">
+    @Override
+    void annotate(Class<?> type) {
+        super.annotate(type);
+        if (type != null) {
+            annotateBooleanEnumerationReference(type);
+        }
+    }
+
+    @Override
+    void annotate(Field field) {
+        super.annotate(field);
+        if (field != null) {
+            annotateBooleanEnumerationReference(field);
+        }
+    }
+
+    @Override
+    protected List<Class<? extends Annotation>> getValidTypeAnnotations() {
+        List<Class<? extends Annotation>> valid = super.getValidTypeAnnotations();
+        if (this instanceof BooleanEnumerationEntity) {
+            valid.add(BooleanEnumerationReference.class);
+        }
+        return valid;
+    }
+
     @Override
     protected List<Class<? extends Annotation>> getValidFieldAnnotations() {
         List<Class<? extends Annotation>> valid = super.getValidFieldAnnotations();
@@ -166,8 +213,67 @@ public abstract class AbstractPersistentEnumerationEntity extends AbstractPersis
             valid.add(DiscriminatorColumn.class);
             valid.add(StateProperty.class);
         }
+        if (this instanceof BooleanEnumerationEntity) {
+            valid.add(BooleanEnumerationReference.class);
+        }
         return valid;
     }
+
+    /**
+     * annotated with BooleanEnumerationReference
+     */
+    private boolean _annotatedWithBooleanEnumerationReference;
+
+    public boolean isAnnotatedWithBooleanEnumerationReference() {
+        return _annotatedWithBooleanEnumerationReference;
+    }
+
+    private BooleanDisplayType _booleanEnumerationDisplayType;
+
+    public BooleanDisplayType getBooleanEnumerationDisplayType() {
+        return _booleanEnumerationDisplayType;
+    }
+
+    public void setBooleanEnumerationDisplayType(BooleanDisplayType displayType) {
+        _booleanEnumerationDisplayType = displayType;
+    }
+
+    private void annotateBooleanEnumerationReference(Class<?> type) {
+        Class<?> annotatedClass = XS1.getAnnotatedClass(type, BooleanEnumerationReference.class);
+        if (annotatedClass != null) {
+            BooleanEnumerationReference annotation = annotatedClass.getAnnotation(BooleanEnumerationReference.class);
+            if (annotation != null) {
+                if (BooleanEnumerationEntity.class.isAssignableFrom(type)) {
+                    _booleanEnumerationDisplayType = specified(annotation.displayType(), _booleanEnumerationDisplayType);
+                    _annotatedWithBooleanEnumerationReference = true;
+                } else {
+                    boolean log = depth() == 0;
+                    if (log) {
+                        logger.error(type + " is annotated with BooleanEnumerationReference but does implement BooleanEnumeration");
+                        Project.increaseParserErrorCount();
+                    }
+                }
+            }
+        }
+    }
+
+    private void annotateBooleanEnumerationReference(Field field) {
+        _annotatedWithBooleanEnumerationReference = field.isAnnotationPresent(BooleanEnumerationReference.class);
+        if (_annotatedWithBooleanEnumerationReference) {
+            Class<?> type = field.getType();
+            if (type != null && BooleanEnumerationEntity.class.isAssignableFrom(type)) {
+                BooleanEnumerationReference annotation = field.getAnnotation(BooleanEnumerationReference.class);
+                _booleanEnumerationDisplayType = specified(annotation.displayType(), _booleanEnumerationDisplayType);
+            } else {
+                boolean log = depth() == 0;
+                if (log) {
+                    logger.error(field + " is annotated with BooleanEnumerationReference but " + type + " does implement BooleanEnumeration");
+                    Project.increaseParserErrorCount();
+                }
+            }
+        }
+    }
+    // </editor-fold>
 
     private Instance[] _removeInstanceArray;
 

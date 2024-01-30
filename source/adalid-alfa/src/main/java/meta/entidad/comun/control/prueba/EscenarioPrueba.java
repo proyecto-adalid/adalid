@@ -193,7 +193,7 @@ public class EscenarioPrueba extends PersistentEntityBase {
         linkForeignOwnerProperty(caso.propietario);
     }
 
-    protected Key key1;
+    Key key1;
 
     @Override
     protected void settleKeys() {

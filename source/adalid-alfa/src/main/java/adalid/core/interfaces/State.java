@@ -13,11 +13,18 @@
 package adalid.core.interfaces;
 
 import adalid.core.*;
+import adalid.core.properties.*;
 
 /**
  * @author Jorge Campins
  */
 public interface State extends Segment {
+
+    default void setTransitionTimestamp(TimestampProperty timestamp) {
+    }
+
+    default void setTransitionDate(DateProperty date) {
+    }
 
     Transition transitionTo(State y);
 

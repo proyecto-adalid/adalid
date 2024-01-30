@@ -12,6 +12,7 @@
  */
 package adalid.core.expressions;
 
+import adalid.commons.bundles.Bundle;
 import adalid.core.*;
 import adalid.core.enums.*;
 import adalid.core.exceptions.*;
@@ -2981,6 +2982,27 @@ public class XB {
     public static final EntityScalarX CURRENT_USER = new EntityScalarX(null, SpecialEntityValue.CURRENT_USER);
 
     public static final EntityScalarX NULL_ENTITY = new EntityScalarX(null, SpecialEntityValue.NULL);
+
+    static {
+        /**/
+        CURRENT_DATE.setLocalizedLabel(Bundle.ENGLISH, "current date");
+        CURRENT_DATE.setLocalizedLabel(Bundle.SPANISH, "fecha actual");
+        CURRENT_TIME.setLocalizedLabel(Bundle.ENGLISH, "current time");
+        CURRENT_TIME.setLocalizedLabel(Bundle.SPANISH, "hora actual");
+        CURRENT_TIMESTAMP.setLocalizedLabel(Bundle.ENGLISH, "current timestamp");
+        CURRENT_TIMESTAMP.setLocalizedLabel(Bundle.SPANISH, "fecha/hora actual");
+        CURRENT_USER.setLocalizedLabel(Bundle.ENGLISH, "current user");
+        CURRENT_USER.setLocalizedLabel(Bundle.SPANISH, "usuario actual");
+        CURRENT_USER_CODE.setLocalizedLabel(Bundle.ENGLISH, "current user code");
+        CURRENT_USER_CODE.setLocalizedLabel(Bundle.SPANISH, "código del usuario actual");
+        CURRENT_USER_ID.setLocalizedLabel(Bundle.ENGLISH, "current user ID");
+        CURRENT_USER_ID.setLocalizedLabel(Bundle.SPANISH, "ID del usuario actual");
+        TRUTH.setLocalizedLabel(Bundle.ENGLISH, "always");
+        TRUTH.setLocalizedLabel(Bundle.SPANISH, "siempre");
+        UNTRUTH.setLocalizedLabel(Bundle.ENGLISH, "never");
+        UNTRUTH.setLocalizedLabel(Bundle.SPANISH, "nunca");
+        /**/
+    }
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Special Expressions">
