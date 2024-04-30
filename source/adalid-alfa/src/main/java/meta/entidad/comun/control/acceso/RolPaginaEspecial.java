@@ -17,6 +17,7 @@ import adalid.core.annotations.*;
 import adalid.core.enums.*;
 import adalid.core.interfaces.*;
 import adalid.core.properties.*;
+import adalid.core.properties.ext.*;
 import java.lang.reflect.Field;
 
 /**
@@ -54,6 +55,10 @@ public class RolPaginaEspecial extends AbstractPersistentEntity {
     @VersionProperty
     public LongProperty version;
 
+    @NameProperty
+    @ColumnField(calculable = Kleenean.TRUE)
+    public CloakedStringProperty nombre;
+
     @ForeignKey(onDelete = OnDeleteAction.CASCADE, onUpdate = OnUpdateAction.CASCADE)
     @ManyToOne(navigability = Navigability.BIDIRECTIONAL, view = MasterDetailView.TABLE, viewSequence = 30)
     @ColumnField(nullable = Kleenean.FALSE)
@@ -68,6 +73,7 @@ public class RolPaginaEspecial extends AbstractPersistentEntity {
     public PaginaEspecial paginaEspecial;
 
     @ColumnField(calculable = Kleenean.TRUE)
+    @BooleanField(displayType = BooleanDisplayType.TOGGLE)
     @PropertyField(table = Kleenean.TRUE, report = Kleenean.TRUE)
     public BooleanProperty inactiva;
 
@@ -103,6 +109,9 @@ public class RolPaginaEspecial extends AbstractPersistentEntity {
     @Override
     protected void settleProperties() {
         super.settleProperties();
+        /**/
+        nombre.setCalculableValueExpression(concatenate(paginaEspecial.codigo, SLASH, rol.codigoRol));
+        /**/
         // <editor-fold defaultstate="collapsed" desc="localization of RolPagina's properties">
         /**/
         rol.setLocalizedLabel(ENGLISH, "role");

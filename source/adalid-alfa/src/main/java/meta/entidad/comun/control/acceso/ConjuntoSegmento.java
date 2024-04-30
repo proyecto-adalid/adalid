@@ -84,6 +84,7 @@ public class ConjuntoSegmento extends AbstractPersistentEntity {
     @StringField(maxLength = 200, regex = "([a-zA-Z_$][a-zA-Z\\d_$]*\\.)*[a-zA-Z_$][a-zA-Z\\d_$]*", validator = ClaseFabricador.FCSS_VALIDATOR)
     public StringProperty nombreClaseFabricador;
 
+    @BooleanField(displayType = BooleanDisplayType.TOGGLE)
     @PropertyField(create = Kleenean.FALSE, update = Kleenean.FALSE, table = Kleenean.TRUE)
     public BooleanProperty esConjuntoEspecial;
 
@@ -167,7 +168,9 @@ public class ConjuntoSegmento extends AbstractPersistentEntity {
         claseFabricador.setLocalizedDescription(SPANISH, "clase Java utilizada para determinar los segmentos autorizados; "
             + "la clase debe implementar la interfaz FabricadorConjuntoSegmentos");
         claseFabricador.setLocalizedLabel(ENGLISH, "factory class");
-        claseFabricador.setLocalizedLabel(SPANISH, "clase fabricador");
+        claseFabricador.setLocalizedLabel(SPANISH, "clase de fabricador");
+        claseFabricador.setLocalizedShortLabel(ENGLISH, "factory");
+        claseFabricador.setLocalizedShortLabel(SPANISH, "fabricador");
         /**/
         nombreClaseFabricador.setLocalizedDescription(ENGLISH, "name of the Java class used to determine the authorized segments; "
             + "the class must implement interface FabricadorConjuntoSegmentos");
@@ -183,6 +186,8 @@ public class ConjuntoSegmento extends AbstractPersistentEntity {
         /**/
         esConjuntoEspecial.setLocalizedLabel(ENGLISH, "special set");
         esConjuntoEspecial.setLocalizedLabel(SPANISH, "conjunto especial");
+        esConjuntoEspecial.setLocalizedShortLabel(ENGLISH, "special");
+        esConjuntoEspecial.setLocalizedShortLabel(SPANISH, "especial");
         /**/
         grupo.setLocalizedLabel(ENGLISH, "user group");
         grupo.setLocalizedLabel(SPANISH, "grupo de usuarios");
@@ -194,6 +199,7 @@ public class ConjuntoSegmento extends AbstractPersistentEntity {
         grupo.setLocalizedTooltip(SPANISH, "código del grupo al que pertenece este conjunto");
         /**/
         // </editor-fold>
+        /**/
     }
 
     protected Segment modificables;

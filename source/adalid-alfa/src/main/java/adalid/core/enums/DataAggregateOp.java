@@ -59,7 +59,7 @@ public enum DataAggregateOp implements Operator {
      */
     NOR_OR_NAXOR,
     /* operadores para expresiones alfanuméricas */
-    CONCAT,
+    CONCAT, CONCATENATE,
     /* operadores para expresiones numéricas */
     SUM, PRODUCT, AVERAGE
 

@@ -244,7 +244,7 @@ public abstract class ProyectoJava1 extends ProyectoBase implements JavaWebProje
         headerRightBanner.height = 36;
         /**/
         welcomePageBanner.path = "/resources/images/base/index.png";
-        welcomePageBanner.height = 250;
+        welcomePageBanner.height = 200;
         /**/
         changePasswordBanner.path = "/resources/images/base/index.png";
         changePasswordBanner.width = 250;

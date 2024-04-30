@@ -32,6 +32,10 @@ import org.apache.log4j.Logger;
  */
 public class Utility {
 
+    static {
+        adalid.commons.MainClass.init();
+    }
+
     private static final Logger logger = Logger.getLogger(Utility.class);
 
     private static final String ARGS_FAILED = "method getArguments failed";

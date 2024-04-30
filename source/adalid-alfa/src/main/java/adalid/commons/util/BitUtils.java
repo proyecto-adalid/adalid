@@ -64,14 +64,14 @@ public class BitUtils {
     }
 
     public static boolean valueOf(Object o) {
-        if (o instanceof Boolean) {
-            return (Boolean) o;
-        } else if (o instanceof Character) {
-            return valueOf((Character) o);
-        } else if (o instanceof String) {
-            return valueOf((String) o);
-        } else if (o instanceof Number) {
-            return valueOf((Number) o);
+        if (o instanceof Boolean pdq) {
+            return pdq;
+        } else if (o instanceof Character pdq) {
+            return valueOf(pdq);
+        } else if (o instanceof String pdq) {
+            return valueOf(pdq);
+        } else if (o instanceof Number pdq) {
+            return valueOf(pdq);
         } else {
             return o != null;
         }
@@ -85,22 +85,22 @@ public class BitUtils {
         if (b == null) {
             return Bundle.getString("bit.null");
         }
-        switch (bls) {
-            case YES_OR_NO:
-                return b ? Bundle.getString("bit.yes") : Bundle.getString("bit.no");
-            case ACTIVE_OR_INACTIVE:
-                return b ? Bundle.getString("bit.active") : Bundle.getString("bit.inactive");
-            case ON_OR_OFF:
-                return b ? Bundle.getString("bit.on") : Bundle.getString("bit.off");
-            case POSITIVE_OR_NEGATIVE:
-                return b ? Bundle.getString("bit.positive") : Bundle.getString("bit.negative");
-            case PRESENT_OR_ABSENT:
-                return b ? Bundle.getString("bit.present") : Bundle.getString("bit.absent");
-            case TRUE_OR_FALSE:
-                return b ? Bundle.getString("bit.true") : Bundle.getString("bit.false");
-            default:
-                return b ? Bundle.getString("bit.yes") : Bundle.getString("bit.no");
-        }
+        return switch (bls) {
+            case YES_OR_NO ->
+                b ? Bundle.getString("bit.yes") : Bundle.getString("bit.no");
+            case ACTIVE_OR_INACTIVE ->
+                b ? Bundle.getString("bit.active") : Bundle.getString("bit.inactive");
+            case ON_OR_OFF ->
+                b ? Bundle.getString("bit.on") : Bundle.getString("bit.off");
+            case POSITIVE_OR_NEGATIVE ->
+                b ? Bundle.getString("bit.positive") : Bundle.getString("bit.negative");
+            case PRESENT_OR_ABSENT ->
+                b ? Bundle.getString("bit.present") : Bundle.getString("bit.absent");
+            case TRUE_OR_FALSE ->
+                b ? Bundle.getString("bit.true") : Bundle.getString("bit.false");
+            default ->
+                b ? Bundle.getString("bit.yes") : Bundle.getString("bit.no");
+        };
     }
 
     public static Boolean newBoolean(Object obj) {

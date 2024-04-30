@@ -97,7 +97,7 @@ public class ArchivoAdjunto extends AbstractPersistentEntity {
     public Usuario propietario;
 
     @PropertyField(table = Kleenean.TRUE, search = Kleenean.TRUE, report = Kleenean.TRUE)
-    @StringField(maxLength = MAX_EMAIL_ADDRESS_LENGTH) // maxLength = 36 until 01/12/2023
+    @StringField(maxLength = MAX_EMAIL_ADDRESS_LENGTH, displayLength = 36) // maxLength = 36 until 01/12/2023
     public StringProperty codigoUsuarioPropietario;
 
     @PropertyField(table = Kleenean.FALSE, search = Kleenean.TRUE, report = Kleenean.TRUE)
@@ -127,6 +127,7 @@ public class ArchivoAdjunto extends AbstractPersistentEntity {
     @PropertyField(table = Kleenean.TRUE, report = Kleenean.TRUE, search = Kleenean.TRUE, overlay = Kleenean.TRUE)
     public LongProperty longitud;
 
+    @BinaryField(fetch = FetchType.LAZY)
     @PropertyField(hidden = Kleenean.TRUE)
     public BinaryProperty octetos;
 

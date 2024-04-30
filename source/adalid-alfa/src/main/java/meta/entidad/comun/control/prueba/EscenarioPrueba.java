@@ -131,7 +131,7 @@ public class EscenarioPrueba extends PersistentEntityBase {
     @Override
     protected void settleProperties() {
         super.settleProperties();
-        codigo.setDefaultValue(caso.codigo.concat("-").concat(numero));
+        codigo.setDefaultValue(concat(caso.codigo, HYPHEN, numero));
         numero.setMinValue(1);
         numero.setMaxValue(10000);
         tipoResultado.setInitialValue(tipoResultado.EXITO);

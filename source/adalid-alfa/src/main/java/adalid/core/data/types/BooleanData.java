@@ -54,7 +54,7 @@ public class BooleanData extends BooleanPrimitive {
      * @param displayType the boolean display type to set
      */
     public void setBooleanDisplayType(BooleanDisplayType displayType) {
-        XS2.checkAccess();
+        checkScope();
         _booleanDisplayType = displayType == null ? BooleanDisplayType.UNSPECIFIED : displayType;
     }
 

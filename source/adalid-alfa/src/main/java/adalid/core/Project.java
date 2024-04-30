@@ -51,6 +51,10 @@ import static adalid.core.enums.RoleType.*;
  */
 public abstract class Project extends AbstractArtifact implements ProjectBuilder, ProjectWriter, Comparable<Project> {
 
+    static {
+        adalid.commons.MainClass.init();
+    }
+
     // <editor-fold defaultstate="collapsed" desc="static fields">
     private static final Logger logger = Logger.getLogger(Project.class);
 
@@ -1504,6 +1508,7 @@ public abstract class Project extends AbstractArtifact implements ProjectBuilder
      * @param type entity class
      * @return the root entity of the specified class
      */
+    @SuppressWarnings("unchecked")
     public <T extends Entity> T getTypedEntity(Class<T> type) {
         Entity entity = getEntity(type);
         return entity == null ? null : (T) entity;
@@ -1577,6 +1582,7 @@ public abstract class Project extends AbstractArtifact implements ProjectBuilder
      * @param type entity class
      * @return the root entity of the specified class
      */
+    @SuppressWarnings("unchecked")
     public <T extends Project> T getTypedModule(Class<T> type) {
         Project project = getModule(type);
         return project == null ? null : (T) project;
@@ -1844,17 +1850,12 @@ public abstract class Project extends AbstractArtifact implements ProjectBuilder
         _databaseOperationConfirmationRequired = confirmation;
     }
 
-    private Boolean _databaseDefaultValuesMustBeSingleEntityExpression;
+    private boolean _databaseDefaultValuesMustBeSingleEntityExpression;
 
     /**
-     * @return the database default.values.must.be.single.entity.expression indicator
+     * @return the database.default.values.must.be.single.entity.expression indicator
      */
     public boolean isDatabaseDefaultValuesMustBeSingleEntityExpression() {
-        if (_databaseDefaultValuesMustBeSingleEntityExpression == null) {
-            ExtendedProperties bootstrapping = PropertiesHandler.getBootstrapping();
-            return bootstrapping != null && !bootstrapping.isEmpty()
-                && BitUtils.valueOf(bootstrapping.getString("database.default.values.must.be.single.entity.expression", "false"));
-        }
         return _databaseDefaultValuesMustBeSingleEntityExpression;
     }
 
@@ -1866,6 +1867,25 @@ public abstract class Project extends AbstractArtifact implements ProjectBuilder
      */
     public void setDatabaseDefaultValuesMustBeSingleEntityExpression(boolean b) {
         _databaseDefaultValuesMustBeSingleEntityExpression = b;
+    }
+
+    private boolean _entityTableViewWithStickyHeaderDefaultValue;
+
+    /**
+     * @return the entity.table.view.with.sticky.header.default.value indicator
+     */
+    public boolean isEntityTableViewWithStickyHeaderDefaultValue() {
+        return _entityTableViewWithStickyHeaderDefaultValue;
+    }
+
+    /**
+     * El método setEntityTableViewWithStickyHeader se utiliza para especificar el valor por default del elemento stickyHeader de la anotación
+     * EntityTableView.
+     *
+     * @param b true para incluir el encabezado fijo; de lo contrario, false
+     */
+    public void setEntityTableViewWithStickyHeaderDefaultValue(boolean b) {
+        _entityTableViewWithStickyHeaderDefaultValue = b;
     }
 
     /**
@@ -2469,6 +2489,7 @@ public abstract class Project extends AbstractArtifact implements ProjectBuilder
         }
     }
 
+    @SuppressWarnings("unchecked")
     public void addEntityAttribute(String attributeName, Object attributeValue, Class<? extends Entity>... entityClasses) {
         if (StringUtils.isNotBlank(attributeName) && attributeValue != null && entityClasses != null && entityClasses.length > 0) {
             forEntityAttribute(attributeName, attributeValue, entityNames(entityClasses));
@@ -2549,6 +2570,7 @@ public abstract class Project extends AbstractArtifact implements ProjectBuilder
      * un módulo de entidades foráneas (vea el elemento foreign de la Anotación ProjectModule)
      * @param entityClasses una o más clases de entidades que se van a agregar, o no, al conjunto de entidades foráneas de la aplicación
      */
+    @SuppressWarnings("unchecked")
     public void setForeignEntityClass(Boolean foreignEntityClass, Class<? extends Entity>... entityClasses) {
         if (entityClasses != null && entityClasses.length > 0) {
             forForeignEntityClass(foreignEntityClass, entityNames(entityClasses));
@@ -2606,6 +2628,7 @@ public abstract class Project extends AbstractArtifact implements ProjectBuilder
      * un módulo de entidades privadas (vea el elemento private de la Anotación ProjectModule)
      * @param entityClasses una o más clases de entidades que se van a agregar, o no, al conjunto de entidades privadas de la aplicación
      */
+    @SuppressWarnings("unchecked")
     public void setPrivateEntityClass(Boolean privateEntityClass, Class<? extends Entity>... entityClasses) {
         if (entityClasses != null && entityClasses.length > 0) {
             forPrivateEntityClass(privateEntityClass, entityNames(entityClasses));
@@ -2671,6 +2694,7 @@ public abstract class Project extends AbstractArtifact implements ProjectBuilder
      *
      * @param entityClasses una o más clases de entidades cuyo origen se va a establecer
      */
+    @SuppressWarnings("unchecked")
     public void setApplicationOrigin(String origin, Class<? extends Entity>... entityClasses) {
         if (entityClasses != null && entityClasses.length > 0) {
             forApplicationOrigin(origin, entityNames(entityClasses));
@@ -2736,6 +2760,7 @@ public abstract class Project extends AbstractArtifact implements ProjectBuilder
      *
      * @param entityClasses una o más clases de entidades cuya raíz de contexto se va a establecer
      */
+    @SuppressWarnings("unchecked")
     public void setApplicationContextRoot(String contextRoot, Class<? extends Entity>... entityClasses) {
         if (entityClasses != null && entityClasses.length > 0) {
             forApplicationContextRoot(contextRoot, entityNames(entityClasses));
@@ -2784,6 +2809,7 @@ public abstract class Project extends AbstractArtifact implements ProjectBuilder
      *
      * @param entityClasses una o más clases de entidades cuya parte intermedia del path se va a establecer
      */
+    @SuppressWarnings("unchecked")
     public void setApplicationConsolePath(String consolePath, Class<? extends Entity>... entityClasses) {
         if (entityClasses != null && entityClasses.length > 0) {
             forApplicationConsolePath(consolePath, entityNames(entityClasses));
@@ -2832,6 +2858,7 @@ public abstract class Project extends AbstractArtifact implements ProjectBuilder
      *
      * @param entityClasses una o más clases de entidades cuya parte intermedia del path se va a establecer
      */
+    @SuppressWarnings("unchecked")
     public void setApplicationReadingPath(String readingPath, Class<? extends Entity>... entityClasses) {
         if (entityClasses != null && entityClasses.length > 0) {
             forApplicationReadingPath(readingPath, entityNames(entityClasses));
@@ -2880,6 +2907,7 @@ public abstract class Project extends AbstractArtifact implements ProjectBuilder
      *
      * @param entityClasses una o más clases de entidades cuya parte intermedia del path se va a establecer
      */
+    @SuppressWarnings("unchecked")
     public void setApplicationWritingPath(String writingPath, Class<? extends Entity>... entityClasses) {
         if (entityClasses != null && entityClasses.length > 0) {
             forApplicationWritingPath(writingPath, entityNames(entityClasses));
@@ -2937,6 +2965,7 @@ public abstract class Project extends AbstractArtifact implements ProjectBuilder
      * @param enabled true o false para generar, o no, código BPL para las entidades del conjunto definido por el parámetro entityClasses
      * @param entityClasses una o más clases de entidades cuya generación de código BPL se va a establecer
      */
+    @SuppressWarnings("unchecked")
     public void setBplCodeGenEnabled(boolean enabled, Class<? extends Entity>... entityClasses) {
         setBplCodeGenEnabled(enabled, false, entityClasses);
     }
@@ -2951,6 +2980,7 @@ public abstract class Project extends AbstractArtifact implements ProjectBuilder
      * @param updateOnlyEntities true para actualizar solo las entidades; o false, para actualizar el atributo de las entidades y sus operaciones
      * @param entityClasses una o más clases de entidades cuya generación de código BPL se va a establecer
      */
+    @SuppressWarnings("unchecked")
     public void setBplCodeGenEnabled(boolean enabled, boolean updateOnlyEntities, Class<? extends Entity>... entityClasses) {
         if (entityClasses != null && entityClasses.length > 0) {
             forBplCodeGenEnabled(enabled, updateOnlyEntities, entityNames(entityClasses));
@@ -3008,6 +3038,7 @@ public abstract class Project extends AbstractArtifact implements ProjectBuilder
      * @param enabled true o false para generar, o no, código BWS para las entidades del conjunto definido por el parámetro entityClasses
      * @param entityClasses una o más clases de entidades cuya generación de código BWS se va a establecer
      */
+    @SuppressWarnings("unchecked")
     public void setBwsCodeGenEnabled(boolean enabled, Class<? extends Entity>... entityClasses) {
         if (entityClasses != null && entityClasses.length > 0) {
             forBwsCodeGenEnabled(enabled, entityNames(entityClasses));
@@ -3054,6 +3085,7 @@ public abstract class Project extends AbstractArtifact implements ProjectBuilder
      * @param enabled true o false para generar, o no, código DAF para las entidades del conjunto definido por el parámetro entityClasses
      * @param entityClasses una o más clases de entidades cuya generación de código DAF se va a establecer
      */
+    @SuppressWarnings("unchecked")
     public void setDafCodeGenEnabled(boolean enabled, Class<? extends Entity>... entityClasses) {
         if (entityClasses != null && entityClasses.length > 0) {
             forDafCodeGenEnabled(enabled, entityNames(entityClasses));
@@ -3100,6 +3132,7 @@ public abstract class Project extends AbstractArtifact implements ProjectBuilder
      * @param enabled true o false para generar, o no, código FWS para las entidades del conjunto definido por el parámetro entityClasses
      * @param entityClasses una o más clases de entidades cuya generación de código FWS se va a establecer
      */
+    @SuppressWarnings("unchecked")
     public void setFwsCodeGenEnabled(boolean enabled, Class<? extends Entity>... entityClasses) {
         if (entityClasses != null && entityClasses.length > 0) {
             forFwsCodeGenEnabled(enabled, entityNames(entityClasses));
@@ -3115,6 +3148,7 @@ public abstract class Project extends AbstractArtifact implements ProjectBuilder
         }
     }
 
+    @SuppressWarnings("unchecked")
     private Set<String> entityNames(Class<? extends Entity>... entityClasses) {
         Set<String> entityNames = new LinkedHashSet<>();
         for (Class<?> entityClass : entityClasses) {
@@ -3566,13 +3600,13 @@ public abstract class Project extends AbstractArtifact implements ProjectBuilder
 
     protected boolean parse() {
         logger.info(signature("parse", getClass().getName()));
-        TLC.setProject(this);
+//      TLC.setProject(this);
         return getParser().parse();
     }
 
     protected boolean analyze() {
         logger.info(signature("analyze", getClass().getName()));
-        TLC.setProject(this);
+//      TLC.setProject(this);
         configureAnalyzer();
         List<Project> modulesList = getModulesList();
         Collections.sort(modulesList);
@@ -3607,7 +3641,11 @@ public abstract class Project extends AbstractArtifact implements ProjectBuilder
             return false;
         }
         logger.info(signature("generate", "platform=" + platform));
-        TLC.setProject(this);
+//      TLC.setProject(this);
+        if (TLC.getProject() != this) {
+            logger.error("this project has not been built and therefore cannot be generated");
+            return false;
+        }
         boolean fee = readyToWrite(platform);
         boolean faa = checkBootstrappingProperties();
         boolean foo = checkProjectAlias();
@@ -4312,8 +4350,8 @@ public abstract class Project extends AbstractArtifact implements ProjectBuilder
 
     // <editor-fold defaultstate="collapsed" desc="iframe">
     /**
-     * Cree la definición de un iframe usando MessageFormat.format
-     * <p>
+     * Crea la definición de un iframe usando MessageFormat.format
+     *
      * @param src URL del documento a incrustar en el iframe
      * @return la definición de un iframe de 300 x 150 píxeles
      */
@@ -4322,8 +4360,8 @@ public abstract class Project extends AbstractArtifact implements ProjectBuilder
     }
 
     /**
-     * Cree la definición de un iframe usando MessageFormat.format
-     * <p>
+     * Crea la definición de un iframe usando MessageFormat.format
+     *
      * @param src URL del documento a incrustar en el iframe
      * @param width ancho del iframe en píxeles. Un número menor o igual a 0 es equivalente a 300; un número mayor que 0 y menor que 100 es
      * equivalente a 100.

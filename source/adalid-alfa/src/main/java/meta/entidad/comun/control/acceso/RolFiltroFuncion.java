@@ -17,6 +17,7 @@ import adalid.core.annotations.*;
 import adalid.core.enums.*;
 import adalid.core.interfaces.*;
 import adalid.core.properties.*;
+import adalid.core.properties.ext.*;
 import java.lang.reflect.Field;
 import meta.entidad.comun.configuracion.basica.Funcion;
 import meta.entidad.comun.operacion.basica.FiltroFuncion;
@@ -57,6 +58,10 @@ public class RolFiltroFuncion extends AbstractPersistentEntity {
 
     @VersionProperty
     public LongProperty version;
+
+    @NameProperty
+    @ColumnField(calculable = Kleenean.TRUE)
+    public CloakedStringProperty nombre;
 
     @ForeignKey(onDelete = OnDeleteAction.CASCADE, onUpdate = OnUpdateAction.CASCADE)
     @ManyToOne(navigability = Navigability.BIDIRECTIONAL, view = MasterDetailView.TABLE, viewSequence = 50)
@@ -111,6 +116,9 @@ public class RolFiltroFuncion extends AbstractPersistentEntity {
     @Override
     protected void settleProperties() {
         super.settleProperties();
+        /**/
+        nombre.setCalculableValueExpression(concatenate(filtroFuncion.nombreFiltroFuncion, SLASH, rol.codigoRol));
+        /**/
         // <editor-fold defaultstate="collapsed" desc="localization of RolFiltroFuncion's properties">
         rol.setLocalizedLabel(ENGLISH, "role");
         rol.setLocalizedLabel(SPANISH, "rol");

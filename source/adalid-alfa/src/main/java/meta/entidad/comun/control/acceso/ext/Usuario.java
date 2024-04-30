@@ -18,6 +18,7 @@ import adalid.core.enums.*;
 import adalid.core.expressions.XB;
 import adalid.core.interfaces.*;
 import adalid.core.parameters.*;
+import adalid.core.parameters.ext.*;
 import adalid.core.properties.*;
 import adalid.core.sql.NativeQuery;
 import java.lang.reflect.Field;
@@ -32,7 +33,7 @@ import meta.entidad.comun.control.acceso.UsuarioModulo;
  * @author Jorge Campins
  */
 @EntityClass(independent = Kleenean.TRUE, resourceType = ResourceType.OPERATION, resourceGender = ResourceGender.MASCULINE)
-@EntityCodeGen(fws = Kleenean.FALSE)
+@EntityCodeGen(bws = Kleenean.FALSE, fws = Kleenean.FALSE)
 @EntityDocGen(stateDiagram = Kleenean.FALSE)
 @EntitySelectOperation(enabled = Kleenean.TRUE, onload = SelectOnloadOption.EXECUTE)
 @EntityInsertOperation(enabled = Kleenean.TRUE)
@@ -158,6 +159,10 @@ public class Usuario extends meta.entidad.comun.control.acceso.Usuario {
     @StringField(maxLength = Project.STRING_FIELD_MAX_LENGTH)
     public StringProperty preferenciasInterfaz;
 
+    @ColumnField(nullable = Kleenean.FALSE)
+    @PropertyField(create = Kleenean.TRUE, update = Kleenean.TRUE)
+    public BooleanProperty plantillaMinimalista;
+
     @ColumnField(nullable = Kleenean.TRUE)
     @PropertyField(create = Kleenean.FALSE, update = Kleenean.FALSE)
     public IntegerProperty filasPorPagina;
@@ -232,6 +237,8 @@ public class Usuario extends meta.entidad.comun.control.acceso.Usuario {
         restriccionFormatos.setDefaultValue(restriccionFormatos.NADA);
         paginaInicio.setDefaultValue(paginaInicio.PREDETERMINADA);
         paginaInicio.setInitialValue(paginaInicio.PREDETERMINADA);
+        plantillaMinimalista.setDefaultValue(false);
+        plantillaMinimalista.setInitialValue(false);
         filasPorPagina.setDefaultValue(0);
         filasPorPagina.setMaxValue(Constants.MAXIMUM_ROWS_PER_PAGE_LIMIT);
         filasPorPagina.setMinValue(0);
@@ -397,6 +404,16 @@ public class Usuario extends meta.entidad.comun.control.acceso.Usuario {
         temaInterfaz.setLocalizedDescription(ENGLISH, "set of shapes and colors for graphic elements used to customize the appearance of the application");
         temaInterfaz.setLocalizedDescription(SPANISH, "conjunto de formas y colores para elementos gráficos utilizados para personalizar la apariencia de la aplicación");
         /**/
+        preferenciasInterfaz.setLocalizedLabel(ENGLISH, "user preferences");
+        preferenciasInterfaz.setLocalizedLabel(SPANISH, "preferencias del usuario");
+        preferenciasInterfaz.setLocalizedDescription(ENGLISH, "user preferences to configure the interface theme");
+        preferenciasInterfaz.setLocalizedDescription(SPANISH, "preferencias del usuario para configurar el tema de la interfaz");
+        /**/
+        plantillaMinimalista.setLocalizedLabel(ENGLISH, "minimalist layout");
+        plantillaMinimalista.setLocalizedLabel(SPANISH, "plantilla minimalista");
+        plantillaMinimalista.setLocalizedDescription(ENGLISH, "use a minimalist version of the application page layout");
+        plantillaMinimalista.setLocalizedDescription(SPANISH, "utilizar una versión minimalista del diseño de página de la aplicación");
+        /**/
         filasPorPagina.setLocalizedLabel(ENGLISH, "rows per page");
         filasPorPagina.setLocalizedLabel(SPANISH, "filas por página");
         filasPorPagina.setLocalizedDescription(ENGLISH, "initial number of rows per page");
@@ -461,7 +478,7 @@ public class Usuario extends meta.entidad.comun.control.acceso.Usuario {
         /**/
         step10.newStepField(codigoUsuario, nombreUsuario, archivo, correoElectronico, numeroTelefonoInteligente, numeroTelefonoMovil, grupo);
         /**/
-        step20.newStepField(paginaInicio, paginaMenu, otraPagina, temaInterfaz, filasPorPagina, ayudaPorCampos, confirmarAlDescartar, confirmarAlFinalizar);
+        step20.newStepField(paginaInicio, paginaMenu, otraPagina, temaInterfaz, preferenciasInterfaz, plantillaMinimalista, filasPorPagina, ayudaPorCampos, confirmarAlDescartar, confirmarAlFinalizar);
         /**/
         step30.newStepField(limiteArchivoDetalle, limiteArchivoResumen, limiteInformeDetalle, limiteInformeResumen, limiteInformeGrafico);
         /**/
@@ -935,10 +952,10 @@ public class Usuario extends meta.entidad.comun.control.acceso.Usuario {
     public class Agregar extends ProcessOperation {
 
         @ParameterField(required = Kleenean.TRUE)
-        @StringField(maxLength = MAX_EMAIL_ADDRESS_LENGTH) // maxLength = 36 until 01/12/2023
+        @StringField(maxLength = MAX_EMAIL_ADDRESS_LENGTH, displayLength = 36) // maxLength = 36 until 01/12/2023
         protected StringParameter codigo;
 
-        @ParameterField(required = Kleenean.FALSE)
+        @ParameterField(required = Kleenean.TRUE)
         @StringField(maxLength = 100)
         protected StringParameter nombre;
 
@@ -959,9 +976,17 @@ public class Usuario extends meta.entidad.comun.control.acceso.Usuario {
             // <editor-fold defaultstate="collapsed" desc="localization of Agregar's parameters">
             codigo.setLocalizedLabel(ENGLISH, "code");
             codigo.setLocalizedLabel(SPANISH, "código");
+            codigo.setLocalizedDescription(ENGLISH, "Code of the new user; "
+                + "it is a required field and has no default value.");
+            codigo.setLocalizedDescription(SPANISH, "Código del nuevo usuario; "
+                + "es un dato obligatorio y no tiene valor por omisión.");
             /**/
             nombre.setLocalizedLabel(ENGLISH, "name");
             nombre.setLocalizedLabel(SPANISH, "nombre");
+            nombre.setLocalizedDescription(ENGLISH, "Name of the new user; "
+                + "it is a required field and has no default value.");
+            nombre.setLocalizedDescription(SPANISH, "Nombre del nuevo usuario; "
+                + "es un dato obligatorio y no tiene valor por omisión.");
             // </editor-fold>
         }
 
@@ -1022,7 +1047,7 @@ public class Usuario extends meta.entidad.comun.control.acceso.Usuario {
         protected meta.entidad.comun.control.acceso.Usuario usuario;
 
         @ParameterField(required = Kleenean.TRUE)
-        @StringField(maxLength = MAX_EMAIL_ADDRESS_LENGTH) // maxLength = 36 until 01/12/2023
+        @StringField(maxLength = MAX_EMAIL_ADDRESS_LENGTH, displayLength = 36) // maxLength = 36 until 01/12/2023
         protected StringParameter codigo;
 
         @ParameterField(required = Kleenean.FALSE)
@@ -1312,7 +1337,7 @@ public class Usuario extends meta.entidad.comun.control.acceso.Usuario {
             super.settleAttributes();
             // <editor-fold defaultstate="collapsed" desc="localization of AsignarPassword's attributes">
             setLocalizedLabel(ENGLISH, "assign password");
-            setLocalizedLabel(SPANISH, "asignar password");
+            setLocalizedLabel(SPANISH, "asignar contraseña");
             setLocalizedDescription(ENGLISH, "assign a new password to a user");
             setLocalizedDescription(SPANISH, "asignar una nueva contraseña a un usuario");
             setLocalizedSuccessMessage(ENGLISH, "a new password was assigned to the user");
@@ -1324,11 +1349,11 @@ public class Usuario extends meta.entidad.comun.control.acceso.Usuario {
         protected meta.entidad.comun.control.acceso.Usuario usuario;
 
         @ParameterField(auditable = Kleenean.FALSE, password = Kleenean.TRUE, required = Kleenean.TRUE)
-        @StringField(maxLength = 128, autoComplete = AutoComplete.NEW_PASSWORD)
+        @StringField(maxLength = 128, displayLength = 36, autoComplete = AutoComplete.NEW_PASSWORD)
         protected StringParameter nuevoPassword;
 
         @ParameterField(auditable = Kleenean.FALSE, password = Kleenean.TRUE, required = Kleenean.TRUE)
-        @StringField(maxLength = 128, autoComplete = AutoComplete.OFF)
+        @StringField(maxLength = 128, displayLength = 36, autoComplete = AutoComplete.OFF)
         protected StringParameter confirmacionPassword;
 
         @Override
@@ -1721,16 +1746,16 @@ public class Usuario extends meta.entidad.comun.control.acceso.Usuario {
         protected meta.entidad.comun.control.acceso.Usuario usuario;
 
         @ParameterField(auditable = Kleenean.FALSE, password = Kleenean.TRUE, required = Kleenean.TRUE)
-        @StringField(maxLength = 128, autoComplete = AutoComplete.OFF)
+        @StringField(maxLength = 128, displayLength = 36, autoComplete = AutoComplete.OFF)
         protected StringParameter password;
 
         @ParameterField(required = Kleenean.TRUE)
-        @StringField(maxLength = MAX_EMAIL_ADDRESS_LENGTH, regex = EMAIL_REGEX) // maxLength = 100 until 01/12/2023
-        protected StringParameter nuevoCorreo;
+//      @StringField(maxLength = MAX_EMAIL_ADDRESS_LENGTH, regex = EMAIL_REGEX) // maxLength = 100 until 01/12/2023
+        protected EmailAddressParameter nuevoCorreo;
 
         @ParameterField(required = Kleenean.TRUE)
-        @StringField(maxLength = MAX_EMAIL_ADDRESS_LENGTH, regex = EMAIL_REGEX) // maxLength = 100 until 01/12/2023
-        protected StringParameter confirmacionCorreo;
+//      @StringField(maxLength = MAX_EMAIL_ADDRESS_LENGTH, regex = EMAIL_REGEX) // maxLength = 100 until 01/12/2023
+        protected EmailAddressParameter confirmacionCorreo;
 
         @Override
         protected void settleParameters() {
@@ -1758,9 +1783,9 @@ public class Usuario extends meta.entidad.comun.control.acceso.Usuario {
             /**/
             nuevoCorreo.setLocalizedLabel(ENGLISH, "new e-mail");
             nuevoCorreo.setLocalizedLabel(SPANISH, "nuevo correo");
-            nuevoCorreo.setLocalizedDescription(ENGLISH, "The new e-mail must be a string of up to 100 characters; "
+            nuevoCorreo.setLocalizedDescription(ENGLISH, "The new e-mail must be a string of up to 254 characters; "
                 + "it is a required field and has no default value");
-            nuevoCorreo.setLocalizedDescription(SPANISH, "El nuevo correo debe ser una secuencia de hasta 100 caracteres; "
+            nuevoCorreo.setLocalizedDescription(SPANISH, "El nuevo correo debe ser una secuencia de hasta 254 caracteres; "
                 + "es un dato obligatorio y no tiene valor por omisión");
             /**/
             confirmacionCorreo.setLocalizedLabel(ENGLISH, "e-mail confirmation");
@@ -1803,15 +1828,15 @@ public class Usuario extends meta.entidad.comun.control.acceso.Usuario {
         protected meta.entidad.comun.control.acceso.Usuario usuario;
 
         @ParameterField(auditable = Kleenean.FALSE, password = Kleenean.TRUE, required = Kleenean.TRUE)
-        @StringField(maxLength = 128, autoComplete = AutoComplete.OFF)
+        @StringField(maxLength = 128, displayLength = 36, autoComplete = AutoComplete.OFF)
         protected StringParameter password;
 
         @ParameterField(auditable = Kleenean.FALSE, password = Kleenean.TRUE, required = Kleenean.TRUE)
-        @StringField(maxLength = 128, autoComplete = AutoComplete.NEW_PASSWORD)
+        @StringField(maxLength = 128, displayLength = 36, autoComplete = AutoComplete.NEW_PASSWORD)
         protected StringParameter nuevoPassword;
 
         @ParameterField(auditable = Kleenean.FALSE, password = Kleenean.TRUE, required = Kleenean.TRUE)
-        @StringField(maxLength = 128, autoComplete = AutoComplete.OFF)
+        @StringField(maxLength = 128, displayLength = 36, autoComplete = AutoComplete.OFF)
         protected StringParameter confirmacionPassword;
 
         @Override
@@ -1939,11 +1964,11 @@ public class Usuario extends meta.entidad.comun.control.acceso.Usuario {
         protected meta.entidad.comun.control.acceso.Usuario usuario;
 
         @ParameterField(auditable = Kleenean.FALSE, password = Kleenean.TRUE, required = Kleenean.TRUE)
-        @StringField(maxLength = 128, autoComplete = AutoComplete.NEW_PASSWORD)
+        @StringField(maxLength = 128, displayLength = 36, autoComplete = AutoComplete.NEW_PASSWORD)
         protected StringParameter nuevoPassword;
 
         @ParameterField(auditable = Kleenean.FALSE, password = Kleenean.TRUE, required = Kleenean.TRUE)
-        @StringField(maxLength = 128, autoComplete = AutoComplete.OFF)
+        @StringField(maxLength = 128, displayLength = 36, autoComplete = AutoComplete.OFF)
         protected StringParameter confirmacionPassword;
 
         @Override

@@ -17,6 +17,7 @@ import adalid.core.annotations.*;
 import adalid.core.enums.*;
 import adalid.core.interfaces.*;
 import adalid.core.properties.*;
+import adalid.core.properties.ext.*;
 import java.lang.reflect.Field;
 import meta.entidad.comun.configuracion.basica.ext.ClaseRecurso;
 import meta.entidad.comun.configuracion.basica.ext.Funcion;
@@ -88,6 +89,10 @@ public class RolFuncion extends AbstractPersistentEntity {
     @VersionProperty
     public LongProperty version;
 
+    @NameProperty
+    @ColumnField(calculable = Kleenean.TRUE)
+    public CloakedStringProperty nombre;
+
     @ForeignKey(onDelete = OnDeleteAction.NONE, onUpdate = OnUpdateAction.NONE) // CASCADE -> Mutatis mutandis
     @ManyToOne(navigability = Navigability.BIDIRECTIONAL, view = MasterDetailView.TABLE, viewSequence = 20)
     @ColumnField(nullable = Kleenean.FALSE)
@@ -123,13 +128,24 @@ public class RolFuncion extends AbstractPersistentEntity {
     @PropertyField(required = Kleenean.FALSE, table = Kleenean.TRUE, report = Kleenean.TRUE, create = Kleenean.TRUE)
     public BooleanProperty esTarea;
 
+    @ColumnField(nullable = Kleenean.FALSE)
+    @PropertyField(create = Kleenean.FALSE, update = Kleenean.FALSE, table = Kleenean.TRUE)
+//  @BooleanField(displayType = BooleanDisplayType.CHECKBOX)
+    public BooleanProperty esAutorizacionInvalida;
+
     @Override
     protected void settleProperties() {
         super.settleProperties();
+        /**/
+        nombre.setCalculableValueExpression(concatenate(funcion.codigoFuncion, SLASH, rol.codigoRol));
+        /**/
         esAccesoPersonalizado.setInitialValue(funcion.esPersonalizable);
         esAccesoPersonalizado.setDefaultValue(funcion.esPersonalizable);
         esTarea.setInitialValue(false);
         esTarea.setDefaultValue(false);
+        /**/
+        esAutorizacionInvalida.setInitialValue(false);
+        esAutorizacionInvalida.setDefaultValue(false);
         /**/
         // <editor-fold defaultstate="collapsed" desc="localization of RolFuncion's properties">
         /**/
@@ -151,9 +167,16 @@ public class RolFuncion extends AbstractPersistentEntity {
         /**/
         esAccesoPersonalizado.setLocalizedLabel(ENGLISH, "personalized access");
         esAccesoPersonalizado.setLocalizedLabel(SPANISH, "acceso personalizado");
+        esAccesoPersonalizado.setLocalizedColumnHeader(ENGLISH, "personalized", "access");
+        esAccesoPersonalizado.setLocalizedColumnHeader(SPANISH, "acceso", "personalizado");
         /**/
         esTarea.setLocalizedLabel(ENGLISH, "task");
         esTarea.setLocalizedLabel(SPANISH, "tarea");
+        /**/
+        esAutorizacionInvalida.setLocalizedLabel(ENGLISH, "invalid authorization");
+        esAutorizacionInvalida.setLocalizedLabel(SPANISH, "autorización inválida");
+        esAutorizacionInvalida.setLocalizedColumnHeader(ENGLISH, "invalid", "authorization");
+        esAutorizacionInvalida.setLocalizedColumnHeader(SPANISH, "autorización", "inválida");
         /**/
         // </editor-fold>
     }

@@ -1080,6 +1080,11 @@ public abstract class AbstractPersistentEntity extends AbstractDatabaseEntity im
         return list;
     }
 
+    public boolean isUpdateFilterAlsoCheck() {
+        BooleanExpression updateFilter = getUpdateFilter();
+        return updateFilter != null && getChecksList().contains(updateFilter);
+    }
+
     /**
      * @return the expressions that are checks
      */
@@ -1113,7 +1118,7 @@ public abstract class AbstractPersistentEntity extends AbstractDatabaseEntity im
         for (Expression expression : getExpressionsList()) {
             if (expression instanceof Check check) {
                 point = check.getCheckpoint();
-                if (checkpoint == null || checkpoint.equals(point) || Checkpoint.WHEREVER_POSSIBLE.equals(point)) {
+                if (checkpoint == null || checkpoint.equals(point) || Checkpoint.UNSPECIFIED.equals(point) || Checkpoint.WHEREVER_POSSIBLE.equals(point)) {
                     field = expression.getDeclaringField();
                     clazz = field.getType();
                     if (Check.class.isAssignableFrom(clazz)) {

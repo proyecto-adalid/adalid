@@ -65,6 +65,17 @@ public @interface EntityReferenceDisplay {
     EntityReferenceProperty filter() default EntityReferenceProperty.UNSPECIFIED;
 
     /**
+     * filterType especifica el tipo de componente que será utilizado para filtrar las filas visibles en las vistas (páginas) de presentación tabular.
+     * Su valor es uno de los elementos de la enumeración EntityReferenceFilterType. Seleccione LIST para que la vista utilice una lista desplegable
+     * (drop-down list); esta opción solo es válida si la entidad referenciada es una enumeración. Seleccione TEXTBOX para que la vista utilice un
+     * cuadro de texto. Alternativamente, omita el elemento o seleccione UNSPECIFIED para utilizar el valor predeterminado del atributo. El valor
+     * predeterminado del atributo es TEXTBOX.
+     *
+     * @return filterType
+     */
+    EntityReferenceFilterType filterType() default EntityReferenceFilterType.UNSPECIFIED;
+
+    /**
      * sort especifica la propiedad de la entidad referenciada que será utilizada por la función de ordenado rápido de las vistas (páginas) de
      * presentación tabular. Su valor es uno de los elementos de la enumeración EntityReferenceProperty. Seleccione CHARACTER_KEY o NAME para que la
      * vista utilice la clave alfanumérica (o de negocio) o el nombre, respectivamente. Alternativamente, omita el elemento o seleccione UNSPECIFIED

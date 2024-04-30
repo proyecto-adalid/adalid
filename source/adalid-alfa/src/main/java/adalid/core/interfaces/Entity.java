@@ -996,6 +996,11 @@ public interface Entity extends Comparable<Entity>, DataArtifact, EntityReferenc
     boolean isTableViewWithQuickFilterSnippet();
 
     /**
+     * @return the table-view-with-sticky-header indicator
+     */
+    boolean isTableViewWithStickyHeader();
+
+    /**
      * @return the quick-filter-snippet path
      */
     String getTableViewQuickFilterSnippetPath();

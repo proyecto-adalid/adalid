@@ -138,6 +138,38 @@ public interface Artifact {
     void setDefaultShortLabel(String defaultShortLabel);
 
     /**
+     * El método setDefaultShortLabel se utiliza para establecer la etiqueta corta del artefacto que se almacena en el archivo de recursos por
+     * defecto. En caso de que el archivo de recursos para el idioma seleccionado por el usuario no esté disponible, la interfaz de la aplicación
+     * utiliza el archivo de recursos por defecto para obtener el valor de la etiqueta.
+     *
+     * @param defaultShortLabel sustantivo singular, preferiblemente sin complementos, que se usa como etiqueta corta del artefacto
+     */
+    void setDefaultShortLabel(String... defaultShortLabel);
+
+    /**
+     * @return the default column header
+     */
+    String getDefaultColumnHeader();
+
+    /**
+     * El método setDefaultColumnHeader se utiliza para establecer el encabezado de columna del artefacto que se almacena en el archivo de recursos
+     * por defecto. En caso de que el archivo de recursos para el idioma seleccionado por el usuario no esté disponible, la interfaz de la aplicación
+     * utiliza el archivo de recursos por defecto para obtener el valor de la etiqueta.
+     *
+     * @param defaultColumnHeader sustantivo singular, preferiblemente sin complementos, que se usa como encabezado de columna del artefacto
+     */
+    void setDefaultColumnHeader(String defaultColumnHeader);
+
+    /**
+     * El método setDefaultColumnHeader se utiliza para establecer el encabezado de columna del artefacto que se almacena en el archivo de recursos
+     * por defecto. En caso de que el archivo de recursos para el idioma seleccionado por el usuario no esté disponible, la interfaz de la aplicación
+     * utiliza el archivo de recursos por defecto para obtener el valor de la etiqueta.
+     *
+     * @param defaultColumnHeader sustantivo singular, preferiblemente sin complementos, que se usa como encabezado de columna del artefacto
+     */
+    void setDefaultColumnHeader(String... defaultColumnHeader);
+
+    /**
      * @return the default collection label
      */
     String getDefaultCollectionLabel();
@@ -253,6 +285,42 @@ public interface Artifact {
      * @param localizedShortLabel sustantivo singular, preferiblemente sin complementos, que se usa como etiqueta corta del artefacto
      */
     void setLocalizedShortLabel(Locale locale, String localizedShortLabel);
+
+    /**
+     * El método setLocalizedShortLabel se utiliza para establecer la etiqueta corta del artefacto que se almacena en el archivo de recursos de
+     * configuración regional. En caso de que el archivo de recursos para el idioma seleccionado por el usuario no esté disponible, la interfaz de la
+     * aplicación utiliza el archivo de recursos por defecto para obtener el valor de la etiqueta.
+     *
+     * @param locale configuración regional
+     * @param localizedShortLabel sustantivo singular, preferiblemente sin complementos, que se usa como etiqueta corta del artefacto
+     */
+    void setLocalizedShortLabel(Locale locale, String... localizedShortLabel);
+
+    /**
+     * @param locale locale
+     * @return the localized column header
+     */
+    String getLocalizedColumnHeader(Locale locale);
+
+    /**
+     * El método setLocalizedColumnHeader se utiliza para establecer el encabezado de columna del artefacto que se almacena en el archivo de recursos
+     * de configuración regional. En caso de que el archivo de recursos para el idioma seleccionado por el usuario no esté disponible, la interfaz de
+     * la aplicación utiliza el archivo de recursos por defecto para obtener el valor de la etiqueta.
+     *
+     * @param locale configuración regional
+     * @param localizedColumnHeader sustantivo singular, preferiblemente sin complementos, que se usa como encabezado de columna del artefacto
+     */
+    void setLocalizedColumnHeader(Locale locale, String localizedColumnHeader);
+
+    /**
+     * El método setLocalizedColumnHeader se utiliza para establecer el encabezado de columna del artefacto que se almacena en el archivo de recursos
+     * de configuración regional. En caso de que el archivo de recursos para el idioma seleccionado por el usuario no esté disponible, la interfaz de
+     * la aplicación utiliza el archivo de recursos por defecto para obtener el valor de la etiqueta.
+     *
+     * @param locale configuración regional
+     * @param localizedColumnHeader sustantivo singular, preferiblemente sin complementos, que se usa como encabezado de columna del artefacto
+     */
+    void setLocalizedColumnHeader(Locale locale, String... localizedColumnHeader);
 
     /**
      * @param locale locale

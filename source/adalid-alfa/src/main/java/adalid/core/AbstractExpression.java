@@ -259,6 +259,7 @@ public abstract class AbstractExpression extends AbstractArtifact implements Nar
 
 //  @Override
     public void setLogicalTautology(boolean tautology) {
+        checkScope();
         if (this instanceof BooleanExpression) {
             _logicalTautology = tautology;
         }
@@ -273,11 +274,13 @@ public abstract class AbstractExpression extends AbstractArtifact implements Nar
 
 //  @Override
     public void setTransitionTimestamp(TimestampProperty timestamp) {
+        checkScope();
         _transitionTimestamp = timestamp;
     }
 
 //  @Override
     public void setTransitionDate(DateProperty date) {
+        checkScope();
         _transitionTimestamp = date;
     }
 

@@ -84,13 +84,14 @@ public @interface UniformResourceLocator {
      * seleccione UNSPECIFIED para utilizar el valor predeterminado del atributo. El valor predeterminado del atributo es FALSE.
      * <p>
      * <b>Advertencias</b>
+     * </p>
      * <ul>
      * <li>La codificación limita significativamente el uso de la propiedad en consultas e informes.</li>
      * <li>El algoritmo de codificación utilizado es Base64, el cual no es un algoritmo de cifrado, se decodifica fácilmente y, por lo tanto, no debe
      * utilizarse como un método de cifrado seguro.</li>
      * <li>La longitud del valor codificado es un tercio mayor que la longitud del valor original; si, por ejemplo, la longitud máxima de la propiedad
      * se establece en 2000, entonces la propiedad solo puede contener valores de hasta 1500 caracteres.</li>
-     * </ul><p>
+     * </ul>
      *
      * @return encoding
      * @see <a href="https://docs.oracle.com/javase/8/docs/api/java/util/Base64.html">class Base64</a>

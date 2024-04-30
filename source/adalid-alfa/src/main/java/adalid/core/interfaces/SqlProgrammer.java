@@ -203,7 +203,11 @@ public interface SqlProgrammer extends Programmer {
 
     String getSqlSelectStatement(QueryTable queryTable, List<Property> referencedColumns, boolean into, boolean indent);
 
+    String getSqlSelectStatement(QueryTable queryTable, List<Property> referencedColumns, boolean into, boolean indent, boolean blobless, boolean joinless);
+
     String getSqlSelectStatement(QueryJoin queryJoin, List<Property> referencedColumns, boolean into, boolean where, boolean indent);
+
+    String getSqlSelectStatement(QueryJoin queryJoin, List<Property> referencedColumns, boolean into, boolean where, boolean indent, boolean blobless, boolean joinless);
 
     String getSqlStandardRelationalExpression(String arg1, StandardRelationalOp operator);
 

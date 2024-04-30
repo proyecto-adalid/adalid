@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
 /**
@@ -33,6 +34,22 @@ public abstract class Primitive extends AbstractDataArtifact implements Expressi
      *
      */
     private static final Logger logger = Logger.getLogger(Primitive.class);
+
+    @Override
+    protected boolean checkName() {
+        if (super.checkName()) {
+            String name = getName();
+            if (Character.isUpperCase(name.charAt(0)) && ((isProperty() && depth() == 0) || isParameter())) {
+                String tag = isParameter() ? "parameter" : "property";
+                logger.error(tag + " " + getFullName() + " must be renamed; " + name + " must begin with a lowercase letter; "
+                    + "therefore it should be " + StringUtils.uncapitalize((name)));
+                Project.increaseParserErrorCount();
+            } else {
+                return true;
+            }
+        }
+        return false;
+    }
 
     @Override
     public Operator getOperator() {

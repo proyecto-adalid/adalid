@@ -134,7 +134,7 @@ public class FiltroFuncion extends AbstractPersistentEntity {
 //      setOrderBy(funcion, esPublico, esEspecial, nombreFiltroFuncion);
         setOrderBy(funcion, esPublico, nombreFiltroFuncion);
         /**/
-        codigoFiltroFuncion.setDefaultValue(funcion.dominio.codigoDominio.concat("-").concat(id));
+        codigoFiltroFuncion.setDefaultValue(concat(funcion.dominio.codigoDominio, HYPHEN, id));
         /**/
         esPublico.setInitialValue(false);
         esPublico.setDefaultValue(false);

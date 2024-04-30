@@ -24,7 +24,7 @@ import java.lang.reflect.Field;
  * @author Jorge Campins
  */
 @EntityClass(independent = Kleenean.TRUE, resourceType = ResourceType.OPERATION, resourceGender = ResourceGender.MASCULINE)
-@EntityCodeGen(fws = Kleenean.FALSE)
+@EntityCodeGen(bws = Kleenean.FALSE, fws = Kleenean.FALSE)
 @EntityDocGen(stateDiagram = Kleenean.FALSE)
 @EntitySelectOperation(enabled = Kleenean.TRUE, onload = SelectOnloadOption.EXECUTE)
 @EntityInsertOperation(enabled = Kleenean.TRUE)
@@ -51,41 +51,36 @@ public class Usuario extends AbstractPersistentEntity {
 
     @BusinessKey
     @PropertyField(update = Kleenean.FALSE, overlay = Kleenean.FALSE)
-    @StringField(maxLength = MAX_EMAIL_ADDRESS_LENGTH) // maxLength = 36 until 01/12/2023
+    @StringField(maxLength = MAX_EMAIL_ADDRESS_LENGTH, displayLength = 36) // maxLength = 36 until 01/12/2023
     public StringProperty codigoUsuario;
 
     @NameProperty
     public StringProperty nombreUsuario;
 
     @PropertyField(auditable = Kleenean.FALSE, password = Kleenean.TRUE, hidden = Kleenean.TRUE, filter = Kleenean.FALSE, sort = Kleenean.FALSE)
-    @StringField(maxLength = 128)
+    @StringField(maxLength = 128, displayLength = 36)
     public StringProperty passwordUsuario;
 
+    /*
+//  @ForeignKey(onDelete = OnDeleteAction.NONE, onUpdate = OnUpdateAction.NONE)
+    @ManyToOne(view = MasterDetailView.NONE)
+    @PropertyField(hidden = Kleenean.TRUE)
+    public ArchivoAdjunto adjunto;
+
+    /**/
+//  @ColumnField(calculable = Kleenean.TRUE)
     @ImageProperty(displayWidth = {144, 96, 72}, displayHeight = {192, 128, 96}, avatarShape = AvatarShape.CIRCLE, avatarDefault = AvatarDefault.USER)
     @PropertyField(table = Kleenean.TRUE, overlay = Kleenean.TRUE)
     public BinaryProperty octetos;
 
-    @FileReference(types = MimeType.IMAGE, storage = UploadStorageOption.ROW, blobField = "octetos", max = 131072)
+//  @FileReference(types = MimeType.IMAGE, storage = UploadStorageOption.ROW, joinField = "adjunto")
+    @FileReference(types = MimeType.IMAGE, storage = UploadStorageOption.ROW, blobField = "octetos")
     @PropertyField(create = Kleenean.TRUE, update = Kleenean.TRUE, table = Kleenean.FALSE, report = Kleenean.FALSE)
     public StringProperty archivo;
 
-    /*
-    @StringField(maxLength = MAX_EMAIL_ADDRESS_LENGTH, regex = EMAIL_REGEX) // maxLength = 100 until 01/12/2023
-    @PropertyField(create = Kleenean.TRUE, overlay = Kleenean.TRUE, table = Kleenean.FALSE, report = Kleenean.FALSE)
-    public StringProperty correoElectronico;
-
-    /**/
     @PropertyField(create = Kleenean.TRUE, overlay = Kleenean.TRUE, table = Kleenean.FALSE, report = Kleenean.FALSE)
     public EmailAddressProperty correoElectronico;
 
-    /*
-    private static final String BWA = "/resources/snippets/base/entity/Usuario/botonWhatsApp";
-
-    @StringField(maxLength = 20, regex = PHONE_REGEX, validator = PHONE_NUMBER_VALIDATOR)
-    @PropertyField(create = Kleenean.TRUE, table = Kleenean.FALSE, report = Kleenean.FALSE, readingDetailSnippet = BWA, writingDetailSnippet = BWA)
-    public StringProperty numeroTelefonoInteligente;
-
-    /**/
     @PropertyField(create = Kleenean.TRUE, table = Kleenean.FALSE, report = Kleenean.FALSE)
     public InternationalSmartphoneNumberProperty numeroTelefonoInteligente;
 
@@ -161,6 +156,8 @@ public class Usuario extends AbstractPersistentEntity {
         super.settleProperties();
         /*
         setOrderBy(codigoUsuario);
+        /*
+        octetos.setCalculableValueExpression(adjunto.octetos);
         /**/
         esSuperUsuario.setInitialValue(false);
         esSuperUsuario.setDefaultValue(false);
@@ -191,9 +188,12 @@ public class Usuario extends AbstractPersistentEntity {
         nombreUsuario.setLocalizedShortLabel(SPANISH, "nombre");
         /**/
         passwordUsuario.setLocalizedLabel(ENGLISH, "user password");
-        passwordUsuario.setLocalizedLabel(SPANISH, "password usuario");
+        passwordUsuario.setLocalizedLabel(SPANISH, "contraseña usuario");
         passwordUsuario.setLocalizedShortLabel(ENGLISH, "password");
         passwordUsuario.setLocalizedShortLabel(SPANISH, "contraseña");
+        /*
+        adjunto.setLocalizedLabel(ENGLISH, "portrait attachment");
+        adjunto.setLocalizedLabel(SPANISH, "adjunto de retrato");
         /**/
         octetos.setLocalizedLabel(ENGLISH, "portrait");
         octetos.setLocalizedLabel(SPANISH, "retrato");
@@ -207,6 +207,7 @@ public class Usuario extends AbstractPersistentEntity {
         /**/
         correoElectronico.setLocalizedLabel(ENGLISH, "e-mail");
         correoElectronico.setLocalizedLabel(SPANISH, "correo electrónico");
+        /*
         correoElectronico.setLocalizedRegexErrorMessage(ENGLISH, "e-mail does not meet the required pattern");
         correoElectronico.setLocalizedRegexErrorMessage(SPANISH, "correo electrónico no cumple con el patrón requerido");
         /**/

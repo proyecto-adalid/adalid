@@ -521,6 +521,21 @@ public class CharacterScalarX extends AbstractScalarX implements CharacterExpres
     }
 
     @Override
+    public CharacterOrderedPairX concatenate(String y) {
+        return XB.Character.OrderedPair.concatenate(this, y);
+    }
+
+    @Override
+    public CharacterOrderedPairX concatenate(SpecialCharacterValue y) {
+        return XB.Character.OrderedPair.concatenate(this, y);
+    }
+
+    @Override
+    public CharacterOrderedPairX concatenate(Expression y) {
+        return XB.Character.OrderedPair.concatenate(this, toCharacterExpression(y));
+    }
+
+    @Override
     public CharacterOrderedPairX format(String template) {
         return XB.Character.OrderedPair.format(this, template);
     }

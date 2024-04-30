@@ -52,6 +52,7 @@ public abstract class CharacterPrimitive extends Primitive implements CharacterE
      * @param initialValue valor inicial primitivo de la propiedad o el parámetro
      */
     public void setPrimalInitialValue(String initialValue) {
+        checkScope();
         _primalInitialValue = initialValue == null ? primalValue : initialValue;
     }
 
@@ -70,6 +71,7 @@ public abstract class CharacterPrimitive extends Primitive implements CharacterE
      * @param defaultValue valor por omisión primitivo de la propiedad o el parámetro
      */
     public void setPrimalDefaultValue(String defaultValue) {
+        checkScope();
         _primalDefaultValue = defaultValue == null ? primalValue : defaultValue;
     }
 
@@ -88,6 +90,7 @@ public abstract class CharacterPrimitive extends Primitive implements CharacterE
      * @param expression expresión para el cálculo del valor
      */
     public void setCalculableValueExpression(CharacterExpression expression) {
+        checkScope();
         _calculableValue = validCalculableValue(expression) ? expression : null;
     }
 
@@ -128,6 +131,7 @@ public abstract class CharacterPrimitive extends Primitive implements CharacterE
      * @param initialValue valor inicial de la propiedad o el parámetro
      */
     public void setInitialValue(String initialValue) {
+        checkScope();
         _initialValue = validInitialValue(initialValue) ? initialValue : null;
     }
 
@@ -139,6 +143,7 @@ public abstract class CharacterPrimitive extends Primitive implements CharacterE
      * @param initialValue valor inicial de la propiedad o el parámetro
      */
     public void setInitialValue(SpecialCharacterValue initialValue) {
+        checkScope();
         _initialValue = validInitialValue(initialValue) ? initialValue : null;
     }
 
@@ -150,6 +155,7 @@ public abstract class CharacterPrimitive extends Primitive implements CharacterE
      * @param initialValue valor inicial de la propiedad o el parámetro
      */
     public void setInitialValue(CharacterExpression initialValue) {
+        checkScope();
         _initialValue = validInitialValue(initialValue) ? initialValue : null;
     }
 
@@ -190,6 +196,7 @@ public abstract class CharacterPrimitive extends Primitive implements CharacterE
      * @param defaultValue valor por omisión de la propiedad o el parámetro
      */
     public void setDefaultValue(String defaultValue) {
+        checkScope();
         _defaultValue = validDefaultValue(defaultValue) ? defaultValue : null;
     }
 
@@ -201,6 +208,7 @@ public abstract class CharacterPrimitive extends Primitive implements CharacterE
      * @param defaultValue valor por omisión de la propiedad o el parámetro
      */
     public void setDefaultValue(SpecialCharacterValue defaultValue) {
+        checkScope();
         _defaultValue = validDefaultValue(defaultValue) ? defaultValue : null;
     }
 
@@ -212,6 +220,7 @@ public abstract class CharacterPrimitive extends Primitive implements CharacterE
      * @param defaultValue valor por omisión de la propiedad o el parámetro
      */
     public void setDefaultValue(CharacterExpression defaultValue) {
+        checkScope();
         _defaultValue = validDefaultValue(defaultValue) ? defaultValue : null;
     }
 
@@ -250,6 +259,7 @@ public abstract class CharacterPrimitive extends Primitive implements CharacterE
      * @param currentValue valor actual
      */
     public void setCurrentValue(String currentValue) {
+        checkScope();
         _currentValue = validCurrentValue(currentValue) ? currentValue : null;
     }
 
@@ -259,6 +269,7 @@ public abstract class CharacterPrimitive extends Primitive implements CharacterE
      * @param currentValue valor actual
      */
     public void setCurrentValue(SpecialCharacterValue currentValue) {
+        checkScope();
         _currentValue = validCurrentValue(currentValue) ? currentValue : null;
     }
 
@@ -268,6 +279,7 @@ public abstract class CharacterPrimitive extends Primitive implements CharacterE
      * @param currentValue valor actual
      */
     public void setCurrentValue(CharacterExpression currentValue) {
+        checkScope();
         _currentValue = validCurrentValue(currentValue) ? currentValue : null;
     }
 
@@ -775,6 +787,21 @@ public abstract class CharacterPrimitive extends Primitive implements CharacterE
     @Override
     public CharacterOrderedPairX concat(Expression y) {
         return XB.Character.OrderedPair.concat(this, toCharacterExpression(y));
+    }
+
+    @Override
+    public CharacterOrderedPairX concatenate(String y) {
+        return XB.Character.OrderedPair.concatenate(this, y);
+    }
+
+    @Override
+    public CharacterOrderedPairX concatenate(SpecialCharacterValue y) {
+        return XB.Character.OrderedPair.concatenate(this, y);
+    }
+
+    @Override
+    public CharacterOrderedPairX concatenate(Expression y) {
+        return XB.Character.OrderedPair.concatenate(this, toCharacterExpression(y));
     }
 
     @Override

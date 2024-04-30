@@ -86,7 +86,7 @@ public class RastroInforme extends AbstractPersistentEntity {
 
     @ColumnField(indexed = Kleenean.TRUE)
     @PropertyField(sequence = 250, table = Kleenean.TRUE, search = Kleenean.TRUE, report = Kleenean.TRUE)
-    @StringField(maxLength = MAX_EMAIL_ADDRESS_LENGTH) // maxLength = 36 until 01/12/2023
+    @StringField(maxLength = MAX_EMAIL_ADDRESS_LENGTH, displayLength = 36) // maxLength = 36 until 01/12/2023
     public StringProperty codigoUsuario;
 
     @ColumnField(indexed = Kleenean.TRUE)
@@ -229,7 +229,7 @@ public class RastroInforme extends AbstractPersistentEntity {
 
     @ColumnField(indexed = Kleenean.TRUE)
     @PropertyField(sequence = 250, table = Kleenean.TRUE, search = Kleenean.TRUE, report = Kleenean.TRUE)
-    @StringField(maxLength = MAX_EMAIL_ADDRESS_LENGTH) // maxLength = 36 until 01/12/2023
+    @StringField(maxLength = MAX_EMAIL_ADDRESS_LENGTH, displayLength = 36) // maxLength = 36 until 01/12/2023
     public StringProperty codigoRemitente;
 
     @ColumnField(indexed = Kleenean.TRUE)

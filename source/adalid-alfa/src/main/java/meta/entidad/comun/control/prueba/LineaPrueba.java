@@ -110,7 +110,7 @@ public class LineaPrueba extends PersistentEntityBase {
     @Override
     protected void settleProperties() {
         super.settleProperties();
-        codigo.setDefaultValue(programa.codigo.concat("-").concat(numero));
+        codigo.setDefaultValue(concat(programa.codigo, HYPHEN, numero));
         numero.setMinValue(1);
         numero.setMaxValue(10000);
         // <editor-fold defaultstate="collapsed" desc="localization of LineaPrueba's properties">

@@ -28,6 +28,15 @@ import java.lang.annotation.Target;
 public @interface StringField {
 
     /**
+     * displayLength específica la cantidad de caracteres que se utiliza para calcular el tamaño del componente correspondiente a la propiedad o
+     * parámetro en las vistas (páginas) de la aplicación. Su valor debe ser un número entero entre 0 y 32.767. El valor predeterminado es el valor,
+     * especificado o determinado, del elemento maxLength. Especifique 0 para utilizar el máximo permitido por la plataforma.
+     *
+     * @return displayLength
+     */
+    int displayLength() default -1;
+
+    /**
      * maxLength específica la cantidad máxima de caracteres que deben tener los valores de la propiedad o parámetro. Su valor debe ser un número
      * entero entre 0 y 32.767. El valor predeterminado es 2.000. Especifique 0 para utilizar el máximo permitido por la plataforma.
      *

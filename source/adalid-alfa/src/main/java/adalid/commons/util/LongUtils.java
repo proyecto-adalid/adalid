@@ -61,7 +61,7 @@ public class LongUtils {
 
     public static long getNewId(String string) {
         String number = StrUtils.getLongNumericCode(string);
-        return number == null ? getNewId() : Long.valueOf(number);
+        return number == null ? getNewId() : Long.parseLong(number);
     }
 
     public static long getNewId() {

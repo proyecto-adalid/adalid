@@ -40,6 +40,7 @@ public abstract class BinaryPrimitive extends Primitive {
      * @param expression expresión para determinar el valor
      */
     public void setCalculableValueExpression(BinaryPrimitive expression) {
+        checkScope();
         _calculableValue = validCalculableValue(expression) ? expression : null;
     }
 
@@ -80,6 +81,7 @@ public abstract class BinaryPrimitive extends Primitive {
      * @param currentValue valor actual
      */
     public void setCurrentValue(SpecialBinaryValue currentValue) {
+        checkScope();
         _currentValue = validCurrentValue(currentValue) ? currentValue : null;
     }
 

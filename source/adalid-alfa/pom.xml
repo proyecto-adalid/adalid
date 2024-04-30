@@ -6,7 +6,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.proyecto-adalid</groupId>
     <artifactId>adalid-alfa</artifactId>
-    <version>5.0.0</version><!--adalid-->
+    <version>5.1.0</version><!--adalid-->
     <packaging>jar</packaging>
     <name>adalid-alfa</name>
     <description>Adalid Alfa Library</description>
@@ -94,6 +94,14 @@
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-log4j12</artifactId>
             <version>1.7.32</version>
+            <!--
+            <exclusions>
+                <exclusion>
+                    <groupId>log4j</groupId>
+                    <artifactId>log4j</artifactId>
+                </exclusion>
+            </exclusions>
+            -->
         </dependency>
         <dependency>
             <groupId>log4j</groupId>
@@ -104,12 +112,17 @@
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>
             <artifactId>log4j-1.2-api</artifactId>
-            <version>2.12.1</version>
+            <version>2.23.1</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-api</artifactId>
+            <version>2.23.1</version>
         </dependency>
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>
             <artifactId>log4j-core</artifactId>
-            <version>2.12.1</version>
+            <version>2.23.1</version>
         </dependency>
         -->
         <dependency>
@@ -132,7 +145,7 @@
         <dependency>
             <groupId>net.sourceforge.plantuml</groupId>
             <artifactId>plantuml</artifactId>
-            <version>1.2022.5</version>
+            <version>1.2024.4</version>
         </dependency>
         <!--
         <dependency>
@@ -175,17 +188,20 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.1</version>
+                <version>3.13.0</version><!--maven-compiler-plugin-->
                 <configuration>
                     <source>${maven.compiler.source}</source>
                     <target>${maven.compiler.target}</target>
                     <showDeprecation>true</showDeprecation>
+                    <compilerArgs>
+                        <arg>-Xlint:unchecked</arg>
+                    </compilerArgs>
                 </configuration>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
-                <version>2.6</version>
+                <version>3.3.0</version><!--maven-jar-plugin-->
                 <configuration>
                     <archive>
                         <addMavenDescriptor>true</addMavenDescriptor>
@@ -227,7 +243,7 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-gpg-plugin</artifactId>
-                        <version>1.5</version>
+                        <version>3.2.1</version><!--maven-gpg-plugin-->
                         <executions>
                             <execution>
                                 <id>sign-artifacts</id>
@@ -248,10 +264,11 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-javadoc-plugin</artifactId>
-                        <version>3.5.0</version>
+                        <version>3.6.3</version><!--maven-javadoc-plugin-->
                         <configuration>
-                            <source>17</source>
+                            <source>${maven.compiler.source}</source>
                             <detectJavaApiLink>false</detectJavaApiLink>
+                            <doclint>all,-missing</doclint>
                             <maxmemory>4096</maxmemory>
                             <minmemory>1024</minmemory>
                         </configuration>
@@ -274,7 +291,7 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-source-plugin</artifactId>
-                        <version>3.0.1</version><!--maven-source-plugin-->
+                        <version>3.3.0</version><!--maven-source-plugin-->
                         <executions>
                             <execution>
                                 <id>attach-sources</id>
@@ -294,7 +311,7 @@
                     <plugin>
                         <groupId>org.sonatype.plugins</groupId>
                         <artifactId>nexus-staging-maven-plugin</artifactId>
-                        <version>[1.6.7,)</version>
+                        <version>[1.6.13,)</version><!--nexus-staging-maven-plugin-->
                         <extensions>true</extensions>
                         <configuration>
                             <serverId>ossrh</serverId>

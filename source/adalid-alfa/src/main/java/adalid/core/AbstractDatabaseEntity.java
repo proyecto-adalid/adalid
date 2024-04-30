@@ -56,6 +56,7 @@ public abstract class AbstractDatabaseEntity extends AbstractEntity implements D
      */
     @Override
     public void setSchema(String schema) {
+        checkScope();
         _schema = schema;
     }
 

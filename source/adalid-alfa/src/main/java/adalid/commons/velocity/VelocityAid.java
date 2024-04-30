@@ -505,14 +505,14 @@ public class VelocityAid {
         return StringUtils.join(array2, separator);
     }
 
-    private static final String JAVADOC_PARAGRAPH_TAG = "<p>";
+    private static final String JAVADOC_SEPARATOR_TAG = "<br>"; // "<p>" until 24/03/2024
 
     public static List<String> javadocLines(String string) {
         return javadocLines(string, 72);
     }
 
     public static List<String> javadocLines(String string, int max) {
-        return split(string, max, JAVADOC_PARAGRAPH_TAG, true);
+        return split(string, max, JAVADOC_SEPARATOR_TAG, true);
     }
 
     public static List<String> split(String string) {

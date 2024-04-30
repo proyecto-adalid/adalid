@@ -32,6 +32,7 @@ public class BigDecimalData extends AbstractBigNumber {
      */
     @Override
     public void setScale(int scale) {
+        checkScope();
         super.setScale(scale);
     }
 

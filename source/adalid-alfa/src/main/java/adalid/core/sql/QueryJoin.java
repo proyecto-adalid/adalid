@@ -31,6 +31,8 @@ public class QueryJoin {
 
     private Property _rightColumn;
 
+    private boolean _hierarchical;
+
     private final SqlProgrammer _sqlProgrammer;
 
     QueryJoin(SqlProgrammer sqlProgrammer) {
@@ -105,6 +107,14 @@ public class QueryJoin {
      */
     void setRightColumn(Property property) {
         _rightColumn = property;
+    }
+
+    public boolean isHierarchical() {
+        return _hierarchical;
+    }
+
+    public void setHierarchical(boolean hierarchical) {
+        _hierarchical = hierarchical;
     }
 
     /**

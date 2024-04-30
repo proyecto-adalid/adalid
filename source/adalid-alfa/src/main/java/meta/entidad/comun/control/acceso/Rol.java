@@ -372,7 +372,11 @@ public class Rol extends AbstractPersistentEntity {
 
     protected ModificarConjunto modificarConjunto;
 
+    protected SuprimirConjunto suprimirConjunto;
+
     protected PersonalizarAcceso personalizarAcceso;
+
+    protected ImpersonalizarAcceso impersonalizarAcceso;
 
     protected PropagarFavoritos propagarFavoritos;
 
@@ -445,7 +449,7 @@ public class Rol extends AbstractPersistentEntity {
     }
 
     @OperationClass(access = OperationAccess.PRIVATE)
-//  @ProcessOperationClass(serviceable = Kleenean.TRUE)
+    @ProcessOperationClass(serviceable = Kleenean.FALSE)
     public class Desactivar extends ProcessOperation {
 
         @Override
@@ -483,7 +487,7 @@ public class Rol extends AbstractPersistentEntity {
     }
 
     @OperationClass(access = OperationAccess.PRIVATE)
-//  @ProcessOperationClass(serviceable = Kleenean.TRUE)
+    @ProcessOperationClass(serviceable = Kleenean.FALSE)
     public class Reactivar extends ProcessOperation {
 
         @Override
@@ -599,6 +603,60 @@ public class Rol extends AbstractPersistentEntity {
 
     @OperationClass(confirmation = Kleenean.TRUE)
     @ProcessOperationClass
+    public class SuprimirConjunto extends ProcessOperation {
+
+        @Override
+        protected void settleAttributes() {
+            super.settleAttributes();
+            // <editor-fold defaultstate="collapsed" desc="localization of SuprimirConjunto's attributes">
+            setLocalizedLabel(ENGLISH, "suppress segment set");
+            setLocalizedLabel(SPANISH, "suprimir conjunto");
+            setLocalizedDescription(ENGLISH, "suppress the segment set to all the functions of the role");
+            setLocalizedDescription(SPANISH, "suprimir el conjunto de segmentos a todas las funciones del rol");
+            setLocalizedSuccessMessage(ENGLISH, "all the functions of the role that had a segment set have been successfully changed");
+            setLocalizedSuccessMessage(SPANISH, "todas las funciones del rol que tenían un conjunto de segmentos se han modificado con éxito");
+            // </editor-fold>
+        }
+
+        @InstanceReference
+        protected Rol rol;
+
+        @Override
+        protected void settleParameters() {
+            super.settleParameters();
+            // <editor-fold defaultstate="collapsed" desc="localization of SuprimirConjunto's parameters">
+            rol.setLocalizedLabel(ENGLISH, "role");
+            rol.setLocalizedLabel(SPANISH, "rol");
+            rol.setLocalizedDescription(ENGLISH, "Code of the role whose functions you want to modify; "
+                + "it is a required field and has no default value");
+            rol.setLocalizedDescription(SPANISH, "Código del rol cuyas funciones asociadas desea suprimir; "
+                + "es un dato obligatorio y no tiene valor por omisión");
+            /**/
+            // </editor-fold>
+        }
+
+        protected Check check101;
+
+        @Override
+        protected void settleExpressions() {
+            super.settleExpressions();
+            /**/
+            check101 = rol.id.isGreaterOrEqualTo(10000L);
+            /**/
+            // <editor-fold defaultstate="collapsed" desc="localization of Rol's expressions">
+            check101.setLocalizedDescription(ENGLISH, "the role is not a basic configuration role");
+            check101.setLocalizedDescription(SPANISH, "el rol no es un rol de configuración básica del sistema");
+            check101.setLocalizedErrorMessage(ENGLISH, "the role is a basic configuration role; "
+                + "it can't be modified");
+            check101.setLocalizedErrorMessage(SPANISH, "el rol es un rol de configuración básica del sistema; "
+                + "no se permite suprimirlo");
+            // </editor-fold>
+        }
+
+    }
+
+    @OperationClass(confirmation = Kleenean.TRUE)
+    @ProcessOperationClass
     public class PersonalizarAcceso extends ProcessOperation {
 
         @Override
@@ -621,6 +679,60 @@ public class Rol extends AbstractPersistentEntity {
         protected void settleParameters() {
             super.settleParameters();
             // <editor-fold defaultstate="collapsed" desc="localization of Personalizar's parameters">
+            rol.setLocalizedLabel(ENGLISH, "role");
+            rol.setLocalizedLabel(SPANISH, "rol");
+            rol.setLocalizedDescription(ENGLISH, "Code of the role whose functions you want to modify; "
+                + "it is a required field and has no default value");
+            rol.setLocalizedDescription(SPANISH, "Código del rol cuyas funciones asociadas desea modificar; "
+                + "es un dato obligatorio y no tiene valor por omisión");
+            /**/
+            // </editor-fold>
+        }
+
+        protected Check check101;
+
+        @Override
+        protected void settleExpressions() {
+            super.settleExpressions();
+            /**/
+            check101 = rol.id.isGreaterOrEqualTo(10000L);
+            /**/
+            // <editor-fold defaultstate="collapsed" desc="localization of Rol's expressions">
+            check101.setLocalizedDescription(ENGLISH, "the role is not a basic configuration role");
+            check101.setLocalizedDescription(SPANISH, "el rol no es un rol de configuración básica del sistema");
+            check101.setLocalizedErrorMessage(ENGLISH, "the role is a basic configuration role; "
+                + "it can't be modified");
+            check101.setLocalizedErrorMessage(SPANISH, "el rol es un rol de configuración básica del sistema; "
+                + "no se permite modificarlo");
+            // </editor-fold>
+        }
+
+    }
+
+    @OperationClass(confirmation = Kleenean.TRUE)
+    @ProcessOperationClass
+    public class ImpersonalizarAcceso extends ProcessOperation {
+
+        @Override
+        protected void settleAttributes() {
+            super.settleAttributes();
+            // <editor-fold defaultstate="collapsed" desc="localization of Impersonalizar's attributes">
+            setLocalizedLabel(ENGLISH, "suppress personalized access");
+            setLocalizedLabel(SPANISH, "suprimir acceso personalizado");
+            setLocalizedDescription(ENGLISH, "suppress personalized access to all the functions of the role");
+            setLocalizedDescription(SPANISH, "suprimir el acceso personalizado a todas las funciones del rol");
+            setLocalizedSuccessMessage(ENGLISH, "all the functions of the role that had personalized access have been successfully changed");
+            setLocalizedSuccessMessage(SPANISH, "todas las funciones del rol que tenían acceso personalizado se han modificado con éxito");
+            // </editor-fold>
+        }
+
+        @InstanceReference
+        protected Rol rol;
+
+        @Override
+        protected void settleParameters() {
+            super.settleParameters();
+            // <editor-fold defaultstate="collapsed" desc="localization of Impersonalizar's parameters">
             rol.setLocalizedLabel(ENGLISH, "role");
             rol.setLocalizedLabel(SPANISH, "rol");
             rol.setLocalizedDescription(ENGLISH, "Code of the role whose functions you want to modify; "

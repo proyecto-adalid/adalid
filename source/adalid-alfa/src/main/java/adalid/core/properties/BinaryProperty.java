@@ -27,6 +27,7 @@ public class BinaryProperty extends BinaryData implements Property {
     protected List<Class<? extends Annotation>> getValidFieldAnnotations() {
         List<Class<? extends Annotation>> valid = super.getValidFieldAnnotations();
         valid.add(BaseField.class);
+        valid.add(BinaryField.class);
         valid.add(CastingField.class);
         valid.add(ColumnField.class);
         valid.add(GraphicImage.class);

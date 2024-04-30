@@ -161,7 +161,7 @@ public class EjecucionLineaPrueba extends PersistentEntityBase {
     @Override
     protected void settleProperties() {
         super.settleProperties();
-        codigo.setDefaultValue(ejecucion.codigo.concat("-").concat(numero));
+        codigo.setDefaultValue(concat(ejecucion.codigo, HYPHEN, numero));
         condicionEjecucion.setInitialValue(condicionEjecucion.EJECUCION_PENDIENTE);
         condicionEjecucion.setDefaultValue(condicionEjecucion.EJECUCION_PENDIENTE);
 //      condicionEjecucion.setRemoveInstanceArray(condicionEjecucion.EJECUCION_EN_PROGRESO);

@@ -75,14 +75,24 @@ public interface Property extends DataArtifact, ValuedArtifact {
     boolean isHiddenEntityReferenceField();
 
     /**
-     * @return the create field indicator
+     * @return the GUI-creatable field indicator
      */
     boolean isCreateField();
 
     /**
-     * @return the update field indicator
+     * @return the API-creatable field indicator
+     */
+    boolean isCreateFieldViaAPI();
+
+    /**
+     * @return the GUI-updatable field indicator
      */
     boolean isUpdateField();
+
+    /**
+     * @return the API-updatable field indicator
+     */
+    boolean isUpdateFieldViaAPI();
 
     /**
      * @return the search field indicator

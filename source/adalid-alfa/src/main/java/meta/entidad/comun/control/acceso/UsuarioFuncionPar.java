@@ -158,8 +158,8 @@ public class UsuarioFuncionPar extends AbstractPersistentEntity {
         /**/
         esAccesoPersonalizado.setLocalizedLabel(ENGLISH, "personalized access");
         esAccesoPersonalizado.setLocalizedLabel(SPANISH, "acceso personalizado");
-        esAccesoPersonalizado.setLocalizedShortLabel(ENGLISH, "personalized");
-        esAccesoPersonalizado.setLocalizedShortLabel(SPANISH, "personalizado");
+        esAccesoPersonalizado.setLocalizedColumnHeader(ENGLISH, "personalized", "access");
+        esAccesoPersonalizado.setLocalizedColumnHeader(SPANISH, "acceso", "personalizado");
         /**/
         funcionParametro.setLocalizedLabel(ENGLISH, "function parameter");
         funcionParametro.setLocalizedLabel(SPANISH, "parámetro de función");

@@ -938,7 +938,7 @@ public abstract class AbstractJavaProgrammer extends AbstractProgrammer implemen
             case NAXOR:
             case NAXNOR:
             case NOR_OR_NAXOR:
-            case CONCAT:
+            case CONCAT, CONCATENATE:
             case SUM:
             case PRODUCT:
             case AVERAGE:
@@ -1040,7 +1040,7 @@ public abstract class AbstractJavaProgrammer extends AbstractProgrammer implemen
             case X_IMPLIES_Y:
             case ASCII:
             case DIACRITICLESS_ASCII:
-            case CONCAT:
+            case CONCAT, CONCATENATE:
             case FORMAT:
             case LEFT:
             case RIGHT:
@@ -1065,6 +1065,7 @@ public abstract class AbstractJavaProgrammer extends AbstractProgrammer implemen
             case DIFF_IN_HOURS:
             case DIFF_IN_MINUTES:
             case DIFF_IN_SECONDS:
+            case TO_TIMESTAMP:
             default:
                 arg1 = StrUtils.disclose(arg1);
                 arg2 = StrUtils.disclose(arg2);

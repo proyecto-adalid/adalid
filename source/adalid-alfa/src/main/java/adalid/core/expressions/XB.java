@@ -1182,6 +1182,11 @@ public class XB {
                 return operands == null ? null : new CharacterDataAggregateX(DataAggregateOp.CONCAT, operands);
             }
 
+            public CharacterDataAggregateX concatenate(CharacterExpression operand1, CharacterExpression operand2, CharacterExpression... extraOperands) {
+                Object[] operands = aggregate(operand1, operand2, extraOperands);
+                return operands == null ? null : new CharacterDataAggregateX(DataAggregateOp.CONCATENATE, operands);
+            }
+
         }
         // </editor-fold>
 
@@ -1276,6 +1281,18 @@ public class XB {
 
             public CharacterOrderedPairX concat(CharacterExpression x, CharacterExpression y) {
                 return x == null || y == null ? null : new CharacterOrderedPairX(x, OrderedPairOp.CONCAT, y);
+            }
+
+            public CharacterOrderedPairX concatenate(CharacterExpression x, String y) {
+                return x == null || y == null ? null : new CharacterOrderedPairX(x, OrderedPairOp.CONCATENATE, y);
+            }
+
+            public CharacterOrderedPairX concatenate(CharacterExpression x, SpecialCharacterValue y) {
+                return x == null || y == null ? null : new CharacterOrderedPairX(x, OrderedPairOp.CONCATENATE, y);
+            }
+
+            public CharacterOrderedPairX concatenate(CharacterExpression x, CharacterExpression y) {
+                return x == null || y == null ? null : new CharacterOrderedPairX(x, OrderedPairOp.CONCATENATE, y);
             }
 
             public CharacterOrderedPairX format(CharacterExpression x, String y) {
@@ -2541,6 +2558,18 @@ public class XB {
                 return x == null || y == null ? null : new NumericOrderedPairX(x, OrderedPairOp.DIFF_IN_SECONDS, y);
             }
 
+            public TemporalOrderedPairX toTimestamp(TemporalExpression x, java.util.Date y) {
+                return x == null || y == null ? null : new TemporalOrderedPairX(x, OrderedPairOp.TO_TIMESTAMP, y);
+            }
+
+            public TemporalOrderedPairX toTimestamp(TemporalExpression x, SpecialTemporalValue y) {
+                return x == null || y == null ? null : new TemporalOrderedPairX(x, OrderedPairOp.TO_TIMESTAMP, y);
+            }
+
+            public TemporalOrderedPairX toTimestamp(TemporalExpression x, TemporalExpression y) {
+                return x == null || y == null ? null : new TemporalOrderedPairX(x, OrderedPairOp.TO_TIMESTAMP, y);
+            }
+
         }
         // </editor-fold>
 
@@ -2964,6 +2993,22 @@ public class XB {
     public static final CharacterScalarX EMPTY = new CharacterScalarX(null, SpecialCharacterValue.EMPTY);
 
     public static final CharacterScalarX SPACE = new CharacterScalarX(null, " ");
+
+    public static final CharacterScalarX COMMA = new CharacterScalarX(null, ",");
+
+    public static final CharacterScalarX HYPHEN = new CharacterScalarX(null, "-");
+
+    public static final CharacterScalarX PERIOD = new CharacterScalarX(null, ".");
+
+    public static final CharacterScalarX SLASH = new CharacterScalarX(null, "/");
+
+    public static final CharacterScalarX COLON = new CharacterScalarX(null, ":");
+
+    public static final CharacterScalarX SEMICOLON = new CharacterScalarX(null, ";");
+
+    public static final CharacterScalarX UNDERSCORE = new CharacterScalarX(null, "_");
+
+    public static final CharacterScalarX VBAR = new CharacterScalarX(null, "|");
 
     public static final CharacterScalarX CURRENT_USER_CODE = new CharacterScalarX(null, SpecialCharacterValue.CURRENT_USER_CODE);
 

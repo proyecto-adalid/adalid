@@ -52,6 +52,7 @@ public abstract class BooleanPrimitive extends Primitive implements State {
      * @param initialValue valor inicial primitivo de la propiedad o el parámetro
      */
     public void setPrimalInitialValue(boolean initialValue) {
+        checkScope();
         _primalInitialValue = initialValue;
     }
 
@@ -70,6 +71,7 @@ public abstract class BooleanPrimitive extends Primitive implements State {
      * @param defaultValue valor por omisión primitivo de la propiedad o el parámetro
      */
     public void setPrimalDefaultValue(boolean defaultValue) {
+        checkScope();
         _primalDefaultValue = defaultValue;
     }
 
@@ -88,6 +90,7 @@ public abstract class BooleanPrimitive extends Primitive implements State {
      * @param expression expresión para el cálculo del valor
      */
     public void setCalculableValueExpression(BooleanExpression expression) {
+        checkScope();
         _calculableValue = validCalculableValue(expression) ? expression : null;
     }
 
@@ -128,6 +131,7 @@ public abstract class BooleanPrimitive extends Primitive implements State {
      * @param initialValue valor inicial de la propiedad o el parámetro
      */
     public void setInitialValue(Boolean initialValue) {
+        checkScope();
         _initialValue = validInitialValue(initialValue) ? initialValue : null;
     }
 
@@ -139,6 +143,7 @@ public abstract class BooleanPrimitive extends Primitive implements State {
      * @param initialValue valor inicial de la propiedad o el parámetro
      */
     public void setInitialValue(SpecialBooleanValue initialValue) {
+        checkScope();
         _initialValue = validInitialValue(initialValue) ? initialValue : null;
     }
 
@@ -150,6 +155,7 @@ public abstract class BooleanPrimitive extends Primitive implements State {
      * @param initialValue valor inicial de la propiedad o el parámetro
      */
     public void setInitialValue(BooleanExpression initialValue) {
+        checkScope();
         _initialValue = validInitialValue(initialValue) ? initialValue : null;
     }
 
@@ -190,6 +196,7 @@ public abstract class BooleanPrimitive extends Primitive implements State {
      * @param defaultValue valor por omisión de la propiedad o el parámetro
      */
     public void setDefaultValue(Boolean defaultValue) {
+        checkScope();
         _defaultValue = validDefaultValue(defaultValue) ? defaultValue : null;
     }
 
@@ -201,6 +208,7 @@ public abstract class BooleanPrimitive extends Primitive implements State {
      * @param defaultValue valor por omisión de la propiedad o el parámetro
      */
     public void setDefaultValue(SpecialBooleanValue defaultValue) {
+        checkScope();
         _defaultValue = validDefaultValue(defaultValue) ? defaultValue : null;
     }
 
@@ -212,6 +220,7 @@ public abstract class BooleanPrimitive extends Primitive implements State {
      * @param defaultValue valor por omisión de la propiedad o el parámetro
      */
     public void setDefaultValue(BooleanExpression defaultValue) {
+        checkScope();
         _defaultValue = validDefaultValue(defaultValue) ? defaultValue : null;
     }
 
@@ -250,6 +259,7 @@ public abstract class BooleanPrimitive extends Primitive implements State {
      * @param currentValue valor actual
      */
     public void setCurrentValue(Boolean currentValue) {
+        checkScope();
         _currentValue = validCurrentValue(currentValue) ? currentValue : null;
     }
 
@@ -259,6 +269,7 @@ public abstract class BooleanPrimitive extends Primitive implements State {
      * @param currentValue valor actual
      */
     public void setCurrentValue(SpecialBooleanValue currentValue) {
+        checkScope();
         _currentValue = validCurrentValue(currentValue) ? currentValue : null;
     }
 
@@ -268,6 +279,7 @@ public abstract class BooleanPrimitive extends Primitive implements State {
      * @param currentValue valor actual
      */
     public void setCurrentValue(BooleanExpression currentValue) {
+        checkScope();
         _currentValue = validCurrentValue(currentValue) ? currentValue : null;
     }
 
@@ -278,6 +290,7 @@ public abstract class BooleanPrimitive extends Primitive implements State {
      * no calculables, de una entidad directamente referenciada
      */
     public void keepTallyOn(Property... properties) {
+        checkScope();
         addAggregate(RowsAggregateOp.TALLY, properties);
     }
 
@@ -524,6 +537,7 @@ public abstract class BooleanPrimitive extends Primitive implements State {
      */
     @Override
     public void setLocalizedErrorMessage(Locale locale, String localizedErrorMessage) {
+        checkScope();
         Locale l = localeWritingKey(locale);
         if (localizedErrorMessage == null) {
             _localizedErrorMessage.remove(l);

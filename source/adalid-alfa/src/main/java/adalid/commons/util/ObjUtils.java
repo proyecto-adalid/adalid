@@ -43,10 +43,7 @@ public class ObjUtils {
     }
 
     public static String toString(Object o) {
-        if (o == null) {
-            return null;
-        }
-        return o.toString();
+        return o == null ? null : o.toString();
     }
 
     public static Byte toByte(Object o) {
@@ -187,13 +184,11 @@ public class ObjUtils {
             }
             return true;
         }
-        if (object instanceof KVP) {
-            KVP kvp = (KVP) object;
+        if (object instanceof KVP kvp) {
             String string = kvp.toString();
             return StringUtils.isBlank(string);
         }
-        if (object instanceof String) {
-            String string = (String) object;
+        if (object instanceof String string) {
             return StringUtils.isBlank(string);
         }
         return false;
@@ -327,8 +322,7 @@ public class ObjUtils {
             BigDecimal min = NumUtils.toBigDecimal(minimum);
             BigDecimal max = NumUtils.toBigDecimal(maximum);
             return (min == null || val.compareTo(min) >= 0) && (max == null || val.compareTo(max) <= 0);
-        } else if (object instanceof java.util.Date) {
-            java.util.Date val = (java.util.Date) object;
+        } else if (object instanceof java.util.Date val) {
             java.util.Date min = (java.util.Date) minimum;
             java.util.Date max = (java.util.Date) maximum;
             return (min == null || val.compareTo(min) >= 0) && (max == null || val.compareTo(max) <= 0);
@@ -340,10 +334,10 @@ public class ObjUtils {
     public static Boolean startsWith(Object x, Object y) {
         if (x == null || y == null) {
             return false;
-        } else if (x instanceof String) {
-            return y instanceof String
-                ? StringUtils.startsWithIgnoreCase(((String) x), ((String) y))
-                : StringUtils.startsWithIgnoreCase(((String) x), toString(y));
+        } else if (x instanceof String sx) {
+            return y instanceof String sy
+                ? StringUtils.startsWithIgnoreCase(sx, sy)
+                : StringUtils.startsWithIgnoreCase(sx, toString(y));
         }
         return startsWith(toString(x), y);
     }
@@ -355,10 +349,10 @@ public class ObjUtils {
     public static Boolean contains(Object x, Object y) {
         if (x == null || y == null) {
             return false;
-        } else if (x instanceof String) {
-            return y instanceof String
-                ? StringUtils.containsIgnoreCase(((String) x), ((String) y))
-                : StringUtils.containsIgnoreCase(((String) x), toString(y));
+        } else if (x instanceof String sx) {
+            return y instanceof String sy
+                ? StringUtils.containsIgnoreCase(sx, sy)
+                : StringUtils.containsIgnoreCase(sx, toString(y));
         }
         return contains(toString(x), y);
     }
@@ -370,10 +364,10 @@ public class ObjUtils {
     public static Boolean endsWith(Object x, Object y) {
         if (x == null || y == null) {
             return false;
-        } else if (x instanceof String) {
-            return y instanceof String
-                ? StringUtils.endsWithIgnoreCase(((String) x), ((String) y))
-                : StringUtils.endsWithIgnoreCase(((String) x), toString(y));
+        } else if (x instanceof String sx) {
+            return y instanceof String sy
+                ? StringUtils.endsWithIgnoreCase(sx, sy)
+                : StringUtils.endsWithIgnoreCase(sx, toString(y));
         }
         return endsWith(toString(x), y);
     }
@@ -462,6 +456,7 @@ public class ObjUtils {
         return i;
     }
 
+    @SuppressWarnings("unchecked")
     public static <T> T maximum(T... objects) {
         T max = null;
         for (T obj : objects) {
@@ -472,6 +467,7 @@ public class ObjUtils {
         return max;
     }
 
+    @SuppressWarnings("unchecked")
     public static <T> T minimum(T... objects) {
         T min = null;
         for (T obj : objects) {
@@ -533,14 +529,21 @@ public class ObjUtils {
     public static String concat(Object... objects) {
         String string = "";
         for (Object obj : objects) {
-            /*
-            if (obj instanceof String) {
-                string += obj;
+            if (obj == null) {
+                continue; // A diferencia del método concatenate, este método ignora los argumentos nulos...
             }
-            **/
-            if (obj != null) {
-                string += obj.toString();
+            string += obj.toString();
+        }
+        return string.isEmpty() ? null : string; // y solo devuelve nulo si todos los argumentos son nulos
+    }
+
+    public static String concatenate(Object... objects) {
+        String string = "";
+        for (Object obj : objects) {
+            if (obj == null) {
+                return null; // A diferencia de concat, este método devuelve nulo si alguno de los argumentos es nulo
             }
+            string += obj.toString();
         }
         return string;
     }
@@ -735,29 +738,21 @@ public class ObjUtils {
     public static Number modulus(Object o) {
         if (o == null) {
             return null;
-        } else if (o instanceof Byte) {
-            Byte pdq = (Byte) o;
+        } else if (o instanceof Byte pdq) {
             return NumUtils.newByte(Math.abs(pdq));
-        } else if (o instanceof Short) {
-            Short pdq = (Short) o;
+        } else if (o instanceof Short pdq) {
             return NumUtils.newShort(Math.abs(pdq));
-        } else if (o instanceof Integer) {
-            Integer pdq = (Integer) o;
+        } else if (o instanceof Integer pdq) {
             return Math.abs(pdq);
-        } else if (o instanceof Long) {
-            Long pdq = (Long) o;
+        } else if (o instanceof Long pdq) {
             return Math.abs(pdq);
-        } else if (o instanceof Float) {
-            Float pdq = (Float) o;
+        } else if (o instanceof Float pdq) {
             return Math.abs(pdq);
-        } else if (o instanceof Double) {
-            Double pdq = (Double) o;
+        } else if (o instanceof Double pdq) {
             return Math.abs(pdq);
-        } else if (o instanceof BigInteger) {
-            BigInteger pdq = (BigInteger) o;
+        } else if (o instanceof BigInteger pdq) {
             return pdq.abs();
-        } else if (o instanceof BigDecimal) {
-            BigDecimal pdq = (BigDecimal) o;
+        } else if (o instanceof BigDecimal pdq) {
             return pdq.abs();
         }
         return null;
@@ -766,29 +761,21 @@ public class ObjUtils {
     public static Number opposite(Object o) {
         if (o == null) {
             return null;
-        } else if (o instanceof Byte) {
-            Byte pdq = (Byte) o;
+        } else if (o instanceof Byte pdq) {
             return NumUtils.newByte(0 - pdq);
-        } else if (o instanceof Short) {
-            Short pdq = (Short) o;
+        } else if (o instanceof Short pdq) {
             return NumUtils.newShort(0 - pdq);
-        } else if (o instanceof Integer) {
-            Integer pdq = (Integer) o;
+        } else if (o instanceof Integer pdq) {
             return 0 - pdq;
-        } else if (o instanceof Long) {
-            Long pdq = (Long) o;
+        } else if (o instanceof Long pdq) {
             return 0L - pdq;
-        } else if (o instanceof Float) {
-            Float pdq = (Float) o;
+        } else if (o instanceof Float pdq) {
             return 0.0F - pdq;
-        } else if (o instanceof Double) {
-            Double pdq = (Double) o;
+        } else if (o instanceof Double pdq) {
             return 0.0D - pdq;
-        } else if (o instanceof BigInteger) {
-            BigInteger pdq = (BigInteger) o;
+        } else if (o instanceof BigInteger pdq) {
             return pdq.negate();
-        } else if (o instanceof BigDecimal) {
-            BigDecimal pdq = (BigDecimal) o;
+        } else if (o instanceof BigDecimal pdq) {
             return pdq.negate();
         }
         return null;

@@ -547,8 +547,8 @@ public class Writer {
             String pattern = "failed to initialise {2}" + hint;
             String message = MessageFormat.format(pattern, PROJECT_OBJECT_MODEL, propertiesFilePath, projectObjectModel);
             Object obj = getNewInstanceForName(projectObjectModel, message);
-            if (obj instanceof ProjectObjectModelReader) {
-                pom = (ProjectObjectModelReader) obj;
+            if (obj instanceof ProjectObjectModelReader projectObjectModelReader) {
+                pom = projectObjectModelReader;
             } else {
                 logger.error(message);
                 errors++;
@@ -829,8 +829,8 @@ public class Writer {
     @SuppressWarnings("unchecked") // unchecked conversion & method invocation
     private void writeTemplate(WriterContext templateWriterContext, File templatePropertiesFile, ForEachVariable v, Object o) {
         Object object = invoke(templatePropertiesFile, v, o);
-        if (object instanceof Collection<?>) {
-            Collection<?> collection = new ArrayList<>((Collection<?>) object);
+        if (object instanceof Collection<?> coleccion) {
+            Collection<?> collection = new ArrayList<>(coleccion);
             if (collection.isEmpty()) {
                 return;
             }
@@ -841,8 +841,7 @@ public class Writer {
                 }
             }
             if (v.comparator != null) {
-                if (collection instanceof List<?>) {
-                    List<?> list = (List<?>) collection;
+                if (collection instanceof List<?> list) {
                     Collections.sort(list, v.comparator); // unchecked conversion & method invocation
                 }
             }
@@ -919,7 +918,7 @@ public class Writer {
         fileContext.put(VC_TEMPLATE_TYPE, temptype);
         fileContext.put(VC_FILE, fileName);
         fileContext.put(VC_FILE_ENCODING, charset2 == null ? VelocityEngineer.getDocumentEncoding(fileName) : charset2);
-        fileContext.put(VC_FILE_PRESERVE, preservar + " -> file will" + (preservar ? " not " : " ") + "be replaced when regenerating the project");
+        fileContext.put(VC_FILE_PRESERVE, preservar + "; file will" + (preservar ? " not " : " ") + "be replaced when regenerating the project");
         if (filePath == null) {
 //          filePath = rootPath;
             filePath = userPath;
@@ -1083,13 +1082,12 @@ public class Writer {
         String method = StringUtils.trimToNull(properties.getProperty(TP_PROCESS_FILE_METHOD));
         if (method != null && file.exists()) {
             switch (method) {
-                case "PlantUML.generateImage":
+                case "PlantUML.generateImage" ->
                     PlantUML.generateImage(file);
-                    break;
-                case "PlantUML.generateImageAndDeleteSourceFile":
-                    PlantUML.generateImage(file);
+                case "PlantUML.generateImageAndDeleteSourceFile" -> {
+                    PlantUML.generateImage(file, "svg");
                     FileUtils.deleteQuietly(file);
-                    break;
+                }
             }
         }
     }
@@ -1317,10 +1315,10 @@ public class Writer {
                 message = MessageFormat.format(pattern2, name, propertiesFile, string2);
                 object2 = getNewInstanceForName(string2, message);
                 if (object2 != null) {
-                    if (object2 instanceof Programmer) {
+                    if (object2 instanceof Programmer programmer) {
                         velocityKey = StrUtils.getCamelCase(string1, true);
                         context.put(velocityKey, object2);
-                        TLB.setProgrammer(velocityKey, (Programmer) object2);
+                        TLB.setProgrammer(velocityKey, programmer);
                         continue;
                     } else {
                         message = MessageFormat.format(pattern3, name, propertiesFile, string2, Programmer.class);
@@ -1496,10 +1494,10 @@ public class Writer {
         Set<String> stringPropertyNames = properties.keySet();
         for (String name : stringPropertyNames) {
             switch (name) {
-                case DO_CREATE_DIR:
+                case DO_CREATE_DIR -> {
                     stringArray = properties.getStringArray(name);
                     createDirectories(name, stringArray);
-                    break;
+                }
             }
         }
     }
@@ -1543,14 +1541,14 @@ public class Writer {
         Set<String> stringPropertyNames = properties.keySet();
         for (String name : stringPropertyNames) {
             switch (name) {
-                case DO_CASCADED_DELETE:
+                case DO_CASCADED_DELETE -> {
                     stringArray = properties.getStringArray(name);
                     deletePreviouslyGeneratedFiles(name, stringArray, true);
-                    break;
-                case DO_ISOLATED_DELETE:
+                }
+                case DO_ISOLATED_DELETE -> {
                     stringArray = properties.getStringArray(name);
                     deletePreviouslyGeneratedFiles(name, stringArray, false);
-                    break;
+                }
             }
         }
     }
@@ -2010,16 +2008,16 @@ public class Writer {
             String operator = properties.getString(key, "all");
             String[] operators = {"all", "any", "none", "one"};
             int i = ArrayUtils.indexOf(operators, operator.toLowerCase());
-            switch (i) {
-                case 1:
-                    return PredicateUtils.anyPredicate(predicates);
-                case 2:
-                    return PredicateUtils.nonePredicate(predicates);
-                case 3:
-                    return PredicateUtils.onePredicate(predicates);
-                default:
-                    return PredicateUtils.allPredicate(predicates);
-            }
+            return switch (i) {
+                case 1 ->
+                    PredicateUtils.anyPredicate(predicates);
+                case 2 ->
+                    PredicateUtils.nonePredicate(predicates);
+                case 3 ->
+                    PredicateUtils.onePredicate(predicates);
+                default ->
+                    PredicateUtils.allPredicate(predicates);
+            };
         }
 
         @SuppressWarnings("unchecked") // unchecked cast

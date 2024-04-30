@@ -102,6 +102,33 @@ public @interface PropertyField {
     Kleenean update() default Kleenean.UNSPECIFIED; // TRUE
 
     /**
+     * createViaAPI indica si la propiedad es, o no, requerida por la operación insert del API. Este elemento no es relevante si la propiedad está
+     * designada como clave primaria, columna discriminadora, secuencia, o versión de la entidad; si es la clave primaria, entonces es requerida; si
+     * es la columna discriminadora, la secuencia o la versión, entonces no es requerida. Tampoco es relevante si la propiedad no es insertable, es
+     * calculable o tiene valor por omisión incondicional en la operación insert; tales propiedades no son requeridas. Su valor es uno de los
+     * elementos de la enumeración Kleenean. Seleccione TRUE si la propiedad es requerida por la operación insert del API; en caso contrario,
+     * seleccione FALSE. Alternativamente, omita el elemento o seleccione UNSPECIFIED para utilizar el valor predeterminado del atributo. El valor
+     * predeterminado del atributo es FALSE si la propiedad está enlazada a un parámetro de un proceso de instancia; en caso contrario es TRUE
+     *
+     * @return createViaAPI
+     */
+    Kleenean createViaAPI() default Kleenean.UNSPECIFIED; // TRUE
+
+    /**
+     * updateViaAPI indica si la propiedad es, o no, requerida por la operación update del API. Este elemento no es relevante si la propiedad está
+     * designada como clave primaria, columna discriminadora, secuencia, o versión de la entidad; si es la versión, entonces es requerida; si es la
+     * clave primaria, la columna discriminadora o la secuencia, entonces no es requerida. Tampoco es relevante si la propiedad no es actualizable, es
+     * calculable o tiene valor por omisión incondicional en la operación update; tales propiedades no son requeridas. Su valor es uno de los
+     * elementos de la enumeración Kleenean. Seleccione TRUE si la propiedad es requerida por la operación update del API; en caso contrario,
+     * seleccione FALSE. Alternativamente, omita el elemento o seleccione UNSPECIFIED para utilizar el valor predeterminado del atributo. El valor
+     * predeterminado del atributo es FALSE si la entidad es una enumeración o si la propiedad está enlazada a un parámetro de un proceso de
+     * instancia; en caso contrario es TRUE.
+     *
+     * @return updateViaAPI
+     */
+    Kleenean updateViaAPI() default Kleenean.UNSPECIFIED; // TRUE
+
+    /**
      * search indica si la propiedad es, o no, un criterio de búsqueda básica en las vistas (páginas) de consulta y registro. Su valor es uno de los
      * elementos de la enumeración Kleenean. Seleccione TRUE si la propiedad es un criterio de búsqueda básica; en caso contrario, seleccione FALSE.
      * Alternativamente, omita el elemento o seleccione UNSPECIFIED para utilizar el valor predeterminado del atributo. El valor predeterminado del
@@ -384,6 +411,16 @@ public @interface PropertyField {
      * @return anchorType
      */
     AnchorType anchorType() default AnchorType.UNLINKED;
+
+    /**
+     * responsivePriority específica la prioridad de la columna correspondiente a la propiedad en las vistas (páginas) de consulta y registro tabular.
+     * La prioridad solo es relevante si el elemento table es TRUE y el modo "responsive" de la tabla es PRIORITY. Su valor debe ser un número entero
+     * entre 0 y 6. Un valor más bajo significa una prioridad más alta. Las columnas con valores de prioridad más bajos se mostrarán primero en
+     * pantallas más pequeñas. A medida que aumenta el tamaño de la pantalla, se mostrarán las columnas con valores de prioridad más altos.
+     *
+     * @return sequence
+     */
+    int responsivePriority() default 0;
 
     /**
      * sequence específica el número de secuencia o posición relativa en la que se muestra la propiedad en las vistas (páginas) de consulta y

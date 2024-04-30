@@ -1043,6 +1043,7 @@ public class Instance extends AbstractArtifact {
      * @param property propiedad de la entidad
      * @param value valor de la propiedad
      */
+    @SuppressWarnings("unchecked")
     public void newInstanceField(DateProperty property, String value) {
         java.util.Date valor = TimeUtils.jdbcObject(value, (Class<? extends java.util.Date>) property.getDataType());
         if (valor instanceof Date date) {
@@ -1070,6 +1071,7 @@ public class Instance extends AbstractArtifact {
      * @param property propiedad de la entidad
      * @param value valor de la propiedad
      */
+    @SuppressWarnings("unchecked")
     public void newInstanceField(TimeProperty property, String value) {
         java.util.Date valor = TimeUtils.jdbcObject(value, (Class<? extends java.util.Date>) property.getDataType());
         if (valor instanceof Time time) {
@@ -1119,6 +1121,7 @@ public class Instance extends AbstractArtifact {
      * @param property propiedad de la entidad
      * @param value valor de la propiedad
      */
+    @SuppressWarnings("unchecked")
     public void newInstanceField(TimestampProperty property, String value) {
         java.util.Date valor = TimeUtils.jdbcObject(value, (Class<? extends java.util.Date>) property.getDataType());
         if (valor instanceof Timestamp timestamp) {

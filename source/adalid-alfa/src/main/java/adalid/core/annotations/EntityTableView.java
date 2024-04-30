@@ -94,6 +94,17 @@ public @interface EntityTableView {
     Kleenean quickFilter() default Kleenean.UNSPECIFIED; // FALSE
 
     /**
+     * stickyHeader indica si las tablas de las vistas generadas incluyen, o no, un encabezado fijo. El encabezado fijo permanece visible durante el
+     * desplazamiento. Su valor es uno de los elementos de la enumeración Kleenean. Seleccione TRUE para incluir el encabezado fijo; en caso
+     * contrario, seleccione FALSE. Alternativamente, omita el elemento o seleccione UNSPECIFIED para utilizar el valor predeterminado del atributo.
+     * El valor predeterminado del atributo se puede establecer utilizando el método setEntityTableViewWithStickyHeaderDefaultValue del proyecto
+     * maestro; si no se establece, es FALSE.
+     *
+     * @return quickFilter
+     */
+    Kleenean stickyHeader() default Kleenean.UNSPECIFIED; // FALSE
+
+    /**
      * rowsLimit específica el máximo número de filas por página que muestra la vista. Este elemento es relevante solo si el valor especificado, o
      * determinado, para el elemento enabled es TRUE. Su valor debe ser un número entero entre 5 y 1000. El valor predeterminado es 100.
      *
@@ -109,6 +120,15 @@ public @interface EntityTableView {
      * @return rows
      */
     int rows() default Constants.DEFAULT_ROWS_PER_PAGE;
+
+    /**
+     * responsiveMode especifica el modo "responsive" de la tabla. Su valor es uno de los elementos de la enumeración TableResponsiveMode. Seleccione
+     * PRIORITY para mostrar las columnas de la tabla dependiendo de su prioridad, según el tamaño de la pantalla. Seleccione REFLOW para mostrar
+     * todas las columnas, apiladas o no, según el tamaño de la pantalla. Omita el elemento o seleccione NONE para que la tabla no sea "responsive".
+     *
+     * @return responsiveMode
+     */
+    TableResponsiveMode responsiveMode() default TableResponsiveMode.NONE;
 
     /**
      * menu especifica el tipo de vistas (páginas) generadas que deben ser accesibles desde el menú principal de la aplicación. Su valor es uno de los

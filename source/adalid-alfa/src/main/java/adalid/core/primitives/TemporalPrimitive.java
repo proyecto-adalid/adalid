@@ -72,6 +72,7 @@ public abstract class TemporalPrimitive extends Primitive implements Intervalize
 
     private String _specialValidatorName;
 
+    @SuppressWarnings("unchecked")
     private Class<? extends java.util.Date> dataType() {
         return (Class<? extends java.util.Date>) getDataType();
     }
@@ -91,6 +92,7 @@ public abstract class TemporalPrimitive extends Primitive implements Intervalize
      * @param initialValue valor inicial primitivo de la propiedad o el parámetro
      */
     public void setPrimalInitialValue(java.util.Date initialValue) {
+        checkScope();
         _primalInitialValue = initialValue == null ? primalValue : initialValue;
     }
 
@@ -109,6 +111,7 @@ public abstract class TemporalPrimitive extends Primitive implements Intervalize
      * @param defaultValue valor por omisión primitivo de la propiedad o el parámetro
      */
     public void setPrimalDefaultValue(java.util.Date defaultValue) {
+        checkScope();
         _primalDefaultValue = defaultValue == null ? primalValue : defaultValue;
     }
 
@@ -127,6 +130,7 @@ public abstract class TemporalPrimitive extends Primitive implements Intervalize
      * @param minValue valor mínimo primitivo de la propiedad o el parámetro
      */
     public void setPrimalMinValue(java.util.Date minValue) {
+        checkScope();
         _primalMinValue = minValue;
     }
 
@@ -145,6 +149,7 @@ public abstract class TemporalPrimitive extends Primitive implements Intervalize
      * @param maxValue valor máximo primitivo de la propiedad o el parámetro
      */
     public void setPrimalMaxValue(java.util.Date maxValue) {
+        checkScope();
         _primalMaxValue = maxValue;
     }
 
@@ -163,6 +168,7 @@ public abstract class TemporalPrimitive extends Primitive implements Intervalize
      * @param expression expresión para el cálculo del valor
      */
     public void setCalculableValueExpression(TemporalExpression expression) {
+        checkScope();
         _calculableValue = validCalculableValue(expression) ? expression : null;
     }
 
@@ -221,6 +227,7 @@ public abstract class TemporalPrimitive extends Primitive implements Intervalize
      * @param initialValue valor inicial de la propiedad o el parámetro
      */
     public void setInitialValue(java.util.Date initialValue) {
+        checkScope();
         _initialValue = validInitialValue(initialValue) ? initialValue : null;
     }
 
@@ -232,6 +239,7 @@ public abstract class TemporalPrimitive extends Primitive implements Intervalize
      * @param initialValue valor inicial de la propiedad o el parámetro
      */
     public void setInitialValue(SpecialTemporalValue initialValue) {
+        checkScope();
         _initialValue = validInitialValue(initialValue) ? initialValue : null;
     }
 
@@ -243,6 +251,7 @@ public abstract class TemporalPrimitive extends Primitive implements Intervalize
      * @param initialValue valor inicial de la propiedad o el parámetro
      */
     public void setInitialValue(TemporalExpression initialValue) {
+        checkScope();
         _initialValue = validInitialValue(initialValue) ? initialValue : null;
     }
 
@@ -301,6 +310,7 @@ public abstract class TemporalPrimitive extends Primitive implements Intervalize
      * @param defaultValue valor por omisión de la propiedad o el parámetro
      */
     public void setDefaultValue(java.util.Date defaultValue) {
+        checkScope();
         _defaultValue = validDefaultValue(defaultValue) ? defaultValue : null;
     }
 
@@ -312,6 +322,7 @@ public abstract class TemporalPrimitive extends Primitive implements Intervalize
      * @param defaultValue valor por omisión de la propiedad o el parámetro
      */
     public void setDefaultValue(SpecialTemporalValue defaultValue) {
+        checkScope();
         _defaultValue = validDefaultValue(defaultValue) ? defaultValue : null;
     }
 
@@ -323,6 +334,7 @@ public abstract class TemporalPrimitive extends Primitive implements Intervalize
      * @param defaultValue valor por omisión de la propiedad o el parámetro
      */
     public void setDefaultValue(TemporalExpression defaultValue) {
+        checkScope();
         _defaultValue = validDefaultValue(defaultValue) ? defaultValue : null;
     }
 
@@ -377,6 +389,7 @@ public abstract class TemporalPrimitive extends Primitive implements Intervalize
      * @param currentValue valor actual
      */
     public void setCurrentValue(java.util.Date currentValue) {
+        checkScope();
         _currentValue = validCurrentValue(currentValue) ? currentValue : null;
     }
 
@@ -386,6 +399,7 @@ public abstract class TemporalPrimitive extends Primitive implements Intervalize
      * @param currentValue valor actual
      */
     public void setCurrentValue(SpecialTemporalValue currentValue) {
+        checkScope();
         _currentValue = validCurrentValue(currentValue) ? currentValue : null;
     }
 
@@ -395,6 +409,7 @@ public abstract class TemporalPrimitive extends Primitive implements Intervalize
      * @param currentValue valor actual
      */
     public void setCurrentValue(TemporalExpression currentValue) {
+        checkScope();
         _currentValue = validCurrentValue(currentValue) ? currentValue : null;
     }
 
@@ -464,6 +479,7 @@ public abstract class TemporalPrimitive extends Primitive implements Intervalize
      * @param minValue valor mínimo de la propiedad o el parámetro
      */
     public void setMinValue(java.util.Date minValue) {
+        checkScope();
         _minValue = minValue;
     }
 
@@ -473,6 +489,7 @@ public abstract class TemporalPrimitive extends Primitive implements Intervalize
      * @param minValue valor mínimo de la propiedad o el parámetro
      */
     public void setMinValue(SpecialTemporalValue minValue) {
+        checkScope();
         _minValue = minValue;
     }
 
@@ -482,6 +499,7 @@ public abstract class TemporalPrimitive extends Primitive implements Intervalize
      * @param minValue valor mínimo de la propiedad o el parámetro
      */
     public void setMinValue(TemporalExpression minValue) {
+        checkScope();
         _minValue = validMinimumValue(minValue) ? minValue : null;
     }
 
@@ -551,6 +569,7 @@ public abstract class TemporalPrimitive extends Primitive implements Intervalize
      * @param maxValue valor máximo de la propiedad o el parámetro
      */
     public void setMaxValue(java.util.Date maxValue) {
+        checkScope();
         _maxValue = maxValue;
     }
 
@@ -560,6 +579,7 @@ public abstract class TemporalPrimitive extends Primitive implements Intervalize
      * @param maxValue valor máximo de la propiedad o el parámetro
      */
     public void setMaxValue(SpecialTemporalValue maxValue) {
+        checkScope();
         _maxValue = maxValue;
     }
 
@@ -569,6 +589,7 @@ public abstract class TemporalPrimitive extends Primitive implements Intervalize
      * @param maxValue valor máximo de la propiedad o el parámetro
      */
     public void setMaxValue(TemporalExpression maxValue) {
+        checkScope();
         _maxValue = validMaximumValue(maxValue) ? maxValue : null;
     }
 
@@ -670,6 +691,7 @@ public abstract class TemporalPrimitive extends Primitive implements Intervalize
      */
     @Override
     public void setLocalizedRangeErrorMessage(Locale locale, String message) {
+        checkScope();
         Locale l = localeWritingKey(locale);
         if (message == null) {
             _localizedRangeErrorMessage.remove(l);
@@ -686,7 +708,7 @@ public abstract class TemporalPrimitive extends Primitive implements Intervalize
     }
 
     public void setSpecialConverterName(String converter) {
-        XS2.checkAccess();
+        checkScope();
         _specialConverterName = converter;
     }
 
@@ -698,7 +720,7 @@ public abstract class TemporalPrimitive extends Primitive implements Intervalize
     }
 
     public void setSpecialValidatorName(String validator) {
-        XS2.checkAccess();
+        checkScope();
         _specialValidatorName = validator;
     }
 
@@ -1176,6 +1198,21 @@ public abstract class TemporalPrimitive extends Primitive implements Intervalize
     @Override
     public NumericOrderedPairX diffInSeconds(TemporalExpression y) {
         return XB.Temporal.OrderedPair.diffInSeconds(this, y);
+    }
+
+    @Override
+    public TemporalOrderedPairX toTimestamp(java.util.Date y) {
+        return XB.Temporal.OrderedPair.toTimestamp(this, y);
+    }
+
+    @Override
+    public TemporalOrderedPairX toTimestamp(SpecialTemporalValue y) {
+        return XB.Temporal.OrderedPair.toTimestamp(this, y);
+    }
+
+    @Override
+    public TemporalOrderedPairX toTimestamp(TemporalExpression y) {
+        return XB.Temporal.OrderedPair.toTimestamp(this, y);
     }
 
     @Override

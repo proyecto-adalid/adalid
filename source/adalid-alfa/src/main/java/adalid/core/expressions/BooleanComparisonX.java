@@ -279,6 +279,7 @@ public class BooleanComparisonX extends AbstractComparisonX implements Check, St
      */
     @Override
     public void setLocalizedErrorMessage(Locale locale, String localizedErrorMessage) {
+        checkScope();
         Locale l = localeWritingKey(locale);
         if (localizedErrorMessage == null) {
             _localizedErrorMessage.remove(l);
@@ -308,10 +309,11 @@ public class BooleanComparisonX extends AbstractComparisonX implements Check, St
      */
     @Override
     public void setCheckEvent(CheckEvent checkEvent) {
+        checkScope();
         _checkEvent = checkEvent == null ? CheckEvent.INSERT_AND_UPDATE : checkEvent;
     }
 
-    private Checkpoint _checkpoint = Checkpoint.WHEREVER_POSSIBLE;
+    private Checkpoint _checkpoint = Checkpoint.UNSPECIFIED;
 
     /**
      * @return the checkpoint
@@ -331,7 +333,8 @@ public class BooleanComparisonX extends AbstractComparisonX implements Check, St
      */
     @Override
     public void setCheckpoint(Checkpoint checkpoint) {
-        _checkpoint = checkpoint == null ? Checkpoint.WHEREVER_POSSIBLE : checkpoint;
+        checkScope();
+        _checkpoint = checkpoint == null ? Checkpoint.UNSPECIFIED : checkpoint;
     }
     // </editor-fold>
 

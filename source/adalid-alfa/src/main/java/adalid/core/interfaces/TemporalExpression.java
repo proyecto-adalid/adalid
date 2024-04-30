@@ -681,8 +681,8 @@ public interface TemporalExpression extends Expression {
     TemporalOrderedPairX addSeconds(NumericExpression y);
 
     /**
-     * El método <b>diffInYears</b> contruye una expresión que genera el valor de la diferencia en años entre esta expresión (operando X) y la fecha
-     * actual.
+     * El método <b>diffInYears</b> contruye una expresión que genera el valor de la diferencia en años entre esta expresión (operando X) y el valor
+     * que recibe como argumento (operando Y).
      *
      * @param y operando Y
      * @return expresión que retorna la diferencia entre los dos operandos.
@@ -691,7 +691,7 @@ public interface TemporalExpression extends Expression {
 
     /**
      * El método <b>diffInYears</b> contruye una expresión que genera el valor de la diferencia en años entre esta expresión (operando X) y el valor
-     * especial que recibe como argumento (operando Y).
+     * que recibe como argumento (operando Y).
      *
      * @param y operando Y
      * @return expresión que retorna la diferencia entre los dos operandos.
@@ -700,7 +700,7 @@ public interface TemporalExpression extends Expression {
 
     /**
      * El método <b>diffInYears</b> contruye una expresión que genera el valor de la diferencia en años entre esta expresión (operando X) y el valor
-     * de la expresión que recibe como argumento (operando Y).
+     * que recibe como argumento (operando Y).
      *
      * @param y operando Y
      * @return expresión que retorna la diferencia entre los dos operandos.
@@ -708,8 +708,8 @@ public interface TemporalExpression extends Expression {
     NumericOrderedPairX diffInYears(TemporalExpression y);
 
     /**
-     * El método <b>diffInMonths</b> contruye una expresión que genera el valor de la diferencia en meses entre esta expresión (operando X) y la fecha
-     * actual.
+     * El método <b>diffInMonths</b> contruye una expresión que genera el valor de la diferencia en meses entre esta expresión (operando X) y el valor
+     * que recibe como argumento (operando Y).
      *
      * @param y operando Y
      * @return expresión que retorna la diferencia entre los dos operandos.
@@ -718,7 +718,7 @@ public interface TemporalExpression extends Expression {
 
     /**
      * El método <b>diffInMonths</b> contruye una expresión que genera el valor de la diferencia en meses entre esta expresión (operando X) y el valor
-     * especial que recibe como argumento (operando Y).
+     * que recibe como argumento (operando Y).
      *
      * @param y operando Y
      * @return expresión que retorna la diferencia entre los dos operandos.
@@ -727,7 +727,7 @@ public interface TemporalExpression extends Expression {
 
     /**
      * El método <b>diffInMonths</b> contruye una expresión que genera el valor de la diferencia en meses entre esta expresión (operando X) y el valor
-     * de la expresión que recibe como argumento (operando Y).
+     * que recibe como argumento (operando Y).
      *
      * @param y operando Y
      * @return expresión que retorna la diferencia entre los dos operandos.
@@ -735,8 +735,8 @@ public interface TemporalExpression extends Expression {
     NumericOrderedPairX diffInMonths(TemporalExpression y);
 
     /**
-     * El método <b>diffInWeeks</b> contruye una expresión que genera el valor de la diferencia en semanas entre esta expresión (operando X) y la
-     * fecha actual.
+     * El método <b>diffInWeeks</b> contruye una expresión que genera el valor de la diferencia en semanas entre esta expresión (operando X) y el
+     * valor que recibe como argumento (operando Y).
      *
      * @param y operando Y
      * @return expresión que retorna la diferencia entre los dos operandos.
@@ -745,7 +745,7 @@ public interface TemporalExpression extends Expression {
 
     /**
      * El método <b>diffInWeeks</b> contruye una expresión que genera el valor de la diferencia en semanas entre esta expresión (operando X) y el
-     * valor especial que recibe como argumento (operando Y).
+     * valor que recibe como argumento (operando Y).
      *
      * @param y operando Y
      * @return expresión que retorna la diferencia entre los dos operandos.
@@ -754,7 +754,7 @@ public interface TemporalExpression extends Expression {
 
     /**
      * El método <b>diffInWeeks</b> contruye una expresión que genera el valor de la diferencia en semanas entre esta expresión (operando X) y el
-     * valor de la expresión que recibe como argumento (operando Y).
+     * valor que recibe como argumento (operando Y).
      *
      * @param y operando Y
      * @return expresión que retorna la diferencia entre los dos operandos.
@@ -762,8 +762,8 @@ public interface TemporalExpression extends Expression {
     NumericOrderedPairX diffInWeeks(TemporalExpression y);
 
     /**
-     * El método <b>diffInDays</b> contruye una expresión que genera el valor de la diferencia en dias entre esta expresión (operando X) y la fecha
-     * actual.
+     * El método <b>diffInDays</b> contruye una expresión que genera el valor de la diferencia en dias entre esta expresión (operando X) y el valor
+     * que recibe como argumento (operando Y).
      *
      * @param y operando Y
      * @return expresión que retorna la diferencia entre los dos operandos.
@@ -772,7 +772,7 @@ public interface TemporalExpression extends Expression {
 
     /**
      * El método <b>diffInDays</b> contruye una expresión que genera el valor de la diferencia en dias entre esta expresión (operando X) y el valor
-     * especial que recibe como argumento (operando Y).
+     * que recibe como argumento (operando Y).
      *
      * @param y operando Y
      * @return expresión que retorna la diferencia entre los dos operandos.
@@ -780,8 +780,8 @@ public interface TemporalExpression extends Expression {
     NumericOrderedPairX diffInDays(SpecialTemporalValue y);
 
     /**
-     * El método <b>diffInDays</b> contruye una expresión que genera el valor de la diferencia en dias entre esta expresión (operando X) y la fecha
-     * actual.
+     * El método <b>diffInDays</b> contruye una expresión que genera el valor de la diferencia en dias entre esta expresión (operando X) y el valor
+     * que recibe como argumento (operando Y).
      *
      * @param y operando Y
      * @return expresión que retorna la diferencia entre los dos operandos.
@@ -789,8 +789,8 @@ public interface TemporalExpression extends Expression {
     NumericOrderedPairX diffInDays(TemporalExpression y);
 
     /**
-     * El método <b>diffInHours</b> contruye una expresión que genera el valor de la diferencia en horas entre esta expresión (operando X) y la fecha
-     * y hora actual.
+     * El método <b>diffInHours</b> contruye una expresión que genera el valor de la diferencia en horas entre esta expresión (operando X) y el valor
+     * que recibe como argumento (operando Y).
      *
      * @param y operando Y
      * @return expresión que retorna la diferencia entre los dos operandos.
@@ -799,7 +799,7 @@ public interface TemporalExpression extends Expression {
 
     /**
      * El método <b>diffInHours</b> contruye una expresión que genera el valor de la diferencia en horas entre esta expresión (operando X) y el valor
-     * especial que recibe como argumento (operando Y).
+     * que recibe como argumento (operando Y).
      *
      * @param y operando Y
      * @return expresión que retorna la diferencia entre los dos operandos.
@@ -807,8 +807,8 @@ public interface TemporalExpression extends Expression {
     NumericOrderedPairX diffInHours(SpecialTemporalValue y);
 
     /**
-     * El método <b>diffInHours</b> contruye una expresión que genera el valor de la diferencia en horas entre esta expresión (operando X) y la fecha
-     * actual.
+     * El método <b>diffInHours</b> contruye una expresión que genera el valor de la diferencia en horas entre esta expresión (operando X) y el valor
+     * que recibe como argumento (operando Y).
      *
      * @param y operando Y
      * @return expresión que retorna la diferencia entre los dos operandos.
@@ -816,8 +816,8 @@ public interface TemporalExpression extends Expression {
     NumericOrderedPairX diffInHours(TemporalExpression y);
 
     /**
-     * El método <b>diffInMinutes</b> contruye una expresión que genera el valor de la diferencia en minutos entre esta expresión (operando X) y la
-     * fecha y hora actual.
+     * El método <b>diffInMinutes</b> contruye una expresión que genera el valor de la diferencia en minutos entre esta expresión (operando X) y el
+     * valor que recibe como argumento (operando Y).
      *
      * @param y operando Y
      * @return expresión que retorna la diferencia entre los dos operandos.
@@ -826,7 +826,7 @@ public interface TemporalExpression extends Expression {
 
     /**
      * El método <b>diffInMinutes</b> contruye una expresión que genera el valor de la diferencia en minutos entre esta expresión (operando X) y el
-     * valor especial que recibe como argumento (operando Y).
+     * valor que recibe como argumento (operando Y).
      *
      * @param y operando Y
      * @return expresión que retorna la diferencia entre los dos operandos.
@@ -834,8 +834,8 @@ public interface TemporalExpression extends Expression {
     NumericOrderedPairX diffInMinutes(SpecialTemporalValue y);
 
     /**
-     * El método <b>diffInMinutes</b> contruye una expresión que genera el valor de la diferencia en minutos entre esta expresión (operando X) y la
-     * fecha actual.
+     * El método <b>diffInMinutes</b> contruye una expresión que genera el valor de la diferencia en minutos entre esta expresión (operando X) y el
+     * valor que recibe como argumento (operando Y).
      *
      * @param y operando Y
      * @return expresión que retorna la diferencia entre los dos operandos.
@@ -843,8 +843,8 @@ public interface TemporalExpression extends Expression {
     NumericOrderedPairX diffInMinutes(TemporalExpression y);
 
     /**
-     * El método <b>diffInSeconds</b> contruye una expresión que genera el valor de la diferencia en segundos entre esta expresión (operando X) y la
-     * fecha y hora actual.
+     * El método <b>diffInSeconds</b> contruye una expresión que genera el valor de la diferencia en segundos entre esta expresión (operando X) y el
+     * valor que recibe como argumento (operando Y).
      *
      * @param y operando Y
      * @return expresión que retorna la diferencia entre los dos operandos.
@@ -853,7 +853,7 @@ public interface TemporalExpression extends Expression {
 
     /**
      * El método <b>diffInSeconds</b> contruye una expresión que genera el valor de la diferencia en segundos entre esta expresión (operando X) y el
-     * valor especial que recibe como argumento (operando Y).
+     * valor que recibe como argumento (operando Y).
      *
      * @param y operando Y
      * @return expresión que retorna la diferencia entre los dos operandos.
@@ -861,13 +861,40 @@ public interface TemporalExpression extends Expression {
     NumericOrderedPairX diffInSeconds(SpecialTemporalValue y);
 
     /**
-     * El método <b>diffInSeconds</b> contruye una expresión que genera el valor de la diferencia en segundos entre esta expresión (operando X) y la
-     * fecha actual.
+     * El método <b>diffInSeconds</b> contruye una expresión que genera el valor de la diferencia en segundos entre esta expresión (operando X) y el
+     * valor que recibe como argumento (operando Y).
      *
      * @param y operando Y
      * @return expresión que retorna la diferencia entre los dos operandos.
      */
     NumericOrderedPairX diffInSeconds(TemporalExpression y);
+
+    /**
+     * El método <b>toTimestamp</b> contruye una expresión que genera un Timestamp con la fecha de esta expresión (operando X) y la hora, los minutos
+     * y los segundos del valor que recibe como argumento (operando Y).
+     *
+     * @param y operando Y
+     * @return expresión que retorna la diferencia entre los dos operandos.
+     */
+    TemporalOrderedPairX toTimestamp(java.util.Date y);
+
+    /**
+     * El método <b>toTimestamp</b> contruye una expresión que genera un Timestamp con la fecha de esta expresión (operando X) y la hora, los minutos
+     * y los segundos del valor que recibe como argumento (operando Y).
+     *
+     * @param y operando Y
+     * @return expresión que retorna la diferencia entre los dos operandos.
+     */
+    TemporalOrderedPairX toTimestamp(SpecialTemporalValue y);
+
+    /**
+     * El método <b>toTimestamp</b> contruye una expresión que genera un Timestamp con la fecha de esta expresión (operando X) y la hora, los minutos
+     * y los segundos del valor que recibe como argumento (operando Y).
+     *
+     * @param y operando Y
+     * @return expresión que retorna la diferencia entre los dos operandos.
+     */
+    TemporalOrderedPairX toTimestamp(TemporalExpression y);
 
     /**
      * El método <b>defaultWhenNull</b> contruye una expresión que genera el valor de esta expresión o el valor predeterminado según el tipo de dato

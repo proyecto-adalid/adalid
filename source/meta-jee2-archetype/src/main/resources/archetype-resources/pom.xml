@@ -43,7 +43,7 @@
         <dependency>
             <groupId>org.proyecto-adalid</groupId>
             <artifactId>adalid-alfa</artifactId>
-            <version>5.0.0</version><!--adalid-->
+            <version>5.1.0</version><!--adalid-->
         </dependency>
         <dependency>
             <groupId>com.oracle.database.jdbc</groupId>
@@ -64,7 +64,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.1</version>
+                <version>3.13.0</version><!--maven-compiler-plugin-->
                 <configuration>
                     <source>${dollar}{maven.compiler.source}</source>
                     <target>${dollar}{maven.compiler.target}</target>
@@ -74,7 +74,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
-                <version>2.6</version>
+                <version>3.3.0</version><!--maven-jar-plugin-->
                 <configuration>
                     <archive>
                         <addMavenDescriptor>true</addMavenDescriptor>
@@ -85,6 +85,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-dependency-plugin</artifactId>
+                <version>3.6.1</version>
                 <executions>
                     <execution>
                         <goals>
@@ -119,7 +120,9 @@
             -->
             <!--
             <plugin>
-                <artifactId>maven-assembly-plugin</artifactId><version>3.1.0</version>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <version>3.7.1</version>
                 <configuration>
                     <descriptors>
                         <descriptor>src/main/resources/assembly-lib.xml</descriptor>
@@ -165,7 +168,7 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-gpg-plugin</artifactId>
-                        <version>1.5</version>
+                        <version>3.2.1</version><!--maven-gpg-plugin-->
                         <executions>
                             <execution>
                                 <id>sign-artifacts</id>
@@ -186,9 +189,11 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-javadoc-plugin</artifactId>
-                        <version>3.5.0</version>
+                        <version>3.6.3</version><!--maven-javadoc-plugin-->
                         <configuration>
-                            <source>17</source>
+                            <source>${dollar}{maven.compiler.source}</source>
+                            <detectJavaApiLink>false</detectJavaApiLink>
+                            <doclint>all,-missing</doclint>
                             <maxmemory>4096</maxmemory>
                             <minmemory>1024</minmemory>
                         </configuration>
@@ -211,7 +216,7 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-source-plugin</artifactId>
-                        <version>3.0.1</version><!--maven-source-plugin-->
+                        <version>3.3.0</version><!--maven-source-plugin-->
                         <executions>
                             <execution>
                                 <id>attach-sources</id>
@@ -231,7 +236,7 @@
                     <plugin>
                         <groupId>org.sonatype.plugins</groupId>
                         <artifactId>nexus-staging-maven-plugin</artifactId>
-                        <version>[1.6.7,)</version>
+                        <version>[1.6.13,)</version><!--nexus-staging-maven-plugin-->
                         <extensions>true</extensions>
                         <configuration>
                             <serverId>ossrh</serverId>

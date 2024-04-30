@@ -34,6 +34,7 @@ import java.util.Locale;
 @EntityDetailView(enabled = Kleenean.FALSE)
 @EntityTreeView(enabled = Kleenean.FALSE)
 @EntityConsoleView(enabled = Kleenean.FALSE)
+//@EntityReferenceDisplay(filterType = EntityReferenceFilterType.TEXTBOX)
 public class ClaseFabricador extends AbstractPersistentEnumerationEntity {
 
     public static final String FCSS_VALIDATOR = "fcssValidator";

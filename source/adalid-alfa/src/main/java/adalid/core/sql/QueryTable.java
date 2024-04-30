@@ -269,12 +269,12 @@ public class QueryTable {
             if (joinedEntity == null) {
                 properties = entity.getJoinedTablePropertiesList();
                 if (_line) {
-                    addJoin(leftColumn, rightEntity, maxDepth, depth, entity, baseEntity);
+                    addJoin(leftColumn, rightEntity, maxDepth, depth, entity, baseEntity, true);
                 }
             } else {
                 properties = joinedEntity.getJoinedTableMatchingPropertiesList(entity.getJoinedTablePropertiesMap());
                 if (_line) {
-                    addJoin(leftColumn, rightEntity, maxDepth, depth, joinedEntity, baseEntity);
+                    addJoin(leftColumn, rightEntity, maxDepth, depth, joinedEntity, baseEntity, true);
                 }
             }
         } else if (joinedEntity != null) {
@@ -294,7 +294,7 @@ public class QueryTable {
                 } else {
                     properties = entity.getSingleJoinedTablePropertiesList(rightEntity.getPropertiesMap());
                     if (_line) {
-                        addJoin(leftColumn, rightEntity, maxDepth, depth, entity, baseEntity);
+                        addJoin(leftColumn, rightEntity, maxDepth, depth, entity, baseEntity, true);
                     }
                 }
             }
@@ -303,10 +303,10 @@ public class QueryTable {
             for (Property property : properties) {
                 if (property instanceof Primitive) {
                     _columns.add(property);
-                } else if (property instanceof PersistentEntity) {
+                } else if (property instanceof PersistentEntity persistentEntity) {
                     _columns.add(property);
                     leftColumn = property;
-                    rightEntity = (PersistentEntity) property;
+                    rightEntity = persistentEntity;
                     if (_star) {
                         addJoin(leftColumn, rightEntity, maxDepth, depth);
                     }
@@ -336,32 +336,32 @@ public class QueryTable {
             _star = true;
         } else {
             switch (_virtualEntityType) {
-                case SELECTION:
+                case SELECTION -> {
                     _line = false;
                     _star = false;
-                    break;
-                case LINE:
+                }
+                case LINE -> {
                     _line = true;
                     _star = false;
-                    break;
-                case STAR:
+                }
+                case STAR -> {
                     _line = false;
                     _star = true;
-                    break;
-                default:
+                }
+                default -> {
                     _line = true;
                     _star = true;
-                    break;
+                }
             }
         }
     }
 
     private void addJoin(Property leftColumn, PersistentEntity rightEntity, int maxDepth, int depth) {
-        addJoin(leftColumn, rightEntity, maxDepth, depth, null, null);
+        addJoin(leftColumn, rightEntity, maxDepth, depth, null, null, false);
     }
 
     private void addJoin(Property leftColumn, PersistentEntity rightEntity, int maxDepth, int depth,
-        PersistentEntity joinedEntity, Entity joiningEntity) {
+        PersistentEntity joinedEntity, Entity joiningEntity, boolean hierarchical) {
         if (depth >= maxDepth && maxDepth >= 0) {
             return;
         }
@@ -385,14 +385,14 @@ public class QueryTable {
         join.setLeftColumn(leftColumn);
         join.setRightTable(rightTable);
         join.setRightColumn(rightColumn);
+        join.setHierarchical(hierarchical);
         _joins.add(join);
     }
 
     private QueryJoinOp queryJoinOp(Property leftColumn) {
         boolean nullable;
         boolean foreignKey;
-        if (leftColumn instanceof PersistentEntityReference) {
-            PersistentEntityReference reference = (PersistentEntityReference) leftColumn;
+        if (leftColumn instanceof PersistentEntityReference reference) {
             nullable = reference.isNullable();
             foreignKey = reference.isForeignKey();
         } else {
@@ -671,7 +671,30 @@ public class QueryTable {
      * @return the SQL statement
      */
     public String getSqlSelectStatement(List<Property> referencedColumns, boolean into, boolean indent) {
-        return _sqlProgrammer.getSqlSelectStatement(this, referencedColumns, into, indent);
+        return getSqlSelectStatement(referencedColumns, into, indent, false); // since 17/03/2024
+    }
+
+    /**
+     * @param referencedColumns referenced columns
+     * @param into into
+     * @param indent indent
+     * @param blobless blobless
+     * @return the SQL statement
+     */
+    public String getSqlSelectStatement(List<Property> referencedColumns, boolean into, boolean indent, boolean blobless) {
+        return getSqlSelectStatement(referencedColumns, into, indent, blobless, false); // since 17/03/2024
+    }
+
+    /**
+     * @param referencedColumns referenced columns
+     * @param into into
+     * @param indent indent
+     * @param blobless blobless
+     * @param joinless joinless
+     * @return the SQL statement
+     */
+    public String getSqlSelectStatement(List<Property> referencedColumns, boolean into, boolean indent, boolean blobless, boolean joinless) {
+        return _sqlProgrammer.getSqlSelectStatement(this, referencedColumns, into, indent, blobless, joinless); // since 17/03/2024
     }
 
 }

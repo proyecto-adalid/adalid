@@ -23,12 +23,12 @@ import java.lang.annotation.Target;
  * StringProperty.
  * <p>
  * <b>NOTA IMPORTANTE</b>
- * <p>
+ * </p>
  * El componente Web de las aplicaciones generadas con la plataforma jee2 incluye el jar de OWASP HTML Sanitizer entre sus dependencias. OWASP HTML
  * Sanitizer es un Sanitizer HTML de fácil configuración que permite prevenir ataques del tipo Cross-Site Scripting (XSS), que podrían ocurrir por
  * incluir HTML creado por terceros en su aplicación web. Como parte de la refinación de la aplicación, se podrían definir e implementar políticas de
  * saneamiento de los documentos incrustados utilizando OWASP HTML Sanitizer.
- * <p>
+ *
  * @author Jorge Campins
  * @see <a href="https://github.com/OWASP/java-html-sanitizer/blob/master/docs/getting_started.md">OWASP HTML Sanitizer</a>
  */
@@ -260,13 +260,14 @@ public @interface EmbeddedDocument {
      * seleccione UNSPECIFIED para utilizar el valor predeterminado del atributo. El valor predeterminado del atributo es FALSE.
      * <p>
      * <b>Advertencias</b>
+     * </p>
      * <ul>
      * <li>La codificación limita significativamente el uso de la propiedad en consultas e informes.</li>
      * <li>El algoritmo de codificación utilizado es Base64, el cual no es un algoritmo de cifrado, se decodifica fácilmente y, por lo tanto, no debe
      * utilizarse como un método de cifrado seguro.</li>
      * <li>La longitud del valor codificado es un tercio mayor que la longitud del valor original; si, por ejemplo, la longitud máxima de la propiedad
      * se establece en 2000, entonces la propiedad solo puede contener valores de hasta 1500 caracteres.</li>
-     * </ul><p>
+     * </ul>
      *
      * @return encoding
      * @see <a href="https://docs.oracle.com/javase/8/docs/api/java/util/Base64.html">class Base64</a>

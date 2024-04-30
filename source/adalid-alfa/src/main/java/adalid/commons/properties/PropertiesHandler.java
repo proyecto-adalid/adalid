@@ -445,8 +445,8 @@ public class PropertiesHandler {
             logger.error("null properties file");
         } else if (file.getParentFile().isDirectory() || file.getParentFile().mkdirs()) {
             try {
-                if (properties instanceof SortedProperties) {
-                    sortedProperties = (SortedProperties) properties;
+                if (properties instanceof SortedProperties sp) {
+                    sortedProperties = sp;
                 } else {
                     sortedProperties = new SortedProperties();
                     sortedProperties.putAll(properties);

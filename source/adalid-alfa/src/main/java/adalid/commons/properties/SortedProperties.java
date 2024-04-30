@@ -48,15 +48,6 @@ public class SortedProperties extends Properties {
         return new TreeSet<>(super.stringPropertyNames());
     }
 
-    /*
-    private <T extends Comparable<? super T>> List<T> asSortedList(Collection<T> c) {
-        List<T> list = new ArrayList<>(c);
-        Collections.sort(list);
-        return list;
-    }
-    /**/
-    char asSortedList;
-
     // <editor-fold defaultstate="collapsed" desc="store">
     @Override
     public void store(Writer writer, String comments) throws IOException {
@@ -165,6 +156,7 @@ public class SortedProperties extends Properties {
                     } else {
                         outBuffer.append(aChar);
                     }
+                    break;
             }
         }
         return outBuffer.toString();

@@ -56,6 +56,16 @@ public class InstanceTag {
     public static final InstanceTag LIGHT_GREEN = new InstanceTag(Color.decode("#90EE90"), Color.decode("#212529"));
 
     /**
+     * Etiqueta de color naranja con letras color carbón, todas mayúsculas
+     */
+    public static final InstanceTag ORANGE = new InstanceTag(Color.decode("#FF9900"), Color.decode("#212529"));
+
+    /**
+     * Etiqueta de color anaranjado con letras color carbón, todas mayúsculas
+     */
+    public static final InstanceTag ORANGISH = new InstanceTag(Color.decode("#FFAD33"), Color.decode("#212529"));
+
+    /**
      * Etiqueta de color arena con letras color carbón, todas mayúsculas
      */
     public static final InstanceTag SANDY_BEACH = new InstanceTag(Color.decode("#FFD8B2"), Color.decode("#212529"));

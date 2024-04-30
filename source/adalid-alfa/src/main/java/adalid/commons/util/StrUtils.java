@@ -382,12 +382,6 @@ public class StrUtils {
      *
      * @param string a string
      * @return string's long numeric key code
-     * @see adalid.jee2.meta.proyecto.base.ProyectoBase#getEntityNumber(java.lang.String)
-     * @see adalid.jee2.meta.proyecto.base.ProyectoBase#getEntityParameterNumber(java.lang.String)
-     * @see adalid.jee2.meta.proyecto.base.ProyectoBase#getOperationNumber(java.lang.String)
-     * @see adalid.jee2.meta.proyecto.base.ProyectoBase#getOperationParameterNumber(java.lang.String)
-     * @see adalid.jee2.meta.proyecto.base.ProyectoBase#getPageNumber(java.lang.String)
-     * @see adalid.jee2.meta.proyecto.base.ProyectoBase#getParameterNumber(java.lang.String)
      */
     public static String getLongNumericKeyCode(String string) {
         if (StringUtils.isBlank(string)) {

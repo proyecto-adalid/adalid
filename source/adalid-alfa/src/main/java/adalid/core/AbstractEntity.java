@@ -14,7 +14,6 @@ package adalid.core;
 
 import adalid.commons.bundles.*;
 import adalid.commons.i18n.*;
-import adalid.commons.properties.*;
 import adalid.commons.util.*;
 import adalid.core.annotations.*;
 import adalid.core.comparators.*;
@@ -49,7 +48,6 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.TreeSet;
-import org.apache.commons.collections.ExtendedProperties;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Level;
@@ -899,12 +897,22 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
     /**
      *
      */
+    private boolean _tableViewWithStickyHeader = false;
+
+    /**
+     *
+     */
     private int _tableViewRowsLimit = Constants.DEFAULT_ROWS_PER_PAGE_LIMIT;
 
     /**
      *
      */
     private int _tableViewRows = Constants.DEFAULT_ROWS_PER_PAGE;
+
+    /**
+     *
+     */
+    private TableResponsiveMode _tableResponsiveMode = TableResponsiveMode.NONE;
 
     /**
      *
@@ -1354,6 +1362,11 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
     /**
      * annotated with EntityReferenceDisplay
      */
+    private EntityReferenceFilterType _referenceFilterType = EntityReferenceFilterType.UNSPECIFIED;
+
+    /**
+     * annotated with EntityReferenceDisplay
+     */
     private EntityReferenceProperty _referenceSortBy = EntityReferenceProperty.UNSPECIFIED;
 
     /**
@@ -1424,6 +1437,8 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
      * delete filter
      */
     private BooleanExpression _deleteFilter;
+
+    private boolean _updateFilterWhereverPossible, _deleteFilterWhereverPossible;
 
     /**
      * master/detail filter
@@ -1895,6 +1910,7 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
      */
 //  @Override
     public void setLocalizedLabel(Locale locale, EntityReference reference, String localizedLabel) {
+        checkScope();
         if (reference != null) {
             LocaleEntityReference ler = localeEntityReferenceWritingKey(locale, reference);
             if (localizedLabel == null) {
@@ -1931,6 +1947,7 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
      */
 //  @Override
     public void setLocalizedShortLabel(Locale locale, EntityReference reference, String localizedShortLabel) {
+        checkScope();
         if (reference != null) {
             LocaleEntityReference ler = localeEntityReferenceWritingKey(locale, reference);
             if (localizedShortLabel == null) {
@@ -1967,6 +1984,7 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
      */
 //  @Override
     public void setLocalizedCollectionLabel(Locale locale, EntityReference reference, String localizedCollectionLabel) {
+        checkScope();
         if (reference != null) {
             LocaleEntityReference ler = localeEntityReferenceWritingKey(locale, reference);
             if (localizedCollectionLabel == null) {
@@ -2004,6 +2022,7 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
      */
 //  @Override
     public void setLocalizedCollectionShortLabel(Locale locale, EntityReference reference, String localizedCollectionShortLabel) {
+        checkScope();
         if (reference != null) {
             LocaleEntityReference ler = localeEntityReferenceWritingKey(locale, reference);
             if (localizedCollectionShortLabel == null) {
@@ -2040,6 +2059,7 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
      */
 //  @Override
     public void setLocalizedMenuOptionLabel(Locale locale, DisplayFormat format, String localizedMenuOptionLabel) {
+        checkScope();
         if (format != null && !format.equals(DisplayFormat.UNSPECIFIED)) {
             LocaleDisplayFormat ldf = localeDisplayFormatWritingKey(locale, format);
             if (localizedMenuOptionLabel == null) {
@@ -2389,10 +2409,11 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
     private void mapReferenceQueryProperties(Map<String, Property> map, EntityReference reference) {
         if (reference.isVariantEntity()) {
         } else if (reference.isKeyPropertiesQueryMappingEnabled()) {
-            boolean enumeration = reference.isEnumerationEntity();
+//          boolean enumeration = reference.isEnumerationEntity(); // until 25/03/2014; PK can be a linked foreign segment, etc.
             List<Property> list = reference.getPropertiesList();
             for (Property property : list) {
-                if ((property.isPrimaryKeyProperty() && enumeration) || property.isBusinessKeyProperty() || property.isNameProperty()) {
+//              if ((property.isPrimaryKeyProperty() && enumeration) || property.isBusinessKeyProperty() || property.isNameProperty()) { // until 25/03/2014
+                if (property.isPrimaryKeyProperty() || property.isBusinessKeyProperty() || property.isNameProperty()) { // since 25/03/2024
                     mapQueryProperty(map, property);
                 }
             }
@@ -3031,6 +3052,7 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
      */
     @Override
     public void setHelpDocument(String document) {
+        checkScope();
         boolean log = depth() == 0;
         if (StringUtils.isBlank(document)) {
             _helpDocument = "";
@@ -3067,6 +3089,7 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
      */
     @Override
     public void setHelpFileName(String fileName) {
+        checkScope();
         boolean log = depth() == 0;
         if (StringUtils.isBlank(fileName)) {
             _helpFileName = "";
@@ -3180,6 +3203,7 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
      */
     @Override
     public void setSelectEnabled(boolean enabled) {
+        checkScope();
         _selectEnabled = enabled;
     }
 
@@ -3229,6 +3253,7 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
      */
     @Override
     public void setInsertEnabled(boolean enabled) {
+        checkScope();
         _insertEnabled = enabled;
     }
 
@@ -3269,6 +3294,7 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
      */
     @Override
     public void setUpdateEnabled(boolean enabled) {
+        checkScope();
         _updateEnabled = enabled;
     }
 
@@ -3309,6 +3335,7 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
      */
     @Override
     public void setDeleteEnabled(boolean enabled) {
+        checkScope();
         _deleteEnabled = enabled;
     }
 
@@ -3349,6 +3376,7 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
      */
     @Override
     public void setReportEnabled(boolean enabled) {
+        checkScope();
         _reportEnabled = enabled;
     }
 
@@ -3381,6 +3409,7 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
      */
     @Override
     public void setExportEnabled(boolean enabled) {
+        checkScope();
         _exportEnabled = enabled;
     }
 
@@ -3425,6 +3454,7 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
      */
     @Override
     public void setForeignEntityClass(Boolean foreignEntityClass) {
+        checkScope();
         _foreignEntityClass = foreignEntityClass;
     }
 
@@ -3452,6 +3482,7 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
      */
     @Override
     public void setPrivateEntityClass(Boolean privateEntityClass) {
+        checkScope();
         _privateEntityClass = privateEntityClass;
     }
 
@@ -3529,6 +3560,7 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
      */
     @Override
     public void setTableViewEnabled(boolean enabled) {
+        checkScope();
         _tableViewEnabled = enabled;
     }
 
@@ -3593,6 +3625,14 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
     }
 
     /**
+     * @return the table-view-with-sticky-header indicator
+     */
+    @Override
+    public boolean isTableViewWithStickyHeader() {
+        return _tableViewWithStickyHeader;
+    }
+
+    /**
      * @return the quick-filter-snippet path
      */
     @Override
@@ -3619,6 +3659,14 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
 //  @Override
     public int getTableViewRows() {
         return _tableViewRows;
+    }
+
+    /**
+     * @return the table responsive mode
+     */
+//  @Override
+    public TableResponsiveMode getTableResponsiveMode() {
+        return _tableResponsiveMode;
     }
 
     /**
@@ -4007,6 +4055,7 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
      */
     @Override
     public void setDetailViewEnabled(boolean enabled) {
+        checkScope();
         _detailViewEnabled = enabled;
     }
 
@@ -4295,6 +4344,7 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
      */
     @Override
     public void setTreeViewEnabled(boolean enabled) {
+        checkScope();
         _treeViewEnabled = enabled;
     }
 
@@ -4564,6 +4614,7 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
      */
     @Override
     public void setConsoleViewEnabled(boolean enabled) {
+        checkScope();
         _consoleViewEnabled = enabled;
     }
 
@@ -4788,6 +4839,7 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
     }
 
     public void setJsonSerializerClassName(String className) {
+        checkScope();
         boolean log = depth() == 0;
         if (StringUtils.isBlank(className)) {
             _jsonSerializerClassName = "";
@@ -4807,6 +4859,7 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
     }
 
     public void setJsonDeserializerClassName(String className) {
+        checkScope();
         boolean log = depth() == 0;
         if (StringUtils.isBlank(className)) {
             _jsonDeserializerClassName = "";
@@ -4859,6 +4912,7 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
      */
     @Override
     public void setBplCodeGenEnabled(boolean enabled) {
+        checkScope();
         _bplCodeGenEnabled = enabled;
     }
 
@@ -4879,6 +4933,7 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
      */
     @Override
     public void setBwsCodeGenEnabled(boolean enabled) {
+        checkScope();
         _bwsCodeGenEnabled = enabled;
     }
 
@@ -4900,6 +4955,7 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
      */
     @Override
     public void setDafCodeGenEnabled(boolean enabled) {
+        checkScope();
         _dafCodeGenEnabled = enabled;
     }
 
@@ -4920,6 +4976,7 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
      */
     @Override
     public void setFwsCodeGenEnabled(boolean enabled) {
+        checkScope();
         _fwsCodeGenEnabled = enabled;
     }
 
@@ -4940,6 +4997,7 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
      */
     @Override
     public void setGuiCodeGenEnabled(boolean enabled) {
+        checkScope();
         _guiCodeGenEnabled = enabled;
     }
 
@@ -4960,6 +5018,7 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
      */
     @Override
     public void setSqlCodeGenEnabled(boolean enabled) {
+        checkScope();
         _sqlCodeGenEnabled = enabled;
     }
 
@@ -5020,6 +5079,7 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
     }
 
     public void setReferenceAvatar(boolean avatar) {
+        checkScope();
         _referenceAvatar = avatar;
     }
 
@@ -5055,6 +5115,7 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
      * el componente generado.
      */
     public void setCustomConverterEntityReference(boolean custom) {
+        checkScope();
         _customConverterEntityReference = custom;
     }
 
@@ -5081,6 +5142,7 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
      * @param restricted true para que sea una referencia con acceso restringido; o false, para que sea una referencia sin acceso restringido.
      */
     public void setRestrictedAccessEntityReference(boolean restricted) {
+        checkScope();
         _restrictedAccessEntityReference = restricted;
     }
 
@@ -5169,7 +5231,7 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
     }
 
     /**
-     * @return the reference filter-by proerty
+     * @return the reference filter-by property
      */
     @Override
     public Property getReferenceFilterByProperty() {
@@ -5182,6 +5244,14 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
             default ->
                 null;
         };
+    }
+
+    /**
+     * @return the reference filter-type
+     */
+    public EntityReferenceFilterType getReferenceFilterType() {
+        return _referenceFilterType != null && !_referenceFilterType.equals(EntityReferenceFilterType.UNSPECIFIED) ? _referenceFilterType
+            : /*isEnumerationEntity() ? EntityReferenceFilterType.LIST :*/ EntityReferenceFilterType.TEXTBOX;
     }
 
     /**
@@ -5363,6 +5433,7 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
      */
     @Override
     public void setApplicationOrigin(String origin) {
+        checkScope();
         _applicationOrigin = StringUtils.trimToNull(origin);
     }
 
@@ -5384,6 +5455,7 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
      */
     @Override
     public void setApplicationContextRoot(String contextRoot) {
+        checkScope();
         _applicationContextRoot = StringUtils.trimToNull(contextRoot);
     }
 
@@ -5403,6 +5475,7 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
      */
     @Override
     public void setApplicationConsolePath(String consolePath) {
+        checkScope();
         _applicationConsolePath = StringUtils.trimToNull(consolePath);
     }
 
@@ -5421,6 +5494,7 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
      */
     @Override
     public void setApplicationReadingPath(String readingPath) {
+        checkScope();
         _applicationReadingPath = StringUtils.trimToNull(readingPath);
     }
 
@@ -5439,6 +5513,7 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
      */
     @Override
     public void setApplicationWritingPath(String writingPath) {
+        checkScope();
         _applicationWritingPath = StringUtils.trimToNull(writingPath);
     }
 
@@ -5582,6 +5657,7 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
      * como valor de la propiedad o parámetro
      */
     public void setSearchQueryFilter(BooleanExpression filter) {
+        checkScope();
         String message = "failed to set search query filter of " + getFullName();
         if (filter == null) {
             message += "; supplied expression is null";
@@ -6440,6 +6516,7 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
      * valor de la referencia; de lo contrario, false.
      */
     public void setSearchValueFilterFromSearchQueryFilter(boolean build) {
+        checkScope();
         _searchValueFilterFromSearchQueryFilter = build;
         _searchValueFilterFromSearchQueryFilterExplicitlySet = build;
     }
@@ -6575,6 +6652,7 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
      * @param filter expresión booleana que se utiliza como filtro
      */
     public void setSelectFilter(BooleanExpression filter) {
+        checkScope();
         String message = "failed to set select filter of " + getFullName();
         if (filter == null) {
             message += "; supplied expression is null";
@@ -6605,6 +6683,7 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
      * filtro
      */
     public void setInsertFilter(BooleanExpression filter) {
+        checkScope();
         String message = "failed to set insert filter of " + getFullName();
         if (filter == null) {
             message += "; supplied expression is null";
@@ -6663,13 +6742,37 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
         return _updateFilter;
     }
 
+    public Checkpoint getUpdateFilterCheckpoint() {
+        /*
+        if (_updateFilter instanceof Check check) {
+            Checkpoint checkpoint = check.getCheckpoint();
+            return checkpoint == null ? Checkpoint.UNSPECIFIED : checkpoint;
+        }
+        return null;
+        /**/
+        return _updateFilterWhereverPossible ? Checkpoint.WHEREVER_POSSIBLE : Checkpoint.USER_INTERFACE;
+    }
+
     /**
-     * El método setUpdateFilter se utiliza para establecer el filtro de selección de la operación update de las vistas (páginas) de registro de la
-     * entidad. Solo las instancias de la entidad que cumplen con los criterios del filtro podrán ser modificadas con la operación update.
+     * El método setUpdateFilter se utiliza para establecer el filtro de selección de la operación update que se implementa en las vistas (páginas) de
+     * registro de la entidad. Solo las instancias de la entidad que cumplen con los criterios del filtro podrán ser modificadas.
      *
      * @param filter expresión booleana que se utiliza como filtro
      */
     public void setUpdateFilter(BooleanExpression filter) {
+        setUpdateFilter(filter, false);
+    }
+
+    /**
+     * El método setUpdateFilter se utiliza para establecer el filtro de selección de la operación update que se implementa en las vistas (páginas) de
+     * registro de la entidad y, opcionalmente, en el trigger before update de la tabla de la base de datos que corresponde a la entidad. Solo las
+     * instancias de la entidad que cumplen con los criterios del filtro podrán ser modificadas.
+     *
+     * @param filter expresión booleana que se utiliza como filtro
+     * @param whereverPossible true para implementar el filtro también en el trigger before update
+     */
+    public void setUpdateFilter(BooleanExpression filter, boolean whereverPossible) {
+        checkScope();
         String message = "failed to set update filter of " + getFullName();
         if (filter == null) {
             message += "; supplied expression is null";
@@ -6677,8 +6780,10 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
             Project.increaseParserErrorCount();
         } else if (filter instanceof BooleanPrimitive) {
             _updateFilter = filter.isTrue();
+            _updateFilterWhereverPossible = whereverPossible;
         } else {
             _updateFilter = filter;
+            _updateFilterWhereverPossible = whereverPossible;
         }
     }
 
@@ -6690,13 +6795,37 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
         return _deleteFilter;
     }
 
+    public Checkpoint getDeleteFilterCheckpoint() {
+        /*
+        if (_deleteFilter instanceof Check check) {
+            Checkpoint checkpoint = check.getCheckpoint();
+            return checkpoint == null ? Checkpoint.UNSPECIFIED : checkpoint;
+        }
+        return null;
+        /**/
+        return _deleteFilterWhereverPossible ? Checkpoint.WHEREVER_POSSIBLE : Checkpoint.USER_INTERFACE;
+    }
+
     /**
-     * El método setDeleteFilter se utiliza para establecer el filtro de selección de la operación delete de las vistas (páginas) de registro de la
-     * entidad. Solo las instancias de la entidad que cumplen con los criterios del filtro podrán ser eliminadas con la operación delete.
+     * El método setDeleteFilter se utiliza para establecer el filtro de selección de la operación delete que se implementa en las vistas (páginas) de
+     * registro de la entidad. Solo las instancias de la entidad que cumplen con los criterios del filtro podrán ser eliminadas.
      *
      * @param filter expresión booleana que se utiliza como filtro
      */
     public void setDeleteFilter(BooleanExpression filter) {
+        setDeleteFilter(filter, false);
+    }
+
+    /**
+     * El método setDeleteFilter se utiliza para establecer el filtro de selección de la operación delete que se implementa en las vistas (páginas) de
+     * registro de la entidad y, opcionalmente, en el trigger before delete de la tabla de la base de datos que corresponde a la entidad. Solo las
+     * instancias de la entidad que cumplen con los criterios del filtro podrán ser eliminadas.
+     *
+     * @param filter expresión booleana que se utiliza como filtro
+     * @param whereverPossible true para implementar el filtro también en el trigger before delete
+     */
+    public void setDeleteFilter(BooleanExpression filter, boolean whereverPossible) {
+        checkScope();
         String message = "failed to set delete filter of " + getFullName();
         if (filter == null) {
             message += "; supplied expression is null";
@@ -6704,8 +6833,10 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
             Project.increaseParserErrorCount();
         } else if (filter instanceof BooleanPrimitive) {
             _deleteFilter = filter.isTrue();
+            _deleteFilterWhereverPossible = whereverPossible;
         } else {
             _deleteFilter = filter;
+            _deleteFilterWhereverPossible = whereverPossible;
         }
     }
 
@@ -6727,6 +6858,7 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
      * filtro
      */
     public void setMasterDetailFilter(BooleanExpression filter) {
+        checkScope();
         String message = "failed to set master/detail filter of " + getFullName();
         if (filter == null) {
             message += "; supplied expression is null";
@@ -6901,6 +7033,7 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
 
     @Override
     public void setMappedCollection(EntityCollection collection) {
+        checkScope();
         _mappedCollection = collection;
     }
 
@@ -6947,6 +7080,7 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
     }
 
     public void setMasterDetailViewSequence(int sequence) {
+        checkScope();
         _masterDetailViewSequence = sequence;
     }
 
@@ -6985,6 +7119,7 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
      */
     @Override
     public void setMasterSequenceMasterField(boolean b) {
+        checkScope();
         _masterSequenceMasterField = b;
     }
 
@@ -6999,8 +7134,7 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
     @Override
     public List<Property> getMasterDependentProperties() {
         MasterDetailView masterDetailView = getMasterDetailView();
-        return MasterDetailView.UNSPECIFIED.equals(masterDetailView) || MasterDetailView.NONE.equals(masterDetailView) ? null
-            : _masterDependentProperties;
+        return MasterDetailView.UNSPECIFIED.equals(masterDetailView) || MasterDetailView.NONE.equals(masterDetailView) ? null : _masterDependentProperties;
     }
 
     /**
@@ -7013,10 +7147,35 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
      */
     @Override
     public void setMasterDependentProperties(Property... properties) {
+        checkScope();
         _masterDependentProperties.clear();
         if (properties != null && properties.length > 0) {
             _masterDependentProperties.addAll(Arrays.asList(properties));
         }
+    }
+
+    private EntityReference _missingInstanceQuickAddingMasterOverride;
+
+    /**
+     * @return the missing-instance-quick-adding-master override
+     */
+    @Override
+    public EntityReference getMissingInstanceQuickAddingMasterOverride() {
+        return _missingInstanceQuickAddingMasterOverride;
+    }
+
+    /**
+     * El método setMissingInstanceQuickAddingMasterOverride se utiliza para establecer el maestro que debe utilizar, en lugar de esta referencia,
+     * para construir el filtro de la función Adición Rápida en las vistas (páginas) maestro/detalle. Este método es irrelevante para referencias que
+     * no tengan vistas Maestro/Detalle disponibles; la disponibilidad de vistas Maestro/Detalle la determina el elemento view de la anotación
+     * ManyToOne de la referencia.
+     *
+     * @param reference maestro de adición rápida de instancias faltantes
+     */
+    @Override
+    public void setMissingInstanceQuickAddingMasterOverride(EntityReference reference) {
+        checkScope();
+        _missingInstanceQuickAddingMasterOverride = reference;
     }
 
     /**
@@ -7072,6 +7231,7 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
      * @param entity referencia (no calculable) a una entidad
      */
     public void setCalculableValueEntityReference(Entity entity) {
+        checkScope();
         _calculableValue = entity;
     }
 
@@ -7082,6 +7242,7 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
      * @param expression expresión para el cálculo del valor
      */
     public void setCalculableValueExpression(EntityExpression expression) {
+        checkScope();
         _calculableValue = validCalculableValue(expression) ? expression : null;
     }
 
@@ -7102,6 +7263,7 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
      */
     @Override
     public void setInitialValue(Entity initialValue) {
+        checkScope();
 //      _initialValue = validInitialValue(initialValue) ? initialValue.self() : null;
         _initialValue = validInitialValue(initialValue) ? initialValue : null;
     }
@@ -7115,6 +7277,7 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
      */
     @Override
     public void setInitialValue(Instance initialValue) {
+        checkScope();
         _initialValue = validInitialValue(initialValue) ? initialValue : null;
     }
 
@@ -7127,6 +7290,7 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
      */
     @Override
     public void setInitialValue(EntityExpression initialValue) {
+        checkScope();
         _initialValue = validInitialValue(initialValue) ? initialValue : null;
     }
 
@@ -7139,6 +7303,7 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
      */
     @Override
     public void setInitialValue(SpecialEntityValue initialValue) {
+        checkScope();
         _initialValue = validInitialValue(initialValue) && validSpecialEntityValue(initialValue) ? initialValue : null;
     }
 
@@ -7159,6 +7324,7 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
      */
     @Override
     public void setDefaultValue(Entity defaultValue) {
+        checkScope();
 //      _defaultValue = validInitialValue(defaultValue) ? defaultValue.self() : null;
         _defaultValue = validDefaultValue(defaultValue) ? defaultValue : null;
     }
@@ -7172,6 +7338,7 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
      */
     @Override
     public void setDefaultValue(Instance defaultValue) {
+        checkScope();
         _defaultValue = validDefaultValue(defaultValue) ? defaultValue : null;
     }
 
@@ -7184,6 +7351,7 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
      */
     @Override
     public void setDefaultValue(EntityExpression defaultValue) {
+        checkScope();
         _defaultValue = validDefaultValue(defaultValue) ? defaultValue : null;
     }
 
@@ -7196,6 +7364,7 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
      */
     @Override
     public void setDefaultValue(SpecialEntityValue defaultValue) {
+        checkScope();
         _defaultValue = validDefaultValue(defaultValue) && validSpecialEntityValue(defaultValue) ? defaultValue : null;
         if (SpecialEntityValue.CURRENT_USER.equals(_defaultValue)) {
             if (Checkpoint.UNSPECIFIED.equals(defaultCheckpoint())) {
@@ -7218,6 +7387,7 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
      * @param currentValue valor actual
      */
     public void setCurrentValue(Entity currentValue) {
+        checkScope();
 //      _currentValue = validInitialValue(currentValue) ? currentValue.self() : null;
         _currentValue = validCurrentValue(currentValue) ? currentValue : null;
     }
@@ -7228,6 +7398,7 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
      * @param currentValue valor actual
      */
     public void setCurrentValue(Instance currentValue) {
+        checkScope();
         _currentValue = validCurrentValue(currentValue) ? currentValue : null;
     }
 
@@ -7237,6 +7408,7 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
      * @param currentValue valor actual
      */
     public void setCurrentValue(EntityExpression currentValue) {
+        checkScope();
         _currentValue = validCurrentValue(currentValue) ? currentValue : null;
     }
 
@@ -7246,6 +7418,7 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
      * @param currentValue valor actual
      */
     public void setCurrentValue(SpecialEntityValue currentValue) {
+        checkScope();
         _currentValue = validCurrentValue(currentValue) && validSpecialEntityValue(currentValue) ? currentValue : null;
     }
 
@@ -7306,6 +7479,7 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
      * @param orderBy propiedad que se utiliza como criterio de ordenamiento
      */
     public void setOrderBy(Property orderBy) {
+        checkScope();
         _orderBy = orderBy;
     }
 
@@ -7316,6 +7490,7 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
      * @param orderBy una o más propiedades que se utilizan como criterio de ordenamiento, en la misma secuencia en la que son escritas
      */
     public void setOrderBy(Property... orderBy) {
+        checkScope();
         _orderBy = orderBy;
     }
 
@@ -7327,6 +7502,7 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
      * clave
      */
     public void setOrderBy(Key orderBy) {
+        checkScope();
         _orderBy = orderBy;
     }
 
@@ -7350,6 +7526,7 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
      * @param tab pestaña que recibe el enfoque al abrir una vista con pestañas de la entidad
      */
     public void setDefaultTab(Tab tab) {
+        checkScope();
         _defaultTab = tab;
     }
 
@@ -7387,6 +7564,7 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
 
     @Override
     public void setDisplayAvailable(Boolean displayAvailable) {
+        checkScope();
         _displayAvailable = displayAvailable;
     }
 
@@ -7722,6 +7900,7 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
      */
 //  @Override
     public void setLocalizedSelectFilterTag(Locale locale, String tag) {
+        checkScope();
         Locale l = localeWritingKey(locale);
         if (tag == null) {
             _localizedSelectFilterTag.remove(l);
@@ -7777,6 +7956,7 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
      */
 //  @Override
     public void setLocalizedInsertFilterTag(Locale locale, String tag) {
+        checkScope();
         Locale l = localeWritingKey(locale);
         if (tag == null) {
             _localizedInsertFilterTag.remove(l);
@@ -7830,6 +8010,7 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
      */
 //  @Override
     public void setLocalizedUpdateFilterTag(Locale locale, String tag) {
+        checkScope();
         Locale l = localeWritingKey(locale);
         if (tag == null) {
             _localizedUpdateFilterTag.remove(l);
@@ -7883,6 +8064,7 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
      */
 //  @Override
     public void setLocalizedDeleteFilterTag(Locale locale, String tag) {
+        checkScope();
         Locale l = localeWritingKey(locale);
         if (tag == null) {
             _localizedDeleteFilterTag.remove(l);
@@ -7938,6 +8120,7 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
      */
 //  @Override
     public void setLocalizedSearchQueryFilterTag(Locale locale, String tag) {
+        checkScope();
         Locale l = localeWritingKey(locale);
         if (tag == null) {
             _localizedSearchQueryFilterTag.remove(l);
@@ -7993,6 +8176,7 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
      */
 //  @Override
     public void setLocalizedMasterDetailFilterTag(Locale locale, String tag) {
+        checkScope();
         Locale l = localeWritingKey(locale);
         if (tag == null) {
             _localizedMasterDetailFilterTag.remove(l);
@@ -8105,7 +8289,6 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
         if (declaringArtifact == null) {
             throw new IllegalArgumentException("null declaring artifact");
         }
-        copyFromBootstrappingProperties();
         Class<?> namedClass = getNamedClass();
         String className = namedClass.getSimpleName();
         String fieldName = declaringField == null ? className : declaringField.getName();
@@ -8134,23 +8317,15 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
             initialise();
             settle();
         }
+        init();
     }
 
-    private static final String ALWAYS_ADD_SNIPPETS = "add.head.and.toolbar.snippets.even.when.none.are.defined";
-
-    private static final String REUSE_WHEN_CONTAINS = "reuse.default.entity.labels.when.class.name.contains.property.field.name";
+    private void init() {
+        Project project = TLC.getProject();
+        _tableViewWithStickyHeader = project != null && project.isEntityTableViewWithStickyHeaderDefaultValue();
+    }
 
     private boolean _alwaysAddSnippets = false;
-
-    private boolean _reuseWhenContains = true;
-
-    private void copyFromBootstrappingProperties() {
-        ExtendedProperties bootstrapping = PropertiesHandler.getBootstrapping();
-        if (bootstrapping != null && !bootstrapping.isEmpty()) {
-            _alwaysAddSnippets = BitUtils.valueOf(bootstrapping.getString(ALWAYS_ADD_SNIPPETS, "false"));
-            _reuseWhenContains = BitUtils.valueOf(bootstrapping.getString(REUSE_WHEN_CONTAINS, "true"));
-        }
-    }
 
     public boolean addHeadAndToolbarSnippetsEvenWhenNoneAreDefined() {
         return _alwaysAddSnippets;
@@ -8160,12 +8335,21 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
         _alwaysAddSnippets = b;
     }
 
+    private boolean _reuseWhenContains = true;
+
     public boolean reuseDefaultEntityLabelsWhenClassNameContainsPropertyFieldName() {
         return _reuseWhenContains;
     }
 
     protected void reuseDefaultEntityLabelsWhenClassNameContainsPropertyFieldName(boolean b) {
         _reuseWhenContains = b;
+    }
+
+    @Override
+    protected void copyBootstrappingAttributes() {
+        super.copyBootstrappingAttributes();
+        _alwaysAddSnippets = Bootstrapping.addHeadAndToolbarSnippetsEvenWhenNoneAreDefined;
+        _reuseWhenContains = Bootstrapping.reuseDefaultEntityLabelsWhenClassNameContainsPropertyFieldName;
     }
 
     private void setDeclaredIndicators() {
@@ -8352,7 +8536,7 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
         if (!preserve) {
             for (Locale locale : Bundle.getSupportedLocales()) {
                 setLocalizedLabel(locale, null);
-                setLocalizedShortLabel(locale, null);
+                setLocalizedShortLabel(locale, (String) null);
             }
         }
     }
@@ -9323,6 +9507,11 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
             if (depth() == 0 && !name.matches("^[A-Z][a-z]\\w*$")) {
                 logger.error(getFullName() + " must be renamed; " + name + " is an invalid entity name");
                 Project.increaseParserErrorCount();
+            } else if (Character.isUpperCase(name.charAt(0)) && ((isProperty() && depth() == 1) || isParameter())) {
+                String tag = isParameter() ? "parameter" : "property";
+                logger.error(tag + " " + getFullName() + " must be renamed; " + name + " must begin with a lowercase letter; "
+                    + "therefore it should be " + StringUtils.uncapitalize((name)));
+                Project.increaseParserErrorCount();
             } else {
                 return true;
             }
@@ -9332,6 +9521,7 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
 
     private void check() {
         checkExpressions();
+        checkMissingInstanceQuickAddingMasterOverride();
         if (_rootInstance) {
             checkParentField();
             checkSequenceField();
@@ -9503,6 +9693,47 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
                         Project.increaseParserErrorCount();
                     }
                 }
+            }
+        }
+    }
+
+    private static final boolean anyMasterDetailView = true;
+
+    private void checkMissingInstanceQuickAddingMasterOverride() {
+        EntityReference master = this;
+        EntityReference miqamo = _missingInstanceQuickAddingMasterOverride;
+        String message = getFullName() + " has an invalid missing-instance-quick-adding-master override";
+        if (miqamo != null) {
+            MasterDetailView mdv = miqamo.getMasterDetailView();
+            if (anyMasterDetailView || MasterDetailView.TABLE.equals(mdv) || MasterDetailView.TABLE_AND_DETAIL.equals(mdv)) {
+                Object iv = miqamo.getInitialValue();
+                if (iv instanceof EntityReference iver && master.getPropertiesList().contains(iver)) {
+                    Entity decent = miqamo.getDeclaringEntity();
+                    if (decent != null && decent.equals(getDeclaringEntity())) {
+                        for (Property property : _masterDependentProperties) {
+                            if (property instanceof EntityReference reference) {
+                                if (miqamo.equals(reference)) {
+                                    return;
+                                }
+                            }
+                        }
+                        message += "; " + miqamo.getName() + " is not a master dependent property of " + master.getName();
+                        logger.error(message);
+                        Project.increaseParserErrorCount();
+                    } else {
+                        message += "; the declaring entity of " + miqamo.getName() + " is " + decent;
+                        logger.error(message);
+                        Project.increaseParserErrorCount();
+                    }
+                } else {
+                    message += "; the initial value of " + miqamo.getName() + " is " + iv;
+                    logger.error(message);
+                    Project.increaseParserErrorCount();
+                }
+            } else {
+                message += "; the master detail view of " + miqamo.getName() + " is " + mdv;
+                logger.error(message);
+                Project.increaseParserErrorCount();
             }
         }
     }
@@ -9945,15 +10176,17 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
         if (stepsList.isEmpty()) {
             return;
         }
+        boolean insertEnabled = isInsertEnabled();
+        boolean updateEnabled = isUpdateEnabled();
         for (Step step : stepsList) {
             List<StepField> fields = step.getStepFieldsList();
             if (fields.isEmpty()) {
                 logger.error("step " + step.getFullName() + " has no fields");
                 Project.increaseParserErrorCount();
-            } else {
+            } else if (insertEnabled || updateEnabled) {
                 boolean ec = false;
-                boolean cf = false;
-                boolean uf = false;
+                boolean cf = !insertEnabled;
+                boolean uf = !updateEnabled;
                 for (StepField field : fields) {
                     EntityCollection sfc = field.getEntityCollection();
                     if (sfc != null) {
@@ -10637,10 +10870,12 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
                 _tableViewWithDeleteEnabled = annotation.deletes().toBoolean(_tableViewWithDeleteEnabled);
                 _tableViewWithMasterHeading = annotation.heading().toBoolean(_tableViewWithMasterHeading);
                 _tableViewWithQuickFilterSnippet = annotation.quickFilter().toBoolean(_tableViewWithQuickFilterSnippet);
+                _tableViewWithStickyHeader = annotation.stickyHeader().toBoolean(_tableViewWithStickyHeader);
                 _tableViewRowsLimit = Math.min(MAX, Math.max(MIN, annotation.rowsLimit()));
                 _tableViewRowsLimit = (_tableViewRowsLimit + 9) / 10 * 10;
                 _tableViewRows = Math.min(_tableViewRowsLimit, Math.max(1, annotation.rows()));
                 _tableViewRows = (_tableViewRows + 4) / 5 * 5;
+                _tableResponsiveMode = annotation.responsiveMode();
                 _tableViewMenuOption = annotation.menu();
                 _annotatedWithEntityTableView = true;
                 /**/
@@ -11082,6 +11317,7 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
                 _referenceAvatar = annotation.avatar().toBoolean(_referenceAvatar);
                 _referenceStyle = annotation.style();
                 _referenceFilterBy = annotation.filter();
+                _referenceFilterType = annotation.filterType();
                 _referenceSortBy = annotation.sort();
                 _annotatedWithEntityReferenceDisplay = true;
             }
@@ -11095,6 +11331,7 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
             _referenceAvatar = annotation.avatar().toBoolean(_referenceAvatar);
             _referenceStyle = annotation.style();
             _referenceFilterBy = annotation.filter();
+            _referenceFilterType = annotation.filterType();
             _referenceSortBy = annotation.sort();
         }
     }
@@ -11549,6 +11786,7 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
      * entidad es el Maestro, respectivamente. Seleccione NONE para no mostrar el camino feliz.
      */
     public void setHappyPathDisplaySpots(HappyPathDisplaySpots spots) {
+        checkScope();
         _happyPathDisplaySpots = spots == null ? HappyPathDisplaySpots.UNSPECIFIED : spots;
     }
 
@@ -11705,6 +11943,7 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
      * @return the operation of the specified class
      */
     @Override
+    @SuppressWarnings("unchecked")
     public <T extends Operation> T getOperation(Class<T> type) {
         for (Operation operation : getOperationsList()) {
             if (operation.getClass().isAssignableFrom(type)) {
@@ -11814,7 +12053,8 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
         Class<?> thisClass = getNamedClass();
         String thisClassSimpleName = thisClass.getSimpleName();
         List<ProcessOperation> constructors = new ArrayList<>();
-        Map<Class<? extends Entity>, List<ProcessOperation>> map = TLC.getProject().getConstructorsMap();
+        Project project = TLC.getProject();
+        Map<Class<? extends Entity>, List<ProcessOperation>> map = project == null ? new LinkedHashMap<>() : project.getConstructorsMap();
         Set<Class<? extends Entity>> keySet = map.keySet();
         if (keySet != null && !keySet.isEmpty()) {
             List<ProcessOperation> list;
@@ -11885,6 +12125,7 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
      * (páginas) Maestro/Detalle.
      */
     public void setRemoveHeadingPropertyArray(Property... properties) {
+        checkScope();
         _removeHeadingPropertyArray = properties;
         _removePropertiesInRemoveHeadingPropertyArray = true;
     }
@@ -11897,6 +12138,7 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
      * (páginas) Maestro/Detalle.
      */
     public void setRemoveHeadingPropertyNotInArray(Property... properties) {
+        checkScope();
         _removeHeadingPropertyArray = properties;
         _removePropertiesInRemoveHeadingPropertyArray = false;
     }
@@ -12154,6 +12396,22 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
 
     protected static final CharacterScalarX SPACE = XB.SPACE;
 
+    protected static final CharacterScalarX COMMA = XB.COMMA;
+
+    protected static final CharacterScalarX HYPHEN = XB.HYPHEN;
+
+    protected static final CharacterScalarX PERIOD = XB.PERIOD;
+
+    protected static final CharacterScalarX SLASH = XB.SLASH;
+
+    protected static final CharacterScalarX COLON = XB.COLON;
+
+    protected static final CharacterScalarX SEMICOLON = XB.SEMICOLON;
+
+    protected static final CharacterScalarX UNDERSCORE = XB.UNDERSCORE;
+
+    protected static final CharacterScalarX VBAR = XB.VBAR;
+
     protected static final CharacterScalarX CURRENT_USER_CODE = XB.CURRENT_USER_CODE;
 
     protected static final NumericScalarX NULL_NUMBER = XB.NULL_NUMBER;
@@ -12362,28 +12620,6 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Supplementary Expressions">
-    /* commented since 20200409
-    protected static CharacterOrderedPairX concat(Object x, CharacterExpression y) {
-        return XB.Character.OrderedPair.concat(charStringOf(x), y);
-    }
-
-    protected static CharacterScalarX charStringOf(Object x) {
-        return XB.toCharString(x);
-    }
-
-    protected static TemporalScalarX dateOf(Object x) {
-        return XB.toDate(x);
-    }
-
-    protected static TemporalScalarX timeOf(Object x) {
-        return XB.toTime(x);
-    }
-
-    protected static TemporalScalarX timestampOf(Object x) {
-        return XB.toTimestamp(x);
-    }
-
-    /**/
     protected static CharacterExpression concat(String x, Expression y) {
         return XB.Character.OrderedPair.concat(charStringOf(x), charStringOf(y));
     }
@@ -12413,6 +12649,35 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
         return XB.Character.OrderedPair.concat(cx, cy);
     }
 
+    protected static CharacterExpression concatenate(String x, Expression y) {
+        return XB.Character.OrderedPair.concatenate(charStringOf(x), charStringOf(y));
+    }
+
+    protected static CharacterExpression concatenate(SpecialCharacterValue x, Expression y) {
+        return XB.Character.OrderedPair.concatenate(charStringOf(x), charStringOf(y));
+    }
+
+    protected static CharacterExpression concatenate(Expression x, Expression y) {
+        return XB.Character.OrderedPair.concatenate(charStringOf(x), charStringOf(y));
+    }
+
+    protected static CharacterExpression concatenate(Expression x, Expression y, Expression... extraOperands) {
+        CharacterExpression cx = charStringOf(x);
+        CharacterExpression cy = charStringOf(y);
+        if (extraOperands != null && extraOperands.length > 0) {
+            List<CharacterExpression> cz = new ArrayList<>();
+            for (Expression extraOperand : extraOperands) {
+                if (extraOperand != null) {
+                    cz.add(charStringOf(extraOperand));
+                }
+            }
+            if (!cz.isEmpty()) {
+                return XB.Character.DataAggregate.concatenate(cx, cy, cz.toArray(CharacterExpression[]::new));
+            }
+        }
+        return XB.Character.OrderedPair.concatenate(cx, cy);
+    }
+
     protected static CharacterExpression charStringOf(Object x) {
         return x instanceof CharacterExpression ? (CharacterExpression) x : XB.toCharString(x);
     }
@@ -12432,8 +12697,8 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
 
     // <editor-fold defaultstate="collapsed" desc="iframe">
     /**
-     * Cree la definición de un iframe usando MessageFormat.format
-     * <p>
+     * Crea la definición de un iframe usando MessageFormat.format
+     *
      * @param src URL del documento a incrustar en el iframe
      * @return la definición de un iframe de 300 x 150 píxeles
      */
@@ -12442,8 +12707,8 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
     }
 
     /**
-     * Cree la definición de un iframe usando MessageFormat.format
-     * <p>
+     * Crea la definición de un iframe usando MessageFormat.format
+     *
      * @param src URL del documento a incrustar en el iframe
      * @param width ancho del iframe en píxeles. Un número menor o igual a 0 es equivalente a 300; un número mayor que 0 y menor que 100 es
      * equivalente a 100.

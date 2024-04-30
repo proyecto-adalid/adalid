@@ -50,7 +50,7 @@ public class DateData extends TemporalPrimitive {
      * @param disabled the disabled weekends indicator to set
      */
     public void setDisabledWeekends(boolean disabled) {
-        XS2.checkAccess();
+        checkScope();
         _disabledWeekends = disabled;
     }
 
@@ -65,7 +65,7 @@ public class DateData extends TemporalPrimitive {
      * @param disabled the disabled weekdays indicator to set
      */
     public void setDisabledWeekdays(boolean disabled) {
-        XS2.checkAccess();
+        checkScope();
         _disabledWeekdays = disabled;
     }
 
@@ -80,7 +80,7 @@ public class DateData extends TemporalPrimitive {
      * @param disabled the disabled holidays indicator to set
      */
     public void setDisabledHolidays(boolean disabled) {
-        XS2.checkAccess();
+        checkScope();
         _disabledHolidays = disabled;
     }
 
@@ -95,7 +95,7 @@ public class DateData extends TemporalPrimitive {
      * @param range the year range to set
      */
     public void setYearRange(int range) {
-        XS2.checkAccess();
+        checkScope();
         _yearRange = range;
     }
 

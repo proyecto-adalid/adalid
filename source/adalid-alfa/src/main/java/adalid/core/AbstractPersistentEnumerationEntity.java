@@ -235,6 +235,7 @@ public abstract class AbstractPersistentEnumerationEntity extends AbstractPersis
     }
 
     public void setBooleanEnumerationDisplayType(BooleanDisplayType displayType) {
+        checkScope();
         _booleanEnumerationDisplayType = displayType;
     }
 
@@ -325,6 +326,7 @@ public abstract class AbstractPersistentEnumerationEntity extends AbstractPersis
      * @param instances una o más instancias de la enumeración que no se pueden utilizar como valor de la propiedad o parámetro
      */
     public void setRemoveInstanceArray(Instance... instances) {
+        checkScope();
         _removeInstanceArray = instances;
         _searchInstanceArray = null;
     }
@@ -364,6 +366,7 @@ public abstract class AbstractPersistentEnumerationEntity extends AbstractPersis
      * @param instances una o más instancias de la enumeración que se pueden utilizar como valor de la propiedad o parámetro
      */
     public void setSearchInstanceArray(Instance... instances) {
+        checkScope();
         _searchInstanceArray = instances;
         _removeInstanceArray = null;
     }

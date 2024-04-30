@@ -197,7 +197,7 @@ public class VistaFuncion extends AbstractPersistentEntity {
         /**/
         setOrderBy(funcion, publica, especial, nombre);
         /**/
-        codigo.setDefaultValue(funcion.dominio.codigoDominio.concat("-").concat(id));
+        codigo.setDefaultValue(concat(funcion.dominio.codigoDominio, HYPHEN, id));
         /**/
         publica.setInitialValue(false);
         publica.setDefaultValue(false);
@@ -463,7 +463,9 @@ public class VistaFuncion extends AbstractPersistentEntity {
         anchoDetalle.setLocalizedDescription(SPANISH, "Ancho del grupo de detalle, en píxeles; es la suma del ancho de todos los campos del grupo");
         /**/
         anchoDisponible.setLocalizedLabel(ENGLISH, "available in detail");
-        anchoDisponible.setLocalizedLabel(SPANISH, "disponible en detalle");
+        anchoDisponible.setLocalizedLabel(SPANISH, "disponible en el detalle");
+        anchoDisponible.setLocalizedColumnHeader(ENGLISH, "available", "in detail");
+        anchoDisponible.setLocalizedColumnHeader(SPANISH, "disponible en", "el detalle");
         anchoDisponible.setLocalizedDescription(ENGLISH, "Available width for fields in detail group, in pixels; it is equal to: print area width - detail width");
         anchoDisponible.setLocalizedDescription(SPANISH, "Ancho disponible para campos en el grupo de detalle, en píxeles; es igual a: ancho de impresión - ancho del detalle");
         /**/

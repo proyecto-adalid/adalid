@@ -69,6 +69,7 @@ public class ProjectBuilderDictionary extends Dictionary {
         setProperty(lastExecutedUtilityClassName, value);
     }
 
+    @SuppressWarnings("unchecked")
     public Class<? extends ProjectBuilder> getLastExecutedProjectClass() {
         String name = getLastExecutedProjectClassName();
         if (name == null || name.isEmpty()) {
@@ -81,6 +82,7 @@ public class ProjectBuilderDictionary extends Dictionary {
         }
     }
 
+    @SuppressWarnings("unchecked")
     public ProjectBuilder getLastExecutedProject() {
         Class<? extends ProjectBuilder> clazz = getLastExecutedProjectClass();
         if (clazz == null) {

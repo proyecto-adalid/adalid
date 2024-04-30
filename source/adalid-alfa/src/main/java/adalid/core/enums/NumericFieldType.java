@@ -17,6 +17,6 @@ package adalid.core.enums;
  */
 public enum NumericFieldType {
 
-    UNSPECIFIED, CURRENCY, NUMBER, PERCENT;
+    UNSPECIFIED, CURRENCY, KNOB, NUMBER, PERCENT;
 
 }

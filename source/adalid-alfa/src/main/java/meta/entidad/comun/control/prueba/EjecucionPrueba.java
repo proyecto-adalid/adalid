@@ -125,7 +125,7 @@ public class EjecucionPrueba extends PersistentEntityBase {
     @Override
     protected void settleProperties() {
         super.settleProperties();
-        codigo.setDefaultValue(programa.codigo.concat("-").concat(id));
+        codigo.setDefaultValue(concat(programa.codigo, HYPHEN, id));
         condicionEjecucion.setInitialValue(condicionEjecucion.EJECUCION_PENDIENTE);
         condicionEjecucion.setDefaultValue(condicionEjecucion.EJECUCION_PENDIENTE);
         fechaHoraCondicionEjecucion.setInitialValue(SpecialTemporalValue.CURRENT_TIMESTAMP);

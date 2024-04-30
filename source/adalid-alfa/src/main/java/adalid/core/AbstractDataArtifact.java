@@ -115,6 +115,16 @@ public abstract class AbstractDataArtifact extends AbstractArtifact implements A
     /**
      *
      */
+    private Boolean _createFieldViaAPI;
+
+    /**
+     *
+     */
+    private Boolean _updateFieldViaAPI;
+
+    /**
+     *
+     */
     private Boolean _searchField;
 
     /**
@@ -253,6 +263,11 @@ public abstract class AbstractDataArtifact extends AbstractArtifact implements A
      */
 //  private String _defaultAnchoredLabel;
     private final Map<Locale, String> _localizedAnchoredLabel = new LinkedHashMap<>();
+
+    /**
+     *
+     */
+    private int _responsivePriority;
 
     /**
      *
@@ -983,7 +998,7 @@ public abstract class AbstractDataArtifact extends AbstractArtifact implements A
      */
     @Override
     public boolean isPassword() {
-        return _password;
+        return _password && isStringData();
     }
 
     protected void setPassword(boolean password) {
@@ -1053,7 +1068,7 @@ public abstract class AbstractDataArtifact extends AbstractArtifact implements A
     }
 
     /**
-     * @return the create field indicator
+     * @return the GUI-creatable field indicator
      */
     @Override
     public boolean isCreateField() {
@@ -1075,7 +1090,7 @@ public abstract class AbstractDataArtifact extends AbstractArtifact implements A
     }
 
     /**
-     * @return the update field indicator
+     * @return the GUI-updatable field indicator
      */
     @Override
     public boolean isUpdateField() {
@@ -1114,6 +1129,50 @@ public abstract class AbstractDataArtifact extends AbstractArtifact implements A
 
     protected void setUpdateField(Boolean updateField) {
         _updateField = updateField;
+    }
+
+    /**
+     * @return the API-creatable field indicator
+     */
+    @Override
+    public boolean isCreateFieldViaAPI() {
+        return isPrimaryKeyProperty()
+            || (_insertable && !_calculable
+            && !isVersionProperty()
+            && !isDiscriminatorProperty()
+            && !isSequenceProperty()
+            && !defaultUnconditionallyOnInsert()
+            && BitUtils.valueOf(_createFieldViaAPI, implicitCreateFieldViaAPI()));
+    }
+
+    private boolean implicitCreateFieldViaAPI() {
+        return isUnlinkedProperty();
+    }
+
+    protected void setCreateFieldViaAPI(Boolean createFieldViaAPI) {
+        _createFieldViaAPI = createFieldViaAPI;
+    }
+
+    /**
+     * @return the API-updatable field indicator
+     */
+    @Override
+    public boolean isUpdateFieldViaAPI() {
+        return isVersionProperty()
+            || (_updateable && !_calculable
+            && !isPrimaryKeyProperty()
+            && !isDiscriminatorProperty()
+            && !isSequenceProperty()
+            && !defaultUnconditionallyOnUpdate()
+            && BitUtils.valueOf(_updateFieldViaAPI, implicitUpdateFieldViaAPI()));
+    }
+
+    private boolean implicitUpdateFieldViaAPI() {
+        return isUnlinkedProperty() && !isEnumerationEntityProperty();
+    }
+
+    protected void setUpdateFieldViaAPI(Boolean updateFieldViaAPI) {
+        _updateFieldViaAPI = updateFieldViaAPI;
     }
 
     /**
@@ -1269,7 +1328,7 @@ public abstract class AbstractDataArtifact extends AbstractArtifact implements A
      */
     @Override
     public boolean isHeadertextlessField() {
-        return !isHiddenField() && !isBinaryData() && _headertextlessField;
+        return !isHiddenField() && _headertextlessField;
     }
 
     protected void setHeadertextlessField(boolean headertextlessField) {
@@ -1394,16 +1453,11 @@ public abstract class AbstractDataArtifact extends AbstractArtifact implements A
         return BitUtils.valueOf(_serializableField, implicitSerializableField());
     }
 
-    /**
-     * El valor implícito de serializable es falso si la propiedad es calculable, tiene acceso de lectura restringido, es de tipo binario o es una
-     * referencia oculta a una entidad; de lo contrario, es verdadero.
-     *
-     * @return valor implícito de serializable
-     */
     private boolean implicitSerializableField() {
-        return !isCalculable()
+        return !isBinaryData()
+            && !isCalculable()
             && !isPassword()
-            && !isBinaryData();
+            && !isEntity();
     }
 
     /**
@@ -1423,7 +1477,7 @@ public abstract class AbstractDataArtifact extends AbstractArtifact implements A
      */
     @Override
     public boolean isSerializableIUID() {
-        return isEntity() && BitUtils.valueOf(_serializableIUID, isTransientField());
+        return isEntity() && !isCalculable() && !isSerializableField() && BitUtils.valueOf(_serializableIUID, true);
     }
 
     protected void setSerializableIUID(Boolean serializableIUID) {
@@ -1543,6 +1597,7 @@ public abstract class AbstractDataArtifact extends AbstractArtifact implements A
      */
     @Override
     public void setFirstAnchoredFieldAnchorType(AnchorType anchorType) {
+        checkScope();
         _firstAnchoredFieldAnchorType = anchorType;
     }
 
@@ -1561,6 +1616,7 @@ public abstract class AbstractDataArtifact extends AbstractArtifact implements A
      */
     @Override
     public void setAnchoringLinkedDetailFields(boolean b) {
+        checkScope();
         _anchoringLinkedDetailFields = b;
     }
 
@@ -1579,6 +1635,7 @@ public abstract class AbstractDataArtifact extends AbstractArtifact implements A
      */
     @Override
     public void setAnchoringLinkedParameters(boolean b) {
+        checkScope();
         _anchoringLinkedParameters = b;
     }
 
@@ -1622,6 +1679,7 @@ public abstract class AbstractDataArtifact extends AbstractArtifact implements A
      */
     @Override
     public void setLocalizedAnchorLabel(Locale locale, String localizedAnchorLabel) {
+        checkScope();
         Locale l = localeWritingKey(locale);
         if (localizedAnchorLabel == null) {
             _localizedAnchorLabel.remove(l);
@@ -1672,6 +1730,7 @@ public abstract class AbstractDataArtifact extends AbstractArtifact implements A
      */
     @Override
     public void setLocalizedAnchoredLabel(Locale locale, String localizedAnchoredLabel) {
+        checkScope();
         Locale l = localeWritingKey(locale);
         if (localizedAnchoredLabel == null) {
             _localizedAnchoredLabel.remove(l);
@@ -1691,6 +1750,10 @@ public abstract class AbstractDataArtifact extends AbstractArtifact implements A
                 _localizedAnchoredLabel.putAll(that._localizedAnchoredLabel);
             }
         }
+    }
+
+    public int getResponsivePriority() {
+        return _responsivePriority;
     }
 
     /**
@@ -1728,6 +1791,7 @@ public abstract class AbstractDataArtifact extends AbstractArtifact implements A
      */
     @Override
     public void setDisplaySortKey(String key) {
+        checkScope();
         _displaySortKey = StringUtils.trimToEmpty(key);
     }
 
@@ -1778,6 +1842,7 @@ public abstract class AbstractDataArtifact extends AbstractArtifact implements A
      */
 //  @Override
     public void setLocalizedAggregateTitle(Locale locale, String localizedAggregateTitle) {
+        checkScope();
         Locale l = localeWritingKey(locale);
         if (localizedAggregateTitle == null) {
             _localizedAggregateTitle.remove(l);
@@ -2210,6 +2275,7 @@ public abstract class AbstractDataArtifact extends AbstractArtifact implements A
      * @param name nombre de imagen gráfica de valor requerido no especificado asociada a la propiedad
      */
     public void setMissingValueGraphicImageName(String name) {
+        checkScope();
         _missingValueGraphicImageName = fairGraphicImageName(name);
     }
 
@@ -2237,6 +2303,7 @@ public abstract class AbstractDataArtifact extends AbstractArtifact implements A
      * @param name nombre de imagen gráfica de valor nulo asociada a la propiedad
      */
     public void setNullValueGraphicImageName(String name) {
+        checkScope();
         _nullValueGraphicImageName = fairGraphicImageName(name);
     }
 
@@ -2251,6 +2318,7 @@ public abstract class AbstractDataArtifact extends AbstractArtifact implements A
      */
     @Override
     public void setNullValueGraphicImageExpression() {
+        checkScope();
         String name = getNullValueGraphicImageName();
         if (name != null && _graphicImageNameExpression == null) {
             CharacterExpression expression = isNull().then(name);
@@ -2294,6 +2362,7 @@ public abstract class AbstractDataArtifact extends AbstractArtifact implements A
      * @param name nombre de imagen gráfica de valor innecesario asociada a la propiedad
      */
     public void setUnnecessaryValueGraphicImageName(String name) {
+        checkScope();
         _unnecessaryValueGraphicImageName = fairGraphicImageName(name);
     }
 
@@ -2316,6 +2385,7 @@ public abstract class AbstractDataArtifact extends AbstractArtifact implements A
      * @param expression expresión que determina el nombre de la imagen asociada a la propiedad
      */
     public void setGraphicImageNameExpression(CharacterExpression expression) {
+        checkScope();
         _graphicImageStyleClassNameExpression = false;
         setGraphicImageNameCharacterExpression(expression);
     }
@@ -2338,6 +2408,7 @@ public abstract class AbstractDataArtifact extends AbstractArtifact implements A
      * @param expression expresión que determina el nombre de la clase de estilo de la imagen asociada a la propiedad
      */
     public void setGraphicImageStyleClassNameExpression(CharacterExpression expression) {
+        checkScope();
         _graphicImageStyleClassNameExpression = true;
         setGraphicImageNameCharacterExpression(expression);
     }
@@ -2427,6 +2498,7 @@ public abstract class AbstractDataArtifact extends AbstractArtifact implements A
      * @param localizedTooltip una o más oraciones que describen muy brevemente el significado de la imagen gráfica de la propiedad
      */
     public void setLocalizedGraphicImageTooltip(Locale locale, String graphicImageName, String localizedTooltip) {
+        checkScope();
         if (StringUtils.isBlank(graphicImageName)) {
             return;
         }
@@ -2471,6 +2543,7 @@ public abstract class AbstractDataArtifact extends AbstractArtifact implements A
      * @param value the sequence start value to set
      */
     public void setSequencePropertyStart(long value) {
+        checkScope();
         boolean log = depth() == 0;
         if (isSequenceProperty()) {
             _sequencePropertyStart = Math.min(Long.MAX_VALUE, Math.max(1, value));
@@ -2499,6 +2572,7 @@ public abstract class AbstractDataArtifact extends AbstractArtifact implements A
      * @param value the sequence stop value to set
      */
     public void setSequencePropertyStop(long value) {
+        checkScope();
         boolean log = depth() == 0;
         if (isSequenceProperty()) {
             _sequencePropertyStop = Math.min(Long.MAX_VALUE, Math.max(1, value));
@@ -2526,6 +2600,7 @@ public abstract class AbstractDataArtifact extends AbstractArtifact implements A
      * @param value the sequence step value to set
      */
     public void setSequencePropertyStep(long value) {
+        checkScope();
         boolean log = depth() == 0;
         if (isSequenceProperty()) {
             _sequencePropertyStep = Math.min(Long.MAX_VALUE, Math.max(1, value));
@@ -2628,6 +2703,7 @@ public abstract class AbstractDataArtifact extends AbstractArtifact implements A
      */
 //  @Override
     public void setDataGenFunction(String function) {
+        checkScope();
         String f = StringUtils.trimToNull(function);
         if (f != null) {
             _dataGenFunction = f.equalsIgnoreCase("null") ? null : f;
@@ -2786,6 +2862,7 @@ public abstract class AbstractDataArtifact extends AbstractArtifact implements A
      */
     @Override
     public void setRenderingFilter(BooleanExpression renderingFilter, boolean readOnly) {
+        checkScope();
         boolean log = isParameter() || isLoggableProperty();
         String message = "failed to set rendering filter of " + getFullName();
         if (renderingFilter == null) {
@@ -2819,6 +2896,7 @@ public abstract class AbstractDataArtifact extends AbstractArtifact implements A
      */
     @Override
     public void setRequiringFilter(BooleanExpression requiringFilter) {
+        checkScope();
         boolean log = isParameter() || isLoggableProperty();
         String message = "failed to set requiring filter of " + getFullName();
         if (requiringFilter == null) {
@@ -2851,6 +2929,7 @@ public abstract class AbstractDataArtifact extends AbstractArtifact implements A
      */
     @Override
     public void setModifyingFilter(BooleanExpression modifyingFilter) {
+        checkScope();
         boolean log = isParameter() || isLoggableProperty();
         String message = "failed to set modifying filter of " + getFullName();
         if (modifyingFilter == null) {
@@ -2883,6 +2962,7 @@ public abstract class AbstractDataArtifact extends AbstractArtifact implements A
      */
     @Override
     public void setNullifyingFilter(BooleanExpression nullifyingFilter) {
+        checkScope();
         boolean log = isParameter() || isLoggableProperty();
         String message = "failed to set nullifying filter of " + getFullName();
         if (nullifyingFilter == null) {
@@ -3309,6 +3389,7 @@ public abstract class AbstractDataArtifact extends AbstractArtifact implements A
                 annotateColumnField(field);
                 annotateBigDecimalField(field);
                 annotateBigIntegerField(field);
+                annotateBinaryField(field);
                 annotateBooleanField(field);
                 annotateNumericField(field);
                 annotateStringField(field);
@@ -4099,6 +4180,26 @@ public abstract class AbstractDataArtifact extends AbstractArtifact implements A
         }
     }
 
+    private void annotateBinaryField(Field field) {
+        Class<? extends Annotation> annotationClass = BinaryField.class;
+        Class<?>[] validTypes = new Class<?>[]{BinaryProperty.class};
+        boolean log = depth() == 0;
+        boolean aye = field.isAnnotationPresent(annotationClass)
+            && XS1.checkFieldAnnotation(log, field, annotationClass, validTypes);
+        /**/
+        if (this instanceof BinaryData data) {
+            FetchType fetchType = data.getFetchType();
+            if (aye) {
+//              _annotatedWithBinaryField = true;
+                BinaryField annotation = field.getAnnotation(BinaryField.class);
+                fetchType = specified(annotation.fetch(), fetchType);
+            }
+            if (aye || !casting(field)) {
+                data.setFetchType(fetchType);
+            }
+        }
+    }
+
     private void annotateBooleanField(Field field) {
 //      String fieldName = fullFieldName(field);
         Class<? extends Annotation> annotationClass = BooleanField.class;
@@ -4134,6 +4235,7 @@ public abstract class AbstractDataArtifact extends AbstractArtifact implements A
         /**/
         NumericPrimitive data = null;
         NumericFieldType type = null;
+        int step = 1;
         int divisor = -1;
         DivisorRule divisorRule = null;
         String symbol = "";
@@ -4144,6 +4246,7 @@ public abstract class AbstractDataArtifact extends AbstractArtifact implements A
         if (this instanceof NumericPrimitive numericPrimitive) {
             data = numericPrimitive;
             type = data.getConverterType();
+            step = data.getKnobStep();
             divisor = data.getDivisor();
             divisorRule = data.getDivisorRule();
             symbol = data.getSymbol();
@@ -4157,6 +4260,7 @@ public abstract class AbstractDataArtifact extends AbstractArtifact implements A
             _annotatedWithNumericField = true;
             NumericField annotation = field.getAnnotation(NumericField.class);
             type = specified(annotation.type(), type);
+            step = specified(annotation.step(), step);
             divisor = specified(annotation.divisor(), divisor);
             divisorRule = specified(annotation.divisorRule(), divisorRule);
             symbol = specified(annotation.symbol(), symbol);
@@ -4166,6 +4270,21 @@ public abstract class AbstractDataArtifact extends AbstractArtifact implements A
             validator = specified(annotation.validator(), validator);
         }
         if (data != null && (aye || !casting(field))) {
+            if (NumericFieldType.KNOB.equals(type)) {
+                if (this instanceof ByteData || this instanceof ShortData || this instanceof IntegerData) {
+                    if (step < 1) {
+                        step = 1;
+                        if (log) {
+                            logger.error(fieldName + " has an invalid numeric field step");
+                            Project.increaseParserErrorCount();
+                        }
+                    }
+                } else if (log) {
+                    logger.error(fieldName + " has an invalid numeric field type; KNOB applies only to byte, short and integer fields");
+                    Project.increaseParserErrorCount();
+                }
+
+            }
             if (divisorRule == null || divisorRule.equals(DivisorRule.UNSPECIFIED)) {
                 divisor = 0;
             } else if (divisor < 0) {
@@ -4196,6 +4315,7 @@ public abstract class AbstractDataArtifact extends AbstractArtifact implements A
                 }
             }
             data.setConverterType(type);
+            data.setKnobStep(step);
             data.setDivisor(divisor);
             data.setDivisorRule(divisorRule);
             data.setSymbol(symbol);
@@ -4232,6 +4352,7 @@ public abstract class AbstractDataArtifact extends AbstractArtifact implements A
             && XS1.checkFieldAnnotation(log, field, annotationClass, validTypes);
         /**/
         StringData data = null;
+        int displayLength = -1;
         int maxLength = -1;
         int minLength = -1;
         String mask = "";
@@ -4246,6 +4367,7 @@ public abstract class AbstractDataArtifact extends AbstractArtifact implements A
         boolean translatable = false;
         if (this instanceof StringData stringData) {
             data = stringData;
+            displayLength = IntUtils.valueOf(data.getDisplayLength(), -1);
             maxLength = IntUtils.valueOf(data.getMaxLength(), -1);
             minLength = data.getMinLength();
             mask = data.getInputMask();
@@ -4263,6 +4385,11 @@ public abstract class AbstractDataArtifact extends AbstractArtifact implements A
         if (aye) {
             _annotatedWithStringField = true;
             StringField annotation = field.getAnnotation(StringField.class);
+            /**/
+            int adl = annotation.displayLength();
+            if (adl < -1000000000 || adl > -1) {
+                displayLength = adl;
+            }
             /* until 28/04/2022
             maxLength = specified(annotation.maxLength(), maxLength);
             /**/
@@ -4272,6 +4399,7 @@ public abstract class AbstractDataArtifact extends AbstractArtifact implements A
             }
             /**/
             minLength = specified(annotation.minLength(), minLength);
+            /**/
             mask = specified(annotation.mask(), mask);
             slotChar = specified(annotation.slotChar(), slotChar);
             regex = specified(annotation.regex(), regex);
@@ -4283,6 +4411,11 @@ public abstract class AbstractDataArtifact extends AbstractArtifact implements A
             richTextFormat = annotation.richTextFormat().toBoolean(richTextFormat);
             translatable = annotation.translatable().toBoolean(translatable);
             if (richTextFormat) {
+                displayLength = 0;
+                if (log && adl > 0) {
+                    logger.warn("display length of " + fieldName + " was ignored; rich text format properties must be defined with no limit");
+                    Project.increaseParserWarningCount();
+                }
                 maxLength = 0;
                 if (log && aml > 0) {
                     logger.warn("max length of " + fieldName + " was ignored; rich text format properties must be defined with no limit");
@@ -4293,6 +4426,21 @@ public abstract class AbstractDataArtifact extends AbstractArtifact implements A
         if (data != null && (aye || !casting(field))) {
             int projectMaximumStringFieldMaxLength = Project.getMaximumStringFieldMaxLength();
             int projectMaximumStringIndexMaxLength = Project.getMaximumStringIndexMaxLength();
+            if (displayLength < 0) {
+                displayLength = -1; // positiveStringFieldMaxLength(field, displayLength);
+            } else if (displayLength > projectMaximumStringFieldMaxLength) {
+                displayLength = projectMaximumStringFieldMaxLength;
+                if (log) {
+                    logger.error("display length of " + fieldName + " exceeds the defined string field limit (" + projectMaximumStringFieldMaxLength + ")");
+                    Project.increaseParserErrorCount();
+                }
+            } else if ((displayLength == 0 || displayLength > projectMaximumStringIndexMaxLength) && (isUnique() || isIndexed())) {
+                displayLength = projectMaximumStringIndexMaxLength;
+                if (log) {
+                    logger.error("display length of " + fieldName + " exceeds the defined string index limit (" + projectMaximumStringIndexMaxLength + ")");
+                    Project.increaseParserErrorCount();
+                }
+            }
             if (maxLength < 0) {
                 maxLength = positiveStringFieldMaxLength(field, maxLength);
             } else if (maxLength > projectMaximumStringFieldMaxLength) {
@@ -4308,7 +4456,6 @@ public abstract class AbstractDataArtifact extends AbstractArtifact implements A
                     Project.increaseParserErrorCount();
                 }
             }
-            /**/
             if (minLength < 0) {
                 minLength = 0;
             } else if (maxLength > 0 && minLength > maxLength) {
@@ -4366,6 +4513,7 @@ public abstract class AbstractDataArtifact extends AbstractArtifact implements A
                     }
                 }
             }
+            data.setDisplayLength(displayLength < 1 ? null : displayLength);
             data.setMaxLength(maxLength < 1 ? null : maxLength);
             data.setMinLength(minLength);
             data.setInputMask(mask);
@@ -5551,6 +5699,8 @@ public abstract class AbstractDataArtifact extends AbstractArtifact implements A
             _hiddenField = annotation.hidden().toBoolean(_hiddenField);
             _createField = annotation.create().toBoolean(_createField);
             _updateField = annotation.update().toBoolean(_updateField);
+            _createFieldViaAPI = annotation.create().toBoolean(_createFieldViaAPI);
+            _updateFieldViaAPI = annotation.update().toBoolean(_updateFieldViaAPI);
             _searchField = annotation.search().toBoolean(_searchField);
             _filterField = annotation.filter().toBoolean(_filterField);
             _sortField = annotation.sort().toBoolean(_sortField);
@@ -5570,6 +5720,7 @@ public abstract class AbstractDataArtifact extends AbstractArtifact implements A
             _defaultCheckpoint = specified(annotation.defaultCheckpoint(), _defaultCheckpoint);
             _defaultFunction = StringUtils.defaultIfBlank(StringUtils.trimToNull(annotation.defaultFunction()), _defaultFunction);
             setAnchorProperty(annotation);
+            _responsivePriority = Math.min(6, Math.max(0, annotation.responsivePriority()));
 //          _sequenceNumber = Math.max(0, annotation.sequence());
             _sequenceNumber = annotation.sequence();
             setInlineHelpType(annotation.inlineHelp());
@@ -7537,6 +7688,7 @@ public abstract class AbstractDataArtifact extends AbstractArtifact implements A
      */
 //  @Override
     public void setLocalizedRenderingFilterTag(Locale locale, String tag) {
+        checkScope();
         Locale l = localeWritingKey(locale);
         if (tag == null) {
             _localizedRenderingFilterTag.remove(l);
@@ -7570,6 +7722,7 @@ public abstract class AbstractDataArtifact extends AbstractArtifact implements A
      */
 //  @Override
     public void setLocalizedRequiringFilterTag(Locale locale, String tag) {
+        checkScope();
         Locale l = localeWritingKey(locale);
         if (tag == null) {
             _localizedRequiringFilterTag.remove(l);
@@ -7603,6 +7756,7 @@ public abstract class AbstractDataArtifact extends AbstractArtifact implements A
      */
 //  @Override
     public void setLocalizedModifyingFilterTag(Locale locale, String tag) {
+        checkScope();
         Locale l = localeWritingKey(locale);
         if (tag == null) {
             _localizedModifyingFilterTag.remove(l);
@@ -7636,6 +7790,7 @@ public abstract class AbstractDataArtifact extends AbstractArtifact implements A
      */
 //  @Override
     public void setLocalizedNullifyingFilterTag(Locale locale, String tag) {
+        checkScope();
         Locale l = localeWritingKey(locale);
         if (tag == null) {
             _localizedNullifyingFilterTag.remove(l);
@@ -7751,6 +7906,7 @@ public abstract class AbstractDataArtifact extends AbstractArtifact implements A
      */
 //  @Override
     public void setLocalizedCalculableValueTag(Locale locale, String tag) {
+        checkScope();
         Locale l = localeWritingKey(locale);
         if (tag == null) {
             _localizedCalculableValueTag.remove(l);
@@ -7784,6 +7940,7 @@ public abstract class AbstractDataArtifact extends AbstractArtifact implements A
      */
 //  @Override
     public void setLocalizedInitialValueTag(Locale locale, String tag) {
+        checkScope();
         Locale l = localeWritingKey(locale);
         if (tag == null) {
             _localizedInitialValueTag.remove(l);
@@ -7817,6 +7974,7 @@ public abstract class AbstractDataArtifact extends AbstractArtifact implements A
      */
 //  @Override
     public void setLocalizedDefaultValueTag(Locale locale, String tag) {
+        checkScope();
         Locale l = localeWritingKey(locale);
         if (tag == null) {
             _localizedDefaultValueTag.remove(l);
@@ -7850,6 +8008,7 @@ public abstract class AbstractDataArtifact extends AbstractArtifact implements A
      */
 //  @Override
     public void setLocalizedCurrentValueTag(Locale locale, String tag) {
+        checkScope();
         Locale l = localeWritingKey(locale);
         if (tag == null) {
             _localizedCurrentValueTag.remove(l);
@@ -8157,7 +8316,11 @@ public abstract class AbstractDataArtifact extends AbstractArtifact implements A
             if (isVariantStringField()) {
                 return 120; // 125/1000
             }
+            /* until 03/02/2024
             Integer maxLength = data.getMaxLength();
+            /**/
+            Integer maxLength = data.getMaxDisplayLength();
+            /**/
             if (maxLength == null) {
                 return 384; // 400/1000
             } else if (maxLength > 500) {

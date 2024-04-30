@@ -277,14 +277,14 @@ public class TimeUtils {
         if (format == null) {
             return dateFormatter();
         }
-        switch (format) {
-            case JDBC:
-                return JDBC_DATE_FORMATTER;
-            case SIMPLE:
-                return SIMPLE_DATE_FORMATTER;
-            default:
-                return dateFormatter();
-        }
+        return switch (format) {
+            case JDBC ->
+                JDBC_DATE_FORMATTER;
+            case SIMPLE ->
+                SIMPLE_DATE_FORMATTER;
+            default ->
+                dateFormatter();
+        };
     }
 
     private static SimpleDateFormat dateFormatter() {
@@ -301,14 +301,14 @@ public class TimeUtils {
         if (format == null) {
             return timeFormatter();
         }
-        switch (format) {
-            case JDBC:
-                return JDBC_TIME_FORMATTER;
-            case SIMPLE:
-                return SIMPLE_TIME_FORMATTER;
-            default:
-                return timeFormatter();
-        }
+        return switch (format) {
+            case JDBC ->
+                JDBC_TIME_FORMATTER;
+            case SIMPLE ->
+                SIMPLE_TIME_FORMATTER;
+            default ->
+                timeFormatter();
+        };
     }
 
     private static SimpleDateFormat timeFormatter() {
@@ -325,14 +325,14 @@ public class TimeUtils {
         if (format == null) {
             return timestampFormatter();
         }
-        switch (format) {
-            case JDBC:
-                return JDBC_TIMESTAMP_FORMATTER;
-            case SIMPLE:
-                return SIMPLE_TIMESTAMP_FORMATTER;
-            default:
-                return timestampFormatter();
-        }
+        return switch (format) {
+            case JDBC ->
+                JDBC_TIMESTAMP_FORMATTER;
+            case SIMPLE ->
+                SIMPLE_TIMESTAMP_FORMATTER;
+            default ->
+                timestampFormatter();
+        };
     }
 
     private static SimpleDateFormat timestampFormatter() {
@@ -751,11 +751,9 @@ public class TimeUtils {
     public static Date newDate(Object obj) {
         if (obj == null) {
             return null;
-        } else if (obj instanceof String) {
-            String pdq = (String) obj;
+        } else if (obj instanceof String pdq) {
             return newDate(parse(pdq));
-        } else if (obj instanceof java.util.Date) {
-            java.util.Date pdq = (java.util.Date) obj;
+        } else if (obj instanceof java.util.Date pdq) {
             return newDate(pdq);
         } else {
             throw new IllegalArgumentException("(" + obj.getClass() + ")" + obj + " is not an instance of java.util.Date ");
@@ -765,11 +763,9 @@ public class TimeUtils {
     public static Time newTime(Object obj) {
         if (obj == null) {
             return null;
-        } else if (obj instanceof String) {
-            String pdq = (String) obj;
+        } else if (obj instanceof String pdq) {
             return newTime(parse(pdq));
-        } else if (obj instanceof java.util.Date) {
-            java.util.Date pdq = (java.util.Date) obj;
+        } else if (obj instanceof java.util.Date pdq) {
             return newTime(pdq);
         } else {
             throw new IllegalArgumentException("(" + obj.getClass() + ")" + obj + " is not an instance of java.util.Date ");
@@ -779,11 +775,9 @@ public class TimeUtils {
     public static Timestamp newTimestamp(Object obj) {
         if (obj == null) {
             return null;
-        } else if (obj instanceof String) {
-            String pdq = (String) obj;
+        } else if (obj instanceof String pdq) {
             return newTimestamp(parse(pdq));
-        } else if (obj instanceof java.util.Date) {
-            java.util.Date pdq = (java.util.Date) obj;
+        } else if (obj instanceof java.util.Date pdq) {
             return newTimestamp(pdq);
         } else {
             throw new IllegalArgumentException("(" + obj.getClass() + ")" + obj + " is not an instance of java.util.Date ");
@@ -939,17 +933,12 @@ public class TimeUtils {
         Calendar c = newDateCalendar(date);
         if (addend != 0) {
             switch (unit) {
-                case 'Y':
+                case 'Y' ->
                     c.add(Calendar.YEAR, addend);
-                    break;
-                case 'M':
+                case 'M' ->
                     c.add(Calendar.MONTH, addend);
-                    break;
-                case 'D':
+                case 'D' ->
                     c.add(Calendar.DAY_OF_MONTH, addend);
-                    break;
-                default:
-                    break;
             }
         }
         return new Date(c.getTimeInMillis());
@@ -962,17 +951,12 @@ public class TimeUtils {
         Calendar c = newTimeCalendar(date);
         if (addend != 0) {
             switch (unit) {
-                case 'h':
+                case 'h' ->
                     c.add(Calendar.HOUR, addend);
-                    break;
-                case 'm':
+                case 'm' ->
                     c.add(Calendar.MINUTE, addend);
-                    break;
-                case 's':
+                case 's' ->
                     c.add(Calendar.SECOND, addend);
-                    break;
-                default:
-                    break;
             }
         }
         return new Time(c.getTimeInMillis());
@@ -985,26 +969,18 @@ public class TimeUtils {
         Calendar c = newCalendar(date);
         if (addend != 0) {
             switch (unit) {
-                case 'Y':
+                case 'Y' ->
                     c.add(Calendar.YEAR, addend);
-                    break;
-                case 'M':
+                case 'M' ->
                     c.add(Calendar.MONTH, addend);
-                    break;
-                case 'D':
+                case 'D' ->
                     c.add(Calendar.DAY_OF_MONTH, addend);
-                    break;
-                case 'h':
+                case 'h' ->
                     c.add(Calendar.HOUR, addend);
-                    break;
-                case 'm':
+                case 'm' ->
                     c.add(Calendar.MINUTE, addend);
-                    break;
-                case 's':
+                case 's' ->
                     c.add(Calendar.SECOND, addend);
-                    break;
-                default:
-                    break;
             }
         }
         return new Timestamp(c.getTimeInMillis());

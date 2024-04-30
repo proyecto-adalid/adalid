@@ -180,7 +180,7 @@ public class ElementoSegmento extends AbstractPersistentEntity {
         /**/
         modificables = not(conjuntoSegmento.esConjuntoEspecial);
         /**/
-        ordinarios = modificables.and(conjuntoSegmento.claseFabricador.isNull());
+        ordinarios = modificables.and(conjuntoSegmento.claseFabricador.isNull().or(conjuntoSegmento.claseFabricador.elemental));
         /**/
         // <editor-fold defaultstate="collapsed" desc="localization of ElementoSegmento's expressions">
         /**/
@@ -196,10 +196,10 @@ public class ElementoSegmento extends AbstractPersistentEntity {
         ordinarios.setLocalizedDescription(SPANISH, "el conjunto no es un conjunto de configuración básica del sistema "
             + "y sus elementos son especificados explícitamente");
         ordinarios.setLocalizedErrorMessage(ENGLISH, "the set is a basic configuration set "
-            + "or its elements are determined by a factory class; "
+            + "or its elements are determined by a factory class that does not uses elements; "
             + "its elements cannot be explicitly specified");
         ordinarios.setLocalizedErrorMessage(SPANISH, "el conjunto es un conjunto de configuración básica del sistema "
-            + "o sus elementos son determinados por una clase de fabricador; "
+            + "o sus elementos son determinados por una clase de fabricador que no usa elementos; "
             + "sus elementos no pueden ser especificados explícitamente");
         /**/
         // </editor-fold>

@@ -17,6 +17,7 @@ import adalid.core.annotations.*;
 import adalid.core.enums.*;
 import adalid.core.interfaces.*;
 import adalid.core.properties.*;
+import adalid.core.properties.ext.*;
 import java.lang.reflect.Field;
 import meta.entidad.comun.configuracion.basica.ModuloAplicacion;
 
@@ -84,6 +85,10 @@ public class UsuarioModulo extends AbstractPersistentEntity {
     @VersionProperty
     public LongProperty version;
 
+    @NameProperty
+    @ColumnField(calculable = Kleenean.TRUE)
+    public CloakedStringProperty nombre;
+
     @ForeignKey(onDelete = OnDeleteAction.CASCADE, onUpdate = OnUpdateAction.CASCADE)
     @ManyToOne(navigability = Navigability.BIDIRECTIONAL, view = MasterDetailView.TABLE)
     @ColumnField(nullable = Kleenean.FALSE)
@@ -101,6 +106,8 @@ public class UsuarioModulo extends AbstractPersistentEntity {
     @Override
     protected void settleProperties() {
         super.settleProperties();
+        /**/
+        nombre.setCalculableValueExpression(concatenate(usuario.codigoUsuario, SLASH, modulo.codigoModulo));
         /**/
         // <editor-fold defaultstate="collapsed" desc="localization of UsuarioModulo's properties">
         /**/

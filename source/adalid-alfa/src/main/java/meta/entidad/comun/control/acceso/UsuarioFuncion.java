@@ -156,8 +156,8 @@ public class UsuarioFuncion extends AbstractPersistentEntity {
         /**/
         esAccesoPersonalizado.setLocalizedLabel(ENGLISH, "personalized access");
         esAccesoPersonalizado.setLocalizedLabel(SPANISH, "acceso personalizado");
-        esAccesoPersonalizado.setLocalizedShortLabel(ENGLISH, "personalized");
-        esAccesoPersonalizado.setLocalizedShortLabel(SPANISH, "personalizado");
+        esAccesoPersonalizado.setLocalizedColumnHeader(ENGLISH, "personalized", "access");
+        esAccesoPersonalizado.setLocalizedColumnHeader(SPANISH, "acceso", "personalizado");
         /**/
         esTarea.setLocalizedLabel(ENGLISH, "task");
         esTarea.setLocalizedLabel(SPANISH, "tarea");

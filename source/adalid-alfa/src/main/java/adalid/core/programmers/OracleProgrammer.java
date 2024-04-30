@@ -27,10 +27,10 @@ import java.sql.Date;
 import java.sql.Time;
 import java.sql.Timestamp;
 import java.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.List;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
-
-import static adalid.core.programmers.AbstractProgrammer.format;
 
 /**
  * @author Jorge Campins
@@ -757,6 +757,11 @@ public class OracleProgrammer extends AbstractSqlProgrammer {
                 pattern = "util_diacriticless_ascii_2({0}, {1})";
                 break;
             case CONCAT:
+                arg1 = StrUtils.discloseSqlExpression(arg1);
+                arg2 = StrUtils.discloseSqlExpression(arg2);
+                pattern = "concat({0}, {1})";
+                break;
+            case CONCATENATE:
                 pattern = "{0} || {1}";
                 break;
             case FORMAT:
@@ -868,6 +873,12 @@ public class OracleProgrammer extends AbstractSqlProgrammer {
                 arg1 = StrUtils.discloseSqlExpression(arg1);
                 arg2 = StrUtils.discloseSqlExpression(arg2);
                 pattern = "util_datediff({0}, {1}, 'seconds')";
+                break;
+            case TO_TIMESTAMP:
+                arg1 = StrUtils.discloseSqlExpression(arg1);
+                arg2 = StrUtils.discloseSqlExpression(arg2);
+                pattern = "case when {0} is null or {1} is null then null else "
+                    + "to_timestamp(to_char({0}, 'YYYY-MM-DD')||'-'||to_char({1}, 'HH24:MI:SS'), 'YYYY-MM-DD-HH24:MI:SS') end";
                 break;
             default:
                 arg1 = StrUtils.discloseSqlExpression(arg1);
@@ -1117,6 +1128,27 @@ public class OracleProgrammer extends AbstractSqlProgrammer {
     @Override
     protected String defaultZeroPaddedStringPattern(int width) {
         return "lpad({0}, " + width + ", '0')";
+    }
+
+    @Override
+    protected String concat(String... strings) {
+        if (strings == null || strings.length < 2) {
+            return getNull();
+        }
+        List<String> arguments = new ArrayList<>();
+        for (String string : strings) {
+            arguments.add(StrUtils.discloseSqlExpression(string));
+        }
+        String[] arg = arguments.toArray(strings);
+        String concatenation = concatXY(arg[0], arg[1]);
+        for (int i = 2; i < arg.length; i++) {
+            concatenation = concatXY(concatenation, arg[i]);
+        }
+        return concatenation;
+    }
+
+    private String concatXY(String x, String y) {
+        return "concat(" + x + ", " + y + ")";
     }
 
 }

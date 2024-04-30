@@ -96,7 +96,7 @@ public abstract class AbstractOrderedPairX extends AbstractExpression implements
                     break;
                 case ASCII:
                 case DIACRITICLESS_ASCII:
-                case CONCAT:
+                case CONCAT, CONCATENATE:
                 case FORMAT:
                 case LEFT:
                 case RIGHT:
@@ -129,6 +129,9 @@ public abstract class AbstractOrderedPairX extends AbstractExpression implements
                 case DIFF_IN_MINUTES:
                 case DIFF_IN_SECONDS:
                     setDataType(Long.class);
+                    break;
+                case TO_TIMESTAMP:
+                    setDataType(java.sql.Timestamp.class);
                     break;
                 default:
                     copyDataType(operand);

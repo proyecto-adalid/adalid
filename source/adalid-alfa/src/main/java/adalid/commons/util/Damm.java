@@ -51,7 +51,7 @@ public class Damm {
     private static int column(char c) {
         try {
             return Integer.parseInt(String.valueOf(c));
-        } catch (Exception e) {
+        } catch (NumberFormatException e) {
             return 0;
         }
     }

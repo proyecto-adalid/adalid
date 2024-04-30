@@ -60,6 +60,8 @@ public abstract class NumericPrimitive extends Primitive implements Intervalized
 
     private NumericFieldType _converterType = NumericFieldType.UNSPECIFIED;
 
+    private int _knobStep = 1;
+
     private int _divisor = -1; // Constants.DEFAULT_NUMERIC_DIVISOR;
 
     private DivisorRule _divisorRule = DivisorRule.UNSPECIFIED;
@@ -117,6 +119,7 @@ public abstract class NumericPrimitive extends Primitive implements Intervalized
      * @param initialValue valor inicial primitivo de la propiedad o el parámetro
      */
     public void setPrimalInitialValue(Number initialValue) {
+        checkScope();
         _primalInitialValue = initialValue == null ? 0 : initialValue;
     }
 
@@ -135,6 +138,7 @@ public abstract class NumericPrimitive extends Primitive implements Intervalized
      * @param defaultValue valor por omisión primitivo de la propiedad o el parámetro
      */
     public void setPrimalDefaultValue(Number defaultValue) {
+        checkScope();
         _primalDefaultValue = defaultValue == null ? 0 : defaultValue;
     }
 
@@ -153,6 +157,7 @@ public abstract class NumericPrimitive extends Primitive implements Intervalized
      * @param minValue valor mínimo primitivo de la propiedad o el parámetro
      */
     public void setPrimalMinValue(Number minValue) {
+        checkScope();
         _primalMinValue = minValue;
     }
 
@@ -171,6 +176,7 @@ public abstract class NumericPrimitive extends Primitive implements Intervalized
      * @param maxValue valor máximo primitivo de la propiedad o el parámetro
      */
     public void setPrimalMaxValue(Number maxValue) {
+        checkScope();
         _primalMaxValue = maxValue;
     }
 
@@ -189,6 +195,7 @@ public abstract class NumericPrimitive extends Primitive implements Intervalized
      * @param expression expresión para el cálculo del valor
      */
     public void setCalculableValueExpression(NumericExpression expression) {
+        checkScope();
         _calculableValue = validCalculableValue(expression) ? expression : null;
     }
 
@@ -236,6 +243,7 @@ public abstract class NumericPrimitive extends Primitive implements Intervalized
      * @param initialValue valor inicial de la propiedad o el parámetro
      */
     public void setInitialValue(Number initialValue) {
+        checkScope();
         _initialValue = validInitialValue(initialValue) ? initialValue : null;
     }
 
@@ -247,6 +255,7 @@ public abstract class NumericPrimitive extends Primitive implements Intervalized
      * @param initialValue valor inicial de la propiedad o el parámetro
      */
     public void setInitialValue(SpecialNumericValue initialValue) {
+        checkScope();
         _initialValue = validInitialValue(initialValue) ? initialValue : null;
     }
 
@@ -258,6 +267,7 @@ public abstract class NumericPrimitive extends Primitive implements Intervalized
      * @param initialValue valor inicial de la propiedad o el parámetro
      */
     public void setInitialValue(NumericExpression initialValue) {
+        checkScope();
         _initialValue = validInitialValue(initialValue) ? initialValue : null;
     }
 
@@ -305,6 +315,7 @@ public abstract class NumericPrimitive extends Primitive implements Intervalized
      * @param defaultValue valor por omisión de la propiedad o el parámetro
      */
     public void setDefaultValue(Number defaultValue) {
+        checkScope();
         _defaultValue = validDefaultValue(defaultValue) ? defaultValue : null;
     }
 
@@ -316,6 +327,7 @@ public abstract class NumericPrimitive extends Primitive implements Intervalized
      * @param defaultValue valor por omisión de la propiedad o el parámetro
      */
     public void setDefaultValue(SpecialNumericValue defaultValue) {
+        checkScope();
         _defaultValue = validDefaultValue(defaultValue) ? defaultValue : null;
     }
 
@@ -327,6 +339,7 @@ public abstract class NumericPrimitive extends Primitive implements Intervalized
      * @param defaultValue valor por omisión de la propiedad o el parámetro
      */
     public void setDefaultValue(NumericExpression defaultValue) {
+        checkScope();
         _defaultValue = validDefaultValue(defaultValue) ? defaultValue : null;
     }
 
@@ -372,6 +385,7 @@ public abstract class NumericPrimitive extends Primitive implements Intervalized
      * @param currentValue valor actual
      */
     public void setCurrentValue(Number currentValue) {
+        checkScope();
         _currentValue = validCurrentValue(currentValue) ? currentValue : null;
     }
 
@@ -381,6 +395,7 @@ public abstract class NumericPrimitive extends Primitive implements Intervalized
      * @param currentValue valor actual
      */
     public void setCurrentValue(SpecialNumericValue currentValue) {
+        checkScope();
         _currentValue = validCurrentValue(currentValue) ? currentValue : null;
     }
 
@@ -390,6 +405,7 @@ public abstract class NumericPrimitive extends Primitive implements Intervalized
      * @param currentValue valor actual
      */
     public void setCurrentValue(NumericExpression currentValue) {
+        checkScope();
         _currentValue = validCurrentValue(currentValue) ? currentValue : null;
     }
 
@@ -398,7 +414,7 @@ public abstract class NumericPrimitive extends Primitive implements Intervalized
      */
     @Override
     public Object getMinValue() {
-        return _minValue == null ? _minNumber : _minValue instanceof Number ? primitiveMinValue() : toDataType(_minValue);
+        return _minValue == null ? knob() ? minKnob() : _minNumber : _minValue instanceof Number ? primitiveMinValue() : toDataType(_minValue);
     }
 
     /**
@@ -450,6 +466,7 @@ public abstract class NumericPrimitive extends Primitive implements Intervalized
      * @param minValue valor mínimo de la propiedad o el parámetro
      */
     public void setMinValue(Number minValue) {
+        checkScope();
         _minValue = minValue;
     }
 
@@ -459,6 +476,7 @@ public abstract class NumericPrimitive extends Primitive implements Intervalized
      * @param minValue valor mínimo de la propiedad o el parámetro
      */
     public void setMinValue(SpecialNumericValue minValue) {
+        checkScope();
         _minValue = minValue;
     }
 
@@ -468,6 +486,7 @@ public abstract class NumericPrimitive extends Primitive implements Intervalized
      * @param minValue valor mínimo de la propiedad o el parámetro
      */
     public void setMinValue(NumericExpression minValue) {
+        checkScope();
         _minValue = validMinimumValue(minValue) ? minValue : null;
     }
 
@@ -476,7 +495,7 @@ public abstract class NumericPrimitive extends Primitive implements Intervalized
      */
     @Override
     public Object getMaxValue() {
-        return _maxValue == null ? _maxNumber : _maxValue instanceof Number ? primitiveMaxValue() : toDataType(_maxValue);
+        return _maxValue == null ? knob() ? maxKnob() : _maxNumber : _maxValue instanceof Number ? primitiveMaxValue() : toDataType(_maxValue);
     }
 
     /**
@@ -528,6 +547,7 @@ public abstract class NumericPrimitive extends Primitive implements Intervalized
      * @param maxValue valor máximo de la propiedad o el parámetro
      */
     public void setMaxValue(Number maxValue) {
+        checkScope();
         _maxValue = maxValue;
     }
 
@@ -537,6 +557,7 @@ public abstract class NumericPrimitive extends Primitive implements Intervalized
      * @param maxValue valor máximo de la propiedad o el parámetro
      */
     public void setMaxValue(SpecialNumericValue maxValue) {
+        checkScope();
         _maxValue = maxValue;
     }
 
@@ -546,6 +567,7 @@ public abstract class NumericPrimitive extends Primitive implements Intervalized
      * @param maxValue valor máximo de la propiedad o el parámetro
      */
     public void setMaxValue(NumericExpression maxValue) {
+        checkScope();
         _maxValue = validMaximumValue(maxValue) ? maxValue : null;
     }
 
@@ -693,6 +715,7 @@ public abstract class NumericPrimitive extends Primitive implements Intervalized
      */
     @Override
     public void setLocalizedRangeErrorMessage(Locale locale, String message) {
+        checkScope();
         Locale l = localeWritingKey(locale);
         if (message == null) {
             _localizedRangeErrorMessage.remove(l);
@@ -760,8 +783,39 @@ public abstract class NumericPrimitive extends Primitive implements Intervalized
     }
 
     public void setConverterType(NumericFieldType type) {
-        XS2.checkAccess();
+        checkScope();
         _converterType = type == null ? NumericFieldType.UNSPECIFIED : type;
+    }
+
+    private boolean knob() {
+        return NumericFieldType.KNOB.equals(_converterType);
+    }
+
+    private int minKnob() {
+        int max = _maxValue instanceof Number number ? IntUtils.valueOf(NumUtils.toInteger(number), 100) : 100;
+        return max > 0 ? 0 : max - 100;
+    }
+
+    private int maxKnob() {
+        int min = _minValue instanceof Number number ? IntUtils.valueOf(NumUtils.toInteger(number), 0) : 0;
+        return min < 100 ? 100 : min + 100;
+    }
+
+    /**
+     * @return the knob component step value
+     */
+    public int getKnobStep() {
+        Object minValue = getMinValue();
+        Object maxValue = getMaxValue();
+        Integer min = minValue instanceof Number number ? NumUtils.toInteger(number) : 0;
+        Integer max = maxValue instanceof Number number ? NumUtils.toInteger(number) : 100;
+        int diff = min == null || max == null ? 0 : max - min;
+        return diff < 1 || _knobStep < 1 || _knobStep > diff ? 1 : _knobStep;
+    }
+
+    public void setKnobStep(int step) {
+        checkScope();
+        _knobStep = step;
     }
 
     /**
@@ -772,7 +826,7 @@ public abstract class NumericPrimitive extends Primitive implements Intervalized
     }
 
     public void setDivisor(int divisor) {
-        XS2.checkAccess();
+        checkScope();
         _divisor = divisor;
     }
 
@@ -787,7 +841,7 @@ public abstract class NumericPrimitive extends Primitive implements Intervalized
      * @param rule the divisor rule to set
      */
     public void setDivisorRule(DivisorRule rule) {
-        XS2.checkAccess();
+        checkScope();
         _divisorRule = rule == null ? DivisorRule.UNSPECIFIED : rule;
     }
 
@@ -799,7 +853,7 @@ public abstract class NumericPrimitive extends Primitive implements Intervalized
     }
 
     public void setSymbol(String symbol) {
-        XS2.checkAccess();
+        checkScope();
         _symbol = symbol;
     }
 
@@ -811,7 +865,7 @@ public abstract class NumericPrimitive extends Primitive implements Intervalized
     }
 
     public void setSymbolPosition(SymbolPosition position) {
-        XS2.checkAccess();
+        checkScope();
         _symbolPosition = position == null ? SymbolPosition.UNSPECIFIED : position;
     }
 
@@ -823,7 +877,7 @@ public abstract class NumericPrimitive extends Primitive implements Intervalized
     }
 
     public void setSymbolSeparator(boolean separator) {
-        XS2.checkAccess();
+        checkScope();
         _symbolSeparator = separator;
     }
 
@@ -835,7 +889,7 @@ public abstract class NumericPrimitive extends Primitive implements Intervalized
     }
 
     public void setSpecialConverterName(String converter) {
-        XS2.checkAccess();
+        checkScope();
         _specialConverterName = converter;
     }
 
@@ -847,7 +901,7 @@ public abstract class NumericPrimitive extends Primitive implements Intervalized
     }
 
     public void setSpecialValidatorName(String validator) {
-        XS2.checkAccess();
+        checkScope();
         _specialValidatorName = validator;
     }
 //

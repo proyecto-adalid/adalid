@@ -65,7 +65,7 @@ public @interface FileReference {
     /**
      * max específica el tamaño máximo (en bytes) de los archivos que se pueden cargar. Su valor debe ser un número entero, mayor o igual a 0.
      * Especifique 0 para permitir la carga de archivos hasta el tamaño máximo permitido por la configuración del servidor de aplicaciones.
-     * Alternativamente, omita el elemento para utilizar el valor predeterminado del atributo. El valor predeterminado es 1.000.000 (1 MB).
+     * Alternativamente, omita el elemento para utilizar el valor predeterminado del atributo. El valor predeterminado es 100.000 (100 KB).
      *
      * @return max
      */
@@ -108,7 +108,7 @@ public @interface FileReference {
      * rutas propio del sistema operativo: barra diagonal para Linux y barra diagonal invertida para Windows.
      * <p>
      * Las claves de elementos de datos válidas son:
-     * <p>
+     * </p>
      * <ul>
      * <li><b>EntityName</b>: nombre de la entidad que corresponde al archivo cargado.</li>
      * <li><b>References</b>: nombre de la propiedad de la entidad, o de la operación y el parámetro, que corresponde al archivo cargado.</li>
@@ -122,7 +122,7 @@ public @interface FileReference {
      * <li><b>UploadUserPK</b>: clave primaria (id) del usuario que ejecuta la carga del archivo.</li>
      * <li><b>UploadUserBK</b>: clave de negocio (código) del usuario que ejecuta la carga del archivo.</li>
      * </ul>
-     * <p>
+     *
      * La plantilla predeterminada es <b>{EntityName}.{References}.{UploadDate}</b>
      *
      * @return path

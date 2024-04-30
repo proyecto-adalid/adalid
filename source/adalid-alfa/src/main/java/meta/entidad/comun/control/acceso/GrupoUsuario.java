@@ -14,7 +14,7 @@ import adalid.core.properties.*;
 import java.lang.reflect.Field;
 
 @EntityClass(independent = Kleenean.TRUE, resourceType = ResourceType.OPERATION, resourceGender = ResourceGender.MASCULINE)
-@EntityCodeGen(fws = Kleenean.FALSE)
+@EntityCodeGen(bws = Kleenean.FALSE, fws = Kleenean.FALSE)
 @EntityDocGen(stateDiagram = Kleenean.FALSE)
 @EntitySelectOperation(enabled = Kleenean.TRUE, onload = SelectOnloadOption.EXECUTE)
 @EntityInsertOperation(enabled = Kleenean.TRUE)
@@ -91,15 +91,15 @@ public class GrupoUsuario extends AbstractPersistentEntity {
         /**/
         // <editor-fold defaultstate="collapsed" desc="localization of GrupoUsuario's properties">
         /**/
-        codigo.setLocalizedLabel(ENGLISH, "user group code");
-        codigo.setLocalizedLabel(SPANISH, "código del grupo de usuarios");
-        codigo.setLocalizedShortLabel(ENGLISH, "group code");
-        codigo.setLocalizedShortLabel(SPANISH, "código del grupo");
+        codigo.setLocalizedLabel(ENGLISH, "group code");
+        codigo.setLocalizedLabel(SPANISH, "código del grupo");
+        codigo.setLocalizedShortLabel(ENGLISH, "code");
+        codigo.setLocalizedShortLabel(SPANISH, "código");
         /**/
-        nombre.setLocalizedLabel(ENGLISH, "user group name");
-        nombre.setLocalizedLabel(SPANISH, "nombre del grupo de usuarios");
-        nombre.setLocalizedShortLabel(ENGLISH, "group name");
-        nombre.setLocalizedShortLabel(SPANISH, "nombre del grupo");
+        nombre.setLocalizedLabel(ENGLISH, "group name");
+        nombre.setLocalizedLabel(SPANISH, "nombre del grupo");
+        nombre.setLocalizedShortLabel(ENGLISH, "name");
+        nombre.setLocalizedShortLabel(SPANISH, "nombre");
         /**/
         contenedor.setLocalizedLabel(ENGLISH, "containing group");
         contenedor.setLocalizedLabel(SPANISH, "grupo contenedor");
@@ -141,6 +141,7 @@ public class GrupoUsuario extends AbstractPersistentEntity {
         gruposOrdinarios.setLocalizedErrorMessage(SPANISH, "el grupo es un grupo especial");
         /**/
         // </editor-fold>
+        /**/
     }
 
     @Override

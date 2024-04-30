@@ -927,10 +927,8 @@ public abstract class AbstractSqlProgrammer extends AbstractProgrammer implement
             values.add(value);
         }
         List<Entity> extensionsList = entity.getExtensionsList();
-        PersistentEntity pent;
         for (Entity ext : extensionsList) {
-            if (ext instanceof PersistentEntity) {
-                pent = (PersistentEntity) ext;
+            if (ext instanceof PersistentEntity pent) {
                 value = getSqlDiscriminatorValue(pent);
                 if (value != null) {
                     values.add(value);
@@ -975,22 +973,22 @@ public abstract class AbstractSqlProgrammer extends AbstractProgrammer implement
         if (aggregation == null) {
             return null;
         }
-        switch (aggregation) {
-            case COUNT:
-                return "COUNT";
-            case MINIMUM:
-                return "MIN";
-            case MAXIMUM:
-                return "MAX";
-            case SUM:
-                return "SUM";
-            case AVERAGE:
-                return "AVG";
-            case DEVIATION:
-                return "STDDEV";
-            default:
-                return "COUNT";
-        }
+        return switch (aggregation) {
+            case COUNT ->
+                "COUNT";
+            case MINIMUM ->
+                "MIN";
+            case MAXIMUM ->
+                "MAX";
+            case SUM ->
+                "SUM";
+            case AVERAGE ->
+                "AVG";
+            case DEVIATION ->
+                "STDDEV";
+            default ->
+                "COUNT";
+        };
     }
 
     @Override
@@ -1037,8 +1035,8 @@ public abstract class AbstractSqlProgrammer extends AbstractProgrammer implement
     public String getSqlNull(Artifact artifact) {
         if (artifact == null) {
             return null;
-        } else if (artifact instanceof Property) {
-            return getSqlNull((Property) artifact);
+        } else if (artifact instanceof Property property) {
+            return getSqlNull(property);
         } else {
             return null;
         }
@@ -1162,37 +1160,27 @@ public abstract class AbstractSqlProgrammer extends AbstractProgrammer implement
     private String getSqlValue(Object object, Class<?> type, QueryTable queryTable) {
         if (object == null || type == null) {
             return null;
-        } else if (object instanceof Property) {
-            Property property = (Property) object;
+        } else if (object instanceof Property property) {
             return queryTable == null ? null : getQualifiedName(property, queryTable, SqlQualifierType.RECORD);
-        } else if (object instanceof Expression) {
-            Expression expression = (Expression) object;
+        } else if (object instanceof Expression expression) {
             return queryTable == null ? null : getSqlExpression(expression, queryTable, SqlQualifierType.RECORD);
-        } else if (object instanceof Instance) { // && Entity.class.isAssignableFrom(type)
-            return getDelimitedString(((Instance) object).getInstanceKeyValue());
-        } else if (object instanceof Artifact) {
-            Artifact artifact = (Artifact) object;
+        } else if (object instanceof Instance instance) { // && Entity.class.isAssignableFrom(type)
+            return getDelimitedString(instance.getInstanceKeyValue());
+        } else if (object instanceof Artifact artifact) {
             return getSqlQualifiedName(artifact);
-        } else if (object instanceof SpecialBinaryValue) {
-            SpecialBinaryValue value = (SpecialBinaryValue) object;
+        } else if (object instanceof SpecialBinaryValue value) {
             return getSpecialBinaryValue(value);
-        } else if (object instanceof SpecialBooleanValue) {
-            SpecialBooleanValue value = (SpecialBooleanValue) object;
+        } else if (object instanceof SpecialBooleanValue value) {
             return getSpecialBooleanValue(value);
-        } else if (object instanceof SpecialCharacterValue) {
-            SpecialCharacterValue value = (SpecialCharacterValue) object;
+        } else if (object instanceof SpecialCharacterValue value) {
             return getSpecialCharacterValue(value);
-        } else if (object instanceof SpecialEntityValue) {
-            SpecialEntityValue value = (SpecialEntityValue) object;
+        } else if (object instanceof SpecialEntityValue value) {
             return getSpecialEntityValue(value);
-        } else if (object instanceof SpecialNumericValue) {
-            SpecialNumericValue value = (SpecialNumericValue) object;
+        } else if (object instanceof SpecialNumericValue value) {
             return getSpecialNumericValue(value);
-        } else if (object instanceof SpecialTemporalValue) {
-            SpecialTemporalValue value = (SpecialTemporalValue) object;
+        } else if (object instanceof SpecialTemporalValue value) {
             return getSpecialTemporalValue(value);
-        } else if (object instanceof NamedValue) {
-            NamedValue value = (NamedValue) object;
+        } else if (object instanceof NamedValue value) {
             return value.name();
         } else {
             return getDelimitedString(object);
@@ -1201,80 +1189,80 @@ public abstract class AbstractSqlProgrammer extends AbstractProgrammer implement
 
     @Override
     public String getSpecialBinaryValue(SpecialBinaryValue value) {
-        switch (value) {
-            case NULL:
-                return getNull();
-            default:
-                return null;
-        }
+        return switch (value) {
+            case NULL ->
+                getNull();
+            default ->
+                null;
+        };
     }
 
     @Override
     public String getSpecialBooleanValue(SpecialBooleanValue value) {
-        switch (value) {
-            case NULL:
-                return getNull();
-            case TRUE:
-                return getTrue();
-            case FALSE:
-                return getFalse();
-            default:
-                return null;
-        }
+        return switch (value) {
+            case NULL ->
+                getNull();
+            case TRUE ->
+                getTrue();
+            case FALSE ->
+                getFalse();
+            default ->
+                null;
+        };
     }
 
     @Override
     public String getSpecialCharacterValue(SpecialCharacterValue value) {
-        switch (value) {
-            case NULL:
-                return getNull();
-            case EMPTY:
-                return getZeroString();
-            case CURRENT_USER_CODE:
-                return "current_user_code()";
-            default:
-                return null;
-        }
+        return switch (value) {
+            case NULL ->
+                getNull();
+            case EMPTY ->
+                getZeroString();
+            case CURRENT_USER_CODE ->
+                "current_user_code()";
+            default ->
+                null;
+        };
     }
 
     @Override
     public String getSpecialEntityValue(SpecialEntityValue value) {
-        switch (value) {
-            case NULL:
-                return getNull();
-            case CURRENT_USER:
-                return "current_user_id()";
-            default:
-                return null;
-        }
+        return switch (value) {
+            case NULL ->
+                getNull();
+            case CURRENT_USER ->
+                "current_user_id()";
+            default ->
+                null;
+        };
     }
 
     @Override
     public String getSpecialNumericValue(SpecialNumericValue value) {
-        switch (value) {
-            case NULL:
-                return getNull();
-            case CURRENT_USER_ID:
-                return "current_user_id()";
-            default:
-                return null;
-        }
+        return switch (value) {
+            case NULL ->
+                getNull();
+            case CURRENT_USER_ID ->
+                "current_user_id()";
+            default ->
+                null;
+        };
     }
 
     @Override
     public String getSpecialTemporalValue(SpecialTemporalValue value) {
-        switch (value) {
-            case NULL:
-                return getNull();
-            case CURRENT_DATE:
-                return getCurrentDate();
-            case CURRENT_TIME:
-                return getCurrentTime();
-            case CURRENT_TIMESTAMP:
-                return getCurrentTimestamp();
-            default:
-                return value.name();
-        }
+        return switch (value) {
+            case NULL ->
+                getNull();
+            case CURRENT_DATE ->
+                getCurrentDate();
+            case CURRENT_TIME ->
+                getCurrentTime();
+            case CURRENT_TIMESTAMP ->
+                getCurrentTimestamp();
+            default ->
+                value.name();
+        };
     }
 
     private Class<?> getDataType(Artifact artifact) {
@@ -1425,47 +1413,34 @@ public abstract class AbstractSqlProgrammer extends AbstractProgrammer implement
             Entity entity = (Entity) object;
             Property property = entity.getPrimaryKeyProperty();
             return getSqlExpression(property, queryObject, qualifier, px, enclose);
-        } else if (object instanceof Property) {
-            Property property = (Property) object;
+        } else if (object instanceof Property property) {
             return queryObject == null ? getPropertySqlName(property) : getQualifiedName(property, queryObject, qualifier, px);
         } else if (object instanceof ScalarX) {
             Expression expression = (Expression) object;
             return getSqlExpression(expression, queryObject, qualifier, px, false);
-        } else if (object instanceof Expression) {
-            Expression expression = (Expression) object;
+        } else if (object instanceof Expression expression) {
             return getSqlExpression(expression, queryObject, qualifier, px, enclose);
-        } else if (object instanceof Instance) {
-            Instance instance = (Instance) object;
+        } else if (object instanceof Instance instance) {
             return getDelimitedString(instance.getInstanceKeyValue());
-        } else if (object instanceof SpecialBinaryValue) {
-            SpecialBinaryValue value = (SpecialBinaryValue) object;
+        } else if (object instanceof SpecialBinaryValue value) {
             return getSpecialBinaryValue(value);
-        } else if (object instanceof SpecialBooleanValue) {
-            SpecialBooleanValue value = (SpecialBooleanValue) object;
+        } else if (object instanceof SpecialBooleanValue value) {
             return getSpecialBooleanValue(value);
-        } else if (object instanceof SpecialCharacterValue) {
-            SpecialCharacterValue value = (SpecialCharacterValue) object;
+        } else if (object instanceof SpecialCharacterValue value) {
             return getSpecialCharacterValue(value);
-        } else if (object instanceof SpecialEntityValue) {
-            SpecialEntityValue value = (SpecialEntityValue) object;
+        } else if (object instanceof SpecialEntityValue value) {
             return getSpecialEntityValue(value);
-        } else if (object instanceof SpecialNumericValue) {
-            SpecialNumericValue value = (SpecialNumericValue) object;
+        } else if (object instanceof SpecialNumericValue value) {
             return getSpecialNumericValue(value);
-        } else if (object instanceof SpecialTemporalValue) {
-            SpecialTemporalValue value = (SpecialTemporalValue) object;
+        } else if (object instanceof SpecialTemporalValue value) {
             return getSpecialTemporalValue(value);
-        } else if (object instanceof NamedValue) {
-            NamedValue namedValue = (NamedValue) object;
+        } else if (object instanceof NamedValue namedValue) {
             return getNamedValueName(namedValue, px);
-        } else if (object instanceof NamedQuery) {
-            NamedQuery namedQuery = (NamedQuery) object;
+        } else if (object instanceof NamedQuery namedQuery) {
             return namedQuery.getString(qualifier);
-        } else if (object instanceof NativeQuery) {
-            NativeQuery nativeQuery = (NativeQuery) object;
+        } else if (object instanceof NativeQuery nativeQuery) {
             return nativeQuery.getString(qualifier);
-        } else if (object instanceof Artifact) {
-            Artifact artifact = (Artifact) object;
+        } else if (object instanceof Artifact artifact) {
             return getSqlQualifiedName(artifact);
         } else {
             return getDelimitedString(object);
@@ -1498,25 +1473,24 @@ public abstract class AbstractSqlProgrammer extends AbstractProgrammer implement
         String string;
         if (expression == null) {
             return null;
-        } else if (expression instanceof Property) {
-            Property property = (Property) expression;
+        } else if (expression instanceof Property property) {
             return queryObject == null ? getPropertySqlName(property) : getQualifiedName(property, queryObject, qualifier, px);
-        } else if (expression instanceof ComparisonX) {
-            string = getSqlComparisonExpression((ComparisonX) expression, queryObject, qualifier, px);
-        } else if (expression instanceof ConditionalX) {
-            string = getSqlConditionalExpression((ConditionalX) expression, queryObject, qualifier, px);
-        } else if (expression instanceof DataAggregateX) {
-            string = getSqlDataAggregateExpression((DataAggregateX) expression, queryObject, qualifier, px);
-        } else if (expression instanceof RowsAggregateX) {
-            string = getSqlRowsAggregateExpression((RowsAggregateX) expression, queryObject, qualifier, px);
-        } else if (expression instanceof NaryVectorX) {
-            string = getSqlNaryVectorExpression((NaryVectorX) expression, queryObject, qualifier, px);
-        } else if (expression instanceof OrderedPairX) {
-            string = getSqlOrderedPairExpression((OrderedPairX) expression, queryObject, qualifier, px);
-        } else if (expression instanceof ScalarX) {
-            string = getSqlScalarExpression((ScalarX) expression, queryObject, qualifier, px);
-        } else if (expression instanceof VariantX) {
-            string = getSqlVariantExpression((VariantX) expression, queryObject, qualifier, px);
+        } else if (expression instanceof ComparisonX comparisonX) {
+            string = getSqlComparisonExpression(comparisonX, queryObject, qualifier, px);
+        } else if (expression instanceof ConditionalX conditionalX) {
+            string = getSqlConditionalExpression(conditionalX, queryObject, qualifier, px);
+        } else if (expression instanceof DataAggregateX dataAggregateX) {
+            string = getSqlDataAggregateExpression(dataAggregateX, queryObject, qualifier, px);
+        } else if (expression instanceof RowsAggregateX rowsAggregateX) {
+            string = getSqlRowsAggregateExpression(rowsAggregateX, queryObject, qualifier, px);
+        } else if (expression instanceof NaryVectorX naryVectorX) {
+            string = getSqlNaryVectorExpression(naryVectorX, queryObject, qualifier, px);
+        } else if (expression instanceof OrderedPairX orderedPairX) {
+            string = getSqlOrderedPairExpression(orderedPairX, queryObject, qualifier, px);
+        } else if (expression instanceof ScalarX scalarX) {
+            string = getSqlScalarExpression(scalarX, queryObject, qualifier, px);
+        } else if (expression instanceof VariantX variantX) {
+            string = getSqlVariantExpression(variantX, queryObject, qualifier, px);
         } else {
             string = getDelimitedString(expression);
         }
@@ -1572,135 +1546,100 @@ public abstract class AbstractSqlProgrammer extends AbstractProgrammer implement
         String arg3 = getSqlExpression(z, queryObject, qualifier, px, true);
         String pattern;
         switch (operator) {
-            case EXISTS:
+            case EXISTS -> {
                 arg1 = StrUtils.discloseSqlExpression(arg1);
                 pattern = getExists() + SPC$ + LRB$ + ARG0 + RRB$;
-                break;
-            case NOT_EXISTS:
+            }
+            case NOT_EXISTS -> {
                 arg1 = StrUtils.discloseSqlExpression(arg1);
                 pattern = getNotExists() + SPC$ + LRB$ + ARG0 + RRB$;
-                break;
-            case IS_NULL:
+            }
+            case IS_NULL ->
                 pattern = ARG0 + SPC$ + getIsNull();
-                break;
-            case IS_NOT_NULL:
+            case IS_NOT_NULL ->
                 pattern = ARG0 + SPC$ + getIsNotNull();
-                break;
-            case IS_TRUE:
+            case IS_TRUE -> {
                 pattern = primitive ? primitiveIsTruePattern() : expressionIsTruePattern();
                 pattern = getIsNotNullAnd(arg1, true) + pattern;
-                break;
-            case IS_FALSE:
+            }
+            case IS_FALSE -> {
                 pattern = primitive ? primitiveIsFalsePattern() : expressionIsFalsePattern();
                 pattern = getIsNotNullAnd(arg1, true) + pattern;
-                break;
-            case IS_NULL_OR_TRUE:
+            }
+            case IS_NULL_OR_TRUE -> {
                 pattern = primitive ? primitiveIsTruePattern() : expressionIsTruePattern();
                 pattern = getIsNullOr(arg1, true) + pattern;
-                break;
-            case IS_NULL_OR_FALSE:
+            }
+            case IS_NULL_OR_FALSE -> {
                 pattern = primitive ? primitiveIsFalsePattern() : expressionIsFalsePattern();
                 pattern = getIsNullOr(arg1, true) + pattern;
-                break;
-            case EQ:
+            }
+            case EQ ->
                 pattern = getIsNotNullAnd(arg1) + getEQ() + SPC$ + arg2;
-                break;
-            case NEQ:
+            case NEQ ->
                 pattern = getIsNotNullAnd(arg1) + getNEQ() + SPC$ + arg2;
-                break;
-            case GT:
+            case GT ->
                 pattern = getIsNotNullAnd(arg1) + getGT() + SPC$ + arg2;
-                break;
-            case GTEQ:
+            case GTEQ ->
                 pattern = getIsNotNullAnd(arg1) + getGTEQ() + SPC$ + arg2;
-                break;
-            case LT:
+            case LT ->
                 pattern = getIsNotNullAnd(arg1) + getLT() + SPC$ + arg2;
-                break;
-            case LTEQ:
+            case LTEQ ->
                 pattern = getIsNotNullAnd(arg1) + getLTEQ() + SPC$ + arg2;
-                break;
-            case STARTS_WITH:
+            case STARTS_WITH ->
                 pattern = getIsNotNullAnd(arg1) + getLike() + SPC$ + startsWithArgument(1);
-                break;
-            case NOT_STARTS_WITH:
+            case NOT_STARTS_WITH ->
                 pattern = getIsNotNullAnd(arg1) + getNotLike() + SPC$ + startsWithArgument(1);
-                break;
-            case CONTAINS:
+            case CONTAINS ->
                 pattern = getIsNotNullAnd(arg1) + getLike() + SPC$ + containsArgument(1);
-                break;
-            case NOT_CONTAINS:
+            case NOT_CONTAINS ->
                 pattern = getIsNotNullAnd(arg1) + getNotLike() + SPC$ + containsArgument(1);
-                break;
-            case ENDS_WITH:
+            case ENDS_WITH ->
                 pattern = getIsNotNullAnd(arg1) + getLike() + SPC$ + endsWithArgument(1);
-                break;
-            case NOT_ENDS_WITH:
+            case NOT_ENDS_WITH ->
                 pattern = getIsNotNullAnd(arg1) + getNotLike() + SPC$ + endsWithArgument(1);
-                break;
-            case IS_IN:
+            case IS_IN ->
                 pattern = getIsNotNullAnd(arg1) + getIn() + SPC$ + StrUtils.encloseSqlExpression(arg2);
-                break;
-            case IS_NOT_IN:
+            case IS_NOT_IN ->
                 pattern = getIsNotNullAnd(arg1) + getNotIn() + SPC$ + StrUtils.encloseSqlExpression(arg2);
-                break;
-            case IS_BETWEEN:
+            case IS_BETWEEN ->
                 pattern = getIsNotNullAnd(arg1) + getBetween() + SPC$ + arg2 + SPC$ + getAnd() + SPC$ + arg3;
-                break;
-            case IS_NOT_BETWEEN:
+            case IS_NOT_BETWEEN ->
                 pattern = getIsNotNullAnd(arg1) + getNotBetween() + SPC$ + arg2 + SPC$ + getAnd() + SPC$ + arg3;
-                break;
-            case IS_NULL_OR_EQ:
+            case IS_NULL_OR_EQ ->
                 pattern = getIsNullOr(arg1) + getEQ() + SPC$ + arg2;
-                break;
-            case IS_NULL_OR_NEQ:
+            case IS_NULL_OR_NEQ ->
                 pattern = getIsNullOr(arg1) + getNEQ() + SPC$ + arg2;
-                break;
-            case IS_NULL_OR_GT:
+            case IS_NULL_OR_GT ->
                 pattern = getIsNullOr(arg1) + getGT() + SPC$ + arg2;
-                break;
-            case IS_NULL_OR_LTEQ:
+            case IS_NULL_OR_LTEQ ->
                 pattern = getIsNullOr(arg1) + getLTEQ() + SPC$ + arg2;
-                break;
-            case IS_NULL_OR_GTEQ:
+            case IS_NULL_OR_GTEQ ->
                 pattern = getIsNullOr(arg1) + getGTEQ() + SPC$ + arg2;
-                break;
-            case IS_NULL_OR_LT:
+            case IS_NULL_OR_LT ->
                 pattern = getIsNullOr(arg1) + getLT() + SPC$ + arg2;
-                break;
-            case IS_NULL_OR_STARTS_WITH:
+            case IS_NULL_OR_STARTS_WITH ->
                 pattern = getIsNullOr(arg1) + getLike() + SPC$ + startsWithArgument(1);
-                break;
-            case IS_NULL_OR_NOT_STARTS_WITH:
+            case IS_NULL_OR_NOT_STARTS_WITH ->
                 pattern = getIsNullOr(arg1) + getNotLike() + SPC$ + startsWithArgument(1);
-                break;
-            case IS_NULL_OR_CONTAINS:
+            case IS_NULL_OR_CONTAINS ->
                 pattern = getIsNullOr(arg1) + getLike() + SPC$ + containsArgument(1);
-                break;
-            case IS_NULL_OR_NOT_CONTAINS:
+            case IS_NULL_OR_NOT_CONTAINS ->
                 pattern = getIsNullOr(arg1) + getNotLike() + SPC$ + containsArgument(1);
-                break;
-            case IS_NULL_OR_ENDS_WITH:
+            case IS_NULL_OR_ENDS_WITH ->
                 pattern = getIsNullOr(arg1) + getLike() + SPC$ + endsWithArgument(1);
-                break;
-            case IS_NULL_OR_NOT_ENDS_WITH:
+            case IS_NULL_OR_NOT_ENDS_WITH ->
                 pattern = getIsNullOr(arg1) + getNotLike() + SPC$ + endsWithArgument(1);
-                break;
-            case IS_NULL_OR_IN:
+            case IS_NULL_OR_IN ->
                 pattern = getIsNullOr(arg1) + getIn() + SPC$ + StrUtils.encloseSqlExpression(arg2);
-                break;
-            case IS_NULL_OR_NOT_IN:
+            case IS_NULL_OR_NOT_IN ->
                 pattern = getIsNullOr(arg1) + getNotIn() + SPC$ + StrUtils.encloseSqlExpression(arg2);
-                break;
-            case IS_NULL_OR_BETWEEN:
+            case IS_NULL_OR_BETWEEN ->
                 pattern = getIsNullOr(arg1) + getBetween() + SPC$ + arg2 + SPC$ + getAnd() + SPC$ + arg3;
-                break;
-            case IS_NULL_OR_NOT_BETWEEN:
+            case IS_NULL_OR_NOT_BETWEEN ->
                 pattern = getIsNullOr(arg1) + getNotBetween() + SPC$ + arg2 + SPC$ + getAnd() + SPC$ + arg3;
-                break;
-            default:
+            default ->
                 pattern = call(operator, z == null ? y == null ? 1 : 2 : 3);
-                break;
         }
         return format(pattern, arg1, arg2, arg3);
     }
@@ -1764,53 +1703,40 @@ public abstract class AbstractSqlProgrammer extends AbstractProgrammer implement
             arguments[i] = getSqlExpression(operands[i], queryObject, qualifier, px, true);
         }
         String string;
-        switch (operator) {
-            case COUNT:
-                string = count(arguments);
-                break;
-            case MAXIMUM:
-                string = maximum(arguments);
-                break;
-            case MINIMUM:
-                string = minimum(arguments);
-                break;
-            case AND:
-                string = and(arguments);
-                break;
-            case NAND:
-                string = not(and(arguments));
-                break;
-            case OR:
-                string = or(arguments);
-                break;
-            case NOR:
-                string = not(or(arguments));
-                break;
-            case NAXOR:
-                string = xor(arguments);
-                break;
-            case NAXNOR:
-                string = not(xor(arguments));
-                break;
-            case NOR_OR_NAXOR:
-                string = or(not(or(arguments)), xor(arguments));
-                break;
-            case CONCAT:
-                string = connect(getConcat(), arguments);
-                break;
-            case SUM:
-                string = connect(getAdd(), arguments);
-                break;
-            case PRODUCT:
-                string = connect(getMultiply(), arguments);
-                break;
-            case AVERAGE:
-                string = average(arguments);
-                break;
-            default:
-                string = call(operator, arguments);
-                break;
-        }
+        string = switch (operator) {
+            case COUNT ->
+                count(arguments);
+            case MAXIMUM ->
+                maximum(arguments);
+            case MINIMUM ->
+                minimum(arguments);
+            case AND ->
+                and(arguments);
+            case NAND ->
+                not(and(arguments));
+            case OR ->
+                or(arguments);
+            case NOR ->
+                not(or(arguments));
+            case NAXOR ->
+                xor(arguments);
+            case NAXNOR ->
+                not(xor(arguments));
+            case NOR_OR_NAXOR ->
+                or(not(or(arguments)), xor(arguments));
+            case CONCAT ->
+                concat(arguments);
+            case CONCATENATE ->
+                connect(getConcat(), arguments);
+            case SUM ->
+                connect(getAdd(), arguments);
+            case PRODUCT ->
+                connect(getMultiply(), arguments);
+            case AVERAGE ->
+                average(arguments);
+            default ->
+                call(operator, arguments);
+        };
         return string;
     }
 
@@ -1940,8 +1866,7 @@ public abstract class AbstractSqlProgrammer extends AbstractProgrammer implement
 //          Class<?> foreignType = expression.getForeignType();
             // </editor-fold>
             Expression foreignExpression = expression.getForeignExpression();
-            if (foreignExpression instanceof RowsAggregateX) {
-                RowsAggregateX foreignRowsAggregateX = (RowsAggregateX) foreignExpression;
+            if (foreignExpression instanceof RowsAggregateX foreignRowsAggregateX) {
 //              String select = foreignRowsAggregateX.getSqlSelectFunctionName();
 //              String select = getSqlExpressionSelectFunctionName(foreignRowsAggregateX);
                 String select = getSqlSchemaQualifiedShortExpressionSelectFunctionName(foreignRowsAggregateX);
@@ -2287,14 +2212,14 @@ public abstract class AbstractSqlProgrammer extends AbstractProgrammer implement
     @Override
     public String getSqlSortOption(SortOption sortOption) {
         if (sortOption != null) {
-            switch (sortOption) {
-                case ASC:
-                    return getAscending();
-                case DESC:
-                    return getDescending();
-                default:
-                    return null;
-            }
+            return switch (sortOption) {
+                case ASC ->
+                    getAscending();
+                case DESC ->
+                    getDescending();
+                default ->
+                    null;
+            };
         }
         return null;
     }
@@ -2306,20 +2231,20 @@ public abstract class AbstractSqlProgrammer extends AbstractProgrammer implement
     @Override
     public String getSqlJoinOperator(QueryJoinOp operator) {
         if (operator != null) {
-            switch (operator) {
-                case INNER:
-                    return getInnerJoin();
-                case LEFT:
-                    return getLeftJoin();
-                case RIGHT:
-                    return getRightJoin();
-                case FULL:
-                    return getFullJoin();
-                case CROSS:
-                    return getCrossJoin();
-                default:
-                    return getDefaultJoin();
-            }
+            return switch (operator) {
+                case INNER ->
+                    getInnerJoin();
+                case LEFT ->
+                    getLeftJoin();
+                case RIGHT ->
+                    getRightJoin();
+                case FULL ->
+                    getFullJoin();
+                case CROSS ->
+                    getCrossJoin();
+                default ->
+                    getDefaultJoin();
+            };
         }
         return null;
     }
@@ -2369,8 +2294,8 @@ public abstract class AbstractSqlProgrammer extends AbstractProgrammer implement
      */
     @Override
     public String getSqlSelectStatement(Expression expression, QueryTable queryTable) {
-        if (expression instanceof RowsAggregateX) {
-            return getSqlSelectStatement((RowsAggregateX) expression, queryTable);
+        if (expression instanceof RowsAggregateX rowsAggregateX) {
+            return getSqlSelectStatement(rowsAggregateX, queryTable);
         }
         return null;
     }
@@ -2384,41 +2309,35 @@ public abstract class AbstractSqlProgrammer extends AbstractProgrammer implement
             return null;
         }
         String function;
-        switch (operator) {
-            case COUNT:
-                function = getCount();
-                break;
-            case MAXIMUM:
-                function = getMaximum();
-                break;
-            case MINIMUM:
-                function = getMinimum();
-                break;
-            case SUM:
-                function = getSum();
-                break;
-            case AVERAGE:
-                function = getAverage();
-                break;
-            default:
-                function = operator.name().toLowerCase();
-                break;
-        }
+        function = switch (operator) {
+            case COUNT ->
+                getCount();
+            case MAXIMUM ->
+                getMaximum();
+            case MINIMUM ->
+                getMinimum();
+            case SUM ->
+                getSum();
+            case AVERAGE ->
+                getAverage();
+            default ->
+                operator.name().toLowerCase();
+        };
         String argument = getSqlExpression(measure, queryTable, SqlQualifierType.ALIAS, null, false);
         if (argument == null && operator.equals(RowsAggregateOp.COUNT)) {
             argument = AST$;
         }
         List<Property> referencedColumns = new ArrayList<>();
-        if (measure instanceof Property) {
-            referencedColumns.add((Property) measure);
-        } else if (measure instanceof Expression) {
-            referencedColumns.addAll(((Expression) measure).getReferencedColumnsList());
+        if (measure instanceof Property property) {
+            referencedColumns.add(property);
+        } else if (measure instanceof Expression expression1) {
+            referencedColumns.addAll(expression1.getReferencedColumnsList());
         }
         if (filter != null) {
             referencedColumns.addAll(filter.getReferencedColumnsList());
         }
-        if (dimension instanceof Property) {
-            referencedColumns.add((Property) dimension);
+        if (dimension instanceof Property property) {
+            referencedColumns.add(property);
         }
         String string = getSelect();
         string += EOL$ + function + LRB$ + argument + RRB$;
@@ -2445,8 +2364,22 @@ public abstract class AbstractSqlProgrammer extends AbstractProgrammer implement
      */
     @Override
     public String getSqlSelectStatement(QueryTable queryTable, List<Property> referencedColumns, boolean into, boolean indent) {
+        return getSqlSelectStatement(queryTable, referencedColumns, into, indent, false, false); // since 17/03/2024
+    }
+
+    /**
+     * @param queryTable query table
+     * @param referencedColumns referenced columns
+     * @param into into
+     * @param indent indent
+     * @param blobless blobless
+     * @param joinless joinless
+     * @return the SQL statement
+     */
+    @Override
+    public String getSqlSelectStatement(QueryTable queryTable, List<Property> referencedColumns, boolean into, boolean indent, boolean blobless, boolean joinless) {
         String string = getSelect();
-        string += getSelectColumns(queryTable, queryTable, referencedColumns, indent);
+        string += getSelectColumns(queryTable, queryTable, referencedColumns, indent, blobless, joinless, false); // since 17/03/2024
         if (into) {
             string += EOL$ + getInto() + SPC$ + getSqlJoinQualifier(queryTable);
         }
@@ -2454,22 +2387,23 @@ public abstract class AbstractSqlProgrammer extends AbstractProgrammer implement
         return string;
     }
 
-    private String getSelectColumns(QueryTable rootQueryTable, QueryTable queryTable, List<Property> referencedColumns, boolean indent) {
+    private String getSelectColumns(QueryTable rootQueryTable, QueryTable queryTable, List<Property> referencedColumns, boolean indent, boolean blobless, boolean joinless, boolean nonhierarchical) { // since 17/03/2024
         String string = EMPTY;
         String tab = indent ? StringUtils.repeat(TAB$, queryTable.getDepth()) : EMPTY;
         String name, alias;
-        boolean calculable;
+        boolean calculable, excludable;
         String expression;
         for (Property p : queryTable.getColumns()) {
             if (referencedColumns == null || referencedColumns.isEmpty() || referencedColumns.contains(p)) {
                 name = getPropertySqlName(p);
                 alias = getPropertySqlAlias(p, queryTable);
                 calculable = p.isCalculable();
-                if (calculable) {
-                    /*
-                    expression = getCalculableColumnValueExpression(rootQueryTable, p);
-                    expression = fixCalculableColumnValueExpression(expression, p);
-                    /**/
+                excludable = blobless && (p instanceof BinaryData blob) && (calculable || nonhierarchical || FetchType.LAZY.equals(blob.getFetchType()));
+                if (excludable) { // since 17/03/2024
+                    string += EOL$ + tab + getNull();
+                    string += SPC$ + getAs() + SPC$ + alias;
+                    string += SEP$;
+                } else if (calculable) {
                     if (!VirtualEntityType.LINE.equals(rootQueryTable.getVirtualEntityType())) {
                         expression = fixCalculableColumnValueExpression(rootQueryTable, p);
                         if (expression != null) {
@@ -2488,11 +2422,15 @@ public abstract class AbstractSqlProgrammer extends AbstractProgrammer implement
                 }
             }
         }
+        boolean hierarchical; // join to super-class
         String s;
         for (QueryJoin j : queryTable.getJoins()) {
-            s = getSelectColumns(rootQueryTable, j.getRightTable(), referencedColumns, indent);
-            if (StringUtils.isNotBlank(s)) {
-                string += s + SEP$;
+            hierarchical = j.isHierarchical(); // akin = j.getRightTable().getEntity().getDataClass().isAssignableFrom(rootQueryTable.getEntity().getDataClass());
+            if (hierarchical || !joinless) { // since 17/03/2024
+                s = getSelectColumns(rootQueryTable, j.getRightTable(), referencedColumns, indent, blobless, joinless, !hierarchical); // since 17/03/2024
+                if (StringUtils.isNotBlank(s)) {
+                    string += s + SEP$;
+                }
             }
         }
         return StringUtils.removeEnd(string, SEP$);
@@ -2503,18 +2441,6 @@ public abstract class AbstractSqlProgrammer extends AbstractProgrammer implement
         if (!queryTable.getName().equals(queryTable.getAlias())) {
             string += SPC$ + queryTable.getAlias();
         }
-        // <editor-fold defaultstate="collapsed" desc="log">
-        /*
-        boolean log = referencedColumns != null && !referencedColumns.isEmpty();
-        if (log) {
-            logger.info("QueryTable " + rootQueryTable.getName());
-            for (Property referencedColumn : referencedColumns) {
-                logger.info("\t" + referencedColumn.getFullName());
-            }
-            logger.info(string);
-        }
-        /**/
-        // </editor-fold>
         string += getSelectJoins(rootQueryTable, queryTable, referencedColumnsForJoins(referencedColumns), indent);
         return string;
     }
@@ -2526,14 +2452,12 @@ public abstract class AbstractSqlProgrammer extends AbstractProgrammer implement
         Set<Property> set = new LinkedHashSet<>();
         for (Property referencedColumn : referencedColumns) {
             if (referencedColumn.isCalculable()) {
-                if (referencedColumn instanceof CalculableProperty) {
-                    Object calculableValue = ((CalculableProperty) referencedColumn).getCalculableValue();
-                    if (calculableValue instanceof Property) {
-                        Property valueProperty = (Property) calculableValue;
+                if (referencedColumn instanceof CalculableProperty calculableProperty) {
+                    Object calculableValue = calculableProperty.getCalculableValue();
+                    if (calculableValue instanceof Property valueProperty) {
                         set.add(valueProperty);
 //                      logger.info("\tRC/0\t" + referencedColumn.getFullName() + " -> " + valueProperty.getFullName());
-                    } else if (calculableValue instanceof Expression) {
-                        Expression valueExpression = (Expression) calculableValue;
+                    } else if (calculableValue instanceof Expression valueExpression) {
                         List<Property> referencedColumnsList = valueExpression.getReferencedColumnsList();
                         for (Property referencedByExpression : referencedColumnsList) {
                             set.add(referencedByExpression);
@@ -2600,12 +2524,11 @@ public abstract class AbstractSqlProgrammer extends AbstractProgrammer implement
     }
 
     private String getCalculableColumnValueExpression(QueryTable queryTable, Property property) {
-        if (property instanceof CalculableProperty) {
-            Object calculableValue = ((CalculableProperty) property).getCalculableValue();
+        if (property instanceof CalculableProperty calculableProperty) {
+            Object calculableValue = calculableProperty.getCalculableValue();
             if (calculableValue == null) {
                 return getNull();
-            } else if (calculableValue instanceof Property) {
-                Property p = (Property) calculableValue;
+            } else if (calculableValue instanceof Property p) {
                 QueryTable qt = queryTable.containingQueryTableOf(p);
                 return qt == null ? null : qt.getAlias() + DOT$ + getPropertySqlName(p);
             } else if (calculableValue instanceof Expression) {
@@ -2616,16 +2539,16 @@ public abstract class AbstractSqlProgrammer extends AbstractProgrammer implement
     }
 
     private String fixCalculableColumnValueExpression(QueryTable queryTable, Property property) {
-        if (property instanceof CalculableProperty) {
-            Object calculableValue = ((CalculableProperty) property).getCalculableValue();
+        if (property instanceof CalculableProperty calculableProperty) {
+            Object calculableValue = calculableProperty.getCalculableValue();
             if (calculableValue == null) {
                 QueryTable qt = queryTable.containingQueryTableOf(property);
                 if (qt != null && StringUtils.isBlank(qt.getSuffix())) {
                     Entity dent = property.getDeclaringEntity();
                     if (dent != null && !dent.isRootInstance()) {
                         Entity root = dent.getRoot();
-                        if (root instanceof PersistentEntity) {
-                            QueryTable rootQueryTable = ((PersistentEntity) root).getQueryTable();
+                        if (root instanceof PersistentEntity persistentEntity) {
+                            QueryTable rootQueryTable = persistentEntity.getQueryTable();
                             Property propertyAtRoot = property.getPropertyAtRoot();
                             String expression = getCalculableColumnValueExpression(rootQueryTable, propertyAtRoot);
                             return fixCalculableColumnValueExpression(expression, propertyAtRoot);
@@ -2662,16 +2585,16 @@ public abstract class AbstractSqlProgrammer extends AbstractProgrammer implement
     }
 
     private String getQualifiedName(Property property, Object queryObject, SqlQualifierType qualifier, ParameterizedExpression px) {
-        switch (qualifier) {
-            case ALIAS:
-                return getAliasQualifiedName(property, queryObject, px);
-            case RECORD:
-                return getRecordQualifiedName(property, queryObject, px);
-            case SUFFIX:
-                return getUnqualifiedButSuffixedName(property, queryObject, px);
-            default:
-                return getQualifiedName(property, px);
-        }
+        return switch (qualifier) {
+            case ALIAS ->
+                getAliasQualifiedName(property, queryObject, px);
+            case RECORD ->
+                getRecordQualifiedName(property, queryObject, px);
+            case SUFFIX ->
+                getUnqualifiedButSuffixedName(property, queryObject, px);
+            default ->
+                getQualifiedName(property, px);
+        };
     }
 
     private String getQualifiedName(Property property, ParameterizedExpression px) {
@@ -2828,13 +2751,31 @@ public abstract class AbstractSqlProgrammer extends AbstractProgrammer implement
      * @param queryJoin query join
      * @param referencedColumns referenced columns
      * @param into into
-     * @param indent indent
      * @param where where
+     * @param indent indent
      * @return the SQL statement
      */
     @Override
     public String getSqlSelectStatement(QueryJoin queryJoin, List<Property> referencedColumns, boolean into, boolean where, boolean indent) {
+        return getSqlSelectStatement(queryJoin, referencedColumns, into, where, indent, false, false); // since 17/03/2024
+    }
+
+    /**
+     * @param queryJoin query join
+     * @param referencedColumns referenced columns
+     * @param into into
+     * @param where where
+     * @param indent indent
+     * @param blobless blobless
+     * @param joinless joinless
+     * @return the SQL statement
+     */
+    @Override
+    public String getSqlSelectStatement(QueryJoin queryJoin, List<Property> referencedColumns, boolean into, boolean where, boolean indent, boolean blobless, boolean joinless) {
+        /* until 17/03/2024
         String string = getSqlSelectStatement(queryJoin.getRightTable(), referencedColumns, into, indent);
+        /**/
+        String string = getSqlSelectStatement(queryJoin.getRightTable(), referencedColumns, into, indent, blobless, joinless); // since 17/03/2024
         if (where) {
             string += EOL$ + getSelectWhere(queryJoin);
         }
@@ -2876,60 +2817,42 @@ public abstract class AbstractSqlProgrammer extends AbstractProgrammer implement
     public String getSqlStandardRelationalExpression(String arg1, StandardRelationalOp op, String arg2) {
         String expression;
         StandardRelationalOp operator = op == null ? StandardRelationalOp.EQ : op;
-        switch (operator) {
-            case UNSPECIFIED:
-            case EQ:
-                expression = getIsNotNullAnd(arg1) + getEQ() + SPC$ + arg2;
-                break;
-            case NEQ:
-                expression = getIsNotNullAnd(arg1) + getNEQ() + SPC$ + arg2;
-                break;
-            case GT:
-                expression = getIsNotNullAnd(arg1) + getGT() + SPC$ + arg2;
-                break;
-            case GTEQ:
-                expression = getIsNotNullAnd(arg1) + getGTEQ() + SPC$ + arg2;
-                break;
-            case LT:
-                expression = getIsNotNullAnd(arg1) + getLT() + SPC$ + arg2;
-                break;
-            case LTEQ:
-                expression = getIsNotNullAnd(arg1) + getLTEQ() + SPC$ + arg2;
-                break;
-            case LIKE:
-                expression = getIsNotNullAnd(arg1) + getLike() + SPC$ + startsWithArgument(1);
-                break;
-            case NOT_LIKE:
-                expression = getIsNotNullAnd(arg1) + getNotLike() + SPC$ + startsWithArgument(1);
-                break;
-            case IS_NULL_OR_EQ:
-                expression = getIsNullOr(arg1) + getEQ() + SPC$ + arg2;
-                break;
-            case IS_NULL_OR_NEQ:
-                expression = getIsNullOr(arg1) + getNEQ() + SPC$ + arg2;
-                break;
-            case IS_NULL_OR_GT:
-                expression = getIsNullOr(arg1) + getGT() + SPC$ + arg2;
-                break;
-            case IS_NULL_OR_LTEQ:
-                expression = getIsNullOr(arg1) + getLTEQ() + SPC$ + arg2;
-                break;
-            case IS_NULL_OR_GTEQ:
-                expression = getIsNullOr(arg1) + getGTEQ() + SPC$ + arg2;
-                break;
-            case IS_NULL_OR_LT:
-                expression = getIsNullOr(arg1) + getLT() + SPC$ + arg2;
-                break;
-            case IS_NULL_OR_LIKE:
-                expression = getIsNullOr(arg1) + getLike() + SPC$ + startsWithArgument(1);
-                break;
-            case IS_NULL_OR_NOT_LIKE:
-                expression = getIsNullOr(arg1) + getNotLike() + SPC$ + startsWithArgument(1);
-                break;
-            default:
-                expression = arg1 + SPC$ + getEQ() + SPC$ + arg2;
-                break;
-        }
+        expression = switch (operator) {
+            case UNSPECIFIED, EQ ->
+                getIsNotNullAnd(arg1) + getEQ() + SPC$ + arg2;
+            case NEQ ->
+                getIsNotNullAnd(arg1) + getNEQ() + SPC$ + arg2;
+            case GT ->
+                getIsNotNullAnd(arg1) + getGT() + SPC$ + arg2;
+            case GTEQ ->
+                getIsNotNullAnd(arg1) + getGTEQ() + SPC$ + arg2;
+            case LT ->
+                getIsNotNullAnd(arg1) + getLT() + SPC$ + arg2;
+            case LTEQ ->
+                getIsNotNullAnd(arg1) + getLTEQ() + SPC$ + arg2;
+            case LIKE ->
+                getIsNotNullAnd(arg1) + getLike() + SPC$ + startsWithArgument(1);
+            case NOT_LIKE ->
+                getIsNotNullAnd(arg1) + getNotLike() + SPC$ + startsWithArgument(1);
+            case IS_NULL_OR_EQ ->
+                getIsNullOr(arg1) + getEQ() + SPC$ + arg2;
+            case IS_NULL_OR_NEQ ->
+                getIsNullOr(arg1) + getNEQ() + SPC$ + arg2;
+            case IS_NULL_OR_GT ->
+                getIsNullOr(arg1) + getGT() + SPC$ + arg2;
+            case IS_NULL_OR_LTEQ ->
+                getIsNullOr(arg1) + getLTEQ() + SPC$ + arg2;
+            case IS_NULL_OR_GTEQ ->
+                getIsNullOr(arg1) + getGTEQ() + SPC$ + arg2;
+            case IS_NULL_OR_LT ->
+                getIsNullOr(arg1) + getLT() + SPC$ + arg2;
+            case IS_NULL_OR_LIKE ->
+                getIsNullOr(arg1) + getLike() + SPC$ + startsWithArgument(1);
+            case IS_NULL_OR_NOT_LIKE ->
+                getIsNullOr(arg1) + getNotLike() + SPC$ + startsWithArgument(1);
+            default ->
+                arg1 + SPC$ + getEQ() + SPC$ + arg2;
+        };
         return expression;
     }
 
@@ -3138,6 +3061,10 @@ public abstract class AbstractSqlProgrammer extends AbstractProgrammer implement
 
     protected String not(String argument) {
         return getNot() + StrUtils.encloseSqlExpression(argument);
+    }
+
+    protected String concat(String... strings) {
+        return connect(getConcat(), strings);
     }
 
     protected String connect(char connective, String... arguments) {

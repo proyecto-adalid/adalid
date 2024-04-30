@@ -25,8 +25,9 @@ import java.sql.Date;
 import java.sql.Time;
 import java.sql.Timestamp;
 import java.text.MessageFormat;
-
-import static adalid.core.programmers.AbstractProgrammer.format;
+import java.util.ArrayList;
+import java.util.List;
+import org.apache.commons.lang.StringUtils;
 
 /**
  * @author Jorge Campins
@@ -552,6 +553,11 @@ public class PostgreSqlProgrammer extends AbstractSqlProgrammer {
                 pattern = "diacriticless_ascii({0}, {1})";
                 break;
             case CONCAT:
+                arg1 = StrUtils.discloseSqlExpression(arg1);
+                arg2 = StrUtils.discloseSqlExpression(arg2);
+                pattern = "concat({0}, {1})";
+                break;
+            case CONCATENATE:
                 pattern = "{0} || {1}";
                 break;
             case FORMAT:
@@ -661,6 +667,11 @@ public class PostgreSqlProgrammer extends AbstractSqlProgrammer {
                 arg1 = StrUtils.discloseSqlExpression(arg1);
                 arg2 = StrUtils.discloseSqlExpression(arg2);
                 pattern = "datediff({0}, {1}, 'seconds')";
+                break;
+            case TO_TIMESTAMP:
+                arg1 = StrUtils.discloseSqlExpression(arg1);
+                arg2 = StrUtils.discloseSqlExpression(arg2);
+                pattern = "({0}::date + {1}::time)";
                 break;
             default:
                 arg1 = StrUtils.discloseSqlExpression(arg1);
@@ -894,6 +905,18 @@ public class PostgreSqlProgrammer extends AbstractSqlProgrammer {
     @Override
     protected String defaultZeroPaddedStringPattern(int width) {
         return "lpad({0}::text, " + width + ", '0')";
+    }
+
+    @Override
+    protected String concat(String... strings) {
+        if (strings == null || strings.length < 2) {
+            return getNull();
+        }
+        List<String> arguments = new ArrayList<>();
+        for (String string : strings) {
+            arguments.add(StrUtils.discloseSqlExpression(string));
+        }
+        return "concat(" + StringUtils.join(arguments, ", ") + ")";
     }
 
 }

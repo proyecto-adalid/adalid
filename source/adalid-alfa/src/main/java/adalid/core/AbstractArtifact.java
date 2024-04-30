@@ -133,6 +133,12 @@ public abstract class AbstractArtifact implements Artifact, Wrappable {
     /**
      *
      */
+//  private String _defaultColumnHeader;
+    private final Map<Locale, String> _localizedColumnHeader = new LinkedHashMap<>();
+
+    /**
+     *
+     */
 //  private String _defaultCollectionLabel;
     private final Map<Locale, String> _localizedCollectionLabel = new LinkedHashMap<>();
 
@@ -417,6 +423,7 @@ public abstract class AbstractArtifact implements Artifact, Wrappable {
      */
     @Override
     public void setAlias(String alias) {
+        checkScope();
         _alias = alias;
     }
 
@@ -431,6 +438,7 @@ public abstract class AbstractArtifact implements Artifact, Wrappable {
      * @param trace message
      */
     public void setTrace(String trace) {
+        checkScope();
         _trace = trace;
     }
 
@@ -450,6 +458,7 @@ public abstract class AbstractArtifact implements Artifact, Wrappable {
      */
     @Override
     public void setSqlName(String sqlName) {
+        checkScope();
         _sqlName = sqlName;
     }
 
@@ -472,6 +481,7 @@ public abstract class AbstractArtifact implements Artifact, Wrappable {
     }
 
     public void setInlineHelpType(InlineHelpType type) {
+        checkScope();
         if (!InlineHelpType.UNSPECIFIED.equals(type)) {
             _inlineHelpType = type;
         }
@@ -515,6 +525,50 @@ public abstract class AbstractArtifact implements Artifact, Wrappable {
     @Override
     public void setDefaultShortLabel(String defaultShortLabel) {
         setLocalizedShortLabel(null, defaultShortLabel);
+    }
+
+    /**
+     * El método setDefaultShortLabel se utiliza para establecer la etiqueta corta del artefacto que se almacena en el archivo de recursos por
+     * defecto. En caso de que el archivo de recursos para el idioma seleccionado por el usuario no esté disponible, la interfaz de la aplicación
+     * utiliza el archivo de recursos por defecto para obtener el valor de la etiqueta.
+     *
+     * @param defaultShortLabel sustantivo singular, preferiblemente sin complementos, que se usa como etiqueta corta del artefacto
+     */
+    @Override
+    public void setDefaultShortLabel(String... defaultShortLabel) {
+        setLocalizedShortLabel(null, defaultShortLabel);
+    }
+
+    /**
+     * @return the default column header
+     */
+    @Override
+    public String getDefaultColumnHeader() {
+        return getLocalizedColumnHeader(null);
+    }
+
+    /**
+     * El método setDefaultColumnHeader se utiliza para establecer el encabezado de columna del artefacto que se almacena en el archivo de recursos
+     * por defecto. En caso de que el archivo de recursos para el idioma seleccionado por el usuario no esté disponible, la interfaz de la aplicación
+     * utiliza el archivo de recursos por defecto para obtener el valor del encabezado.
+     *
+     * @param defaultColumnHeader sustantivo singular, preferiblemente sin complementos, que se usa como encabezado de columna del artefacto
+     */
+    @Override
+    public void setDefaultColumnHeader(String defaultColumnHeader) {
+        setLocalizedColumnHeader(null, defaultColumnHeader);
+    }
+
+    /**
+     * El método setDefaultColumnHeader se utiliza para establecer el encabezado de columna del artefacto que se almacena en el archivo de recursos
+     * por defecto. En caso de que el archivo de recursos para el idioma seleccionado por el usuario no esté disponible, la interfaz de la aplicación
+     * utiliza el archivo de recursos por defecto para obtener el valor del encabezado.
+     *
+     * @param defaultColumnHeader sustantivo singular, preferiblemente sin complementos, que se usa como encabezado de columna del artefacto
+     */
+    @Override
+    public void setDefaultColumnHeader(String... defaultColumnHeader) {
+        setLocalizedColumnHeader(null, defaultColumnHeader);
     }
 
     /**
@@ -681,6 +735,7 @@ public abstract class AbstractArtifact implements Artifact, Wrappable {
      */
     @Override
     public void setLocalizedLabel(Locale locale, String localizedLabel) {
+        checkScope();
         Locale l = localeWritingKey(locale);
         if (localizedLabel == null) {
             _localizedLabel.remove(l);
@@ -710,11 +765,79 @@ public abstract class AbstractArtifact implements Artifact, Wrappable {
      */
     @Override
     public void setLocalizedShortLabel(Locale locale, String localizedShortLabel) {
+        checkScope();
         Locale l = localeWritingKey(locale);
         if (localizedShortLabel == null) {
             _localizedShortLabel.remove(l);
         } else {
             _localizedShortLabel.put(l, localizedShortLabel);
+        }
+    }
+
+    /**
+     * El método setLocalizedShortLabel se utiliza para establecer la etiqueta corta del artefacto que se almacena en el archivo de recursos de
+     * configuración regional. En caso de que el archivo de recursos para el idioma seleccionado por el usuario no esté disponible, la interfaz de la
+     * aplicación utiliza el archivo de recursos por defecto para obtener el valor de la etiqueta.
+     *
+     * @param locale configuración regional
+     * @param localizedShortLabel sustantivo singular, preferiblemente sin complementos, que se usa como etiqueta corta del artefacto
+     */
+    @Override
+    public void setLocalizedShortLabel(Locale locale, String... localizedShortLabel) {
+        checkScope();
+        Locale l = localeWritingKey(locale);
+        if (localizedShortLabel == null || localizedShortLabel.length == 0) {
+            _localizedShortLabel.remove(l);
+        } else {
+            _localizedShortLabel.put(l, StringUtils.join(localizedShortLabel, BR));
+        }
+    }
+
+    /**
+     * @param locale the locale for the short label
+     * @return the localized column header
+     */
+    @Override
+    public String getLocalizedColumnHeader(Locale locale) {
+        Locale l = localeReadingKey(locale);
+        return _localizedColumnHeader.get(l);
+    }
+
+    /**
+     * El método setLocalizedColumnHeader se utiliza para establecer el encabezado de columna del artefacto que se almacena en el archivo de recursos
+     * de configuración regional. En caso de que el archivo de recursos para el idioma seleccionado por el usuario no esté disponible, la interfaz de
+     * la aplicación utiliza el archivo de recursos por defecto para obtener el valor del encabezado.
+     *
+     * @param locale configuración regional
+     * @param localizedColumnHeader sustantivo singular, preferiblemente sin complementos, que se usa como encabezado de columna del artefacto
+     */
+    @Override
+    public void setLocalizedColumnHeader(Locale locale, String localizedColumnHeader) {
+        checkScope();
+        Locale l = localeWritingKey(locale);
+        if (localizedColumnHeader == null) {
+            _localizedColumnHeader.remove(l);
+        } else {
+            _localizedColumnHeader.put(l, localizedColumnHeader);
+        }
+    }
+
+    /**
+     * El método setLocalizedColumnHeader se utiliza para establecer el encabezado de columna del artefacto que se almacena en el archivo de recursos
+     * de configuración regional. En caso de que el archivo de recursos para el idioma seleccionado por el usuario no esté disponible, la interfaz de
+     * la aplicación utiliza el archivo de recursos por defecto para obtener el valor del encabezado.
+     *
+     * @param locale configuración regional
+     * @param localizedColumnHeader sustantivo singular, preferiblemente sin complementos, que se usa como encabezado de columna del artefacto
+     */
+    @Override
+    public void setLocalizedColumnHeader(Locale locale, String... localizedColumnHeader) {
+        checkScope();
+        Locale l = localeWritingKey(locale);
+        if (localizedColumnHeader == null || localizedColumnHeader.length == 0) {
+            _localizedColumnHeader.remove(l);
+        } else {
+            _localizedColumnHeader.put(l, StringUtils.join(localizedColumnHeader, BR));
         }
     }
 
@@ -738,6 +861,7 @@ public abstract class AbstractArtifact implements Artifact, Wrappable {
      */
     @Override
     public void setLocalizedCollectionLabel(Locale locale, String localizedCollectionLabel) {
+        checkScope();
         Locale l = localeWritingKey(locale);
         if (localizedCollectionLabel == null) {
             _localizedCollectionLabel.remove(l);
@@ -768,6 +892,7 @@ public abstract class AbstractArtifact implements Artifact, Wrappable {
      */
     @Override
     public void setLocalizedCollectionShortLabel(Locale locale, String localizedCollectionShortLabel) {
+        checkScope();
         Locale l = localeWritingKey(locale);
         if (localizedCollectionShortLabel == null) {
             _localizedCollectionShortLabel.remove(l);
@@ -796,6 +921,7 @@ public abstract class AbstractArtifact implements Artifact, Wrappable {
      */
     @Override
     public void setLocalizedDescription(Locale locale, String localizedDescription) {
+        checkScope();
         Locale l = localeWritingKey(locale);
         if (localizedDescription == null) {
             _localizedDescription.remove(l);
@@ -828,6 +954,7 @@ public abstract class AbstractArtifact implements Artifact, Wrappable {
      */
     @Override
     public void setLocalizedShortDescription(Locale locale, String localizedShortDescription) {
+        checkScope();
         Locale l = localeWritingKey(locale);
         if (localizedShortDescription == null) {
             _localizedShortDescription.remove(l);
@@ -856,6 +983,7 @@ public abstract class AbstractArtifact implements Artifact, Wrappable {
      */
     @Override
     public void setLocalizedTooltip(Locale locale, String localizedTooltip) {
+        checkScope();
         Locale l = localeWritingKey(locale);
         if (localizedTooltip == null) {
             _localizedTooltip.remove(l);
@@ -884,6 +1012,7 @@ public abstract class AbstractArtifact implements Artifact, Wrappable {
      */
     @Override
     public void setLocalizedSymbol(Locale locale, String localizedSymbol) {
+        checkScope();
         Locale l = localeWritingKey(locale);
         if (localizedSymbol == null) {
             _localizedSymbol.remove(l);
@@ -1229,9 +1358,17 @@ public abstract class AbstractArtifact implements Artifact, Wrappable {
     private void init() {
         _defaultLocale = defaultLocale();
         setStaticAttributes();
+        copyBootstrappingAttributes();
     }
 
     protected void setStaticAttributes() {
+//      setBootstrappingFileName("bootstrapping.properties");
+    }
+
+    private boolean _checkScope;
+
+    protected void copyBootstrappingAttributes() {
+        _checkScope = Bootstrapping.checkReferencesToEnclosingEntityMembersWithinEnclosedOperations;
     }
 
     private void add() {
@@ -1837,6 +1974,7 @@ public abstract class AbstractArtifact implements Artifact, Wrappable {
         String message;
         String fieldName, artifactName;
         Object object;
+        boolean expression = Expression.class.equals(clazz);
 //      Class<?> fieldType;
         Class<?> dac = getClass();
         for (Field field : XS1.getFields(dac, top, clazz)) {
@@ -1850,6 +1988,17 @@ public abstract class AbstractArtifact implements Artifact, Wrappable {
                         artifactName = artifact.getName();
                         if (artifactName == null) {
                             artifact.setName(fieldName);
+                        }
+                        if (expression && _checkScope) { // since 19/02/2024
+                            // expressions are not initialized with XS1.initialiseField
+                            // therefore its declaring artifact and declaring field are not set yet
+                            // and must be set here because they are required at checkScope
+                            if (artifact.getDeclaringArtifact() == null) {
+                                artifact.setDeclaringArtifact(this);
+                            }
+                            if (artifact.getDeclaringField() == null) {
+                                artifact.setDeclaringField(field);
+                            }
                         }
                     }
                 } catch (IllegalArgumentException | IllegalAccessException ex) {
@@ -1877,6 +2026,7 @@ public abstract class AbstractArtifact implements Artifact, Wrappable {
         return !(Modifier.isPrivate(modifiers) || Modifier.isStatic(modifiers) || Modifier.isFinal(modifiers));
     }
 
+    @SuppressWarnings("unchecked")
     protected <T> T coalesce(T... objects) {
         for (T object : objects) {
             if (object != null) {
@@ -1901,10 +2051,12 @@ public abstract class AbstractArtifact implements Artifact, Wrappable {
 
     private static final String UNSPECIFIED = "UNSPECIFIED";
 
+    @SuppressWarnings("unchecked")
     protected <E extends Enum> E specified(E... enums) {
         return specified(UNSPECIFIED, enums);
     }
 
+    @SuppressWarnings("unchecked")
     protected <E extends Enum> E specified(String unspecified, E... values) {
         E e = null;
         if (values != null && values.length > 0) {
@@ -2050,6 +2202,62 @@ public abstract class AbstractArtifact implements Artifact, Wrappable {
         return x != null && y != null
             && x.getDataType() != null && y.getDataType() != null
             && x.getDataType().getSimpleName().equals(y.getDataType().getSimpleName());
+    }
+
+    protected void checkScope() { // since 19/02/2024
+        if (Bootstrapping.checkReferencesToEnclosingEntityMembersWithinEnclosedOperations) {
+            checkScope1();
+        }
+    }
+
+    /**
+     * check references to enclosing entity members within enclosed operations
+     */
+    private void checkScope1() { // since 19/02/2024
+        Entity declaringEntity = getDeclaringEntity();
+        if (declaringEntity == null || depth() > 1) {
+            return;
+        }
+        for (Artifact artifact : getPathList()) {
+            if (artifact instanceof Operation) {
+                return;
+            }
+        }
+        String method;
+        String metodo = null;
+        Class<?> callerClass, enclosingClass;
+        final String[] prefixes = {"adalid.core.AbstractArtifact.checkScope", "java.", "jdk."};
+        final StackTraceElement[] stack = Thread.currentThread().getStackTrace();
+        for (StackTraceElement element : stack) {
+            method = element.getClassName() + "." + element.getMethodName();
+            if (StringUtils.startsWithAny(method, prefixes)) {
+                continue;
+            }
+            method += " (" + element.getFileName() + ":" + element.getLineNumber() + ") ";
+            if (metodo == null) {
+                metodo = method;
+            } else {
+                callerClass = XS1.forName(element.getClassName());
+                if (callerClass == null) {
+                    Project.increaseParserErrorCount();
+                    logger.error("class " + element.getClassName() + " not found");
+                    break;
+                }
+                if (Artifact.class.isAssignableFrom(callerClass)) {
+                    if (Operation.class.isAssignableFrom(callerClass)) {
+                        enclosingClass = callerClass.getEnclosingClass();
+                        if (enclosingClass != null && Entity.class.isAssignableFrom(enclosingClass)) {
+                            Project.increaseParserErrorCount();
+                            logger.error("illegal reference to " + getFullName());
+                            logger.error("     at " + method);
+                        }
+                        break;
+                    }
+                } else {
+                    break;
+                }
+            }
+        }
     }
 
     // <editor-fold defaultstate="collapsed" desc="MarkupUtils">

@@ -58,13 +58,13 @@ public enum OrderedPairOp implements Operator {
      */
     X_IMPLIES_Y,
     /* operadores para expresiones alfanuméricas */
-    ASCII, DIACRITICLESS_ASCII, CONCAT, FORMAT, LEFT, RIGHT, SUBSTR,
+    ASCII, DIACRITICLESS_ASCII, CONCAT, CONCATENATE, FORMAT, LEFT, RIGHT, SUBSTR,
     /* operadores para expresiones alfanuméricas y numéricas */
     TO_ZERO_PADDED_STRING,
     /* operadores para expresiones numéricas */
     X_PLUS_Y, X_MINUS_Y, X_MULTIPLIED_BY_Y, X_DIVIDED_INTO_Y, X_RAISED_TO_THE_Y,
-    /* operadores para para expresiones temporales (fechas, horas y timestamps) */
+    /* operadores para expresiones temporales (fechas, horas y timestamps) */
     ADD_YEARS, ADD_MONTHS, ADD_WEEKS, ADD_DAYS, ADD_HOURS, ADD_MINUTES, ADD_SECONDS,
-    DIFF_IN_YEARS, DIFF_IN_MONTHS, DIFF_IN_WEEKS, DIFF_IN_DAYS, DIFF_IN_HOURS, DIFF_IN_MINUTES, DIFF_IN_SECONDS
+    DIFF_IN_YEARS, DIFF_IN_MONTHS, DIFF_IN_WEEKS, DIFF_IN_DAYS, DIFF_IN_HOURS, DIFF_IN_MINUTES, DIFF_IN_SECONDS, TO_TIMESTAMP
 
 }

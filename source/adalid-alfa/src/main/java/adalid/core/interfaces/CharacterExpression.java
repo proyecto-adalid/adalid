@@ -900,7 +900,7 @@ public interface CharacterExpression extends Expression {
 
     /**
      * El método <b>concat</b> contruye una expresión que genera la concatenación de esta expresión (operando X) con el String que recibe como
-     * argumento (operando Y).
+     * argumento (operando Y). A diferencia de concatenate, este método ignora los argumentos NULL.
      *
      * @param y operando Y
      * @return expresión que retorna la concatenación de los dos operandos.
@@ -909,7 +909,7 @@ public interface CharacterExpression extends Expression {
 
     /**
      * El método <b>concat</b> contruye una expresión que genera la concatenación de esta expresión (operando X) con el valor especial que recibe como
-     * argumento (operando Y).
+     * argumento (operando Y). A diferencia de concatenate, este método ignora los argumentos NULL.
      *
      * @param y operando Y
      * @return expresión que retorna la concatenación de los dos operandos.
@@ -918,12 +918,39 @@ public interface CharacterExpression extends Expression {
 
     /**
      * El método <b>concat</b> contruye una expresión que genera la concatenación de esta expresión (operando X) con la expresión que recibe como
-     * argumento (operando Y).
+     * argumento (operando Y). A diferencia de concatenate, este método ignora los argumentos NULL.
      *
      * @param y operando Y
      * @return expresión que retorna la concatenación de los dos operandos.
      */
     CharacterOrderedPairX concat(Expression y);
+
+    /**
+     * El método <b>concatenate</b> contruye una expresión que genera la concatenación de esta expresión (operando X) con el String que recibe como
+     * argumento (operando Y). A diferencia de concat, este método devuelve NULL si el argumento es NULL.
+     *
+     * @param y operando Y
+     * @return expresión que retorna la concatenación de los dos operandos.
+     */
+    CharacterOrderedPairX concatenate(String y);
+
+    /**
+     * El método <b>concatenate</b> contruye una expresión que genera la concatenación de esta expresión (operando X) con el valor especial que recibe
+     * como argumento (operando Y). A diferencia de concat, este método devuelve NULL si el argumento es NULL.
+     *
+     * @param y operando Y
+     * @return expresión que retorna la concatenación de los dos operandos.
+     */
+    CharacterOrderedPairX concatenate(SpecialCharacterValue y);
+
+    /**
+     * El método <b>concatenate</b> contruye una expresión que genera la concatenación de esta expresión (operando X) con la expresión que recibe como
+     * argumento (operando Y). A diferencia de concat, este método devuelve NULL si el argumento es NULL.
+     *
+     * @param y operando Y
+     * @return expresión que retorna la concatenación de los dos operandos.
+     */
+    CharacterOrderedPairX concatenate(Expression y);
 
     /**
      * El método <b>format</b> contruye una expresión que genera esta expresión con el formato especificado por la plantilla que recibe como

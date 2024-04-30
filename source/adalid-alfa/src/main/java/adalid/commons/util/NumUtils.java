@@ -80,8 +80,7 @@ public class NumUtils {
 
     public static String format(Number number, Locale locale) {
         NumberFormat formatter = NumberFormat.getNumberInstance(locale);
-        if (number instanceof BigDecimal) {
-            BigDecimal big = (BigDecimal) number;
+        if (number instanceof BigDecimal big) {
             formatter.setMaximumFractionDigits(big.scale());
         }
         return formatter.format(number);
@@ -98,8 +97,7 @@ public class NumUtils {
     public static Number parse(String value, boolean integerOnly, Locale locale) {
         NumberFormat parser = NumberFormat.getNumberInstance(locale);
         parser.setParseIntegerOnly(integerOnly);
-        if (parser instanceof DecimalFormat) {
-            DecimalFormat decimalParser = (DecimalFormat) parser;
+        if (parser instanceof DecimalFormat decimalParser) {
             decimalParser.setParseBigDecimal(true);
         }
         ParsePosition position = new ParsePosition(0);
@@ -462,11 +460,9 @@ public class NumUtils {
     public static Byte newByte(Object obj) {
         if (obj == null) {
             return null;
-        } else if (obj instanceof Byte) {
-            Byte pdq = (Byte) obj;
+        } else if (obj instanceof Byte pdq) {
             return pdq;
-        } else if (obj instanceof String) {
-            String pdq = (String) obj;
+        } else if (obj instanceof String pdq) {
             return pdq.trim().isEmpty() ? null : Byte.valueOf(pdq);
         } else {
             return Byte.valueOf(obj.toString());
@@ -476,11 +472,9 @@ public class NumUtils {
     public static Short newShort(Object obj) {
         if (obj == null) {
             return null;
-        } else if (obj instanceof Short) {
-            Short pdq = (Short) obj;
+        } else if (obj instanceof Short pdq) {
             return pdq;
-        } else if (obj instanceof String) {
-            String pdq = (String) obj;
+        } else if (obj instanceof String pdq) {
             return pdq.trim().isEmpty() ? null : Short.valueOf(pdq);
         } else {
             return Short.valueOf(obj.toString());
@@ -490,32 +484,23 @@ public class NumUtils {
     public static Integer newInteger(Object obj) {
         if (obj == null) {
             return null;
-        } else if (obj instanceof Byte) {
-            Byte pdq = (Byte) obj;
+        } else if (obj instanceof Byte pdq) {
             return pdq.intValue();
-        } else if (obj instanceof Short) {
-            Short pdq = (Short) obj;
+        } else if (obj instanceof Short pdq) {
             return pdq.intValue();
-        } else if (obj instanceof Integer) {
-            Integer pdq = (Integer) obj;
+        } else if (obj instanceof Integer pdq) {
             return pdq;
-        } else if (obj instanceof Long) {
-            Long pdq = (Long) obj;
+        } else if (obj instanceof Long pdq) {
             return pdq.intValue();
-        } else if (obj instanceof Float) {
-            Float pdq = (Float) obj;
+        } else if (obj instanceof Float pdq) {
             return pdq.intValue();
-        } else if (obj instanceof Double) {
-            Double pdq = (Double) obj;
+        } else if (obj instanceof Double pdq) {
             return pdq.intValue();
-        } else if (obj instanceof BigInteger) {
-            BigInteger pdq = (BigInteger) obj;
+        } else if (obj instanceof BigInteger pdq) {
             return pdq.intValue();
-        } else if (obj instanceof BigDecimal) {
-            BigDecimal pdq = (BigDecimal) obj;
+        } else if (obj instanceof BigDecimal pdq) {
             return pdq.intValue();
-        } else if (obj instanceof String) {
-            String pdq = (String) obj;
+        } else if (obj instanceof String pdq) {
             return pdq.trim().isEmpty() ? null : Integer.valueOf(pdq);
         } else {
             return Integer.valueOf(obj.toString());
@@ -525,32 +510,23 @@ public class NumUtils {
     public static Long newLong(Object obj) {
         if (obj == null) {
             return null;
-        } else if (obj instanceof Byte) {
-            Byte pdq = (Byte) obj;
+        } else if (obj instanceof Byte pdq) {
             return pdq.longValue();
-        } else if (obj instanceof Short) {
-            Short pdq = (Short) obj;
+        } else if (obj instanceof Short pdq) {
             return pdq.longValue();
-        } else if (obj instanceof Integer) {
-            Integer pdq = (Integer) obj;
+        } else if (obj instanceof Integer pdq) {
             return pdq.longValue();
-        } else if (obj instanceof Long) {
-            Long pdq = (Long) obj;
+        } else if (obj instanceof Long pdq) {
             return pdq;
-        } else if (obj instanceof Float) {
-            Float pdq = (Float) obj;
+        } else if (obj instanceof Float pdq) {
             return pdq.longValue();
-        } else if (obj instanceof Double) {
-            Double pdq = (Double) obj;
+        } else if (obj instanceof Double pdq) {
             return pdq.longValue();
-        } else if (obj instanceof BigInteger) {
-            BigInteger pdq = (BigInteger) obj;
+        } else if (obj instanceof BigInteger pdq) {
             return pdq.longValue();
-        } else if (obj instanceof BigDecimal) {
-            BigDecimal pdq = (BigDecimal) obj;
+        } else if (obj instanceof BigDecimal pdq) {
             return pdq.longValue();
-        } else if (obj instanceof String) {
-            String pdq = (String) obj;
+        } else if (obj instanceof String pdq) {
             return pdq.trim().isEmpty() ? null : Long.valueOf(pdq);
         } else {
             return Long.valueOf(obj.toString());
@@ -560,32 +536,23 @@ public class NumUtils {
     public static Float newFloat(Object obj) {
         if (obj == null) {
             return null;
-        } else if (obj instanceof Byte) {
-            Byte pdq = (Byte) obj;
+        } else if (obj instanceof Byte pdq) {
             return pdq.floatValue();
-        } else if (obj instanceof Short) {
-            Short pdq = (Short) obj;
+        } else if (obj instanceof Short pdq) {
             return pdq.floatValue();
-        } else if (obj instanceof Integer) {
-            Integer pdq = (Integer) obj;
+        } else if (obj instanceof Integer pdq) {
             return pdq.floatValue();
-        } else if (obj instanceof Long) {
-            Long pdq = (Long) obj;
+        } else if (obj instanceof Long pdq) {
             return pdq.floatValue();
-        } else if (obj instanceof Float) {
-            Float pdq = (Float) obj;
+        } else if (obj instanceof Float pdq) {
             return pdq;
-        } else if (obj instanceof Double) {
-            Double pdq = (Double) obj;
+        } else if (obj instanceof Double pdq) {
             return pdq.floatValue();
-        } else if (obj instanceof BigInteger) {
-            BigInteger pdq = (BigInteger) obj;
+        } else if (obj instanceof BigInteger pdq) {
             return pdq.floatValue();
-        } else if (obj instanceof BigDecimal) {
-            BigDecimal pdq = (BigDecimal) obj;
+        } else if (obj instanceof BigDecimal pdq) {
             return pdq.floatValue();
-        } else if (obj instanceof String) {
-            String pdq = (String) obj;
+        } else if (obj instanceof String pdq) {
             return pdq.trim().isEmpty() ? null : Float.valueOf(pdq);
         } else {
             return Float.valueOf(obj.toString());
@@ -595,32 +562,23 @@ public class NumUtils {
     public static Double newDouble(Object obj) {
         if (obj == null) {
             return null;
-        } else if (obj instanceof Byte) {
-            Byte pdq = (Byte) obj;
+        } else if (obj instanceof Byte pdq) {
             return pdq.doubleValue();
-        } else if (obj instanceof Short) {
-            Short pdq = (Short) obj;
+        } else if (obj instanceof Short pdq) {
             return pdq.doubleValue();
-        } else if (obj instanceof Integer) {
-            Integer pdq = (Integer) obj;
+        } else if (obj instanceof Integer pdq) {
             return pdq.doubleValue();
-        } else if (obj instanceof Long) {
-            Long pdq = (Long) obj;
+        } else if (obj instanceof Long pdq) {
             return pdq.doubleValue();
-        } else if (obj instanceof Float) {
-            Float pdq = (Float) obj;
+        } else if (obj instanceof Float pdq) {
             return pdq.doubleValue();
-        } else if (obj instanceof Double) {
-            Double pdq = (Double) obj;
+        } else if (obj instanceof Double pdq) {
             return pdq;
-        } else if (obj instanceof BigInteger) {
-            BigInteger pdq = (BigInteger) obj;
+        } else if (obj instanceof BigInteger pdq) {
             return pdq.doubleValue();
-        } else if (obj instanceof BigDecimal) {
-            BigDecimal pdq = (BigDecimal) obj;
+        } else if (obj instanceof BigDecimal pdq) {
             return pdq.doubleValue();
-        } else if (obj instanceof String) {
-            String pdq = (String) obj;
+        } else if (obj instanceof String pdq) {
             return pdq.trim().isEmpty() ? null : Double.valueOf(pdq);
         } else {
             return Double.valueOf(obj.toString());
@@ -630,32 +588,23 @@ public class NumUtils {
     public static BigInteger newBigInteger(Object obj) {
         if (obj == null) {
             return null;
-        } else if (obj instanceof Byte) {
-            Byte pdq = (Byte) obj;
+        } else if (obj instanceof Byte pdq) {
             return BigInteger.valueOf(pdq.longValue());
-        } else if (obj instanceof Short) {
-            Short pdq = (Short) obj;
+        } else if (obj instanceof Short pdq) {
             return BigInteger.valueOf(pdq.longValue());
-        } else if (obj instanceof Integer) {
-            Integer pdq = (Integer) obj;
+        } else if (obj instanceof Integer pdq) {
             return BigInteger.valueOf(pdq.longValue());
-        } else if (obj instanceof Long) {
-            Long pdq = (Long) obj;
+        } else if (obj instanceof Long pdq) {
             return BigInteger.valueOf(pdq);
-        } else if (obj instanceof Float) {
-            Float pdq = (Float) obj;
+        } else if (obj instanceof Float pdq) {
             return BigInteger.valueOf(pdq.longValue());
-        } else if (obj instanceof Double) {
-            Double pdq = (Double) obj;
+        } else if (obj instanceof Double pdq) {
             return BigInteger.valueOf(pdq.longValue());
-        } else if (obj instanceof BigInteger) {
-            BigInteger pdq = (BigInteger) obj;
+        } else if (obj instanceof BigInteger pdq) {
             return BigInteger.ZERO.add(pdq);
-        } else if (obj instanceof BigDecimal) {
-            BigDecimal pdq = (BigDecimal) obj;
+        } else if (obj instanceof BigDecimal pdq) {
             return BigInteger.valueOf(pdq.longValue());
-        } else if (obj instanceof String) {
-            String pdq = (String) obj;
+        } else if (obj instanceof String pdq) {
             return pdq.trim().isEmpty() ? null : new BigInteger(pdq);
         } else {
             return new BigInteger(obj.toString());
@@ -665,32 +614,23 @@ public class NumUtils {
     public static BigDecimal newBigDecimal(Object obj) {
         if (obj == null) {
             return null;
-        } else if (obj instanceof Byte) {
-            Byte pdq = (Byte) obj;
+        } else if (obj instanceof Byte pdq) {
             return new BigDecimal(pdq.intValue());
-        } else if (obj instanceof Short) {
-            Short pdq = (Short) obj;
+        } else if (obj instanceof Short pdq) {
             return new BigDecimal(pdq.intValue());
-        } else if (obj instanceof Integer) {
-            Integer pdq = (Integer) obj;
+        } else if (obj instanceof Integer pdq) {
             return new BigDecimal(pdq);
-        } else if (obj instanceof Long) {
-            Long pdq = (Long) obj;
+        } else if (obj instanceof Long pdq) {
             return new BigDecimal(pdq);
-        } else if (obj instanceof Float) {
-            Float pdq = (Float) obj;
+        } else if (obj instanceof Float pdq) {
             return new BigDecimal(pdq.doubleValue());
-        } else if (obj instanceof Double) {
-            Double pdq = (Double) obj;
+        } else if (obj instanceof Double pdq) {
             return new BigDecimal(pdq);
-        } else if (obj instanceof BigInteger) {
-            BigInteger pdq = (BigInteger) obj;
+        } else if (obj instanceof BigInteger pdq) {
             return new BigDecimal(pdq);
-        } else if (obj instanceof BigDecimal) {
-            BigDecimal pdq = (BigDecimal) obj;
+        } else if (obj instanceof BigDecimal pdq) {
             return BigDecimal.ZERO.add(pdq);
-        } else if (obj instanceof String) {
-            String pdq = (String) obj;
+        } else if (obj instanceof String pdq) {
             return pdq.trim().isEmpty() ? null : new BigDecimal(pdq);
         } else {
             return new BigDecimal(obj.toString());

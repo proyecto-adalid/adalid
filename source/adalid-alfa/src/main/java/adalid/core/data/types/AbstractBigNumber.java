@@ -49,7 +49,7 @@ public abstract class AbstractBigNumber extends NumericPrimitive {
      * @param precision the precision to set
      */
     public void setPrecision(int precision) {
-        XS2.checkAccess();
+        checkScope();
         _precision = precision;
         setMinMaxNumbers();
     }
@@ -68,7 +68,6 @@ public abstract class AbstractBigNumber extends NumericPrimitive {
      * @param scale the scale to set
      */
     void setScale(int scale) {
-        XS2.checkAccess();
         _scale = scale;
         setMinMaxNumbers();
     }

@@ -1603,6 +1603,22 @@ public abstract class Operation extends AbstractArtifact implements Comparable<O
 
     protected static final CharacterScalarX SPACE = XB.SPACE;
 
+    protected static final CharacterScalarX COMMA = XB.COMMA;
+
+    protected static final CharacterScalarX HYPHEN = XB.HYPHEN;
+
+    protected static final CharacterScalarX PERIOD = XB.PERIOD;
+
+    protected static final CharacterScalarX SLASH = XB.SLASH;
+
+    protected static final CharacterScalarX COLON = XB.COLON;
+
+    protected static final CharacterScalarX SEMICOLON = XB.SEMICOLON;
+
+    protected static final CharacterScalarX UNDERSCORE = XB.UNDERSCORE;
+
+    protected static final CharacterScalarX VBAR = XB.VBAR;
+
     protected static final CharacterScalarX CURRENT_USER_CODE = XB.CURRENT_USER_CODE;
 
     protected static final NumericScalarX NULL_NUMBER = XB.NULL_NUMBER;
@@ -1781,28 +1797,6 @@ public abstract class Operation extends AbstractArtifact implements Comparable<O
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Supplementary Expressions">
-    /* commented since 20200409
-    protected static CharacterOrderedPairX concat(Object x, CharacterExpression y) {
-        return XB.Character.OrderedPair.concat(charStringOf(x), y);
-    }
-
-    protected static CharacterScalarX charStringOf(Object x) {
-        return XB.toCharString(x);
-    }
-
-    protected static TemporalScalarX dateOf(Object x) {
-        return XB.toDate(x);
-    }
-
-    protected static TemporalScalarX timeOf(Object x) {
-        return XB.toTime(x);
-    }
-
-    protected static TemporalScalarX timestampOf(Object x) {
-        return XB.toTimestamp(x);
-    }
-
-    /**/
     protected static CharacterExpression concat(String x, Expression y) {
         return XB.Character.OrderedPair.concat(charStringOf(x), charStringOf(y));
     }
@@ -1830,6 +1824,35 @@ public abstract class Operation extends AbstractArtifact implements Comparable<O
             }
         }
         return XB.Character.OrderedPair.concat(cx, cy);
+    }
+
+    protected static CharacterExpression concatenate(String x, Expression y) {
+        return XB.Character.OrderedPair.concatenate(charStringOf(x), charStringOf(y));
+    }
+
+    protected static CharacterExpression concatenate(SpecialCharacterValue x, Expression y) {
+        return XB.Character.OrderedPair.concatenate(charStringOf(x), charStringOf(y));
+    }
+
+    protected static CharacterExpression concatenate(Expression x, Expression y) {
+        return XB.Character.OrderedPair.concatenate(charStringOf(x), charStringOf(y));
+    }
+
+    protected static CharacterExpression concatenate(Expression x, Expression y, Expression... extraOperands) {
+        CharacterExpression cx = charStringOf(x);
+        CharacterExpression cy = charStringOf(y);
+        if (extraOperands != null && extraOperands.length > 0) {
+            List<CharacterExpression> cz = new ArrayList<>();
+            for (Expression extraOperand : extraOperands) {
+                if (extraOperand != null) {
+                    cz.add(charStringOf(extraOperand));
+                }
+            }
+            if (!cz.isEmpty()) {
+                return XB.Character.DataAggregate.concatenate(cx, cy, cz.toArray(CharacterExpression[]::new));
+            }
+        }
+        return XB.Character.OrderedPair.concatenate(cx, cy);
     }
 
     protected static CharacterExpression charStringOf(Object x) {

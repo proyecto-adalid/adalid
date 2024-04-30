@@ -38,7 +38,7 @@ public class BinaryData extends BinaryPrimitive {
     }
 
     public void setDisplayWidth(int width) {
-        XS2.checkAccess();
+        checkScope();
         _displayWidth = width;
     }
 
@@ -49,7 +49,7 @@ public class BinaryData extends BinaryPrimitive {
     }
 
     public void setDisplayHeight(int height) {
-        XS2.checkAccess();
+        checkScope();
         _displayHeight = height;
     }
     /**/
@@ -63,7 +63,7 @@ public class BinaryData extends BinaryPrimitive {
     }
 
     public void setLargeDisplayWidth(int width) {
-        XS2.checkAccess();
+        checkScope();
         _largeDisplayWidth = width;
     }
 
@@ -74,7 +74,7 @@ public class BinaryData extends BinaryPrimitive {
     }
 
     public void setLargeDisplayHeight(int height) {
-        XS2.checkAccess();
+        checkScope();
         _largeDisplayHeight = height;
     }
 
@@ -85,7 +85,7 @@ public class BinaryData extends BinaryPrimitive {
     }
 
     public void setMediumDisplayWidth(int width) {
-        XS2.checkAccess();
+        checkScope();
         _mediumDisplayWidth = width;
     }
 
@@ -96,7 +96,7 @@ public class BinaryData extends BinaryPrimitive {
     }
 
     public void setMediumDisplayHeight(int height) {
-        XS2.checkAccess();
+        checkScope();
         _mediumDisplayHeight = height;
     }
 
@@ -107,7 +107,7 @@ public class BinaryData extends BinaryPrimitive {
     }
 
     public void setSmallDisplayWidth(int width) {
-        XS2.checkAccess();
+        checkScope();
         _smallDisplayWidth = width;
     }
 
@@ -118,7 +118,7 @@ public class BinaryData extends BinaryPrimitive {
     }
 
     public void setSmallDisplayHeight(int height) {
-        XS2.checkAccess();
+        checkScope();
         _smallDisplayHeight = height;
     }
     // </editor-fold>
@@ -130,6 +130,18 @@ public class BinaryData extends BinaryPrimitive {
 
     public int[] getDisplayHeight() {
         return new int[]{_largeDisplayHeight, _mediumDisplayHeight, _smallDisplayHeight};
+    }
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="since 17/03/2024">
+    private FetchType _fetchType = FetchType.EAGER;
+
+    public FetchType getFetchType() {
+        return _fetchType;
+    }
+
+    public void setFetchType(FetchType fetchType) {
+        _fetchType = fetchType;
     }
     // </editor-fold>
 
@@ -149,7 +161,7 @@ public class BinaryData extends BinaryPrimitive {
     }
 
     public void setAvatarShape(AvatarShape shape) {
-        XS2.checkAccess();
+        checkScope();
         _avatarShape = shape == null ? AvatarShape.NONE : shape;
     }
 
@@ -160,7 +172,7 @@ public class BinaryData extends BinaryPrimitive {
     }
 
     public void setAvatarDefault(AvatarDefault defaultAvatar) {
-        XS2.checkAccess();
+        checkScope();
         _avatarDefault = defaultAvatar == null ? AvatarDefault.NONE : defaultAvatar;
     }
 
@@ -171,7 +183,7 @@ public class BinaryData extends BinaryPrimitive {
     }
 
     public void setAvatarWidth(int size) {
-        XS2.checkAccess();
+        checkScope();
         _avatarWidth = size < 24 || size > 96 ? 36 : size;
     }
 
@@ -182,7 +194,7 @@ public class BinaryData extends BinaryPrimitive {
     }
 
     public void setAvatarHeight(int size) {
-        XS2.checkAccess();
+        checkScope();
         _avatarHeight = size < 24 || size > 96 ? 36 : size;
     }
 
@@ -193,7 +205,7 @@ public class BinaryData extends BinaryPrimitive {
     }
 
     public void setResizable(boolean resizable) {
-        XS2.checkAccess();
+        checkScope();
         _resizable = resizable;
     }
 

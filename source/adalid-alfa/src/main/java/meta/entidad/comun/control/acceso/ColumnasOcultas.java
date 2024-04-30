@@ -86,9 +86,12 @@ public class ColumnasOcultas extends AbstractPersistentEntity {
     @PropertyField(update = Kleenean.FALSE)
     public StringProperty codigo;
 
-    @ColumnField(nullable = Kleenean.FALSE)
+    @ColumnField(nullable = Kleenean.TRUE)
     @StringField(maxLength = Constants.MAX_STRING_LENGTH)
     public StringProperty columnas;
+
+    @ColumnField(nullable = Kleenean.TRUE)
+    public IntegerProperty filasPorPagina;
 
     @Override
     protected void settleProperties() {
@@ -114,6 +117,11 @@ public class ColumnasOcultas extends AbstractPersistentEntity {
         columnas.setLocalizedLabel(SPANISH, "lista de columnas");
         columnas.setLocalizedShortLabel(ENGLISH, "columns");
         columnas.setLocalizedShortLabel(SPANISH, "columnas");
+        /**/
+        filasPorPagina.setLocalizedLabel(ENGLISH, "rows per page");
+        filasPorPagina.setLocalizedLabel(SPANISH, "filas por página");
+        filasPorPagina.setLocalizedDescription(ENGLISH, "initial number of rows per page");
+        filasPorPagina.setLocalizedDescription(SPANISH, "número inicial de filas por página en las páginas de consulta y/o registro tabular");
         /**/
         // </editor-fold>
     }

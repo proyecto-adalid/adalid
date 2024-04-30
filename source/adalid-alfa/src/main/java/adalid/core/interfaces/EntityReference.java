@@ -120,6 +120,16 @@ public interface EntityReference extends Entity, Parameter, Property {
     void setMasterDependentProperties(Property... properties);
 
     /**
+     * @return the missing-instance-quick-adding-master override
+     */
+    EntityReference getMissingInstanceQuickAddingMasterOverride();
+
+    /**
+     * @param reference the missing-instance-quick-adding-master override to set
+     */
+    void setMissingInstanceQuickAddingMasterOverride(EntityReference reference);
+
+    /**
      * @return the key-properties-query-mapping indicator
      */
     boolean isKeyPropertiesQueryMappingEnabled();

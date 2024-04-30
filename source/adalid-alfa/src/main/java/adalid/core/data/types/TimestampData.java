@@ -70,7 +70,7 @@ public class TimestampData extends TemporalPrimitive {
      * @param precision the precision to set
      */
     public void setPrecision(int precision) {
-        XS2.checkAccess();
+        checkScope();
         _precision = precision;
     }
 
@@ -85,7 +85,7 @@ public class TimestampData extends TemporalPrimitive {
      * @param disabled the disabled weekends indicator to set
      */
     public void setDisabledWeekends(boolean disabled) {
-        XS2.checkAccess();
+        checkScope();
         _disabledWeekends = disabled;
     }
 
@@ -100,7 +100,7 @@ public class TimestampData extends TemporalPrimitive {
      * @param disabled the disabled weekdays indicator to set
      */
     public void setDisabledWeekdays(boolean disabled) {
-        XS2.checkAccess();
+        checkScope();
         _disabledWeekdays = disabled;
     }
 
@@ -115,7 +115,7 @@ public class TimestampData extends TemporalPrimitive {
      * @param disabled the disabled holidays indicator to set
      */
     public void setDisabledHolidays(boolean disabled) {
-        XS2.checkAccess();
+        checkScope();
         _disabledHolidays = disabled;
     }
 
@@ -130,7 +130,7 @@ public class TimestampData extends TemporalPrimitive {
      * @param range the year range to set
      */
     public void setYearRange(int range) {
-        XS2.checkAccess();
+        checkScope();
         _yearRange = range;
     }
 
@@ -145,7 +145,7 @@ public class TimestampData extends TemporalPrimitive {
      * @param min the minimum hour to set
      */
     public void setMinHour(int min) {
-        XS2.checkAccess();
+        checkScope();
         _minHour = min;
     }
 
@@ -160,7 +160,7 @@ public class TimestampData extends TemporalPrimitive {
      * @param max the maximum hour to set
      */
     public void setMaxHour(int max) {
-        XS2.checkAccess();
+        checkScope();
         _maxHour = max;
     }
 
@@ -175,7 +175,7 @@ public class TimestampData extends TemporalPrimitive {
      * @param step the step hour to set
      */
     public void setStepHour(int step) {
-        XS2.checkAccess();
+        checkScope();
         _stepHour = step;
     }
 
@@ -190,7 +190,7 @@ public class TimestampData extends TemporalPrimitive {
      * @param min the min minute to set
      */
     public void setMinMinute(int min) {
-        XS2.checkAccess();
+        checkScope();
         _minMinute = min;
     }
 
@@ -205,7 +205,7 @@ public class TimestampData extends TemporalPrimitive {
      * @param max the max minute to set
      */
     public void setMaxMinute(int max) {
-        XS2.checkAccess();
+        checkScope();
         _maxMinute = max;
     }
 
@@ -220,7 +220,7 @@ public class TimestampData extends TemporalPrimitive {
      * @param step the step minute to set
      */
     public void setStepMinute(int step) {
-        XS2.checkAccess();
+        checkScope();
         _stepMinute = step;
     }
 
@@ -235,7 +235,7 @@ public class TimestampData extends TemporalPrimitive {
      * @param min the min second to set
      */
     public void setMinSecond(int min) {
-        XS2.checkAccess();
+        checkScope();
         _minSecond = min;
     }
 
@@ -250,7 +250,7 @@ public class TimestampData extends TemporalPrimitive {
      * @param max the max second to set
      */
     public void setMaxSecond(int max) {
-        XS2.checkAccess();
+        checkScope();
         _maxSecond = max;
     }
 
@@ -265,7 +265,7 @@ public class TimestampData extends TemporalPrimitive {
      * @param step the step second to set
      */
     public void setStepSecond(int step) {
-        XS2.checkAccess();
+        checkScope();
         _stepSecond = step;
     }
 

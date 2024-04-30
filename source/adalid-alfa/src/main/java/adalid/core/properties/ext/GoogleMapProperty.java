@@ -39,8 +39,4 @@ public class GoogleMapProperty extends StringProperty {
         /**/
     }
 
-    public boolean isEmailAccount() {
-        return true;
-    }
-
 }

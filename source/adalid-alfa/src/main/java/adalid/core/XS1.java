@@ -43,9 +43,11 @@ class XS1 {
 
     private static final String TAB = "\t";
 
+    private static final String THAT_CLASS = XS2.class.getName();
+
     private static final String THIS_CLASS = XS1.class.getName();
 
-    private static final String ROOT_PACKAGE = StringUtils.substringBefore(THIS_CLASS, XS1.class.getSimpleName());
+    private static final String THIS_PACKAGE = XS1.class.getPackageName();
 
     private static final Map<KeyProperty, Class<? extends Annotation>> keyPropertyAnnotation;
 
@@ -129,23 +131,23 @@ class XS1 {
             return true;
         }
         String method;
-        String caller = null;
+        String metodo = null;
         final StackTraceElement[] stack = Thread.currentThread().getStackTrace();
         for (StackTraceElement element : stack) {
             method = element.getClassName() + "." + element.getMethodName();
-            if (caller == null) {
-                if (method.startsWith(ROOT_PACKAGE) && !method.startsWith(THIS_CLASS)) {
-                    caller = method;
+            if (metodo == null) {
+                if (method.startsWith(THIS_PACKAGE) && !method.startsWith(THAT_CLASS) && !method.startsWith(THIS_CLASS)) {
+                    metodo = method;
                 }
-            } else if (method.startsWith(ROOT_PACKAGE)) {
+            } else if (method.startsWith(THIS_PACKAGE)) {
                 break;
             } else {
-                String message = "illegal invocation of \"" + StringUtils.substringAfterLast(caller, ".") + "\"";
+                String message = "illegal invocation of \"" + StringUtils.substringAfterLast(metodo, ".") + "\"";
                 message += " at " + method + "(" + element.getFileName() + ":" + element.getLineNumber() + ")";
                 throw new IllegalAccessRuntimeException(message);
             }
         }
-        return caller != null;
+        return metodo != null;
     }
 
     static Class<?> getAnnotatedClass(Class<?> clazz, Class<? extends Annotation> annotationClass) {

@@ -68,7 +68,7 @@ public class RastroFuncion extends AbstractPersistentEntity {
 
     @ColumnField(indexed = Kleenean.TRUE)
     @PropertyField(table = Kleenean.TRUE, search = Kleenean.TRUE, report = Kleenean.TRUE, heading = Kleenean.TRUE)
-    @StringField(maxLength = MAX_EMAIL_ADDRESS_LENGTH) // maxLength = 36 until 01/12/2023
+    @StringField(maxLength = MAX_EMAIL_ADDRESS_LENGTH, displayLength = 36) // maxLength = 36 until 01/12/2023
     public StringProperty codigoUsuario;
 
     @ColumnField(indexed = Kleenean.TRUE)

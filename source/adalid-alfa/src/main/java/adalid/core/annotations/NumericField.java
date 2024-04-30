@@ -30,11 +30,20 @@ public @interface NumericField {
     /**
      * type especifica el patrón de análisis que se utilizará al formatear y analizar el valor de la propiedad o parámetro. Su valor es uno de los
      * elementos de la enumeración NumericFieldType. Seleccione CURRENCY para monedas, PERCENT para porcentajes o NUMBER para los demás tipos de
-     * números.
+     * números. Adicionalmente, para números enteros (propiedades ByteProperty, ShortProperty e IntegerProperty o parámetros ByteParameter,
+     * ShortParameter e IntegerParameter), puede seleccionar KNOB, para utilizar un botón giratorio en lugar de un componente de texto.
      *
      * @return type
      */
     NumericFieldType type() default NumericFieldType.UNSPECIFIED;
+
+    /**
+     * step especifica el incremento del botón giratorio. Solo aplica para números enteros, si el valor del elemento type es KNOB. Debe ser un número
+     * entero mayor o igual a 1. El valor predeterminado es 1.
+     *
+     * @return step
+     */
+    int step() default 1;
 
     /**
      * divisor específica el divisor para la regla divisorRule. Su valor debe ser un número entero entre 1 y otro número que depende de la clase de

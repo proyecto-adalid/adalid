@@ -54,7 +54,7 @@ public class IntegerProperty extends IntegerData implements NumericProperty {
      * @param fieldName the MasterSequence master field name to set
      */
     public void setMasterSequenceMasterFieldName(String fieldName) {
-        XS2.checkAccess();
+        checkScope();
         _masterSequenceMasterFieldName = fieldName;
     }
 
@@ -70,7 +70,7 @@ public class IntegerProperty extends IntegerData implements NumericProperty {
      * @param field the MasterSequence master field to set
      */
     public void setMasterSequenceMasterField(Field field) {
-        XS2.checkAccess();
+        checkScope();
         _masterSequenceMasterField = field;
     }
 
@@ -78,7 +78,7 @@ public class IntegerProperty extends IntegerData implements NumericProperty {
      * @param entity the MasterSequence master entity to set
      */
     public void setMasterSequenceMasterEntity(Entity entity) {
-        XS2.checkAccess();
+        checkScope();
         _masterSequenceMasterEntity = entity;
     }
 
@@ -99,7 +99,7 @@ public class IntegerProperty extends IntegerData implements NumericProperty {
      * @param property the MasterSequence master property to set
      */
     public void setMasterSequenceMasterProperty(Property property) {
-        XS2.checkAccess();
+        checkScope();
         _masterSequenceMasterProperty = property;
     }
 
@@ -114,6 +114,7 @@ public class IntegerProperty extends IntegerData implements NumericProperty {
      * @param start the MasterSequence start value to set
      */
     public void setMasterSequenceStart(int start) {
+        checkScope();
         _masterSequenceStart = start;
     }
 
@@ -128,6 +129,7 @@ public class IntegerProperty extends IntegerData implements NumericProperty {
      * @param step the MasterSequence step value to set
      */
     public void setMasterSequenceStep(int step) {
+        checkScope();
         _masterSequenceStep = step;
     }
 
@@ -142,7 +144,7 @@ public class IntegerProperty extends IntegerData implements NumericProperty {
      * @param rule the MasterSequence next value rule to set
      */
     public void setMasterSequenceNextValueRule(NextValueRule rule) {
-        XS2.checkAccess();
+        checkScope();
         _masterSequenceNextValueRule = rule;
     }
 

@@ -17,6 +17,7 @@ import adalid.core.annotations.*;
 import adalid.core.enums.*;
 import adalid.core.interfaces.*;
 import adalid.core.properties.*;
+import adalid.core.properties.ext.*;
 import java.lang.reflect.Field;
 import meta.entidad.comun.configuracion.basica.Funcion;
 import meta.entidad.comun.configuracion.basica.ext.FuncionParametro;
@@ -58,6 +59,10 @@ public class RolFuncionPar extends AbstractPersistentEntity {
 
     @VersionProperty
     public LongProperty version;
+
+    @NameProperty
+    @ColumnField(calculable = Kleenean.TRUE)
+    public CloakedStringProperty nombre;
 
     @ForeignKey(onDelete = OnDeleteAction.CASCADE, onUpdate = OnUpdateAction.CASCADE)
     @ManyToOne(navigability = Navigability.BIDIRECTIONAL, view = MasterDetailView.TABLE)
@@ -118,6 +123,9 @@ public class RolFuncionPar extends AbstractPersistentEntity {
     @Override
     protected void settleProperties() {
         super.settleProperties();
+        /**/
+        nombre.setCalculableValueExpression(concatenate(funcionParametro.codigoFuncionParametro, SLASH, rolFuncion.rol.codigoRol));
+        /**/
         // <editor-fold defaultstate="collapsed" desc="localization of RolFuncionPar's properties">
         rolFuncion.setLocalizedLabel(ENGLISH, "role/function association");
         rolFuncion.setLocalizedLabel(SPANISH, "asociación Rol/Función");

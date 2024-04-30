@@ -68,7 +68,7 @@ public abstract class AbstractDataAggregateX extends AbstractExpression implemen
                 case NOR_OR_NAXOR:
                     setDataType(Boolean.class);
                     break;
-                case CONCAT:
+                case CONCAT, CONCATENATE:
                     setDataType(String.class);
                     break;
                 case COUNT:

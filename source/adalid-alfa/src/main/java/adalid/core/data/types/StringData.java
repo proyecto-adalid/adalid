@@ -46,6 +46,8 @@ public class StringData extends CharacterPrimitive {
 
     private Integer _maxLength;
 
+    private Integer _displayLength;
+
     private String _inputMask;
 
     private char _slotChar = '_';
@@ -280,7 +282,7 @@ public class StringData extends CharacterPrimitive {
      * @param minLength the minLength to set
      */
     public void setMinLength(int minLength) {
-        XS2.checkAccess();
+        checkScope();
         _minLength = minLength;
     }
 
@@ -297,12 +299,36 @@ public class StringData extends CharacterPrimitive {
      * @param maxLength the maxLength to set
      */
     public void setMaxLength(Integer maxLength) {
-        XS2.checkAccess();
+        checkScope();
         _maxLength = maxLength;
     }
 
     public boolean isLargeObject() {
         return getMaxLength() == null;
+    }
+
+    /**
+     * @return the displayLength
+     */
+    public Integer getDisplayLength() {
+        return _richTextFormat ? null : _displayLength;
+    }
+
+    /**
+     * @return the displayLength
+     */
+    public Integer getMaxDisplayLength() {
+        return _richTextFormat ? null : _displayLength == null ? _maxLength : _displayLength;
+    }
+
+    /**
+     * Sets the string display length.
+     *
+     * @param displayLength the displayLength to set
+     */
+    public void setDisplayLength(Integer displayLength) {
+        checkScope();
+        _displayLength = displayLength;
     }
 
     /**
@@ -316,7 +342,7 @@ public class StringData extends CharacterPrimitive {
      * @param inputMask the input mask to set
      */
     public void setInputMask(String inputMask) {
-        XS2.checkAccess();
+        checkScope();
         _inputMask = inputMask;
     }
 
@@ -331,7 +357,7 @@ public class StringData extends CharacterPrimitive {
      * @param slotChar the slot char to set
      */
     public void setSlotChar(char slotChar) {
-        XS2.checkAccess();
+        checkScope();
         _slotChar = slotChar;
     }
 
@@ -346,7 +372,7 @@ public class StringData extends CharacterPrimitive {
      * @param pattern the pattern to set
      */
     public void setPattern(Pattern pattern) {
-        XS2.checkAccess();
+        checkScope();
         _pattern = pattern;
     }
 
@@ -392,6 +418,7 @@ public class StringData extends CharacterPrimitive {
      * @param message mensaje de error asociado a la expresión regular
      */
     public void setLocalizedRegexErrorMessage(Locale locale, String message) {
+        checkScope();
         Locale l = localeWritingKey(locale);
         if (message == null) {
             _localizedRegexErrorMessage.remove(l);
@@ -411,7 +438,7 @@ public class StringData extends CharacterPrimitive {
      * @param autoComplete the auto complete to set
      */
     public void setAutoComplete(AutoComplete autoComplete) {
-        XS2.checkAccess();
+        checkScope();
         _autoComplete = autoComplete == null ? AutoComplete.UNSPECIFIED : autoComplete;
     }
 
@@ -426,7 +453,7 @@ public class StringData extends CharacterPrimitive {
      * @param letterCase the letter case to set
      */
     public void setLetterCase(LetterCase letterCase) {
-        XS2.checkAccess();
+        checkScope();
         _letterCase = letterCase == null ? LetterCase.UNSPECIFIED : letterCase;
     }
 
@@ -441,7 +468,7 @@ public class StringData extends CharacterPrimitive {
      * @param allowDiacritics the allow diacritics indicator to set
      */
     public void setAllowDiacritics(boolean allowDiacritics) {
-        XS2.checkAccess();
+        checkScope();
         _allowDiacritics = allowDiacritics;
     }
 
@@ -456,7 +483,7 @@ public class StringData extends CharacterPrimitive {
      * @param richTextFormat the rich text format indicator to set
      */
     public void setRichTextFormat(boolean richTextFormat) {
-        XS2.checkAccess();
+        checkScope();
         _richTextFormat = richTextFormat;
     }
 
@@ -481,6 +508,7 @@ public class StringData extends CharacterPrimitive {
      * @param translatable the allow translatation indicator to set
      */
     public void setTranslatable(boolean translatable) {
+        checkScope();
         _translatable = translatable;
     }
 
@@ -492,7 +520,7 @@ public class StringData extends CharacterPrimitive {
     }
 
     public void setSpecialConverterName(String converter) {
-        XS2.checkAccess();
+        checkScope();
         _specialConverterName = converter;
     }
 
@@ -504,7 +532,7 @@ public class StringData extends CharacterPrimitive {
     }
 
     public void setSpecialValidatorName(String validator) {
-        XS2.checkAccess();
+        checkScope();
         _specialValidatorName = validator;
     }
 
@@ -519,7 +547,7 @@ public class StringData extends CharacterPrimitive {
      * @param expression the type name expression to set
      */
     public void setTypeNameExpression(CharacterExpression expression) {
-//      XS2.checkAccess();
+        checkScope();
         _typeNameExpression = expression;
     }
 
@@ -535,7 +563,7 @@ public class StringData extends CharacterPrimitive {
      * @param type the url type to set
      */
     public void setUrlType(UrlType type) {
-        XS2.checkAccess();
+        checkScope();
         _urlType = type == null ? UrlType.UNSPECIFIED : type;
     }
 
@@ -551,7 +579,7 @@ public class StringData extends CharacterPrimitive {
      * @param mode the url display mode to set
      */
     public void setUrlDisplayMode(DisplayMode mode) {
-        XS2.checkAccess();
+        checkScope();
         _urlDisplayMode = mode == null ? DisplayMode.UNSPECIFIED : mode;
     }
 
@@ -567,7 +595,7 @@ public class StringData extends CharacterPrimitive {
      * @param type the url display type to set
      */
     public void setUrlDisplayType(UrlDisplayType type) {
-        XS2.checkAccess();
+        checkScope();
         _urlDisplayType = type == null ? UrlDisplayType.UNSPECIFIED : type;
     }
 
@@ -586,7 +614,7 @@ public class StringData extends CharacterPrimitive {
      * @param urls the list of valid URLs to set
      */
     public void setSourceURLs(String... urls) {
-        XS2.checkAccess();
+        checkScope();
         _sourceURLs = urls;
     }
 
@@ -605,7 +633,7 @@ public class StringData extends CharacterPrimitive {
      * @param searchURL the URL to set
      */
     public void setSearchURL(String searchURL) {
-        XS2.checkAccess();
+        checkScope();
         _searchURL = searchURL;
     }
 
@@ -629,18 +657,20 @@ public class StringData extends CharacterPrimitive {
      * El método setEncodingEnabled se utiliza para habilitar la codificación del valor de la propiedad para almacenarlo en la base de datos.
      * <p>
      * <b>Advertencias</b>
+     * </p>
      * <ul>
      * <li>La codificación limita significativamente el uso de la propiedad en consultas e informes.</li>
      * <li>El algoritmo de codificación utilizado es Base64, el cual no es un algoritmo de cifrado, se decodifica fácilmente y, por lo tanto, no debe
      * utilizarse como un método de cifrado seguro.</li>
      * <li>La longitud del valor codificado es un tercio mayor que la longitud del valor original; si, por ejemplo, la longitud máxima de la propiedad
      * se establece en 2000, entonces la propiedad solo puede contener valores de hasta 1500 caracteres.</li>
-     * </ul><p>
+     * </ul>
+     *
      * @param encoding true para habilitar la codificación
      * @see <a href="https://docs.oracle.com/javase/8/docs/api/java/util/Base64.html">Class Base64</a>
      */
     public void setEncodingEnabled(boolean encoding) {
-        XS2.checkAccess();
+        checkScope();
         _encodingEnabled = encoding;
     }
 
@@ -664,6 +694,7 @@ public class StringData extends CharacterPrimitive {
      * algoritmo de codificación utilizado es Base64. Su valor es uno de los elementos de la enumeración EncodingType.
      * <p>
      * Seleccione:
+     * </p>
      * <ul>
      * <li>BASIC, para utilizar el "Alfabeto Base64" como se especifica en la Tabla 1 de RFC 4648 y RFC 2045 para la operación de codificación y
      * decodificación. El codificador no agrega ningún carácter de avance de línea (separador de línea). El decodificador rechaza los datos que
@@ -682,12 +713,13 @@ public class StringData extends CharacterPrimitive {
      * <li>FILENAME, para propiedades que contienen una referencias a un archivo cargado en el servidor (anotadas con @FileReference)</li>
      * <li>URL, para propiedades que contienen una URL (anotadas con @UniformResourceLocator o @UrlProperty)</li>
      * <li>UNSPECIFIED, para las demás propiedades</li>
-     * </ul><p>
+     * </ul>
+     *
      * @param encoding tipo de codificación
      * @see <a href="https://docs.oracle.com/javase/8/docs/api/java/util/Base64.html">Class Base64</a>
      */
     public void setEncodingType(EncodingType encoding) {
-        XS2.checkAccess();
+        checkScope();
         _encodingType = encoding == null ? EncodingType.UNSPECIFIED : encoding;
     }
 
@@ -696,7 +728,7 @@ public class StringData extends CharacterPrimitive {
     }
 
     public void setFileDownloadStartFunction(String function) {
-        XS2.checkAccess();
+        checkScope();
         _fileDownloadStartFunction = function;
     }
 
@@ -705,7 +737,7 @@ public class StringData extends CharacterPrimitive {
     }
 
     public void setFileDownloadStopFunction(String function) {
-        XS2.checkAccess();
+        checkScope();
         _fileDownloadStopFunction = function;
     }
 
@@ -714,7 +746,7 @@ public class StringData extends CharacterPrimitive {
     }
 
     public void setFileViewerDialogReturnUpdate(String... update) {
-        XS2.checkAccess();
+        checkScope();
         _fileViewerDialogReturnUpdate = update == null || update.length == 0 ? null : update;
     }
 
@@ -734,7 +766,7 @@ public class StringData extends CharacterPrimitive {
      * @param autoStart the file-upload auto-start indicator to set
      */
     public void setFileUploadAutoStart(boolean autoStart) {
-        XS2.checkAccess();
+        checkScope();
         _fileUploadAutoStart = autoStart;
     }
 
@@ -754,7 +786,7 @@ public class StringData extends CharacterPrimitive {
      * @param virusScan the file-upload virus-scan indicator to set
      */
     public void setFileUploadVirusScan(boolean virusScan) {
-        XS2.checkAccess();
+        checkScope();
         _fileUploadVirusScan = virusScan;
     }
 
@@ -774,7 +806,7 @@ public class StringData extends CharacterPrimitive {
      * @param fileLimit the file-upload file limit indicator to set
      */
     public void setFileUploadFileLimit(int fileLimit) {
-        XS2.checkAccess();
+        checkScope();
         _fileUploadFileLimit = fileLimit;
     }
 
@@ -794,7 +826,7 @@ public class StringData extends CharacterPrimitive {
      * @param undoLimit the file-upload retry limit indicator to set
      */
     public void setFileUploadUndoLimit(int undoLimit) {
-        XS2.checkAccess();
+        checkScope();
         _fileUploadUndoLimit = undoLimit;
     }
 
@@ -814,7 +846,7 @@ public class StringData extends CharacterPrimitive {
      * @param size the max input file size to set
      */
     public void setMaxInputFileSize(int size) {
-        XS2.checkAccess();
+        checkScope();
         _maxInputFileSize = size;
     }
 
@@ -830,7 +862,7 @@ public class StringData extends CharacterPrimitive {
      * @param types the valid input file types to set
      */
     public void setValidInputFileTypes(MimeType[] types) {
-        XS2.checkAccess();
+        checkScope();
         _validInputFileTypes = types == null ? new MimeType[]{} : types;
     }
 
@@ -867,7 +899,7 @@ public class StringData extends CharacterPrimitive {
      * @param pattern the valid input file pattern to set
      */
     public void setValidInputFilePattern(Pattern pattern) {
-        XS2.checkAccess();
+        checkScope();
         _validInputFilePattern = pattern;
     }
 
@@ -887,7 +919,7 @@ public class StringData extends CharacterPrimitive {
      * @param option the upload storage option to set
      */
     public void setUploadStorageOption(UploadStorageOption option) {
-        XS2.checkAccess();
+        checkScope();
         _uploadStorageOption = option == null ? UploadStorageOption.UNSPECIFIED : option;
     }
 
@@ -903,7 +935,7 @@ public class StringData extends CharacterPrimitive {
      * @param fieldName the path template to set
      */
     public void setPathTemplate(String fieldName) {
-        XS2.checkAccess();
+        checkScope();
         _pathTemplate = fieldName;
     }
 
@@ -919,7 +951,7 @@ public class StringData extends CharacterPrimitive {
      * @param fieldName the blob field name to set
      */
     public void setBlobFieldName(String fieldName) {
-        XS2.checkAccess();
+        checkScope();
         _blobFieldName = fieldName;
     }
 
@@ -937,7 +969,7 @@ public class StringData extends CharacterPrimitive {
      * @return the previously set blob field
      */
     public Field setBlobField(Field field) {
-        XS2.checkAccess();
+        checkScope();
         Field previous = _blobField;
         _blobField = field;
         return previous;
@@ -947,7 +979,7 @@ public class StringData extends CharacterPrimitive {
      * @param entity the blob entity to set
      */
     public void setBlobEntity(Entity entity) {
-        XS2.checkAccess();
+        checkScope();
         _blobEntity = entity;
     }
 
@@ -966,7 +998,7 @@ public class StringData extends CharacterPrimitive {
      * @param property the blob property to set
      */
     public void setBlobProperty(Property property) {
-        XS2.checkAccess();
+        checkScope();
         _blobProperty = property;
     }
 
@@ -982,7 +1014,7 @@ public class StringData extends CharacterPrimitive {
      * @param fieldName the join field name to set
      */
     public void setJoinFieldName(String fieldName) {
-        XS2.checkAccess();
+        checkScope();
         _joinFieldName = fieldName;
     }
 
@@ -1000,7 +1032,7 @@ public class StringData extends CharacterPrimitive {
      * @return the previously set join field
      */
     public Field setJoinField(Field field) {
-        XS2.checkAccess();
+        checkScope();
         Field previous = _joinField;
         _joinField = field;
         return previous;
@@ -1010,7 +1042,7 @@ public class StringData extends CharacterPrimitive {
      * @param entity the join entity to set
      */
     public void setJoinEntity(Entity entity) {
-        XS2.checkAccess();
+        checkScope();
         _joinEntity = entity;
     }
 
@@ -1029,7 +1061,7 @@ public class StringData extends CharacterPrimitive {
      * @param property the join property to set
      */
     public void setJoinProperty(Property property) {
-        XS2.checkAccess();
+        checkScope();
         _joinProperty = property;
     }
 
@@ -1045,7 +1077,7 @@ public class StringData extends CharacterPrimitive {
      * @param fieldName the load field name to set
      */
     public void setLoadFieldName(String fieldName) {
-        XS2.checkAccess();
+        checkScope();
         _loadFieldName = fieldName;
     }
 
@@ -1063,7 +1095,7 @@ public class StringData extends CharacterPrimitive {
      * @return the previously set load field
      */
     public Field setLoadField(Field field) {
-        XS2.checkAccess();
+        checkScope();
         Field previous = _loadField;
         _loadField = field;
         return previous;
@@ -1073,7 +1105,7 @@ public class StringData extends CharacterPrimitive {
      * @param entity the load entity to set
      */
     public void setLoadEntity(Entity entity) {
-        XS2.checkAccess();
+        checkScope();
         _loadEntity = entity;
     }
 
@@ -1092,7 +1124,7 @@ public class StringData extends CharacterPrimitive {
      * @param property the load property to set
      */
     public void setLoadProperty(Property property) {
-        XS2.checkAccess();
+        checkScope();
         _loadProperty = property;
     }
 
@@ -1108,7 +1140,7 @@ public class StringData extends CharacterPrimitive {
      * @param fieldName the text field name to set
      */
     public void setTextFieldName(String fieldName) {
-        XS2.checkAccess();
+        checkScope();
         _textFieldName = fieldName;
     }
 
@@ -1126,7 +1158,7 @@ public class StringData extends CharacterPrimitive {
      * @return the previously set text field
      */
     public Field setTextField(Field field) {
-        XS2.checkAccess();
+        checkScope();
         Field previous = _textField;
         _textField = field;
         return previous;
@@ -1136,7 +1168,7 @@ public class StringData extends CharacterPrimitive {
      * @param entity the text entity to set
      */
     public void setTextEntity(Entity entity) {
-        XS2.checkAccess();
+        checkScope();
         _textEntity = entity;
     }
 
@@ -1155,7 +1187,7 @@ public class StringData extends CharacterPrimitive {
      * @param property the text property to set
      */
     public void setTextProperty(Property property) {
-        XS2.checkAccess();
+        checkScope();
         _textProperty = property;
     }
 
@@ -1171,7 +1203,7 @@ public class StringData extends CharacterPrimitive {
      * @param updateable the updateable file reference indicator to set
      */
     public void setUpdateableFileReference(Kleenean updateable) {
-        XS2.checkAccess();
+        checkScope();
         _updateableFileReference = updateable == null ? Kleenean.UNSPECIFIED : updateable;
     }
 
@@ -1193,7 +1225,7 @@ public class StringData extends CharacterPrimitive {
     }
 
     public void setEmbeddedDocumentURLs(String... urls) {
-        XS2.checkAccess();
+        checkScope();
         _sourceURLs = urls;
         initializeSearchURL();
     }
@@ -1225,7 +1257,7 @@ public class StringData extends CharacterPrimitive {
     }
 
     public void setEmbeddedDocumentType(EmbeddedDocumentType type) {
-        XS2.checkAccess();
+        checkScope();
         String regex;
         if (type == null) {
             type = EmbeddedDocumentType.UNSPECIFIED;
@@ -1252,7 +1284,7 @@ public class StringData extends CharacterPrimitive {
     }
 
     public void setEmbeddedDocumentStyle(EmbeddedDocumentStyle style) {
-        XS2.checkAccess();
+        checkScope();
         _embeddedDocumentStyle = style == null ? EmbeddedDocumentStyle.UNSPECIFIED : style;
     }
 
@@ -1263,7 +1295,7 @@ public class StringData extends CharacterPrimitive {
     }
 
     public void setDisplayWidth(int width) {
-        XS2.checkAccess();
+        checkScope();
         _displayWidth = width;
     }
 
@@ -1272,7 +1304,7 @@ public class StringData extends CharacterPrimitive {
     }
 
     public void setDisplayHeight(int height) {
-        XS2.checkAccess();
+        checkScope();
         _displayHeight = height;
     }
     /**/
@@ -1284,7 +1316,7 @@ public class StringData extends CharacterPrimitive {
     }
 
     public void setLargeDisplayWidth(int width) {
-        XS2.checkAccess();
+        checkScope();
         _largeDisplayWidth = width;
     }
 
@@ -1293,7 +1325,7 @@ public class StringData extends CharacterPrimitive {
     }
 
     public void setLargeDisplayHeight(int height) {
-        XS2.checkAccess();
+        checkScope();
         _largeDisplayHeight = height;
     }
 
@@ -1302,7 +1334,7 @@ public class StringData extends CharacterPrimitive {
     }
 
     public void setMediumDisplayWidth(int width) {
-        XS2.checkAccess();
+        checkScope();
         _mediumDisplayWidth = width;
     }
 
@@ -1311,7 +1343,7 @@ public class StringData extends CharacterPrimitive {
     }
 
     public void setMediumDisplayHeight(int height) {
-        XS2.checkAccess();
+        checkScope();
         _mediumDisplayHeight = height;
     }
 
@@ -1320,7 +1352,7 @@ public class StringData extends CharacterPrimitive {
     }
 
     public void setSmallDisplayWidth(int width) {
-        XS2.checkAccess();
+        checkScope();
         _smallDisplayWidth = width;
     }
 
@@ -1329,7 +1361,7 @@ public class StringData extends CharacterPrimitive {
     }
 
     public void setSmallDisplayHeight(int height) {
-        XS2.checkAccess();
+        checkScope();
         _smallDisplayHeight = height;
     }
     // </editor-fold>
@@ -1349,7 +1381,7 @@ public class StringData extends CharacterPrimitive {
     }
 
     public void setResizable(boolean resizable) {
-        XS2.checkAccess();
+        checkScope();
         _resizable = resizable;
     }
 
@@ -1358,7 +1390,7 @@ public class StringData extends CharacterPrimitive {
     }
 
     public void setFrameBorder(Boolean frameBorder) {
-        XS2.checkAccess();
+        checkScope();
         _frameBorder = frameBorder;
     }
 
@@ -1367,7 +1399,7 @@ public class StringData extends CharacterPrimitive {
     }
 
     public void setEncryptedMedia(Boolean allow) {
-        XS2.checkAccess();
+        checkScope();
         _encryptedMedia = allow;
     }
 
@@ -1376,7 +1408,7 @@ public class StringData extends CharacterPrimitive {
     }
 
     public void setAccelerometer(Boolean allow) {
-        XS2.checkAccess();
+        checkScope();
         _accelerometer = allow;
     }
 
@@ -1385,7 +1417,7 @@ public class StringData extends CharacterPrimitive {
     }
 
     public void setAutoplay(Boolean allow) {
-        XS2.checkAccess();
+        checkScope();
         _autoplay = allow;
     }
 
@@ -1394,7 +1426,7 @@ public class StringData extends CharacterPrimitive {
     }
 
     public void setGyroscope(Boolean allow) {
-        XS2.checkAccess();
+        checkScope();
         _gyroscope = allow;
     }
 
@@ -1403,7 +1435,7 @@ public class StringData extends CharacterPrimitive {
     }
 
     public void setPictureInPicture(Boolean allow) {
-        XS2.checkAccess();
+        checkScope();
         _pictureInPicture = allow;
     }
 
@@ -1412,7 +1444,7 @@ public class StringData extends CharacterPrimitive {
     }
 
     public void setFullScreen(Boolean allow) {
-        XS2.checkAccess();
+        checkScope();
         _fullScreen = allow;
     }
 
@@ -1421,7 +1453,7 @@ public class StringData extends CharacterPrimitive {
     }
 
     public void setLoading(EmbeddedDocumentLoading loading) {
-        XS2.checkAccess();
+        checkScope();
         _loading = loading == null ? EmbeddedDocumentLoading.UNSPECIFIED : loading;
     }
 
@@ -1430,7 +1462,7 @@ public class StringData extends CharacterPrimitive {
     }
 
     public void setReferrerPolicy(EmbeddedDocumentPolicy referrerPolicy) {
-        XS2.checkAccess();
+        checkScope();
         _referrerPolicy = referrerPolicy == null ? EmbeddedDocumentPolicy.UNSPECIFIED : referrerPolicy;
     }
 
@@ -1439,7 +1471,7 @@ public class StringData extends CharacterPrimitive {
     }
 
     public void setSandbox(EmbeddedDocumentSandbox sandbox) {
-        XS2.checkAccess();
+        checkScope();
         _sandbox = sandbox == null ? EmbeddedDocumentSandbox.UNSPECIFIED : sandbox;
     }
 

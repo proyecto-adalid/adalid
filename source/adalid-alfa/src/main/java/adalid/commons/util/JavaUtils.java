@@ -102,6 +102,7 @@ public class JavaUtils {
         return names;
     }
 
+    @SuppressWarnings("unchecked")
     public static <T extends Enum<T>> T getEnumOfEquals(String name, T... values) {
         if (name != null && values != null) {
             for (T t : values) {
@@ -113,6 +114,7 @@ public class JavaUtils {
         return null;
     }
 
+    @SuppressWarnings("unchecked")
     public static <T extends Enum<T>> T getEnumOfEqualsIgnoreCase(String name, T... values) {
         if (name != null && values != null) {
             for (T t : values) {

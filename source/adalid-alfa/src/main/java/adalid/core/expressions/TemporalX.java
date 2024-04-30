@@ -496,6 +496,21 @@ public class TemporalX extends VariantX implements TemporalExpression {
     }
 
     @Override
+    public TemporalOrderedPairX toTimestamp(java.util.Date y) {
+        return XB.Temporal.OrderedPair.toTimestamp(this, y);
+    }
+
+    @Override
+    public TemporalOrderedPairX toTimestamp(SpecialTemporalValue y) {
+        return XB.Temporal.OrderedPair.toTimestamp(this, y);
+    }
+
+    @Override
+    public TemporalOrderedPairX toTimestamp(TemporalExpression y) {
+        return XB.Temporal.OrderedPair.toTimestamp(this, y);
+    }
+
+    @Override
     public TemporalScalarX defaultWhenNull() {
         return XB.Temporal.Scalar.defaultWhenNull(this);
     }

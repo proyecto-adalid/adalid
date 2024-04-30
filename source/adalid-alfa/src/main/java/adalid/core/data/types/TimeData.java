@@ -62,7 +62,7 @@ public class TimeData extends TemporalPrimitive {
      * @param precision the precision to set
      */
     public void setPrecision(int precision) {
-        XS2.checkAccess();
+        checkScope();
         _precision = precision;
     }
 
@@ -77,7 +77,7 @@ public class TimeData extends TemporalPrimitive {
      * @param min the minimum hour to set
      */
     public void setMinHour(int min) {
-        XS2.checkAccess();
+        checkScope();
         _minHour = min;
     }
 
@@ -92,7 +92,7 @@ public class TimeData extends TemporalPrimitive {
      * @param max the maximum hour to set
      */
     public void setMaxHour(int max) {
-        XS2.checkAccess();
+        checkScope();
         _maxHour = max;
     }
 
@@ -107,7 +107,7 @@ public class TimeData extends TemporalPrimitive {
      * @param step the step hour to set
      */
     public void setStepHour(int step) {
-        XS2.checkAccess();
+        checkScope();
         _stepHour = step;
     }
 
@@ -122,7 +122,7 @@ public class TimeData extends TemporalPrimitive {
      * @param min the min minute to set
      */
     public void setMinMinute(int min) {
-        XS2.checkAccess();
+        checkScope();
         _minMinute = min;
     }
 
@@ -137,7 +137,7 @@ public class TimeData extends TemporalPrimitive {
      * @param max the max minute to set
      */
     public void setMaxMinute(int max) {
-        XS2.checkAccess();
+        checkScope();
         _maxMinute = max;
     }
 
@@ -152,7 +152,7 @@ public class TimeData extends TemporalPrimitive {
      * @param step the step minute to set
      */
     public void setStepMinute(int step) {
-        XS2.checkAccess();
+        checkScope();
         _stepMinute = step;
     }
 
@@ -167,7 +167,7 @@ public class TimeData extends TemporalPrimitive {
      * @param min the min second to set
      */
     public void setMinSecond(int min) {
-        XS2.checkAccess();
+        checkScope();
         _minSecond = min;
     }
 
@@ -182,7 +182,7 @@ public class TimeData extends TemporalPrimitive {
      * @param max the max second to set
      */
     public void setMaxSecond(int max) {
-        XS2.checkAccess();
+        checkScope();
         _maxSecond = max;
     }
 
@@ -197,7 +197,7 @@ public class TimeData extends TemporalPrimitive {
      * @param step the step second to set
      */
     public void setStepSecond(int step) {
-        XS2.checkAccess();
+        checkScope();
         _stepSecond = step;
     }
 
