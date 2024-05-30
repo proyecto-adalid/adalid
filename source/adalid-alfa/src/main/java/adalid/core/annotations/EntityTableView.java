@@ -124,11 +124,13 @@ public @interface EntityTableView {
     /**
      * responsiveMode especifica el modo "responsive" de la tabla. Su valor es uno de los elementos de la enumeración TableResponsiveMode. Seleccione
      * PRIORITY para mostrar las columnas de la tabla dependiendo de su prioridad, según el tamaño de la pantalla. Seleccione REFLOW para mostrar
-     * todas las columnas, apiladas o no, según el tamaño de la pantalla. Omita el elemento o seleccione NONE para que la tabla no sea "responsive".
+     * todas las columnas, apiladas o no, según el tamaño de la pantalla. Seleccione NONE para que la tabla no sea "responsive". Omita el elemento o
+     * seleccione UNSPECIFIED para que se utilice el valor establecido mediante el método setDefaultEntityTableViewResponsiveMode del meta-proyecto,
+     * cuyo valor inicial es NONE.
      *
      * @return responsiveMode
      */
-    TableResponsiveMode responsiveMode() default TableResponsiveMode.NONE;
+    TableResponsiveMode responsiveMode() default TableResponsiveMode.UNSPECIFIED;
 
     /**
      * menu especifica el tipo de vistas (páginas) generadas que deben ser accesibles desde el menú principal de la aplicación. Su valor es uno de los

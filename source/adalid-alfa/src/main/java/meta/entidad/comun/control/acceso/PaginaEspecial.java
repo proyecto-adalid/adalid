@@ -28,11 +28,10 @@ import java.lang.reflect.Field;
 @EntityInsertOperation(enabled = Kleenean.FALSE)
 @EntityUpdateOperation(enabled = Kleenean.FALSE)
 @EntityDeleteOperation(enabled = Kleenean.FALSE)
-@EntityTableView(enabled = Kleenean.TRUE)
-@EntityDetailView(enabled = Kleenean.FALSE)
+@EntityTableView(enabled = Kleenean.TRUE, responsiveMode = TableResponsiveMode.PRIORITY)
+@EntityDetailView(enabled = Kleenean.TRUE)
 @EntityTreeView(enabled = Kleenean.FALSE)
 @EntityConsoleView(enabled = Kleenean.FALSE)
-@EntityReferenceDisplay(style = EntityReferenceStyle.NAME)
 @EntityReferenceSearch(searchType = SearchType.LIST, listStyle = ListStyle.NAME)
 public class PaginaEspecial extends AbstractPersistentEntity {
 
@@ -79,7 +78,7 @@ public class PaginaEspecial extends AbstractPersistentEntity {
     public StringProperty descripcion;
 
     @UrlProperty(urlType = UrlType.EXTERNAL, urlDisplayType = UrlDisplayType.HYPERLINK)
-    @PropertyField(create = Kleenean.TRUE, update = Kleenean.TRUE, table = Kleenean.TRUE, report = Kleenean.TRUE)
+    @PropertyField(responsivePriority = 6, create = Kleenean.TRUE, update = Kleenean.TRUE, table = Kleenean.TRUE, report = Kleenean.TRUE)
     public StringProperty uri;
 
     @ColumnField(nullable = Kleenean.FALSE)

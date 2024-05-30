@@ -36,7 +36,7 @@ import meta.entidad.comun.operacion.basica.RecursoValor;
 @EntityInsertOperation(enabled = Kleenean.FALSE)
 @EntityUpdateOperation(enabled = Kleenean.FALSE)
 @EntityDeleteOperation(enabled = Kleenean.FALSE)
-@EntityTableView(enabled = Kleenean.TRUE, readingViewWesternToolbarSnippet = "/resources/snippets/base/entity/RastroProceso/botonOpenCalendarioProcesos")
+@EntityTableView(enabled = Kleenean.TRUE, responsiveMode = TableResponsiveMode.PRIORITY, readingViewWesternToolbarSnippet = "/resources/snippets/base/entity/RastroProceso/botonOpenCalendarioProcesos")
 @EntityDetailView(enabled = Kleenean.TRUE)
 @EntityTreeView(enabled = Kleenean.FALSE)
 @EntityConsoleView(enabled = Kleenean.FALSE)
@@ -66,7 +66,7 @@ public class RastroProceso extends AbstractPersistentEntity {
     public LongProperty id;
 
     @ColumnField(nullable = Kleenean.FALSE, indexed = Kleenean.TRUE)
-    @PropertyField(table = Kleenean.TRUE, report = Kleenean.TRUE, search = Kleenean.TRUE, heading = Kleenean.TRUE, overlay = Kleenean.TRUE)
+    @PropertyField(responsivePriority = 6, table = Kleenean.TRUE, report = Kleenean.TRUE, search = Kleenean.TRUE, heading = Kleenean.TRUE, overlay = Kleenean.TRUE)
     public TimestampProperty fechaHoraInicioEjecucion;
 
     public TimestampProperty fechaHoraFinEjecucion;
@@ -82,7 +82,7 @@ public class RastroProceso extends AbstractPersistentEntity {
     public Usuario usuario;
 
     @ColumnField(indexed = Kleenean.TRUE)
-    @PropertyField(table = Kleenean.TRUE, search = Kleenean.TRUE, report = Kleenean.TRUE)
+    @PropertyField(responsivePriority = 6, table = Kleenean.TRUE, search = Kleenean.TRUE, report = Kleenean.TRUE)
     @StringField(maxLength = MAX_EMAIL_ADDRESS_LENGTH, displayLength = 36) // maxLength = 36 until 01/12/2023
     public StringProperty codigoUsuario;
 
@@ -115,7 +115,7 @@ public class RastroProceso extends AbstractPersistentEntity {
     public StringProperty descripcionFuncion;
 
     @UniformResourceLocator(urlType = UrlType.INTERNAL, urlDisplayMode = DisplayMode.PROCESSING, urlDisplayType = UrlDisplayType.BUTTON)
-    @PropertyField(table = Kleenean.TRUE, report = Kleenean.FALSE, search = Kleenean.FALSE, headertextless = Kleenean.TRUE)
+    @PropertyField(responsivePriority = 6, table = Kleenean.TRUE, report = Kleenean.FALSE, search = Kleenean.FALSE, headertextless = Kleenean.TRUE)
     public StringProperty paginaFuncion;
 
     @ForeignKey(onDelete = OnDeleteAction.NONE, onUpdate = OnUpdateAction.NONE)
@@ -165,7 +165,7 @@ public class RastroProceso extends AbstractPersistentEntity {
     public LongProperty idSegmentoRecurso;
 
     @UniformResourceLocator(urlType = UrlType.INTERNAL, urlDisplayType = UrlDisplayType.BUTTON)
-    @PropertyField(table = Kleenean.TRUE, report = Kleenean.FALSE, search = Kleenean.FALSE, headertextless = Kleenean.TRUE)
+    @PropertyField(responsivePriority = 6, table = Kleenean.TRUE, report = Kleenean.FALSE, search = Kleenean.FALSE, headertextless = Kleenean.TRUE)
     public StringProperty paginaRecurso;
 
     @StringField(maxLength = 20)
@@ -176,7 +176,7 @@ public class RastroProceso extends AbstractPersistentEntity {
     @ForeignKey(onDelete = OnDeleteAction.NONE, onUpdate = OnUpdateAction.NONE)
     @ManyToOne(navigability = Navigability.UNIDIRECTIONAL, view = MasterDetailView.NONE)
     @ColumnField(nullable = Kleenean.FALSE)
-    @PropertyField(table = Kleenean.TRUE, report = Kleenean.TRUE, heading = Kleenean.TRUE, overlay = Kleenean.TRUE, readingTableSnippet = BORPPSX1)
+    @PropertyField(responsivePriority = 5, table = Kleenean.TRUE, report = Kleenean.TRUE, heading = Kleenean.TRUE, overlay = Kleenean.TRUE, readingTableSnippet = BORPPSX1)
     public CondicionEjeFun condicionEjeFun;
 
     @ForeignKey(onDelete = OnDeleteAction.NONE, onUpdate = OnUpdateAction.NONE)
@@ -193,7 +193,7 @@ public class RastroProceso extends AbstractPersistentEntity {
     public StringProperty paginaRecursoObtenido;
 
     @FileReference(loadField = "fechaHoraInicioEjecucion")
-    @PropertyField(table = Kleenean.TRUE, report = Kleenean.FALSE, search = Kleenean.FALSE)
+    @PropertyField(responsivePriority = 5, table = Kleenean.TRUE, report = Kleenean.FALSE, search = Kleenean.FALSE)
     public StringProperty nombreArchivo;
 
     @PropertyField(hidden = Kleenean.TRUE)

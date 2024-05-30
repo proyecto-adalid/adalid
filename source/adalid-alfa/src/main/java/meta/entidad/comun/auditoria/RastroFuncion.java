@@ -35,7 +35,7 @@ import meta.entidad.comun.operacion.basica.RecursoValor;
 @EntityInsertOperation(enabled = Kleenean.FALSE)
 @EntityUpdateOperation(enabled = Kleenean.FALSE)
 @EntityDeleteOperation(enabled = Kleenean.FALSE)
-@EntityTableView(enabled = Kleenean.TRUE)
+@EntityTableView(enabled = Kleenean.TRUE, responsiveMode = TableResponsiveMode.PRIORITY)
 @EntityDetailView(enabled = Kleenean.TRUE)
 @EntityTreeView(enabled = Kleenean.FALSE)
 @EntityConsoleView(enabled = Kleenean.TRUE)
@@ -53,7 +53,7 @@ public class RastroFuncion extends AbstractPersistentEntity {
     public LongProperty id;
 
     @ColumnField(nullable = Kleenean.FALSE, indexed = Kleenean.TRUE)
-    @PropertyField(table = Kleenean.TRUE, report = Kleenean.TRUE, heading = Kleenean.TRUE, search = Kleenean.TRUE)
+    @PropertyField(responsivePriority = 6, table = Kleenean.TRUE, report = Kleenean.TRUE, heading = Kleenean.TRUE, search = Kleenean.TRUE)
     public TimestampProperty fechaHoraEjecucion;
 
     @OwnerProperty
@@ -67,7 +67,7 @@ public class RastroFuncion extends AbstractPersistentEntity {
     public Usuario usuario;
 
     @ColumnField(indexed = Kleenean.TRUE)
-    @PropertyField(table = Kleenean.TRUE, search = Kleenean.TRUE, report = Kleenean.TRUE, heading = Kleenean.TRUE)
+    @PropertyField(responsivePriority = 6, table = Kleenean.TRUE, search = Kleenean.TRUE, report = Kleenean.TRUE, heading = Kleenean.TRUE)
     @StringField(maxLength = MAX_EMAIL_ADDRESS_LENGTH, displayLength = 36) // maxLength = 36 until 01/12/2023
     public StringProperty codigoUsuario;
 
@@ -100,7 +100,7 @@ public class RastroFuncion extends AbstractPersistentEntity {
     public StringProperty descripcionFuncion;
 
     @UniformResourceLocator(urlType = UrlType.INTERNAL, urlDisplayType = UrlDisplayType.BUTTON)
-    @PropertyField(table = Kleenean.TRUE, report = Kleenean.FALSE, search = Kleenean.FALSE, headertextless = Kleenean.TRUE)
+    @PropertyField(responsivePriority = 6, table = Kleenean.TRUE, report = Kleenean.FALSE, search = Kleenean.FALSE, headertextless = Kleenean.TRUE)
     public StringProperty paginaFuncion;
 
     @ForeignKey(onDelete = OnDeleteAction.NONE, onUpdate = OnUpdateAction.NONE)
@@ -150,16 +150,15 @@ public class RastroFuncion extends AbstractPersistentEntity {
     public LongProperty idSelectRecurso;
 
     @UniformResourceLocator(urlType = UrlType.INTERNAL, urlDisplayType = UrlDisplayType.BUTTON)
-    @PropertyField(table = Kleenean.TRUE, report = Kleenean.FALSE, search = Kleenean.FALSE, headertextless = Kleenean.TRUE)
+    @PropertyField(responsivePriority = 6, table = Kleenean.TRUE, report = Kleenean.FALSE, search = Kleenean.FALSE, headertextless = Kleenean.TRUE)
     public StringProperty paginaRecurso;
 
     @ForeignKey(onDelete = OnDeleteAction.NONE, onUpdate = OnUpdateAction.NONE)
     @ManyToOne(navigability = Navigability.UNIDIRECTIONAL, view = MasterDetailView.NONE)
     @ColumnField(nullable = Kleenean.FALSE)
-    @PropertyField(table = Kleenean.TRUE, report = Kleenean.TRUE)
+    @PropertyField(responsivePriority = 5, table = Kleenean.TRUE, report = Kleenean.TRUE)
     public CondicionEjeFun condicionEjeFun;
 
-//  @PropertyField(table = Kleenean.TRUE, report = Kleenean.TRUE)
     @StringField(maxLength = 0)
     public StringProperty descripcionError;
 

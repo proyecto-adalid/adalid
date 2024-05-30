@@ -32,7 +32,7 @@ import meta.entidad.comun.control.acceso.ext.Usuario;
 @EntityInsertOperation(enabled = Kleenean.FALSE)
 @EntityUpdateOperation(enabled = Kleenean.FALSE)
 @EntityDeleteOperation(enabled = Kleenean.FALSE)
-@EntityTableView(enabled = Kleenean.TRUE, readingViewWesternToolbarSnippet = "/resources/snippets/base/entity/TareaUsuario/botonOpenDistribucionTareas")
+@EntityTableView(enabled = Kleenean.TRUE, responsiveMode = TableResponsiveMode.PRIORITY, readingViewWesternToolbarSnippet = "/resources/snippets/base/entity/TareaUsuario/botonOpenDistribucionTareas")
 @EntityDetailView(enabled = Kleenean.TRUE)
 @EntityTreeView(enabled = Kleenean.FALSE)
 @EntityConsoleView(enabled = Kleenean.FALSE)
@@ -80,7 +80,6 @@ public class TareaUsuario extends AbstractPersistentEntity {
 //  @ForeignKey(onDelete = OnDeleteAction.NONE, onUpdate = OnUpdateAction.NONE)
     @ManyToOne(navigability = Navigability.UNIDIRECTIONAL, view = MasterDetailView.NONE)
     @PropertyField(table = Kleenean.TRUE, report = Kleenean.TRUE, search = Kleenean.TRUE, heading = Kleenean.TRUE, overlay = Kleenean.TRUE)
-    @EntityReferenceDisplay(style = EntityReferenceStyle.NAME)
     public Funcion funcion;
 
     @ColumnField(calculable = Kleenean.TRUE)
@@ -89,7 +88,7 @@ public class TareaUsuario extends AbstractPersistentEntity {
     public StringProperty descripcionFuncion;
 
     @UniformResourceLocator(urlType = UrlType.INTERNAL, urlDisplayMode = DisplayMode.PROCESSING, urlDisplayType = UrlDisplayType.BUTTON)
-    @PropertyField(create = Kleenean.FALSE, update = Kleenean.FALSE, table = Kleenean.TRUE, report = Kleenean.FALSE, search = Kleenean.FALSE, headertextless = Kleenean.TRUE)
+    @PropertyField(responsivePriority = 6, create = Kleenean.FALSE, update = Kleenean.FALSE, table = Kleenean.TRUE, report = Kleenean.FALSE, search = Kleenean.FALSE, headertextless = Kleenean.TRUE)
     public StringProperty paginaFuncion;
 
     @PropertyField(hidden = Kleenean.TRUE)
@@ -118,7 +117,7 @@ public class TareaUsuario extends AbstractPersistentEntity {
     public StringProperty codigoRecursoValor;
 
     @ColumnField(indexed = Kleenean.FALSE)
-    @PropertyField(create = Kleenean.FALSE, update = Kleenean.FALSE, table = Kleenean.TRUE, report = Kleenean.TRUE, search = Kleenean.TRUE, heading = Kleenean.TRUE, overlay = Kleenean.TRUE)
+    @PropertyField(responsivePriority = 6, create = Kleenean.FALSE, update = Kleenean.FALSE, table = Kleenean.TRUE, report = Kleenean.TRUE, search = Kleenean.TRUE, heading = Kleenean.TRUE, overlay = Kleenean.TRUE)
     public StringProperty nombreRecursoValor;
 
     @PropertyField(create = Kleenean.FALSE, update = Kleenean.FALSE, table = Kleenean.FALSE)
@@ -126,7 +125,7 @@ public class TareaUsuario extends AbstractPersistentEntity {
     public StringProperty descripcionRecursoValor;
 
     @UniformResourceLocator(urlType = UrlType.INTERNAL, urlDisplayType = UrlDisplayType.BUTTON)
-    @PropertyField(create = Kleenean.FALSE, update = Kleenean.FALSE, table = Kleenean.TRUE, report = Kleenean.FALSE, search = Kleenean.FALSE, headertextless = Kleenean.TRUE)
+    @PropertyField(responsivePriority = 6, create = Kleenean.FALSE, update = Kleenean.FALSE, table = Kleenean.TRUE, report = Kleenean.FALSE, search = Kleenean.FALSE, headertextless = Kleenean.TRUE)
     public StringProperty paginaRecurso;
 
     @ColumnField(nullable = Kleenean.TRUE)
@@ -169,7 +168,7 @@ public class TareaUsuario extends AbstractPersistentEntity {
     public Usuario usuarioCondicion;
 
     @ColumnField(nullable = Kleenean.FALSE, indexed = Kleenean.TRUE)
-    @PropertyField(table = Kleenean.TRUE, report = Kleenean.TRUE, search = Kleenean.TRUE, heading = Kleenean.FALSE, overlay = Kleenean.TRUE, defaultCondition = DefaultCondition.IF_NULL_ON_INSERT)
+    @PropertyField(responsivePriority = 6, table = Kleenean.TRUE, report = Kleenean.TRUE, search = Kleenean.TRUE, heading = Kleenean.FALSE, overlay = Kleenean.TRUE, defaultCondition = DefaultCondition.IF_NULL_ON_INSERT)
     public TimestampProperty fechaHoraCondicion;
 
     @ColumnField(calculable = Kleenean.TRUE)

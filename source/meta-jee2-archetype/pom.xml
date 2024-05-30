@@ -6,7 +6,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.proyecto-adalid.meta</groupId>
     <artifactId>meta-jee2-archetype</artifactId>
-    <version>5.1.0</version><!--adalid-->
+    <version>5.2.0</version><!--adalid-->
     <packaging>maven-archetype</packaging>
     <name>meta-jee2-archetype</name>
     <description>Adalid platform JEE2 meta-project archetype</description>

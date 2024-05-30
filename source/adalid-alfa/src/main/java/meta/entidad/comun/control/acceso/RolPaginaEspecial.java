@@ -29,7 +29,7 @@ import java.lang.reflect.Field;
 @EntityInsertOperation(enabled = Kleenean.TRUE)
 @EntityUpdateOperation(enabled = Kleenean.TRUE)
 @EntityDeleteOperation(enabled = Kleenean.TRUE)
-@EntityTableView(enabled = Kleenean.TRUE)
+@EntityTableView(enabled = Kleenean.TRUE, responsiveMode = TableResponsiveMode.PRIORITY)
 @EntityDetailView(enabled = Kleenean.FALSE)
 @EntityTreeView(enabled = Kleenean.FALSE)
 @EntityConsoleView(enabled = Kleenean.FALSE)
@@ -74,7 +74,7 @@ public class RolPaginaEspecial extends AbstractPersistentEntity {
 
     @ColumnField(calculable = Kleenean.TRUE)
     @BooleanField(displayType = BooleanDisplayType.TOGGLE)
-    @PropertyField(table = Kleenean.TRUE, report = Kleenean.TRUE)
+    @PropertyField(responsivePriority = 6, table = Kleenean.TRUE, report = Kleenean.TRUE)
     public BooleanProperty inactiva;
 
     @Override

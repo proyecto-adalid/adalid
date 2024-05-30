@@ -28,7 +28,7 @@ import java.lang.reflect.Field;
 @EntityInsertOperation(enabled = Kleenean.FALSE)
 @EntityUpdateOperation(enabled = Kleenean.FALSE)
 @EntityDeleteOperation(enabled = Kleenean.FALSE)
-@EntityTableView(enabled = Kleenean.TRUE)
+@EntityTableView(enabled = Kleenean.TRUE, responsiveMode = TableResponsiveMode.PRIORITY)
 @EntityDetailView(enabled = Kleenean.TRUE)
 @EntityTreeView(enabled = Kleenean.FALSE)
 @EntityConsoleView(enabled = Kleenean.FALSE)
@@ -48,6 +48,7 @@ public class ClaseRecurso extends AbstractPersistentEntity {
 
     @BusinessKey
     @StringField(maxLength = 100)
+    @PropertyField(overlay = Kleenean.TRUE)
     public StringProperty codigoClaseRecurso;
 
     @NameProperty

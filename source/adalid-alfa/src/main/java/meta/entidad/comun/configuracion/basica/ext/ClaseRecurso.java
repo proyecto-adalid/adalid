@@ -30,11 +30,10 @@ import meta.entidad.comun.configuracion.basica.TipoRecurso;
 @EntityInsertOperation(enabled = Kleenean.FALSE)
 @EntityUpdateOperation(enabled = Kleenean.FALSE)
 @EntityDeleteOperation(enabled = Kleenean.FALSE)
-@EntityTableView(enabled = Kleenean.TRUE, quickFilter = Kleenean.TRUE)
+@EntityTableView(enabled = Kleenean.TRUE, responsiveMode = TableResponsiveMode.PRIORITY, quickFilter = Kleenean.TRUE)
 @EntityDetailView(enabled = Kleenean.TRUE)
 @EntityTreeView(enabled = Kleenean.FALSE)
 @EntityConsoleView(enabled = Kleenean.FALSE)
-@EntityReferenceDisplay(style = EntityReferenceStyle.NAME_AND_CHARACTER_KEY)
 public class ClaseRecurso extends meta.entidad.comun.configuracion.basica.ClaseRecurso {
 
     // <editor-fold defaultstate="collapsed" desc="class constructors">
@@ -51,7 +50,7 @@ public class ClaseRecurso extends meta.entidad.comun.configuracion.basica.ClaseR
     @ForeignKey(onDelete = OnDeleteAction.NONE, onUpdate = OnUpdateAction.NONE)
     @ManyToOne(navigability = Navigability.UNIDIRECTIONAL, view = MasterDetailView.NONE)
     @ColumnField(nullable = Kleenean.FALSE)
-    @PropertyField(overlay = Kleenean.TRUE)
+    @PropertyField(responsivePriority = 5, overlay = Kleenean.TRUE)
     public TipoRecurso tipoRecurso;
 
     @ForeignKey(onDelete = OnDeleteAction.NONE, onUpdate = OnUpdateAction.NONE)

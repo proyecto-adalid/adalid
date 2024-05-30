@@ -31,11 +31,10 @@ import meta.entidad.comun.configuracion.basica.TipoRastroFun;
 @EntityInsertOperation(enabled = Kleenean.FALSE)
 @EntityUpdateOperation(enabled = Kleenean.FALSE)
 @EntityDeleteOperation(enabled = Kleenean.FALSE)
-@EntityTableView(enabled = Kleenean.TRUE, menu = ViewMenuOption.READING, quickFilter = Kleenean.TRUE)
+@EntityTableView(enabled = Kleenean.TRUE, responsiveMode = TableResponsiveMode.PRIORITY, menu = ViewMenuOption.READING, quickFilter = Kleenean.TRUE)
 @EntityDetailView(enabled = Kleenean.TRUE)
 @EntityTreeView(enabled = Kleenean.FALSE)
 @EntityConsoleView(enabled = Kleenean.FALSE)
-@EntityReferenceDisplay(style = EntityReferenceStyle.NAME_AND_CHARACTER_KEY)
 public class Funcion extends meta.entidad.comun.configuracion.basica.Funcion {
 
     // <editor-fold defaultstate="collapsed" desc="class constructors">
@@ -47,7 +46,7 @@ public class Funcion extends meta.entidad.comun.configuracion.basica.Funcion {
     @ForeignKey(onDelete = OnDeleteAction.NONE, onUpdate = OnUpdateAction.NONE)
     @ManyToOne(navigability = Navigability.UNIDIRECTIONAL, view = MasterDetailView.NONE)
     @ColumnField(nullable = Kleenean.FALSE)
-    @PropertyField(overlay = Kleenean.TRUE)
+    @PropertyField(responsivePriority = 5, overlay = Kleenean.TRUE)
     public TipoFuncion tipoFuncion;
 
     @ForeignKey(onDelete = OnDeleteAction.NONE, onUpdate = OnUpdateAction.NONE)
@@ -65,7 +64,7 @@ public class Funcion extends meta.entidad.comun.configuracion.basica.Funcion {
     @ColumnField(calculable = Kleenean.TRUE)
 //  @ForeignKey(onDelete = OnDeleteAction.NONE, onUpdate = OnUpdateAction.NONE)
     @ManyToOne(navigability = Navigability.UNIDIRECTIONAL, view = MasterDetailView.NONE)
-    @PropertyField(search = Kleenean.TRUE, table = Kleenean.TRUE, report = Kleenean.TRUE, export = Kleenean.TRUE, overlay = Kleenean.TRUE)
+    @PropertyField(responsivePriority = 6, search = Kleenean.TRUE, table = Kleenean.TRUE, report = Kleenean.TRUE, export = Kleenean.TRUE, overlay = Kleenean.TRUE)
     public ClaseRecurso clase;
 
     @ForeignKey(onDelete = OnDeleteAction.NONE, onUpdate = OnUpdateAction.NONE)

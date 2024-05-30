@@ -164,7 +164,6 @@ public class PasoRutina extends AbstractPersistentEntity {
     @ForeignKey(onDelete = OnDeleteAction.NONE, onUpdate = OnUpdateAction.NONE)
     @ManyToOne(navigability = Navigability.UNIDIRECTIONAL, view = MasterDetailView.NONE)
     @PropertyField(create = Kleenean.TRUE, table = Kleenean.TRUE)
-    @EntityReferenceDisplay(style = EntityReferenceStyle.NAME)
     @EntityReferenceSearch(searchType = SearchType.LIST, listStyle = ListStyle.NAME)
     public VariableRutina para;
 
@@ -172,7 +171,6 @@ public class PasoRutina extends AbstractPersistentEntity {
     @ForeignKey(onDelete = OnDeleteAction.NONE, onUpdate = OnUpdateAction.NONE)
     @ManyToOne(navigability = Navigability.UNIDIRECTIONAL, view = MasterDetailView.NONE)
     @PropertyField(create = Kleenean.TRUE, table = Kleenean.TRUE)
-    @EntityReferenceDisplay(style = EntityReferenceStyle.NAME)
     @EntityReferenceSearch(searchType = SearchType.LIST, listStyle = ListStyle.NAME, displayMode = DisplayMode.WRITING)
     public VariableRutina variable;
 

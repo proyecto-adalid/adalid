@@ -32,8 +32,8 @@ import meta.entidad.comun.configuracion.basica.TipoPagina;
 @EntityInsertOperation(enabled = Kleenean.TRUE)
 @EntityUpdateOperation(enabled = Kleenean.TRUE)
 @EntityDeleteOperation(enabled = Kleenean.TRUE)
-@EntityTableView(enabled = Kleenean.TRUE)
-@EntityDetailView(enabled = Kleenean.FALSE)
+@EntityTableView(enabled = Kleenean.TRUE, responsiveMode = TableResponsiveMode.PRIORITY)
+@EntityDetailView(enabled = Kleenean.TRUE)
 @EntityTreeView(enabled = Kleenean.FALSE)
 @EntityConsoleView(enabled = Kleenean.FALSE)
 public class RolPagina extends AbstractPersistentEntity {
@@ -81,12 +81,12 @@ public class RolPagina extends AbstractPersistentEntity {
 
     @ColumnField(calculable = Kleenean.TRUE)
     @ManyToOne(view = MasterDetailView.NONE)
-    @PropertyField(table = Kleenean.TRUE, report = Kleenean.TRUE)
+    @PropertyField(responsivePriority = 6, table = Kleenean.TRUE, report = Kleenean.TRUE)
     public TipoPagina tipoPagina;
 
     @ColumnField(calculable = Kleenean.TRUE)
     @ManyToOne(view = MasterDetailView.NONE)
-    @PropertyField(table = Kleenean.TRUE, report = Kleenean.TRUE)
+    @PropertyField(responsivePriority = 6, table = Kleenean.TRUE, report = Kleenean.TRUE)
     public Dominio dominio;
 
     @Override

@@ -32,7 +32,7 @@ import meta.entidad.comun.configuracion.basica.ext.FuncionParametro;
 @EntityUpdateOperation(enabled = Kleenean.TRUE)
 @EntityDeleteOperation(enabled = Kleenean.TRUE)
 @EntityReportOperation(enabled = Kleenean.FALSE)
-@EntityTableView(enabled = Kleenean.TRUE, rowsLimit = 100, rows = 100)
+@EntityTableView(enabled = Kleenean.TRUE, responsiveMode = TableResponsiveMode.PRIORITY, rowsLimit = 100, rows = 100)
 @EntityDetailView(enabled = Kleenean.FALSE)
 @EntityTreeView(enabled = Kleenean.FALSE)
 @EntityConsoleView(enabled = Kleenean.FALSE)
@@ -87,7 +87,6 @@ public class RolFuncionPar extends AbstractPersistentEntity {
 //  @ForeignKey(onDelete = OnDeleteAction.NONE, onUpdate = OnUpdateAction.NONE)
     @ManyToOne(navigability = Navigability.UNIDIRECTIONAL, view = MasterDetailView.NONE, quickAdding = QuickAddingFilter.MISSING)
     @ColumnField(nullable = Kleenean.FALSE)
-    @EntityReferenceDisplay(style = EntityReferenceStyle.NAME)
     @EntityReferenceSearch(searchType = SearchType.LIST, listStyle = ListStyle.NAME)
     @PropertyField(required = Kleenean.TRUE, table = Kleenean.TRUE, report = Kleenean.TRUE, access = PropertyAccess.RESTRICTED_WRITING)
     public FuncionParametro funcionParametro;

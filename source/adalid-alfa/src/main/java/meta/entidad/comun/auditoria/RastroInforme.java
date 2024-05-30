@@ -36,7 +36,7 @@ import meta.entidad.comun.operacion.basica.RecursoValor;
 @EntityInsertOperation(enabled = Kleenean.FALSE)
 @EntityUpdateOperation(enabled = Kleenean.FALSE)
 @EntityDeleteOperation(enabled = Kleenean.FALSE)
-@EntityTableView(enabled = Kleenean.TRUE, readingViewBelowTableSnippet = "/resources/snippets/base/entity/RastroInforme/overlayPanel")
+@EntityTableView(enabled = Kleenean.TRUE, responsiveMode = TableResponsiveMode.PRIORITY, readingViewBelowTableSnippet = "/resources/snippets/base/entity/RastroInforme/overlayPanel")
 @EntityDetailView(enabled = Kleenean.TRUE)
 @EntityTreeView(enabled = Kleenean.FALSE)
 @EntityConsoleView(enabled = Kleenean.TRUE, menu = Kleenean.FALSE)
@@ -55,7 +55,7 @@ public class RastroInforme extends AbstractPersistentEntity {
     public LongProperty id;
 
     @ColumnField(nullable = Kleenean.FALSE, indexed = Kleenean.TRUE)
-    @PropertyField(sequence = 100, table = Kleenean.TRUE, report = Kleenean.TRUE, search = Kleenean.TRUE, overlay = Kleenean.TRUE)
+    @PropertyField(responsivePriority = 6, sequence = 100, table = Kleenean.TRUE, report = Kleenean.TRUE, search = Kleenean.TRUE, overlay = Kleenean.TRUE)
     public TimestampProperty fechaHoraInicioEjecucion;
 
     @PropertyField(sequence = 100)
@@ -67,7 +67,7 @@ public class RastroInforme extends AbstractPersistentEntity {
     public StringProperty nombreInforme;
 
     @ColumnField(indexed = Kleenean.TRUE)
-    @PropertyField(sequence = 200, table = Kleenean.TRUE, search = Kleenean.TRUE, report = Kleenean.TRUE, overlay = Kleenean.TRUE)
+    @PropertyField(responsivePriority = 5, sequence = 200, table = Kleenean.TRUE, search = Kleenean.TRUE, report = Kleenean.TRUE, overlay = Kleenean.TRUE)
     @StringField(maxLength = 5)
     public StringProperty formatoInforme;
 
@@ -85,7 +85,7 @@ public class RastroInforme extends AbstractPersistentEntity {
     public Usuario usuario;
 
     @ColumnField(indexed = Kleenean.TRUE)
-    @PropertyField(sequence = 250, table = Kleenean.TRUE, search = Kleenean.TRUE, report = Kleenean.TRUE)
+    @PropertyField(responsivePriority = 6, sequence = 250, table = Kleenean.TRUE, search = Kleenean.TRUE, report = Kleenean.TRUE)
     @StringField(maxLength = MAX_EMAIL_ADDRESS_LENGTH, displayLength = 36) // maxLength = 36 until 01/12/2023
     public StringProperty codigoUsuario;
 
@@ -189,7 +189,7 @@ public class RastroInforme extends AbstractPersistentEntity {
     @ColumnField(nullable = Kleenean.FALSE)
     @ForeignKey(onDelete = OnDeleteAction.NONE, onUpdate = OnUpdateAction.NONE)
     @ManyToOne(navigability = Navigability.UNIDIRECTIONAL, view = MasterDetailView.NONE)
-    @PropertyField(sequence = 500, table = Kleenean.TRUE, search = Kleenean.TRUE, report = Kleenean.TRUE)
+    @PropertyField(responsivePriority = 5, sequence = 500, table = Kleenean.TRUE, search = Kleenean.TRUE, report = Kleenean.TRUE)
     public CondicionEjeFun condicionEjeFun;
 
     @FileReference(loadField = "fechaHoraInicioEjecucion")
@@ -204,7 +204,7 @@ public class RastroInforme extends AbstractPersistentEntity {
     @ColumnField(nullable = Kleenean.TRUE)
     @ForeignKey(onDelete = OnDeleteAction.NONE, onUpdate = OnUpdateAction.NONE)
     @ManyToOne(navigability = Navigability.UNIDIRECTIONAL, view = MasterDetailView.NONE)
-    @PropertyField(sequence = 200, table = Kleenean.TRUE, search = Kleenean.TRUE, report = Kleenean.TRUE, overlay = Kleenean.TRUE)
+    @PropertyField(responsivePriority = 6, sequence = 200, table = Kleenean.TRUE, search = Kleenean.TRUE, report = Kleenean.TRUE, overlay = Kleenean.TRUE)
     public TipoInforme tipoInforme;
 
     @ColumnField(nullable = Kleenean.TRUE)
@@ -228,7 +228,7 @@ public class RastroInforme extends AbstractPersistentEntity {
     public Usuario remitente;
 
     @ColumnField(indexed = Kleenean.TRUE)
-    @PropertyField(sequence = 250, table = Kleenean.TRUE, search = Kleenean.TRUE, report = Kleenean.TRUE)
+    @PropertyField(responsivePriority = 6, sequence = 250, table = Kleenean.TRUE, search = Kleenean.TRUE, report = Kleenean.TRUE)
     @StringField(maxLength = MAX_EMAIL_ADDRESS_LENGTH, displayLength = 36) // maxLength = 36 until 01/12/2023
     public StringProperty codigoRemitente;
 
@@ -246,7 +246,7 @@ public class RastroInforme extends AbstractPersistentEntity {
     public BooleanProperty descargado;
 
     @ColumnField(nullable = Kleenean.FALSE, indexed = Kleenean.FALSE)
-    @PropertyField(sequence = 200, table = Kleenean.TRUE, search = Kleenean.FALSE, report = Kleenean.TRUE, overlay = Kleenean.TRUE)
+    @PropertyField(responsivePriority = 6, sequence = 200, table = Kleenean.TRUE, search = Kleenean.FALSE, report = Kleenean.TRUE, overlay = Kleenean.TRUE)
     public BooleanProperty personal;
 
     @Override

@@ -29,7 +29,7 @@ import java.lang.reflect.Field;
 @EntityInsertOperation(enabled = Kleenean.FALSE)
 @EntityUpdateOperation(enabled = Kleenean.FALSE)
 @EntityDeleteOperation(enabled = Kleenean.FALSE)
-@EntityTableView(enabled = Kleenean.TRUE)
+@EntityTableView(enabled = Kleenean.TRUE, responsiveMode = TableResponsiveMode.PRIORITY)
 @EntityDetailView(enabled = Kleenean.TRUE)
 @EntityTreeView(enabled = Kleenean.FALSE)
 @EntityConsoleView(enabled = Kleenean.FALSE)
@@ -53,6 +53,7 @@ public class GrupoProceso extends AbstractPersistentEntity {
     public LongProperty version;
 
     @BusinessKey
+//  @PropertyField(overlay = Kleenean.FALSE)
     public StringProperty codigoGrupoProceso;
 
     @NameProperty
@@ -72,17 +73,17 @@ public class GrupoProceso extends AbstractPersistentEntity {
     @PropertyField(table = Kleenean.TRUE, report = Kleenean.TRUE)
     public CondicionEjeFun condicionEjeFun;
 
-    @PropertyField(table = Kleenean.TRUE, report = Kleenean.TRUE)
+    @PropertyField(responsivePriority = 5, table = Kleenean.TRUE, report = Kleenean.TRUE)
     public TimestampProperty fechaHoraInicioEjecucion;
 
-    @PropertyField(table = Kleenean.TRUE, report = Kleenean.TRUE)
+    @PropertyField(responsivePriority = 5, table = Kleenean.TRUE, report = Kleenean.TRUE)
     public TimestampProperty fechaHoraFinEjecucion;
 
     @PropertyField(table = Kleenean.TRUE, report = Kleenean.TRUE)
     @StringField(maxLength = 200)
     public StringProperty codigoFuncion;
 
-    @PropertyField(table = Kleenean.TRUE, report = Kleenean.FALSE)
+    @PropertyField(responsivePriority = 6, table = Kleenean.TRUE, report = Kleenean.FALSE)
     @StringField(maxLength = 200)
     public StringProperty nombreFuncion;
 

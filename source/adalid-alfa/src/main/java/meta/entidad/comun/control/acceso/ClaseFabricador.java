@@ -34,7 +34,7 @@ import java.util.Locale;
 @EntityDetailView(enabled = Kleenean.FALSE)
 @EntityTreeView(enabled = Kleenean.FALSE)
 @EntityConsoleView(enabled = Kleenean.FALSE)
-//@EntityReferenceDisplay(filterType = EntityReferenceFilterType.TEXTBOX)
+@EntityReferenceSearch(searchType = SearchType.LIST, listStyle = ListStyle.CHARACTER_KEY)
 public class ClaseFabricador extends AbstractPersistentEnumerationEntity {
 
     public static final String FCSS_VALIDATOR = "fcssValidator";
@@ -64,6 +64,7 @@ public class ClaseFabricador extends AbstractPersistentEnumerationEntity {
     public StringProperty codigoConjuntoSegmento;
 
     @StringField(maxLength = 200)
+    @PropertyField(overlay = Kleenean.TRUE)
     public StringProperty nombreConjuntoSegmento;
 
     @DescriptionProperty
@@ -71,6 +72,7 @@ public class ClaseFabricador extends AbstractPersistentEnumerationEntity {
     public StringProperty descripcionConjuntoSegmento;
 
     @ColumnField(nullable = Kleenean.FALSE)
+    @PropertyField(overlay = Kleenean.TRUE)
     public BooleanProperty elemental;
 
     public Instance C01, C02, C03, C04, C05, C06;

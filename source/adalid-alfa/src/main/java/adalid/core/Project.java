@@ -66,6 +66,10 @@ public abstract class Project extends AbstractArtifact implements ProjectBuilder
 
     private static int _defaultMaxRound = 0;
 
+    private static TableResponsiveMode _defaultEntityTableViewResponsiveMode = TableResponsiveMode.NONE;
+
+    private static boolean _replaceEntityTableViewResponsiveMode = false;
+
     private static boolean _defaultEntityCodeGenBPL = true;
 
     private static boolean _defaultEntityCodeGenBWS = false;
@@ -600,6 +604,46 @@ public abstract class Project extends AbstractArtifact implements ProjectBuilder
      */
     public static void setDefaultMaxRound(int round) {
         _defaultMaxRound = round < 0 ? 0 : round;
+    }
+
+    /**
+     * @return the default @EntityTableView responsiveMode
+     */
+    public static TableResponsiveMode getDefaultEntityTableViewResponsiveMode() {
+        return _defaultEntityTableViewResponsiveMode;
+    }
+
+    /**
+     * El método setDefaultEntityTableViewResponsiveMode se utiliza para establecer el modo "responsive" predeterminado de las vistas (páginas) de
+     * consulta y/o registro tabular de las meta-entidades. Este método solo reemplaza el valor especificado en las meta-entidades cuando ese valor
+     * sea UNSPECIFIED.
+     *
+     * @param mode modo "responsive" predeterminado. Su valor es uno de los elementos de la enumeración TableResponsiveMode. Seleccione PRIORITY para
+     * mostrar las columnas de las tablas dependiendo de su prioridad, según el tamaño de la pantalla. Seleccione REFLOW para mostrar todas las
+     * columnas, apiladas o no, según el tamaño de la pantalla. Seleccione NONE o UNSPECIFIED para que las tablas no sean "responsive".
+     */
+    public static void setDefaultEntityTableViewResponsiveMode(TableResponsiveMode mode) {
+        setDefaultEntityTableViewResponsiveMode(mode, false);
+    }
+
+    /**
+     * El método setDefaultEntityTableViewResponsiveMode se utiliza para establecer el modo "responsive" predeterminado de las vistas (páginas) de
+     * consulta y/o registro tabular de las meta-entidades. Este método puede reemplazar cualquier valor especificado en las meta-entidades,
+     * dependiendo del valor del parámetro replace.
+     *
+     * @param mode modo "responsive" predeterminado. Su valor es uno de los elementos de la enumeración TableResponsiveMode. Seleccione PRIORITY para
+     * mostrar las columnas de las tablas dependiendo de su prioridad, según el tamaño de la pantalla. Seleccione REFLOW para mostrar todas las
+     * columnas, apiladas o no, según el tamaño de la pantalla. Seleccione NONE o UNSPECIFIED para que las tablas no sean "responsive".
+     * @param replace true para reemplazar el valor especificado en las meta-entidades con el valor del parámetro mode, aun cuando ese valor no sea
+     * UNSPECIFIED.
+     */
+    public static void setDefaultEntityTableViewResponsiveMode(TableResponsiveMode mode, boolean replace) {
+        _defaultEntityTableViewResponsiveMode = mode == null || mode.equals(TableResponsiveMode.UNSPECIFIED) ? TableResponsiveMode.NONE : mode;
+        _replaceEntityTableViewResponsiveMode = replace;
+    }
+
+    public static boolean isReplaceEntityTableViewResponsiveMode() {
+        return _replaceEntityTableViewResponsiveMode;
     }
 
     /**

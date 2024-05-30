@@ -57,4 +57,6 @@ public class Platform {
 
     public static final String WEBAPP_HELP = "webapp-help";
 
+    public static final String WEBAPP_MAPS = "webapp-maps";
+
 }

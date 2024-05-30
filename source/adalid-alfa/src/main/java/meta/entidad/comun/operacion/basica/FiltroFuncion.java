@@ -30,7 +30,7 @@ import meta.entidad.comun.control.acceso.Usuario;
 @EntityInsertOperation(enabled = Kleenean.TRUE)
 @EntityUpdateOperation(enabled = Kleenean.TRUE)
 @EntityDeleteOperation(enabled = Kleenean.TRUE)
-@EntityTableView(enabled = Kleenean.TRUE, menu = ViewMenuOption.NONE)
+@EntityTableView(enabled = Kleenean.TRUE, responsiveMode = TableResponsiveMode.PRIORITY, menu = ViewMenuOption.NONE)
 @EntityDetailView(enabled = Kleenean.TRUE)
 @EntityTreeView(enabled = Kleenean.FALSE)
 @EntityConsoleView(enabled = Kleenean.TRUE, menu = Kleenean.FALSE)
@@ -50,7 +50,7 @@ public class FiltroFuncion extends AbstractPersistentEntity {
 
     @BusinessKey
     @StringField(maxLength = 100)
-    @PropertyField(create = Kleenean.FALSE, update = Kleenean.FALSE, table = Kleenean.FALSE, heading = Kleenean.FALSE, defaultCondition = DefaultCondition.UNCONDITIONALLY_ON_INSERT, defaultCheckpoint = Checkpoint.USER_INTERFACE)
+    @PropertyField(create = Kleenean.FALSE, update = Kleenean.FALSE, table = Kleenean.FALSE, heading = Kleenean.FALSE/*, overlay = Kleenean.FALSE*/, defaultCondition = DefaultCondition.UNCONDITIONALLY_ON_INSERT, defaultCheckpoint = Checkpoint.USER_INTERFACE)
     public StringProperty codigoFiltroFuncion;
 
     @NameProperty
@@ -70,17 +70,17 @@ public class FiltroFuncion extends AbstractPersistentEntity {
     @ForeignKey(onDelete = OnDeleteAction.CASCADE, onUpdate = OnUpdateAction.CASCADE)
     @ManyToOne(navigability = Navigability.UNIDIRECTIONAL, view = MasterDetailView.NONE)
     @ColumnField(nullable = Kleenean.TRUE)
-    @PropertyField(create = Kleenean.FALSE, update = Kleenean.FALSE, search = Kleenean.TRUE, table = Kleenean.TRUE, report = Kleenean.TRUE, defaultCondition = DefaultCondition.IF_NULL_ON_INSERT, defaultCheckpoint = Checkpoint.USER_INTERFACE)
+    @PropertyField(responsivePriority = 6, create = Kleenean.FALSE, update = Kleenean.FALSE, search = Kleenean.TRUE, table = Kleenean.TRUE, report = Kleenean.TRUE, defaultCondition = DefaultCondition.IF_NULL_ON_INSERT, defaultCheckpoint = Checkpoint.USER_INTERFACE)
     public Usuario usuario;
 
     @ColumnField(nullable = Kleenean.TRUE)
     @ForeignKey(onDelete = OnDeleteAction.NONE, onUpdate = OnUpdateAction.NONE)
     @ManyToOne(navigability = Navigability.UNIDIRECTIONAL, view = MasterDetailView.NONE)
-    @PropertyField(create = Kleenean.FALSE, update = Kleenean.FALSE, search = Kleenean.TRUE, table = Kleenean.TRUE, report = Kleenean.FALSE)
+    @PropertyField(responsivePriority = 6, create = Kleenean.FALSE, update = Kleenean.FALSE, search = Kleenean.TRUE, table = Kleenean.TRUE, report = Kleenean.FALSE)
     public Usuario remitente;
 
     @ColumnField(nullable = Kleenean.FALSE)
-    @PropertyField(create = Kleenean.FALSE, update = Kleenean.FALSE, search = Kleenean.TRUE, table = Kleenean.TRUE, report = Kleenean.TRUE)
+    @PropertyField(responsivePriority = 6, create = Kleenean.FALSE, update = Kleenean.FALSE, search = Kleenean.TRUE, table = Kleenean.TRUE, report = Kleenean.TRUE)
     public BooleanProperty esPublico;
 
     @ColumnField(nullable = Kleenean.FALSE)

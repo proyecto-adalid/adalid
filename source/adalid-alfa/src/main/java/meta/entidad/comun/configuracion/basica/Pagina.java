@@ -28,7 +28,7 @@ import java.lang.reflect.Field;
 @EntityInsertOperation(enabled = Kleenean.FALSE)
 @EntityUpdateOperation(enabled = Kleenean.TRUE)
 @EntityDeleteOperation(enabled = Kleenean.FALSE)
-@EntityTableView(enabled = Kleenean.TRUE, quickFilter = Kleenean.TRUE)
+@EntityTableView(enabled = Kleenean.TRUE, responsiveMode = TableResponsiveMode.PRIORITY, quickFilter = Kleenean.TRUE)
 @EntityDetailView(enabled = Kleenean.TRUE)
 @EntityTreeView(enabled = Kleenean.FALSE)
 @EntityConsoleView(enabled = Kleenean.FALSE)
@@ -48,7 +48,7 @@ public class Pagina extends AbstractPersistentEntity {
 
     @BusinessKey
     @StringField(maxLength = 100)
-    @PropertyField(update = Kleenean.FALSE)
+    @PropertyField(update = Kleenean.FALSE/*, overlay = Kleenean.FALSE*/)
     public StringProperty codigoPagina;
 
     @NameProperty
@@ -65,11 +65,11 @@ public class Pagina extends AbstractPersistentEntity {
     public StringProperty urlPagina;
 
     @ColumnField(nullable = Kleenean.FALSE)
-    @PropertyField(update = Kleenean.FALSE, table = Kleenean.TRUE, report = Kleenean.TRUE)
+    @PropertyField(responsivePriority = 6, update = Kleenean.FALSE, table = Kleenean.TRUE, report = Kleenean.TRUE)
     public BooleanProperty esPublica;
 
     @ColumnField(nullable = Kleenean.FALSE)
-    @PropertyField(update = Kleenean.FALSE, table = Kleenean.TRUE, report = Kleenean.TRUE)
+    @PropertyField(responsivePriority = 6, update = Kleenean.FALSE, table = Kleenean.TRUE, report = Kleenean.TRUE)
     public BooleanProperty esEspecial;
 
     @ColumnField(nullable = Kleenean.FALSE)
@@ -83,7 +83,7 @@ public class Pagina extends AbstractPersistentEntity {
     public BooleanProperty opcionInicio;
 
     @ColumnField(nullable = Kleenean.FALSE)
-    @PropertyField(update = Kleenean.FALSE, table = Kleenean.TRUE, report = Kleenean.TRUE)
+    @PropertyField(responsivePriority = 6, update = Kleenean.FALSE, table = Kleenean.TRUE, report = Kleenean.TRUE)
     public BooleanProperty opcionMenu;
 
     @EmbeddedDocument(sourceURLs = EMBED_YOUTUBE, style = EmbeddedDocumentStyle.POPUP, frameBorder = Kleenean.FALSE, fullScreen = Kleenean.TRUE)
@@ -98,7 +98,7 @@ public class Pagina extends AbstractPersistentEntity {
 
     @ForeignKey(onDelete = OnDeleteAction.NONE, onUpdate = OnUpdateAction.NONE)
     @ManyToOne(navigability = Navigability.UNIDIRECTIONAL, view = MasterDetailView.NONE)
-    @PropertyField(update = Kleenean.FALSE, table = Kleenean.TRUE, report = Kleenean.TRUE)
+    @PropertyField(responsivePriority = 5, update = Kleenean.FALSE, table = Kleenean.TRUE, report = Kleenean.TRUE)
     public TipoPagina tipoPagina;
 
     @ForeignKey(onDelete = OnDeleteAction.NONE, onUpdate = OnUpdateAction.NONE)

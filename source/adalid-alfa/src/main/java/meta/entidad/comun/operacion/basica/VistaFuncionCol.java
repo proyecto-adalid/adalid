@@ -29,7 +29,7 @@ import meta.entidad.comun.configuracion.basica.ext.FuncionParametro;
 @EntityInsertOperation(enabled = Kleenean.TRUE)
 @EntityUpdateOperation(enabled = Kleenean.TRUE)
 @EntityDeleteOperation(enabled = Kleenean.TRUE)
-@EntityTableView(enabled = Kleenean.FALSE, rowsLimit = 100, rows = 100, writingViewWesternToolbarSnippet = "/resources/snippets/base/entity/VistaFuncionCol/botonOpenMasterUpdateDialog")
+@EntityTableView(enabled = Kleenean.FALSE, responsiveMode = TableResponsiveMode.PRIORITY, rowsLimit = 100, rows = 100, writingViewWesternToolbarSnippet = "/resources/snippets/base/entity/VistaFuncionCol/botonOpenMasterUpdateDialog")
 @EntityDetailView(enabled = Kleenean.FALSE)
 @EntityTreeView(enabled = Kleenean.FALSE)
 @EntityConsoleView(enabled = Kleenean.FALSE)
@@ -103,7 +103,6 @@ public class VistaFuncionCol extends AbstractPersistentEntity {
 //  @ForeignKey(onDelete = OnDeleteAction.NONE, onUpdate = OnUpdateAction.NONE)
     @ManyToOne(navigability = Navigability.UNIDIRECTIONAL, view = MasterDetailView.NONE, quickAdding = QuickAddingFilter.MISSING)
     @ColumnField(nullable = Kleenean.FALSE)
-    @EntityReferenceDisplay(style = EntityReferenceStyle.NAME)
     @EntityReferenceSearch(searchType = SearchType.LIST, listStyle = ListStyle.NAME)
     @PropertyField(required = Kleenean.TRUE, table = Kleenean.TRUE, create = Kleenean.TRUE, update = Kleenean.FALSE)
     public FuncionParametro columna;
@@ -127,7 +126,7 @@ public class VistaFuncionCol extends AbstractPersistentEntity {
      * integer property field
      */
     @ColumnField(nullable = Kleenean.FALSE)
-    @PropertyField(required = Kleenean.FALSE, table = Kleenean.TRUE, create = Kleenean.TRUE)
+    @PropertyField(responsivePriority = 6, required = Kleenean.FALSE, table = Kleenean.TRUE, create = Kleenean.TRUE)
     @MasterSequence(masterField = "vista", start = 10, step = 10, nextValueRule = NextValueRule.CEILING)
     public IntegerProperty secuencia;
 
@@ -136,7 +135,7 @@ public class VistaFuncionCol extends AbstractPersistentEntity {
      */
     @ForeignKey(onDelete = OnDeleteAction.NONE, onUpdate = OnUpdateAction.NONE)
     @ManyToOne(navigability = Navigability.UNIDIRECTIONAL, view = MasterDetailView.NONE)
-    @PropertyField(required = Kleenean.FALSE, table = Kleenean.TRUE, create = Kleenean.TRUE)
+    @PropertyField(responsivePriority = 6, required = Kleenean.FALSE, table = Kleenean.TRUE, create = Kleenean.TRUE)
     public TipoAgregacion agregacion;
 
     /**
@@ -144,16 +143,15 @@ public class VistaFuncionCol extends AbstractPersistentEntity {
      */
     @ForeignKey(onDelete = OnDeleteAction.NONE, onUpdate = OnUpdateAction.NONE)
     @ManyToOne(navigability = Navigability.UNIDIRECTIONAL, view = MasterDetailView.NONE)
-    @EntityReferenceDisplay(style = EntityReferenceStyle.NAME)
     @EntityReferenceSearch(searchType = SearchType.LIST, listStyle = ListStyle.NAME)
-    @PropertyField(required = Kleenean.FALSE, table = Kleenean.TRUE, create = Kleenean.TRUE)
+    @PropertyField(responsivePriority = 6, required = Kleenean.FALSE, table = Kleenean.TRUE, create = Kleenean.TRUE)
     public VistaFuncionCol grupo;
 
     /**
      * boolean property field
      */
     @ColumnField(nullable = Kleenean.FALSE)
-    @PropertyField(required = Kleenean.FALSE, table = Kleenean.TRUE, create = Kleenean.TRUE)
+    @PropertyField(responsivePriority = 6, required = Kleenean.FALSE, table = Kleenean.TRUE, create = Kleenean.TRUE)
     public BooleanProperty orden;
 
     /**
@@ -174,7 +172,7 @@ public class VistaFuncionCol extends AbstractPersistentEntity {
      * integer property field
      */
     @ColumnField(nullable = Kleenean.TRUE)
-    @PropertyField(table = Kleenean.TRUE, create = Kleenean.TRUE, update = Kleenean.TRUE, defaultCheckpoint = Checkpoint.USER_INTERFACE)
+    @PropertyField(responsivePriority = 6, table = Kleenean.TRUE, create = Kleenean.TRUE, update = Kleenean.TRUE, defaultCheckpoint = Checkpoint.USER_INTERFACE)
     @PropertyAggregation(function = AggregateFunction.CUSTOM_MADE)
     public IntegerProperty pixeles;
 

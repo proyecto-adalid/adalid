@@ -20,7 +20,7 @@ import java.lang.reflect.Field;
 @EntityInsertOperation(enabled = Kleenean.TRUE)
 @EntityUpdateOperation(enabled = Kleenean.TRUE)
 @EntityDeleteOperation(enabled = Kleenean.TRUE)
-@EntityTableView(enabled = Kleenean.TRUE, inserts = Kleenean.TRUE, updates = Kleenean.TRUE, quickFilter = Kleenean.TRUE)
+@EntityTableView(enabled = Kleenean.TRUE, responsiveMode = TableResponsiveMode.PRIORITY, inserts = Kleenean.TRUE, updates = Kleenean.TRUE, quickFilter = Kleenean.TRUE)
 @EntityDetailView(enabled = Kleenean.TRUE)
 @EntityTreeView(enabled = Kleenean.TRUE)
 @EntityConsoleView(enabled = Kleenean.TRUE)
@@ -67,6 +67,7 @@ public class GrupoUsuario extends AbstractPersistentEntity {
     public LongProperty version;
 
     @BusinessKey
+//  @PropertyField(overlay = Kleenean.FALSE)
     public StringProperty codigo;
 
     @NameProperty
@@ -75,11 +76,11 @@ public class GrupoUsuario extends AbstractPersistentEntity {
     @ParentProperty
     @ForeignKey(onDelete = OnDeleteAction.NONE, onUpdate = OnUpdateAction.NONE)
     @ManyToOne(view = MasterDetailView.NONE)
-    @PropertyField(table = Kleenean.TRUE, create = Kleenean.TRUE)
+    @PropertyField(responsivePriority = 6, table = Kleenean.TRUE, create = Kleenean.TRUE)
     public GrupoUsuario contenedor;
 
     @ColumnField(nullable = Kleenean.FALSE)
-    @PropertyField(create = Kleenean.FALSE, update = Kleenean.FALSE, table = Kleenean.TRUE, report = Kleenean.TRUE)
+    @PropertyField(responsivePriority = 6, create = Kleenean.FALSE, update = Kleenean.FALSE, table = Kleenean.TRUE, report = Kleenean.TRUE)
     public BooleanProperty esGrupoEspecial;
 
     @Override

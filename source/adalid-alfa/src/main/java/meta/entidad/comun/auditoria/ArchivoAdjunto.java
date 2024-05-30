@@ -29,7 +29,7 @@ import meta.entidad.comun.control.acceso.Usuario;
 @EntityInsertOperation(enabled = Kleenean.FALSE)
 @EntityUpdateOperation(enabled = Kleenean.FALSE)
 @EntityDeleteOperation(enabled = Kleenean.FALSE)
-@EntityTableView(enabled = Kleenean.TRUE)
+@EntityTableView(enabled = Kleenean.TRUE, responsiveMode = TableResponsiveMode.PRIORITY)
 @EntityDetailView(enabled = Kleenean.TRUE)
 @EntityTreeView(enabled = Kleenean.FALSE)
 @EntityConsoleView(enabled = Kleenean.FALSE)
@@ -96,7 +96,7 @@ public class ArchivoAdjunto extends AbstractPersistentEntity {
     @QueryMapping(mapKeyProperties = Kleenean.FALSE)
     public Usuario propietario;
 
-    @PropertyField(table = Kleenean.TRUE, search = Kleenean.TRUE, report = Kleenean.TRUE)
+    @PropertyField(responsivePriority = 6, table = Kleenean.TRUE, search = Kleenean.TRUE, report = Kleenean.TRUE)
     @StringField(maxLength = MAX_EMAIL_ADDRESS_LENGTH, displayLength = 36) // maxLength = 36 until 01/12/2023
     public StringProperty codigoUsuarioPropietario;
 
@@ -105,7 +105,7 @@ public class ArchivoAdjunto extends AbstractPersistentEntity {
     public StringProperty nombreUsuarioPropietario;
 
     @ColumnField(nullable = Kleenean.FALSE)
-    @PropertyField(table = Kleenean.TRUE, report = Kleenean.TRUE, search = Kleenean.TRUE, overlay = Kleenean.TRUE)
+    @PropertyField(responsivePriority = 6, table = Kleenean.TRUE, report = Kleenean.TRUE, search = Kleenean.TRUE, overlay = Kleenean.TRUE)
     public TimestampProperty fechaHoraCarga;
 
     @ColumnField(nullable = Kleenean.TRUE)
@@ -114,7 +114,7 @@ public class ArchivoAdjunto extends AbstractPersistentEntity {
     public StringProperty tipoCarga;
 
     @ColumnField(nullable = Kleenean.FALSE)
-    @PropertyField(table = Kleenean.TRUE, report = Kleenean.TRUE, search = Kleenean.TRUE, overlay = Kleenean.TRUE)
+    @PropertyField(responsivePriority = 6, table = Kleenean.TRUE, report = Kleenean.TRUE, search = Kleenean.TRUE, overlay = Kleenean.TRUE)
     @StringField(maxLength = 100)
     public StringProperty tipoContenido;
 
@@ -124,7 +124,7 @@ public class ArchivoAdjunto extends AbstractPersistentEntity {
     public StringProperty conjuntoCaracteres;
 
     @ColumnField(nullable = Kleenean.FALSE)
-    @PropertyField(table = Kleenean.TRUE, report = Kleenean.TRUE, search = Kleenean.TRUE, overlay = Kleenean.TRUE)
+    @PropertyField(responsivePriority = 6, table = Kleenean.TRUE, report = Kleenean.TRUE, search = Kleenean.TRUE, overlay = Kleenean.TRUE)
     public LongProperty longitud;
 
     @BinaryField(fetch = FetchType.LAZY)
@@ -136,12 +136,11 @@ public class ArchivoAdjunto extends AbstractPersistentEntity {
     public IntegerProperty referencias;
 
     @ColumnField(nullable = Kleenean.FALSE)
-//  @PropertyField(table = Kleenean.TRUE, report = Kleenean.FALSE, search = Kleenean.TRUE)
     @PropertyField(hidden = Kleenean.TRUE)
     public BooleanProperty eliminable;
 
     @ColumnField(nullable = Kleenean.FALSE)
-    @PropertyField(table = Kleenean.TRUE, report = Kleenean.FALSE, search = Kleenean.TRUE)
+    @PropertyField(responsivePriority = 6, table = Kleenean.TRUE, report = Kleenean.FALSE, search = Kleenean.TRUE)
     public BooleanProperty restaurable;
 
     /**
@@ -196,6 +195,8 @@ public class ArchivoAdjunto extends AbstractPersistentEntity {
         archivoServidor.setLocalizedLabel(SPANISH, "archivo servidor del archivo adjunto");
         archivoServidor.setLocalizedShortLabel(ENGLISH, "server file");
         archivoServidor.setLocalizedShortLabel(SPANISH, "archivo servidor");
+        archivoServidor.setLocalizedColumnHeader(ENGLISH, "server", "file");
+        archivoServidor.setLocalizedColumnHeader(SPANISH, "archivo", "servidor");
         archivoServidor.setLocalizedTooltip(ENGLISH, "open the attached file");
         archivoServidor.setLocalizedTooltip(SPANISH, "abrir el archivo adjunto");
         /**/

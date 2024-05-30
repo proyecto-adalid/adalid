@@ -31,8 +31,8 @@ import meta.entidad.comun.configuracion.basica.ext.Funcion;
 @EntityInsertOperation(enabled = Kleenean.TRUE)
 @EntityUpdateOperation(enabled = Kleenean.TRUE)
 @EntityDeleteOperation(enabled = Kleenean.TRUE)
-@EntityTableView(enabled = Kleenean.TRUE)
-@EntityDetailView(enabled = Kleenean.FALSE)
+@EntityTableView(enabled = Kleenean.TRUE, responsiveMode = TableResponsiveMode.PRIORITY)
+@EntityDetailView(enabled = Kleenean.TRUE)
 @EntityTreeView(enabled = Kleenean.FALSE)
 @EntityConsoleView(enabled = Kleenean.FALSE)
 public class RolFuncion extends AbstractPersistentEntity {
@@ -102,8 +102,7 @@ public class RolFuncion extends AbstractPersistentEntity {
     @ColumnField(calculable = Kleenean.TRUE)
 //  @ForeignKey(onDelete = OnDeleteAction.NONE, onUpdate = OnUpdateAction.NONE)
     @ManyToOne(navigability = Navigability.UNIDIRECTIONAL, view = MasterDetailView.NONE)
-    @PropertyField(search = Kleenean.TRUE, create = Kleenean.TRUE, update = Kleenean.TRUE, table = Kleenean.TRUE, report = Kleenean.TRUE, export = Kleenean.TRUE, overlay = Kleenean.TRUE)
-//  @EntityReferenceSearch(searchType = SearchType.LIST, listStyle = ListStyle.NAME)
+    @PropertyField(responsivePriority = 6, search = Kleenean.TRUE, create = Kleenean.TRUE, update = Kleenean.TRUE, table = Kleenean.TRUE, report = Kleenean.TRUE, export = Kleenean.TRUE, overlay = Kleenean.TRUE)
     public ClaseRecurso clase;
 
 //  20171213: remove foreign-key referring to Funcion
@@ -116,20 +115,20 @@ public class RolFuncion extends AbstractPersistentEntity {
 
     @ForeignKey(onDelete = OnDeleteAction.CASCADE, onUpdate = OnUpdateAction.CASCADE)
     @ManyToOne(navigability = Navigability.UNIDIRECTIONAL, view = MasterDetailView.NONE)
-    @PropertyField(required = Kleenean.FALSE, table = Kleenean.TRUE, report = Kleenean.TRUE, create = Kleenean.TRUE, access = PropertyAccess.RESTRICTED_WRITING)
+    @PropertyField(responsivePriority = 6, required = Kleenean.FALSE, table = Kleenean.TRUE, report = Kleenean.TRUE, create = Kleenean.TRUE, access = PropertyAccess.RESTRICTED_WRITING)
     @EntityReferenceSearch(searchType = SearchType.LIST, listStyle = ListStyle.NAME)
     public ConjuntoSegmento conjuntoSegmento;
 
     @ColumnField(nullable = Kleenean.FALSE)
-    @PropertyField(required = Kleenean.FALSE, table = Kleenean.TRUE, report = Kleenean.TRUE, create = Kleenean.TRUE, access = PropertyAccess.RESTRICTED_WRITING, defaultCheckpoint = Checkpoint.USER_INTERFACE)
+    @PropertyField(responsivePriority = 6, required = Kleenean.FALSE, table = Kleenean.TRUE, report = Kleenean.TRUE, create = Kleenean.TRUE, access = PropertyAccess.RESTRICTED_WRITING, defaultCheckpoint = Checkpoint.USER_INTERFACE)
     public BooleanProperty esAccesoPersonalizado;
 
     @ColumnField(nullable = Kleenean.FALSE)
-    @PropertyField(required = Kleenean.FALSE, table = Kleenean.TRUE, report = Kleenean.TRUE, create = Kleenean.TRUE)
+    @PropertyField(responsivePriority = 6, required = Kleenean.FALSE, table = Kleenean.TRUE, report = Kleenean.TRUE, create = Kleenean.TRUE)
     public BooleanProperty esTarea;
 
     @ColumnField(nullable = Kleenean.FALSE)
-    @PropertyField(create = Kleenean.FALSE, update = Kleenean.FALSE, table = Kleenean.TRUE)
+    @PropertyField(responsivePriority = 6, create = Kleenean.FALSE, update = Kleenean.FALSE, table = Kleenean.TRUE)
 //  @BooleanField(displayType = BooleanDisplayType.CHECKBOX)
     public BooleanProperty esAutorizacionInvalida;
 

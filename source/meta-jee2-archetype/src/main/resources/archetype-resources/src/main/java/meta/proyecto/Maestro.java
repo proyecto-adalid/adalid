@@ -23,9 +23,9 @@ public abstract class Maestro extends ProyectoPrime {
     public static final String ACRONYM = "jee2";
 
     /**
-     * Guía de Operación, Proyecto Adalid, Plataforma jee2, versión 5.0
+     * Guía de Operación, Proyecto Adalid, Plataforma jee2, versión 5.2
      */
-    public static final String HELP_DOCUMENT_URL = "https://drive.google.com/file/d/1FOy-n_gHPo3rjWVLttWvJ2kErot8uw0L/view?usp=sharing"; // 5.0
+    public static final String HELP_DOCUMENT_URL = "https://drive.google.com/file/d/1dnvNN_5tAj4nQAnOdHv2TxwV5-6H-3MK/view?usp=sharing"; // 5.2
 
     @Override
     protected void settleAttributes() {

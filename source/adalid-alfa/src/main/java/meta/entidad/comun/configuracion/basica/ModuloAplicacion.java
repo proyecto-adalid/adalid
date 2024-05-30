@@ -28,7 +28,7 @@ import java.lang.reflect.Field;
 @EntityInsertOperation(enabled = Kleenean.FALSE)
 @EntityUpdateOperation(enabled = Kleenean.FALSE)
 @EntityDeleteOperation(enabled = Kleenean.FALSE)
-@EntityTableView(enabled = Kleenean.TRUE, rowsLimit = 500)
+@EntityTableView(enabled = Kleenean.TRUE, responsiveMode = TableResponsiveMode.PRIORITY, rowsLimit = 500)
 @EntityDetailView(enabled = Kleenean.TRUE)
 @EntityTreeView(enabled = Kleenean.FALSE)
 @EntityConsoleView(enabled = Kleenean.FALSE)
@@ -48,7 +48,7 @@ public class ModuloAplicacion extends AbstractPersistentEntity {
 
     @BusinessKey
     @StringField(maxLength = 100)
-    @PropertyField(update = Kleenean.FALSE)
+    @PropertyField(update = Kleenean.FALSE/*, overlay = Kleenean.FALSE*/)
     public StringProperty codigoModulo;
 
     @NameProperty
@@ -61,11 +61,11 @@ public class ModuloAplicacion extends AbstractPersistentEntity {
     public StringProperty descripcionModulo;
 
     @ColumnField(nullable = Kleenean.FALSE)
-    @PropertyField(update = Kleenean.FALSE, table = Kleenean.TRUE)
+    @PropertyField(responsivePriority = 6, update = Kleenean.FALSE, table = Kleenean.TRUE)
     public BooleanProperty menusPredefinidos;
 
     @ColumnField(nullable = Kleenean.FALSE)
-    @PropertyField(update = Kleenean.FALSE, table = Kleenean.TRUE)
+    @PropertyField(responsivePriority = 6, update = Kleenean.FALSE, table = Kleenean.TRUE)
     public BooleanProperty rolesPredefinidos;
 
     @ColumnField(nullable = Kleenean.FALSE)

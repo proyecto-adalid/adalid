@@ -32,7 +32,6 @@ import java.lang.reflect.Field;
 @EntityDetailView(enabled = Kleenean.FALSE)
 @EntityTreeView(enabled = Kleenean.FALSE)
 @EntityConsoleView(enabled = Kleenean.FALSE)
-//@EntityReferenceDisplay(filterType = EntityReferenceFilterType.LIST)
 public class VersionAdalid extends AbstractPersistentEnumerationEntity {
 
     // <editor-fold defaultstate="collapsed" desc="class constructors">
@@ -62,7 +61,7 @@ public class VersionAdalid extends AbstractPersistentEnumerationEntity {
 
     public Instance V4R0, V4R1, V4R2, V4R3, V4R4, V4R5, V4R6, V4R7, V4R8, V4R9;
 
-    public Instance V5R0, V5R1;
+    public Instance V5R0, V5R1, V5R2;
 
     @Override
     protected void settleAttributes() {
@@ -121,6 +120,7 @@ public class VersionAdalid extends AbstractPersistentEnumerationEntity {
         V4R9.newInstanceField(codigo, "V4R9");
         V5R0.newInstanceField(codigo, "V5R0");
         V5R1.newInstanceField(codigo, "V5R1");
+        V5R2.newInstanceField(codigo, "V5R2");
     }
 
 }

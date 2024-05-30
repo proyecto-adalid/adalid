@@ -34,7 +34,7 @@ import meta.entidad.comun.control.acceso.Usuario;
 @EntityUpdateOperation(enabled = Kleenean.FALSE)
 @EntityDeleteOperation(enabled = Kleenean.FALSE)
 @EntityReportOperation(enabled = Kleenean.FALSE)
-@EntityTableView(enabled = Kleenean.FALSE)
+@EntityTableView(enabled = Kleenean.FALSE, responsiveMode = TableResponsiveMode.PRIORITY)
 @EntityDetailView(enabled = Kleenean.FALSE)
 @EntityTreeView(enabled = Kleenean.FALSE)
 @EntityConsoleView(enabled = Kleenean.TRUE)
@@ -107,7 +107,7 @@ public class RastroFuncionPar extends AbstractPersistentEntity {
     @PropertyField(sequence = 130, table = Kleenean.FALSE, report = Kleenean.FALSE, export = Kleenean.FALSE)
     public StringProperty nombreRecursoAnterior;
 
-    @PropertyField(sequence = 100, table = Kleenean.TRUE, report = Kleenean.FALSE, export = Kleenean.FALSE)
+    @PropertyField(sequence = 100, table = Kleenean.TRUE, report = Kleenean.FALSE, export = Kleenean.FALSE, responsivePriority = 6)
     @StringField(converter = CONVERTIDOR_VALOR, maxLength = 0)
     public StringProperty valorAparenteAnterior;
 

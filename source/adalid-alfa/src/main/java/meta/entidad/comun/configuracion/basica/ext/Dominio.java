@@ -31,7 +31,6 @@ import meta.entidad.comun.configuracion.basica.TipoDominio;
 @EntityDetailView(enabled = Kleenean.FALSE)
 @EntityTreeView(enabled = Kleenean.FALSE)
 @EntityConsoleView(enabled = Kleenean.FALSE)
-@EntityReferenceDisplay(style = EntityReferenceStyle.NAME_AND_CHARACTER_KEY)
 public class Dominio extends meta.entidad.comun.configuracion.basica.Dominio {
 
     // <editor-fold defaultstate="collapsed" desc="class constructors">

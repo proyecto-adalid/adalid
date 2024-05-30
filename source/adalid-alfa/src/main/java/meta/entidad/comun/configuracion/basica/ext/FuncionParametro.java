@@ -36,11 +36,10 @@ import meta.entidad.comun.configuracion.basica.TipoValor;
 @EntityInsertOperation(enabled = Kleenean.FALSE)
 @EntityUpdateOperation(enabled = Kleenean.FALSE)
 @EntityDeleteOperation(enabled = Kleenean.FALSE)
-@EntityTableView(enabled = Kleenean.TRUE, rowsLimit = 500, rows = 500)
+@EntityTableView(enabled = Kleenean.TRUE, responsiveMode = TableResponsiveMode.PRIORITY, rowsLimit = 500, rows = 500)
 @EntityDetailView(enabled = Kleenean.TRUE)
 @EntityTreeView(enabled = Kleenean.FALSE)
 @EntityConsoleView(enabled = Kleenean.FALSE)
-@EntityReferenceDisplay(style = EntityReferenceStyle.NAME_AND_CHARACTER_KEY)
 public class FuncionParametro extends meta.entidad.comun.configuracion.basica.FuncionParametro {
 
     // <editor-fold defaultstate="collapsed" desc="class constructors">
@@ -52,11 +51,13 @@ public class FuncionParametro extends meta.entidad.comun.configuracion.basica.Fu
     @ForeignKey(onDelete = OnDeleteAction.NONE, onUpdate = OnUpdateAction.NONE)
     @ManyToOne(navigability = Navigability.UNIDIRECTIONAL, view = MasterDetailView.NONE)
     @ColumnField(nullable = Kleenean.FALSE)
+    @PropertyField(table = Kleenean.FALSE)
     public ClaseJava claseJava;
 
     @ForeignKey(onDelete = OnDeleteAction.NONE, onUpdate = OnUpdateAction.NONE)
     @ManyToOne(navigability = Navigability.UNIDIRECTIONAL, view = MasterDetailView.NONE)
     @ColumnField(nullable = Kleenean.FALSE)
+    @PropertyField(responsivePriority = 5, overlay = Kleenean.TRUE)
     public TipoDatoPar tipoDatoPar;
 
     @PropertyField(hidden = Kleenean.TRUE)
@@ -81,7 +82,7 @@ public class FuncionParametro extends meta.entidad.comun.configuracion.basica.Fu
     public BooleanProperty criterioBusqueda;
 
     @ColumnField(nullable = Kleenean.FALSE)
-    @PropertyField(table = Kleenean.TRUE)
+    @PropertyField(responsivePriority = 6, overlay = Kleenean.TRUE, table = Kleenean.TRUE)
     public BooleanProperty accesoRestringido;
 
     @ColumnField(nullable = Kleenean.FALSE)
@@ -97,7 +98,7 @@ public class FuncionParametro extends meta.entidad.comun.configuracion.basica.Fu
     public BooleanProperty esParametroHeredado;
 
     @ColumnField(nullable = Kleenean.FALSE)
-    @PropertyField(table = Kleenean.TRUE)
+    @PropertyField(responsivePriority = 6, overlay = Kleenean.TRUE, table = Kleenean.TRUE)
     public BooleanProperty esParametroVinculado;
 
     @ColumnField(nullable = Kleenean.FALSE)
@@ -153,7 +154,7 @@ public class FuncionParametro extends meta.entidad.comun.configuracion.basica.Fu
 
     @ForeignKey(onDelete = OnDeleteAction.NONE, onUpdate = OnUpdateAction.NONE)
     @ManyToOne(navigability = Navigability.UNIDIRECTIONAL, view = MasterDetailView.NONE)
-    @PropertyField(table = Kleenean.TRUE)
+    @PropertyField(responsivePriority = 6, overlay = Kleenean.TRUE, table = Kleenean.TRUE)
     public ClaseRecurso claseRecursoValor;
 
     @Override

@@ -17,6 +17,6 @@ package adalid.core.enums;
  */
 public enum TableResponsiveMode {
 
-    NONE, PRIORITY, REFLOW
+    UNSPECIFIED, NONE, PRIORITY, REFLOW
 
 }

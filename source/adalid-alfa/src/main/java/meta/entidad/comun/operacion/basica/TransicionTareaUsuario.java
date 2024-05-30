@@ -22,6 +22,7 @@ import meta.entidad.comun.control.acceso.Usuario;
 /**
  * @author Jorge Campins
  */
+@EntityTableView(enabled = Kleenean.TRUE, responsiveMode = TableResponsiveMode.PRIORITY)
 public class TransicionTareaUsuario extends TransicionAbstracta {
 
     // <editor-fold defaultstate="collapsed" desc="class constructors">
@@ -72,19 +73,19 @@ public class TransicionTareaUsuario extends TransicionAbstracta {
     @ColumnField(calculable = Kleenean.TRUE)
 //  @ForeignKey(onDelete = OnDeleteAction.NONE, onUpdate = OnUpdateAction.NONE)
     @ManyToOne(navigability = Navigability.UNIDIRECTIONAL, view = MasterDetailView.NONE)
-    @PropertyField(table = Kleenean.TRUE, detail = Kleenean.FALSE, report = Kleenean.FALSE, search = Kleenean.TRUE)
+    @PropertyField(table = Kleenean.TRUE, detail = Kleenean.FALSE, report = Kleenean.FALSE, search = Kleenean.TRUE, responsivePriority = 6)
     public Usuario responsable;
 
     @ColumnField(nullable = Kleenean.TRUE)
     @ForeignKey(onDelete = OnDeleteAction.NONE, onUpdate = OnUpdateAction.NONE)
     @ManyToOne(navigability = Navigability.UNIDIRECTIONAL, view = MasterDetailView.NONE)
-    @PropertyField(table = Kleenean.FALSE, report = Kleenean.TRUE, search = Kleenean.TRUE)
+    @PropertyField(table = Kleenean.FALSE, report = Kleenean.TRUE, search = Kleenean.TRUE, responsivePriority = 6)
     public Usuario responsableInicial;
 
     @ColumnField(nullable = Kleenean.TRUE)
     @ForeignKey(onDelete = OnDeleteAction.NONE, onUpdate = OnUpdateAction.NONE)
     @ManyToOne(navigability = Navigability.UNIDIRECTIONAL, view = MasterDetailView.NONE)
-    @PropertyField(table = Kleenean.FALSE, report = Kleenean.TRUE, search = Kleenean.TRUE)
+    @PropertyField(table = Kleenean.FALSE, report = Kleenean.TRUE, search = Kleenean.TRUE, responsivePriority = 6)
     public Usuario responsableFinal;
 
     @Override

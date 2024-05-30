@@ -32,7 +32,6 @@ import java.lang.reflect.Field;
 @EntityDetailView(enabled = Kleenean.FALSE)
 @EntityTreeView(enabled = Kleenean.FALSE)
 @EntityConsoleView(enabled = Kleenean.FALSE)
-//@EntityReferenceDisplay(filterType = EntityReferenceFilterType.LIST)
 public class NivelOpcionMenu extends AbstractPersistentEnumerationEntity {
 
     // <editor-fold defaultstate="collapsed" desc="class constructors">

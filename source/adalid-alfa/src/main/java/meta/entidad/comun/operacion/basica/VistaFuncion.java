@@ -31,7 +31,7 @@ import meta.entidad.comun.control.acceso.Usuario;
 @EntityInsertOperation(enabled = Kleenean.TRUE)
 @EntityUpdateOperation(enabled = Kleenean.TRUE)
 @EntityDeleteOperation(enabled = Kleenean.TRUE)
-@EntityTableView(enabled = Kleenean.TRUE, menu = ViewMenuOption.NONE, inserts = Kleenean.FALSE, updates = Kleenean.FALSE)
+@EntityTableView(enabled = Kleenean.TRUE, responsiveMode = TableResponsiveMode.PRIORITY, menu = ViewMenuOption.NONE, inserts = Kleenean.FALSE, updates = Kleenean.FALSE)
 @EntityDetailView(enabled = Kleenean.TRUE)
 @EntityTreeView(enabled = Kleenean.FALSE)
 @EntityConsoleView(enabled = Kleenean.TRUE, menu = Kleenean.FALSE)
@@ -51,7 +51,7 @@ public class VistaFuncion extends AbstractPersistentEntity {
 
     @BusinessKey
     @StringField(maxLength = 100)
-    @PropertyField(create = Kleenean.FALSE, update = Kleenean.FALSE, table = Kleenean.FALSE, heading = Kleenean.FALSE, defaultCondition = DefaultCondition.UNCONDITIONALLY_ON_INSERT, defaultCheckpoint = Checkpoint.USER_INTERFACE)
+    @PropertyField(create = Kleenean.FALSE, update = Kleenean.FALSE, table = Kleenean.FALSE, heading = Kleenean.FALSE, overlay = Kleenean.FALSE, defaultCondition = DefaultCondition.UNCONDITIONALLY_ON_INSERT, defaultCheckpoint = Checkpoint.USER_INTERFACE)
     public StringProperty codigo;
 
     @NameProperty
@@ -71,27 +71,27 @@ public class VistaFuncion extends AbstractPersistentEntity {
     @ForeignKey(onDelete = OnDeleteAction.CASCADE, onUpdate = OnUpdateAction.CASCADE)
     @ManyToOne(navigability = Navigability.UNIDIRECTIONAL, view = MasterDetailView.NONE)
     @ColumnField(nullable = Kleenean.TRUE)
-    @PropertyField(create = Kleenean.FALSE, update = Kleenean.FALSE, search = Kleenean.TRUE, table = Kleenean.TRUE, report = Kleenean.TRUE, defaultCondition = DefaultCondition.IF_NULL_ON_INSERT, defaultCheckpoint = Checkpoint.USER_INTERFACE)
+    @PropertyField(responsivePriority = 6, create = Kleenean.FALSE, update = Kleenean.FALSE, search = Kleenean.TRUE, table = Kleenean.TRUE, report = Kleenean.TRUE, defaultCondition = DefaultCondition.IF_NULL_ON_INSERT, defaultCheckpoint = Checkpoint.USER_INTERFACE)
     public Usuario propietario;
 
     @ColumnField(nullable = Kleenean.TRUE)
     @ForeignKey(onDelete = OnDeleteAction.NONE, onUpdate = OnUpdateAction.NONE)
     @ManyToOne(navigability = Navigability.UNIDIRECTIONAL, view = MasterDetailView.NONE)
-    @PropertyField(create = Kleenean.FALSE, update = Kleenean.FALSE, search = Kleenean.TRUE, table = Kleenean.TRUE, report = Kleenean.FALSE)
+    @PropertyField(responsivePriority = 6, create = Kleenean.FALSE, update = Kleenean.FALSE, search = Kleenean.TRUE, table = Kleenean.TRUE, report = Kleenean.FALSE)
     public Usuario remitente;
 
     @ColumnField(nullable = Kleenean.FALSE)
-    @PropertyField(create = Kleenean.FALSE, update = Kleenean.FALSE, search = Kleenean.TRUE, table = Kleenean.TRUE, report = Kleenean.TRUE)
+    @PropertyField(responsivePriority = 6, create = Kleenean.FALSE, update = Kleenean.FALSE, search = Kleenean.TRUE, table = Kleenean.TRUE, report = Kleenean.TRUE)
     public BooleanProperty publica;
 
     @ColumnField(nullable = Kleenean.FALSE)
-    @PropertyField(create = Kleenean.FALSE, update = Kleenean.FALSE, search = Kleenean.TRUE, table = Kleenean.TRUE, report = Kleenean.TRUE)
+    @PropertyField(responsivePriority = 6, create = Kleenean.FALSE, update = Kleenean.FALSE, search = Kleenean.TRUE, table = Kleenean.TRUE, report = Kleenean.TRUE)
     public BooleanProperty especial;
 
     @ColumnField(nullable = Kleenean.FALSE)
     @ForeignKey(onDelete = OnDeleteAction.NONE, onUpdate = OnUpdateAction.NONE)
     @ManyToOne(view = MasterDetailView.NONE)
-    @PropertyField(create = Kleenean.TRUE, heading = Kleenean.TRUE, search = Kleenean.TRUE, table = Kleenean.TRUE, report = Kleenean.TRUE)
+    @PropertyField(responsivePriority = 6, create = Kleenean.TRUE, heading = Kleenean.TRUE, search = Kleenean.TRUE, table = Kleenean.TRUE, report = Kleenean.TRUE)
     public FormatoPaginaInforme formato;
 
     @ColumnField(nullable = Kleenean.FALSE)
@@ -139,7 +139,7 @@ public class VistaFuncion extends AbstractPersistentEntity {
     public IntegerProperty anchoDetalle;
 
     @ColumnField(calculable = Kleenean.TRUE)
-    @PropertyField(prominent = Kleenean.TRUE, table = Kleenean.TRUE)
+    @PropertyField(responsivePriority = 6, prominent = Kleenean.TRUE, table = Kleenean.TRUE)
     public IntegerProperty anchoDisponible;
 
     @ColumnField(nullable = Kleenean.FALSE)

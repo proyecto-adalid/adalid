@@ -48,6 +48,7 @@ public class Dominio extends AbstractPersistentEntity {
 
     @BusinessKey
     @StringField(maxLength = 100)
+    @PropertyField(overlay = Kleenean.TRUE)
     public StringProperty codigoDominio;
 
     @NameProperty

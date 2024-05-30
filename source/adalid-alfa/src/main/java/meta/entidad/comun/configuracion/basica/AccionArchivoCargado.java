@@ -33,7 +33,6 @@ import java.lang.reflect.Field;
 @EntityTreeView(enabled = Kleenean.FALSE)
 @EntityConsoleView(enabled = Kleenean.FALSE)
 @EntityReferenceSearch(searchType = SearchType.RADIO)
-//@EntityReferenceDisplay(filterType = EntityReferenceFilterType.LIST)
 public class AccionArchivoCargado extends AbstractPersistentEnumerationEntity {
 
     // <editor-fold defaultstate="collapsed" desc="class constructors">

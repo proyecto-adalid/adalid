@@ -30,11 +30,10 @@ import meta.entidad.comun.configuracion.basica.ClaseRecurso;
 @EntityInsertOperation(enabled = Kleenean.TRUE)
 @EntityUpdateOperation(enabled = Kleenean.TRUE)
 @EntityDeleteOperation(enabled = Kleenean.TRUE)
-@EntityTableView(enabled = Kleenean.TRUE, inserts = Kleenean.TRUE, updates = Kleenean.TRUE, quickFilter = Kleenean.TRUE)
+@EntityTableView(enabled = Kleenean.TRUE, responsiveMode = TableResponsiveMode.PRIORITY, inserts = Kleenean.TRUE, updates = Kleenean.TRUE, quickFilter = Kleenean.TRUE)
 @EntityDetailView(enabled = Kleenean.TRUE)
 @EntityTreeView(enabled = Kleenean.FALSE)
 @EntityConsoleView(enabled = Kleenean.TRUE)
-@EntityReferenceDisplay(style = EntityReferenceStyle.NAME_AND_CHARACTER_KEY)
 public class ConjuntoSegmento extends AbstractPersistentEntity {
 
     // <editor-fold defaultstate="collapsed" desc="class constructors">
@@ -51,6 +50,7 @@ public class ConjuntoSegmento extends AbstractPersistentEntity {
 
     @BusinessKey
     @StringField(maxLength = 200)
+    @PropertyField(overlay = Kleenean.TRUE)
     public StringProperty codigoConjuntoSegmento;
 
     @NameProperty
@@ -65,8 +65,8 @@ public class ConjuntoSegmento extends AbstractPersistentEntity {
 //  @ForeignKey(onDelete = OnDeleteAction.NONE, onUpdate = OnUpdateAction.NONE)
     @ManyToOne(navigability = Navigability.UNIDIRECTIONAL, view = MasterDetailView.NONE)
     @ColumnField(nullable = Kleenean.FALSE)
-    @PropertyField(heading = Kleenean.TRUE, overlay = Kleenean.TRUE, update = Kleenean.FALSE)
-    @EntityReferenceSearch(searchType = SearchType.LIST, listStyle = ListStyle.CHARACTER_KEY)
+    @PropertyField(responsivePriority = 5, heading = Kleenean.TRUE, overlay = Kleenean.TRUE, update = Kleenean.FALSE)
+    @EntityReferenceSearch(searchType = SearchType.LIST, listStyle = ListStyle.NAME)
     public ClaseRecurso claseRecurso;
 
     @ForeignKey(onDelete = OnDeleteAction.CASCADE, onUpdate = OnUpdateAction.CASCADE)
@@ -77,7 +77,6 @@ public class ConjuntoSegmento extends AbstractPersistentEntity {
     @ForeignKey(onDelete = OnDeleteAction.NONE, onUpdate = OnUpdateAction.NONE)
     @ManyToOne(navigability = Navigability.UNIDIRECTIONAL, view = MasterDetailView.NONE)
     @PropertyField(create = Kleenean.TRUE)
-    @EntityReferenceSearch(searchType = SearchType.LIST, listStyle = ListStyle.CHARACTER_KEY)
     public ClaseFabricador claseFabricador;
 
     @PropertyField(hidden = Kleenean.TRUE, defaultCondition = DefaultCondition.UNCONDITIONALLY, defaultCheckpoint = Checkpoint.USER_INTERFACE)
@@ -85,14 +84,14 @@ public class ConjuntoSegmento extends AbstractPersistentEntity {
     public StringProperty nombreClaseFabricador;
 
     @BooleanField(displayType = BooleanDisplayType.TOGGLE)
-    @PropertyField(create = Kleenean.FALSE, update = Kleenean.FALSE, table = Kleenean.TRUE)
+    @PropertyField(responsivePriority = 6, create = Kleenean.FALSE, update = Kleenean.FALSE, table = Kleenean.TRUE)
     public BooleanProperty esConjuntoEspecial;
 
     @SegmentProperty
     @EntityReferenceSearch(searchType = SearchType.LIST, listStyle = ListStyle.CHARACTER_KEY_AND_NAME, displayMode = DisplayMode.WRITING)
     @ForeignKey(onDelete = OnDeleteAction.NONE, onUpdate = OnUpdateAction.NONE)
     @ManyToOne(view = MasterDetailView.TABLE_AND_DETAIL)
-    @PropertyField(create = Kleenean.TRUE, update = Kleenean.TRUE, required = Kleenean.TRUE, table = Kleenean.TRUE, report = Kleenean.TRUE, heading = Kleenean.TRUE, overlay = Kleenean.TRUE)
+    @PropertyField(responsivePriority = 6, create = Kleenean.TRUE, update = Kleenean.TRUE, required = Kleenean.TRUE, table = Kleenean.TRUE, report = Kleenean.TRUE, heading = Kleenean.TRUE, overlay = Kleenean.TRUE)
     public GrupoUsuario grupo;
 
     @Override

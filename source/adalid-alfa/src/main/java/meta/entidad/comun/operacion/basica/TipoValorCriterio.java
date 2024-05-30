@@ -32,7 +32,8 @@ import java.lang.reflect.Field;
 @EntityDetailView(enabled = Kleenean.FALSE)
 @EntityTreeView(enabled = Kleenean.FALSE)
 @EntityConsoleView(enabled = Kleenean.FALSE)
-@EntityReferenceDisplay(style = EntityReferenceStyle.CHARACTER_KEY/*, filterType = EntityReferenceFilterType.LIST*/)
+@EntityReferenceDisplay(filterType = EntityReferenceFilterType.LIST)
+@EntityReferenceSearch(listStyle = ListStyle.CHARACTER_KEY)
 public class TipoValorCriterio extends AbstractPersistentEnumerationEntity {
 
     // <editor-fold defaultstate="collapsed" desc="class constructors">

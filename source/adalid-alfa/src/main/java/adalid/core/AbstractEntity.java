@@ -912,7 +912,7 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
     /**
      *
      */
-    private TableResponsiveMode _tableResponsiveMode = TableResponsiveMode.NONE;
+    private TableResponsiveMode _tableResponsiveMode = TableResponsiveMode.UNSPECIFIED;
 
     /**
      *
@@ -3666,7 +3666,21 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
      */
 //  @Override
     public TableResponsiveMode getTableResponsiveMode() {
-        return _tableResponsiveMode;
+        return TableResponsiveMode.UNSPECIFIED.equals(_tableResponsiveMode) || Project.isReplaceEntityTableViewResponsiveMode()
+            ? Project.getDefaultEntityTableViewResponsiveMode() : _tableResponsiveMode;
+    }
+
+    /**
+     * El método setTableResponsiveMode se utiliza para establecer el modo "responsive" de las vistas (páginas) de consulta y/o registro tabular de la
+     * entidad. Su valor es uno de los elementos de la enumeración TableResponsiveMode. Seleccione PRIORITY para mostrar las columnas de la tabla
+     * dependiendo de su prioridad, según el tamaño de la pantalla. Seleccione REFLOW para mostrar todas las columnas, apiladas o no, según el tamaño
+     * de la pantalla. Seleccione NONE para que la tabla no sea "responsive". Seleccione UNSPECIFIED para que se utilice el valor establecido mediante
+     * el método setDefaultEntityTableViewResponsiveMode del meta-proyecto, cuyo valor inicial es NONE.
+     *
+     * @param responsiveMode modo "responsive" de la tabla
+     */
+    protected void setTableResponsiveMode(TableResponsiveMode responsiveMode) {
+        _tableResponsiveMode = responsiveMode == null ? TableResponsiveMode.UNSPECIFIED : responsiveMode;
     }
 
     /**
@@ -10875,7 +10889,7 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
                 _tableViewRowsLimit = (_tableViewRowsLimit + 9) / 10 * 10;
                 _tableViewRows = Math.min(_tableViewRowsLimit, Math.max(1, annotation.rows()));
                 _tableViewRows = (_tableViewRows + 4) / 5 * 5;
-                _tableResponsiveMode = annotation.responsiveMode();
+                _tableResponsiveMode = specified(annotation.responsiveMode(), _tableResponsiveMode);
                 _tableViewMenuOption = annotation.menu();
                 _annotatedWithEntityTableView = true;
                 /**/

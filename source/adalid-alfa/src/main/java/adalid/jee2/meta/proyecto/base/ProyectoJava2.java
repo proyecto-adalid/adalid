@@ -311,6 +311,7 @@ public class ProyectoJava2 extends ProyectoJava1 {
         addSpecialPageCalendarioProcesos();
         addSpecialPageDistribucionTareas();
         addSpecialPageIndicadoresGestion();
+        addSpecialPageMapaSitio();
     }
 
     protected final SpecialPage paginaCalendarioProcesos = SpecialPage.of("CalendarioProcesos", "/faces/views/base/code/CalendarioProcesos.xhtml");
@@ -347,6 +348,18 @@ public class ProyectoJava2 extends ProyectoJava1 {
         paginaIndicadoresGestion.setLocalizedShortDescription(Bundle.SPANISH, "Tablero de indicadores de gestión");
         paginaIndicadoresGestion.setStartOption(true);
         addSpecialPage(paginaIndicadoresGestion);
+    }
+
+    protected final SpecialPage paginaMapaSitio = SpecialPage.of("Mapa", "/faces/views/base/code/Mapa.xhtml");
+
+    private void addSpecialPageMapaSitio() {
+        paginaMapaSitio.setIconClass("fa fa-sitemap fa-rotate-270");
+        paginaMapaSitio.setLocalizedLabel(Bundle.ENGLISH, "Site Map");
+        paginaMapaSitio.setLocalizedLabel(Bundle.SPANISH, "Mapa del Sitio");
+        paginaMapaSitio.setLocalizedShortDescription(Bundle.ENGLISH, "Site Map");
+        paginaMapaSitio.setLocalizedShortDescription(Bundle.SPANISH, "Mapa del Sitio");
+        paginaMapaSitio.setStartOption(true);
+        addSpecialPage(paginaMapaSitio);
     }
 
     @Override

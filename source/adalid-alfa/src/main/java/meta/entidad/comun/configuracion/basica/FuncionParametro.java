@@ -28,7 +28,7 @@ import java.lang.reflect.Field;
 @EntityInsertOperation(enabled = Kleenean.FALSE)
 @EntityUpdateOperation(enabled = Kleenean.FALSE)
 @EntityDeleteOperation(enabled = Kleenean.FALSE)
-@EntityTableView(enabled = Kleenean.TRUE)
+@EntityTableView(enabled = Kleenean.TRUE, responsiveMode = TableResponsiveMode.PRIORITY)
 @EntityDetailView(enabled = Kleenean.TRUE)
 @EntityTreeView(enabled = Kleenean.FALSE)
 @EntityConsoleView(enabled = Kleenean.FALSE)
@@ -47,8 +47,8 @@ public class FuncionParametro extends AbstractPersistentEntity {
     public LongProperty version;
 
     @BusinessKey
-//  @PropertyField(table = Kleenean.FALSE)
     @StringField(maxLength = 200)
+    @PropertyField(overlay = Kleenean.TRUE)
     public StringProperty codigoFuncionParametro;
 
     @NameProperty

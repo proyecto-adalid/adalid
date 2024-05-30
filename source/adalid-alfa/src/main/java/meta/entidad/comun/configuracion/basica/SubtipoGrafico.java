@@ -32,7 +32,6 @@ import java.lang.reflect.Field;
 @EntityDetailView(enabled = Kleenean.FALSE)
 @EntityTreeView(enabled = Kleenean.FALSE)
 @EntityConsoleView(enabled = Kleenean.FALSE)
-//@EntityReferenceDisplay(filterType = EntityReferenceFilterType.TEXTBOX)
 public class SubtipoGrafico extends AbstractPersistentEnumerationEntity {
 
     // <editor-fold defaultstate="collapsed" desc="class constructors">

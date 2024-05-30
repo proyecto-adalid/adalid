@@ -29,7 +29,7 @@ import meta.entidad.comun.configuracion.basica.ext.FuncionParametro;
 @EntityInsertOperation(enabled = Kleenean.TRUE)
 @EntityUpdateOperation(enabled = Kleenean.TRUE)
 @EntityDeleteOperation(enabled = Kleenean.TRUE)
-@EntityTableView(enabled = Kleenean.FALSE, rowsLimit = 100, rows = 100, writingViewWesternToolbarSnippet = "/resources/snippets/base/entity/FiltroFuncionPar/botonOpenMasterUpdateDialog")
+@EntityTableView(enabled = Kleenean.FALSE, responsiveMode = TableResponsiveMode.PRIORITY, rowsLimit = 100, rows = 100, writingViewWesternToolbarSnippet = "/resources/snippets/base/entity/FiltroFuncionPar/botonOpenMasterUpdateDialog")
 @EntityDetailView(enabled = Kleenean.FALSE)
 @EntityTreeView(enabled = Kleenean.FALSE)
 @EntityConsoleView(enabled = Kleenean.FALSE)
@@ -71,7 +71,6 @@ public class FiltroFuncionPar extends AbstractPersistentEntity {
 //  @ForeignKey(onDelete = OnDeleteAction.NONE, onUpdate = OnUpdateAction.NONE)
     @ManyToOne(navigability = Navigability.UNIDIRECTIONAL, view = MasterDetailView.NONE, quickAdding = QuickAddingFilter.ANY)
     @ColumnField(nullable = Kleenean.FALSE)
-    @EntityReferenceDisplay(style = EntityReferenceStyle.NAME)
     @EntityReferenceSearch(searchType = SearchType.LIST, listStyle = ListStyle.NAME)
     @PropertyField(required = Kleenean.TRUE, table = Kleenean.TRUE, detail = Kleenean.TRUE, report = Kleenean.TRUE, export = Kleenean.TRUE)
     public FuncionParametro funcionParametro;
@@ -99,13 +98,13 @@ public class FiltroFuncionPar extends AbstractPersistentEntity {
     public StringProperty valor;
 
     @ColumnField(nullable = Kleenean.TRUE)
-    @PropertyField(table = Kleenean.TRUE, detail = Kleenean.TRUE, create = Kleenean.TRUE, update = Kleenean.TRUE, anchor = "tipoValorCriterio", anchorType = AnchorType.INLINE)
+    @PropertyField(responsivePriority = 6, table = Kleenean.TRUE, detail = Kleenean.TRUE, create = Kleenean.TRUE, update = Kleenean.TRUE, anchor = "tipoValorCriterio", anchorType = AnchorType.INLINE)
     public IntegerProperty cifraValorTemporal;
 
     @ForeignKey(onDelete = OnDeleteAction.NONE, onUpdate = OnUpdateAction.NONE)
     @ManyToOne(navigability = Navigability.UNIDIRECTIONAL, view = MasterDetailView.NONE)
     @ColumnField(nullable = Kleenean.TRUE)
-    @PropertyField(table = Kleenean.TRUE, detail = Kleenean.TRUE, create = Kleenean.TRUE, update = Kleenean.TRUE, anchor = "tipoValorCriterio", anchorType = AnchorType.INLINE)
+    @PropertyField(responsivePriority = 6, table = Kleenean.TRUE, detail = Kleenean.TRUE, create = Kleenean.TRUE, update = Kleenean.TRUE, anchor = "tipoValorCriterio", anchorType = AnchorType.INLINE)
     public CampoValorTemporal campoValorTemporal;
 
     @PropertyField(hidden = Kleenean.TRUE)

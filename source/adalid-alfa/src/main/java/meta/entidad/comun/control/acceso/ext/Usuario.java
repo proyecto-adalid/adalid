@@ -39,7 +39,7 @@ import meta.entidad.comun.control.acceso.UsuarioModulo;
 @EntityInsertOperation(enabled = Kleenean.TRUE)
 @EntityUpdateOperation(enabled = Kleenean.TRUE)
 @EntityDeleteOperation(enabled = Kleenean.TRUE)
-@EntityTableView(enabled = Kleenean.TRUE, inserts = Kleenean.FALSE, updates = Kleenean.TRUE, quickFilter = Kleenean.TRUE)
+@EntityTableView(enabled = Kleenean.TRUE, responsiveMode = TableResponsiveMode.PRIORITY, inserts = Kleenean.FALSE, updates = Kleenean.TRUE, quickFilter = Kleenean.TRUE)
 @EntityDetailView(enabled = Kleenean.TRUE)
 @EntityTreeView(enabled = Kleenean.TRUE)
 @EntityConsoleView(enabled = Kleenean.TRUE)
@@ -67,7 +67,7 @@ public class Usuario extends meta.entidad.comun.control.acceso.Usuario {
     @ParentProperty
     @ForeignKey(onDelete = OnDeleteAction.NONE, onUpdate = OnUpdateAction.NONE)
     @ManyToOne(navigability = Navigability.UNIDIRECTIONAL, view = MasterDetailView.NONE)
-    @PropertyField(create = Kleenean.FALSE, update = Kleenean.FALSE, table = Kleenean.TRUE, report = Kleenean.TRUE, overlay = Kleenean.TRUE,
+    @PropertyField(responsivePriority = 6, create = Kleenean.FALSE, update = Kleenean.FALSE, table = Kleenean.TRUE, report = Kleenean.TRUE, overlay = Kleenean.TRUE,
         defaultCheckpoint = Checkpoint.USER_INTERFACE, defaultCondition = DefaultCondition.IF_NULL_ON_INSERT)
     public Usuario usuarioSupervisor;
 

@@ -1375,9 +1375,23 @@ public abstract class AbstractDataArtifact extends AbstractArtifact implements A
     }
 
     private boolean implicitOverlayFieldDisjunction() {
+        Entity declaringEntity = getDeclaringEntity();
+        if (declaringEntity.isEnumerationEntity()) {
+            return false; // since 20/05/2024
+        }
+        /**/
         if (isBusinessKeyProperty() || isNameProperty()) {
             return false;
         }
+        /*
+        EntityReferenceStyle overlayableEntityReferenceStyle
+            = isBusinessKeyProperty() ? EntityReferenceStyle.NAME
+                : isNameProperty() ? EntityReferenceStyle.CHARACTER_KEY
+                    : null;
+        if (overlayableEntityReferenceStyle != null) {
+            return overlayableEntityReferenceStyle.equals(declaringEntity.getReferenceStyle());
+        }
+        /**/
         return isImplicitOverlayImageProperty()
             || isDiscriminatorProperty()
             || isStateProperty()
