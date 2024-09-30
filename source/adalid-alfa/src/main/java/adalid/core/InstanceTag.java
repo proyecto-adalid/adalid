@@ -41,6 +41,16 @@ public class InstanceTag {
     public static final InstanceTag BLUISH = new InstanceTag(Color.decode("#B3E5FC"), Color.decode("#23547B"));
 
     /**
+     * Etiqueta de color cian con letras color azul oscuro, todas mayúsculas
+     */
+    public static final InstanceTag CYAN = new InstanceTag(Color.decode("#00FFFF"), Color.decode("#23547B"));
+
+    /**
+     * Etiqueta de color cian claro con letras color azul oscuro, todas mayúsculas
+     */
+    public static final InstanceTag CYANISH = new InstanceTag(Color.decode("#B2FFFF"), Color.decode("#23547B"));
+
+    /**
      * Etiqueta de color verde con letras blancas, todas mayúsculas
      */
     public static final InstanceTag GREEN = new InstanceTag(Color.decode("#689F38"), Color.decode("#FFFFFF"));
@@ -66,11 +76,6 @@ public class InstanceTag {
     public static final InstanceTag ORANGISH = new InstanceTag(Color.decode("#FFAD33"), Color.decode("#212529"));
 
     /**
-     * Etiqueta de color arena con letras color carbón, todas mayúsculas
-     */
-    public static final InstanceTag SANDY_BEACH = new InstanceTag(Color.decode("#FFD8B2"), Color.decode("#212529"));
-
-    /**
      * Etiqueta de color púrpura con letras blancas, todas mayúsculas
      */
     public static final InstanceTag PURPLE = new InstanceTag(Color.decode("#694382"), Color.decode("#FFFFFF"));
@@ -89,6 +94,11 @@ public class InstanceTag {
      * Etiqueta de colores rojizos y todas las letras mayúsculas
      */
     public static final InstanceTag REDISH = new InstanceTag(Color.decode("#FFCDD2"), Color.decode("#C63737"));
+
+    /**
+     * Etiqueta de color arena con letras color carbón, todas mayúsculas
+     */
+    public static final InstanceTag SANDY_BEACH = new InstanceTag(Color.decode("#FFD8B2"), Color.decode("#212529"));
 
     /**
      * Etiqueta de color amarillo con letras color carbón, todas mayúsculas

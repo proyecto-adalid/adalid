@@ -83,22 +83,28 @@ public class ClaseRecurso extends AbstractPersistentEntity {
     public IntegerProperty ordenPresentacion;
 
     @ColumnField(nullable = Kleenean.FALSE)
+    @PropertyField(overlay = Kleenean.TRUE)
     public BooleanProperty esClaseRecursoInsertable;
 
     @ColumnField(nullable = Kleenean.FALSE)
+    @PropertyField(overlay = Kleenean.TRUE)
     public BooleanProperty esClaseRecursoModificable;
 
     @ColumnField(nullable = Kleenean.FALSE)
+    @PropertyField(overlay = Kleenean.TRUE)
     public BooleanProperty esClaseRecursoEliminable;
 
     @ColumnField(nullable = Kleenean.FALSE)
     public BooleanProperty esClaseRecursoExtendida;
 
-    @StringField(maxLength = 20)
-    public StringProperty etiquetaHipervinculo;
+    @ColumnField(nullable = Kleenean.FALSE)
+    public BooleanProperty esEntidadDelCatalogo;
 
     @ColumnField(nullable = Kleenean.FALSE)
     public BooleanProperty esEnumeradorConNumero;
+
+    @StringField(maxLength = 20)
+    public StringProperty etiquetaHipervinculo;
 
     @Override
     protected void settleAttributes() {
@@ -149,6 +155,8 @@ public class ClaseRecurso extends AbstractPersistentEntity {
         esClaseRecursoEliminable.setDefaultValue(true);
         esClaseRecursoExtendida.setInitialValue(false);
         esClaseRecursoExtendida.setDefaultValue(false);
+        esEntidadDelCatalogo.setInitialValue(false);
+        esEntidadDelCatalogo.setDefaultValue(false);
         esEnumeradorConNumero.setInitialValue(false);
         esEnumeradorConNumero.setDefaultValue(false);
         /**/
@@ -225,6 +233,9 @@ public class ClaseRecurso extends AbstractPersistentEntity {
         /**/
         etiquetaHipervinculo.setLocalizedLabel(ENGLISH, "hyperlink label");
         etiquetaHipervinculo.setLocalizedLabel(SPANISH, "etiqueta hipervinculo");
+        /**/
+        esEntidadDelCatalogo.setLocalizedLabel(ENGLISH, "catalog entity");
+        esEntidadDelCatalogo.setLocalizedLabel(SPANISH, "entidad del catálogo");
         /**/
         esEnumeradorConNumero.setLocalizedLabel(ENGLISH, "enumerator with number");
         esEnumeradorConNumero.setLocalizedLabel(SPANISH, "enumerador con número");

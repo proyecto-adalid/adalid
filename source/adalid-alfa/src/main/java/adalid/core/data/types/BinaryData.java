@@ -140,6 +140,17 @@ public class BinaryData extends BinaryPrimitive {
         return _fetchType;
     }
 
+    /**
+     * El método setFetchType se utiliza para establecer la estrategia para obtener datos de la base de datos. Con la estrategia EAGER, el valor de la
+     * propiedad se obtiene simultáneamente con el resto de las propiedades de la entidad. Con la estrategia LAZY, el valor se obtiene posteriormente,
+     * por demanda, cuando se accede a la propiedad por primera vez. El valor predeterminado del atributo es EAGER.
+     *
+     * @param fetchType especifica si la operación de consulta obtiene el valor de la propiedad simultáneamente con el resto de las propiedades de la
+     * entidad o posteriormente, por demanda. Su valor es uno de los elementos de la enumeración FetchType. Especifique EAGER para obtener el valor de
+     * la propiedad simultáneamente con el resto de las propiedades de la entidad. Especifique LAZY para obtenerlo posteriormente, por demanda, cuando
+     * se accede a la propiedad por primera vez. Puede especificar UNSPECIFIED para utilizar el valor predeterminado del atributo. El valor
+     * predeterminado del atributo es EAGER
+     */
     public void setFetchType(FetchType fetchType) {
         _fetchType = fetchType;
     }

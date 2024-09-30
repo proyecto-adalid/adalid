@@ -29,7 +29,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.apache.velocity.VelocityContext;
 
@@ -69,6 +68,8 @@ public class SqlReader extends SqlUtil {
 
     private boolean _loadOperationTables;
 
+    private boolean _coverConstraintIndexes = true;
+
     private boolean _coverIndexes, _coverTabs, _coverRoutines;
 
     private String _selectTemplatesPath = "templates/meta/sql";
@@ -87,30 +88,27 @@ public class SqlReader extends SqlUtil {
 
     protected SqlAid getSqlAid() {
         if (_sqlAid == null) {
-            switch (_dbms) {
-                case "oracle":
-                    _sqlAid = new OracleAid();
-                    break;
-                case "postgresql":
-                    _sqlAid = new PostgreSqlAid();
-                    break;
-                default:
-                    _sqlAid = null;
-                    break;
-            }
+            _sqlAid = switch (_dbms) {
+                case "oracle" ->
+                    new OracleAid();
+                case "postgresql" ->
+                    new PostgreSqlAid();
+                default ->
+                    null;
+            };
         }
         return _sqlAid;
     }
 
     /**
-     * @return the tables list
+     * @return the tables map
      */
     public Map<String, SqlTable> getTablesMap() {
         return _tables;
     }
 
     /**
-     * @return the tables list
+     * @return the tables collection
      */
     public Collection<SqlTable> getTables() {
         return _tables.values();
@@ -243,6 +241,20 @@ public class SqlReader extends SqlUtil {
     }
 
     /**
+     * @return the cover constraint indexes indicator
+     */
+    public boolean isCoverConstraintIndexes() {
+        return _coverConstraintIndexes;
+    }
+
+    /**
+     * @param b the cover constraint indexes indicator to set
+     */
+    public void setCoverConstraintIndexes(boolean b) {
+        _coverConstraintIndexes = b;
+    }
+
+    /**
      * @return the cover indexes indicator
      */
     public boolean isCoverIndexes() {
@@ -328,21 +340,32 @@ public class SqlReader extends SqlUtil {
         PreparedStatementWrapper select = null;
         PreparedStatementWrapper selectTables = null;
         PreparedStatementWrapper selectColumns = null;
+        /*
         PreparedStatementWrapper selectIndexes = null;
         PreparedStatementWrapper selectTabs = null;
         PreparedStatementWrapper selectRoutines = null;
+        /**/
+        PreparedStatementWrapper selectCKs;
+        PreparedStatementWrapper selectPKs = null;
+        PreparedStatementWrapper selectUKs = null;
+        PreparedStatementWrapper selectFKs = null;
+        PreparedStatementWrapper selectIXs = null;
         PreparedStatementWrapper selectRows = null;
         String tableName;
+        /*
         Object[] executeQueryArgs;
         ResultSet tablesResultSet, columnsResultSet, indexesResultSet, tabsResultSet, rowsResultSet, routinesResultSet;
-        Level tableNameLogLevel = isSlowConnection() ? Level.INFO : Level.TRACE;
+        /**/
+        ResultSet tablesResultSet, columnsResultSet, constraintResultSet, rowsResultSet;
+//      Level tableNameLogLevel = isSlowConnection() ? Level.INFO : Level.TRACE;
         int tables = 0, columns = 0, indexes = 0, tabs = 0, rows = 0, routines = 0;
+        int cks = 0, pks = 0, uks = 0, fks = 0, ixs = 0;
 //      int type1 = 0, type2 = 0, enum1 = 0, enum2 = 0, enum3 = 0, load1 = 0, load2 = 0;
         int enum2 = 0, enum3 = 0, load2 = 0;
         try {
             selectTables = aid.getSelectTablesStatement();
             if (selectTables == null) {
-                logger.error("tables=?");
+                logger.error("select tables statement is invalid");
                 close(selectTables);
                 return false;
             }
@@ -357,12 +380,13 @@ public class SqlReader extends SqlUtil {
             }
             selectColumns = aid.getSelectColumnsStatement();
             if (selectColumns == null) {
-                logger.error("columns=?");
+                logger.error("select columns statement is invalid");
                 close(selectTables);
                 close(selectColumns);
                 return false;
             }
             setUpdatableColumns(aid);
+            /*
             if (_coverIndexes) {
                 selectIndexes = aid.getSelectIndexesStatement();
             }
@@ -372,6 +396,15 @@ public class SqlReader extends SqlUtil {
             if (_coverRoutines) {
                 selectRoutines = aid.getSelectRoutinesStatement();
             }
+            /**/
+            selectCKs = aid.getSelectCKsStatement();
+            if (_coverConstraintIndexes) {
+                selectPKs = aid.getSelectPKsStatement();
+                selectUKs = aid.getSelectUKsStatement();
+                selectFKs = aid.getSelectFKsStatement();
+                selectIXs = aid.getSelectIXsStatement();
+            }
+            logger.info("excluded-tables=" + _tablesExcludeSet);
             do {
                 SqlTable sqlTable = aid.getSqlTable(tablesResultSet);
                 if (foul(sqlTable)) {
@@ -383,10 +416,12 @@ public class SqlReader extends SqlUtil {
                     continue;
                 }
                 tableName = sqlTable.getName();
+                /*
                 logger.log(tableNameLogLevel, tableName);
                 executeQueryArgs = new Object[]{tableName};
                 /**/
                 // <editor-fold defaultstate="collapsed" desc="read columns">
+                /*
                 select = selectColumns;
                 logger.trace(select);
                 columnsResultSet = selectColumns.executeQuery(executeQueryArgs);
@@ -400,9 +435,11 @@ public class SqlReader extends SqlUtil {
                         }
                     } while (columnsResultSet.next());
                 }
+                /**/
                 // </editor-fold>
                 /**/
                 // <editor-fold defaultstate="collapsed" desc="read indexes">
+                /*
                 if (selectIndexes != null) {
                     select = selectIndexes;
                     logger.trace(select);
@@ -425,9 +462,11 @@ public class SqlReader extends SqlUtil {
                         } while (indexesResultSet.next());
                     }
                 }
+                /**/
                 // </editor-fold>
                 /**/
                 // <editor-fold defaultstate="collapsed" desc="read tabs">
+                /*
                 if (selectTabs != null) {
                     select = selectTabs;
                     logger.trace(select);
@@ -450,9 +489,11 @@ public class SqlReader extends SqlUtil {
                         } while (tabsResultSet.next());
                     }
                 }
+                /**/
                 // </editor-fold>
                 /**/
                 // <editor-fold defaultstate="collapsed" desc="read routines">
+                /*
                 if (selectRoutines != null) {
                     select = selectRoutines;
                     logger.trace(select);
@@ -475,9 +516,11 @@ public class SqlReader extends SqlUtil {
                         } while (routinesResultSet.next());
                     }
                 }
+                /**/
                 // </editor-fold>
                 /**/
                 // <editor-fold defaultstate="collapsed" desc="read rows">
+                /*
                 if (sqlTable.isEnumeration() || sqlTable.isLoadable()) {
                     selectRows = aid.getSelectRowsStatement(sqlTable);
                     if (selectRows != null) {
@@ -512,11 +555,13 @@ public class SqlReader extends SqlUtil {
                         }
                     }
                 }
+                /**/
                 // </editor-fold>
                 /**/
                 select = selectTables;
                 /**/
                 // <editor-fold defaultstate="collapsed" desc="increment feature counters">
+                /*
 //              if (sqlTable.isConfigurationTable()) {
 //                  type1++;
 //              }
@@ -538,9 +583,192 @@ public class SqlReader extends SqlUtil {
                 if (sqlTable.isLoaded()) {
                     load2++;
                 }
+                /**/
                 // </editor-fold>
                 /**/
             } while (tablesResultSet.next());
+            if (_tables.isEmpty()) {
+            } else {
+                SqlTable sqlTable;
+                /**/
+                // <editor-fold defaultstate="collapsed" desc="read columns">
+                select = selectColumns;
+                logger.info("read columns");
+                columnsResultSet = selectColumns.executeQuery();
+                if (columnsResultSet.next()) {
+                    SqlColumn sqlColumn;
+                    do {
+                        String key = aid.getSqlColumnTableName(columnsResultSet);
+                        sqlTable = _tables.get(key);
+                        if (sqlTable != null) {
+                            columns++;
+                            sqlColumn = aid.getSqlColumn(columnsResultSet, sqlTable);
+                            sqlTable.add(sqlColumn);
+                        }
+                    } while (columnsResultSet.next());
+                }
+                // </editor-fold>
+                /**/
+                // <editor-fold defaultstate="collapsed" desc="read check constraints">
+                if (selectCKs != null) {
+                    select = selectCKs;
+                    logger.info("read check constraints");
+                    constraintResultSet = selectCKs.executeQuery();
+                    if (constraintResultSet.next()) {
+                        SqlCheckConstraint sqlCheckConstraint;
+                        do {
+                            String key = aid.getSqlCheckConstraintTableName(constraintResultSet);
+                            sqlTable = _tables.get(key);
+                            if (sqlTable != null) {
+                                cks++;
+                                sqlCheckConstraint = aid.getSqlCheckConstraint(constraintResultSet, sqlTable);
+                                sqlTable.addCK(sqlCheckConstraint);
+                            }
+                        } while (constraintResultSet.next());
+                    }
+                }
+                // </editor-fold>
+                /**/
+                // <editor-fold defaultstate="collapsed" desc="read primary keys">
+                if (selectPKs != null) {
+                    select = selectPKs;
+                    logger.info("read primary keys");
+                    constraintResultSet = selectPKs.executeQuery();
+                    if (constraintResultSet.next()) {
+                        SqlConstraintIndex sqlConstraintIndex;
+                        do {
+                            String key = aid.getSqlConstraintIndexTableName(constraintResultSet);
+                            sqlTable = _tables.get(key);
+                            if (sqlTable != null) {
+                                pks++;
+                                sqlConstraintIndex = aid.getSqlConstraintIndex(constraintResultSet, sqlTable);
+                                sqlTable.addPK(sqlConstraintIndex);
+                            }
+                        } while (constraintResultSet.next());
+                    }
+                }
+                // </editor-fold>
+                /**/
+                // <editor-fold defaultstate="collapsed" desc="read unique keys">
+                if (selectUKs != null) {
+                    select = selectUKs;
+                    logger.info("read unique keys");
+                    constraintResultSet = selectUKs.executeQuery();
+                    if (constraintResultSet.next()) {
+                        SqlConstraintIndex sqlConstraintIndex;
+                        do {
+                            String key = aid.getSqlConstraintIndexTableName(constraintResultSet);
+                            sqlTable = _tables.get(key);
+                            if (sqlTable != null) {
+                                uks++;
+                                sqlConstraintIndex = aid.getSqlConstraintIndex(constraintResultSet, sqlTable);
+                                sqlTable.addUK(sqlConstraintIndex);
+                            }
+                        } while (constraintResultSet.next());
+                    }
+                }
+                // </editor-fold>
+                /**/
+                // <editor-fold defaultstate="collapsed" desc="read foreign keys">
+                if (selectFKs != null) {
+                    select = selectFKs;
+                    logger.info("read foreign keys");
+                    constraintResultSet = selectFKs.executeQuery();
+                    if (constraintResultSet.next()) {
+                        SqlConstraintIndex sqlConstraintIndex;
+                        do {
+                            String key = aid.getSqlConstraintIndexTableName(constraintResultSet);
+                            sqlTable = _tables.get(key);
+                            if (sqlTable != null) {
+                                fks++;
+                                sqlConstraintIndex = aid.getSqlConstraintIndex(constraintResultSet, sqlTable);
+                                sqlTable.addFK(sqlConstraintIndex);
+                            }
+                        } while (constraintResultSet.next());
+                    }
+                }
+                // </editor-fold>
+                /**/
+                // <editor-fold defaultstate="collapsed" desc="read non-unique indexes">
+                if (selectIXs != null) {
+                    select = selectIXs;
+                    logger.info("read non-unique indexes");
+                    constraintResultSet = selectIXs.executeQuery();
+                    if (constraintResultSet.next()) {
+                        SqlConstraintIndex sqlConstraintIndex;
+                        do {
+                            String key = aid.getSqlConstraintIndexTableName(constraintResultSet);
+                            sqlTable = _tables.get(key);
+                            if (sqlTable != null) {
+                                ixs++;
+                                sqlConstraintIndex = aid.getSqlConstraintIndex(constraintResultSet, sqlTable);
+                                sqlTable.addIX(sqlConstraintIndex);
+                            }
+                        } while (constraintResultSet.next());
+                    }
+                }
+                // </editor-fold>
+                /**/
+                // <editor-fold defaultstate="collapsed" desc="read rows">
+                logger.info("read rows");
+//              int i = 0;
+                for (String key : _tables.keySet()) {
+                    sqlTable = _tables.get(key);
+                    /**/
+                    // <editor-fold defaultstate="collapsed" desc="read rows">
+                    if (sqlTable.isEnumeration() || sqlTable.isLoadable()) {
+                        selectRows = aid.getSelectRowsStatement(sqlTable);
+                        if (selectRows != null) {
+                            select = selectRows;
+//                          logger.warn("\t" + String.format("%04d", ++i) + " " + sqlTable.getName());
+                            try {
+                                int n = 0;
+                                rowsResultSet = selectRows.executeQuery();
+                                if (rowsResultSet.next()) {
+                                    SqlRow sqlRow;
+                                    do {
+                                        sqlRow = aid.getSqlRow(rowsResultSet, sqlTable);
+                                        if (sqlRow != null) {
+                                            n++;
+                                            rows++;
+                                            sqlTable.add(sqlRow);
+                                        }
+                                    } while (rowsResultSet.next());
+                                    if (n >= ROW_LIMIT) {
+                                        warnRowLimit(sqlTable);
+                                    }
+                                }
+                                sqlTable.setLoaded(true);
+                                if (INFO && DETAIL) {
+                                    logger.info(tableName + " rowcount = " + n + " " + sqlTable.getFeatures());
+                                }
+                            } catch (SQLException ex) {
+                                logger.info(select + " / " + ThrowableUtils.getString(ex));
+                            } finally {
+                                close(selectRows);
+                                selectRows = null;
+                            }
+                        }
+                    }
+                    // </editor-fold>
+                    /**/
+                    // <editor-fold defaultstate="collapsed" desc="increment feature counters">
+                    if (sqlTable.isEnumeration()) {
+                        enum2++;
+                    }
+                    if (sqlTable.isUpdatableEnumeration()) {
+                        enum3++;
+                    }
+                    if (sqlTable.isLoaded()) {
+                        load2++;
+                    }
+                    // </editor-fold>
+                    /**/
+                }
+                // </editor-fold>
+                /**/
+            }
+            /**/
             logger.info("tables=" + tables);
 //          logger.info("configuration-tables=" + type1);
 //          logger.info("operation-tables=" + type2);
@@ -556,20 +784,33 @@ public class SqlReader extends SqlUtil {
             if (_coverTabs) {
                 logger.info("tabs=" + tabs);
             }
-            logger.info("rows=" + rows);
             if (_coverRoutines) {
                 logger.info("routines=" + routines);
             }
+            logger.info("check-constraints=" + cks);
+            if (_coverConstraintIndexes) {
+                logger.info("primary-keys=" + pks);
+                logger.info("unique-keys=" + uks);
+                logger.info("foreign-keys=" + fks);
+                logger.info("non-unique-indexes=" + ixs);
+            }
+            logger.info("rows=" + rows);
         } catch (SQLException ex) {
             logger.fatal(select == null ? _url : select.toString(), ex);
             return false;
         } finally {
             close(selectTables);
             close(selectColumns);
+            /*
             close(selectIndexes);
             close(selectTabs);
-            close(selectRows);
             close(selectRoutines);
+            /**/
+            close(selectPKs);
+            close(selectUKs);
+            close(selectFKs);
+            close(selectIXs);
+            close(selectRows);
         }
         for (SqlTable sqlTable : _tables.values()) {
             aid.finalize(sqlTable);
@@ -686,7 +927,32 @@ public class SqlReader extends SqlUtil {
         }
 
         protected PreparedStatementWrapper getSelectColumnsStatement() {
-            String template = getTemplateName("columns");
+            String template = getTemplateName("columns-v5r3");
+            return getSelectStatement(template);
+        }
+
+        protected PreparedStatementWrapper getSelectCKsStatement() {
+            String template = getTemplateName("checks");
+            return getSelectStatement(template);
+        }
+
+        protected PreparedStatementWrapper getSelectPKsStatement() {
+            String template = getTemplateName("PK-constraints");
+            return getSelectStatement(template);
+        }
+
+        protected PreparedStatementWrapper getSelectUKsStatement() {
+            String template = getTemplateName("UK-constraints");
+            return getSelectStatement(template);
+        }
+
+        protected PreparedStatementWrapper getSelectFKsStatement() {
+            String template = getTemplateName("FK-constraints");
+            return getSelectStatement(template);
+        }
+
+        protected PreparedStatementWrapper getSelectIXsStatement() {
+            String template = getTemplateName("IX-constraints");
             return getSelectStatement(template);
         }
 
@@ -695,11 +961,13 @@ public class SqlReader extends SqlUtil {
             return getSelectStatement(template);
         }
 
+        /*
         protected PreparedStatementWrapper getSelectTabsStatement() {
             String template = getTemplateName("tabs");
             return getSelectStatement(template);
         }
 
+        /**/
         protected PreparedStatementWrapper getSelectRoutinesStatement() {
             String template = getTemplateName("routines");
             return getSelectStatement(template);
@@ -766,6 +1034,10 @@ public class SqlReader extends SqlUtil {
             return sqlTable;
         }
 
+        protected String getSqlColumnTableName(ResultSet resultSet) throws SQLException {
+            return resultSet.getString(15);
+        }
+
         protected String getSqlColumnName(ResultSet resultSet) throws SQLException {
             return resultSet.getString(1);
         }
@@ -822,35 +1094,20 @@ public class SqlReader extends SqlUtil {
             for (SqlColumn sqlColumn : sqlTable.getColumns()) {
                 column = sqlColumn.getName();
                 type = sqlColumn.getType();
-                switch (type) {
-                    case "boolean":
-                    case "char":
-                    case "string":
-                    case "byte":
-                    case "short":
-                    case "integer":
-                    case "long":
-                    case "decimal":
-                    case "float":
-                    case "double":
-                        object = resultSet.getObject(sqlColumn.getPosition());
-                        break;
-                    case "clob":
-                        object = resultSet.getClob(sqlColumn.getPosition());
-                        break;
-                    case "date":
-                        object = resultSet.getDate(sqlColumn.getPosition());
-                        break;
-                    case "time":
-                        object = resultSet.getTime(sqlColumn.getPosition());
-                        break;
-                    case "timestamp":
-                        object = resultSet.getTimestamp(sqlColumn.getPosition());
-                        break;
-                    default:
-                        object = null;
-                        break;
-                }
+                object = switch (type) {
+                    case "boolean", "char", "string", "byte", "short", "integer", "long", "decimal", "float", "double" ->
+                        resultSet.getObject(sqlColumn.getPosition());
+                    case "clob" ->
+                        resultSet.getClob(sqlColumn.getPosition());
+                    case "date" ->
+                        resultSet.getDate(sqlColumn.getPosition());
+                    case "time" ->
+                        resultSet.getTime(sqlColumn.getPosition());
+                    case "timestamp" ->
+                        resultSet.getTimestamp(sqlColumn.getPosition());
+                    default ->
+                        null;
+                };
                 if (object != null) {
                     string = StrUtils.getString(object);
                     sqlRowValue = new SqlRowValue(sqlRow, sqlColumn);
@@ -875,6 +1132,33 @@ public class SqlReader extends SqlUtil {
 
         protected SqlRoutine getSqlRoutine(ResultSet resultSet, SqlRoutine sqlRoutine) throws SQLException {
             return sqlRoutine;
+        }
+
+        protected String getSqlCheckConstraintTableName(ResultSet resultSet) throws SQLException {
+            return resultSet.getString(1);
+        }
+
+        protected SqlCheckConstraint getSqlCheckConstraint(ResultSet resultSet, SqlTable sqlTable) throws SQLException {
+            SqlCheckConstraint sqlCheckConstraint = new SqlCheckConstraint(sqlTable);
+            sqlCheckConstraint.setTableName(resultSet.getString(1));
+            sqlCheckConstraint.setName(resultSet.getString(2));
+            sqlCheckConstraint.setType(resultSet.getString(3));
+            sqlCheckConstraint.setConstraintDefinition(resultSet.getString(4));
+            return sqlCheckConstraint;
+        }
+
+        protected String getSqlConstraintIndexTableName(ResultSet resultSet) throws SQLException {
+            return resultSet.getString(1);
+        }
+
+        protected SqlConstraintIndex getSqlConstraintIndex(ResultSet resultSet, SqlTable sqlTable) throws SQLException {
+            SqlConstraintIndex sqlConstraintIndex = new SqlConstraintIndex(sqlTable);
+            sqlConstraintIndex.setTableName(resultSet.getString(1));
+            sqlConstraintIndex.setName(resultSet.getString(2));
+            sqlConstraintIndex.setType(resultSet.getString(3));
+            sqlConstraintIndex.setCreateStatement(resultSet.getString(4));
+            sqlConstraintIndex.setDropStatement(resultSet.getString(5));
+            return sqlConstraintIndex;
         }
 
         protected void finalize(SqlTable sqlTable) {
@@ -1054,7 +1338,7 @@ public class SqlReader extends SqlUtil {
             sqlColumn.setSqlType(data_type);
             sqlColumn.setType(data_type);
             switch (data_type) {
-                case "number":
+                case "number" -> {
                     if (numeric_precision > 0) {
                         if (numeric_scale == 0) {
                             if (numeric_precision <= 3) {
@@ -1092,45 +1376,27 @@ public class SqlReader extends SqlUtil {
                             }
                         }
                     }
-                    break;
-                case "blob":
-                case "bytea":
+                }
+                case "blob", "bytea" ->
                     sqlColumn.setType("blob");
-                    break;
-                case "\"char\"":
+                case "\"char\"" -> {
                     sqlColumn.setType("char");
                     sqlColumn.setSqlType("char(1)");
-                    break;
-                case "char":
-                case "character":
-                case "character varying":
-                case "nchar":
-                case "nvarchar":
-                case "nvarchar2":
-                case "varchar":
-                case "varchar2":
-                case "text":
+                }
+                case "char", "character", "character varying", "nchar", "nvarchar", "nvarchar2", "varchar", "varchar2", "text" -> {
                     sqlColumn.setType("string");
                     sqlColumn.setLength(character_maximum_length);
                     if (character_maximum_length > 0) {
                         sqlColumn.setSqlType(data_type + "(" + character_maximum_length + ")");
                     }
-                    break;
-                case "smallint":
-                case "smallserial":
+                }
+                case "smallint", "smallserial" ->
                     sqlColumn.setType("short");
-                    break;
-                case "integer":
-                case "serial":
+                case "integer", "serial" ->
                     sqlColumn.setType("integer");
-                    break;
-                case "bigint":
-                case "bigserial":
+                case "bigint", "bigserial" ->
                     sqlColumn.setType("long");
-                    break;
-                case "decimal":
-                case "numeric":
-                case "money":
+                case "decimal", "numeric", "money" -> {
                     sqlColumn.setType("decimal");
                     sqlColumn.setPrecision(numeric_precision);
                     sqlColumn.setScale(numeric_scale);
@@ -1141,19 +1407,14 @@ public class SqlReader extends SqlUtil {
                             sqlColumn.setSqlType(data_type + "(" + numeric_precision + ")");
                         }
                     }
-                    break;
-                case "real":
+                }
+                case "real" ->
                     sqlColumn.setType("float");
-                    break;
-                case "double precision":
+                case "double precision" ->
                     sqlColumn.setType("double");
-                    break;
-                case "date":
+                case "date" ->
                     sqlColumn.setType("date");
-                    break;
-                case "timestamp":
-                case "timestamp with time zone":
-                case "timestamp without time zone":
+                case "timestamp", "timestamp with time zone", "timestamp without time zone" -> {
                     sqlColumn.setType("timestamp");
                     sqlColumn.setPrecision(datetime_precision);
                     if (datetime_precision > 0) {
@@ -1164,7 +1425,7 @@ public class SqlReader extends SqlUtil {
                             sqlColumn.setSqlType(data_type.substring(0, i) + "(" + datetime_precision + ")" + data_type.substring(i));
                         }
                     }
-                    break;
+                }
             }
             // </editor-fold>
             sqlColumn.setDefault(string_default);
@@ -1207,28 +1468,20 @@ public class SqlReader extends SqlUtil {
             if (type == null || string == null) {
                 return "null";
             }
-            switch (type) {
-                case "byte":
-                case "short":
-                case "integer":
-                case "long":
-                case "decimal":
-                case "float":
-                case "double":
-                    return string;
-                case "boolean":
-                case "char":
-                case "string":
-                    return StrUtils.enclose(string, '\'');
-                case "date":
-                    return "date" + StrUtils.enclose(string, '\'');
-                case "time":
-                    return "timestamp" + StrUtils.enclose(string, '\'');
-                case "timestamp":
-                    return "timestamp" + StrUtils.enclose(string, '\'');
-                default:
-                    return "null";
-            }
+            return switch (type) {
+                case "byte", "short", "integer", "long", "decimal", "float", "double" ->
+                    string;
+                case "boolean", "char", "string" ->
+                    StrUtils.enclose(string, '\'');
+                case "date" ->
+                    "date" + StrUtils.enclose(string, '\'');
+                case "time" ->
+                    "timestamp" + StrUtils.enclose(string, '\'');
+                case "timestamp" ->
+                    "timestamp" + StrUtils.enclose(string, '\'');
+                default ->
+                    "null";
+            };
         }
 
         @Override
@@ -1237,35 +1490,27 @@ public class SqlReader extends SqlUtil {
             if (type == null) {
                 return "null";
             }
-            switch (type) {
-                case "byte":
-                case "short":
-                case "integer":
-                case "long":
-                case "decimal":
-                case "float":
-                case "double":
-                    return "0";
-                case "boolean":
-                case "char":
-                case "string":
-                    return "'?'";
-                case "date":
-                    return "current_date";
-                case "time":
-                    return "localtimestamp";
-                case "timestamp":
-                    return "localtimestamp";
-                default:
-                    return "null";
-            }
+            return switch (type) {
+                case "byte", "short", "integer", "long", "decimal", "float", "double" ->
+                    "0";
+                case "boolean", "char", "string" ->
+                    "'?'";
+                case "date" ->
+                    "current_date";
+                case "time" ->
+                    "localtimestamp";
+                case "timestamp" ->
+                    "localtimestamp";
+                default ->
+                    "null";
+            };
         }
 
         protected String unquotedLiteralOf(Object obj) {
             if (obj == null) {
                 return null;
-            } else if (obj instanceof Clob) {
-                return StrUtils.getSubString((Clob) obj);
+            } else if (obj instanceof Clob clob) {
+                return StrUtils.getSubString(clob);
             } else if (obj instanceof Date) {
                 return TimeUtils.jdbcDateString(obj);
             } else if (obj instanceof Time) {
@@ -1378,69 +1623,40 @@ public class SqlReader extends SqlUtil {
             sqlRoutineParameter.setName(parameter_name);
             // <editor-fold defaultstate="collapsed" desc="switch(data_type)...">
             switch (data_type) {
-                case "boolean":
+                case "boolean" ->
                     sqlRoutineParameter.setType("boolean");
-                    break;
-                case "\"char\"":
+                case "\"char\"" ->
                     sqlRoutineParameter.setType("char");
-                    break;
-                case "char":
-                case "character":
-                case "character varying":
-                case "nchar":
-                case "nvarchar":
-                case "nvarchar2":
-                case "varchar":
-                case "varchar2":
-                case "text":
+                case "char", "character", "character varying", "nchar", "nvarchar", "nvarchar2", "varchar", "varchar2", "text" ->
                     sqlRoutineParameter.setType("string");
-                    break;
-                case "smallint":
-                case "smallserial":
+                case "smallint", "smallserial" ->
                     sqlRoutineParameter.setType("short");
-                    break;
-                case "integer":
+                case "integer" -> {
                     if (StringUtils.startsWithIgnoreCase(parameter_name, "es_")) {
                         sqlRoutineParameter.setType("boolean");
                         parameter_default = "" + booleanValueOf(parameter_default);
                     } else {
                         sqlRoutineParameter.setType("integer");
                     }
-                    break;
-                case "serial":
+                }
+                case "serial" ->
                     sqlRoutineParameter.setType("integer");
-                    break;
-                case "bigint":
-                case "bigserial":
+                case "bigint", "bigserial" ->
                     sqlRoutineParameter.setType("long");
-                    break;
-                case "decimal":
-                case "numeric":
-                case "money":
+                case "decimal", "numeric", "money" ->
                     sqlRoutineParameter.setType("decimal");
-                    break;
-                case "real":
+                case "real" ->
                     sqlRoutineParameter.setType("float");
-                    break;
-                case "double precision":
+                case "double precision" ->
                     sqlRoutineParameter.setType("double");
-                    break;
-                case "date":
+                case "date" ->
                     sqlRoutineParameter.setType("date");
-                    break;
-                case "time":
-                case "time with time zone":
-                case "time without time zone":
+                case "time", "time with time zone", "time without time zone" ->
                     sqlRoutineParameter.setType("time");
-                    break;
-                case "timestamp":
-                case "timestamp with time zone":
-                case "timestamp without time zone":
+                case "timestamp", "timestamp with time zone", "timestamp without time zone" ->
                     sqlRoutineParameter.setType("timestamp");
-                    break;
-                default:
+                default ->
                     sqlRoutineParameter.setType("string");
-                    break;
             }
             // </editor-fold>
             sqlRoutineParameter.setSqlDataType(data_type);
@@ -1561,43 +1777,28 @@ public class SqlReader extends SqlUtil {
             sqlColumn.setSqlType(data_type);
             sqlColumn.setType(data_type);
             switch (data_type) {
-                case "boolean":
+                case "boolean" ->
                     sqlColumn.setType("boolean");
-                    break;
-                case "blob":
-                case "bytea":
+                case "blob", "bytea" ->
                     sqlColumn.setType("blob");
-                    break;
-                case "\"char\"":
+                case "\"char\"" -> {
                     sqlColumn.setType("char");
                     sqlColumn.setSqlType("char(1)");
-                    break;
-                case "char":
-                case "character":
-                case "character varying":
-                case "varchar":
-                case "text":
+                }
+                case "char", "character", "character varying", "varchar", "text" -> {
                     sqlColumn.setType("string");
                     sqlColumn.setLength(character_maximum_length);
                     if (character_maximum_length > 0) {
                         sqlColumn.setSqlType(data_type + "(" + character_maximum_length + ")");
                     }
-                    break;
-                case "smallint":
-                case "smallserial":
+                }
+                case "smallint", "smallserial" ->
                     sqlColumn.setType("short");
-                    break;
-                case "integer":
-                case "serial":
+                case "integer", "serial" ->
                     sqlColumn.setType("integer");
-                    break;
-                case "bigint":
-                case "bigserial":
+                case "bigint", "bigserial" ->
                     sqlColumn.setType("long");
-                    break;
-                case "decimal":
-                case "numeric":
-                case "money":
+                case "decimal", "numeric", "money" -> {
                     sqlColumn.setType("decimal");
                     sqlColumn.setPrecision(numeric_precision);
                     sqlColumn.setScale(numeric_scale);
@@ -1608,19 +1809,14 @@ public class SqlReader extends SqlUtil {
                             sqlColumn.setSqlType(data_type + "(" + numeric_precision + ")");
                         }
                     }
-                    break;
-                case "real":
+                }
+                case "real" ->
                     sqlColumn.setType("float");
-                    break;
-                case "double precision":
+                case "double precision" ->
                     sqlColumn.setType("double");
-                    break;
-                case "date":
+                case "date" ->
                     sqlColumn.setType("date");
-                    break;
-                case "time":
-                case "time with time zone":
-                case "time without time zone":
+                case "time", "time with time zone", "time without time zone" -> {
                     sqlColumn.setType("time");
                     sqlColumn.setPrecision(datetime_precision);
                     if (datetime_precision > 0) {
@@ -1631,10 +1827,8 @@ public class SqlReader extends SqlUtil {
                             sqlColumn.setSqlType(data_type.substring(0, i) + "(" + datetime_precision + ")" + data_type.substring(i));
                         }
                     }
-                    break;
-                case "timestamp":
-                case "timestamp with time zone":
-                case "timestamp without time zone":
+                }
+                case "timestamp", "timestamp with time zone", "timestamp without time zone" -> {
                     sqlColumn.setType("timestamp");
                     sqlColumn.setPrecision(datetime_precision);
                     if (datetime_precision > 0) {
@@ -1645,7 +1839,7 @@ public class SqlReader extends SqlUtil {
                             sqlColumn.setSqlType(data_type.substring(0, i) + "(" + datetime_precision + ")" + data_type.substring(i));
                         }
                     }
-                    break;
+                }
             }
             // </editor-fold>
             sqlColumn.setDefault(string_default);
@@ -1690,28 +1884,20 @@ public class SqlReader extends SqlUtil {
             if (type == null || string == null) {
                 return "null";
             }
-            switch (type) {
-                case "boolean":
-                case "byte":
-                case "short":
-                case "integer":
-                case "long":
-                case "decimal":
-                case "float":
-                case "double":
-                    return string;
-                case "char":
-                case "string":
-                    return StrUtils.enclose(string, '\'');
-                case "date":
-                    return "date" + StrUtils.enclose(string, '\'');
-                case "time":
-                    return "time" + StrUtils.enclose(string, '\'');
-                case "timestamp":
-                    return "timestamp" + StrUtils.enclose(string, '\'');
-                default:
-                    return "null";
-            }
+            return switch (type) {
+                case "boolean", "byte", "short", "integer", "long", "decimal", "float", "double" ->
+                    string;
+                case "char", "string" ->
+                    StrUtils.enclose(string, '\'');
+                case "date" ->
+                    "date" + StrUtils.enclose(string, '\'');
+                case "time" ->
+                    "time" + StrUtils.enclose(string, '\'');
+                case "timestamp" ->
+                    "timestamp" + StrUtils.enclose(string, '\'');
+                default ->
+                    "null";
+            };
         }
 
         @Override
@@ -1720,36 +1906,29 @@ public class SqlReader extends SqlUtil {
             if (type == null) {
                 return "null";
             }
-            switch (type) {
-                case "boolean":
-                    return "false";
-                case "byte":
-                case "short":
-                case "integer":
-                case "long":
-                case "decimal":
-                case "float":
-                case "double":
-                    return "0";
-                case "char":
-                case "string":
-                    return "'?'";
-                case "date":
-                    return "current_date";
-                case "time":
-                    return "localtime";
-                case "timestamp":
-                    return "localtimestamp";
-                default:
-                    return "null";
-            }
+            return switch (type) {
+                case "boolean" ->
+                    "false";
+                case "byte", "short", "integer", "long", "decimal", "float", "double" ->
+                    "0";
+                case "char", "string" ->
+                    "'?'";
+                case "date" ->
+                    "current_date";
+                case "time" ->
+                    "localtime";
+                case "timestamp" ->
+                    "localtimestamp";
+                default ->
+                    "null";
+            };
         }
 
         protected String unquotedLiteralOf(Object obj) {
             if (obj == null) {
                 return null;
-            } else if (obj instanceof Clob) {
-                return StrUtils.getSubString((Clob) obj);
+            } else if (obj instanceof Clob clob) {
+                return StrUtils.getSubString(clob);
             } else if (obj instanceof Date) {
                 return TimeUtils.jdbcDateString(obj);
             } else if (obj instanceof Time) {
@@ -1861,58 +2040,32 @@ public class SqlReader extends SqlUtil {
             sqlRoutineParameter.setName(parameter_name);
             // <editor-fold defaultstate="collapsed" desc="switch(data_type)...">
             switch (data_type) {
-                case "boolean":
+                case "boolean" ->
                     sqlRoutineParameter.setType("boolean");
-                    break;
-                case "\"char\"":
+                case "\"char\"" ->
                     sqlRoutineParameter.setType("char");
-                    break;
-                case "char":
-                case "character":
-                case "character varying":
-                case "varchar":
-                case "text":
+                case "char", "character", "character varying", "varchar", "text" ->
                     sqlRoutineParameter.setType("string");
-                    break;
-                case "smallint":
-                case "smallserial":
+                case "smallint", "smallserial" ->
                     sqlRoutineParameter.setType("short");
-                    break;
-                case "integer":
-                case "serial":
+                case "integer", "serial" ->
                     sqlRoutineParameter.setType("integer");
-                    break;
-                case "bigint":
-                case "bigserial":
+                case "bigint", "bigserial" ->
                     sqlRoutineParameter.setType("long");
-                    break;
-                case "decimal":
-                case "numeric":
-                case "money":
+                case "decimal", "numeric", "money" ->
                     sqlRoutineParameter.setType("decimal");
-                    break;
-                case "real":
+                case "real" ->
                     sqlRoutineParameter.setType("float");
-                    break;
-                case "double precision":
+                case "double precision" ->
                     sqlRoutineParameter.setType("double");
-                    break;
-                case "date":
+                case "date" ->
                     sqlRoutineParameter.setType("date");
-                    break;
-                case "time":
-                case "time with time zone":
-                case "time without time zone":
+                case "time", "time with time zone", "time without time zone" ->
                     sqlRoutineParameter.setType("time");
-                    break;
-                case "timestamp":
-                case "timestamp with time zone":
-                case "timestamp without time zone":
+                case "timestamp", "timestamp with time zone", "timestamp without time zone" ->
                     sqlRoutineParameter.setType("timestamp");
-                    break;
-                default:
+                default ->
                     sqlRoutineParameter.setType("string");
-                    break;
             }
             // </editor-fold>
             sqlRoutineParameter.setSqlDataType(data_type);

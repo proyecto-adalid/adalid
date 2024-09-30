@@ -13,6 +13,8 @@
 package meta.proyecto.comun;
 
 import adalid.core.*;
+import adalid.core.annotations.*;
+import adalid.core.enums.*;
 import meta.entidad.comun.auditoria.ArchivoAdjunto;
 import meta.entidad.comun.auditoria.RastroFuncion;
 import meta.entidad.comun.auditoria.RastroFuncionPar;
@@ -60,6 +62,7 @@ import meta.entidad.comun.control.acceso.ElementoSegmento;
 import meta.entidad.comun.control.acceso.GrupoUsuario;
 import meta.entidad.comun.control.acceso.PaginaEspecial;
 import meta.entidad.comun.control.acceso.Rol;
+import meta.entidad.comun.control.acceso.RolAplicacion;
 import meta.entidad.comun.control.acceso.RolFiltroFuncion;
 import meta.entidad.comun.control.acceso.RolFuncion;
 import meta.entidad.comun.control.acceso.RolFuncionPar;
@@ -96,11 +99,13 @@ import meta.entidad.comun.operacion.basica.VistaFuncionCol;
 /**
  * @author Jorge Campins
  */
+@ProjectModuleDocGen(classDiagram = Kleenean.FALSE)
 public class EntidadesBasicas extends Project {
 
     @Override
     protected void settleAttributes() {
         super.settleAttributes();
+        setImmutableModule(true);
         // <editor-fold defaultstate="collapsed" desc="localization of EntidadesBasicas's attributes">
         setLocalizedLabel(ENGLISH, "Basic Entities");
         setLocalizedLabel(SPANISH, "Entidades Básicas");
@@ -192,6 +197,8 @@ public class EntidadesBasicas extends Project {
     protected RecursoValor RecursoValor;
 
     protected Rol Rol;
+
+    protected RolAplicacion RolAplicacion;
 
     protected RolFiltroFuncion RolFiltroFuncion;
 

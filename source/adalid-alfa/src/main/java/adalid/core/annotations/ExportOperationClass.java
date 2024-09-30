@@ -58,7 +58,7 @@ public @interface ExportOperationClass {
      * utilizar el valor predeterminado del atributo. El valor predeterminado del atributo es DYNAMIC. Las consultas dinámicas son aquellas que
      * dinámicamente construyen la cláusula WHERE de la consulta a partir de los parámetros no nulos de la operación y de sus respectivos operadores
      * escalares de comparación (vea Anotación ParameterField). Las consultas parametrizadas son consultas estáticas (su cláusula WHERE está
-     * prestablecida) que utilizan todos los parámetros (aún los nulos) de la operación.
+     * prestablecida) que utilizan todos los parámetros (aun los nulos) de la operación.
      *
      * @return type
      */

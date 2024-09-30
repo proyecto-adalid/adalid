@@ -1218,6 +1218,8 @@ public abstract class AbstractSqlProgrammer extends AbstractProgrammer implement
                 getNull();
             case EMPTY ->
                 getZeroString();
+            case CONTENT_ROOT_DIR ->
+                "content_root_dir()";
             case CURRENT_USER_CODE ->
                 "current_user_code()";
             default ->
@@ -2398,7 +2400,11 @@ public abstract class AbstractSqlProgrammer extends AbstractProgrammer implement
                 name = getPropertySqlName(p);
                 alias = getPropertySqlAlias(p, queryTable);
                 calculable = p.isCalculable();
+                /* until 25/06/2024
                 excludable = blobless && (p instanceof BinaryData blob) && (calculable || nonhierarchical || FetchType.LAZY.equals(blob.getFetchType()));
+                /**/
+                excludable = blobless && isLargeObject(p) && (calculable || nonhierarchical || isLazy(p));
+                /**/
                 if (excludable) { // since 17/03/2024
                     string += EOL$ + tab + getNull();
                     string += SPC$ + getAs() + SPC$ + alias;
@@ -2434,6 +2440,14 @@ public abstract class AbstractSqlProgrammer extends AbstractProgrammer implement
             }
         }
         return StringUtils.removeEnd(string, SEP$);
+    }
+
+    private boolean isLargeObject(Property p) {
+        return p instanceof BinaryData || p instanceof StringData sd && sd.isLargeObject();
+    }
+
+    private boolean isLazy(Property p) {
+        return FetchType.LAZY.equals(p instanceof BinaryData bd ? bd.getFetchType() : p instanceof StringData sd ? sd.getFetchType() : null);
     }
 
     private String getSelectFrom(QueryTable rootQueryTable, QueryTable queryTable, List<Property> referencedColumns, boolean indent) {

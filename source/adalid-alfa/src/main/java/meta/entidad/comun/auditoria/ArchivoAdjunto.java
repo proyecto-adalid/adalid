@@ -104,6 +104,14 @@ public class ArchivoAdjunto extends AbstractPersistentEntity {
     @StringField(maxLength = 100)
     public StringProperty nombreUsuarioPropietario;
 
+    @ColumnField(nullable = Kleenean.TRUE)
+//  do not add a foreign-key referring to RastroProceso
+//  @ForeignKey(onDelete = OnDeleteAction.NONE, onUpdate = OnUpdateAction.NONE)
+    @ManyToOne(navigability = Navigability.UNIDIRECTIONAL, view = MasterDetailView.TABLE_AND_DETAIL)
+    @PropertyField(table = Kleenean.FALSE, report = Kleenean.FALSE)
+//  @QueryMapping(mapKeyProperties = Kleenean.FALSE)
+    public RastroProceso rastroProcesoCarga;
+
     @ColumnField(nullable = Kleenean.FALSE)
     @PropertyField(responsivePriority = 6, table = Kleenean.TRUE, report = Kleenean.TRUE, search = Kleenean.TRUE, overlay = Kleenean.TRUE)
     public TimestampProperty fechaHoraCarga;
@@ -224,6 +232,13 @@ public class ArchivoAdjunto extends AbstractPersistentEntity {
         nombreUsuarioPropietario.setLocalizedLabel(ENGLISH, "owner name");
         nombreUsuarioPropietario.setLocalizedLabel(SPANISH, "nombre del propietario");
         /**/
+        rastroProcesoCarga.setLocalizedDescription(ENGLISH, "audit trail of the execution of the business process that performed the file upload");
+        rastroProcesoCarga.setLocalizedDescription(SPANISH, "rastro de auditoría de la ejecución del proceso de negocio que realizó la carga del archivo");
+        rastroProcesoCarga.setLocalizedLabel(ENGLISH, "process execution audit trail");
+        rastroProcesoCarga.setLocalizedLabel(SPANISH, "rastro de ejecución del proceso");
+        rastroProcesoCarga.setLocalizedShortLabel(ENGLISH, "process audit trail");
+        rastroProcesoCarga.setLocalizedShortLabel(SPANISH, "rastro del proceso");
+        /**/
         fechaHoraCarga.setLocalizedDescription(ENGLISH, "date and time the upload was made");
         fechaHoraCarga.setLocalizedDescription(SPANISH, "fecha y hora en la que se realizó la carga");
         fechaHoraCarga.setLocalizedLabel(ENGLISH, "upload timestamp");
@@ -275,6 +290,14 @@ public class ArchivoAdjunto extends AbstractPersistentEntity {
         );
         /**/
         // </editor-fold>
+    }
+
+    @Override
+    protected void settleFilters() {
+        super.settleFilters();
+        /**/
+        setMasterDetailFilter(rastroProcesoCarga.conArchivosCargados);
+        /**/
     }
 
     protected RestaurarArchivoServidorWeb restaurarArchivoServidorWeb;

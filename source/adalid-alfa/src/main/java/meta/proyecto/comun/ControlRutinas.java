@@ -28,6 +28,7 @@ public class ControlRutinas extends Project {
     @Override
     protected void settleAttributes() {
         super.settleAttributes();
+        setImmutableModule(true);
         // <editor-fold defaultstate="collapsed" desc="localization of ControlRutinas's attributes">
         setLocalizedLabel(ENGLISH, "Routine Control");
         setLocalizedLabel(SPANISH, "Control de Rutinas");

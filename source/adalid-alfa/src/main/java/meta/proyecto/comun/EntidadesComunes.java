@@ -65,6 +65,7 @@ import meta.entidad.comun.control.acceso.ElementoSegmento;
 import meta.entidad.comun.control.acceso.GrupoUsuario;
 import meta.entidad.comun.control.acceso.PaginaEspecial;
 import meta.entidad.comun.control.acceso.Rol;
+import meta.entidad.comun.control.acceso.RolAplicacion;
 import meta.entidad.comun.control.acceso.RolFiltroFuncion;
 import meta.entidad.comun.control.acceso.RolFuncion;
 import meta.entidad.comun.control.acceso.RolFuncionPar;
@@ -125,13 +126,10 @@ import meta.entidad.comun.operacion.basica.VistaFuncionCol;
 @ProjectModuleDocGen(classDiagram = Kleenean.FALSE)
 public class EntidadesComunes extends Project implements SpecialEntityPack {
 
-    public EntidadesComunes() {
-        super();
-    }
-
     @Override
     protected void settleAttributes() {
         super.settleAttributes();
+        setImmutableModule(true);
         // <editor-fold defaultstate="collapsed" desc="localization of EntidadesComunes's attributes">
         setLocalizedLabel(ENGLISH, "Common Entities");
         setLocalizedLabel(SPANISH, "Entidades Comúnes");
@@ -328,6 +326,8 @@ public class EntidadesComunes extends Project implements SpecialEntityPack {
     protected RecursoValor RecursoValor;
 
     protected Rol Rol;
+
+    protected RolAplicacion RolAplicacion;
 
     protected RolFiltroFuncion RolFiltroFuncion;
 

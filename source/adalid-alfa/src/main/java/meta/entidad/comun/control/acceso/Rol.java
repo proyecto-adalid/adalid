@@ -49,6 +49,7 @@ public class Rol extends AbstractPersistentEntity {
 
     @BusinessKey
     @StringField(maxLength = 100)
+    @PropertyField(overlay = Kleenean.TRUE)
     public StringProperty codigoRol;
 
     @NameProperty

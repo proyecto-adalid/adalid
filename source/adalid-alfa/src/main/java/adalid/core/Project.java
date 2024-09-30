@@ -74,6 +74,8 @@ public abstract class Project extends AbstractArtifact implements ProjectBuilder
 
     private static boolean _defaultEntityCodeGenBWS = false;
 
+    private static boolean _defaultEntityCodeGenDAO = true; // since 22/08/2024
+
     private static boolean _defaultEntityCodeGenDAF = true;
 
     private static boolean _defaultEntityCodeGenFWS = false;
@@ -618,9 +620,10 @@ public abstract class Project extends AbstractArtifact implements ProjectBuilder
      * consulta y/o registro tabular de las meta-entidades. Este método solo reemplaza el valor especificado en las meta-entidades cuando ese valor
      * sea UNSPECIFIED.
      *
-     * @param mode modo "responsive" predeterminado. Su valor es uno de los elementos de la enumeración TableResponsiveMode. Seleccione PRIORITY para
-     * mostrar las columnas de las tablas dependiendo de su prioridad, según el tamaño de la pantalla. Seleccione REFLOW para mostrar todas las
-     * columnas, apiladas o no, según el tamaño de la pantalla. Seleccione NONE o UNSPECIFIED para que las tablas no sean "responsive".
+     * @param mode modo "responsive" predeterminado. Su valor es uno de los elementos de la enumeración TableResponsiveMode. Seleccione AUTO o
+     * PRIORITY para mostrar las columnas de la tabla dependiendo de su prioridad, según el tamaño de la pantalla; la diferencia entre estas opciones
+     * es que, especificando AUTO, la prioridad de las columnas se determina de manera automática. Seleccione REFLOW para mostrar todas las columnas,
+     * apiladas o no, según el tamaño de la pantalla. Seleccione NONE o UNSPECIFIED para que las tablas no sean "responsive".
      */
     public static void setDefaultEntityTableViewResponsiveMode(TableResponsiveMode mode) {
         setDefaultEntityTableViewResponsiveMode(mode, false);
@@ -631,9 +634,10 @@ public abstract class Project extends AbstractArtifact implements ProjectBuilder
      * consulta y/o registro tabular de las meta-entidades. Este método puede reemplazar cualquier valor especificado en las meta-entidades,
      * dependiendo del valor del parámetro replace.
      *
-     * @param mode modo "responsive" predeterminado. Su valor es uno de los elementos de la enumeración TableResponsiveMode. Seleccione PRIORITY para
-     * mostrar las columnas de las tablas dependiendo de su prioridad, según el tamaño de la pantalla. Seleccione REFLOW para mostrar todas las
-     * columnas, apiladas o no, según el tamaño de la pantalla. Seleccione NONE o UNSPECIFIED para que las tablas no sean "responsive".
+     * @param mode modo "responsive" predeterminado. Su valor es uno de los elementos de la enumeración TableResponsiveMode. Seleccione AUTO o
+     * PRIORITY para mostrar las columnas de la tabla dependiendo de su prioridad, según el tamaño de la pantalla; la diferencia entre estas opciones
+     * es que, especificando AUTO, la prioridad de las columnas se determina de manera automática. Seleccione REFLOW para mostrar todas las columnas,
+     * apiladas o no, según el tamaño de la pantalla. Seleccione NONE o UNSPECIFIED para que las tablas no sean "responsive".
      * @param replace true para reemplazar el valor especificado en las meta-entidades con el valor del parámetro mode, aun cuando ese valor no sea
      * UNSPECIFIED.
      */
@@ -682,6 +686,25 @@ public abstract class Project extends AbstractArtifact implements ProjectBuilder
      */
     public static void setDefaultEntityCodeGenBWS(boolean b) {
         _defaultEntityCodeGenBWS = b;
+    }
+
+    /**
+     * @return the default @EntityCodeGen DAO (Data Access Object) value
+     */
+    public static boolean getDefaultEntityCodeGenDAO() {
+        return _defaultEntityCodeGenDAO;
+    }
+
+    /**
+     * El método setDefaultEntityCodeGenDAO se utiliza para establecer el valor predeterminado del atributo dao de las meta-entidades. El atributo
+     * indica si se debe, o no, generar un objeto de acceso a datos (DAO, por las siglas en inglés de Data Access Object) para la entidad.
+     *
+     * El método setDefaultEntityCodeGenDAO es un método estático que debe ejecutarse en el método setStaticAttributes del proyecto maestro.
+     *
+     * @param b valor predeterminado del atributo dao
+     */
+    public static void setDefaultEntityCodeGenDAO(boolean b) {
+        _defaultEntityCodeGenDAO = b;
     }
 
     /**
@@ -1211,6 +1234,8 @@ public abstract class Project extends AbstractArtifact implements ProjectBuilder
 
     private final List<Pattern> _filePreservationPatterns = new ArrayList<>();
 
+    private ProjectKeyFeatures _keyFeaturesDictionary;
+
     private boolean _abort, _built;
 
     private boolean _annotatedWithMasterProject;
@@ -1227,9 +1252,13 @@ public abstract class Project extends AbstractArtifact implements ProjectBuilder
 
     private boolean _privateModule;
 
+    private boolean _immutableModule;
+
     private boolean _disablePrivateAndOtherContextEntitiesBplCodeGen; // since 10/02/2023 disable selected entities BPL code generation
 
     private boolean _disablePrivateAndOtherContextEntitiesBwsCodeGen; // since 10/02/2023 disable selected entities BWS code generation
+
+    private boolean _disablePrivateAndOtherContextEntitiesDaoCodeGen; // since 22/08/2024 disable selected entities DAO code generation
 
     private boolean _disablePrivateAndOtherContextEntitiesDafCodeGen; // since 11/02/2023 disable selected entities DAF code generation
 
@@ -2084,6 +2113,24 @@ public abstract class Project extends AbstractArtifact implements ProjectBuilder
         return _privateModule;
     }
 
+    /**
+     * @return the immutable module indicator
+     */
+    public boolean isMutableModule() {
+        return !isImmutableModule();
+    }
+
+    /**
+     * @return the immutable module indicator
+     */
+    public boolean isImmutableModule() {
+        return _immutableModule;
+    }
+
+    public void setImmutableModule(boolean immutable) {
+        _immutableModule = immutable;
+    }
+
     public boolean isDisablePrivateAndOtherContextEntitiesBplCodeGen() {
         return _disablePrivateAndOtherContextEntitiesBplCodeGen;
     }
@@ -2114,6 +2161,23 @@ public abstract class Project extends AbstractArtifact implements ProjectBuilder
      */
     public void setDisablePrivateAndOtherContextEntitiesBwsCodeGen(boolean disable) {
         _disablePrivateAndOtherContextEntitiesBwsCodeGen = disable;
+    }
+
+    public boolean isDisablePrivateAndOtherContextEntitiesDaoCodeGen() {
+        return _disablePrivateAndOtherContextEntitiesDaoCodeGen;
+    }
+
+    /**
+     * El método setDisablePrivateAndOtherContextEntitiesDaoCodeGen se utiliza para inhabilitar la generación de objetos de acceso a datos (código
+     * DAO, por las siglas en inglés de Data Access Object) de entidades privadas y de entidades cuyas vistas (páginas) se encuentran en el módulo Web
+     * de la aplicación empresarial de otro proyecto.
+     *
+     * El método setDisablePrivateAndOtherContextEntitiesDaoCodeGen debe ejecutarse en el método configureGenerator del proyecto.
+     *
+     * @param disable true o false para inhabilitar, o no, la generación de código DAO
+     */
+    public void setDisablePrivateAndOtherContextEntitiesDaoCodeGen(boolean disable) {
+        _disablePrivateAndOtherContextEntitiesDaoCodeGen = disable;
     }
 
     public boolean isDisablePrivateAndOtherContextEntitiesDafCodeGen() {
@@ -2399,6 +2463,22 @@ public abstract class Project extends AbstractArtifact implements ProjectBuilder
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="instance fields public getters and setters">
+    protected void loadKeyFeatures() {
+        _keyFeaturesDictionary = ProjectKeyFeatures.load();
+    }
+
+    void putKeyFeatures(String key, String value) {
+        if (_keyFeaturesDictionary != null) {
+            _keyFeaturesDictionary.setProperty(key, value);
+        }
+    }
+
+    private void storeKeyFeatures() {
+        if (_keyFeaturesDictionary != null && !_keyFeaturesDictionary.isEmpty()) {
+            _keyFeaturesDictionary.store();
+        }
+    }
+
     /**
      * @return the artifacts set
      */
@@ -3099,6 +3179,55 @@ public abstract class Project extends AbstractArtifact implements ProjectBuilder
     }
 
     /**
+     * El método setDaoCodeGenEnabled se utiliza para especificar si se debe, o no, generar un objeto de acceso a datos (código DAO, por las siglas en
+     * inglés de Data Access Object) para un conjunto de entidades.
+     *
+     * El método setDaoCodeGenEnabled debe ejecutarse en el método configureGenerator del proyecto.
+     *
+     * @param enabled true o false para generar, o no, código DAO para las entidades del conjunto definido por el parámetro moduleClass
+     * @param moduleClass clase del módulo que contiene las entidades cuya generación de código DAO se va a establecer
+     */
+    public void setDaoCodeGenEnabled(boolean enabled, Class<? extends Project> moduleClass) {
+        if (moduleClass != null) {
+            Project module = getModule(moduleClass);
+            if (module != null) {
+                for (Entity entity : module.getEntitiesList()) {
+                    if (isOptionalDaoCodeGen(entity)) {
+                        entity.setDaoCodeGenEnabled(enabled);
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * El método setDaoCodeGenEnabled se utiliza para especificar si se debe, o no, generar un objeto de acceso a datos (código DAO, por las siglas en
+     * inglés de Data Access Object) para un conjunto de entidades.
+     *
+     * El método setDaoCodeGenEnabled debe ejecutarse en el método configureGenerator del proyecto.
+     *
+     * @param enabled true o false para generar, o no, código DAO para las entidades del conjunto definido por el parámetro entityClasses
+     * @param entityClasses una o más clases de entidades cuya generación de código DAO se va a establecer
+     */
+    @SuppressWarnings("unchecked")
+    public void setDaoCodeGenEnabled(boolean enabled, Class<? extends Entity>... entityClasses) {
+        if (entityClasses != null && entityClasses.length > 0) {
+            forDaoCodeGenEnabled(enabled, entityNames(entityClasses));
+        }
+    }
+
+    private void forDaoCodeGenEnabled(boolean enabled, Set<String> entityNames) {
+        for (String name : entityNames) {
+            Entity entity = getEntity(name);
+            if (entity != null) {
+                if (isOptionalDaoCodeGen(entity)) {
+                    entity.setDaoCodeGenEnabled(enabled);
+                }
+            }
+        }
+    }
+
+    /**
      * El método setDafCodeGenEnabled se utiliza para especificar si se debe, o no, generar una fachada de acceso a datos (código DAF, por las siglas
      * en inglés de Data Access Façade) para un conjunto de entidades.
      *
@@ -3346,7 +3475,7 @@ public abstract class Project extends AbstractArtifact implements ProjectBuilder
      * método puede utilizarse repetidamente para agregar varias directrices.
      *
      * Al ejecutar el proyecto Maestro, no se generarán aquellos archivos cuyos nombres satisfacen alguna de las directrices de exclusión del
-     * proyecto; más aún, se eliminarán los archivos previamente generados cuyos nombres satisfacen alguna de tales directrices.
+     * proyecto; más aun, se eliminarán los archivos previamente generados cuyos nombres satisfacen alguna de tales directrices.
      *
      * @param regex expresión regular para evaluar el nombre de los archivos que se deben excluir
      */
@@ -3460,6 +3589,7 @@ public abstract class Project extends AbstractArtifact implements ProjectBuilder
                 _roleModule = annotation.role().toBoolean(_roleModule);
                 _foreignModule = annotation.foreign().toBoolean(_foreignModule);
                 _privateModule = annotation.privacy().toBoolean(_privateModule);
+//              _immutableModule = annotation.immutable().toBoolean(_immutableModule);
                 _moduleMenuType = annotation.menuType();
                 _moduleRoleTypes = annotation.roleTypes();
                 String document = annotation.helpDocument();
@@ -3485,6 +3615,7 @@ public abstract class Project extends AbstractArtifact implements ProjectBuilder
             _roleModule = annotation.role().toBoolean(_roleModule);
             _foreignModule = annotation.foreign().toBoolean(_foreignModule);
             _privateModule = annotation.privacy().toBoolean(_privateModule);
+//          _immutableModule = annotation.immutable().toBoolean(_immutableModule);
             _moduleMenuType = annotation.menuType();
             _moduleRoleTypes = annotation.roleTypes();
             String document = annotation.helpDocument();
@@ -3568,25 +3699,27 @@ public abstract class Project extends AbstractArtifact implements ProjectBuilder
         }
         String plataformas = (platforms.length == 1 ? "platform" : "platforms") + " " + Arrays.toString(platforms);
         Class<? extends Project> clazz = getClass();
+        String clase = RunUtils.canonical(clazz);
         long millis1 = System.currentTimeMillis();
-        logger.warn("build and generate " + plataformas + " for project " + RunUtils.starting(clazz));
+        logger.warn(RunUtils.starting("building and generation of project " + clase + " with " + plataformas));
         boolean built = build();
-        logger.warn("build project " + RunUtils.finished(clazz, millis1));
+        logger.warn(RunUtils.finished("building project " + clase, millis1));
         boolean generated = false;
         if (built) {
             for (String platform : platforms) {
                 long millis2 = System.currentTimeMillis();
                 generated = generate(platform);
-                logger.warn("generate platform " + platform + " for project " + RunUtils.finished(clazz, millis2));
+                logger.warn(RunUtils.finished("generation of project " + clase + " with " + platform, millis2));
             }
         }
-        logger.warn("build and generate " + plataformas + " for project " + RunUtils.finished(clazz, millis1));
+        storeKeyFeatures();
+        logger.warn(RunUtils.finished("building and generation of project " + clase + " with " + plataformas, millis1));
         return built && generated;
     }
 
     @Override
     public boolean build() {
-        logger.info(signature("build", getClass().getName()));
+        logger.trace(signature("build", getClass().getName()));
         getBuildTimestamp();
         if (PropertiesHandler.missingBootstrappingProperties()) {
             logger.error("build aborted due to missing or invalid bootstrapping properties");
@@ -3643,13 +3776,13 @@ public abstract class Project extends AbstractArtifact implements ProjectBuilder
     }
 
     protected boolean parse() {
-        logger.info(signature("parse", getClass().getName()));
+        logger.trace(signature("parse", getClass().getName()));
 //      TLC.setProject(this);
         return getParser().parse();
     }
 
     protected boolean analyze() {
-        logger.info(signature("analyze", getClass().getName()));
+        logger.trace(signature("analyze", getClass().getName()));
 //      TLC.setProject(this);
         configureAnalyzer();
         List<Project> modulesList = getModulesList();
@@ -3684,7 +3817,7 @@ public abstract class Project extends AbstractArtifact implements ProjectBuilder
             logger.error("invalid platform argument");
             return false;
         }
-        logger.info(signature("generate", "platform=" + platform));
+        logger.trace(signature("generate", "platform=" + platform));
 //      TLC.setProject(this);
         if (TLC.getProject() != this) {
             logger.error("this project has not been built and therefore cannot be generated");
@@ -3729,6 +3862,11 @@ public abstract class Project extends AbstractArtifact implements ProjectBuilder
                     if (_disablePrivateAndOtherContextEntitiesBwsCodeGen) {
                         entity.setBwsCodeGenEnabled(false);
                     }
+                    if (_disablePrivateAndOtherContextEntitiesDaoCodeGen) {
+                        if (isOptionalDaoCodeGen(entity)) {
+                            entity.setDaoCodeGenEnabled(false);
+                        }
+                    }
                     if (_disablePrivateAndOtherContextEntitiesDafCodeGen) {
                         if (isOptionalDafCodeGen(entity)) {
                             entity.setDafCodeGenEnabled(false);
@@ -3745,11 +3883,16 @@ public abstract class Project extends AbstractArtifact implements ProjectBuilder
     private boolean disableEntitiesCodeGen() {
         return _disablePrivateAndOtherContextEntitiesBplCodeGen
             || _disablePrivateAndOtherContextEntitiesBwsCodeGen
+            || _disablePrivateAndOtherContextEntitiesDaoCodeGen
             || _disablePrivateAndOtherContextEntitiesDafCodeGen
             || _disablePrivateAndOtherContextEntitiesFwsCodeGen;
     }
 
     protected boolean isOptionalBplCodeGen(Entity entity) {
+        return entity != null;
+    }
+
+    protected boolean isOptionalDaoCodeGen(Entity entity) {
         return entity != null;
     }
 
@@ -3791,7 +3934,7 @@ public abstract class Project extends AbstractArtifact implements ProjectBuilder
     protected void printSummary(boolean ok) {
         String alias = getAlias();
         if (ok) {
-            logger.info("project " + alias + " successfully generated");
+            logger.trace("project " + alias + " successfully generated");
         } else {
             logger.warn("project " + alias + " generated with errors");
         }
@@ -5140,7 +5283,6 @@ public abstract class Project extends AbstractArtifact implements ProjectBuilder
             logger.debug("defaultPropertyFieldSerializableIUID=" + _defaultPropertyFieldSerializableIUID);
             logger.debug("alertLevel=" + _alertLevel);
             logger.debug("detailLevel=" + _detailLevel);
-//          logger.debug("dictionaryLevel=" + getDictionaryLevel());
             logger.debug("trackingLevel=" + _trackingLevel);
             logger.debug("transitionLevel=" + _transitionLevel);
             logger.debug("specialExpressionLevel=" + _specialExpressionLevel);

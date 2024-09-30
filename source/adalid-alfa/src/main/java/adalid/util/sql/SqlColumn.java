@@ -67,6 +67,13 @@ public class SqlColumn extends SqlArtifact {
         _table = table;
     }
 
+    @Override
+    public String toString() {
+        return getClass().getSimpleName() + " " + getName()
+            + " " + getSqlDataType() + (isNullable() ? "" : " not null") + (_sqlDefaultValue == null ? " " : " default " + _sqlDefaultValue)
+            + "(" + getClass().getName() + "@" + Integer.toHexString(hashCode()) + ")";
+    }
+
     // <editor-fold defaultstate="collapsed" desc="instance getters and setters">
     /**
      * @return the table
@@ -443,6 +450,8 @@ public class SqlColumn extends SqlArtifact {
         } else {
             return _foreignTable.getCapitalizedJavaName();
         }
+        /**/
+        // <editor-fold defaultstate="collapsed" desc="comment">
         /*
         switch (_type) {
             case "blob":
@@ -474,6 +483,8 @@ public class SqlColumn extends SqlArtifact {
             default:
                 return "Property";
         }
+        /**/
+        // </editor-fold>
         /**/
         return switch (_type) {
             case "blob" ->

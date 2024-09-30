@@ -617,6 +617,20 @@ public interface Artifact {
     String getPartialName();
 
     /**
+     * @param prefix prefijo
+     * @param suffix sufijo
+     * @return the cryptic name
+     */
+    String getCrypticName(String prefix, String suffix);
+
+    /**
+     * @param prefix prefijo
+     * @param suffix sufijo
+     * @return the key features
+     */
+    String getKeyFeatures(String prefix, String suffix);
+
+    /**
      * @return true if this artifact is an Operation; otherwise false
      */
     boolean isOperation();

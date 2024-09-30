@@ -41,7 +41,24 @@ public class Key extends AbstractArtifact {
     /**/
     private boolean _unique;
 
+    private boolean _nullsNotDistinct;
+
     private boolean _containsNullProperties;
+
+    @Override
+    public String getKeyFeatures(String prefix, String suffix) {
+        String unique = isUnique() ? ",UNIQUE" : "";
+        String fields = keyFieldsFeatures(prefix, suffix);
+        return "(Key" + fields + unique + ")";
+    }
+
+    private String keyFieldsFeatures(String prefix, String suffix) {
+        List<String> list = new ArrayList<>();
+        for (KeyField keyField : getKeyFieldsList()) {
+            list.add(keyField.getKeyFeatures(prefix, suffix));
+        }
+        return "[" + StringUtils.join(list, ",") + "]";
+    }
 
     /**
      * @return the key fields
@@ -83,6 +100,23 @@ public class Key extends AbstractArtifact {
      */
     public void setUnique(boolean unique) {
         _unique = unique;
+    }
+
+    public boolean isNullsNotDistinct() {
+        return _nullsNotDistinct;
+    }
+
+    /**
+     * El método setNullsNotDistinct se utiliza para definir la forma en la que se deben manejar los valores nulos en restricciones e índices únicos.
+     * Si el manejador de base de datos de su aplicación es PostgreSQL, de manera predeterminada los valores nulos en una columna única no se
+     * consideran iguales, lo que permite múltiples valores nulos en la columna. A partir de la versión 15 de PostgreSQL, setNullsNotDistinct(true)
+     * permite modificar esto, haciendo que el índice trate los nulos como iguales. Un índice único de varias columnas solo rechazará los casos en los
+     * que todas las columnas indexadas sean iguales en varias filas.
+     *
+     * @param nullsNotDistinct true, si los valores nulos se deben tratar como iguales; de lo contrario false
+     */
+    public void setNullsNotDistinct(boolean nullsNotDistinct) {
+        _nullsNotDistinct = nullsNotDistinct;
     }
 
     /* commented on 21/03/2021
@@ -366,6 +400,17 @@ public class Key extends AbstractArtifact {
             }
         }
         return properties;
+    }
+
+    public boolean isUniqueKeyWithNullProperties() {
+        if (_unique) {
+            for (KeyField field : getKeyFieldsList()) {
+                if (field.getProperty() != null && field.getProperty().isNullable()) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     public boolean isSingleProperty() {

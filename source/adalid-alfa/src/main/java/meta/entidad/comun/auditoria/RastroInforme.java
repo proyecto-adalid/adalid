@@ -67,7 +67,7 @@ public class RastroInforme extends AbstractPersistentEntity {
     public StringProperty nombreInforme;
 
     @ColumnField(indexed = Kleenean.TRUE)
-    @PropertyField(responsivePriority = 5, sequence = 200, table = Kleenean.TRUE, search = Kleenean.TRUE, report = Kleenean.TRUE, overlay = Kleenean.TRUE)
+    @PropertyField(responsivePriority = 6, sequence = 200, table = Kleenean.TRUE, search = Kleenean.TRUE, report = Kleenean.TRUE, overlay = Kleenean.TRUE)
     @StringField(maxLength = 5)
     public StringProperty formatoInforme;
 
@@ -151,7 +151,7 @@ public class RastroInforme extends AbstractPersistentEntity {
     public LongProperty versionRecurso;
 
     @ColumnField(indexed = Kleenean.FALSE)
-    @PropertyField(sequence = 300, table = Kleenean.TRUE, report = Kleenean.TRUE, search = Kleenean.TRUE)
+    @PropertyField(responsivePriority = 5, sequence = 300, table = Kleenean.TRUE, report = Kleenean.TRUE, search = Kleenean.TRUE)
     public StringProperty codigoRecurso;
 
     @ColumnField(indexed = Kleenean.FALSE)
@@ -189,7 +189,7 @@ public class RastroInforme extends AbstractPersistentEntity {
     @ColumnField(nullable = Kleenean.FALSE)
     @ForeignKey(onDelete = OnDeleteAction.NONE, onUpdate = OnUpdateAction.NONE)
     @ManyToOne(navigability = Navigability.UNIDIRECTIONAL, view = MasterDetailView.NONE)
-    @PropertyField(responsivePriority = 5, sequence = 500, table = Kleenean.TRUE, search = Kleenean.TRUE, report = Kleenean.TRUE)
+    @PropertyField(sequence = 500, table = Kleenean.TRUE, search = Kleenean.TRUE, report = Kleenean.TRUE)
     public CondicionEjeFun condicionEjeFun;
 
     @FileReference(loadField = "fechaHoraInicioEjecucion")

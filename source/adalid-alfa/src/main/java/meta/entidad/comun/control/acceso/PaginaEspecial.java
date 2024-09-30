@@ -51,7 +51,7 @@ public class PaginaEspecial extends AbstractPersistentEntity {
         setLocalizedCollectionLabel(ENGLISH, "Special Pages");
         setLocalizedCollectionLabel(SPANISH, "Páginas Especiales");
         /**/
-        setLocalizedDescription(ENGLISH, "Each instance of " + b("Special Pages") + " represents an "
+        setLocalizedDescription(ENGLISH, "Each instance of " + b("Special Pages") + " represents a "
             + "special (handmade, not generated) web application page."
             + "");
         setLocalizedDescription(SPANISH, "Cada instancia de " + b("Páginas Especiales") + " representa una "
@@ -111,7 +111,7 @@ public class PaginaEspecial extends AbstractPersistentEntity {
         super.settleProperties();
         /*
         setOrderBy(codigo);
-        /**/
+        /*
         codigo.setDefaultValue(concat("@", id.toZeroPaddedString(19)));
         /**/
         publica.setInitialValue(false);

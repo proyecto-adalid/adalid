@@ -24,7 +24,7 @@ public enum OperationAccess {
      */
     PRIVATE,
     /**
-     * Las operaciones con acceso PUBLIC pueden ser ejecutadas por todos los usuarios del sistema, aún cuando no tengan autorización explícita para
+     * Las operaciones con acceso PUBLIC pueden ser ejecutadas por todos los usuarios del sistema, aun cuando no tengan autorización explícita para
      * hacerlo.
      */
     PUBLIC,

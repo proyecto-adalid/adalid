@@ -360,6 +360,32 @@ public interface Entity extends Comparable<Entity>, DataArtifact, EntityReferenc
     Map<String, AllocationOverride> getAllocationOverridesMap();
 
     /**
+     * @return the super-view name
+     */
+    String getSuperViewName();
+
+    /**
+     * El método setSuperViewName se utiliza para establecer el nombre de la super-vista de la entidad. Si este método no es ejecutado, el nombre de
+     * la super-vista se determina a partir del nombre SQL de la entidad.
+     *
+     * @param viewName nombre de la super-vista
+     */
+    void setSuperViewName(String viewName);
+
+    /**
+     * @return the supra-view name
+     */
+    String getSupraViewName();
+
+    /**
+     * El método setSupraViewName se utiliza para establecer el nombre de la supra-vista de la entidad. Si este método no es ejecutado, el nombre de
+     * la supra-vista se determina a partir del nombre SQL de la entidad.
+     *
+     * @param viewName nombre de la supra-vista
+     */
+    void setSupraViewName(String viewName);
+
+    /**
      * @return the primary key field name
      */
     String getPrimaryKeyFieldName();
@@ -1006,6 +1032,11 @@ public interface Entity extends Comparable<Entity>, DataArtifact, EntityReferenc
     String getTableViewQuickFilterSnippetPath();
 
     /**
+     * @return the table responsive mode
+     */
+    public TableResponsiveMode getTableResponsiveMode();
+
+    /**
      * @return the table view help document
      */
     String getTableViewHelpDocument();
@@ -1109,6 +1140,16 @@ public interface Entity extends Comparable<Entity>, DataArtifact, EntityReferenc
      * @param enabled the business web service code generation enabled indicator to set
      */
     void setBwsCodeGenEnabled(boolean enabled);
+
+    /**
+     * @return the data access object code generation enabled indicator
+     */
+    boolean isDaoCodeGenEnabled();
+
+    /**
+     * @param enabled the data access object code generation enabled indicator to set
+     */
+    void setDaoCodeGenEnabled(boolean enabled);
 
     /**
      * @return the data access facade code generation enabled indicator

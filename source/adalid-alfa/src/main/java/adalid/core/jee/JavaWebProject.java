@@ -23,6 +23,11 @@ public interface JavaWebProject {
     boolean isMultiApplication();
 
     /**
+     * @return the multi-web-application project indicator
+     */
+    boolean isRoleWebAppDissociationAllowed();
+
+    /**
      * @return the ear project name
      */
     String getEarProjectName();

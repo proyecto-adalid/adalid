@@ -42,6 +42,11 @@ public class KeyField extends AbstractArtifact {
         return _sortOption;
     }
 
+    @Override
+    public String getKeyFeatures(String prefix, String suffix) {
+        return "(KeyField" + _property.getKeyFeatures(prefix, suffix) + "," + _sortOption + ")";
+    }
+
     KeyField(Key key, Property property) {
         this(key, property, SortOption.ASC);
     }

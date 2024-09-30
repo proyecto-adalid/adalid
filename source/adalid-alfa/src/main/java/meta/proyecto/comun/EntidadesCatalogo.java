@@ -15,7 +15,17 @@ package meta.proyecto.comun;
 import adalid.core.*;
 import adalid.core.annotations.*;
 import adalid.core.enums.*;
-import meta.entidad.comun.configuracion.basica.*;
+import meta.entidad.comun.configuracion.basica.Aplicacion;
+import meta.entidad.comun.configuracion.basica.AtributoAplicacion;
+import meta.entidad.comun.configuracion.basica.ClaseRecurso;
+import meta.entidad.comun.configuracion.basica.Dominio;
+import meta.entidad.comun.configuracion.basica.DominioParametro;
+import meta.entidad.comun.configuracion.basica.Funcion;
+import meta.entidad.comun.configuracion.basica.FuncionParametro;
+import meta.entidad.comun.configuracion.basica.GrupoProceso;
+import meta.entidad.comun.configuracion.basica.ModuloAplicacion;
+import meta.entidad.comun.configuracion.basica.Pagina;
+import meta.entidad.comun.configuracion.basica.Parametro;
 
 /**
  * @author Jorge Campins
@@ -26,6 +36,7 @@ public class EntidadesCatalogo extends Project {
     @Override
     protected void settleAttributes() {
         super.settleAttributes();
+        setImmutableModule(true);
         // <editor-fold defaultstate="collapsed" desc="localization of EntidadesCatalogo's attributes">
         setLocalizedLabel(ENGLISH, "Catalog Entities");
         setLocalizedLabel(SPANISH, "Entidades Del Catálogo");

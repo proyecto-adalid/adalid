@@ -46,6 +46,7 @@ public class ControlPruebas extends Project {
     @Override
     protected void settleAttributes() {
         super.settleAttributes();
+        setImmutableModule(true);
         // <editor-fold defaultstate="collapsed" desc="localization of ControlPruebas's attributes">
         setLocalizedLabel(ENGLISH, "Test Control");
         setLocalizedLabel(SPANISH, "Control de Pruebas");

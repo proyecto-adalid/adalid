@@ -36,35 +36,35 @@ public class PrimeFacesThemes {
 //
 //  public static final String BLACK_TIE = "black-tie";
 //
-    public static final String BLITZER = "blitzer";
+//  public static final String BLITZER = "blitzer";
 //
 //  public static final String BLUESKY = "bluesky";
-
-    public static final String BOOTSTRAP = "bootstrap";
-
-    public static final String CASABLANCA = "casablanca";
+//
+//  public static final String BOOTSTRAP = "bootstrap";
+//
+//  public static final String CASABLANCA = "casablanca";
 //
 //  public static final String CRUZE = "cruze";
 //
 //  public static final String CUPERTINO = "cupertino";
-
-    public static final String DARK_HIVE = "dark-hive";
-
-    public static final String DELTA = "delta";
+//
+//  public static final String DARK_HIVE = "dark-hive";
+//
+//  public static final String DELTA = "delta";
 //
 //  public static final String DOT_LUV = "dot-luv";
 //
 //  public static final String EGGPLANT = "eggplant";
 //
 //  public static final String EXCITE_BIKE = "excite-bike";
-
-    public static final String FLICK = "flick";
-
-    public static final String GLASS_X = "glass-x";
-
-    public static final String HOME = "home";
-
-    public static final String HOT_SNEAKS = "hot-sneaks";
+//
+//  public static final String FLICK = "flick";
+//
+//  public static final String GLASS_X = "glass-x";
+//
+//  public static final String HOME = "home";
+//
+//  public static final String HOT_SNEAKS = "hot-sneaks";
 //
 //  public static final String HUMANITY = "humanity";
 //
@@ -75,20 +75,20 @@ public class PrimeFacesThemes {
 //  public static final String MINT_CHOC = "mint-choc";
 //
 //  public static final String OVERCAST = "overcast";
-
-    public static final String PEPPER_GRINDER = "pepper-grinder";
-
-    public static final String REDMOND = "redmond";
+//
+//  public static final String PEPPER_GRINDER = "pepper-grinder";
+//
+//  public static final String REDMOND = "redmond";
 //
 //  public static final String ROCKET = "rocket";
-
-    public static final String SAM = "sam";
-
-    public static final String SMOOTHNESS = "smoothness";
+//
+//  public static final String SAM = "sam";
+//
+//  public static final String SMOOTHNESS = "smoothness";
 //
 //  public static final String SOUTH_STREET = "south-street";
-
-    public static final String START = "start";
+//
+//  public static final String START = "start";
 //
 //  public static final String SUNNY = "sunny";
 //
@@ -102,7 +102,7 @@ public class PrimeFacesThemes {
 //
 //  public static final String VADER = "vader";
     // </editor-fold>
-
+/**/
     // <editor-fold defaultstate="collapsed" desc="Luna/primefaces-11.0.0.jar">
     public static final String LUNA_AMBER = "luna-amber";
 
@@ -133,6 +133,7 @@ public class PrimeFacesThemes {
     static final Set<String> allThemes = new TreeSet<>();
 
     static {
+        /*
 //      allThemes.add(AFTERDARK);
 //      allThemes.add(AFTERNOON);
 //      allThemes.add(AFTERWORK);
@@ -171,6 +172,7 @@ public class PrimeFacesThemes {
 //      allThemes.add(UI_DARKNESS);
 //      allThemes.add(UI_LIGHTNESS);
 //      allThemes.add(VADER);
+        /**/
     }
 
     public static boolean allThemesContains(String theme) {

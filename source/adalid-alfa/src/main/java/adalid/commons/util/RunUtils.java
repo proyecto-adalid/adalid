@@ -28,14 +28,22 @@ public class RunUtils {
     private static final String double_prime = "\"";
 
     public static String starting(Class<?> clazz) {
-        return canonical(clazz) + starting;
+        return starting(canonical(clazz));
+    }
+
+    public static String starting(String string) {
+        return string + starting;
     }
 
     public static String finished(Class<?> clazz, long millis) {
-        return canonical(clazz) + finished + elapsed(millis);
+        return finished(canonical(clazz), millis);
     }
 
-    private static String canonical(Class<?> clazz) {
+    public static String finished(String string, long millis) {
+        return string + finished + elapsed(millis);
+    }
+
+    public static String canonical(Class<?> clazz) {
         return clazz != null ? clazz.getCanonicalName() : RunUtils.class.getCanonicalName();
     }
 

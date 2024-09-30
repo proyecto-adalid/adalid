@@ -19,6 +19,7 @@ import adalid.core.interfaces.*;
 import adalid.core.primitives.*;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -81,6 +82,26 @@ public class EntityCollection extends AbstractArtifact implements AnnotatableArt
      *
      */
     private Property _mappedByProperty;
+
+    /**
+     *
+     */
+    private String _quickAddingFieldName;
+
+    /**
+     *
+     */
+    private Field _quickAddingField;
+
+    /**
+     *
+     */
+    private Property _quickAddingProperty;
+
+    /**
+     *
+     */
+    private QuickAddingFilter _quickAddingFilter;
 
     /**
      *
@@ -265,6 +286,37 @@ public class EntityCollection extends AbstractArtifact implements AnnotatableArt
 //  @Override
     public Property getMappedByProperty() {
         return _mappedByProperty;
+    }
+
+    /**
+     * @return the quick adding field name
+     */
+//  @Override
+    public String getQuickAddingFieldName() {
+        return _quickAddingFieldName;
+    }
+
+    /**
+     * @return the quick adding field
+     */
+//  @Override
+    public Field getQuickAddingField() {
+        return _quickAddingField;
+    }
+
+    /**
+     * @return the quick adding property
+     */
+//  @Override
+    public Property getQuickAddingProperty() {
+        return _quickAddingProperty;
+    }
+
+    /**
+     * @return the quick adding filter
+     */
+    public QuickAddingFilter getQuickAddingFilter() {
+        return _quickAddingFilter;
     }
 
     /**
@@ -1426,10 +1478,8 @@ public class EntityCollection extends AbstractArtifact implements AnnotatableArt
             }
         }
         if (StringUtils.isBlank(_mappedByFieldName)) {
-//          if (log) {
             logger.error(message);
             Project.increaseParserErrorCount();
-//          }
             return false;
         }
         if (_mappedByField == null) {
@@ -1439,32 +1489,25 @@ public class EntityCollection extends AbstractArtifact implements AnnotatableArt
             _mappedByField = XS1.getField(log, role, _mappedByFieldName, _targetEntityClass, Entity.class, validTypes);
         }
         if (_mappedByField == null) {
-//          if (log) {
             message = "no mapping defined for " + fullName + "; it has an invalid mapped-by field name.";
             logger.error(message);
             Project.increaseParserErrorCount();
-//          }
             return false;
         }
         _mappedByProperty = XS1.getProperty(_mappedByField, _targetEntity);
         if (_mappedByProperty == null) {
-//          if (log) {
             message = "no mapping defined for " + fullName + "; it has an invalid mapped-by property name.";
             logger.error(message);
             Project.increaseParserErrorCount();
-//          }
             return false;
         }
         if (_mappedByProperty.isCalculable()) {
-//          if (log) {
             message = "no mapping defined for " + fullName + "; it has an invalid (calculable) mapped-by property.";
             logger.error(message);
             Project.increaseParserErrorCount();
-//          }
             return false;
         }
-        if (_mappedByProperty instanceof EntityReference) {
-            EntityReference reference = (EntityReference) _mappedByProperty;
+        if (_mappedByProperty instanceof EntityReference reference) {
             // now it's too early to check the navigability...
             // so set the reference's mapped collection to check later
             reference.setMappedCollection(this);
@@ -1489,6 +1532,30 @@ public class EntityCollection extends AbstractArtifact implements AnnotatableArt
         for (EntityCollectionAggregate aggregate : aggregates) {
             aggregate.check();
         }
+        /**/
+        List<Field> references = XS1.getEntityFields(_targetEntityClass, Entity.class, Entity.class);
+        for (Field field : references) {
+            String fieldName = field.getName();
+            if (_mappedByFieldName.equals(fieldName)) {
+                continue;
+            }
+            int modifiers = field.getModifiers();
+            if ((Modifier.isPrivate(modifiers) || Modifier.isStatic(modifiers) || Modifier.isFinal(modifiers))) {
+                continue;
+            }
+            ManyToOne annotation = field.getAnnotation(ManyToOne.class);
+            QuickAddingFilter quickAdding = annotation == null ? null : annotation.quickAdding();
+            if (quickAdding == null || quickAdding.equals(QuickAddingFilter.NONE)) {
+                continue;
+            }
+            _quickAddingFieldName = fieldName;
+            _quickAddingField = field;
+            _quickAddingProperty = XS1.getProperty(_quickAddingField, _targetEntity);
+            _quickAddingFilter = quickAdding;
+            logger.trace("\t\t" + "QuickAddingFilter=" + quickAdding + "\n\t\t" + _quickAddingField + "\n\t\t" + _quickAddingProperty);
+            break;
+        }
+        /**/
         return true;
     }
 

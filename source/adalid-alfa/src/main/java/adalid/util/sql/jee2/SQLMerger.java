@@ -75,6 +75,8 @@ public class SQLMerger extends Utility {
                 merger.clear();
 //              merger.disableDetailLogging();
                 merger.setCatalogTablesMap(entidadesComunes.getCatalogTablesMap());
+                merger.getExcludableTableNames().add("call_stack");
+                merger.getExcludableTableNames().add("recurso");
                 merger.getCurrentKeyTableNames().add("rol");
                 merger.getMutableKeyTableNames().add("opcion_menu");
                 merger.merge();

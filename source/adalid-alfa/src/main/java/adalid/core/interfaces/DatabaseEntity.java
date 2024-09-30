@@ -12,6 +12,7 @@
  */
 package adalid.core.interfaces;
 
+import adalid.commons.connections.*;
 import adalid.core.enums.*;
 
 /**
@@ -23,6 +24,19 @@ public interface DatabaseEntity extends Entity {
      * @return the database entity type
      */
     DatabaseEntityType getDatabaseEntityType();
+
+    /**
+     * @return the database connection
+     */
+    DatabaseConnection getDatabaseConnection();
+
+    /**
+     * El método setDatabaseConnection permite establecer el objeto para conexión a la base de datos en la que se encuentra la tabla correspondiente a
+     * la entidad.
+     *
+     * @param connection conexión a la base de datos
+     */
+    void setDatabaseConnection(DatabaseConnection connection);
 
     /**
      * @return the schema

@@ -37,6 +37,8 @@ public class SqlTable extends SqlArtifact {
     // <editor-fold defaultstate="collapsed" desc="instance fields">
     private final SqlReader _reader;
 
+    private SqlTable _otherTable;
+
     private String _defaultLabel;
 
     private String _defaultCollectionLabel;
@@ -81,6 +83,16 @@ public class SqlTable extends SqlArtifact {
 
     private final Map<String, SqlTable> _extensions = new LinkedHashMap<>();
 
+    private final Map<String, SqlCheckConstraint> _ckConstraints = new LinkedHashMap<>();
+
+    private final Map<String, SqlConstraintIndex> _pkConstraints = new LinkedHashMap<>();
+
+    private final Map<String, SqlConstraintIndex> _ukConstraints = new LinkedHashMap<>();
+
+    private final Map<String, SqlConstraintIndex> _fkConstraints = new LinkedHashMap<>();
+
+    private final Map<String, SqlConstraintIndex> _ixConstraints = new LinkedHashMap<>();
+
     private int _discriminatorValue;
     // </editor-fold>
 
@@ -94,6 +106,20 @@ public class SqlTable extends SqlArtifact {
      */
     public SqlReader getReader() {
         return _reader;
+    }
+
+    /**
+     * @return the matching table in the other schema
+     */
+    public SqlTable getOtherTable() {
+        return _otherTable;
+    }
+
+    /**
+     * @param table the the matching table in the other schema to set
+     */
+    public void setOtherTable(SqlTable table) {
+        _otherTable = table;
     }
 
     /**
@@ -319,7 +345,7 @@ public class SqlTable extends SqlArtifact {
     /**
      * @param baseTable the base table to set
      */
-    void setBaseTable(SqlTable baseTable) {
+    protected void setBaseTable(SqlTable baseTable) {
         _baseTable = baseTable;
     }
 
@@ -426,6 +452,14 @@ public class SqlTable extends SqlArtifact {
      */
     public Collection<SqlColumn> getColumns() {
         return getColumns(true);
+    }
+
+    /**
+     * @param name of the column
+     * @return the column
+     */
+    public SqlColumn getColumn(String name) {
+        return _columns.get(name);
     }
 
     /**
@@ -681,6 +715,76 @@ public class SqlTable extends SqlArtifact {
         return _extensions;
     }
 
+    /**
+     * @return the CK constraints map
+     */
+    public Map<String, SqlCheckConstraint> getCKConstraintsMap() {
+        return _ckConstraints;
+    }
+
+    /**
+     * @return the CK constraints collection
+     */
+    public Collection<SqlCheckConstraint> getCKConstraints() {
+        return _ckConstraints.values();
+    }
+
+    /**
+     * @return the PK constraints map
+     */
+    public Map<String, SqlConstraintIndex> getPKConstraintsMap() {
+        return _pkConstraints;
+    }
+
+    /**
+     * @return the PK constraints collection
+     */
+    public Collection<SqlConstraintIndex> getPKConstraints() {
+        return _pkConstraints.values();
+    }
+
+    /**
+     * @return the UK constraints map
+     */
+    public Map<String, SqlConstraintIndex> getUKConstraintsMap() {
+        return _ukConstraints;
+    }
+
+    /**
+     * @return the UK constraints collection
+     */
+    public Collection<SqlConstraintIndex> getUKConstraints() {
+        return _ukConstraints.values();
+    }
+
+    /**
+     * @return the FK constraints map
+     */
+    public Map<String, SqlConstraintIndex> getFKConstraintsMap() {
+        return _fkConstraints;
+    }
+
+    /**
+     * @return the FK constraints collection
+     */
+    public Collection<SqlConstraintIndex> getFKConstraints() {
+        return _fkConstraints.values();
+    }
+
+    /**
+     * @return the IX constraints map
+     */
+    public Map<String, SqlConstraintIndex> getIXConstraintsMap() {
+        return _ixConstraints;
+    }
+
+    /**
+     * @return the IX constraints collection
+     */
+    public Collection<SqlConstraintIndex> getIXConstraints() {
+        return _ixConstraints.values();
+    }
+
     public boolean isRoot() {
         return !_extensions.isEmpty();
     }
@@ -739,7 +843,7 @@ public class SqlTable extends SqlArtifact {
 
     private int indexes;
 
-    void add(SqlIndex index) {
+    protected void add(SqlIndex index) {
         index.setPosition(++indexes);
         String name = index.getName();
         String text;
@@ -784,7 +888,7 @@ public class SqlTable extends SqlArtifact {
 
     private int tabs;
 
-    void add(SqlTab tab) {
+    protected void add(SqlTab tab) {
         tab.setPosition(++tabs);
         String name = tab.getName();
         String text;
@@ -801,7 +905,7 @@ public class SqlTable extends SqlArtifact {
 
     private int routines;
 
-    void add(SqlRoutine routine) {
+    protected void add(SqlRoutine routine) {
         routine.setPosition(++routines);
         String name = routine.getName();
         String text;
@@ -832,6 +936,76 @@ public class SqlTable extends SqlArtifact {
             logger.error(SqlUtil.highlight(text));
         } else {
             _extensions.put(name, extension);
+        }
+    }
+
+    void addCK(SqlCheckConstraint check) {
+        String name = check.getName();
+        String text;
+        if (StringUtils.isBlank(name)) {
+            text = "a null name check constraint will not be added to table " + getQualifiedName();
+            logger.error(SqlUtil.highlight(text));
+        } else if (_ckConstraints.containsKey(name)) {
+            text = "check constraint " + name + " already added to table " + getQualifiedName();
+            logger.error(SqlUtil.highlight(text));
+        } else {
+            _ckConstraints.put(name, check);
+        }
+    }
+
+    void addPK(SqlConstraintIndex constraintIndex) {
+        String name = constraintIndex.getName();
+        String text;
+        if (StringUtils.isBlank(name)) {
+            text = "a null name primary key will not be added to table " + getQualifiedName();
+            logger.error(SqlUtil.highlight(text));
+        } else if (_pkConstraints.containsKey(name)) {
+            text = "primary key " + name + " already added to table " + getQualifiedName();
+            logger.error(SqlUtil.highlight(text));
+        } else {
+            _pkConstraints.put(name, constraintIndex);
+        }
+    }
+
+    void addUK(SqlConstraintIndex constraintIndex) {
+        String name = constraintIndex.getName();
+        String text;
+        if (StringUtils.isBlank(name)) {
+            text = "a null name unique key will not be added to table " + getQualifiedName();
+            logger.error(SqlUtil.highlight(text));
+        } else if (_ukConstraints.containsKey(name)) {
+            text = "unique key " + name + " already added to table " + getQualifiedName();
+            logger.error(SqlUtil.highlight(text));
+        } else {
+            _ukConstraints.put(name, constraintIndex);
+        }
+    }
+
+    void addFK(SqlConstraintIndex constraintIndex) {
+        String name = constraintIndex.getName();
+        String text;
+        if (StringUtils.isBlank(name)) {
+            text = "a null name foreign key will not be added to table " + getQualifiedName();
+            logger.error(SqlUtil.highlight(text));
+        } else if (_fkConstraints.containsKey(name)) {
+            text = "foreign key " + name + " already added to table " + getQualifiedName();
+            logger.error(SqlUtil.highlight(text));
+        } else {
+            _fkConstraints.put(name, constraintIndex);
+        }
+    }
+
+    void addIX(SqlConstraintIndex constraintIndex) {
+        String name = constraintIndex.getName();
+        String text;
+        if (StringUtils.isBlank(name)) {
+            text = "a null name index will not be added to table " + getQualifiedName();
+            logger.error(SqlUtil.highlight(text));
+        } else if (_ixConstraints.containsKey(name)) {
+            text = "index " + name + " already added to table " + getQualifiedName();
+            logger.error(SqlUtil.highlight(text));
+        } else {
+            _ixConstraints.put(name, constraintIndex);
         }
     }
     // </editor-fold>

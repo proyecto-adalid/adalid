@@ -13,7 +13,10 @@
 package meta.proyecto.comun;
 
 import adalid.core.*;
-import meta.entidad.comun.operacion.basica.*;
+import meta.entidad.comun.operacion.basica.FiltroFuncion;
+import meta.entidad.comun.operacion.basica.FiltroFuncionPar;
+import meta.entidad.comun.operacion.basica.VistaFuncion;
+import meta.entidad.comun.operacion.basica.VistaFuncionCol;
 
 /**
  * @author Jorge Campins
@@ -23,6 +26,7 @@ public class ControlServicios extends Project {
     @Override
     protected void settleAttributes() {
         super.settleAttributes();
+        setImmutableModule(true);
         // <editor-fold defaultstate="collapsed" desc="localization of ControlServicios's attributes">
         setLocalizedLabel(ENGLISH, "Supplementary Services Control");
         setLocalizedLabel(SPANISH, "Control de Servicios Complementarios");

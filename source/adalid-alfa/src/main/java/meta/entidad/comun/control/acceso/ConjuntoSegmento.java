@@ -76,7 +76,7 @@ public class ConjuntoSegmento extends AbstractPersistentEntity {
 
     @ForeignKey(onDelete = OnDeleteAction.NONE, onUpdate = OnUpdateAction.NONE)
     @ManyToOne(navigability = Navigability.UNIDIRECTIONAL, view = MasterDetailView.NONE)
-    @PropertyField(create = Kleenean.TRUE)
+    @PropertyField(create = Kleenean.TRUE, overlay = Kleenean.TRUE)
     public ClaseFabricador claseFabricador;
 
     @PropertyField(hidden = Kleenean.TRUE, defaultCondition = DefaultCondition.UNCONDITIONALLY, defaultCheckpoint = Checkpoint.USER_INTERFACE)
@@ -84,8 +84,13 @@ public class ConjuntoSegmento extends AbstractPersistentEntity {
     public StringProperty nombreClaseFabricador;
 
     @BooleanField(displayType = BooleanDisplayType.TOGGLE)
-    @PropertyField(responsivePriority = 6, create = Kleenean.FALSE, update = Kleenean.FALSE, table = Kleenean.TRUE)
+    @PropertyField(responsivePriority = 6, create = Kleenean.FALSE, update = Kleenean.FALSE, table = Kleenean.TRUE, overlay = Kleenean.TRUE)
     public BooleanProperty esConjuntoEspecial;
+
+    @ColumnField(calculable = Kleenean.TRUE)
+    @BooleanField(displayType = BooleanDisplayType.TOGGLE)
+    @PropertyField(overlay = Kleenean.TRUE)
+    public BooleanProperty definicionExplicita;
 
     @SegmentProperty
     @EntityReferenceSearch(searchType = SearchType.LIST, listStyle = ListStyle.CHARACTER_KEY_AND_NAME, displayMode = DisplayMode.WRITING)
@@ -94,6 +99,12 @@ public class ConjuntoSegmento extends AbstractPersistentEntity {
     @PropertyField(responsivePriority = 6, create = Kleenean.TRUE, update = Kleenean.TRUE, required = Kleenean.TRUE, table = Kleenean.TRUE, report = Kleenean.TRUE, heading = Kleenean.TRUE, overlay = Kleenean.TRUE)
     public GrupoUsuario grupo;
 
+    /*
+    @EntityCollectionField()
+    @OneToMany(targetEntity = ElementoSegmento.class, mappedBy = "conjuntoSegmento")
+    public EntityCollection elementos;
+
+    /**/
     @Override
     protected void settleAttributes() {
         super.settleAttributes();
@@ -133,6 +144,9 @@ public class ConjuntoSegmento extends AbstractPersistentEntity {
         /**/
         esConjuntoEspecial.setInitialValue(false);
         esConjuntoEspecial.setDefaultValue(false);
+        /**/
+        BooleanExpression elemental = /*esConjuntoEspecial.isFalse().and*/ (claseFabricador.isNull().or(claseFabricador.elemental));
+        definicionExplicita.setCalculableValueExpression(elemental);
         /**/
 //      grupo.setInitialValue(esConjuntoEspecial.then(grupo.USUARIOS_ESPECIALES).otherwise(grupo.USUARIOS_ORDINARIOS));
 //      grupo.setDefaultValue(esConjuntoEspecial.then(grupo.USUARIOS_ESPECIALES).otherwise(grupo.USUARIOS_ORDINARIOS));
@@ -183,10 +197,23 @@ public class ConjuntoSegmento extends AbstractPersistentEntity {
         nombreClaseFabricador.setLocalizedRegexErrorMessage(SPANISH, "clase fabricador no cumple con el patrón requerido; "
             + "debe ser un nombre completo y válido de clase Java");
         /**/
+        esConjuntoEspecial.setLocalizedDescription(ENGLISH, "a special set can be used as defined and can be copied, "
+            + "but cannot be modified or deleted; copies can be modified, deleted, have elements added to them, etc.");
+        esConjuntoEspecial.setLocalizedDescription(SPANISH, "un conjunto especial puede ser utilizado tal como está definido y puede ser copiado, "
+            + "pero no puede ser modificado ni eliminado; a las copias se les puede modificar, eliminar, agregar elementos, etc.");
         esConjuntoEspecial.setLocalizedLabel(ENGLISH, "special set");
         esConjuntoEspecial.setLocalizedLabel(SPANISH, "conjunto especial");
         esConjuntoEspecial.setLocalizedShortLabel(ENGLISH, "special");
         esConjuntoEspecial.setLocalizedShortLabel(SPANISH, "especial");
+        /**/
+        definicionExplicita.setLocalizedDescription(ENGLISH, "the set requires the explicit definition of its elements; "
+            + "all sets that do not use a factory class, and some that do, require explicit definition of their elements.");
+        definicionExplicita.setLocalizedDescription(SPANISH, "el conjunto requiere la definición explicita de sus elementos; "
+            + "todos los conjuntos que no utilizan un fabricador, y algunos que sí lo hacen, requieren la definición explicita de sus elementos");
+        definicionExplicita.setLocalizedLabel(ENGLISH, "explicit definition");
+        definicionExplicita.setLocalizedLabel(SPANISH, "definición explícita");
+        definicionExplicita.setLocalizedShortLabel(ENGLISH, "explicit");
+        definicionExplicita.setLocalizedShortLabel(SPANISH, "explícito");
         /**/
         grupo.setLocalizedLabel(ENGLISH, "user group");
         grupo.setLocalizedLabel(SPANISH, "grupo de usuarios");
@@ -199,6 +226,29 @@ public class ConjuntoSegmento extends AbstractPersistentEntity {
         /**/
         // </editor-fold>
         /**/
+    }
+
+    @Override
+    protected void settleCollections() {
+        super.settleCollections();
+        /*
+        BooleanExpression elemental = esConjuntoEspecial.isFalse().and(claseFabricador.isNull().or(claseFabricador.elemental));
+        EntityCollectionAggregate elementos_count = elementos.addCount(elemental.then(1).otherwise(0));
+        elementos.setCascadeType(CascadeType.PERSIST, CascadeType.MERGE);
+        /**/
+        // <editor-fold defaultstate="collapsed" desc="localization of Usuario's collections">
+        /*
+        elementos.setLocalizedLabel(ENGLISH, "elements of the set");
+        elementos.setLocalizedLabel(SPANISH, "elementos del conjunto");
+        elementos.setLocalizedShortLabel(ENGLISH, "elements");
+        elementos.setLocalizedShortLabel(SPANISH, "elementos");
+        elementos.setLocalizedDescription(ENGLISH, "collection of elements of the set");
+        elementos.setLocalizedDescription(SPANISH, "colección de elementos del conjunto");
+        /*
+        elementos_count.setLocalizedMinimumValueTag(ENGLISH, "the set must contain at least one element");
+        elementos_count.setLocalizedMinimumValueTag(SPANISH, "el conjunto debe contener al menos un elemento");
+        /**/
+        // </editor-fold>
     }
 
     protected Segment modificables;
@@ -271,10 +321,15 @@ public class ConjuntoSegmento extends AbstractPersistentEntity {
     @Override
     protected void settleFilters() {
         super.settleFilters();
+        /**/
         setUpdateFilter(modificables);
         setDeleteFilter(modificables);
+        /**/
         claseRecurso.setSearchQueryFilter(check101);
         claseFabricador.setSearchQueryFilter(claim201);
+        /*
+        elementos.setRenderingFilter(ordinarios);
+        /**/
     }
 
     protected Copiar copiar;

@@ -3,4 +3,4 @@ AutoUpdate-Show-In-Client: true
 OpenIDE-Module: adalid.code.templates
 OpenIDE-Module-Layer: adalid/code/templates/layer.xml
 OpenIDE-Module-Localizing-Bundle: adalid/code/templates/Bundle.properties
-OpenIDE-Module-Specification-Version: 5.2.0
+OpenIDE-Module-Specification-Version: 5.3.0

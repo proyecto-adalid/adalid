@@ -927,12 +927,20 @@ public class XB {
                 return x == null || y == null ? null : new BooleanComparisonX(x, ComparisonOp.IS_IN, y);
             }
 
+            public BooleanComparisonX isIn(CharacterExpression x, String y) {
+                return isIn(x, NativeQuery.of(y));
+            }
+
             public BooleanComparisonX isIn(CharacterExpression x, NativeQuery y) {
                 return x == null || y == null ? null : new BooleanComparisonX(x, ComparisonOp.IS_IN, y);
             }
 
             public BooleanComparisonX isNotIn(CharacterExpression x, CharacterExpression... y) {
                 return x == null || y == null ? null : new BooleanComparisonX(x, ComparisonOp.IS_NOT_IN, y);
+            }
+
+            public BooleanComparisonX isNotIn(CharacterExpression x, String y) {
+                return isNotIn(x, NativeQuery.of(y));
             }
 
             public BooleanComparisonX isNotIn(CharacterExpression x, NativeQuery y) {
@@ -1095,12 +1103,20 @@ public class XB {
                 return x == null || y == null ? null : new BooleanComparisonX(x, ComparisonOp.IS_NULL_OR_IN, y);
             }
 
+            public BooleanComparisonX isNullOrIn(CharacterExpression x, String y) {
+                return isNullOrIn(x, NativeQuery.of(y));
+            }
+
             public BooleanComparisonX isNullOrIn(CharacterExpression x, NativeQuery y) {
                 return x == null || y == null ? null : new BooleanComparisonX(x, ComparisonOp.IS_NULL_OR_IN, y);
             }
 
             public BooleanComparisonX isNullOrNotIn(CharacterExpression x, CharacterExpression... y) {
                 return x == null || y == null ? null : new BooleanComparisonX(x, ComparisonOp.IS_NULL_OR_NOT_IN, y);
+            }
+
+            public BooleanComparisonX isNullOrNotIn(CharacterExpression x, String y) {
+                return isNullOrNotIn(x, NativeQuery.of(y));
             }
 
             public BooleanComparisonX isNullOrNotIn(CharacterExpression x, NativeQuery y) {
@@ -1591,12 +1607,20 @@ public class XB {
                 return x == null || y == null ? null : new BooleanComparisonX(x, ComparisonOp.IS_IN, y);
             }
 
+            public BooleanComparisonX isIn(NumericExpression x, String y) {
+                return isIn(x, NativeQuery.of(y));
+            }
+
             public BooleanComparisonX isIn(NumericExpression x, NativeQuery y) {
                 return x == null || y == null ? null : new BooleanComparisonX(x, ComparisonOp.IS_IN, y);
             }
 
             public BooleanComparisonX isNotIn(NumericExpression x, NumericExpression... y) {
                 return x == null || y == null ? null : new BooleanComparisonX(x, ComparisonOp.IS_NOT_IN, y);
+            }
+
+            public BooleanComparisonX isNotIn(NumericExpression x, String y) {
+                return isNotIn(x, NativeQuery.of(y));
             }
 
             public BooleanComparisonX isNotIn(NumericExpression x, NativeQuery y) {
@@ -1687,12 +1711,20 @@ public class XB {
                 return x == null || y == null ? null : new BooleanComparisonX(x, ComparisonOp.IS_NULL_OR_IN, y);
             }
 
+            public BooleanComparisonX isNullOrIn(NumericExpression x, String y) {
+                return isNullOrIn(x, NativeQuery.of(y));
+            }
+
             public BooleanComparisonX isNullOrIn(NumericExpression x, NativeQuery y) {
                 return x == null || y == null ? null : new BooleanComparisonX(x, ComparisonOp.IS_NULL_OR_IN, y);
             }
 
             public BooleanComparisonX isNullOrNotIn(NumericExpression x, NumericExpression... y) {
                 return x == null || y == null ? null : new BooleanComparisonX(x, ComparisonOp.IS_NULL_OR_NOT_IN, y);
+            }
+
+            public BooleanComparisonX isNullOrNotIn(NumericExpression x, String y) {
+                return isNullOrNotIn(x, NativeQuery.of(y));
             }
 
             public BooleanComparisonX isNullOrNotIn(NumericExpression x, NativeQuery y) {
@@ -2186,12 +2218,20 @@ public class XB {
                 return x == null || y == null ? null : new BooleanComparisonX(x, ComparisonOp.IS_IN, y);
             }
 
+            public BooleanComparisonX isIn(TemporalExpression x, String y) {
+                return isIn(x, NativeQuery.of(y));
+            }
+
             public BooleanComparisonX isIn(TemporalExpression x, NativeQuery y) {
                 return x == null || y == null ? null : new BooleanComparisonX(x, ComparisonOp.IS_IN, y);
             }
 
             public BooleanComparisonX isNotIn(TemporalExpression x, TemporalExpression... y) {
                 return x == null || y == null ? null : new BooleanComparisonX(x, ComparisonOp.IS_NOT_IN, y);
+            }
+
+            public BooleanComparisonX isNotIn(TemporalExpression x, String y) {
+                return isNotIn(x, NativeQuery.of(y));
             }
 
             public BooleanComparisonX isNotIn(TemporalExpression x, NativeQuery y) {
@@ -2282,12 +2322,20 @@ public class XB {
                 return x == null || y == null ? null : new BooleanComparisonX(x, ComparisonOp.IS_NULL_OR_IN, y);
             }
 
+            public BooleanComparisonX isNullOrIn(TemporalExpression x, String y) {
+                return isNullOrIn(x, NativeQuery.of(y));
+            }
+
             public BooleanComparisonX isNullOrIn(TemporalExpression x, NativeQuery y) {
                 return x == null || y == null ? null : new BooleanComparisonX(x, ComparisonOp.IS_NULL_OR_IN, y);
             }
 
             public BooleanComparisonX isNullOrNotIn(TemporalExpression x, TemporalExpression... y) {
                 return x == null || y == null ? null : new BooleanComparisonX(x, ComparisonOp.IS_NULL_OR_NOT_IN, y);
+            }
+
+            public BooleanComparisonX isNullOrNotIn(TemporalExpression x, String y) {
+                return isNullOrNotIn(x, NativeQuery.of(y));
             }
 
             public BooleanComparisonX isNullOrNotIn(TemporalExpression x, NativeQuery y) {
@@ -2740,8 +2788,16 @@ public class XB {
         // <editor-fold defaultstate="collapsed" desc="Comparison">
         public class Comparison {
 
+            public BooleanComparisonX exists(String x) {
+                return exists(NativeQuery.of(x));
+            }
+
             public BooleanComparisonX exists(NativeQuery x) {
                 return x == null ? null : new BooleanComparisonX(x, ComparisonOp.EXISTS);
+            }
+
+            public BooleanComparisonX notExists(String x) {
+                return notExists(NativeQuery.of(x));
             }
 
             public BooleanComparisonX notExists(NativeQuery x) {
@@ -3010,6 +3066,8 @@ public class XB {
 
     public static final CharacterScalarX VBAR = new CharacterScalarX(null, "|");
 
+    public static final CharacterScalarX CONTENT_ROOT_DIR = new CharacterScalarX(null, SpecialCharacterValue.CONTENT_ROOT_DIR);
+
     public static final CharacterScalarX CURRENT_USER_CODE = new CharacterScalarX(null, SpecialCharacterValue.CURRENT_USER_CODE);
 
     public static final NumericScalarX NULL_NUMBER = new NumericScalarX(null, SpecialNumericValue.NULL);
@@ -3030,6 +3088,8 @@ public class XB {
 
     static {
         /**/
+        CONTENT_ROOT_DIR.setLocalizedLabel(Bundle.ENGLISH, "content root directory");
+        CONTENT_ROOT_DIR.setLocalizedLabel(Bundle.SPANISH, "directorio raíz de contenido");
         CURRENT_DATE.setLocalizedLabel(Bundle.ENGLISH, "current date");
         CURRENT_DATE.setLocalizedLabel(Bundle.SPANISH, "fecha actual");
         CURRENT_TIME.setLocalizedLabel(Bundle.ENGLISH, "current time");
@@ -3073,6 +3133,10 @@ public class XB {
 
     public static CharacterScalarX empty() {
         return EMPTY;
+    }
+
+    public static CharacterScalarX contentRootDir() {
+        return CONTENT_ROOT_DIR;
     }
 
     public static CharacterScalarX currentUserCode() {

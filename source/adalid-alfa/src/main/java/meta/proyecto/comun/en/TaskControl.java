@@ -25,6 +25,7 @@ public class TaskControl extends Project {
     @Override
     protected void settleAttributes() {
         super.settleAttributes();
+        setImmutableModule(true);
         // <editor-fold defaultstate="collapsed" desc="localization of ControlTareas's attributes">
         setLocalizedLabel(ENGLISH, "Task Control");
         setLocalizedLabel(SPANISH, "Control de Tareas");

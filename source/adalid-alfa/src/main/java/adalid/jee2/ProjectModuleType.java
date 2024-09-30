@@ -21,7 +21,7 @@ import org.apache.commons.lang.StringUtils;
  */
 public enum ProjectModuleType {
 
-    EAR, EJB, LIB, LIB_DIR, RESOURCES, WEB, WEB_API;
+    EAR, EJB, LIB, LIB_DIR, RESOURCES, WEB, WEB_API, JDS/*jboss-deployment-structure*/;
 
     private static final List<String> names = new ArrayList<>();
 

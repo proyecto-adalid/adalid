@@ -57,6 +57,7 @@ public class ConfiguracionBasica extends Project {
     @Override
     protected void settleAttributes() {
         super.settleAttributes();
+        setImmutableModule(true);
         // <editor-fold defaultstate="collapsed" desc="localization of ConfiguracionBasica's attributes">
         setLocalizedLabel(ENGLISH, "Basic Configuration");
         setLocalizedLabel(SPANISH, "Configuración Básica");

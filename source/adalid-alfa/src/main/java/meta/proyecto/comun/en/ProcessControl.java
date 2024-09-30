@@ -23,6 +23,7 @@ public class ProcessControl extends Project {
     @Override
     protected void settleAttributes() {
         super.settleAttributes();
+        setImmutableModule(true);
         // <editor-fold defaultstate="collapsed" desc="localization of ControlProcesos's attributes">
         setLocalizedLabel(ENGLISH, "Process Control");
         setLocalizedLabel(SPANISH, "Control de Procesos");

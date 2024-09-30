@@ -13,6 +13,7 @@
 package adalid.core;
 
 import adalid.commons.bundles.*;
+import adalid.commons.interfaces.Wrapper;
 import adalid.commons.util.*;
 import adalid.core.annotations.*;
 import adalid.core.comparators.*;
@@ -47,6 +48,41 @@ import static adalid.core.WHR.*;
  * @author Jorge Campins
  */
 public abstract class AbstractDataArtifact extends AbstractArtifact implements AnnotatableArtifact, DataArtifact, Parameter, CalculableProperty {
+
+    @Override
+    public String getKeyFeatures(String prefix, String suffix) {
+        boolean uk = StringUtils.equalsIgnoreCase(prefix, "c") && StringUtils.startsWith(suffix, "_uk");
+        String unique = uk && isUnique() ? ",UNIQUE" : "";
+        return "(" + getFullName() + "," + keyDataTypeFeatures(prefix, suffix) + unique + ")";
+    }
+
+    private String keyDataTypeFeatures(String prefix, String suffix) {
+        boolean fk = StringUtils.equalsIgnoreCase(prefix, "c") && StringUtils.startsWith(suffix, "_fk");
+        boolean uk = StringUtils.equalsIgnoreCase(prefix, "c") && StringUtils.startsWith(suffix, "_uk");
+        boolean ix = StringUtils.equalsIgnoreCase(prefix, "i") && StringUtils.startsWith(suffix, "_ix");
+        String features = firstFeature(fk, ix);
+        Wrapper wrapper = getWrapper();
+        if (wrapper instanceof DataArtifactWrapper dataWrapper) {
+            String sqlNull = ix || uk ? dataWrapper.getSqlNull() : null;
+            features += "," + dataWrapper.getSqlType() + (StringUtils.isBlank(sqlNull) ? "" : "," + sqlNull);
+        }
+        return features;
+    }
+
+    private String firstFeature(boolean fk, boolean ix) {
+        if (fk || ix) {
+            if (this instanceof PersistentEntityReference entity) {
+                if (fk || (this instanceof PersistentEntityReference per && per.isForeignKey())) {
+                    Entity root = entity.getRoot();
+                    Property pk = root == null ? null : root.getPrimaryKeyProperty();
+                    if (pk != null) {
+                        return pk.getFullName();
+                    }
+                }
+            }
+        }
+        return getDataType().getSimpleName();
+    }
 
     // <editor-fold defaultstate="collapsed" desc="field declarations">
     /**
@@ -267,7 +303,7 @@ public abstract class AbstractDataArtifact extends AbstractArtifact implements A
     /**
      *
      */
-    private int _responsivePriority;
+    private int _responsivePriority = -1;
 
     /**
      *
@@ -1006,11 +1042,19 @@ public abstract class AbstractDataArtifact extends AbstractArtifact implements A
     }
 
     /**
-     * @return the read only indicator
+     * @return the read-only indicator
      */
     @Override
     public boolean isReadOnly() {
         return !isCreateField() && !isUpdateField();
+    }
+
+    /**
+     * @return the read-write indicator
+     */
+    @Override
+    public boolean isReadWrite() {
+        return isCreateField() || isUpdateField() || getModifyingFilter() != null;
     }
 
     /**
@@ -1276,8 +1320,8 @@ public abstract class AbstractDataArtifact extends AbstractArtifact implements A
      * @return the column field indicator
      */
     @Override
-    public boolean isColumnField() {
-        return !isHiddenField() && !isBinaryData() && !_password && BitUtils.valueOf(_columnField, !isFileReferenceField());
+    public boolean isColumnField() { // since 25/06/2024 CLOBs are also excluded from columns (views), reports, exports, etc.
+        return !isHiddenField() && !isBinaryData() && !isCharacterLargeObject() && !_password && BitUtils.valueOf(_columnField, !isFileReferenceField());
     }
 
     protected void setColumnField(Boolean columnField) {
@@ -1288,8 +1332,8 @@ public abstract class AbstractDataArtifact extends AbstractArtifact implements A
      * @return the report field indicator
      */
     @Override
-    public boolean isReportField() {
-        return !isHiddenField() && !isBinaryData() && !_password && BitUtils.valueOf(_reportField, implicitReportField());
+    public boolean isReportField() { // since 25/06/2024 CLOBs are also excluded from columns (views), reports, exports, etc.
+        return !isHiddenField() && !isBinaryData() && !isCharacterLargeObject() && !_password && BitUtils.valueOf(_reportField, implicitReportField());
     }
 
     private boolean implicitReportField() {
@@ -1315,8 +1359,8 @@ public abstract class AbstractDataArtifact extends AbstractArtifact implements A
      * @return the export field indicator
      */
     @Override
-    public boolean isExportField() {
-        return !isHiddenField() && !isBinaryData() && !_password && BitUtils.valueOf(_exportField, unrestrictedReadingField());
+    public boolean isExportField() { // since 25/06/2024 CLOBs are also excluded from columns (views), reports, exports, etc.
+        return !isHiddenField() && !isBinaryData() && !isCharacterLargeObject() && !_password && BitUtils.valueOf(_exportField, unrestrictedReadingField());
     }
 
     protected void setExportField(Boolean exportField) {
@@ -1378,8 +1422,14 @@ public abstract class AbstractDataArtifact extends AbstractArtifact implements A
         Entity declaringEntity = getDeclaringEntity();
         if (declaringEntity.isEnumerationEntity()) {
             return false; // since 20/05/2024
+        } else if (declaringEntity.isDetailViewEnabled() && isDetailField()) {
+        } else if (declaringEntity.isTableViewEnabled() && isTableField()) {
+        } else {
+            return false; // since 14/06/2024
         }
         /**/
+        // <editor-fold defaultstate="collapsed">
+        /* until 14/06/2024
         if (isBusinessKeyProperty() || isNameProperty()) {
             return false;
         }
@@ -1390,6 +1440,15 @@ public abstract class AbstractDataArtifact extends AbstractArtifact implements A
                     : null;
         if (overlayableEntityReferenceStyle != null) {
             return overlayableEntityReferenceStyle.equals(declaringEntity.getReferenceStyle());
+        }
+        /**/
+        // </editor-fold>
+        /**/
+        if (isBusinessKeyProperty()) {
+            return EntityReferenceStyle.NAME.equals(declaringEntity.getReferenceStyle());
+        }
+        if (isNameProperty()) {
+            return EntityReferenceStyle.CHARACTER_KEY.equals(declaringEntity.getReferenceStyle());
         }
         /**/
         return isImplicitOverlayImageProperty()
@@ -1423,8 +1482,8 @@ public abstract class AbstractDataArtifact extends AbstractArtifact implements A
      *
      * @return the prominent field indicator
      */
-    public boolean isProminentField() {
-        return !isHiddenField() && !isUndisplayableBinaryData() && !restrictedReadingAccess() && BitUtils.valueOf(_prominentField, implicitProminentField());
+    public boolean isProminentField() { // since 25/06/2024 CLOBs are also excluded from columns (views), reports, exports, etc.
+        return !isHiddenField() && !isUndisplayableBinaryData() && !isCharacterLargeObject() && !restrictedReadingAccess() && BitUtils.valueOf(_prominentField, implicitProminentField());
     }
 
     private boolean implicitProminentField() {
@@ -1469,6 +1528,7 @@ public abstract class AbstractDataArtifact extends AbstractArtifact implements A
 
     private boolean implicitSerializableField() {
         return !isBinaryData()
+            && !isCharacterLargeObject() // since 25/06/2024
             && !isCalculable()
             && !isPassword()
             && !isEntity();
@@ -1766,8 +1826,18 @@ public abstract class AbstractDataArtifact extends AbstractArtifact implements A
         }
     }
 
+    /**
+     * @return the responsive priority
+     */
+    @Override
     public int getResponsivePriority() {
         return _responsivePriority;
+    }
+
+    @Override
+    public void setResponsivePriority(int priority) {
+        checkScope();
+        _responsivePriority = priority;
     }
 
     /**
@@ -3370,6 +3440,7 @@ public abstract class AbstractDataArtifact extends AbstractArtifact implements A
         boolean ok = super.finish();
         if (ok) {
             checkColumnFieldElements();
+            checkColumnResponsivePriority();
         }
         return ok;
     }
@@ -4113,6 +4184,14 @@ public abstract class AbstractDataArtifact extends AbstractArtifact implements A
         }
     }
 
+    private void checkColumnResponsivePriority() {
+        if (_responsivePriority < 0) {
+            _responsivePriority = 0;
+        } else if (_responsivePriority > 6) {
+            _responsivePriority = 6;
+        }
+    }
+
     private void annotateBigDecimalField(Field field) {
         String fieldName = fullFieldName(field);
         Class<? extends Annotation> annotationClass = BigDecimalField.class;
@@ -4374,6 +4453,7 @@ public abstract class AbstractDataArtifact extends AbstractArtifact implements A
         String regex = "";
         String converter = "";
         String validator = "";
+        FetchType fetchType = FetchType.UNSPECIFIED;
         AutoComplete autoComplete = AutoComplete.UNSPECIFIED;
         LetterCase letterCase = LetterCase.UNSPECIFIED;
         boolean allowDiacritics = false;
@@ -4389,6 +4469,7 @@ public abstract class AbstractDataArtifact extends AbstractArtifact implements A
             regex = data.getPatternRegex();
             converter = data.getSpecialConverterName();
             validator = data.getSpecialValidatorName();
+            fetchType = data.getFetchType();
             autoComplete = data.getAutoComplete();
             letterCase = data.getLetterCase();
             allowDiacritics = data.isAllowDiacritics();
@@ -4419,6 +4500,7 @@ public abstract class AbstractDataArtifact extends AbstractArtifact implements A
             regex = specified(annotation.regex(), regex);
             converter = specified(annotation.converter(), converter);
             validator = specified(annotation.validator(), validator);
+            fetchType = specified(annotation.fetch(), fetchType);
             autoComplete = specified(annotation.autoComplete(), autoComplete);
             letterCase = specified(annotation.letterCase(), letterCase);
             allowDiacritics = annotation.allowDiacritics().toBoolean(allowDiacritics);
@@ -4532,6 +4614,7 @@ public abstract class AbstractDataArtifact extends AbstractArtifact implements A
             data.setMinLength(minLength);
             data.setInputMask(mask);
             data.setSlotChar(slotChar);
+            data.setFetchType(fetchType);
             data.setAutoComplete(autoComplete);
             data.setLetterCase(letterCase);
             data.setAllowDiacritics(allowDiacritics);
@@ -5734,7 +5817,7 @@ public abstract class AbstractDataArtifact extends AbstractArtifact implements A
             _defaultCheckpoint = specified(annotation.defaultCheckpoint(), _defaultCheckpoint);
             _defaultFunction = StringUtils.defaultIfBlank(StringUtils.trimToNull(annotation.defaultFunction()), _defaultFunction);
             setAnchorProperty(annotation);
-            _responsivePriority = Math.min(6, Math.max(0, annotation.responsivePriority()));
+            _responsivePriority = annotation.responsivePriority();
 //          _sequenceNumber = Math.max(0, annotation.sequence());
             _sequenceNumber = annotation.sequence();
             setInlineHelpType(annotation.inlineHelp());
@@ -6356,7 +6439,7 @@ public abstract class AbstractDataArtifact extends AbstractArtifact implements A
     }
 
     private boolean isCharacterLargeObject() {
-        return this instanceof StringData && ((StringData) this).isLargeObject();
+        return this instanceof StringData sd && sd.isLargeObject();
     }
 
     /**
@@ -7588,6 +7671,21 @@ public abstract class AbstractDataArtifact extends AbstractArtifact implements A
         return DataArtifactWrapper.class;
     }
 
+    protected Object getInitialValue(Object initialValue) {
+        if (initialValue == null) {
+            if (isProperty() && isCalculable() && !isReadWrite()) {
+                Entity declaringEntity = getDeclaringEntity();
+                if (isDetailField() && isProminentField() && declaringEntity.isDetailViewEnabled()) {
+                    return getCalculableValue();
+                }
+                if (isTableField() && (declaringEntity.isTableViewWithInsertEnabled() || declaringEntity.isTableViewWithUpdateEnabled())) {
+                    return getCalculableValue();
+                }
+            }
+        }
+        return initialValue;
+    }
+
     /**
      * @return the calculable value
      */
@@ -7600,7 +7698,7 @@ public abstract class AbstractDataArtifact extends AbstractArtifact implements A
     /**
      * @return the rendering filter tag
      */
-//  @Override
+    //  @Override
     public String getRenderingFilterTag() {
         return getLocalizedRenderingFilterTag(null);
     }
@@ -8316,7 +8414,7 @@ public abstract class AbstractDataArtifact extends AbstractArtifact implements A
     public int getPixels() {
         if (isEnumerationEntityPrimaryKey()) {
             return 48;
-        } else if (isEntity() || isHiddenField() || isBinaryData() || isPassword()) {
+        } else if (isEntity() || isHiddenField() || isBinaryData() || isCharacterLargeObject() || isPassword()) {
             return 0;
         } else if (this instanceof BooleanPrimitive) {
             return 48; // 50/1000
@@ -8432,25 +8530,33 @@ public abstract class AbstractDataArtifact extends AbstractArtifact implements A
         } else {
             Entity thisDeclaringEntity = getDeclaringEntity();
             String thisTableColumnEntityName = getTableColumnEntityName();
-            for (Property property : properties) {
-                if (property instanceof NumericPrimitive && property.isProperty() && !isCalculable(property.getDeclaringField())) {
-                    Entity thatDeclaringEntity = property.getDeclaringEntity();
-                    Entity thenDeclaringEntity = thatDeclaringEntity.getDeclaringEntity();
+            if (thisTableColumnEntityName == null) {
+                if (log) {
+                    String hint = "; thisTableColumnEntityName is null";
+                    logger.error(message + hint);
+                    Project.increaseParserErrorCount();
+                }
+            } else {
+                for (Property property : properties) {
+                    if (property instanceof NumericPrimitive && property.isProperty() && !isCalculable(property.getDeclaringField())) {
+                        Entity thatDeclaringEntity = property.getDeclaringEntity();
+                        Entity thenDeclaringEntity = thatDeclaringEntity.getDeclaringEntity();
 //                  String thatTableColumnEntityName = property.getTableColumnEntityName();
-                    String thatDeclaringEntityTableColumnEntityName = ((Property) thatDeclaringEntity).getTableColumnEntityName();
-                    boolean ok = !isCalculable(thatDeclaringEntity.getDeclaringField());
-                    if (ok && thisDeclaringEntity == thenDeclaringEntity && thisTableColumnEntityName.equals(thatDeclaringEntityTableColumnEntityName)) {
-                        _aggregates.add(new NumericAggregate(operator, property));
+                        String thatDeclaringEntityTableColumnEntityName = ((Property) thatDeclaringEntity).getTableColumnEntityName();
+                        boolean ok = !isCalculable(thatDeclaringEntity.getDeclaringField());
+                        if (ok && thisDeclaringEntity == thenDeclaringEntity && thisTableColumnEntityName.equals(thatDeclaringEntityTableColumnEntityName)) {
+                            _aggregates.add(new NumericAggregate(operator, property));
+                        } else if (log) {
+                            String hint = "; " + property.getFullName() + xIsNotY + thisDeclaringEntity.getFullName();
+                            logger.error(message + hint);
+                            Project.increaseParserErrorCount();
+                        }
                     } else if (log) {
-                        String hint = "; " + property.getFullName() + xIsNotY + thisDeclaringEntity.getFullName();
+                        String name = property == null ? "null property argument" : property.getFullName();
+                        String hint = "; " + name + xIsNotY + thisDeclaringEntity.getFullName();
                         logger.error(message + hint);
                         Project.increaseParserErrorCount();
                     }
-                } else if (log) {
-                    String name = property == null ? "null property argument" : property.getFullName();
-                    String hint = "; " + name + xIsNotY + thisDeclaringEntity.getFullName();
-                    logger.error(message + hint);
-                    Project.increaseParserErrorCount();
                 }
             }
         }

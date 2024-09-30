@@ -12,9 +12,13 @@
  */
 package adalid.core;
 
+import adalid.commons.connections.*;
+import adalid.commons.interfaces.*;
+import adalid.commons.util.*;
 import adalid.core.enums.*;
 import adalid.core.interfaces.*;
 import java.lang.reflect.Field;
+import org.apache.commons.lang.StringUtils;
 
 /**
  * @author Jorge Campins
@@ -22,6 +26,8 @@ import java.lang.reflect.Field;
 public abstract class AbstractDatabaseEntity extends AbstractEntity implements DatabaseEntity {
 
     private DatabaseEntityType _databaseEntityType;
+
+    private DatabaseConnection _databaseConnection;
 
     private String _schema;
 
@@ -41,11 +47,46 @@ public abstract class AbstractDatabaseEntity extends AbstractEntity implements D
     }
 
     /**
+     * @return the database connection
+     */
+    @Override
+    public DatabaseConnection getDatabaseConnection() {
+        return _databaseConnection;
+    }
+
+    /**
+     * El método setDatabaseConnection permite establecer el objeto para conexión a la base de datos en la que se encuentra la tabla correspondiente a
+     * la entidad.
+     *
+     * @param connection conexión a la base de datos
+     */
+    @Override
+    public void setDatabaseConnection(DatabaseConnection connection) {
+        checkScope();
+        if (connection != null) {
+            String name = StrUtils.getLowerCaseIdentifier(connection.getName(), '-');
+            if (StringUtils.isBlank(name)) {
+                _databaseConnection = null;
+            } else {
+                Project project = TLC.getProject();
+                if (project instanceof DatabaseProject databaseProject) {
+                    if (name.equalsIgnoreCase(databaseProject.getDatabaseName())) {
+                        _databaseConnection = null;
+                    } else {
+                        _databaseConnection = connection;
+                        databaseProject.addExtraDatabaseConnection(connection);
+                    }
+                }
+            }
+        }
+    }
+
+    /**
      * @return the schema
      */
     @Override
     public String getSchema() {
-        return _schema;
+        return _schema != null ? _schema : _databaseConnection != null ? _databaseConnection.getSchema() : null;
     }
 
     /**
@@ -58,6 +99,11 @@ public abstract class AbstractDatabaseEntity extends AbstractEntity implements D
     public void setSchema(String schema) {
         checkScope();
         _schema = schema;
+    }
+
+    @Override
+    public boolean isSqlCodeGenEnabled() {
+        return super.isSqlCodeGenEnabled() && _databaseConnection == null;
     }
 
     public AbstractDatabaseEntity(Artifact declaringArtifact, Field declaringField) {

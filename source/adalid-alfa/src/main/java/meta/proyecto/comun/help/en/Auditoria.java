@@ -29,7 +29,7 @@ public class Auditoria {
                 "Attached Files",
                 "Process Groups (optional)",
                 "Function Audit Trails",
-                "Function Parameter Audit Trails",
+                //"Function Parameter Audit Trails",
                 "Report Audit Trails",
                 "Process Audit Trails"
             )

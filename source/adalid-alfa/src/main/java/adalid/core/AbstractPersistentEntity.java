@@ -148,6 +148,13 @@ public abstract class AbstractPersistentEntity extends AbstractDatabaseEntity im
     private final List<Property> _uniqueKeyPropertiesList = new ArrayList<>();
 
     @Override
+    public String getKeyFeatures(String prefix, String suffix) {
+        boolean fk = StringUtils.equalsIgnoreCase(prefix, "c") && StringUtils.startsWith(suffix, "_fk");
+        String keyFeatures = super.getKeyFeatures(prefix, suffix);
+        return fk ? keyFeatures + "," + getOnDeleteAction() + "," + getOnUpdateAction() : keyFeatures;
+    }
+
+    @Override
     public boolean finalise() {
         boolean ok = super.finalise();
         if (ok) {
@@ -581,7 +588,16 @@ public abstract class AbstractPersistentEntity extends AbstractDatabaseEntity im
      */
     @Override
     public boolean isForeignKey() {
-        return _annotatedWithForeignKey && isRootEntitySqlCodeGenEnabled();
+        return _annotatedWithForeignKey && validForeignKey() && isRootEntitySqlCodeGenEnabled(); // since 09/07/2024 && validForeignKey()
+    }
+
+    private boolean validForeignKey() {
+        return !isCatalogEntity() || isTheDeclaringEntityACatalogEntity();
+    }
+
+    private boolean isTheDeclaringEntityACatalogEntity() {
+        Entity dent = getDeclaringEntity();
+        return dent != null && dent.isCatalogEntity();
     }
 
     private boolean isRootEntitySqlCodeGenEnabled() {

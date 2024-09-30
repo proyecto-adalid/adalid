@@ -76,11 +76,11 @@ public class GrupoUsuario extends AbstractPersistentEntity {
     @ParentProperty
     @ForeignKey(onDelete = OnDeleteAction.NONE, onUpdate = OnUpdateAction.NONE)
     @ManyToOne(view = MasterDetailView.NONE)
-    @PropertyField(responsivePriority = 6, table = Kleenean.TRUE, create = Kleenean.TRUE)
+    @PropertyField(responsivePriority = 6, table = Kleenean.TRUE, create = Kleenean.TRUE, overlay = Kleenean.TRUE)
     public GrupoUsuario contenedor;
 
     @ColumnField(nullable = Kleenean.FALSE)
-    @PropertyField(responsivePriority = 6, create = Kleenean.FALSE, update = Kleenean.FALSE, table = Kleenean.TRUE, report = Kleenean.TRUE)
+    @PropertyField(responsivePriority = 6, create = Kleenean.FALSE, update = Kleenean.FALSE, table = Kleenean.TRUE, report = Kleenean.TRUE, overlay = Kleenean.TRUE)
     public BooleanProperty esGrupoEspecial;
 
     @Override

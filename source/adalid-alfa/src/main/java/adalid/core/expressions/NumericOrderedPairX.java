@@ -131,7 +131,17 @@ public class NumericOrderedPairX extends AbstractOrderedPairX implements Numeric
     }
 
     @Override
+    public BooleanComparisonX isIn(String y) {
+        return XB.Numeric.Comparison.isIn(this, y);
+    }
+
+    @Override
     public BooleanComparisonX isNotIn(NumericExpression... y) {
+        return XB.Numeric.Comparison.isNotIn(this, y);
+    }
+
+    @Override
+    public BooleanComparisonX isNotIn(String y) {
         return XB.Numeric.Comparison.isNotIn(this, y);
     }
 
@@ -241,7 +251,17 @@ public class NumericOrderedPairX extends AbstractOrderedPairX implements Numeric
     }
 
     @Override
+    public BooleanComparisonX isNullOrIn(String y) {
+        return XB.Numeric.Comparison.isNullOrIn(this, y);
+    }
+
+    @Override
     public BooleanComparisonX isNullOrNotIn(NumericExpression... y) {
+        return XB.Numeric.Comparison.isNullOrNotIn(this, y);
+    }
+
+    @Override
+    public BooleanComparisonX isNullOrNotIn(String y) {
         return XB.Numeric.Comparison.isNullOrNotIn(this, y);
     }
 

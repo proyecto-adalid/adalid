@@ -113,6 +113,32 @@ public class StrUtils {
         }
     }
 
+    private static final boolean logCrypticName = false;
+
+    public static String getCrypticName(String prefix, String string, String suffix) {
+        if (logCrypticName) {
+            if (StringUtils.endsWith(suffix, "___")) {
+                logger.warn(prefix + suffix + " " + string);
+            }
+        }
+        return StringUtils.isBlank(string) ? null : StringUtils.trimToEmpty(prefix) + getSha256Base36(string) + StringUtils.trimToEmpty(suffix);
+    }
+
+    public static String getSha256Base36(String string) {
+        if (StringUtils.isBlank(string)) {
+            return null;
+        }
+        try {
+            MessageDigest messageDigest = MessageDigest.getInstance("SHA-256");
+            byte[] hashBytes = messageDigest.digest(string.getBytes());
+            BigInteger hashInteger = new BigInteger(1, hashBytes);
+            String base36String = hashInteger.toString(36);
+            return base36String;
+        } catch (NoSuchAlgorithmException e) {
+            throw new RuntimeException("SHA-256 algorithm not found", e);
+        }
+    }
+
     public static String separateLines(String string, int maxLineLength) {
         return separateLines(string, maxLineLength, "\n");
     }
@@ -502,10 +528,10 @@ public class StrUtils {
     public static String getString(Object obj) {
         if (obj == null) {
             return null;
-        } else if (obj instanceof Clob) {
-            return getSubString((Clob) obj);
-        } else if (obj instanceof java.util.Date) {
-            return TimeUtils.defaultString((java.util.Date) obj);
+        } else if (obj instanceof Clob clob) {
+            return getSubString(clob);
+        } else if (obj instanceof java.util.Date date) {
+            return TimeUtils.defaultString(date);
         } else {
             return obj.toString();
         }
@@ -567,10 +593,10 @@ public class StrUtils {
     public static String getStringStandard(Object obj) {
         if (obj == null) {
             return null;
-        } else if (obj instanceof Number) {
-            return NumUtils.format((Number) obj, Locale.US);
-        } else if (obj instanceof java.util.Date) {
-            return TimeUtils.jdbcString((java.util.Date) obj);
+        } else if (obj instanceof Number number) {
+            return NumUtils.format(number, Locale.US);
+        } else if (obj instanceof java.util.Date date) {
+            return TimeUtils.jdbcString(date);
         } else {
             return obj.toString();
         }
@@ -579,8 +605,8 @@ public class StrUtils {
     public static String getStringSql(Object obj) {
         if (obj == null) {
             return null;
-        } else if (obj instanceof java.util.Date) {
-            return TimeUtils.jdbcString((java.util.Date) obj);
+        } else if (obj instanceof java.util.Date date) {
+            return TimeUtils.jdbcString(date);
         } else {
             return obj.toString();
         }
@@ -637,12 +663,10 @@ public class StrUtils {
             Object[] array = (Object[]) object;
             return getString(equals, separator, open, close, array);
         }
-        if (object instanceof KVP) {
-            KVP value = (KVP) object;
+        if (object instanceof KVP value) {
             return value.toString(equals, separator, open, close);
         }
-        if (object instanceof String) {
-            String value = (String) object;
+        if (object instanceof String value) {
             return StringUtils.trimToEmpty(value);
         }
         return StringUtils.trimToEmpty(object.toString());
@@ -1751,8 +1775,25 @@ public class StrUtils {
         return false;
     }
 
+    /*
     private static String quotedStringRegex(char... quotes) {
         return quotes == null || quotes.length == 0 ? null : "(?:([" + new String(quotes) + "])[^\u0000]*?\\1)";
+    }
+
+    /**/
+    private static String quotedStringRegex(char... quotes) {
+        if (quotes == null || quotes.length == 0) {
+            return null;
+        }
+        StringBuilder regex = new StringBuilder();
+        for (char quote : quotes) {
+            if (regex.length() > 0) {
+                regex.append("|");
+            }
+            String quoted = Pattern.quote(String.valueOf(quote));
+            regex.append("(?:").append(quoted).append("[^").append(quoted).append("]*").append(quoted).append(")");
+        }
+        return regex.length() > 0 ? regex.toString() : null;
     }
 
     public static String enclose(String argument) {
@@ -1981,12 +2022,21 @@ public class StrUtils {
         return remove == null ? string : removeWords(string, remove, affixType, separator);
     }
 
+    public static String removeWord(String string, String remove) {
+        if (StringUtils.isBlank(string) || StringUtils.isBlank(remove)) {
+            return string;
+        }
+        string = string.replaceAll("\\b" + remove + "\\b", "");
+        string = string.replaceAll("\\s{2,}", " ").trim();
+        return string;
+    }
+
     public static String removeWords(String string, String remove) {
         return removeWords(string, remove, null);
     }
 
     public static String removeWords(String string, String remove, String separator) {
-        if (string == null || remove == null) {
+        if (StringUtils.isBlank(string) || StringUtils.isBlank(remove)) {
             return string;
         }
         string = removeWords(string, remove, 'p', separator);
@@ -2000,7 +2050,7 @@ public class StrUtils {
     }
 
     public static String removeWords(String string, String remove, char affixType, String separator) {
-        if (string == null || remove == null) {
+        if (StringUtils.isBlank(string) || StringUtils.isBlank(remove)) {
             return string;
         }
         String separatorChars = ", ";
@@ -2017,7 +2067,7 @@ public class StrUtils {
     }
 
     public static String removeWholeWord(String string, String remove, String separator) {
-        if (string == null || remove == null) {
+        if (StringUtils.isBlank(string) || StringUtils.isBlank(remove)) {
             return string;
         }
         string = removeWholeWord(string, remove, 'p', separator);

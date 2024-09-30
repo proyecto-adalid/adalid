@@ -420,7 +420,7 @@ public @interface PropertyField {
      *
      * @return sequence
      */
-    int responsivePriority() default 0;
+    int responsivePriority() default -1;
 
     /**
      * sequence específica el número de secuencia o posición relativa en la que se muestra la propiedad en las vistas (páginas) de consulta y

@@ -637,7 +637,7 @@ public abstract class Operation extends AbstractArtifact implements Comparable<O
         return _operationAccess;
     }
 
-    void setOperationAccess(OperationAccess operationAccess) {
+    public void setOperationAccess(OperationAccess operationAccess) {
         _operationAccess = operationAccess;
     }
 
@@ -712,7 +712,7 @@ public abstract class Operation extends AbstractArtifact implements Comparable<O
         return _operationLogging;
     }
 
-    void setOperationLogging(OperationLogging operationLogging) {
+    public void setOperationLogging(OperationLogging operationLogging) {
         _operationLogging = operationLogging;
     }
 
@@ -1046,6 +1046,7 @@ public abstract class Operation extends AbstractArtifact implements Comparable<O
         boolean ok = super.finalise();
         if (ok) {
             finaliseFields();
+            finaliseParameters();
             checkExpressions();
             checkTransitions();
             setParametersDisplaySortKey();
@@ -1260,6 +1261,7 @@ public abstract class Operation extends AbstractArtifact implements Comparable<O
             }
         }
     }
+    // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="finaliseParameter">
     private void finaliseParameter(Field field, Parameter parameter) {
@@ -1316,7 +1318,10 @@ public abstract class Operation extends AbstractArtifact implements Comparable<O
         _expressions.put(key, expression);
     }
     // </editor-fold>
-    // </editor-fold>
+
+    protected void finaliseParameters() {
+        // field annotations can be overriden here
+    }
 
     private void finishParameters() {
         BooleanExpression filter;
@@ -1543,12 +1548,12 @@ public abstract class Operation extends AbstractArtifact implements Comparable<O
         if (annotatedClass != null) {
             OperationClass annotation = annotatedClass.getAnnotation(OperationClass.class);
             if (annotation != null) {
-                _operationAccess = annotation.access();
+                _operationAccess = specified(annotation.access(), _operationAccess);
                 _asynchronous = annotation.asynchronous();
                 _shellEnabled = annotation.shell();
                 _confirmationRequired = annotation.confirmation().toBoolean(_confirmationRequired);
                 _complex = annotation.complex().toBoolean(_complex);
-                _operationLogging = annotation.logging();
+                _operationLogging = specified(annotation.logging(), _operationLogging);
                 _annotatedWithOperationClass = true;
             }
         }
@@ -1618,6 +1623,8 @@ public abstract class Operation extends AbstractArtifact implements Comparable<O
     protected static final CharacterScalarX UNDERSCORE = XB.UNDERSCORE;
 
     protected static final CharacterScalarX VBAR = XB.VBAR;
+
+    protected static final CharacterScalarX CONTENT_ROOT_DIR = XB.CONTENT_ROOT_DIR;
 
     protected static final CharacterScalarX CURRENT_USER_CODE = XB.CURRENT_USER_CODE;
 
@@ -1699,6 +1706,10 @@ public abstract class Operation extends AbstractArtifact implements Comparable<O
 
     protected static CharacterScalarX empty() {
         return EMPTY;
+    }
+
+    protected static CharacterScalarX contentRootDir() {
+        return CONTENT_ROOT_DIR;
     }
 
     protected static CharacterScalarX currentUserCode() {

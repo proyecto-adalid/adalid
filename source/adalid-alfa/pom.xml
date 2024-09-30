@@ -6,11 +6,18 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.proyecto-adalid</groupId>
     <artifactId>adalid-alfa</artifactId>
-    <version>5.2.0</version><!--adalid-->
+    <version>5.3.0</version><!--adalid-->
     <packaging>jar</packaging>
     <name>adalid-alfa</name>
     <description>Adalid Alfa Library</description>
     <url>http://www.proyecto-adalid.org/</url>
+
+    <properties>
+        <maven.build.timestamp.format>yyyyMMdd-HHmm</maven.build.timestamp.format>
+        <maven.compiler.release>17</maven.compiler.release>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.build.timestamp>${maven.build.timestamp}</project.build.timestamp>
+    </properties>
 
     <licenses>
         <license>
@@ -45,20 +52,12 @@
         </repository>
     </distributionManagement>
 
-    <properties>
-        <maven.build.timestamp.format>yyyyMMdd-HHmm</maven.build.timestamp.format>
-        <maven.compiler.source>17</maven.compiler.source>
-        <maven.compiler.target>17</maven.compiler.target>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <project.build.timestamp>${maven.build.timestamp}</project.build.timestamp>
-    </properties>
-
     <dependencyManagement>
         <dependencies>
             <dependency>
                 <groupId>com.google.cloud</groupId>
                 <artifactId>libraries-bom</artifactId>
-                <version>26.28.0</version>
+                <version>26.42.0</version><!--com.google.cloud:libraries-bom-->
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
@@ -73,40 +72,32 @@
         <dependency>
             <groupId>commons-collections</groupId>
             <artifactId>commons-collections</artifactId>
-            <version>3.2.2</version>
+            <version>3.2.2</version><!--commons-collections-->
         </dependency>
         <dependency>
             <groupId>commons-io</groupId>
             <artifactId>commons-io</artifactId>
-            <version>2.5</version>
+            <version>2.5</version><!--commons-io-->
         </dependency>
         <dependency>
             <groupId>commons-lang</groupId>
             <artifactId>commons-lang</artifactId>
-            <version>2.6</version>
+            <version>2.6</version><!--commons-lang-->
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
-            <version>1.7.32</version>
+            <version>2.0.13</version><!--slf4j-api-->
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-log4j12</artifactId>
-            <version>1.7.32</version>
-            <!--
-            <exclusions>
-                <exclusion>
-                    <groupId>log4j</groupId>
-                    <artifactId>log4j</artifactId>
-                </exclusion>
-            </exclusions>
-            -->
+            <artifactId>slf4j-reload4j</artifactId>
+            <version>2.0.13</version><!--slf4j-reload4j-->
         </dependency>
         <dependency>
             <groupId>log4j</groupId>
             <artifactId>log4j</artifactId>
-            <version>1.2.17</version>
+            <version>1.2.17</version><!--log4j-->
         </dependency>
         <!--
         <dependency>
@@ -128,7 +119,7 @@
         <dependency>
             <groupId>org.apache.maven</groupId>
             <artifactId>maven-artifact</artifactId>
-            <version>3.5.4</version>
+            <version>3.9.8</version><!--maven-artifact-->
         </dependency>
         <!--
         <dependency>
@@ -140,12 +131,12 @@
         <dependency>
             <groupId>org.apache.velocity</groupId>
             <artifactId>velocity</artifactId>
-            <version>1.7</version>
+            <version>1.7</version><!--velocity-->
         </dependency>
         <dependency>
             <groupId>net.sourceforge.plantuml</groupId>
             <artifactId>plantuml</artifactId>
-            <version>1.2024.4</version>
+            <version>1.2024.5</version><!--plantuml-->
         </dependency>
         <!--
         <dependency>
@@ -164,22 +155,13 @@
         <dependency>
             <groupId>org.reflections</groupId>
             <artifactId>reflections</artifactId>
-            <version>0.10.2</version>
+            <version>0.10.2</version><!--reflections-->
         </dependency>
-        <!--
-        <dependency>
-            <groupId>jdk</groupId>
-            <artifactId>tools</artifactId>
-            <version>1.8</version>
-            <scope>system</scope>
-            <systemPath>${env.JDK8_HOME}/lib/tools.jar</systemPath>
-        </dependency>
-        -->
         <!-- javax.xml.bind -->
         <dependency>
             <groupId>jakarta.xml.bind</groupId>
             <artifactId>jakarta.xml.bind-api</artifactId>
-            <version>2.3.3</version>
+            <version>2.3.3</version><!--jakarta.xml.bind-api-->
         </dependency>
     </dependencies>
 
@@ -201,7 +183,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
-                <version>3.3.0</version><!--maven-jar-plugin-->
+                <version>3.4.2</version><!--maven-jar-plugin-->
                 <configuration>
                     <archive>
                         <addMavenDescriptor>true</addMavenDescriptor>
@@ -243,7 +225,7 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-gpg-plugin</artifactId>
-                        <version>3.2.1</version><!--maven-gpg-plugin-->
+                        <version>3.2.4</version><!--maven-gpg-plugin-->
                         <executions>
                             <execution>
                                 <id>sign-artifacts</id>
@@ -264,13 +246,16 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-javadoc-plugin</artifactId>
-                        <version>3.6.3</version><!--maven-javadoc-plugin-->
+                        <version>3.7.0</version><!--maven-javadoc-plugin-->
                         <configuration>
                             <source>${maven.compiler.source}</source>
                             <detectJavaApiLink>false</detectJavaApiLink>
                             <doclint>all,-missing</doclint>
                             <maxmemory>4096</maxmemory>
                             <minmemory>1024</minmemory>
+                            <encoding>${project.build.sourceEncoding}</encoding>
+                            <docencoding>${project.build.sourceEncoding}</docencoding>
+                            <charset>${project.build.sourceEncoding}</charset>
                         </configuration>
                         <executions>
                             <execution>
@@ -291,7 +276,7 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-source-plugin</artifactId>
-                        <version>3.3.0</version><!--maven-source-plugin-->
+                        <version>3.3.1</version><!--maven-source-plugin-->
                         <executions>
                             <execution>
                                 <id>attach-sources</id>
@@ -311,7 +296,7 @@
                     <plugin>
                         <groupId>org.sonatype.plugins</groupId>
                         <artifactId>nexus-staging-maven-plugin</artifactId>
-                        <version>[1.6.13,)</version><!--nexus-staging-maven-plugin-->
+                        <version>1.7.0</version><!--nexus-staging-maven-plugin-->
                         <extensions>true</extensions>
                         <configuration>
                             <serverId>ossrh</serverId>

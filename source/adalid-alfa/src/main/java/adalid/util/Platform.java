@@ -35,6 +35,8 @@ public class Platform {
 
     public static final String META_DATA_UML_CLASS = "meta-data-uml-class";
 
+    public static final String META_DATA_UML_MAP = "meta-data-uml-map";
+
     public static final String META_DATA_UML_STATE = "meta-data-uml-state";
 
     public static final String META_DATA_UTIL = "meta-data-util";

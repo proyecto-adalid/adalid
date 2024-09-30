@@ -99,7 +99,7 @@ public abstract class BooleanPrimitive extends Primitive implements State {
      */
     @Override
     public Object getInitialValue() {
-        return _initialValue;
+        return getInitialValue(_initialValue);
     }
 
     /**

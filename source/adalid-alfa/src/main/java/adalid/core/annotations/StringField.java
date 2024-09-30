@@ -85,6 +85,17 @@ public @interface StringField {
     String regex() default "";
 
     /**
+     * fetch especifica si la operación de consulta obtiene el valor de la propiedad simultáneamente con el resto de las propiedades de la entidad o
+     * posteriormente, por demanda. Este elemento solo es relevante si el valor del elemento maxLength es 0. Su valor es uno de los elementos de la
+     * enumeración FetchType. Seleccione EAGER para obtener el valor de la propiedad simultáneamente con el resto de las propiedades de la entidad;
+     * seleccione LAZY para obtenerlo posteriormente, por demanda; alternativamente, omita el elemento o seleccione UNSPECIFIED para utilizar el valor
+     * predeterminado del atributo. El valor predeterminado del atributo es EAGER.
+     *
+     * @return fetch
+     */
+    FetchType fetch() default FetchType.UNSPECIFIED; // since 25/06/2024
+
+    /**
      * autoComplete especifica si los campos de entrada de la propiedad o parámetro deben tener habilitado, o no, el autocompletado. Cuando el usuario
      * comienza a escribir en un campo que tiene habilitado el autocompletado, el navegador debe mostrar y permitir seleccionar alguno de los valores
      * escritos anteriormente. El valor de autoComplete es uno de los elementos de la enumeración AutoComplete. Seleccione ON u OFF para habilitar o

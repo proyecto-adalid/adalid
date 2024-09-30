@@ -276,6 +276,11 @@ public abstract class AbstractPersistentEnumerationEntity extends AbstractPersis
     }
     // </editor-fold>
 
+    @Override
+    boolean unfilteredInstances() {
+        return super.unfilteredInstances() && !isSelectItemsWithFilter();
+    }
+
     private Instance[] _removeInstanceArray;
 
     /**

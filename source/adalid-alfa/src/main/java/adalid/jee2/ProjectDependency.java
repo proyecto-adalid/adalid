@@ -36,12 +36,21 @@ public class ProjectDependency {
 
     private final boolean _valid;
 
-    private String _version, _classifier, _scope, /*_systemPath,*/ _type; // SYSTEM is deprecated
+    private String _version, _classifier, _scope, _type; // SYSTEM is deprecated
 
     private boolean _optional;
 
     public static final ProjectDependency of(String groupId, String artifactId, String version) {
         return new ProjectDependency(groupId, artifactId, version);
+    }
+
+    public static final ProjectDependency of(ProjectDependency dependency) {
+        ProjectDependency clone = new ProjectDependency(dependency.getGroupId(), dependency.getArtifactId(), dependency.getVersion());
+        clone.setClassifier(dependency.getClassifier());
+        clone.setScope(dependency.getScope());
+        clone.setType(dependency.getType());
+        clone.setOptional(dependency.isOptional());
+        return clone;
     }
 
     private ProjectDependency(String groupId, String artifactId, String version) {
@@ -165,35 +174,6 @@ public class ProjectDependency {
         return this;
     }
 
-    // <editor-fold defaultstate="collapsed" desc="getSystemPath/setSystemPath">
-    /**
-     * The systemPath element is used only if the dependency scope is system. Otherwise, the build will fail if this element is set. The path must be
-     * absolute, so it is recommended to use a property to specify the machine-specific path (more on properties below), such as ${java.home}/lib.
-     * Since it is assumed that system scope dependencies are installed a priori, Maven does not check the repositories for the project, but instead
-     * checks to ensure that the file exists. If not, Maven fails the build and suggests that you download and install it manually.
-     *
-     * @return the system path
-     */
-    /*
-    public String getSystemPath() {
-        return _systemPath;
-    }
-    /**/
-    char getSystemPath;
-
-    /**
-     * @param systemPath the system path to set
-     * @return this
-     */
-    /*
-    public ProjectDependency setSystemPath(String systemPath) {
-        _systemPath = StringUtils.trimToNull(systemPath);
-        return this;
-    }
-    /**/
-    char setSystemPath;
-    // </editor-fold>
-
     /**
      * The type element corresponds to the chosen dependency type. This defaults to jar. While it usually represents the extension on the filename of
      * the dependency, that is not always the case: a type can be mapped to a different extension and a classifier. The type often corresponds to the
@@ -271,7 +251,6 @@ public class ProjectDependency {
         if (dependency != null) {
             mergeVersion(dependency.getVersion());
             mergeScope(ProjectDependencyScope.of(dependency.getScope()));
-//          mergeSystemPath(dependency.getSystemPath());
             mergeOptional(dependency.isOptional());
         }
         return this;

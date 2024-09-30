@@ -1378,6 +1378,13 @@ public abstract class AbstractArtifact implements Artifact, Wrappable {
         }
     }
 
+    private void putKeyFeatures(String key, String value) {
+        Project project = TLC.getProject();
+        if (project != null) {
+            project.putKeyFeatures(key, value);
+        }
+    }
+
     protected Locale defaultLocale() {
         return null;
     }
@@ -1714,6 +1721,24 @@ public abstract class AbstractArtifact implements Artifact, Wrappable {
     @Override
     public String getPartialName() {
         return StringUtils.substringAfter(getPathString(), "." + "this" + ".");
+    }
+
+    public String getPartialSqlName() {
+        return StrUtils.getSnakeCase(getPartialName());
+    }
+
+    @Override
+    public String getCrypticName(String prefix, String suffix) {
+        String keyFeatures = getKeyFeatures(prefix, suffix);
+        String crypticName = StrUtils.getCrypticName(prefix, keyFeatures, suffix);
+        String featuresKey = getFullName() + "/" + StringUtils.remove(suffix, "_");
+        putKeyFeatures(featuresKey, keyFeatures);
+        return crypticName;
+    }
+
+    @Override
+    public String getKeyFeatures(String prefix, String suffix) {
+        return "(" + getFullName() + "," + getClass().getSimpleName() + ")";
     }
 
     protected String getValueString(Object value) {

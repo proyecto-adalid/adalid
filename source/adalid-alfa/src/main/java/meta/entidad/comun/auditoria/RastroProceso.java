@@ -151,7 +151,7 @@ public class RastroProceso extends AbstractPersistentEntity {
     public LongProperty versionRecurso;
 
     @ColumnField(indexed = Kleenean.FALSE)
-    @PropertyField(table = Kleenean.TRUE, report = Kleenean.TRUE, search = Kleenean.TRUE)
+    @PropertyField(responsivePriority = 5, table = Kleenean.TRUE, report = Kleenean.TRUE, search = Kleenean.TRUE)
     public StringProperty codigoRecurso;
 
     @ColumnField(indexed = Kleenean.FALSE)
@@ -176,7 +176,7 @@ public class RastroProceso extends AbstractPersistentEntity {
     @ForeignKey(onDelete = OnDeleteAction.NONE, onUpdate = OnUpdateAction.NONE)
     @ManyToOne(navigability = Navigability.UNIDIRECTIONAL, view = MasterDetailView.NONE)
     @ColumnField(nullable = Kleenean.FALSE)
-    @PropertyField(responsivePriority = 5, table = Kleenean.TRUE, report = Kleenean.TRUE, heading = Kleenean.TRUE, overlay = Kleenean.TRUE, readingTableSnippet = BORPPSX1)
+    @PropertyField(table = Kleenean.TRUE, report = Kleenean.TRUE, heading = Kleenean.TRUE, overlay = Kleenean.TRUE, readingTableSnippet = BORPPSX1)
     public CondicionEjeFun condicionEjeFun;
 
     @ForeignKey(onDelete = OnDeleteAction.NONE, onUpdate = OnUpdateAction.NONE)
@@ -192,9 +192,18 @@ public class RastroProceso extends AbstractPersistentEntity {
     @PropertyField(table = Kleenean.FALSE, report = Kleenean.FALSE, search = Kleenean.FALSE, headertextless = Kleenean.TRUE)
     public StringProperty paginaRecursoObtenido;
 
+    private static final String BOAAPRPCX1 = "/resources/snippets/base/entity/RastroProceso/botonOpenArchivoAdjuntoPorRastroProcesoCargaX1";
+
     @FileReference(loadField = "fechaHoraInicioEjecucion")
-    @PropertyField(responsivePriority = 5, table = Kleenean.TRUE, report = Kleenean.FALSE, search = Kleenean.FALSE)
+    @PropertyField(responsivePriority = 5, table = Kleenean.TRUE, report = Kleenean.FALSE, search = Kleenean.FALSE, readingTableSnippet = BOAAPRPCX1)
+    @StringField(maxLength = Project.FILE_REFERENCE_MAX_LENGTH)
     public StringProperty nombreArchivo;
+
+    private static final String BOAAPRPCX2 = "/resources/snippets/base/entity/RastroProceso/botonOpenArchivoAdjuntoPorRastroProcesoCargaX2";
+
+    @ColumnField(nullable = Kleenean.FALSE)
+    @PropertyField(readingDetailSnippet = BOAAPRPCX2)
+    public IntegerProperty archivosCargados;
 
     @PropertyField(hidden = Kleenean.TRUE)
     @StringField(maxLength = 100)
@@ -390,6 +399,9 @@ public class RastroProceso extends AbstractPersistentEntity {
         nombreArchivo.setFileDownloadStopFunction("hideDialogoMostrarStatusDownloadPlusRefresh");
         nombreArchivo.setFileViewerDialogReturnUpdate("mainForm", "northForm", "@(.xs-bar-updatable-component)");
         /**/
+        archivosCargados.setInitialValue(0);
+        archivosCargados.setDefaultValue(0);
+        /**/
         leido.setInitialValue(false);
         leido.setDefaultValue(false);
         /**/
@@ -543,6 +555,9 @@ public class RastroProceso extends AbstractPersistentEntity {
         nombreArchivo.setLocalizedTooltip(ENGLISH, "open the process file");
         nombreArchivo.setLocalizedTooltip(SPANISH, "abrir el archivo del proceso");
         /**/
+        archivosCargados.setLocalizedLabel(ENGLISH, "uploaded files");
+        archivosCargados.setLocalizedLabel(SPANISH, "archivos cargados");
+        /**/
         codigoError.setLocalizedLabel(ENGLISH, "message code");
         codigoError.setLocalizedLabel(SPANISH, "código del mensaje");
         /**/
@@ -668,7 +683,7 @@ public class RastroProceso extends AbstractPersistentEntity {
             funcion, codigoFuncion, nombreFuncion, descripcionFuncion, paginaFuncion,
             idClaseRecursoValor, codigoClaseRecursoValor, nombreClaseRecursoValor, recursoValor,
             idRecurso, versionRecurso, codigoRecurso, nombreRecurso, idPropietarioRecurso, idSegmentoRecurso, paginaRecurso,
-            condicionEjeFun, codigoError, descripcionError, severidadMensaje, paginaRecursoObtenido, nombreArchivo, etiquetaLenguaje); //, mensajeAplicacion);
+            condicionEjeFun, codigoError, descripcionError, severidadMensaje, paginaRecursoObtenido, nombreArchivo, archivosCargados, etiquetaLenguaje); //, mensajeAplicacion);
         /**/
         tab120.newTabField(funcion, codigoFuncion, nombreFuncion, descripcionFuncion, paginaFuncion,
             tipoFuncion, tipoRastroFun, grupo, procesoAsincrono, procesoCalendarizado, procesoNativo, procesoWeb, subprocesos);
@@ -692,7 +707,9 @@ public class RastroProceso extends AbstractPersistentEntity {
 
     protected Segment finalizado, pendiente, pendienteActual;
 
-    protected Segment sinSuperior, conSuperior, sinSubprocesos, conSubprocesos;
+    protected Segment conArchivosCargados, conSuperior, conSubprocesos;
+
+    protected Segment sinArchivosCargados, sinSuperior, sinSubprocesos;
 
     @Override
     protected void settleExpressions() {
@@ -705,6 +722,9 @@ public class RastroProceso extends AbstractPersistentEntity {
         );
         pendiente = and(procesoAsincrono, superior.isNull(), finalizado, not(leido), not(descargado));
         pendienteActual = pendiente.and(codigoUsuario.isEqualTo(CURRENT_USER_CODE));
+        /**/
+        sinArchivosCargados = archivosCargados.isEqualTo(0);
+        conArchivosCargados = archivosCargados.isGreaterThan(0);
         /**/
         sinSuperior = superior.isNull();
         conSuperior = superior.isNotNull();
@@ -731,6 +751,24 @@ public class RastroProceso extends AbstractPersistentEntity {
         pendienteActual.setLocalizedDescription(SPANISH, "el proceso no ha sido leído ni descargado por el usuario actual");
         pendienteActual.setLocalizedErrorMessage(ENGLISH, "the process has already been read or downloaded by you");
         pendienteActual.setLocalizedErrorMessage(SPANISH, "el proceso ya fue leído o descargado por usted");
+        /**/
+        sinArchivosCargados.setLocalizedCollectionLabel(ENGLISH, "audit trails of processes without uploaded files");
+        sinArchivosCargados.setLocalizedCollectionLabel(SPANISH, "rastros de auditoría de procesos sin archivos cargados");
+        sinArchivosCargados.setLocalizedCollectionShortLabel(ENGLISH, "trails of processes without uploaded files");
+        sinArchivosCargados.setLocalizedCollectionShortLabel(SPANISH, "rastros de procesos sin archivos cargados");
+        sinArchivosCargados.setLocalizedDescription(ENGLISH, "the process has no uploaded files");
+        sinArchivosCargados.setLocalizedDescription(SPANISH, "el proceso no tiene archivos cargados");
+        sinArchivosCargados.setLocalizedErrorMessage(ENGLISH, "the process has uploaded files");
+        sinArchivosCargados.setLocalizedErrorMessage(SPANISH, "el proceso tiene archivos cargados");
+        /**/
+        conArchivosCargados.setLocalizedCollectionLabel(ENGLISH, "audit trails of processes with one or more uploaded files");
+        conArchivosCargados.setLocalizedCollectionLabel(SPANISH, "rastros de auditoría de procesos con uno o más archivos cargados");
+        conArchivosCargados.setLocalizedCollectionShortLabel(ENGLISH, "trails of processes with uploaded files");
+        conArchivosCargados.setLocalizedCollectionShortLabel(SPANISH, "rastros de procesos con archivos cargados");
+        conArchivosCargados.setLocalizedDescription(ENGLISH, "the process has uploaded files");
+        conArchivosCargados.setLocalizedDescription(SPANISH, "el proceso tiene archivos cargados");
+        conArchivosCargados.setLocalizedErrorMessage(ENGLISH, "the process has no uploaded files");
+        conArchivosCargados.setLocalizedErrorMessage(SPANISH, "el proceso no tiene archivos cargados");
         /**/
         sinSuperior.setLocalizedCollectionLabel(ENGLISH, "audit trails of main processes (processes without parent process)");
         sinSuperior.setLocalizedCollectionLabel(SPANISH, "rastros de auditoría de procesos principales (procesos sin proceso superior)");
@@ -781,7 +819,7 @@ public class RastroProceso extends AbstractPersistentEntity {
         addSelectSegment(pendiente, false);
         /**/
 //      addSelectSegment(sinSuperior, true); // no, porque hay páginas de rastros/superior
-        addSelectSegment(sinSuperior, conSuperior, sinSubprocesos, conSubprocesos);
+        addSelectSegment(conArchivosCargados, conSuperior, conSubprocesos, sinArchivosCargados, sinSuperior, sinSubprocesos);
         /**/
         tab130.setRenderingFilter(conSubprocesos);
         /**/
@@ -840,7 +878,7 @@ public class RastroProceso extends AbstractPersistentEntity {
                 proceso.condicionEjeFun.EJECUTADO_CON_ERRORES,
                 proceso.condicionEjeFun.EJECUCION_CANCELADA
             );
-            check102 = proceso.codigoUsuario.isEqualTo(CURRENT_USER_CODE);
+            check102 = proceso.codigoUsuario.isEqualTo(CURRENT_USER_CODE).or(proceso.usuario.isEqualTo(proceso.usuario.OPERADOR));
             check103 = not(proceso.leido.or(proceso.descargado));
             check104 = proceso.procesoAsincrono.isTrue();
             check105 = proceso.superior.isNull();
@@ -932,7 +970,7 @@ public class RastroProceso extends AbstractPersistentEntity {
                 proceso.condicionEjeFun.EJECUTADO_CON_ERRORES,
                 proceso.condicionEjeFun.EJECUCION_CANCELADA
             );
-            check102 = proceso.codigoUsuario.isEqualTo(CURRENT_USER_CODE);
+            check102 = proceso.codigoUsuario.isEqualTo(CURRENT_USER_CODE).or(proceso.usuario.isEqualTo(proceso.usuario.OPERADOR));
             check103 = proceso.leido.or(proceso.descargado);
             check104 = proceso.procesoAsincrono.isTrue();
             check105 = proceso.superior.isNull();

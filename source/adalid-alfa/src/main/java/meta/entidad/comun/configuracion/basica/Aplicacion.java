@@ -28,10 +28,11 @@ import java.lang.reflect.Field;
 @EntityInsertOperation(enabled = Kleenean.FALSE)
 @EntityUpdateOperation(enabled = Kleenean.FALSE)
 @EntityDeleteOperation(enabled = Kleenean.FALSE)
-@EntityTableView(enabled = Kleenean.FALSE)
+@EntityTableView(enabled = Kleenean.TRUE, responsiveMode = TableResponsiveMode.PRIORITY, quickFilter = Kleenean.TRUE)
 @EntityDetailView(enabled = Kleenean.FALSE)
 @EntityTreeView(enabled = Kleenean.FALSE)
 @EntityConsoleView(enabled = Kleenean.FALSE)
+@EntityReferenceSearch(searchType = SearchType.LIST, listStyle = ListStyle.CHARACTER_KEY_AND_NAME)
 public class Aplicacion extends AbstractPersistentEntity {
 
     // <editor-fold defaultstate="collapsed" desc="class constructors">
@@ -48,6 +49,7 @@ public class Aplicacion extends AbstractPersistentEntity {
 
     @BusinessKey
     @StringField(maxLength = 100)
+    @PropertyField(overlay = Kleenean.FALSE)
     public StringProperty codigoAplicacion;
 
     @NameProperty

@@ -167,7 +167,7 @@ public class UsuarioModulo extends AbstractPersistentEntity {
         /**/
         setInsertFilter(usuario.usuariosOrdinarios);
         setMasterDetailFilter(usuario.usuariosOrdinarios);
-        /**/
+        /* 20/09/2024 - permitir módulos sin menú predefinido, porque podrían tener menú en otra aplicación
         modulo.setSearchQueryFilter(menusPredefinidos);
         /**/
     }

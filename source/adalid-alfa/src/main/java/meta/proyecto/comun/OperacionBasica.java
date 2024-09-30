@@ -13,6 +13,8 @@
 package meta.proyecto.comun;
 
 import adalid.core.*;
+import adalid.core.annotations.*;
+import adalid.core.enums.*;
 import meta.entidad.comun.operacion.basica.CampoValorTemporal;
 import meta.entidad.comun.operacion.basica.CondicionTarea;
 import meta.entidad.comun.operacion.basica.DialogoDinamicoRemoto;
@@ -34,11 +36,13 @@ import meta.entidad.comun.operacion.basica.VistaFuncionCol;
 /**
  * @author Jorge Campins
  */
+@ProjectModuleDocGen(classDiagram = Kleenean.FALSE)
 public class OperacionBasica extends Project {
 
     @Override
     protected void settleAttributes() {
         super.settleAttributes();
+        setImmutableModule(true);
         // <editor-fold defaultstate="collapsed" desc="localization of OperacionBasica's attributes">
         setLocalizedLabel(ENGLISH, "Basic Operation");
         setLocalizedLabel(SPANISH, "Operación Básica");

@@ -50,10 +50,12 @@ public class ClaseFabricador extends AbstractPersistentEnumerationEntity {
 
     @BusinessKey
     @StringField(maxLength = 100)
+    @PropertyField(overlay = Kleenean.TRUE)
     public StringProperty codigo;
 
     @ColumnField(nullable = Kleenean.FALSE)
     @StringField(maxLength = 100)
+    @PropertyField(overlay = Kleenean.TRUE)
     public StringProperty codigoClaseRecurso;
 
     @ColumnField(nullable = Kleenean.FALSE)
@@ -64,7 +66,6 @@ public class ClaseFabricador extends AbstractPersistentEnumerationEntity {
     public StringProperty codigoConjuntoSegmento;
 
     @StringField(maxLength = 200)
-    @PropertyField(overlay = Kleenean.TRUE)
     public StringProperty nombreConjuntoSegmento;
 
     @DescriptionProperty
@@ -135,6 +136,8 @@ public class ClaseFabricador extends AbstractPersistentEnumerationEntity {
         descripcionConjuntoSegmento.setLocalizedLabel(ENGLISH, "segment set description");
         descripcionConjuntoSegmento.setLocalizedLabel(SPANISH, "descripción del conjunto de segmentos");
         /**/
+        elemental.setLocalizedDescription(ENGLISH, "the factory class requires a set of explicitly defined elements");
+        elemental.setLocalizedDescription(SPANISH, "la clase de fabricador requiere un conjunto de elementos definidos explícitamente");
         elemental.setLocalizedLabel(ENGLISH, "requires elements");
         elemental.setLocalizedLabel(SPANISH, "requiere elementos");
         /**/

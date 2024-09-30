@@ -72,6 +72,10 @@ public class Maestro102 extends Maestro {
 //      setBusinessOperationConfirmationRequired(Kleenean.TRUE);
 //      setDatabaseOperationConfirmationRequired(Kleenean.TRUE);
         /**/
+//      setMultiApplication(true);
+//      addWebApplication(WebApplication.of(...));
+//      setRoleWebAppDissociationAllowed(true);
+        /**/
         setMissingValueGraphicImageName(FA.MISSING_VALUE);
 //      setNullValueGraphicImageName(FA.NULL_VALUE);
         setUnnecessaryValueGraphicImageName(FA.UNNECESSARY_VALUE);
@@ -82,22 +86,20 @@ public class Maestro102 extends Maestro {
     public void configureGenerator() {
         super.configureGenerator();
         loadEnvironmentVariables(LoggingLevel.TRACE);
+//
 //      putEnvironmentVariable(CONTENT_ROOT_DIR_LINUX, "/opt/content-root");
 //      putEnvironmentVariable(CONTENT_ROOT_DIR_WINDOWS, "%SystemDrive%/content-root");
 //
 //      putEnvironmentVariable(POSTGRESQL_DRIVER_ID, "pgjdbc4");
-//      putEnvironmentVariable(POSTGRESQL_DRIVER_JAR, "postgresql-42.6.0.jar");
-//      putEnvironmentVariable(POSTGRESQL_DRIVER_VERSION, "42.6.0");
+//      putEnvironmentVariable(POSTGRESQL_DRIVER_JAR, "postgresql-42.7.3.jar");
+//      putEnvironmentVariable(POSTGRESQL_DRIVER_VERSION, "42.7.3");
 //
 //      putEnvironmentVariable(PLATAFORMA_JAVA, "jakarta");
 //      putEnvironmentVariable(VERSION_ECLIPSELINK, "4.0.2");
 //      putEnvironmentVariable(VERSION_POSTGRESQL, "16");
-//      putEnvironmentVariable(VERSION_WILDFLY, "29.0.1.Final");
+//      putEnvironmentVariable(VERSION_WILDFLY, "32.0.1.Final");
 //      putEnvironmentVariable(VERSION_JAVA, "17");
-//      putEnvironmentVariable(VERSION_PRIMEFACES, "13.0.1");
-//      putEnvironmentVariable(VERSION_PRIMEFACES_EXTENSIONS, "13.0.1");
-//      putEnvironmentVariable(VERSION_PRIMEFACES_EXTENSIONS_RESOURCES_CKEDITOR, "12.0.4");
-//      putEnvironmentVariable(VERSION_PRIMEFACES_EXTENSIONS_RESOURCES_MONACOEDITOR, "13.0.1");
+//      putEnvironmentVariable(VERSION_PRIMEFACES, "13.0.10");
 //      putEnvironmentVariable(VERSION_GOOGLE_GSON, "2.10.1");
 //      putEnvironmentVariable(VERSION_THIRD_PARTY_DIR, "5.0");
 //
@@ -106,6 +108,7 @@ public class Maestro102 extends Maestro {
 //      setThemeSwitchingEnabled(true);
 //      setInternetAccessAllowed(true);
 //      setWebServicesEnabled(true);
+//      setPlantUMLEnabled(false);
 //      setProjectMailingEnabled(true);
 //      setProjectTextingEnabled(true);
 //      setDefaultSMSProvider(ShortMessageServiceProvider.TWILIO);

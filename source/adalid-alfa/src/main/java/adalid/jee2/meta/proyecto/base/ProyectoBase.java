@@ -13,6 +13,7 @@
 package adalid.jee2.meta.proyecto.base;
 
 import adalid.commons.*;
+import adalid.commons.connections.*;
 import adalid.commons.enums.*;
 import adalid.commons.interfaces.*;
 import adalid.commons.properties.*;
@@ -55,7 +56,7 @@ import org.apache.log4j.Logger;
 /**
  * @author Jorge Campins
  */
-public class ProyectoBase extends Project implements SubjectProject, SpecialEntityPack {
+public abstract class ProyectoBase extends Project implements DatabaseProject, SubjectProject, SpecialEntityPack {
 
     private static final Logger logger = Logger.getLogger(ProyectoBase.class);
 
@@ -557,6 +558,8 @@ public class ProyectoBase extends Project implements SubjectProject, SpecialEnti
 
     private String _messageDigestAlgorithm;
 
+    final private Map<String, DatabaseConnection> _extraDatabaseConnections = new TreeMap<>();
+
     private boolean _sqlBusinessAuditTrail;
 
     private DatabaseLockingMechanism _databaseLockingMechanism;
@@ -772,7 +775,7 @@ public class ProyectoBase extends Project implements SubjectProject, SpecialEnti
      * @return the entity number
      */
     public String getEntityNumber(String key) {
-        return StringUtils.isBlank(key) ? "?" : longNumericCode(key, _entitiesDictionary);
+        return longNumericCode(key, _entitiesDictionary);
     }
 
     /**
@@ -780,7 +783,7 @@ public class ProyectoBase extends Project implements SubjectProject, SpecialEnti
      * @return the entity parameter number
      */
     public String getEntityParameterNumber(String key) {
-        return StringUtils.isBlank(key) ? "?" : longNumericCode(key, _entityParametersDictionary);
+        return longNumericCode(key, _entityParametersDictionary);
     }
 
     /**
@@ -804,7 +807,7 @@ public class ProyectoBase extends Project implements SubjectProject, SpecialEnti
      * @return the module number
      */
     public String getModuleNumber(String key) {
-        return StringUtils.isBlank(key) ? "?" : longNumericCode(key, _modulesDictionary);
+        return longNumericCode(key, _modulesDictionary);
     }
 
     /**
@@ -839,7 +842,7 @@ public class ProyectoBase extends Project implements SubjectProject, SpecialEnti
      * @return the operation number
      */
     public String getOperationNumber(String key) {
-        return StringUtils.isBlank(key) ? "?" : longNumericCode(key, _operationsDictionary);
+        return longNumericCode(key, _operationsDictionary);
     }
 
     /**
@@ -847,7 +850,7 @@ public class ProyectoBase extends Project implements SubjectProject, SpecialEnti
      * @return the operation parameter number
      */
     public String getOperationParameterNumber(String key) {
-        return StringUtils.isBlank(key) ? "?" : longNumericCode(key, _operationParametersDictionary);
+        return longNumericCode(key, _operationParametersDictionary);
     }
 
     /**
@@ -855,7 +858,7 @@ public class ProyectoBase extends Project implements SubjectProject, SpecialEnti
      * @return the page number
      */
     public String getPageNumber(String key) {
-        return StringUtils.isBlank(key) ? "?" : longNumericCode(key, _pagesDictionary);
+        return longNumericCode(key, _pagesDictionary);
     }
 
     /**
@@ -918,10 +921,13 @@ public class ProyectoBase extends Project implements SubjectProject, SpecialEnti
      * @return the parameter number
      */
     public String getParameterNumber(String key) {
-        return StringUtils.isBlank(key) ? "?" : longNumericCode(key, _parametersDictionary);
+        return longNumericCode(key, _parametersDictionary);
     }
 
     private String longNumericCode(String key, Dictionary dictionary) {
+        if (StringUtils.isBlank(key)) {
+            return "?";
+        }
         String humplessKey = StrUtils.getHumplessCase(key, '_');
         String numericCode = StrUtils.getLongNumericKeyCode(humplessKey);
         if (dictionary != null) {
@@ -954,6 +960,7 @@ public class ProyectoBase extends Project implements SubjectProject, SpecialEnti
     /**
      * @return the database name
      */
+    @Override
     public String getDatabaseName() {
         return StringUtils.defaultIfBlank(_databaseName, getDefaultDatabaseName());
     }
@@ -1040,6 +1047,24 @@ public class ProyectoBase extends Project implements SubjectProject, SpecialEnti
      */
     public void setMessageDigestAlgorithm(String messageDigestAlgorithm) {
         _messageDigestAlgorithm = StrUtils.getIdentifier(messageDigestAlgorithm, '-');
+    }
+
+    @Override
+    public Set<String> getExtraDatabaseNames() {
+        return _extraDatabaseConnections.keySet();
+    }
+
+    @Override
+    public Map<String, DatabaseConnection> getExtraDatabaseConnections() {
+        return _extraDatabaseConnections;
+    }
+
+    @Override
+    public void addExtraDatabaseConnection(DatabaseConnection connection) {
+        String databaseName = connection == null ? null : StrUtils.getLowerCaseIdentifier(connection.getName(), '-');
+        if (databaseName != null) {
+            _extraDatabaseConnections.put(databaseName, connection);
+        }
     }
 
     /**

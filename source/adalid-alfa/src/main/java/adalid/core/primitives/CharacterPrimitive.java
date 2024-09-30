@@ -99,7 +99,7 @@ public abstract class CharacterPrimitive extends Primitive implements CharacterE
      */
     @Override
     public Object getInitialValue() {
-        return _initialValue;
+        return getInitialValue(_initialValue);
     }
 
     /**
@@ -490,7 +490,17 @@ public abstract class CharacterPrimitive extends Primitive implements CharacterE
     }
 
     @Override
+    public BooleanComparisonX isIn(String y) {
+        return XB.Character.Comparison.isIn(this, y);
+    }
+
+    @Override
     public BooleanComparisonX isNotIn(CharacterExpression... y) {
+        return XB.Character.Comparison.isNotIn(this, y);
+    }
+
+    @Override
+    public BooleanComparisonX isNotIn(String y) {
         return XB.Character.Comparison.isNotIn(this, y);
     }
 
@@ -690,7 +700,17 @@ public abstract class CharacterPrimitive extends Primitive implements CharacterE
     }
 
     @Override
+    public BooleanComparisonX isNullOrIn(String y) {
+        return XB.Character.Comparison.isNullOrIn(this, y);
+    }
+
+    @Override
     public BooleanComparisonX isNullOrNotIn(CharacterExpression... y) {
+        return XB.Character.Comparison.isNullOrNotIn(this, y);
+    }
+
+    @Override
+    public BooleanComparisonX isNullOrNotIn(String y) {
         return XB.Character.Comparison.isNullOrNotIn(this, y);
     }
 

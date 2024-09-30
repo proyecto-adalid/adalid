@@ -15,6 +15,7 @@ package adalid.jee2.meta.proyecto.base;
 import adalid.commons.bundles.Bundle;
 import adalid.commons.util.*;
 import adalid.core.*;
+import adalid.core.enums.Navigability;
 import adalid.core.interfaces.*;
 import adalid.core.jee.JavaWebModule;
 import adalid.jee2.SpecialPage;
@@ -28,11 +29,15 @@ import meta.psm.EntityAttributeKeys;
 import meta.psm.PageAttributeKeys;
 import meta.psm.ProjectAttributeKeys;
 import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
 
 /**
  * @author Jorge Campins
  */
-public class ProyectoJava2 extends ProyectoJava1 {
+public abstract class ProyectoJava2 extends ProyectoJava1 {
+
+    private static final Logger logger = Logger.getLogger(Project.class);
 
     public ProyectoJava2() {
         super();
@@ -41,6 +46,44 @@ public class ProyectoJava2 extends ProyectoJava1 {
     // <editor-fold defaultstate="collapsed" desc="static final arrays">
     private static final String[] NECESSARY_BPL_ENTITY_NAMES = {
         "Usuario"
+    };
+
+    private static final String[] NECESSARY_DAO_ENTITY_NAMES = {
+        "AccionArchivoCargado",
+        "ArchivoAdjunto",
+        "ClaseRecurso",
+        "ColumnasOcultas",
+        "ConjuntoSegmento",
+        "DialogoDinamicoRemoto",
+        "Dominio",
+        "DominioParametro",
+        "ElementoSegmento",
+        "FiltroFuncion",
+        "Funcion",
+        "FuncionParametro",
+        "GrupoUsuario",
+        "ModuloAplicacion",
+        "Pagina",
+        "PaginaEspecial",
+        "Parametro",
+        "RastroFuncion",
+        "RastroInforme",
+        "RastroProceso",
+        "Rol",
+        "RolAplicacion",
+        "RolFiltroFuncion",
+        "RolFuncion",
+        "RolFuncionPar",
+        "RolPagina",
+        "RolPaginaEspecial",
+        "RolUsuario",
+        "RolVistaFuncion",
+        "TareaUsuario",
+        "TareaUsuarioCorreo",
+        "Usuario",
+        "UsuarioModulo",
+        "UsuarioSegmento",
+        "VistaFuncion"
     };
 
     // Found 54 matches of import (\w+\.)+\w+Facade\w+; in 17 files.
@@ -63,6 +106,7 @@ public class ProyectoJava2 extends ProyectoJava1 {
         "RastroInforme",
         "RastroProceso",
         "Rol",
+        "RolAplicacion",
         "TareaUsuario",
         "TareaUsuarioCorreo",
         "Usuario",
@@ -358,6 +402,7 @@ public class ProyectoJava2 extends ProyectoJava1 {
         paginaMapaSitio.setLocalizedLabel(Bundle.SPANISH, "Mapa del Sitio");
         paginaMapaSitio.setLocalizedShortDescription(Bundle.ENGLISH, "Site Map");
         paginaMapaSitio.setLocalizedShortDescription(Bundle.SPANISH, "Mapa del Sitio");
+        paginaMapaSitio.setPublicView(true);
         paginaMapaSitio.setStartOption(true);
         addSpecialPage(paginaMapaSitio);
     }
@@ -365,14 +410,15 @@ public class ProyectoJava2 extends ProyectoJava1 {
     @Override
     protected void disablePrivateAndOtherContextEntitiesCodeGen() {
         addEntitiesReferencedByPageFields(true);
+        addEntitiesReferencedByLocalEntities();
         super.disablePrivateAndOtherContextEntitiesCodeGen();
     }
 
     private final Set<String> _entitiesReferencedByLocalPageFields = new TreeSet<>();
 
-    protected void addEntitiesReferencedByPageFields() {
-        addEntitiesReferencedByPageFields(false);
-    }
+    private final Set<String> _entitiesReferencedByLocalPageEntities = new TreeSet<>();
+
+    private final Set<String> _contextsReferencedByLocalPageEntities = new TreeSet<>();
 
     protected void addEntitiesReferencedByPageFields(boolean hidden) {
         Set<Entity> entities;
@@ -383,18 +429,109 @@ public class ProyectoJava2 extends ProyectoJava1 {
                         entities = page.getEntitiesReferencedByFields(hidden);
                         if (entities != null && !entities.isEmpty()) {
                             for (Entity entity : entities) {
+                                /* until 22/08/2024
                                 if (entity == null || entity instanceof EnumerationEntity) {
                                     continue;
                                 }
+                                /**/
                                 _entitiesReferencedByLocalPageFields.add(entity.getDataClass().getSimpleName());
                             }
                         }
+                        addLocalPageEntity(page.getEntity());
+                        addLocalPageEntity(page.getMaster());
                     }
                 }
-
             }
         }
 //      System.out.println(_entitiesReferencedByLocalPageFields.toString().replace(",", "\n"));
+        int size = _contextsReferencedByLocalPageEntities.size();
+        String s = size == 1 ? "another app is" : size > 1 ? size + " other apps are" : null;
+        if (s != null) {
+            logger.info(s + " being referenced by local entities " + _contextsReferencedByLocalPageEntities);
+        }
+    }
+
+    private void addLocalPageEntity(Entity entity) {
+        if (entity == null) {
+            return;
+        }
+        String entityName = entity.getDataClass().getSimpleName();
+        if (_entitiesReferencedByLocalPageEntities.contains(entityName)) {
+            return;
+        }
+        _entitiesReferencedByLocalPageEntities.add(entityName);
+        Entity entityRoot = entity.getRoot();
+        for (Property property : entityRoot.getPropertiesList()) {
+            if (property instanceof Entity reference) {
+                addLocalPageEntityReference(reference);
+            }
+        }
+        for (Operation operation : entityRoot.getOperationsList()) {
+            for (Parameter parameter : operation.getParametersList()) {
+                if (parameter instanceof Entity reference) {
+                    addLocalPageEntityReference(reference);
+                }
+            }
+        }
+    }
+
+    private void addLocalPageEntityReference(Entity reference) {
+        _entitiesReferencedByLocalPageEntities.add(reference.getDataClass().getSimpleName());
+        Entity referenceRoot = reference.getRoot();
+        if (referenceRoot.isApplicationDefaultLocation()) {
+            return;
+        }
+        String host = StringUtils.trimToEmpty(referenceRoot.getApplicationOrigin());
+        String root = StringUtils.trimToEmpty(referenceRoot.getApplicationContextRoot());
+        _contextsReferencedByLocalPageEntities.add(host + "/" + root);
+    }
+
+    private final Set<String> _entitiesReferencedByLocalEntities = new TreeSet<>();
+
+    protected void addEntitiesReferencedByLocalEntities() {
+        for (Entity entity : getEntitiesList()) {
+            if (entity.isApplicationDefaultLocation()) {
+                addReferencedEntity(entity);
+            }
+        }
+        if (isMultiApplication()) {
+            int size = _entitiesReferencedByLocalEntities.size();
+            if (size > 0) {
+                logger.info(size + " entities being referenced by local entities "/* + _entitiesReferencedByLocalEntities*/);
+            }
+        }
+    }
+
+    private void addReferencedEntity(Entity entity) {
+        String entityName = entity.getDataClass().getSimpleName();
+        if (_entitiesReferencedByLocalEntities.contains(entityName)) {
+            return;
+        }
+        _entitiesReferencedByLocalEntities.add(entityName);
+        Entity entityRoot = entity.getRoot();
+        for (Property property : entityRoot.getPropertiesList()) {
+            if (property instanceof Entity reference) {
+                addReferencedEntity(reference);
+            }
+        }
+        for (EntityCollection collection : entityRoot.getEntityCollectionsList()) {
+            addReferencedEntity(collection.getTargetEntity());
+        }
+        List<Property> referencesList = entityRoot.getReferencesList();
+        for (Property reference : referencesList) {
+            if (reference instanceof EntityReference entityReference) {
+                if (Navigability.BIDIRECTIONAL.equals(entityReference.getNavigability())) {
+                    addReferencedEntity(entityReference.getDeclaringEntityRoot());
+                }
+            }
+        }
+        for (Operation operation : entityRoot.getOperationsList()) {
+            for (Parameter parameter : operation.getParametersList()) {
+                if (parameter instanceof Entity reference) {
+                    addReferencedEntity(reference);
+                }
+            }
+        }
     }
 
     @Override
@@ -403,11 +540,26 @@ public class ProyectoJava2 extends ProyectoJava1 {
     }
 
     @Override
-    protected boolean isOptionalDafCodeGen(Entity entity) {
-        return !(entity == null || entity instanceof EnumerationEntity || necessary(entity) || necessary(entity, NECESSARY_DAF_ENTITY_NAMES));
+    protected boolean isOptionalDaoCodeGen(Entity entity) {
+        return !(entity == null || necessaryDao(entity) || necessary(entity, NECESSARY_DAO_ENTITY_NAMES));
     }
 
-    private boolean necessary(Entity entity) {
+    private boolean necessaryDao(Entity entity) {
+        // Each entity requires Entity Class, Constants and Entity Base Interface
+        // Each enumeration entity also requires Enumeration
+        return _entitiesReferencedByLocalEntities.contains(entity.getDataClass().getSimpleName());
+    }
+
+    @Override
+    protected boolean isOptionalDafCodeGen(Entity entity) {
+        /* until 22/08/2024
+        return !(entity == null || entity instanceof EnumerationEntity || necessaryDaf(entity) || necessary(entity, NECESSARY_DAF_ENTITY_NAMES));
+        /**/
+        return (entity instanceof EnumerationEntity) ? isOptionalDaoCodeGen(entity)
+            : !(entity == null || necessaryDaf(entity) || necessary(entity, NECESSARY_DAF_ENTITY_NAMES));
+    }
+
+    private boolean necessaryDaf(Entity entity) {
         // Each entity reference page field requires conversion and each Converter requires the Facade
         return _entitiesReferencedByLocalPageFields.contains(entity.getDataClass().getSimpleName());
     }

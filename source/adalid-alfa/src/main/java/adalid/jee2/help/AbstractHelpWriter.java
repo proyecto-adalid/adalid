@@ -48,6 +48,11 @@ public abstract class AbstractHelpWriter implements JavaWebProject {
     }
 
     @Override
+    public boolean isRoleWebAppDissociationAllowed() {
+        return javaWebProject != null && javaWebProject.isRoleWebAppDissociationAllowed();
+    }
+
+    @Override
     public String getEarProjectName() {
         return javaWebProject == null ? "?" : javaWebProject.getEarProjectName();
     }

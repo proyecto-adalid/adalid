@@ -58,7 +58,7 @@ public class BarraBotonesAccion2 extends AbstractHelpWriter {
             + "Al hacer nuevamente clic sobre el botón las filas se ordenan descendentemente. "
             + "Para ordenar por más de una columna se debe presionar la tecla SHIFT al hacer clic sobre el botón de las columnas adicionales. "
             + BR + BR
-            + "El componente que se encuentra por debajo del nombre de cada columna permite filtrar aún más el resultado "
+            + "El componente que se encuentra por debajo del nombre de cada columna permite filtrar aun más el resultado "
             + "obtenido al consultar la base de datos con los criterios especificados en el diálogo de criterios de búsqueda; "
             + "de esta manera, el usuario puede ocultar algunas filas sin necesidad de hacer una nueva consulta (a la base de datos). "
             + "La barra muestra un cuadro de texto para las columnas que corresponden a referencias a otras entidades, "

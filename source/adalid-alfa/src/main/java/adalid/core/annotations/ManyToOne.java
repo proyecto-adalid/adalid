@@ -130,7 +130,7 @@ public @interface ManyToOne {
 
     /**
      * quickAdding especifica el filtro de la función Adición Rápida para esta relación. Su valor es uno de los elementos de la enumeración
-     * QuickAddingFilter. Seleccione ANY o MISSING para incluir todas las instancias o solo las instancias aún no agregadas, respectivamente.
+     * QuickAddingFilter. Seleccione ANY o MISSING para incluir todas las instancias o solo las instancias aun no agregadas, respectivamente.
      * Seleccione NONE para deshabilitar la función Adición Rápida para esta relación. El valor predeterminado del atributo es NONE.
      *
      * @return quickAdding

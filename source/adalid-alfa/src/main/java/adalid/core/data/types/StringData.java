@@ -307,6 +307,30 @@ public class StringData extends CharacterPrimitive {
         return getMaxLength() == null;
     }
 
+    // <editor-fold defaultstate="collapsed" desc="since 25/06/2024">
+    private FetchType _fetchType = FetchType.EAGER;
+
+    public FetchType getFetchType() {
+        return _fetchType;
+    }
+
+    /**
+     * El método setFetchType se utiliza para establecer la estrategia para obtener datos de la base de datos. Este método solo aplica si la meta
+     * propiedad tiene longitud ilimitada, es decir, su maxLength es 0. Con la estrategia EAGER, el valor de la propiedad se obtiene simultáneamente
+     * con el resto de las propiedades de la entidad. Con la estrategia LAZY, el valor se obtiene posteriormente, por demanda, cuando se accede a la
+     * propiedad por primera vez. El valor predeterminado del atributo es EAGER.
+     *
+     * @param fetchType especifica si la operación de consulta obtiene el valor de la propiedad simultáneamente con el resto de las propiedades de la
+     * entidad o posteriormente, por demanda. Su valor es uno de los elementos de la enumeración FetchType. Seleccione EAGER para obtener el valor de
+     * la propiedad simultáneamente con el resto de las propiedades de la entidad; seleccione LAZY para obtenerlo posteriormente, por demanda;
+     * alternativamente, omita el elemento o seleccione UNSPECIFIED para utilizar el valor predeterminado del atributo. El valor predeterminado del
+     * atributo es EAGER.
+     */
+    public void setFetchType(FetchType fetchType) {
+        _fetchType = fetchType;
+    }
+    // </editor-fold>
+
     /**
      * @return the displayLength
      */

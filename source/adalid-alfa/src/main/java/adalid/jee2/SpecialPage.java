@@ -120,6 +120,16 @@ public class SpecialPage {
         return _publicView;
     }
 
+    /**
+     * El método setPublicView se utiliza para establecer si la página especial es, o no, pública; es decir, si la página puede, o no, ser utilizada
+     * por todos los usuarios del sistema, aun cuando no tengan autorización explícita para hacerlo. Su valor predeterminado es false.
+     *
+     * @param b true para que la página especial sea pública. Su valor predeterminado es false.
+     */
+    public void setPublicView(boolean b) {
+        _publicView = b;
+    }
+
     public boolean isStartOption() {
         return _startOption;
     }

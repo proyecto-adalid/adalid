@@ -370,6 +370,16 @@ public interface CharacterExpression extends Expression {
     BooleanComparisonX isIn(CharacterExpression... y);
 
     /**
+     * El método <b>isIn</b> contruye una expresión lógica que genera la comparación de esta expresión (operando X) con el conjunto de instancias que
+     * se obtiene ejecutando la instrucción SELECT de SQL que recibe como argumento (operando Y). La comparación resulta en verdadero si X es igual a
+     * algún elemento de Y.
+     *
+     * @param y operando Y
+     * @return expresión lógica que genera la comparación de los operandos.
+     */
+    BooleanComparisonX isIn(String y);
+
+    /**
      * El método <b>isNotIn</b> contruye una expresión lógica que genera la comparación de esta expresión (operando X) con el conjunto de expresiones
      * que recibe como argumento (operando Y). La comparación resulta en verdadero si X no es igual a algún elemento de Y.
      *
@@ -377,6 +387,16 @@ public interface CharacterExpression extends Expression {
      * @return expresión lógica que genera la comparación de los operandos.
      */
     BooleanComparisonX isNotIn(CharacterExpression... y);
+
+    /**
+     * El método <b>isNotIn</b> contruye una expresión lógica que genera la comparación de esta expresión (operando X) con el conjunto de instancias
+     * que se obtiene ejecutando la instrucción SELECT de SQL que recibe como argumento (operando Y). La comparación resulta en verdadero si X no es
+     * igual a algún elemento de Y.
+     *
+     * @param y operando Y
+     * @return expresión lógica que genera la comparación de los operandos.
+     */
+    BooleanComparisonX isNotIn(String y);
 
     /**
      * El método <b>isBetween</b> contruye una expresión lógica que genera la comparación de esta expresión (operando X) con las expresiones que
@@ -740,6 +760,16 @@ public interface CharacterExpression extends Expression {
     BooleanComparisonX isNullOrIn(CharacterExpression... y);
 
     /**
+     * El método <b>isNullOrIn</b> contruye una expresión lógica que genera la comparación de esta expresión (operando X) con el conjunto de
+     * instancias que se obtiene ejecutando la instrucción SELECT de SQL que recibe como argumento (operando Y). La comparación resulta en verdadero
+     * si el valor del operando X es nulo o si X es igual a algún elemento de Y.
+     *
+     * @param y operando Y
+     * @return expresión lógica que genera la comparación de los operandos.
+     */
+    BooleanComparisonX isNullOrIn(String y);
+
+    /**
      * El método <b>isNullOrNotIn</b> contruye una expresión lógica que genera la comparación de esta expresión (operando X) con el conjunto de
      * expresiones que recibe como argumento (operando Y). La comparación resulta en verdadero si el valor del operando X es nulo o si X no es igual a
      * algún elemento de Y.
@@ -748,6 +778,16 @@ public interface CharacterExpression extends Expression {
      * @return expresión lógica que genera la comparación de los operandos.
      */
     BooleanComparisonX isNullOrNotIn(CharacterExpression... y);
+
+    /**
+     * El método <b>isNullOrNotIn</b> contruye una expresión lógica que genera la comparación de esta expresión (operando X) con el conjunto de
+     * instancias que se obtiene ejecutando la instrucción SELECT de SQL que recibe como argumento (operando Y). La comparación resulta en verdadero
+     * si el valor del operando X es nulo o si X no es igual a algún elemento de Y.
+     *
+     * @param y operando Y
+     * @return expresión lógica que genera la comparación de los operandos.
+     */
+    BooleanComparisonX isNullOrNotIn(String y);
 
     /**
      * El método <b>isNullOrBetween</b> contruye una expresión lógica que genera la comparación de esta expresión (operando X) con las expresiones que

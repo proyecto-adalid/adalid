@@ -478,7 +478,7 @@ public class Writer {
         this.subject = subject == null ? this : subject;
         this.subjectKey = StringUtils.isBlank(subjectKey) ? StringUtils.uncapitalize(this.subject.getClass().getSimpleName()) : subjectKey.trim();
 //      logger.info(this.subjectKey + "=(" + this.subject.getClass().getName() + ")" + this.subject);
-        logger.info(subjectKey + "=" + subject);
+//      logger.info(subjectKey + "=" + subject);
 //      velocityPropertiesFile = PropertiesHandler.getVelocityPropertiesFile();
 //      velocityExtendedProperties = PropertiesHandler.getExtendedProperties(velocityPropertiesFile);
 //      velocityFileResourceLoaderPathArray = velocityExtendedProperties.getStringArray(FILE_RESOURCE_LOADER_PATH);
@@ -500,7 +500,7 @@ public class Writer {
 //  }
 //
     public boolean write(String platform) {
-        log(Level.INFO, "write", "platform=" + platform);
+        logger.trace("writing " + subjectKey + " " + subject + " with platform " + platform);
         resetCounters();
         if (isInvalidBootstrapping()) {
             return false;
@@ -536,7 +536,7 @@ public class Writer {
         String projectObjectModel = properties.getProperty(PROJECT_OBJECT_MODEL);
         String projectVersionRequirement = properties.getProperty(PROJECT_VERSION_REQUIREMENT);
         if (StringUtils.isBlank(projectVersionRequirement)) {
-            logger.info("platform requires no specific version of ADALID");
+//          logger.info("platform requires no specific version of ADALID");
             return true;
         }
         ProjectObjectModelReader pom;
@@ -700,8 +700,8 @@ public class Writer {
                         prevDir = StringUtils.removeEnd(prevPath, template);
                         currDir = StringUtils.removeEnd(currPath, template);
                         message = MessageFormat.format(pattern, template, prevDir, currDir);
-                        log(Level.WARN, message);
-                        warnings++;
+                        log(_alertLevel, message);
+                        alerts++;
                     } else if (BitUtils.valueOf(disabled)) {
                         processedTemplatePropertiesFileMap.put(template, currPath);
                         disabledTemplates++;
@@ -1081,11 +1081,17 @@ public class Writer {
         Properties properties = mergeProperties(fileContext, templatePropertiesFile);
         String method = StringUtils.trimToNull(properties.getProperty(TP_PROCESS_FILE_METHOD));
         if (method != null && file.exists()) {
+            String format = null;
+            String SVG = "(SVG)";
+            if (StringUtils.endsWithIgnoreCase(method, SVG)) {
+                method = StringUtils.removeEndIgnoreCase(method, SVG);
+                format = "svg";
+            }
             switch (method) {
                 case "PlantUML.generateImage" ->
-                    PlantUML.generateImage(file);
+                    PlantUML.generateImage(file, format);
                 case "PlantUML.generateImageAndDeleteSourceFile" -> {
-                    PlantUML.generateImage(file, "svg");
+                    PlantUML.generateImage(file, format);
                     FileUtils.deleteQuietly(file);
                 }
             }
@@ -1145,6 +1151,7 @@ public class Writer {
          * special characters
          */
         context.put("BACKSLASH", String.valueOf('\\'));
+        context.put("CURRENCY", String.valueOf('¤'));
         context.put("DOLLAR", String.valueOf('$'));
         context.put("NOT", String.valueOf('!'));
         context.put("POUND", String.valueOf('#'));

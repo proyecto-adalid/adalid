@@ -242,6 +242,17 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
 
     // <editor-fold defaultstate="collapsed" desc="Special expression building protected static methods">
     /**
+     * El método <b>exists</b> contruye una expresión lógica para la evaluación del resultado del query que recibe como argumento (operando X). La
+     * evaluación resulta en verdadero si el resultado de X es verdadero.
+     *
+     * @param x operando X
+     * @return segmento de selección para la evaluación del resultado del query nativo que recibe como argumento (operando X).
+     */
+    protected static BooleanComparisonX exists(String x) {
+        return XB.AnyType.Comparison.exists(x);
+    }
+
+    /**
      * El método <b>exists</b> contruye un segmento de selección para la evaluación del resultado del query nativo que recibe como argumento (operando
      * X). La evaluación resulta en verdadero si el resultado de X es verdadero.
      *
@@ -250,6 +261,17 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
      */
     protected static NativeQuerySegment exists(NativeQuery x) {
         return NativeQuerySegment.of(XB.AnyType.Comparison.exists(x));
+    }
+
+    /**
+     * El método <b>exists</b> contruye una expresión lógica para la evaluación del resultado del query que recibe como argumento (operando X). La
+     * evaluación resulta en verdadero si el resultado de X es falso.
+     *
+     * @param x operando X
+     * @return segmento de selección para la evaluación del resultado del query nativo que recibe como argumento (operando X).
+     */
+    protected static BooleanComparisonX notExists(String x) {
+        return XB.AnyType.Comparison.notExists(x);
     }
 
     /**
@@ -368,6 +390,11 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
      *
      */
     private final Map<String, AllocationOverride> _allocationOverrides = new LinkedHashMap<>();
+
+    /**
+     *
+     */
+    private String _superViewName, _supraViewName;
 
     /**
      *
@@ -1278,6 +1305,11 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
      *
      */
     private boolean _bwsCodeGenEnabled = Project.getDefaultEntityCodeGenBWS(); // && !isEnumerationEntity();
+
+    /**
+     *
+     */
+    private boolean _daoCodeGenEnabled = Project.getDefaultEntityCodeGenDAO();
 
     /**
      *
@@ -2500,6 +2532,44 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
     }
 
     /**
+     * @return the superViewName
+     */
+    @Override
+    public String getSuperViewName() {
+        return _superViewName;
+    }
+
+    /**
+     * El método setSuperViewName se utiliza para establecer el nombre de la super-vista de la entidad. Si este método no es ejecutado, el nombre de
+     * la super-vista se determina a partir del nombre SQL de la entidad.
+     *
+     * @param viewName nombre de la vista
+     */
+    @Override
+    public void setSuperViewName(String viewName) {
+        _superViewName = viewName;
+    }
+
+    /**
+     * @return the supraViewName
+     */
+    @Override
+    public String getSupraViewName() {
+        return _supraViewName;
+    }
+
+    /**
+     * El método setSupraViewName se utiliza para establecer el nombre de la supra-vista de la entidad. Si este método no es ejecutado, el nombre de
+     * la supra-vista se determina a partir del nombre SQL de la entidad.
+     *
+     * @param viewName nombre de la vista
+     */
+    @Override
+    public void setSupraViewName(String viewName) {
+        _supraViewName = viewName;
+    }
+
+    /**
      * @return the primaryKeyFieldName
      */
     @Override
@@ -3664,7 +3734,7 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
     /**
      * @return the table responsive mode
      */
-//  @Override
+    @Override
     public TableResponsiveMode getTableResponsiveMode() {
         return TableResponsiveMode.UNSPECIFIED.equals(_tableResponsiveMode) || Project.isReplaceEntityTableViewResponsiveMode()
             ? Project.getDefaultEntityTableViewResponsiveMode() : _tableResponsiveMode;
@@ -3672,10 +3742,11 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
 
     /**
      * El método setTableResponsiveMode se utiliza para establecer el modo "responsive" de las vistas (páginas) de consulta y/o registro tabular de la
-     * entidad. Su valor es uno de los elementos de la enumeración TableResponsiveMode. Seleccione PRIORITY para mostrar las columnas de la tabla
-     * dependiendo de su prioridad, según el tamaño de la pantalla. Seleccione REFLOW para mostrar todas las columnas, apiladas o no, según el tamaño
-     * de la pantalla. Seleccione NONE para que la tabla no sea "responsive". Seleccione UNSPECIFIED para que se utilice el valor establecido mediante
-     * el método setDefaultEntityTableViewResponsiveMode del meta-proyecto, cuyo valor inicial es NONE.
+     * entidad. Su valor es uno de los elementos de la enumeración TableResponsiveMode. Seleccione AUTO o PRIORITY para mostrar las columnas de la
+     * tabla dependiendo de su prioridad, según el tamaño de la pantalla; la diferencia entre estas opciones es que, especificando AUTO, la prioridad
+     * de las columnas se determina de manera automática. Seleccione REFLOW para mostrar todas las columnas, apiladas o no, según el tamaño de la
+     * pantalla. Seleccione NONE para que la tabla no sea "responsive". Seleccione UNSPECIFIED para que se utilice el valor establecido mediante el
+     * método setDefaultEntityTableViewResponsiveMode del meta-proyecto, cuyo valor inicial es NONE.
      *
      * @param responsiveMode modo "responsive" de la tabla
      */
@@ -4952,6 +5023,28 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
     }
 
     /**
+     * @return the data access object code generation enabled indicator
+     */
+    @Override
+    public boolean isDaoCodeGenEnabled() {
+        return _daoCodeGenEnabled;
+    }
+
+    /**
+     * El método setDaoCodeGenEnabled se utiliza para especificar si se debe, o no, generar un objeto de acceso a datos (DAO, por las siglas en inglés
+     * de Data Access Object) para la entidad.
+     *
+     * El método setDaoCodeGenEnabled debe ejecutarse en el método settleAttributes de la entidad.
+     *
+     * @param enabled true o false para generar, o no, código DAO para la entidad
+     */
+    @Override
+    public void setDaoCodeGenEnabled(boolean enabled) {
+        checkScope();
+        _daoCodeGenEnabled = enabled;
+    }
+
+    /**
      * @return the data access facade code generation enabled indicator
      */
     @Override
@@ -5189,6 +5282,11 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
         };
     }
 
+    public void setReferenceStyle(EntityReferenceStyle referenceStyle) {
+        checkScope();
+        _referenceStyle = referenceStyle != null ? referenceStyle : EntityReferenceStyle.UNSPECIFIED;
+    }
+
     private EntityReferenceStyle defaultReferenceStyle(Property code, Property name, EntityReferenceStyle defaultStyle) {
         SearchType searchType = getSearchType();
         if (SearchType.LIST.equals(searchType) || SearchType.RADIO.equals(searchType)) {
@@ -5244,6 +5342,11 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
         };
     }
 
+    public void setReferenceFilterBy(EntityReferenceProperty referenceFilterBy) {
+        checkScope();
+        _referenceFilterBy = referenceFilterBy != null ? referenceFilterBy : EntityReferenceProperty.UNSPECIFIED;
+    }
+
     /**
      * @return the reference filter-by property
      */
@@ -5268,6 +5371,11 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
             : /*isEnumerationEntity() ? EntityReferenceFilterType.LIST :*/ EntityReferenceFilterType.TEXTBOX;
     }
 
+    public void setReferenceFilterType(EntityReferenceFilterType referenceFilterType) {
+        checkScope();
+        _referenceFilterType = referenceFilterType != null ? referenceFilterType : EntityReferenceFilterType.UNSPECIFIED;
+    }
+
     /**
      * @return the reference sort-by
      */
@@ -5284,6 +5392,11 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
             default ->
                 defaultProperty;
         };
+    }
+
+    public void setReferenceSortBy(EntityReferenceProperty referenceSortBy) {
+        checkScope();
+        _referenceSortBy = referenceSortBy != null ? referenceSortBy : EntityReferenceProperty.UNSPECIFIED;
     }
 
     /**
@@ -5331,6 +5444,11 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
             : isEnumerationEntity() ? SearchType.LIST : SearchType.DISPLAY;
     }
 
+    public void setSearchType(SearchType searchType) {
+        checkScope();
+        _searchType = searchType != null ? searchType : SearchType.UNSPECIFIED;
+    }
+
     /**
      * @return the specified list style
      */
@@ -5368,6 +5486,11 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
         return ListStyle.UNSPECIFIED;
     }
 
+    public void setListStyle(ListStyle listStyle) {
+        checkScope();
+        _listStyle = listStyle != null ? listStyle : ListStyle.UNSPECIFIED;
+    }
+
     private ListStyle defaultListStyle(Property code, Property name, ListStyle defaultStyle) {
         return switch (_referenceStyle) {
             case NAME ->
@@ -5403,7 +5526,22 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
      * @return the radio columns
      */
     public int getRadioColumns() {
+        if (SearchType.RADIO.equals(_searchType)) {
+            if (_radioColumns == 0) {
+                int size = unfilteredInstances() ? getInstancesList().size() : 0;
+                return size > 0 && 12 % size == 0 ? size : _radioColumns;
+            }
+        }
         return _radioColumns;
+    }
+
+    public void setRadioColumns(int radioColumns) {
+        checkScope();
+        _radioColumns = Math.min(12, Math.max(0, radioColumns));
+    }
+
+    boolean unfilteredInstances() {
+        return isEnumerationEntity() && getSearchQueryFilter() == null;
     }
 
     /**
@@ -5411,6 +5549,11 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
      */
     public boolean isDescendingOrder() {
         return _descendingOrder;
+    }
+
+    public void setDescendingOrder(boolean descendingOrder) {
+        checkScope();
+        _descendingOrder = descendingOrder;
     }
 
     /**
@@ -5421,12 +5564,22 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
         return _searchDisplayFormat;
     }
 
+    public void setSearchDisplayFormat(SearchDisplayFormat searchDisplayFormat) {
+        checkScope();
+        _searchDisplayFormat = searchDisplayFormat != null ? searchDisplayFormat : SearchDisplayFormat.UNSPECIFIED;
+    }
+
     /**
      * @return the search display mode
      */
     @Override
     public DisplayMode getSearchDisplayMode() {
         return _searchDisplayMode;
+    }
+
+    public void setSearchDisplayMode(DisplayMode searchDisplayMode) {
+        checkScope();
+        _searchDisplayMode = searchDisplayMode != null ? searchDisplayMode : DisplayMode.UNSPECIFIED;
     }
 
     @Override
@@ -5563,6 +5716,11 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
         return project instanceof JavaWebProject ? (JavaWebProject) project : null;
     }
 
+    protected boolean isRoleWebAppDissociationAllowed() {
+        JavaWebProject jwp = getJavaWebProject();
+        return jwp != null && jwp.isRoleWebAppDissociationAllowed();
+    }
+
     /**
      * @return the search query filter
      */
@@ -5661,6 +5819,25 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
             default ->
                 and(array[0], array[1], (Check[]) ArrayUtils.subarray(array, 2, i));
         };
+    }
+
+    private final Map<String, Artifact> _searchQueryFilterParametersMap = new LinkedHashMap<>();
+
+    public void addSearchQueryFilterParameter(String key, DataArtifact value) {
+        if (key != null && value != null) {
+            _searchQueryFilterParametersMap.put(key, value);
+        }
+    }
+
+    public Map<String, Artifact> addSearchQueryFilterParametersMap(Map<String, Artifact> map) {
+        if (map != null && !map.isEmpty()) {
+            _searchQueryFilterParametersMap.putAll(map);
+        }
+        return _searchQueryFilterParametersMap;
+    }
+
+    public Map<String, Artifact> getSearchQueryFilterParametersMap() {
+        return _searchQueryFilterParametersMap;
     }
 
     /**
@@ -7265,7 +7442,7 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
      */
     @Override
     public Object getInitialValue() {
-        return _initialValue;
+        return getInitialValue(_initialValue);
     }
 
     /**
@@ -7278,7 +7455,6 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
     @Override
     public void setInitialValue(Entity initialValue) {
         checkScope();
-//      _initialValue = validInitialValue(initialValue) ? initialValue.self() : null;
         _initialValue = validInitialValue(initialValue) ? initialValue : null;
     }
 
@@ -8525,6 +8701,7 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
             if (declaringArtifact instanceof Operation) {
                 settleExpressions();
             }
+            setSqlName(null); // since 23/08/2024 - Nullify the SQL name eventually set for the root entity
             verifyLabels();
             verifyDescriptions();
         }
@@ -8935,6 +9112,8 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
         boolean ok = super.finalise();
         if (ok) {
             _atlas.finalise();
+            finaliseProperties();
+            finaliseCollections();
             setKeyFields();
             setBusinessKey();
             setKeyProperties();
@@ -8946,6 +9125,14 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
             setPropertiesDisplaySortKey();
         }
         return ok;
+    }
+
+    protected void finaliseProperties() {
+        // field annotations can be overriden here
+    }
+
+    protected void finaliseCollections() {
+        // field annotations can be overriden here
     }
 
     @Override
@@ -8960,9 +9147,92 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
     }
 
     private void finishProperties() {
+        setResponsivePriorities();
         for (Property property : getPropertiesList()) {
             property.finish();
         }
+    }
+
+    private void setResponsivePriorities() {
+        if (isTableViewEnabled() && TableResponsiveMode.AUTO.equals(getTableResponsiveMode())) {
+            boolean b = false; // la tabla tiene al menos una columna con prioridad 0
+            Property p = getBusinessKeyProperty();
+            if (prioritizable(p)) {
+                p.setResponsivePriority(0);
+                b = true;
+            }
+            p = getNameProperty();
+            if (prioritizable(p)) {
+                p.setResponsivePriority(0);
+                b = true;
+            }
+            if (!b) {
+                for (Property q : getPropertiesList()) {
+                    if (prioritizable(q) && q.isUnique()) {
+                        q.setResponsivePriority(0);
+                        b = true;
+                        break;
+                    }
+                }
+                if (!b) {
+                    for (Key k : getKeysList()) {
+                        if (k.isUnique()) {
+                            int n = 0;
+                            List<KeyField> keyFields = k.getKeyFieldsList();
+                            for (KeyField kf : keyFields) {
+                                if (prioritizable(kf.getProperty())) {
+                                    n++;
+                                }
+                            }
+                            b = n > 0 && n == keyFields.size();
+                            if (b) {
+                                for (KeyField kf : keyFields) {
+                                    kf.getProperty().setResponsivePriority(0);
+                                }
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+            if (b) {
+                if (this instanceof PersistentEntity pe) {
+                    p = pe.getDiscriminatorProperty();
+                    if (prioritizable(p)) {
+                        p.setResponsivePriority(1);
+                    }
+                }
+                p = getInactiveIndicatorProperty();
+                if (prioritizable(p)) {
+                    p.setResponsivePriority(4);
+                }
+                Entity e = getStateProperty();
+                if (e instanceof Property q && prioritizable(q)) {
+                    q.setResponsivePriority(4);
+                }
+                e = getParentProperty();
+                if (e instanceof Property q && prioritizable(q)) {
+                    q.setResponsivePriority(5);
+                }
+                e = getOwnerProperty();
+                if (e instanceof Property q && prioritizable(q)) {
+                    q.setResponsivePriority(5);
+                }
+                DataArtifact a = getSegmentProperty();
+                if (a instanceof Property q && prioritizable(q)) {
+                    q.setResponsivePriority(5);
+                }
+                for (Property q : getPropertiesList()) {
+                    if (prioritizable(q)) {
+                        q.setResponsivePriority(6);
+                    }
+                }
+            }
+        }
+    }
+
+    private boolean prioritizable(Property p) {
+        return p != null && p.getResponsivePriority() < 0 && p.isTableField();
     }
 
     /**
@@ -11257,6 +11527,7 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
             if (annotation != null) {
                 _bplCodeGenEnabled = annotation.bpl().toBoolean(_bplCodeGenEnabled);
                 _bwsCodeGenEnabled = annotation.bws().toBoolean(_bwsCodeGenEnabled);
+                _daoCodeGenEnabled = annotation.dao().toBoolean(_daoCodeGenEnabled);
                 _dafCodeGenEnabled = annotation.daf().toBoolean(_dafCodeGenEnabled);
                 _fwsCodeGenEnabled = annotation.fws().toBoolean(_fwsCodeGenEnabled);
                 _guiCodeGenEnabled = annotation.gui().toBoolean(_guiCodeGenEnabled);
@@ -11329,10 +11600,10 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
             EntityReferenceDisplay annotation = annotatedClass.getAnnotation(EntityReferenceDisplay.class);
             if (annotation != null) {
                 _referenceAvatar = annotation.avatar().toBoolean(_referenceAvatar);
-                _referenceStyle = annotation.style();
-                _referenceFilterBy = annotation.filter();
-                _referenceFilterType = annotation.filterType();
-                _referenceSortBy = annotation.sort();
+                _referenceStyle = specified(annotation.style(), _referenceStyle);
+                _referenceFilterBy = specified(annotation.filter(), _referenceFilterBy);
+                _referenceFilterType = specified(annotation.filterType(), _referenceFilterType);
+                _referenceSortBy = specified(annotation.sort(), _referenceSortBy);
                 _annotatedWithEntityReferenceDisplay = true;
             }
         }
@@ -11343,10 +11614,10 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
         if (_annotatedWithEntityReferenceDisplay) {
             EntityReferenceDisplay annotation = field.getAnnotation(EntityReferenceDisplay.class);
             _referenceAvatar = annotation.avatar().toBoolean(_referenceAvatar);
-            _referenceStyle = annotation.style();
-            _referenceFilterBy = annotation.filter();
-            _referenceFilterType = annotation.filterType();
-            _referenceSortBy = annotation.sort();
+            _referenceStyle = specified(annotation.style(), _referenceStyle);
+            _referenceFilterBy = specified(annotation.filter(), _referenceFilterBy);
+            _referenceFilterType = specified(annotation.filterType(), _referenceFilterType);
+            _referenceSortBy = specified(annotation.sort(), _referenceSortBy);
         }
     }
 
@@ -11355,12 +11626,12 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
         if (annotatedClass != null) {
             EntityReferenceSearch annotation = annotatedClass.getAnnotation(EntityReferenceSearch.class);
             if (annotation != null) {
-                _searchType = annotation.searchType();
-                _listStyle = annotation.listStyle();
-                _radioColumns = Math.min(10, Math.max(0, annotation.radioColumns()));
+                _searchType = specified(annotation.searchType(), _searchType);
+                _listStyle = specified(annotation.listStyle(), _listStyle);
+                _radioColumns = Math.min(12, Math.max(0, annotation.radioColumns()));
                 _descendingOrder = annotation.descending();
-                _searchDisplayFormat = annotation.displayFormat();
-                _searchDisplayMode = annotation.displayMode();
+                _searchDisplayFormat = specified(annotation.displayFormat(), _searchDisplayFormat);
+                _searchDisplayMode = specified(annotation.displayMode(), _searchDisplayMode);
                 _annotatedWithEntityReferenceSearch = true;
             }
         }
@@ -11370,12 +11641,12 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
         _annotatedWithEntityReferenceSearch = field.isAnnotationPresent(EntityReferenceSearch.class);
         if (_annotatedWithEntityReferenceSearch) {
             EntityReferenceSearch annotation = field.getAnnotation(EntityReferenceSearch.class);
-            _searchType = annotation.searchType();
-            _listStyle = annotation.listStyle();
-            _radioColumns = Math.min(10, Math.max(0, annotation.radioColumns()));
+            _searchType = specified(annotation.searchType(), _searchType);
+            _listStyle = specified(annotation.listStyle(), _listStyle);
+            _radioColumns = Math.min(12, Math.max(0, annotation.radioColumns()));
             _descendingOrder = annotation.descending();
-            _searchDisplayFormat = annotation.displayFormat();
-            _searchDisplayMode = annotation.displayMode();
+            _searchDisplayFormat = specified(annotation.displayFormat(), _searchDisplayFormat);
+            _searchDisplayMode = specified(annotation.displayMode(), _searchDisplayMode);
         }
     }
 
@@ -12426,6 +12697,8 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
 
     protected static final CharacterScalarX VBAR = XB.VBAR;
 
+    protected static final CharacterScalarX CONTENT_ROOT_DIR = XB.CONTENT_ROOT_DIR;
+
     protected static final CharacterScalarX CURRENT_USER_CODE = XB.CURRENT_USER_CODE;
 
     protected static final NumericScalarX NULL_NUMBER = XB.NULL_NUMBER;
@@ -12506,6 +12779,10 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
 
     protected static CharacterScalarX empty() {
         return EMPTY;
+    }
+
+    protected static CharacterScalarX contentRootDir() {
+        return CONTENT_ROOT_DIR;
     }
 
     protected static CharacterScalarX currentUserCode() {

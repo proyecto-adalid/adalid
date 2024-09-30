@@ -15,6 +15,7 @@ package adalid.util.sql.jee2;
 import adalid.util.*;
 import adalid.util.sql.*;
 import meta.proyecto.comun.EntidadesComunes;
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
 /**
@@ -56,6 +57,16 @@ public class SQLMerger2nd extends Utility {
 
     private static final Logger logger = Logger.getLogger(SqlMerger2nd.class);
 
+    private static String _projectAlias;
+
+    public static String getProjectAlias() {
+        return _projectAlias;
+    }
+
+    public static void setProjectAlias(String alias) {
+        _projectAlias = alias;
+    }
+
     public static void merge(String[] args) {
         SqlMerger2nd merger = new SqlMerger2nd(args);
         if (merger.isInitialised()) {
@@ -63,12 +74,17 @@ public class SQLMerger2nd extends Utility {
             // The project alias is also used to define the default folder used by COPY commands (see the comments on method setOldDataFolder).
             // By default or by specifying a null value, the alias will be either the Oracle schema or the PostgreSQL database name.
             // merger.setProjectAlias("jee2ap101");
+            if (StringUtils.isNotBlank(_projectAlias)) {
+                merger.setProjectAlias(_projectAlias);
+            }
             logger.info("projectAlias=" + merger.getProjectAlias());
             EntidadesComunes entidadesComunes = new EntidadesComunes();
             if (entidadesComunes.build()) {
                 merger.clear();
 //              merger.disableDetailLogging();
                 merger.setCatalogTablesMap(entidadesComunes.getCatalogTablesMap());
+                merger.getExcludableTableNames().add("call_stack");
+                merger.getExcludableTableNames().add("recurso");
                 merger.getCurrentKeyTableNames().add("rol");
                 merger.getMutableKeyTableNames().add("opcion_menu");
                 merger.merge();

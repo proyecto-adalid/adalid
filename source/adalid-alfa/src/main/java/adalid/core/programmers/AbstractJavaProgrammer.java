@@ -384,16 +384,19 @@ public abstract class AbstractJavaProgrammer extends AbstractProgrammer implemen
     protected String getSpecialCharacterValue(SpecialCharacterValue value, ParameterizedExpression px) {
         String string;
         switch (value) {
-            case NULL:
+            case NULL -> {
                 return "null";
-            case EMPTY:
+            }
+            case EMPTY -> {
                 return DQM$ + DQM$;
-            case CURRENT_USER_CODE:
-//              string = "TLC.getUsuarioActual().getCodigoUsuario()";
+            }
+            case CONTENT_ROOT_DIR ->
+                string = "getContentRootDir()";
+            case CURRENT_USER_CODE ->
                 string = "getCurrentUserCode()";
-                break;
-            default:
+            default -> {
                 return null;
+            }
         }
         addSpecialValue(value, px, string);
         return string;
@@ -430,13 +433,14 @@ public abstract class AbstractJavaProgrammer extends AbstractProgrammer implemen
     protected String getSpecialNumericValue(SpecialNumericValue value, ParameterizedExpression px) {
         String string;
         switch (value) {
-            case NULL:
+            case NULL -> {
                 return "null";
-            case CURRENT_USER_ID:
+            }
+            case CURRENT_USER_ID ->
                 string = "getCurrentUserId()";
-                break;
-            default:
+            default -> {
                 return null;
+            }
         }
         addSpecialValue(value, px, string);
         return string;
@@ -689,11 +693,13 @@ public abstract class AbstractJavaProgrammer extends AbstractProgrammer implemen
         }
         // TODO: include CURRENT_USER?
         String[] sqlExpressions = {
+            sqlProgrammer.getSpecialCharacterValue(SpecialCharacterValue.CONTENT_ROOT_DIR),
             sqlProgrammer.getSpecialNumericValue(SpecialNumericValue.CURRENT_USER_ID),
             sqlProgrammer.getSpecialCharacterValue(SpecialCharacterValue.CURRENT_USER_CODE)
         };
         // TODO: include CURRENT_USER?
         String[] javaExpressions = {
+            "'\" + " + getSpecialCharacterValue(SpecialCharacterValue.CONTENT_ROOT_DIR) + " + \"'",
             " \" + " + getSpecialNumericValue(SpecialNumericValue.CURRENT_USER_ID) + " + \" ",
             "'\" + " + getSpecialCharacterValue(SpecialCharacterValue.CURRENT_USER_CODE) + " + \"'"
         };

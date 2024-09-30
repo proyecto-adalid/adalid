@@ -91,8 +91,8 @@ public abstract class ProyectoMaven extends ProyectoJava2 {
     public boolean addProjectDependency(ProjectDependency dependency, ProjectModuleType moduleType) {
         if (dependency != null && dependency.isValid() && moduleType != null) {
             putProjectDependency(dependency, moduleType);
-            if (ProjectModuleType.LIB.equals(moduleType) && ProjectDependencyScope.PROVIDED.getMavenScope().equals(dependency.getScope())) {
-                putProjectDependency(dependency, ProjectModuleType.LIB_DIR);
+            if (ProjectModuleType.LIB.equals(moduleType)) {
+                putProjectDependency(ProjectDependency.of(dependency).setScope(ProjectDependencyScope.RUNTIME), ProjectModuleType.LIB_DIR);
             }
             return true;
         }

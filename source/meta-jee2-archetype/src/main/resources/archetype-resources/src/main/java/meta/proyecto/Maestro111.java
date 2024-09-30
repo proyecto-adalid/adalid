@@ -72,6 +72,10 @@ public class Maestro111 extends Maestro {
 //      setBusinessOperationConfirmationRequired(Kleenean.TRUE);
 //      setDatabaseOperationConfirmationRequired(Kleenean.TRUE);
         /**/
+//      setMultiApplication(true);
+//      addWebApplication(WebApplication.of(...));
+//      setRoleWebAppDissociationAllowed(true);
+        /**/
         setMissingValueGraphicImageName(FA.MISSING_VALUE);
 //      setNullValueGraphicImageName(FA.NULL_VALUE);
         setUnnecessaryValueGraphicImageName(FA.UNNECESSARY_VALUE);
@@ -82,22 +86,20 @@ public class Maestro111 extends Maestro {
     public void configureGenerator() {
         super.configureGenerator();
         loadEnvironmentVariables(LoggingLevel.TRACE);
+//
 //      putEnvironmentVariable(CONTENT_ROOT_DIR_LINUX, "/opt/content-root");
 //      putEnvironmentVariable(CONTENT_ROOT_DIR_WINDOWS, "%SystemDrive%/content-root");
 //
 //      putEnvironmentVariable(ORACLE_DRIVER_ID, "ojdbc11");
 //      putEnvironmentVariable(ORACLE_DRIVER_JAR, "ojdbc11.jar");
-//      putEnvironmentVariable(ORACLE_DRIVER_VERSION, "23.3.0.23.09");
+//      putEnvironmentVariable(ORACLE_DRIVER_VERSION, "23.4.0.24.05");
 //      putEnvironmentVariable(ORACLE_SERVICE, "XEPDB1");
 //      putEnvironmentVariable(PLATAFORMA_JAVA, "jakarta");
 //      putEnvironmentVariable(VERSION_ECLIPSELINK, "4.0.2");
 //      putEnvironmentVariable(VERSION_ORACLE, "21c");
 //      putEnvironmentVariable(VERSION_GLASSFISH, "7.0.6");
 //      putEnvironmentVariable(VERSION_JAVA, "17");
-//      putEnvironmentVariable(VERSION_PRIMEFACES, "13.0.1");
-//      putEnvironmentVariable(VERSION_PRIMEFACES_EXTENSIONS, "13.0.1");
-//      putEnvironmentVariable(VERSION_PRIMEFACES_EXTENSIONS_RESOURCES_CKEDITOR, "12.0.4");
-//      putEnvironmentVariable(VERSION_PRIMEFACES_EXTENSIONS_RESOURCES_MONACOEDITOR, "13.0.1");
+//      putEnvironmentVariable(VERSION_PRIMEFACES, "13.0.10");
 //      putEnvironmentVariable(VERSION_GOOGLE_GSON, "2.10.1");
 //      putEnvironmentVariable(VERSION_THIRD_PARTY_DIR, "5.0");
 //
@@ -106,6 +108,7 @@ public class Maestro111 extends Maestro {
 //      setThemeSwitchingEnabled(true);
 //      setInternetAccessAllowed(true);
 //      setWebServicesEnabled(true);
+//      setPlantUMLEnabled(false);
 //      setProjectMailingEnabled(true);
 //      setProjectTextingEnabled(true);
 //      setDefaultSMSProvider(ShortMessageServiceProvider.TWILIO);

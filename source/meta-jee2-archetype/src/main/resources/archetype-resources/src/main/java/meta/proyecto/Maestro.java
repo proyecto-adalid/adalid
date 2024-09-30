@@ -9,6 +9,7 @@
  */
 package ${package}.meta.proyecto;
 
+import adalid.core.*;
 import adalid.core.annotations.*;
 import adalid.core.enums.*;
 import adalid.jee2.meta.proyecto.base.*;
@@ -23,9 +24,34 @@ public abstract class Maestro extends ProyectoPrime {
     public static final String ACRONYM = "jee2";
 
     /**
-     * Guía de Operación, Proyecto Adalid, Plataforma jee2, versión 5.2
+     * Guía de Operación, Proyecto Adalid, Plataforma jee2
      */
-    public static final String HELP_DOCUMENT_URL = "https://drive.google.com/file/d/1dnvNN_5tAj4nQAnOdHv2TxwV5-6H-3MK/view?usp=sharing"; // 5.2
+    public static final String HELP_DOCUMENT_URL = "https://drive.google.com/file/d/1WbT-VXWP-rOsqn7OZ9uXtq1oKHb40LnI/view?usp=sharing"; // 5.3
+
+    @Override
+    protected void setStaticAttributes() {
+        super.setStaticAttributes();
+        /**/
+        InstanceTag.BLUE.setPillShaped(true);
+        InstanceTag.BLUISH.setPillShaped(true);
+        InstanceTag.CYAN.setPillShaped(true);
+        InstanceTag.CYANISH.setPillShaped(true);
+        InstanceTag.GREEN.setPillShaped(true);
+        InstanceTag.GREENISH.setPillShaped(true);
+        InstanceTag.LIGHT_GREEN.setPillShaped(true);
+        InstanceTag.ORANGE.setPillShaped(true);
+        InstanceTag.ORANGISH.setPillShaped(true);
+        InstanceTag.PURPLE.setPillShaped(true);
+        InstanceTag.PURPLISH.setPillShaped(true);
+        InstanceTag.RED.setPillShaped(true);
+        InstanceTag.REDISH.setPillShaped(true);
+        InstanceTag.SANDY_BEACH.setPillShaped(true);
+        InstanceTag.YELLOW.setPillShaped(true);
+        InstanceTag.YELLOWISH.setPillShaped(true);
+        /**/
+        setDefaultEntityTableViewResponsiveMode(TableResponsiveMode.AUTO);
+        /**/
+    }
 
     @Override
     protected void settleAttributes() {

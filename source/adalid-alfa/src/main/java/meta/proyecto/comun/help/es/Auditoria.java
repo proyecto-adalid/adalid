@@ -27,9 +27,9 @@ public class Auditoria {
             + "El módulo de Auditoría incluye consolas de procesamiento y páginas de consulta para las siguientes clases de entidades: "
             + ul(
                 "Archivos Adjuntos",
-                "Grupos de Procesos (opconal)",
+                "Grupos de Procesos (opcional)",
                 "Rastros de Funciones",
-                "Rastros de Parámetros de Funciones",
+                //"Rastros de Parámetros de Funciones",
                 "Rastros de Informes",
                 "Rastros de Procesos"
             )

@@ -158,7 +158,7 @@ public class ProjectAttributeKeys {
 
     /**
      * true sí se define un directorio de contenido estático seguro para la aplicación; de lo contrario false. El directorio es seguro si no se
-     * configura como raíz de documentos alternativa de la aplicación o del servidor de aplicaciones; de esta manera, aún se podrá acceder a su
+     * configura como raíz de documentos alternativa de la aplicación o del servidor de aplicaciones; de esta manera, aun se podrá acceder a su
      * contenido a través de la interfaz gráfica de la aplicación, sujeto al control de acceso provisto por la aplicación. El valor predeterminado es
      * el especificado para el atributo MEDIA_FILE_EXPOSURE_RISK_ACCEPTABLE; si ese atributo también fue omitido, entonces el valor predeterminado es
      * false.

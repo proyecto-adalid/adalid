@@ -133,7 +133,7 @@ public class RastroFuncion extends AbstractPersistentEntity {
     public LongProperty versionRecurso;
 
     @ColumnField(indexed = Kleenean.FALSE)
-    @PropertyField(table = Kleenean.TRUE, report = Kleenean.TRUE, search = Kleenean.TRUE)
+    @PropertyField(responsivePriority = 5, table = Kleenean.TRUE, report = Kleenean.TRUE, search = Kleenean.TRUE)
     public StringProperty codigoRecurso;
 
     @ColumnField(indexed = Kleenean.FALSE)
@@ -156,7 +156,7 @@ public class RastroFuncion extends AbstractPersistentEntity {
     @ForeignKey(onDelete = OnDeleteAction.NONE, onUpdate = OnUpdateAction.NONE)
     @ManyToOne(navigability = Navigability.UNIDIRECTIONAL, view = MasterDetailView.NONE)
     @ColumnField(nullable = Kleenean.FALSE)
-    @PropertyField(responsivePriority = 5, table = Kleenean.TRUE, report = Kleenean.TRUE)
+    @PropertyField(table = Kleenean.TRUE, report = Kleenean.TRUE)
     public CondicionEjeFun condicionEjeFun;
 
     @StringField(maxLength = 0)

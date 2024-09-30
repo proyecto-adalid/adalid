@@ -183,6 +183,10 @@ public abstract class Dictionary {
         log(false);
     }
 
+    public boolean isEmpty() {
+        return properties.isEmpty();
+    }
+
     private void log(boolean initializing) {
         String path = StringUtils.substringAfter(filePath, USER_DIR).replace(FILE_SEP, "/");
         if (properties.isEmpty()) {

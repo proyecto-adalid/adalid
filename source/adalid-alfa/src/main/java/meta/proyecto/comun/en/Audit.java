@@ -30,6 +30,7 @@ public class Audit extends Project {
     @Override
     protected void settleAttributes() {
         super.settleAttributes();
+        setImmutableModule(true);
         // <editor-fold defaultstate="collapsed" desc="localization of Auditoria's attributes">
         setLocalizedLabel(ENGLISH, "Audit");
         setLocalizedLabel(SPANISH, "Auditoría");

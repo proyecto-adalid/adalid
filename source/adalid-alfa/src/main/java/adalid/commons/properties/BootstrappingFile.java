@@ -45,7 +45,7 @@ public class BootstrappingFile {
                 logger.warn("null value for name parameter; set to " + bootstrapping_file_name());
             } else {
                 bootstrapping_file_name = name;
-                logger.info("using user-defined file name " + bootstrapping_file_name());
+                logger.trace("using user-defined file name " + bootstrapping_file_name());
             }
         } else if (bootstrapping_file_name.equals(name)) {
             logger.debug("file name already set to " + bootstrapping_file_name());

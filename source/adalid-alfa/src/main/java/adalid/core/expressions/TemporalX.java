@@ -136,7 +136,17 @@ public class TemporalX extends VariantX implements TemporalExpression {
     }
 
     @Override
+    public BooleanComparisonX isIn(String y) {
+        return XB.Temporal.Comparison.isIn(this, y);
+    }
+
+    @Override
     public BooleanComparisonX isNotIn(TemporalExpression... y) {
+        return XB.Temporal.Comparison.isNotIn(this, y);
+    }
+
+    @Override
+    public BooleanComparisonX isNotIn(String y) {
         return XB.Temporal.Comparison.isNotIn(this, y);
     }
 
@@ -246,7 +256,17 @@ public class TemporalX extends VariantX implements TemporalExpression {
     }
 
     @Override
+    public BooleanComparisonX isNullOrIn(String y) {
+        return XB.Temporal.Comparison.isNullOrIn(this, y);
+    }
+
+    @Override
     public BooleanComparisonX isNullOrNotIn(TemporalExpression... y) {
+        return XB.Temporal.Comparison.isNullOrNotIn(this, y);
+    }
+
+    @Override
+    public BooleanComparisonX isNullOrNotIn(String y) {
         return XB.Temporal.Comparison.isNullOrNotIn(this, y);
     }
 

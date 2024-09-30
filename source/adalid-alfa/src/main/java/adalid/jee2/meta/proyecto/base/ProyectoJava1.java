@@ -53,6 +53,8 @@ public abstract class ProyectoJava1 extends ProyectoBase implements JavaWebProje
 
     private static final Logger logger = Logger.getLogger(Project.class);
 
+    private static final long globalApplicationID = 10101L;
+
     protected static final boolean TYPELESS_REALM_NAME = true;
 
     /**
@@ -67,6 +69,13 @@ public abstract class ProyectoJava1 extends ProyectoBase implements JavaWebProje
      * Utilice / como separador en lugar de \. Por ejemplo: C:/xyz2ap101/content-root
      */
     protected static final String CONTENT_ROOT_DIR_WINDOWS = "content.root.dir.windows";
+
+    /**
+     * Nombre del subdirectorio de contenido estático de la aplicación. Debe ser un nombre válido tanto para Linux como para Windows. El subdirectorio
+     * debe existir antes de definir las propiedades del sistema en el servidor de aplicaciones y el servidor de aplicaciones se debe configurar para
+     * utilizar este subdirectorio en lugar del predeterminado. El nombre predeterminado del subdirectorio es el alias del proyecto.
+     */
+    protected static final String CONTENT_ROOT_SUBDIR = "content.root.subdir";
 
     /**
      * Ruta del directorio HOME de la aplicación en Linux generada con la plataforma de solo base de datos. El directorio debe existir antes de
@@ -159,6 +168,17 @@ public abstract class ProyectoJava1 extends ProyectoBase implements JavaWebProje
         initializeJobSchedules();
     }
 
+    @Override
+    public boolean beforeWriting() {
+        boolean beforeWriting = super.beforeWriting();
+        boolean webAppMapIsOK = checkWebApplicationMap();
+        return beforeWriting && webAppMapIsOK;
+    }
+
+    public long getGlobalApplicationID() {
+        return globalApplicationID;
+    }
+
     protected ModuloConsulta consulta;
 
     protected ModuloProcesamiento procesamiento;
@@ -201,11 +221,81 @@ public abstract class ProyectoJava1 extends ProyectoBase implements JavaWebProje
 
     private final Map<ProjectModuleType, Map<String, String>> _contextParameters = new LinkedHashMap<>();
 
+    private final Map<String, WebApplication> _webApplicationMap = new LinkedHashMap<>();
+
+    public Map<String, WebApplication> getWebApplicationMap() {
+        return _webApplicationMap;
+    }
+
+    private boolean _webApplicationMapFinalized;
+
+    private boolean checkWebApplicationMap() {
+        String code = getWebProjectName();
+        WebApplication webapp = _webApplicationMap.get(code);
+        if (webapp == null) {
+            webapp = addWebApplication(WebApplication.of(code, null, null, false));
+        }
+        _webApplicationMapFinalized = true;
+        if (webapp == null) {
+            return false;
+        }
+        webapp.setId(globalApplicationID);
+        logger.trace("web application " + code + " has been updated: ID=" + webapp.getNumericCode());
+        Map<String, WebApplication> map = new LinkedHashMap<>();
+        map.put(code, webapp);
+        map.putAll(_webApplicationMap);
+        _webApplicationMap.clear();
+        _webApplicationMap.putAll(map);
+        return true;
+    }
+
+    /**
+     * El método addWebApplication se utiliza para agregar una aplicación a la lista de aplicaciones Web del proyecto. Por lo general, en todo
+     * proyecto se genera automáticamente una sola aplicación Web; esté método permite agregar aplicaciones adicionales y, por lo tanto, suele
+     * utilizarse solamente en proyectos maestros que generan una base de datos compartida por múltiples aplicaciones.
+     *
+     * @param webapp la aplicación Web a agregar. Para construir una aplicación Web se utiliza el método estático of de la clase WebApplication
+     * @return aplicación Web
+     */
+    protected WebApplication addWebApplication(WebApplication webapp) {
+        if (webapp == null) {
+            logger.error("web application argument is null");
+        } else {
+            String code = webapp.getCode();
+            if (code == null) {
+                logger.error("code of " + webapp + " is null and therefore this web application was not added");
+            } else if (_webApplicationMapFinalized) {
+                logger.error("web application " + code + " was not added; web applications must be added in the configureBuilder method");
+            } else if (_webApplicationMap.containsKey(code)) {
+                logger.warn("web application " + code + " has already been added and has not been replaced");
+                increaseWriterWarnings(1);
+                return webapp;
+            } else {
+                _webApplicationMap.put(code, webapp);
+                Long id = webapp.getId();
+                if (id != null && id == globalApplicationID) {
+                    webapp.setId(null);
+                }
+                logger.trace("web application \"" + code + "\" has been added; ID=" + webapp.getNumericCode());
+                return webapp;
+            }
+        }
+        increaseWriterErrors(1);
+        return null;
+    }
+
     private void initializeContextParameters() {
         _contextParameters.put(ProjectModuleType.WEB, new LinkedHashMap<>());
         _contextParameters.put(ProjectModuleType.WEB_API, new LinkedHashMap<>());
     }
 
+    /**
+     * El método addWebContextParameter se utiliza para agregar un parámetro de contexto al descriptor de implementación del módulo web (archivo
+     * web.xml).
+     *
+     * @param key nombre del parámetro
+     * @param value valor del parámetro
+     */
     public void addWebContextParameter(String key, String value) {
         if (StringUtils.isNotBlank(key) && StringUtils.isNotBlank(value)) {
             _contextParameters.get(ProjectModuleType.WEB).put(key, value);
@@ -216,6 +306,13 @@ public abstract class ProyectoJava1 extends ProyectoBase implements JavaWebProje
         return _contextParameters.get(ProjectModuleType.WEB);
     }
 
+    /**
+     * El método addWebApiContextParameter se utiliza para agregar un parámetro de contexto al descriptor de implementación del módulo web-api
+     * (archivo web.xml).
+     *
+     * @param key nombre del parámetro
+     * @param value valor del parámetro
+     */
     public void addWebApiContextParameter(String key, String value) {
         if (StringUtils.isNotBlank(key) && StringUtils.isNotBlank(value)) {
             _contextParameters.get(ProjectModuleType.WEB_API).put(key, value);
@@ -325,7 +422,7 @@ public abstract class ProyectoJava1 extends ProyectoBase implements JavaWebProje
         for (JobSchedule jobSchedule : _jobScheduleList) {
             previousName = jobSchedule.getJobScheduleName();
             if (scheduleName.equalsIgnoreCase(previousName)) {
-                logger.warn("job schedule \"" + previousName + "\" has already been added to the list; reusing the previously added one");
+                logger.warn("job schedule \"" + previousName + "\" has already been added; keeping the previously added one");
                 return jobSchedule;
             }
         }
@@ -379,7 +476,11 @@ public abstract class ProyectoJava1 extends ProyectoBase implements JavaWebProje
 
     private boolean _internetAccessAllowed;
 
+    private boolean _roleWebAppDissociationAllowed;
+
     private boolean _webServicesEnabled;
+
+    private boolean _plantUMLEnabled = true;
 
     private boolean _projectMailingEnabled;
 
@@ -818,6 +919,27 @@ public abstract class ProyectoJava1 extends ProyectoBase implements JavaWebProje
     }
 
     /**
+     * @return true if role/web-application dissociations should be allowed; false otherwise
+     */
+    @Override
+    public boolean isRoleWebAppDissociationAllowed() {
+        return _roleWebAppDissociationAllowed;
+    }
+
+    /**
+     * El método setRoleWebAppDissociationAllowed se utiliza para especificar si se deben incluir componentes que permitan disociar roles y
+     * aplicaciones Web en el módulo de Control de Acceso del proyecto generado. De manera predeterminada, todos los roles están asociados con todas
+     * las aplicaciones. Si hubiese roles que no deban ser utilizados por algunas aplicaciones, sería necesario disociar esos roles de esas
+     * aplicaciones. Por lo general, este método se utiliza solamente en proyectos maestros que generan un módulo de Control de Acceso compartido por
+     * múltiples aplicaciones.
+     *
+     * @param allowed true incluir componentes para disociar roles y aplicaciones Web; de lo contrario, false
+     */
+    public void setRoleWebAppDissociationAllowed(boolean allowed) {
+        _roleWebAppDissociationAllowed = allowed;
+    }
+
+    /**
      * @return true if web services should be disabled; false otherwise
      */
     public boolean isWebServicesDisabled() {
@@ -842,6 +964,30 @@ public abstract class ProyectoJava1 extends ProyectoBase implements JavaWebProje
      */
     public void setWebServicesEnabled(boolean enabled) {
         _webServicesEnabled = enabled;
+    }
+
+    /**
+     * @return true if UML diagram generation should be disabled; false otherwise
+     */
+    public boolean isPlantUMLDisabled() {
+        return !isPlantUMLEnabled();
+    }
+
+    /**
+     * @return true if UML diagram generation should be enabled; false otherwise
+     */
+    public boolean isPlantUMLEnabled() {
+        return _plantUMLEnabled;
+    }
+
+    /**
+     * El método setPlantUMLEnabled se utiliza para especificar si el proyecto generado incluye, o no, componentes para generar diagramas UML. El
+     * valor predeterminado de esta propiedad es true (si se incluyen componentes para generar diagramas UML).
+     *
+     * @param enabled true, si el proyecto generado incluye componentes para generar diagramas UML; de lo contrario false.
+     */
+    public void setPlantUMLEnabled(boolean enabled) {
+        _plantUMLEnabled = enabled;
     }
 
     /**

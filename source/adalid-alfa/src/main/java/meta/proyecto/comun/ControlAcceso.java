@@ -20,6 +20,7 @@ import meta.entidad.comun.control.acceso.ElementoSegmento;
 import meta.entidad.comun.control.acceso.GrupoUsuario;
 import meta.entidad.comun.control.acceso.PaginaEspecial;
 import meta.entidad.comun.control.acceso.Rol;
+import meta.entidad.comun.control.acceso.RolAplicacion;
 import meta.entidad.comun.control.acceso.RolFiltroFuncion;
 import meta.entidad.comun.control.acceso.RolFuncion;
 import meta.entidad.comun.control.acceso.RolFuncionPar;
@@ -47,6 +48,7 @@ public class ControlAcceso extends Project {
     @Override
     protected void settleAttributes() {
         super.settleAttributes();
+        setImmutableModule(true);
         // <editor-fold defaultstate="collapsed" desc="localization of ControlAcceso's attributes">
         setLocalizedLabel(ENGLISH, "Access Control");
         setLocalizedLabel(SPANISH, "Control de Acceso");
@@ -70,6 +72,8 @@ public class ControlAcceso extends Project {
     protected PaginaEspecial PaginaEspecial;
 
     protected Rol Rol;
+
+    protected RolAplicacion RolAplicacion;
 
     protected RolFiltroFuncion RolFiltroFuncion;
 

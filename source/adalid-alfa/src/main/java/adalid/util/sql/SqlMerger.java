@@ -16,7 +16,6 @@ import adalid.commons.util.*;
 import adalid.commons.velocity.*;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -70,6 +69,8 @@ public class SqlMerger extends SqlUtil {
 
     private final Set<String> _tableNames = new TreeSet<>();
 
+    private final Set<String> _excludableTableNames = new TreeSet<>();
+
     private final Set<String> _currentKeyTableNames = new TreeSet<>();
 
     private final Set<String> _mutableKeyTableNames = new TreeSet<>();
@@ -95,6 +96,14 @@ public class SqlMerger extends SqlUtil {
     private final List<SqlColumn> _addedColumns = new ArrayList<>();
 
     private final List<SqlColumn> _droppedColumns = new ArrayList<>();
+
+    private final List<SqlConstraintIndex> _addedConstraintIndexes = new ArrayList<>();
+
+    private final List<SqlConstraintIndex> _droppedConstraintIndexes = new ArrayList<>();
+
+    private final List<SqlConstraintIndex> _addedPrimaryKeyConstraints = new ArrayList<>();
+
+    private final List<SqlConstraintIndex> _droppedPrimaryKeyConstraints = new ArrayList<>();
 
     private final List<SqlRow> _addedRows = new ArrayList<>();
 
@@ -129,7 +138,6 @@ public class SqlMerger extends SqlUtil {
         _initialised = _initialised && oldPassword(_argIndex++, _args);
         _initialised = _initialised && oldDatabase(_argIndex++, _args);
         _initialised = _initialised && projectAlias(_argIndex++, _args);
-
     }
 
     // <editor-fold defaultstate="collapsed" desc="args">
@@ -403,6 +411,10 @@ public class SqlMerger extends SqlUtil {
         return _tableNames;
     }
 
+    public Set<String> getExcludableTableNames() {
+        return _excludableTableNames;
+    }
+
     public Set<String> getCurrentKeyTableNames() {
         return _currentKeyTableNames;
     }
@@ -463,6 +475,22 @@ public class SqlMerger extends SqlUtil {
         return _droppedColumns;
     }
 
+    public List<SqlConstraintIndex> getAddedConstraintIndexes() {
+        return _addedConstraintIndexes;
+    }
+
+    public List<SqlConstraintIndex> getDroppedConstraintIndexes() {
+        return _droppedConstraintIndexes;
+    }
+
+    public List<SqlConstraintIndex> getAddedPrimaryKeyConstraints() {
+        return _addedPrimaryKeyConstraints;
+    }
+
+    public List<SqlConstraintIndex> getDroppedPrimaryKeyConstraints() {
+        return _droppedPrimaryKeyConstraints;
+    }
+
     public List<SqlRow> getAddedRows() {
         return _addedRows;
     }
@@ -495,6 +523,7 @@ public class SqlMerger extends SqlUtil {
     public synchronized void clear() {
         logger.info("clear");
         _tableNames.clear();
+        _excludableTableNames.clear();
         _currentKeyTableNames.clear();
         _mutableKeyTableNames.clear();
         _addedKeyTableNames.clear();
@@ -508,6 +537,10 @@ public class SqlMerger extends SqlUtil {
         _oddColumns.clear();
         _addedColumns.clear();
         _droppedColumns.clear();
+        _addedConstraintIndexes.clear();
+        _droppedConstraintIndexes.clear();
+        _addedPrimaryKeyConstraints.clear();
+        _droppedPrimaryKeyConstraints.clear();
         _addedRows.clear();
         _deletedRows.clear();
         _addedValues.clear();
@@ -579,6 +612,7 @@ public class SqlMerger extends SqlUtil {
         _reader1 = new SqlReader(args);
         _reader1.setSelectTemplatesPath(StringUtils.defaultIfBlank(_selectTemplatesPath, "templates/meta/sql"));
 //      _reader1.setMasterProject(_masterProject);
+        _reader1.getTablesExcludeSet().addAll(_excludableTableNames);
         _reader1.setTablesLoadMap(_tablesLoadMap);
         _reader1.setCatalogTablesMap(_catalogTablesMap);
         return _reader1.isInitialised();
@@ -598,6 +632,7 @@ public class SqlMerger extends SqlUtil {
         _reader2 = new SqlReader(args);
         _reader2.setSelectTemplatesPath(StringUtils.defaultIfBlank(_selectTemplatesPath, "templates/meta/sql"));
 //      _reader2.setMasterProject(_masterProject);
+        _reader2.getTablesExcludeSet().addAll(_excludableTableNames);
         _reader2.setTablesLoadMap(_tablesLoadMap);
         _reader2.setCatalogTablesMap(_catalogTablesMap);
         return _reader2.isInitialised();
@@ -704,7 +739,11 @@ public class SqlMerger extends SqlUtil {
             } else if (map1.containsKey(key) && map2.containsKey(key)) {
                 table1 = map1.get(key);
                 table2 = map2.get(key);
+                table1.setOtherTable(table2);
+                table2.setOtherTable(table1);
                 mergeColumns(table1, table2);
+                mergePrimaryKeys(table1, table2);
+                mergeConstraintIndexes(table1, table2);
             } else if (map1.containsKey(key)) {
                 table1 = map1.get(key);
                 createTable(table1);
@@ -713,18 +752,18 @@ public class SqlMerger extends SqlUtil {
                 dropTable(table2);
             }
         }
+        _addedConstraintIndexes.addAll(0, _addedPrimaryKeyConstraints); // primary keys must be added before the other constraints
+        _droppedConstraintIndexes.addAll(_droppedPrimaryKeyConstraints); // primary keys must be dropped after the other constraints
         if (isThereChanceOfRenamedTables()) {
-            logWarning("*", "there could be renamed tables; check CREATE and DROP TABLE statements");
+            logWarning("*", "there may be renamed tables; check CREATE and DROP TABLE statements");
         }
         if (isThereChanceOfRenamedColumns()) {
-            logWarning("*", "there could be renamed columns; check ADD and DROP COLUMN statements");
+            logWarning("*", "there may be renamed columns; check ADD and DROP COLUMN statements");
         }
         return true;
     }
 
     private static final String DATA_CONV_REQD = "; data conversion might be required";
-
-    private static final String END_USER_VALUE = "; it could also have been updated by the end user";
 
     private boolean mergeColumns(SqlTable table1, SqlTable table2) {
         SqlTableWrapper sharedTable = newSharedTable(table1);
@@ -802,12 +841,50 @@ public class SqlMerger extends SqlUtil {
             }
         }
         if (sharedTable.hasAddedColumns() && sharedTable.hasDroppedColumns()) {
-            text = tableName + " could have renamed columns; check its ADD and DROP COLUMN statements";
+            text = tableName + " may have renamed columns; check its ADD and DROP COLUMN statements";
 //          logMessage(tableName, text, true);
             logWarning(tableName, text);
         }
         if (compareRows) {
             compareRows(table1, table2, keySet);
+        }
+        return true;
+    }
+
+    private void mergePrimaryKeys(SqlTable table1, SqlTable table2) {
+        SqlColumn pk1 = table1.getPrimaryKey();
+        SqlColumn pk2 = table2.getPrimaryKey();
+        if (pk1 == null && pk2 == null) {
+            logger.warn("pk1=" + pk1 + ", pk2=" + pk2);
+        } else if (pk1 == null) {
+            logger.warn("pk1=" + pk1 + ", pk2=" + pk2);
+            _droppedPrimaryKeyConstraints.addAll(table2.getPKConstraintsMap().values());
+        } else if (pk2 == null) {
+            logger.warn("pk1=" + pk1 + ", pk2=" + pk2);
+            _addedPrimaryKeyConstraints.addAll(table1.getPKConstraintsMap().values());
+        } else if (StringUtils.equals(pk1.getName(), pk2.getName()) && StringUtils.equals(pk1.getSqlDataType(), pk2.getSqlDataType())) {
+        } else {
+            _addedPrimaryKeyConstraints.addAll(table1.getPKConstraintsMap().values());
+            _droppedPrimaryKeyConstraints.addAll(table2.getPKConstraintsMap().values());
+        }
+    }
+
+    private void mergeConstraintIndexes(SqlTable table1, SqlTable table2) {
+        mergeConstraintIndexes(table1.getFKConstraintsMap(), table2.getFKConstraintsMap());
+        mergeConstraintIndexes(table1.getUKConstraintsMap(), table2.getUKConstraintsMap());
+        mergeConstraintIndexes(table1.getIXConstraintsMap(), table2.getIXConstraintsMap());
+    }
+
+    private boolean mergeConstraintIndexes(Map<String, SqlConstraintIndex> map1, Map<String, SqlConstraintIndex> map2) {
+        for (String key1 : map1.keySet()) {
+            if (!map2.containsKey(key1)) {
+                _addedConstraintIndexes.add(map1.get(key1));
+            }
+        }
+        for (String key2 : map2.keySet()) {
+            if (!map1.containsKey(key2)) {
+                _droppedConstraintIndexes.add(map2.get(key2));
+            }
         }
         return true;
     }
@@ -872,6 +949,7 @@ public class SqlMerger extends SqlUtil {
                     boolean newColumn = column2 == null;
                     boolean newColumnWithValue = newColumn && rowValue1 != null && strValue1 != null;
                     boolean newColumnWithDefaultValue = newColumnWithValue && isDefaultValue(rowValue1);
+                    boolean newValueIsTheDefaultValue = rowValue1 != null && strValue1 != null && isDefaultValue(rowValue1);
                     rowValuePair = new SqlRowValuePair(rowValue1, rowValue2);
                     if (oldColumn) {
                         rowValuePairs.add(rowValuePair);
@@ -896,9 +974,9 @@ public class SqlMerger extends SqlUtil {
                     text = join(tableName, subject, predicate);
                     if (bk || isDetailLoggingEnabled()) {
                         if (oldColumn) {
-                            text += " (" + colname + ": " + StrUtils.enclose(strValue2, '"') + " -> " + StrUtils.enclose(strValue1, '"') + ")";
+                            text += " (" + colname + ": new value " + StrUtils.enclose(strValue1, '"') + ", current value " + StrUtils.enclose(strValue2, '"') + ")";
                         } else {
-                            text += " (" + colname + ": " + StrUtils.enclose(strValue1, '"') + ")";
+                            text += " (" + colname + ": new value " + StrUtils.enclose(strValue1, '"') + ")";
                         }
                     }
                     if (bk && oldColumn) {
@@ -914,7 +992,10 @@ public class SqlMerger extends SqlUtil {
                             logger.trace(getUpdateStatement(rowValue1));
                             _addedValues.add(rowValue1);
                         } else if (rowValuePair.isUpdatableColumn()) {
-                            text = join(tableName, strKey, colname, "has a new value" + END_USER_VALUE);
+                            text = join(tableName, strKey, colname, "has a new value; it may also have been updated by the end user");
+                            if (newValueIsTheDefaultValue) {
+                                text += " and the new value is the default value, so an update might not be required";
+                            }
                             logWarning(tableName, text);
                         }
                     }
@@ -973,10 +1054,11 @@ public class SqlMerger extends SqlUtil {
     }
 
     private void createTable(SqlTable table) {
+        //<editor-fold defaultstate="collapsed" desc="testing">
+        /*
         String tableName = table.getName();
         String statement = "create table " + tableName;
         boolean log = logMessage(tableName, statement);
-        _addedTables.add(table);
         if (_testingPhase) {
             String name, type, defaultValue;
             int length, precision, scale;
@@ -996,7 +1078,26 @@ public class SqlMerger extends SqlUtil {
                 }
             }
         }
+        /**/
+        //</editor-fold>
+        _addedTables.add(table);
+        addConstraintIndexes(table);
         insertRows(table);
+    }
+
+    private void addConstraintIndexes(SqlTable table) {
+//      for (SqlConstraintIndex pk : table.getPKConstraints()) {
+//          _addedConstraintIndexes.add(pk);
+//      }
+        for (SqlConstraintIndex fk : table.getFKConstraints()) {
+            _addedConstraintIndexes.add(fk);
+        }
+        for (SqlConstraintIndex uk : table.getUKConstraints()) {
+            _addedConstraintIndexes.add(uk);
+        }
+        for (SqlConstraintIndex ix : table.getIXConstraints()) {
+            _addedConstraintIndexes.add(ix);
+        }
     }
 
     private void insertRows(SqlTable table) {
@@ -1021,7 +1122,6 @@ public class SqlMerger extends SqlUtil {
     private void dropTable(SqlTable table) {
         String tableName = table.getName();
         String statement = "drop table " + tableName + ";";
-//      logMessage(tableName, statement, true);
         logWarning(tableName, statement);
         _droppedTables.add(table);
     }
@@ -1030,6 +1130,7 @@ public class SqlMerger extends SqlUtil {
         String tableName = column1.getTable().getName();
         String columnName = column1.getName();
         String name = tableName + "." + columnName;
+        /**/
         //<editor-fold defaultstate="collapsed" desc="logging">
         /*
         String type1 = column1.getSqlDataType();
@@ -1056,6 +1157,7 @@ public class SqlMerger extends SqlUtil {
         logMessage(tableName, statement);
 //      */
         //</editor-fold>
+        /**/
         _newColumns.put(name, column1);
         _oldColumns.put(name, column2);
     }

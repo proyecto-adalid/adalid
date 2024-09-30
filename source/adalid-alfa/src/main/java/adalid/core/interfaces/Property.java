@@ -55,9 +55,14 @@ public interface Property extends DataArtifact, ValuedArtifact {
     boolean isPassword();
 
     /**
-     * @return the required indicator
+     * @return the read-only indicator
      */
     boolean isReadOnly();
+
+    /**
+     * @return the read-write indicator
+     */
+    boolean isReadWrite();
 
     /**
      * @return the required indicator
@@ -294,6 +299,18 @@ public interface Property extends DataArtifact, ValuedArtifact {
      * ancladas
      */
     void setLocalizedAnchoredLabel(Locale locale, String localizedAnchoredLabel);
+
+    /**
+     * @return the responsive priority
+     */
+    int getResponsivePriority();
+
+    /**
+     * Sets the responsive priority
+     *
+     * @param priority the responsive priority to set
+     */
+    void setResponsivePriority(int priority);
 
     /**
      * @return the sequence number

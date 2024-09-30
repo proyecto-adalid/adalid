@@ -48,6 +48,16 @@ public @interface EntityCodeGen {
     Kleenean bws() default Kleenean.UNSPECIFIED; // FALSE
 
     /**
+     * dao indica si se debe, o no, generar un objeto de acceso a datos (DAO, por las siglas en inglés de Data Access Object) para la entidad. Su
+     * valor es uno de los elementos de la enumeración Kleenean. Seleccione TRUE para generar un objeto; en caso contrario, seleccione FALSE.
+     * Alternativamente, omita el elemento o seleccione UNSPECIFIED para utilizar el valor predeterminado del atributo. El valor predeterminado del
+     * atributo es TRUE.
+     *
+     * @return dao
+     */
+    Kleenean dao() default Kleenean.UNSPECIFIED; // TRUE
+
+    /**
      * daf indica si se debe, o no, generar una fachada de acceso a datos (DAF, por las siglas en inglés de Data Access Facade) para la entidad. Su
      * valor es uno de los elementos de la enumeración Kleenean. Seleccione TRUE para generar una fachada; en caso contrario, seleccione FALSE.
      * Alternativamente, omita el elemento o seleccione UNSPECIFIED para utilizar el valor predeterminado del atributo. El valor predeterminado del
