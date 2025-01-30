@@ -38,7 +38,7 @@ public abstract class AbstractVirtualEntity extends AbstractDatabaseEntity imple
     /**
      * @param virtualEntityType the virtual entity type to set
      */
-    void setVirtualEntityType(VirtualEntityType virtualEntityType) {
+    protected void setVirtualEntityType(VirtualEntityType virtualEntityType) { // protected avoids method never unused warning
         _virtualEntityType = virtualEntityType;
     }
 

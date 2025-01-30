@@ -22,8 +22,7 @@ public class IsProcessOperationSqlCodeGenEnabled implements Predicate {
 
     @Override
     public boolean evaluate(Object object) {
-        if (object instanceof ProcessOperation) {
-            ProcessOperation operation = (ProcessOperation) object;
+        if (object instanceof ProcessOperation operation) {
             return operation.isSqlCodeGenEnabled();
         }
         return false;

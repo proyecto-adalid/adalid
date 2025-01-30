@@ -23,11 +23,9 @@ public class IsProcessOperationSqlCodeGenEnabledInEntity implements Predicate {
 
     @Override
     public boolean evaluate(Object object) {
-        if (object instanceof Entity) {
-            Entity entity = (Entity) object;
+        if (object instanceof Entity entity) {
             for (Operation operation : entity.getOperationsList()) {
-                if (operation instanceof ProcessOperation) {
-                    ProcessOperation processOperation = (ProcessOperation) operation;
+                if (operation instanceof ProcessOperation processOperation) {
                     if (processOperation.isSqlCodeGenEnabled()) {
                         return true;
                     }

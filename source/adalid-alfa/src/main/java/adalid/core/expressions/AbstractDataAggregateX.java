@@ -59,34 +59,18 @@ public abstract class AbstractDataAggregateX extends AbstractExpression implemen
             copyDataType(operand);
         } else {
             switch (_operator) {
-                case AND:
-                case NAND:
-                case OR:
-                case NOR:
-                case NAXOR:
-                case NAXNOR:
-                case NOR_OR_NAXOR:
+                case AND, NAND, OR, NOR, NAXOR, NAXNOR, NOR_OR_NAXOR ->
                     setDataType(Boolean.class);
-                    break;
-                case CONCAT, CONCATENATE:
+                case CONCAT, CONCATENATE ->
                     setDataType(String.class);
-                    break;
-                case COUNT:
+                case COUNT ->
                     setDataType(Long.class);
-                    break;
-                case COALESCE:
-                case MAXIMUM:
-                case MINIMUM:
+                case COALESCE, MAXIMUM, MINIMUM ->
                     copyDataType(operand);
-                    break;
-                case SUM:
-                case PRODUCT:
-                case AVERAGE:
+                case SUM, PRODUCT, AVERAGE ->
                     setDataType(BigDecimal.class);
-                    break;
-                default:
+                default ->
                     copyDataType(operand);
-                    break;
             }
         }
     }

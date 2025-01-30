@@ -171,6 +171,26 @@ public class EntityCollection extends AbstractArtifact implements AnnotatableArt
     /**
      *
      */
+    private String _afterReadingSnippetFileName = "";
+
+    /**
+     *
+     */
+    private String _afterWritingSnippetFileName = "";
+
+    /**
+     *
+     */
+    private String _beforeReadingSnippetFileName = "";
+
+    /**
+     *
+     */
+    private String _beforeWritingSnippetFileName = "";
+
+    /**
+     *
+     */
     private String _readingViewRowActionSnippetFileName = "";
 
     /**
@@ -663,6 +683,82 @@ public class EntityCollection extends AbstractArtifact implements AnnotatableArt
      */
     public void setDataEntryFormat(DataEntryFormat format) {
         _dataEntryFormat = format == null ? DataEntryFormat.UNSPECIFIED : format;
+    }
+
+    /**
+     * @return the after reading collection snippet file name
+     */
+    public String getAfterReadingSnippetFileName() {
+        return _afterReadingSnippetFileName;
+    }
+
+    protected void setAfterReadingSnippetFileName(String fileName) {
+        boolean log = depth() == 0;
+        if (StringUtils.isBlank(fileName)) {
+            _afterReadingSnippetFileName = "";
+        } else if (isValidSnippetFileName(fileName)) {
+            _afterReadingSnippetFileName = fileName;
+        } else if (log) {
+            logger.error(getName() + " after reading collection snippet is invalid ");
+            Project.increaseParserErrorCount();
+        }
+    }
+
+    /**
+     * @return the after writing collection snippet file name
+     */
+    public String getAfterWritingSnippetFileName() {
+        return _afterWritingSnippetFileName;
+    }
+
+    protected void setAfterWritingSnippetFileName(String fileName) {
+        boolean log = depth() == 0;
+        if (StringUtils.isBlank(fileName)) {
+            _afterWritingSnippetFileName = "";
+        } else if (isValidSnippetFileName(fileName)) {
+            _afterWritingSnippetFileName = fileName;
+        } else if (log) {
+            logger.error(getName() + " after writing collection snippet is invalid ");
+            Project.increaseParserErrorCount();
+        }
+    }
+
+    /**
+     * @return the before reading collection snippet file name
+     */
+    public String getBeforeReadingSnippetFileName() {
+        return _beforeReadingSnippetFileName;
+    }
+
+    protected void setBeforeReadingSnippetFileName(String fileName) {
+        boolean log = depth() == 0;
+        if (StringUtils.isBlank(fileName)) {
+            _beforeReadingSnippetFileName = "";
+        } else if (isValidSnippetFileName(fileName)) {
+            _beforeReadingSnippetFileName = fileName;
+        } else if (log) {
+            logger.error(getName() + " before reading collection snippet is invalid ");
+            Project.increaseParserErrorCount();
+        }
+    }
+
+    /**
+     * @return the before writing collection snippet file name
+     */
+    public String getBeforeWritingSnippetFileName() {
+        return _beforeWritingSnippetFileName;
+    }
+
+    protected void setBeforeWritingSnippetFileName(String fileName) {
+        boolean log = depth() == 0;
+        if (StringUtils.isBlank(fileName)) {
+            _beforeWritingSnippetFileName = "";
+        } else if (isValidSnippetFileName(fileName)) {
+            _beforeWritingSnippetFileName = fileName;
+        } else if (log) {
+            logger.error(getName() + " before writing collection snippet is invalid ");
+            Project.increaseParserErrorCount();
+        }
     }
 
     /**
@@ -1357,6 +1453,26 @@ public class EntityCollection extends AbstractArtifact implements AnnotatableArt
             _dataEntryFormat = specified(annotation.format(), _dataEntryFormat);
             /**/
             String fileName;
+            /**/
+            fileName = annotation.afterReadingSnippet();
+            if (StringUtils.isNotBlank(fileName)) {
+                setAfterReadingSnippetFileName(fileName);
+            }
+            /**/
+            fileName = annotation.afterWritingSnippet();
+            if (StringUtils.isNotBlank(fileName)) {
+                setAfterWritingSnippetFileName(fileName);
+            }
+            /**/
+            fileName = annotation.beforeReadingSnippet();
+            if (StringUtils.isNotBlank(fileName)) {
+                setBeforeReadingSnippetFileName(fileName);
+            }
+            /**/
+            fileName = annotation.beforeWritingSnippet();
+            if (StringUtils.isNotBlank(fileName)) {
+                setBeforeWritingSnippetFileName(fileName);
+            }
             /**/
             fileName = annotation.readingViewRowActionSnippet();
             if (StringUtils.isNotBlank(fileName)) {

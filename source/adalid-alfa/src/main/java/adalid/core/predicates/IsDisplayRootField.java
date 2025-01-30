@@ -22,8 +22,7 @@ public class IsDisplayRootField implements Predicate {
 
     @Override
     public boolean evaluate(Object object) {
-        if (object instanceof DisplayField) {
-            DisplayField field = (DisplayField) object;
+        if (object instanceof DisplayField field) {
             return field.getParent() == null;
         }
         return false;

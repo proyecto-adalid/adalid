@@ -606,8 +606,7 @@ public abstract class NumericPrimitive extends Primitive implements Intervalized
     }
 
     private Object toDataType(Object value) {
-        if (value instanceof NumericExpression) {
-            NumericExpression nx = (NumericExpression) value;
+        if (value instanceof NumericExpression nx) {
             Operator nxop = nx.getOperator();
             Class<?> nxdt = nx instanceof NumericPrimitive ? nx.getDataType() : null;
             Class<?> mydt = getDataType();
@@ -807,9 +806,9 @@ public abstract class NumericPrimitive extends Primitive implements Intervalized
     public int getKnobStep() {
         Object minValue = getMinValue();
         Object maxValue = getMaxValue();
-        Integer min = minValue instanceof Number number ? NumUtils.toInteger(number) : 0;
-        Integer max = maxValue instanceof Number number ? NumUtils.toInteger(number) : 100;
-        int diff = min == null || max == null ? 0 : max - min;
+        int min = minValue instanceof Number number ? NumUtils.toInteger(number) : 0;
+        int max = maxValue instanceof Number number ? NumUtils.toInteger(number) : 100;
+        int diff = max - min;
         return diff < 1 || _knobStep < 1 || _knobStep > diff ? 1 : _knobStep;
     }
 

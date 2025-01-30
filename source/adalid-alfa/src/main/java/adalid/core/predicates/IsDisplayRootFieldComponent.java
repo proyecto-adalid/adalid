@@ -22,8 +22,7 @@ public class IsDisplayRootFieldComponent implements Predicate {
 
     @Override
     public boolean evaluate(Object object) {
-        if (object instanceof UIComponent) {
-            UIComponent component = (UIComponent) object;
+        if (object instanceof UIComponent component) {
             return component.getField().getParent() == null;
         }
         return false;

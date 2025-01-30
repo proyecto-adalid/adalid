@@ -69,8 +69,9 @@ public abstract class AbstractScalarX extends AbstractExpression implements Scal
     public Expression unwrapBooleanExpression() {
         if (_operator != null && _operand instanceof BooleanExpression) {
             switch (_operator) {
-                case TO_BOOLEAN:
+                case TO_BOOLEAN -> {
                     return (BooleanExpression) _operand;
+                }
             }
         }
         return this;
@@ -80,9 +81,9 @@ public abstract class AbstractScalarX extends AbstractExpression implements Scal
     public Expression unwrapCharacterExpression() {
         if (_operator != null && _operand instanceof CharacterExpression) {
             switch (_operator) {
-                case TO_CHARACTER:
-                case TO_STRING:
+                case TO_CHARACTER, TO_STRING -> {
                     return (CharacterExpression) _operand;
+                }
             }
         }
         return this;
@@ -92,15 +93,9 @@ public abstract class AbstractScalarX extends AbstractExpression implements Scal
     public Expression unwrapNumericExpression() {
         if (_operator != null && _operand instanceof NumericExpression) {
             switch (_operator) {
-                case TO_BYTE:
-                case TO_SHORT:
-                case TO_INTEGER:
-                case TO_LONG:
-                case TO_FLOAT:
-                case TO_DOUBLE:
-                case TO_BIG_INTEGER:
-                case TO_BIG_DECIMAL:
+                case TO_BYTE, TO_SHORT, TO_INTEGER, TO_LONG, TO_FLOAT, TO_DOUBLE, TO_BIG_INTEGER, TO_BIG_DECIMAL -> {
                     return (NumericExpression) _operand;
+                }
             }
         }
         return this;
@@ -110,10 +105,9 @@ public abstract class AbstractScalarX extends AbstractExpression implements Scal
     public Expression unwrapTemporalExpression() {
         if (_operator != null && _operand instanceof TemporalExpression) {
             switch (_operator) {
-                case TO_DATE:
-                case TO_TIME:
-                case TO_TIMESTAMP:
+                case TO_DATE, TO_TIME, TO_TIMESTAMP -> {
                     return (TemporalExpression) _operand;
+                }
             }
         }
         return this;
@@ -155,97 +149,50 @@ public abstract class AbstractScalarX extends AbstractExpression implements Scal
             copyDataType(_operand);
         } else {
             switch (_operator) {
-                case SELF:
-                case DEFAULT_WHEN_NULL:
-                case NULL_WHEN_DEFAULT:
+                case SELF, DEFAULT_WHEN_NULL, NULL_WHEN_DEFAULT ->
                     copyDataType(_operand);
-                    break;
-                case NOT:
+                case NOT ->
                     setDataType(Boolean.class);
-                    break;
-                case ASCII:
-                case DIACRITICLESS:
-                case DIACRITICLESS_ASCII:
-                case LOWER:
-                case UPPER:
-                case CAPITALIZE:
-                case UNCAPITALIZE:
-                case TRIM:
-                case LTRIM:
-                case RTRIM:
+                case ASCII, DIACRITICLESS, DIACRITICLESS_ASCII, LOWER, UPPER, CAPITALIZE, UNCAPITALIZE, TRIM, LTRIM, RTRIM ->
                     setDataType(String.class);
-                    break;
-                case MODULUS:
-                case OPPOSITE:
+                case MODULUS, OPPOSITE ->
                     copyDataType(_operand);
-                    break;
-                case RECIPROCAL:
+                case RECIPROCAL ->
                     setDataType(BigDecimal.class);
-                    break;
-                case YEAR:
-                case MONTH:
-                case DAY:
-                case HOUR:
-                case MINUTE:
-                case SECOND:
+                case YEAR, MONTH, DAY, HOUR, MINUTE, SECOND ->
                     setDataType(Integer.class);
-                    break;
-                case FIRST_DATE_OF_MONTH:
-                case FIRST_DATE_OF_QUARTER:
-                case FIRST_DATE_OF_SEMESTER:
-                case FIRST_DATE_OF_YEAR:
-                case LAST_DATE_OF_MONTH:
-                case LAST_DATE_OF_QUARTER:
-                case LAST_DATE_OF_SEMESTER:
-                case LAST_DATE_OF_YEAR:
+                case FIRST_DATE_OF_MONTH, FIRST_DATE_OF_QUARTER, FIRST_DATE_OF_SEMESTER, FIRST_DATE_OF_YEAR, LAST_DATE_OF_MONTH, LAST_DATE_OF_QUARTER, LAST_DATE_OF_SEMESTER, LAST_DATE_OF_YEAR ->
                     setDataType(Date.class);
-                    break;
-                case TO_BOOLEAN:
+                case TO_BOOLEAN ->
                     setDataType(Boolean.class);
-                    break;
-                case TO_CHARACTER:
+                case TO_CHARACTER ->
                     setDataType(Character.class);
-                    break;
-                case TO_STRING:
-                case TO_LOCALE_STRING:
+                case TO_STRING, TO_LOCALE_STRING ->
                     setDataType(String.class);
-                    break;
-                case TO_BYTE:
+                case TO_BYTE ->
                     setDataType(Byte.class);
-                    break;
-                case TO_SHORT:
+                case TO_SHORT ->
                     setDataType(Short.class);
-                    break;
-                case TO_INTEGER:
+                case TO_INTEGER ->
                     setDataType(Integer.class);
-                    break;
-                case TO_LONG:
+                case TO_LONG ->
                     setDataType(Long.class);
-                    break;
-                case TO_FLOAT:
+                case TO_FLOAT ->
                     setDataType(Float.class);
-                    break;
-                case TO_DOUBLE:
+                case TO_DOUBLE ->
                     setDataType(Double.class);
-                    break;
-                case TO_BIG_INTEGER:
+                case TO_BIG_INTEGER ->
                     setDataType(BigInteger.class);
-                    break;
-                case TO_BIG_DECIMAL:
+                case TO_BIG_DECIMAL ->
                     setDataType(BigDecimal.class);
-                    break;
-                case TO_DATE:
+                case TO_DATE ->
                     setDataType(Date.class);
-                    break;
-                case TO_TIME:
+                case TO_TIME ->
                     setDataType(Time.class);
-                    break;
-                case TO_TIMESTAMP:
+                case TO_TIMESTAMP ->
                     setDataType(Timestamp.class);
-                    break;
-                default:
+                default ->
                     copyDataType(_operand);
-                    break;
             }
         }
     }

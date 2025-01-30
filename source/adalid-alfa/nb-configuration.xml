@@ -14,7 +14,7 @@
         Any value defined here will override the pom.xml file value but is only applicable to the current project.
         -->
         <netbeans.compile.on.save>all</netbeans.compile.on.save>
-        <netbeans.hint.jdkPlatform>JDK_17</netbeans.hint.jdkPlatform>
+        <netbeans.hint.jdkPlatform>JDK_21</netbeans.hint.jdkPlatform>
         <netbeans.hint.license>adalid.es</netbeans.hint.license>
     </properties>
 </project-shared-configuration>

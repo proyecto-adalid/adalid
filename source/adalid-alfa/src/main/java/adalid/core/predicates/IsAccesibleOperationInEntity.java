@@ -23,8 +23,7 @@ public class IsAccesibleOperationInEntity implements Predicate {
 
     @Override
     public boolean evaluate(Object object) {
-        if (object instanceof Entity) {
-            Entity entity = (Entity) object;
+        if (object instanceof Entity entity) {
             IsAccesibleOperation isAccesibleOperation = new IsAccesibleOperation();
             for (Operation operation : entity.getOperationsList()) {
                 if (isAccesibleOperation.evaluate(operation)) {

@@ -22,8 +22,7 @@ public class IsCrudOperationEnabledEntityReference implements Predicate {
 
     @Override
     public boolean evaluate(Object object) {
-        if (object instanceof PersistentEntityReference) {
-            PersistentEntityReference reference = (PersistentEntityReference) object;
+        if (object instanceof PersistentEntityReference reference) {
             PersistentEntity declaringEntity = reference.getDeclaringPersistentEntity();
             if (declaringEntity != null) { // && declaringEntity.isSelectEnabled()
                 return declaringEntity.isInsertEnabled() || declaringEntity.isUpdateEnabled() || declaringEntity.isDeleteEnabled();

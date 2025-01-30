@@ -54,20 +54,16 @@ public abstract class PaqueteBase extends ModuloBase {
             return null;
         }
         Predicate predicate;
-        switch (tipo) {
-            case CONSULTA:
-                predicate = new IsModuloConsultaDisplay(entityPredicate);
-                break;
-            case PROCESAMIENTO:
-                predicate = new IsModuloProcesamientoDisplay(entityPredicate);
-                break;
-            case REGISTRO:
-                predicate = new IsModuloRegistroDisplay(entityPredicate);
-                break;
-            default:
-                predicate = null;
-                break;
-        }
+        predicate = switch (tipo) {
+            case CONSULTA ->
+                new IsModuloConsultaDisplay(entityPredicate);
+            case PROCESAMIENTO ->
+                new IsModuloProcesamientoDisplay(entityPredicate);
+            case REGISTRO ->
+                new IsModuloRegistroDisplay(entityPredicate);
+            default ->
+                null;
+        };
         return predicate;
     }
 

@@ -137,20 +137,18 @@ public class TemporalAddend implements Comparable {
     }
 
     private static char fix(char unit) {
-        switch (unit) {
-            case OTHER_SECONDS_1:
-                return SECONDS;
-            case OTHER_HOURS_1:
-                return HOURS;
-            case OTHER_DAYS_1:
-                return DAYS;
-            case OTHER_YEARS_1:
-            case OTHER_YEARS_2:
-            case OTHER_YEARS_3:
-                return YEARS;
-            default:
-                return unit;
-        }
+        return switch (unit) {
+            case OTHER_SECONDS_1 ->
+                SECONDS;
+            case OTHER_HOURS_1 ->
+                HOURS;
+            case OTHER_DAYS_1 ->
+                DAYS;
+            case OTHER_YEARS_1, OTHER_YEARS_2, OTHER_YEARS_3 ->
+                YEARS;
+            default ->
+                unit;
+        };
     }
 
     private static boolean valid(char[] units) {
@@ -213,18 +211,24 @@ public class TemporalAddend implements Comparable {
      */
     public String getUnitName() {
         switch (unitCode) {
-            case SECONDS:
+            case SECONDS -> {
                 return "seconds";
-            case MINUTES:
+            }
+            case MINUTES -> {
                 return "minutes";
-            case HOURS:
+            }
+            case HOURS -> {
                 return "hours";
-            case DAYS:
+            }
+            case DAYS -> {
                 return "days";
-            case MONTHS:
+            }
+            case MONTHS -> {
                 return "months";
-            case YEARS:
+            }
+            case YEARS -> {
                 return "years";
+            }
         }
         return null;
     }
@@ -265,18 +269,24 @@ public class TemporalAddend implements Comparable {
 
     private double seconds() {
         switch (unitCode) {
-            case SECONDS:
+            case SECONDS -> {
                 return quantity;
-            case MINUTES:
+            }
+            case MINUTES -> {
                 return quantity * 60;
-            case HOURS:
+            }
+            case HOURS -> {
                 return quantity * 60 * 60;
-            case DAYS:
+            }
+            case DAYS -> {
                 return quantity * 60 * 60 * 24;
-            case MONTHS:
+            }
+            case MONTHS -> {
                 return quantity * 60 * 60 * 24 * 30.4375D;
-            case YEARS:
+            }
+            case YEARS -> {
                 return quantity * 60 * 60 * 24 * 365.25D;
+            }
         }
         return 0D;
     }
@@ -287,18 +297,24 @@ public class TemporalAddend implements Comparable {
 
     private double minutes() {
         switch (unitCode) {
-            case SECONDS:
+            case SECONDS -> {
                 return quantity / 60.0D;
-            case MINUTES:
+            }
+            case MINUTES -> {
                 return quantity;
-            case HOURS:
+            }
+            case HOURS -> {
                 return quantity * 60;
-            case DAYS:
+            }
+            case DAYS -> {
                 return quantity * 60 * 24;
-            case MONTHS:
+            }
+            case MONTHS -> {
                 return quantity * 60 * 24 * 30.4375D;
-            case YEARS:
+            }
+            case YEARS -> {
                 return quantity * 60 * 24 * 365.25D;
+            }
         }
         return 0D;
     }
@@ -309,18 +325,24 @@ public class TemporalAddend implements Comparable {
 
     private double hours() {
         switch (unitCode) {
-            case SECONDS:
+            case SECONDS -> {
                 return quantity / 60.0D / 60.0D;
-            case MINUTES:
+            }
+            case MINUTES -> {
                 return quantity / 60.0D;
-            case HOURS:
+            }
+            case HOURS -> {
                 return quantity;
-            case DAYS:
+            }
+            case DAYS -> {
                 return quantity * 24;
-            case MONTHS:
+            }
+            case MONTHS -> {
                 return quantity * 24 * 30.4375D;
-            case YEARS:
+            }
+            case YEARS -> {
                 return quantity * 24 * 365.25D;
+            }
         }
         return 0D;
     }
@@ -331,18 +353,24 @@ public class TemporalAddend implements Comparable {
 
     private double days() {
         switch (unitCode) {
-            case SECONDS:
+            case SECONDS -> {
                 return quantity / 24.0D / 60.0D / 60.0D;
-            case MINUTES:
+            }
+            case MINUTES -> {
                 return quantity / 24.0D / 60.0D;
-            case HOURS:
+            }
+            case HOURS -> {
                 return quantity / 24.0D;
-            case DAYS:
+            }
+            case DAYS -> {
                 return quantity;
-            case MONTHS:
+            }
+            case MONTHS -> {
                 return quantity * 30.4375D;
-            case YEARS:
+            }
+            case YEARS -> {
                 return quantity * 365.25D;
+            }
         }
         return 0D;
     }
@@ -353,18 +381,24 @@ public class TemporalAddend implements Comparable {
 
     private double months() {
         switch (unitCode) {
-            case SECONDS:
+            case SECONDS -> {
                 return quantity / 30.4375D / 24.0D / 60.0D / 60.0D;
-            case MINUTES:
+            }
+            case MINUTES -> {
                 return quantity / 30.4375D / 24.0D / 60.0D;
-            case HOURS:
+            }
+            case HOURS -> {
                 return quantity / 30.4375D / 24.0D;
-            case DAYS:
+            }
+            case DAYS -> {
                 return quantity / 30.4375D;
-            case MONTHS:
+            }
+            case MONTHS -> {
                 return quantity;
-            case YEARS:
+            }
+            case YEARS -> {
                 return quantity * 12;
+            }
         }
         return 0D;
     }
@@ -375,18 +409,24 @@ public class TemporalAddend implements Comparable {
 
     private double years() {
         switch (unitCode) {
-            case SECONDS:
+            case SECONDS -> {
                 return quantity / 365.25D / 24.0D / 60.0D / 60.0D;
-            case MINUTES:
+            }
+            case MINUTES -> {
                 return quantity / 365.25D / 24.0D / 60.0D;
-            case HOURS:
+            }
+            case HOURS -> {
                 return quantity / 365.25D / 24.0D;
-            case DAYS:
+            }
+            case DAYS -> {
                 return quantity / 365.25D;
-            case MONTHS:
+            }
+            case MONTHS -> {
                 return quantity / 12.0D;
-            case YEARS:
+            }
+            case YEARS -> {
                 return quantity;
+            }
         }
         return 0D;
     }
@@ -395,8 +435,7 @@ public class TemporalAddend implements Comparable {
     // <editor-fold defaultstate="collapsed" desc="Comparable methods">
     @Override
     public int compareTo(Object object) {
-        if (object instanceof TemporalAddend) {
-            TemporalAddend that = (TemporalAddend) object;
+        if (object instanceof TemporalAddend that) {
             return compareTo(that);
         }
         throw new IllegalArgumentException();

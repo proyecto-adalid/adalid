@@ -12,10 +12,27 @@
  */
 package adalid.commons.i18n;
 
+import java.util.Set;
+
 /**
  * @author Jorge Campins
  */
 public class EnglishLinguist implements Linguist {
+
+    @Override
+    public Set<String> getArticles() {
+        return EnglishNoun.getArticles();
+    }
+
+    @Override
+    public Set<String> getConjunctions() {
+        return EnglishNoun.getConjunctions();
+    }
+
+    @Override
+    public Set<String> getPrepositions() {
+        return EnglishNoun.getPrepositions();
+    }
 
     @Override
     public String capitalize(String noun) {

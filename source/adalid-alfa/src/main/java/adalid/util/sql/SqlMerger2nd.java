@@ -32,7 +32,7 @@ public class SqlMerger2nd extends SqlMerger {
 
     @Override
     protected String getSyntax() {
-        return getSqlUtilSyntax() + ", new schema, [new host], [new port], [new user], [new password], [new database]";
+        return getSqlUtilSyntax() + ", new schema, [new host], [new port], [new user], [new password], [new database], [project alias]";
     }
 
     @Override

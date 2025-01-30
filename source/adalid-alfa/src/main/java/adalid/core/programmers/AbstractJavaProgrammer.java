@@ -287,31 +287,23 @@ public abstract class AbstractJavaProgrammer extends AbstractProgrammer implemen
     protected String getJavaValue(Object object, Class<?> type) {
         if (object == null || type == null) {
             return null;
-        } else if (object instanceof Instance) { // && Entity.class.isAssignableFrom(type)
-            Instance instance = (Instance) object;
+        } else if (object instanceof Instance instance) { // && Entity.class.isAssignableFrom(type)
             return getJavaPrimitiveValue(instance.getInstanceKeyValue(), instance.getInstanceKeyType());
         } else if (object instanceof Artifact) {
             return null;
-        } else if (object instanceof SpecialBinaryValue) {
-            SpecialBinaryValue value = (SpecialBinaryValue) object;
+        } else if (object instanceof SpecialBinaryValue value) {
             return getSpecialBinaryValue(value);
-        } else if (object instanceof SpecialBooleanValue) {
-            SpecialBooleanValue value = (SpecialBooleanValue) object;
+        } else if (object instanceof SpecialBooleanValue value) {
             return getSpecialBooleanValue(value);
-        } else if (object instanceof SpecialCharacterValue) {
-            SpecialCharacterValue value = (SpecialCharacterValue) object;
+        } else if (object instanceof SpecialCharacterValue value) {
             return getSpecialCharacterValue(value);
-        } else if (object instanceof SpecialEntityValue) {
-            SpecialEntityValue value = (SpecialEntityValue) object;
+        } else if (object instanceof SpecialEntityValue value) {
             return getSpecialEntityValue(value);
-        } else if (object instanceof SpecialNumericValue) {
-            SpecialNumericValue value = (SpecialNumericValue) object;
+        } else if (object instanceof SpecialNumericValue value) {
             return getSpecialNumericValue(value);
-        } else if (object instanceof SpecialTemporalValue) {
-            SpecialTemporalValue value = (SpecialTemporalValue) object;
+        } else if (object instanceof SpecialTemporalValue value) {
             return getSpecialTemporalValue(value);
-        } else if (object instanceof NamedValue) {
-            NamedValue value = (NamedValue) object;
+        } else if (object instanceof NamedValue value) {
             return getNamedValueName(value);
         } else {
             return getJavaPrimitiveValue(object, type);
@@ -348,12 +340,12 @@ public abstract class AbstractJavaProgrammer extends AbstractProgrammer implemen
 
     //protected
     protected String getSpecialBinaryValue(SpecialBinaryValue value, ParameterizedExpression px) {
-        switch (value) {
-            case NULL:
-                return "null";
-            default:
-                return null;
-        }
+        return switch (value) {
+            case NULL ->
+                "null";
+            default ->
+                null;
+        };
     }
 
     //protected
@@ -363,16 +355,16 @@ public abstract class AbstractJavaProgrammer extends AbstractProgrammer implemen
 
     //protected
     protected String getSpecialBooleanValue(SpecialBooleanValue value, ParameterizedExpression px) {
-        switch (value) {
-            case NULL:
-                return "null";
-            case TRUE:
-                return "Boolean.TRUE";
-            case FALSE:
-                return "Boolean.FALSE";
-            default:
-                return null;
-        }
+        return switch (value) {
+            case NULL ->
+                "null";
+            case TRUE ->
+                "Boolean.TRUE";
+            case FALSE ->
+                "Boolean.FALSE";
+            default ->
+                null;
+        };
     }
 
     //protected
@@ -390,6 +382,8 @@ public abstract class AbstractJavaProgrammer extends AbstractProgrammer implemen
             case EMPTY -> {
                 return DQM$ + DQM$;
             }
+            case RGUID ->
+                string = "java.util.UUID.randomUUID().toString()";
             case CONTENT_ROOT_DIR ->
                 string = "getContentRootDir()";
             case CURRENT_USER_CODE ->
@@ -411,14 +405,14 @@ public abstract class AbstractJavaProgrammer extends AbstractProgrammer implemen
     protected String getSpecialEntityValue(SpecialEntityValue value, ParameterizedExpression px) {
         String string;
         switch (value) {
-            case NULL:
+            case NULL -> {
                 return "null";
-            case CURRENT_USER:
-//              string = "TLC.getUsuarioActual().getIdUsuario()";
+            }
+            case CURRENT_USER -> //              string = "TLC.getUsuarioActual().getIdUsuario()";
                 string = "getCurrentUser()";
-                break;
-            default:
+            default -> {
                 return null;
+            }
         }
         addSpecialValue(value, px, string);
         return string;
@@ -455,19 +449,18 @@ public abstract class AbstractJavaProgrammer extends AbstractProgrammer implemen
     protected String getSpecialTemporalValue(SpecialTemporalValue value, ParameterizedExpression px) {
         String string;
         switch (value) {
-            case NULL:
+            case NULL -> {
                 return "null";
-            case CURRENT_DATE:
+            }
+            case CURRENT_DATE ->
                 string = "TimeUtils.currentDate()";
-                break;
-            case CURRENT_TIME:
+            case CURRENT_TIME ->
                 string = "TimeUtils.currentTime()";
-                break;
-            case CURRENT_TIMESTAMP:
+            case CURRENT_TIMESTAMP ->
                 string = "TimeUtils.currentTimestamp()";
-                break;
-            default:
+            default -> {
                 return null;
+            }
         }
         addSpecialValue(value, px, string);
         return string;
@@ -562,8 +555,8 @@ public abstract class AbstractJavaProgrammer extends AbstractProgrammer implemen
     protected String getString(Object object) {
         if (object == null) {
             return null;
-        } else if (object instanceof String) {
-            return StrUtils.getStringJava((String) object);
+        } else if (object instanceof String string) {
+            return StrUtils.getStringJava(string);
         } else if (object instanceof Date) {
             return TimeUtils.jdbcDateString(object);
         } else if (object instanceof Time) {
@@ -731,40 +724,32 @@ public abstract class AbstractJavaProgrammer extends AbstractProgrammer implemen
         } else if (object.getClass().isArray()) {
             Object[] objects = (Object[]) object;
             return getJavaExpression(objects, px, enclose);
-        } else if (object instanceof Entity) {
-            Entity entity = (Entity) object;
+        } else if (object instanceof Entity entity) {
             return getFullVariableName(entity, px);
-        } else if (object instanceof Instance) {
-            Instance instance = (Instance) object;
+        } else if (object instanceof Instance instance) {
+            /* until 06/12/2024
             return getDelimitedString(instance.getInstanceKeyValue());
-        } else if (object instanceof SpecialBinaryValue) {
-            SpecialBinaryValue value = (SpecialBinaryValue) object;
+            /**/
+            return getJavaPrimitiveValue(instance.getInstanceKeyValue(), instance.getInstanceKeyType());
+        } else if (object instanceof SpecialBinaryValue value) {
             return getSpecialBinaryValue(value, px);
-        } else if (object instanceof SpecialBooleanValue) {
-            SpecialBooleanValue value = (SpecialBooleanValue) object;
+        } else if (object instanceof SpecialBooleanValue value) {
             return getSpecialBooleanValue(value, px);
-        } else if (object instanceof SpecialCharacterValue) {
-            SpecialCharacterValue value = (SpecialCharacterValue) object;
+        } else if (object instanceof SpecialCharacterValue value) {
             return getSpecialCharacterValue(value, px);
-        } else if (object instanceof SpecialEntityValue) {
-            SpecialEntityValue value = (SpecialEntityValue) object;
+        } else if (object instanceof SpecialEntityValue value) {
             return getSpecialEntityValue(value, px);
-        } else if (object instanceof SpecialNumericValue) {
-            SpecialNumericValue value = (SpecialNumericValue) object;
+        } else if (object instanceof SpecialNumericValue value) {
             return getSpecialNumericValue(value, px);
-        } else if (object instanceof SpecialTemporalValue) {
-            SpecialTemporalValue value = (SpecialTemporalValue) object;
+        } else if (object instanceof SpecialTemporalValue value) {
             return getSpecialTemporalValue(value, px);
-        } else if (object instanceof NamedValue) {
-            NamedValue namedValue = (NamedValue) object;
+        } else if (object instanceof NamedValue namedValue) {
             return getNamedValueName(namedValue, px);
-        } else if (object instanceof NativeQuery) {
-            NativeQuery nativeQuery = (NativeQuery) object;
+        } else if (object instanceof NativeQuery nativeQuery) {
             return getDelimitedString(nativeQuery.getString());
-        } else if (object instanceof Expression) {
-            return getJavaExpression((Expression) object, px, enclose);
-        } else if (object instanceof Artifact) {
-            Artifact artifact = (Artifact) object;
+        } else if (object instanceof Expression expression) {
+            return getJavaExpression(expression, px, enclose);
+        } else if (object instanceof Artifact artifact) {
             return getJavaQualifiedName(artifact);
         } else {
             return getJavaValue(object);
@@ -796,25 +781,24 @@ public abstract class AbstractJavaProgrammer extends AbstractProgrammer implemen
         String string;
         if (expression == null) {
             return null;
-        } else if (expression instanceof Property) {
-            Property property = (Property) expression;
+        } else if (expression instanceof Property property) {
             return getFullVariableName(property, px);
-        } else if (expression instanceof ComparisonX) {
-            string = getJavaComparisonExpression((ComparisonX) expression, px);
-        } else if (expression instanceof ConditionalX) {
-            string = getJavaConditionalExpression((ConditionalX) expression, px);
-        } else if (expression instanceof DataAggregateX) {
-            string = getJavaDataAggregateExpression((DataAggregateX) expression, px);
-        } else if (expression instanceof RowsAggregateX) {
-            string = getJavaRowsAggregateExpression((RowsAggregateX) expression, px);
-        } else if (expression instanceof NaryVectorX) {
-            string = getJavaNaryVectorExpression((NaryVectorX) expression, px);
-        } else if (expression instanceof OrderedPairX) {
-            string = getJavaOrderedPairExpression((OrderedPairX) expression, px);
-        } else if (expression instanceof ScalarX) {
-            string = getJavaScalarExpression((ScalarX) expression, px);
-        } else if (expression instanceof VariantX) {
-            string = getJavaVariantExpression((VariantX) expression, px);
+        } else if (expression instanceof ComparisonX comparisonX) {
+            string = getJavaComparisonExpression(comparisonX, px);
+        } else if (expression instanceof ConditionalX conditionalX) {
+            string = getJavaConditionalExpression(conditionalX, px);
+        } else if (expression instanceof DataAggregateX dataAggregateX) {
+            string = getJavaDataAggregateExpression(dataAggregateX, px);
+        } else if (expression instanceof RowsAggregateX rowsAggregateX) {
+            string = getJavaRowsAggregateExpression(rowsAggregateX, px);
+        } else if (expression instanceof NaryVectorX naryVectorX) {
+            string = getJavaNaryVectorExpression(naryVectorX, px);
+        } else if (expression instanceof OrderedPairX orderedPairX) {
+            string = getJavaOrderedPairExpression(orderedPairX, px);
+        } else if (expression instanceof ScalarX scalarX) {
+            string = getJavaScalarExpression(scalarX, px);
+        } else if (expression instanceof VariantX variantX) {
+            string = getJavaVariantExpression(variantX, px);
         } else {
             string = getJavaValue(expression);
         }
@@ -840,55 +824,16 @@ public abstract class AbstractJavaProgrammer extends AbstractProgrammer implemen
         String arg2 = getJavaExpression(y, px, true);
         String arg3 = getJavaExpression(z, px, true);
         String pattern;
-        switch (operator) {
-            case IS_NULL:
-            case IS_NOT_NULL:
-            case IS_TRUE:
-            case IS_FALSE:
-            case IS_NULL_OR_TRUE:
-            case IS_NULL_OR_FALSE:
-                pattern = call(operator, 1);
-                break;
-            case EQ:
-            case NEQ:
-            case GT:
-            case GTEQ:
-            case LT:
-            case LTEQ:
-            case STARTS_WITH:
-            case NOT_STARTS_WITH:
-            case CONTAINS:
-            case NOT_CONTAINS:
-            case ENDS_WITH:
-            case NOT_ENDS_WITH:
-            case IS_IN:
-            case IS_NOT_IN:
-            case IS_NULL_OR_EQ:
-            case IS_NULL_OR_NEQ:
-            case IS_NULL_OR_GT:
-            case IS_NULL_OR_GTEQ:
-            case IS_NULL_OR_LT:
-            case IS_NULL_OR_LTEQ:
-            case IS_NULL_OR_STARTS_WITH:
-            case IS_NULL_OR_NOT_STARTS_WITH:
-            case IS_NULL_OR_CONTAINS:
-            case IS_NULL_OR_NOT_CONTAINS:
-            case IS_NULL_OR_ENDS_WITH:
-            case IS_NULL_OR_NOT_ENDS_WITH:
-            case IS_NULL_OR_IN:
-            case IS_NULL_OR_NOT_IN:
-                pattern = call(operator, 2);
-                break;
-            case IS_BETWEEN:
-            case IS_NOT_BETWEEN:
-            case IS_NULL_OR_BETWEEN:
-            case IS_NULL_OR_NOT_BETWEEN:
-                pattern = call(operator, 3);
-                break;
-            default:
-                pattern = call(operator, z == null ? y == null ? 1 : 2 : 3);
-                break;
-        }
+        pattern = switch (operator) {
+            case IS_NULL, IS_NOT_NULL, IS_TRUE, IS_FALSE, IS_NULL_OR_TRUE, IS_NULL_OR_FALSE ->
+                call(operator, 1);
+            case EQ, NEQ, GT, GTEQ, LT, LTEQ, STARTS_WITH, NOT_STARTS_WITH, CONTAINS, NOT_CONTAINS, ENDS_WITH, NOT_ENDS_WITH, IS_IN, IS_NOT_IN, IS_NULL_OR_EQ, IS_NULL_OR_NEQ, IS_NULL_OR_GT, IS_NULL_OR_GTEQ, IS_NULL_OR_LT, IS_NULL_OR_LTEQ, IS_NULL_OR_STARTS_WITH, IS_NULL_OR_NOT_STARTS_WITH, IS_NULL_OR_CONTAINS, IS_NULL_OR_NOT_CONTAINS, IS_NULL_OR_ENDS_WITH, IS_NULL_OR_NOT_ENDS_WITH, IS_NULL_OR_IN, IS_NULL_OR_NOT_IN ->
+                call(operator, 2);
+            case IS_BETWEEN, IS_NOT_BETWEEN, IS_NULL_OR_BETWEEN, IS_NULL_OR_NOT_BETWEEN ->
+                call(operator, 3);
+            default ->
+                call(operator, z == null ? y == null ? 1 : 2 : 3);
+        };
         return format(pattern, arg1, arg2, arg3);
     }
 
@@ -1190,8 +1135,7 @@ public abstract class AbstractJavaProgrammer extends AbstractProgrammer implemen
         boolean doubtful = declaringEntity.isRootInstance();
         if (doubtful) {
             Expression foreignExpression = expression.getForeignExpression();
-            if (foreignExpression instanceof RowsAggregateX) {
-                RowsAggregateX foreignRowsAggregateX = (RowsAggregateX) foreignExpression;
+            if (foreignExpression instanceof RowsAggregateX foreignRowsAggregateX) {
                 String select = getJavaExpressionSelectFunctionName(foreignRowsAggregateX);
                 if (select != null) {
                     Entity dimension = foreignRowsAggregateX.getDimension();

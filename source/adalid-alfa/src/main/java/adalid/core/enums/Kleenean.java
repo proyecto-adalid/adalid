@@ -38,7 +38,7 @@ public enum Kleenean {
     }
 
     public boolean toBoolean(boolean unspecified) {
-        return _value == null ? unspecified : _value;
+        return _value == null ? unspecified : (boolean) _value;
     }
 
 }

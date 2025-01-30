@@ -13,7 +13,7 @@ import adalid.commons.bundles.Bundle;
 import adalid.jee2.SpecialPage;
 
 /**
- * @author ADALID meta-jee2-archetype
+ * @author ADALID meta-jee2-archetype, version 6.0.0
  */
 public class SpecialPages {
 

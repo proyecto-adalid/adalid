@@ -106,19 +106,29 @@ public class SQLDeveloperDDLFixer extends Utility {
     }
 
     public static boolean replace(String path) {
-        return SQLDeveloperDDLFixer.replace(path, false);
+        return replace(path, false);
     }
 
     public static boolean replace(String path, boolean detail) {
-        logger.info("replace" + StrUtils.enclose(path));
-        SQLDeveloperDDLFixer fixer = new SQLDeveloperDDLFixer(path, detail);
-        return fixer.replace();
+        logger.info("replace(" + path + ", " + detail + ")");
+        try {
+            SQLDeveloperDDLFixer fixer = new SQLDeveloperDDLFixer(path, detail);
+            return fixer.replace();
+        } catch (IllegalArgumentException e) {
+            logger.error(ThrowableUtils.getString(e));
+        }
+        return false;
     }
 
     public static boolean replace(String path, List<String> details) {
-        logger.info("replace" + StrUtils.enclose(path));
-        SQLDeveloperDDLFixer fixer = new SQLDeveloperDDLFixer(path, details);
-        return fixer.replace();
+        logger.info("replace(" + path + ", " + details + ")");
+        try {
+            SQLDeveloperDDLFixer fixer = new SQLDeveloperDDLFixer(path, details);
+            return fixer.replace();
+        } catch (IllegalArgumentException e) {
+            logger.error(ThrowableUtils.getString(e));
+        }
+        return false;
     }
 
     // <editor-fold defaultstate="collapsed" desc="instance fields">

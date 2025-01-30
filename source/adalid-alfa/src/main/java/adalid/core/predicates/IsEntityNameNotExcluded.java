@@ -23,8 +23,7 @@ public class IsEntityNameNotExcluded implements Predicate {
 
     @Override
     public boolean evaluate(Object object) {
-        if (object instanceof Entity) {
-            Entity entity = (Entity) object;
+        if (object instanceof Entity entity) {
             String name = entity.getName();
             return name != null && !ArrayUtils.contains(_excludedNames, name);
         }

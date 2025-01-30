@@ -107,6 +107,28 @@ public @interface EntityWarnings {
     Kleenean aboutVisibleFields() default Kleenean.UNSPECIFIED; // TRUE
 
     /**
+     * aboutStepCreatableFields indica si se debe, o no, emitir mensajes de advertencia acerca de pasos del asistente (wizard) de la entidad sin
+     * campos habilitados al agregar. Este elemento es relevante solo si el valor especificado, o determinado, para el elemento enabled es TRUE. Su
+     * valor es uno de los elementos de la enumeración Kleenean. Seleccione TRUE para emitir los mensajes; en caso contrario, seleccione FALSE.
+     * Alternativamente, omita el elemento o seleccione UNSPECIFIED para utilizar el valor predeterminado del atributo. El valor predeterminado del
+     * atributo es TRUE.
+     *
+     * @return aboutStepCreatableFields
+     */
+    Kleenean aboutStepCreatableFields() default Kleenean.UNSPECIFIED; // TRUE
+
+    /**
+     * aboutStepUpdatableFields indica si se debe, o no, emitir mensajes de advertencia acerca de pasos del asistente (wizard) de la entidad sin
+     * campos habilitados al modificar. Este elemento es relevante solo si el valor especificado, o determinado, para el elemento enabled es TRUE. Su
+     * valor es uno de los elementos de la enumeración Kleenean. Seleccione TRUE para emitir los mensajes; en caso contrario, seleccione FALSE.
+     * Alternativamente, omita el elemento o seleccione UNSPECIFIED para utilizar el valor predeterminado del atributo. El valor predeterminado del
+     * atributo es TRUE.
+     *
+     * @return aboutStepUpdatableFields
+     */
+    Kleenean aboutStepUpdatableFields() default Kleenean.UNSPECIFIED; // TRUE
+
+    /**
      * aboutSpecialExpressions indica si se debe, o no, emitir mensajes de advertencia acerca de las expresiones especiales de la entidad. Este
      * elemento es relevante solo si el valor especificado, o determinado, para el elemento enabled es TRUE. Su valor es uno de los elementos de la
      * enumeración Kleenean. Seleccione TRUE para emitir los mensajes; en caso contrario, seleccione FALSE. Alternativamente, omita el elemento o

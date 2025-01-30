@@ -23,8 +23,7 @@ public class IsConsoleViewDisplay implements Predicate {
 
     @Override
     public boolean evaluate(Object object) {
-        if (object instanceof Display) {
-            Display display = (Display) object;
+        if (object instanceof Display display) {
             return display.getEntity() != null && DisplayFormat.CONSOLE.equals(display.getDisplayFormat());
         }
         return false;

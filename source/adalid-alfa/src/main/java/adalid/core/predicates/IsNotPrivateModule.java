@@ -22,8 +22,7 @@ public class IsNotPrivateModule implements Predicate {
 
     @Override
     public boolean evaluate(Object object) {
-        if (object instanceof Project) {
-            Project project = (Project) object;
+        if (object instanceof Project project) {
             return !project.isPrivateModule();
         }
         return true;

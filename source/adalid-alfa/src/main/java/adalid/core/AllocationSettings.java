@@ -98,7 +98,7 @@ class AllocationSettings {
     /**
      * @return the round
      */
-    int getSettingRound() {
+    protected int getSettingRound() { // protected avoids method never unused warning
         return _settingRound;
     }
 

@@ -361,24 +361,28 @@ public abstract class AbstractPersistentEntity extends AbstractDatabaseEntity im
     }
 
     private void checkDiscriminatorValue() {
+        boolean ok = _discriminatorValue != null;
         HierarchyNodeType hierarchyNodeType = getHierarchyNodeType();
         if (hierarchyNodeType == null) {
             if (_discriminatorValue != null) {
                 String message = getName() + " has a discriminator value but it is not in a class hierarchy";
                 logger.error(message);
                 Project.increaseParserErrorCount();
+                ok = false;
             }
         } else if (isAbstractClass()) {
             if (_discriminatorValue != null) {
                 String message = getName() + " has a discriminator value but it is an abstract class";
                 logger.error(message);
                 Project.increaseParserErrorCount();
+                ok = false;
             }
         } else if (_discriminatorProperty == null) {
             if (_discriminatorValue != null) {
                 String message = getName() + " has a discriminator value but it does not have a discriminator property";
                 logger.error(message);
                 Project.increaseParserErrorCount();
+                ok = false;
             }
         } else if (_inheritanceMappingStrategy == null) {
         } else if (_inheritanceMappingStrategy.equals(InheritanceMappingStrategy.UNSPECIFIED)) {
@@ -389,12 +393,14 @@ public abstract class AbstractPersistentEntity extends AbstractDatabaseEntity im
                         + " but it does not have a discriminator value";
                     logger.error(message);
                     Project.increaseParserErrorCount();
+                    ok = false;
                 }
             }
         } else if (_inheritanceMappingStrategy.equals(InheritanceMappingStrategy.TABLE_PER_CLASS)) {
             String message = getName() + " inheritance mapping strategy is TABLE_PER_CLASS and it has a discriminator  value";
             logger.error(message);
             Project.increaseParserErrorCount();
+            ok = false;
         } else if (_discriminatorProperty.isEntity()) {
             Entity discriminatorEntity = (Entity) _discriminatorProperty;
             List<Instance> instances = discriminatorEntity.getInstancesList();
@@ -412,7 +418,15 @@ public abstract class AbstractPersistentEntity extends AbstractDatabaseEntity im
                     + "\" does not correspond to any instance of " + discriminatorEntity.getRoot().getName();
                 logger.error(message);
                 Project.increaseParserErrorCount();
+                ok = false;
             }
+        }
+        Entity root = ok ? getHierarchyRoot() : null;
+        Entity prev = root == null ? null : root.getSubentitiesMap().put(_discriminatorValue, this);
+        if (prev != null) {
+            String message = "the discriminator value of " + getName() + " (" + _discriminatorValue + ") is also assigned to " + prev.getName();
+            logger.error(message);
+            Project.increaseParserErrorCount();
         }
     }
 

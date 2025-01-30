@@ -50,10 +50,11 @@ public class RastroFuncion extends AbstractPersistentEntity {
     // </editor-fold>
 
     @PrimaryKey
+    @PropertyField(hidden = Kleenean.FALSE, detail = Kleenean.TRUE, heading = Kleenean.TRUE)
     public LongProperty id;
 
     @ColumnField(nullable = Kleenean.FALSE, indexed = Kleenean.TRUE)
-    @PropertyField(responsivePriority = 6, table = Kleenean.TRUE, report = Kleenean.TRUE, heading = Kleenean.TRUE, search = Kleenean.TRUE)
+    @PropertyField(responsivePriority = 6, table = Kleenean.TRUE, report = Kleenean.TRUE, search = Kleenean.TRUE, heading = Kleenean.FALSE, overlay = Kleenean.TRUE)
     public TimestampProperty fechaHoraEjecucion;
 
     @OwnerProperty
@@ -62,35 +63,40 @@ public class RastroFuncion extends AbstractPersistentEntity {
 //  20231209: remove foreign-key referring to Usuario because it might cause ARJUNA012117 and/or ARJUNA012121
 //  @ForeignKey(onDelete = OnDeleteAction.NONE, onUpdate = OnUpdateAction.NONE)
     @ManyToOne(navigability = Navigability.UNIDIRECTIONAL, view = MasterDetailView.NONE)
-    @PropertyField(hidden = Kleenean.TRUE)
+    @PropertyField(table = Kleenean.FALSE, export = Kleenean.FALSE, report = Kleenean.FALSE, heading = Kleenean.FALSE, overlay = Kleenean.FALSE, search = Kleenean.FALSE, filter = Kleenean.FALSE, column = Kleenean.FALSE) // hidden until 02/11/2024
     @QueryMapping(mapKeyProperties = Kleenean.FALSE)
     public Usuario usuario;
 
     @ColumnField(indexed = Kleenean.TRUE)
-    @PropertyField(responsivePriority = 6, table = Kleenean.TRUE, search = Kleenean.TRUE, report = Kleenean.TRUE, heading = Kleenean.TRUE)
+    @PropertyField(responsivePriority = 6, table = Kleenean.TRUE, search = Kleenean.TRUE, report = Kleenean.TRUE, heading = Kleenean.FALSE)
     @StringField(maxLength = MAX_EMAIL_ADDRESS_LENGTH, displayLength = 36) // maxLength = 36 until 01/12/2023
     public StringProperty codigoUsuario;
 
     @ColumnField(indexed = Kleenean.TRUE)
-    @PropertyField(table = Kleenean.FALSE, search = Kleenean.TRUE, report = Kleenean.TRUE, heading = Kleenean.TRUE)
+    @PropertyField(table = Kleenean.FALSE, search = Kleenean.TRUE, report = Kleenean.TRUE, heading = Kleenean.FALSE, overlay = Kleenean.TRUE, anchor = "codigoUsuario", anchorType = AnchorType.INLINE)
     @StringField(maxLength = 100)
     public StringProperty nombreUsuario;
+
+    @ColumnField(nullable = Kleenean.TRUE)
+    @PropertyField(table = Kleenean.FALSE)
+    @StringField(maxLength = 40) // IPv4: Máximo de 15 caracteres (con puntos incluidos); IPv6: Máximo de 39 caracteres (con dos puntos incluidos)
+    public StringProperty direccionIp;
 
 //  20171213: remove foreign-key referring to Funcion
 //  @ForeignKey(onDelete = OnDeleteAction.NONE, onUpdate = OnUpdateAction.NONE)
     @ManyToOne(navigability = Navigability.UNIDIRECTIONAL, view = MasterDetailView.NONE)
     @ColumnField(nullable = Kleenean.TRUE)
-    @PropertyField(hidden = Kleenean.TRUE)
+    @PropertyField(table = Kleenean.FALSE, export = Kleenean.FALSE, report = Kleenean.FALSE, heading = Kleenean.FALSE, overlay = Kleenean.FALSE, search = Kleenean.FALSE, filter = Kleenean.FALSE, column = Kleenean.FALSE) // hidden until 11/01/2025
     @QueryMapping(mapKeyProperties = Kleenean.FALSE)
     public Funcion funcion;
 
     @ColumnField(indexed = Kleenean.TRUE)
-    @PropertyField(table = Kleenean.TRUE, search = Kleenean.TRUE, report = Kleenean.TRUE, heading = Kleenean.TRUE)
+    @PropertyField(table = Kleenean.TRUE, search = Kleenean.TRUE, report = Kleenean.TRUE, heading = Kleenean.FALSE)
     @StringField(maxLength = 200)
     public StringProperty codigoFuncion;
 
     @ColumnField(indexed = Kleenean.TRUE)
-    @PropertyField(table = Kleenean.FALSE, search = Kleenean.TRUE, report = Kleenean.TRUE, heading = Kleenean.TRUE)
+    @PropertyField(table = Kleenean.FALSE, search = Kleenean.TRUE, report = Kleenean.TRUE, heading = Kleenean.FALSE, overlay = Kleenean.TRUE, anchor = "codigoFuncion", anchorType = AnchorType.INLINE)
     @StringField(maxLength = 200)
     public StringProperty nombreFuncion;
 
@@ -117,7 +123,7 @@ public class RastroFuncion extends AbstractPersistentEntity {
     public StringProperty codigoClaseRecursoValor;
 
     @ColumnField(indexed = Kleenean.TRUE)
-    @PropertyField(search = Kleenean.TRUE)
+    @PropertyField(search = Kleenean.TRUE, heading = Kleenean.FALSE, overlay = Kleenean.TRUE, anchor = "codigoClaseRecursoValor", anchorType = AnchorType.INLINE)
     @StringField(maxLength = 100)
     public StringProperty nombreClaseRecursoValor;
 
@@ -133,11 +139,11 @@ public class RastroFuncion extends AbstractPersistentEntity {
     public LongProperty versionRecurso;
 
     @ColumnField(indexed = Kleenean.FALSE)
-    @PropertyField(responsivePriority = 5, table = Kleenean.TRUE, report = Kleenean.TRUE, search = Kleenean.TRUE)
+    @PropertyField(responsivePriority = 5, table = Kleenean.TRUE, report = Kleenean.TRUE, search = Kleenean.TRUE, overlay = Kleenean.TRUE)
     public StringProperty codigoRecurso;
 
     @ColumnField(indexed = Kleenean.FALSE)
-    @PropertyField(table = Kleenean.FALSE, report = Kleenean.TRUE, search = Kleenean.TRUE)
+    @PropertyField(table = Kleenean.FALSE, report = Kleenean.TRUE, search = Kleenean.TRUE, overlay = Kleenean.TRUE, anchor = "codigoRecurso", anchorType = AnchorType.INLINE)
     public StringProperty nombreRecurso;
 
     @PropertyField(hidden = Kleenean.TRUE)
@@ -156,11 +162,14 @@ public class RastroFuncion extends AbstractPersistentEntity {
     @ForeignKey(onDelete = OnDeleteAction.NONE, onUpdate = OnUpdateAction.NONE)
     @ManyToOne(navigability = Navigability.UNIDIRECTIONAL, view = MasterDetailView.NONE)
     @ColumnField(nullable = Kleenean.FALSE)
-    @PropertyField(table = Kleenean.TRUE, report = Kleenean.TRUE)
+    @PropertyField(table = Kleenean.TRUE, report = Kleenean.TRUE, heading = Kleenean.TRUE, overlay = Kleenean.TRUE)
     public CondicionEjeFun condicionEjeFun;
 
     @StringField(maxLength = 0)
     public StringProperty descripcionError;
+
+    @OneToOne(navigability = Navigability.UNIDIRECTIONAL, detailView = Kleenean.TRUE)
+    public RastroProceso rastroProceso;
 
     @Override
     protected void settleAttributes() {
@@ -175,6 +184,11 @@ public class RastroFuncion extends AbstractPersistentEntity {
         setLocalizedCollectionLabel(SPANISH, "Rastros de Auditoría de Funciones");
         setLocalizedCollectionShortLabel(ENGLISH, "Function Trails");
         setLocalizedCollectionShortLabel(SPANISH, "Rastros de Funciones");
+        /**/
+        setLocalizedCollectionLabel(ENGLISH, rastroProceso, "Function Audit Trail");
+        setLocalizedCollectionLabel(SPANISH, rastroProceso, "Rastro de Auditoría de Función");
+        setLocalizedCollectionShortLabel(ENGLISH, rastroProceso, "Function Trail");
+        setLocalizedCollectionShortLabel(SPANISH, rastroProceso, "Rastro de Función");
         /**/
         setLocalizedDescription(ENGLISH, "Each instance of " + b("Function Audit Trails") + " represents an "
             + "audit trail of the execution of CRUD operations and business processes."
@@ -212,38 +226,65 @@ public class RastroFuncion extends AbstractPersistentEntity {
         /**/
         usuario.setLocalizedDescription(ENGLISH, "user who executed the function");
         usuario.setLocalizedDescription(SPANISH, "usuario que ejecutó la función");
+        usuario.setLocalizedShortDescription(ENGLISH, "user who executed the function");
+        usuario.setLocalizedShortDescription(SPANISH, "usuario que ejecutó la función");
         usuario.setLocalizedLabel(ENGLISH, "user");
         usuario.setLocalizedLabel(SPANISH, "usuario");
         /**/
         codigoUsuario.setLocalizedDescription(ENGLISH, "code of the user who executed the function");
         codigoUsuario.setLocalizedDescription(SPANISH, "código del usuario que ejecutó la función");
-        codigoUsuario.setLocalizedLabel(ENGLISH, "user");
-        codigoUsuario.setLocalizedLabel(SPANISH, "usuario");
+        codigoUsuario.setLocalizedLabel(ENGLISH, "user code");
+        codigoUsuario.setLocalizedLabel(SPANISH, "código del usuario");
+        codigoUsuario.setLocalizedColumnHeader(ENGLISH, "user");
+        codigoUsuario.setLocalizedColumnHeader(SPANISH, "usuario");
+        codigoUsuario.setLocalizedAnchorLabel(ENGLISH, "user");
+        codigoUsuario.setLocalizedAnchorLabel(SPANISH, "usuario");
+        codigoUsuario.setLocalizedAnchoredLabel(ENGLISH, "code");
+        codigoUsuario.setLocalizedAnchoredLabel(SPANISH, "código");
         /**/
         nombreUsuario.setLocalizedDescription(ENGLISH, "name of the user who executed the function");
         nombreUsuario.setLocalizedDescription(SPANISH, "nombre del usuario que ejecutó la función");
         nombreUsuario.setLocalizedLabel(ENGLISH, "user name");
         nombreUsuario.setLocalizedLabel(SPANISH, "nombre del usuario");
+        nombreUsuario.setLocalizedAnchoredLabel(ENGLISH, "name");
+        nombreUsuario.setLocalizedAnchoredLabel(SPANISH, "nombre");
         /**/
-        funcion.setLocalizedDescription(ENGLISH, "function executed");
+        direccionIp.setLocalizedDescription(ENGLISH, "IP address");
+        direccionIp.setLocalizedDescription(SPANISH, "dirección IP");
+        direccionIp.setLocalizedLabel(ENGLISH, "IP");
+        direccionIp.setLocalizedLabel(SPANISH, "IP");
+        /**/
+        funcion.setLocalizedDescription(ENGLISH, "executed function");
         funcion.setLocalizedDescription(SPANISH, "función ejecutada");
+        funcion.setLocalizedShortDescription(ENGLISH, "executed function");
+        funcion.setLocalizedShortDescription(SPANISH, "función ejecutada");
         funcion.setLocalizedLabel(ENGLISH, "function");
         funcion.setLocalizedLabel(SPANISH, "función");
         /**/
         tipoFuncion.setLocalizedDescription(ENGLISH, "type of the function");
-        tipoFuncion.setLocalizedDescription(SPANISH, "tipo de función");
+        tipoFuncion.setLocalizedDescription(SPANISH, "tipo de la función");
+        tipoFuncion.setLocalizedShortDescription(ENGLISH, "type of the function");
+        tipoFuncion.setLocalizedShortDescription(SPANISH, "tipo de la función");
         tipoFuncion.setLocalizedLabel(ENGLISH, "function type");
         tipoFuncion.setLocalizedLabel(SPANISH, "tipo de función");
         /**/
-        codigoFuncion.setLocalizedDescription(ENGLISH, "code of the function");
-        codigoFuncion.setLocalizedDescription(SPANISH, "código de la función");
-        codigoFuncion.setLocalizedLabel(ENGLISH, "function");
-        codigoFuncion.setLocalizedLabel(SPANISH, "función");
+        codigoFuncion.setLocalizedDescription(ENGLISH, "code of the executed function");
+        codigoFuncion.setLocalizedDescription(SPANISH, "código de la función ejecutada");
+        codigoFuncion.setLocalizedLabel(ENGLISH, "function code");
+        codigoFuncion.setLocalizedLabel(SPANISH, "código de la función");
+        codigoFuncion.setLocalizedColumnHeader(ENGLISH, "function");
+        codigoFuncion.setLocalizedColumnHeader(SPANISH, "función");
+        codigoFuncion.setLocalizedAnchorLabel(ENGLISH, "function");
+        codigoFuncion.setLocalizedAnchorLabel(SPANISH, "función");
+        codigoFuncion.setLocalizedAnchoredLabel(ENGLISH, "code");
+        codigoFuncion.setLocalizedAnchoredLabel(SPANISH, "código");
         /**/
         nombreFuncion.setLocalizedDescription(ENGLISH, "name of the function");
         nombreFuncion.setLocalizedDescription(SPANISH, "nombre de la función");
         nombreFuncion.setLocalizedLabel(ENGLISH, "function name");
         nombreFuncion.setLocalizedLabel(SPANISH, "nombre de la función");
+        nombreFuncion.setLocalizedAnchoredLabel(ENGLISH, "name");
+        nombreFuncion.setLocalizedAnchoredLabel(SPANISH, "nombre");
         /**/
         descripcionFuncion.setLocalizedDescription(ENGLISH, "description of the function");
         descripcionFuncion.setLocalizedDescription(SPANISH, "descripción de la función");
@@ -257,20 +298,28 @@ public class RastroFuncion extends AbstractPersistentEntity {
         paginaFuncion.setLocalizedTooltip(ENGLISH, "open the function's processing page");
         paginaFuncion.setLocalizedTooltip(SPANISH, "abrir la página de procesamiento de la función");
         /**/
-        codigoClaseRecursoValor.setLocalizedDescription(ENGLISH, "resource class of the function");
-        codigoClaseRecursoValor.setLocalizedDescription(SPANISH, "clase de recurso de la función");
+        idClaseRecursoValor.setLocalizedDescription(ENGLISH, "resource class of the function");
+        idClaseRecursoValor.setLocalizedDescription(SPANISH, "clase de recurso de la función");
         idClaseRecursoValor.setLocalizedLabel(ENGLISH, "resource class");
         idClaseRecursoValor.setLocalizedLabel(SPANISH, "clase de recurso");
         /**/
         codigoClaseRecursoValor.setLocalizedDescription(ENGLISH, "code of the resource class of the function");
         codigoClaseRecursoValor.setLocalizedDescription(SPANISH, "código de la clase de recurso de la función");
-        codigoClaseRecursoValor.setLocalizedLabel(ENGLISH, "resource class");
-        codigoClaseRecursoValor.setLocalizedLabel(SPANISH, "clase de recurso");
+        codigoClaseRecursoValor.setLocalizedLabel(ENGLISH, "resource class code");
+        codigoClaseRecursoValor.setLocalizedLabel(SPANISH, "código de la clase de recurso");
+        codigoClaseRecursoValor.setLocalizedColumnHeader(ENGLISH, "resource class");
+        codigoClaseRecursoValor.setLocalizedColumnHeader(SPANISH, "clase de recurso");
+        codigoClaseRecursoValor.setLocalizedAnchorLabel(ENGLISH, "resource class");
+        codigoClaseRecursoValor.setLocalizedAnchorLabel(SPANISH, "clase de recurso");
+        codigoClaseRecursoValor.setLocalizedAnchoredLabel(ENGLISH, "code");
+        codigoClaseRecursoValor.setLocalizedAnchoredLabel(SPANISH, "código");
         /**/
         nombreClaseRecursoValor.setLocalizedDescription(ENGLISH, "name of the resource class of the function");
         nombreClaseRecursoValor.setLocalizedDescription(SPANISH, "nombre de la clase de recurso de la función");
         nombreClaseRecursoValor.setLocalizedLabel(ENGLISH, "resource class name");
         nombreClaseRecursoValor.setLocalizedLabel(SPANISH, "nombre de la clase de recurso");
+        nombreClaseRecursoValor.setLocalizedAnchoredLabel(ENGLISH, "name");
+        nombreClaseRecursoValor.setLocalizedAnchoredLabel(SPANISH, "nombre");
         /**/
         recursoValor.setLocalizedLabel(ENGLISH, "resource");
         recursoValor.setLocalizedLabel(SPANISH, "recurso");
@@ -283,13 +332,21 @@ public class RastroFuncion extends AbstractPersistentEntity {
         /**/
         codigoRecurso.setLocalizedDescription(ENGLISH, "code of the resource on which the function was executed");
         codigoRecurso.setLocalizedDescription(SPANISH, "código del recurso sobre el que se ejecutó la función");
-        codigoRecurso.setLocalizedLabel(ENGLISH, "resource");
-        codigoRecurso.setLocalizedLabel(SPANISH, "recurso");
+        codigoRecurso.setLocalizedLabel(ENGLISH, "resource code");
+        codigoRecurso.setLocalizedLabel(SPANISH, "código del recurso");
+        codigoRecurso.setLocalizedColumnHeader(ENGLISH, "resource");
+        codigoRecurso.setLocalizedColumnHeader(SPANISH, "recurso");
+        codigoRecurso.setLocalizedAnchorLabel(ENGLISH, "resource");
+        codigoRecurso.setLocalizedAnchorLabel(SPANISH, "recurso");
+        codigoRecurso.setLocalizedAnchoredLabel(ENGLISH, "code");
+        codigoRecurso.setLocalizedAnchoredLabel(SPANISH, "código");
         /**/
         nombreRecurso.setLocalizedDescription(ENGLISH, "name of the resource on which the function was executed");
         nombreRecurso.setLocalizedDescription(SPANISH, "nombre del recurso sobre el que se ejecutó la función");
         nombreRecurso.setLocalizedLabel(ENGLISH, "resource name");
         nombreRecurso.setLocalizedLabel(SPANISH, "nombre del recurso");
+        nombreRecurso.setLocalizedAnchoredLabel(ENGLISH, "name");
+        nombreRecurso.setLocalizedAnchoredLabel(SPANISH, "nombre");
         /**/
         idPropietarioRecurso.setLocalizedLabel(ENGLISH, "resource owner");
         idPropietarioRecurso.setLocalizedLabel(SPANISH, "propietario del recurso");
@@ -309,6 +366,8 @@ public class RastroFuncion extends AbstractPersistentEntity {
         /**/
         condicionEjeFun.setLocalizedDescription(ENGLISH, "condition code of the function execution");
         condicionEjeFun.setLocalizedDescription(SPANISH, "código de condición de la ejecución de la función");
+        condicionEjeFun.setLocalizedShortDescription(ENGLISH, "condition code of the function execution");
+        condicionEjeFun.setLocalizedShortDescription(SPANISH, "código de condición de la ejecución de la función");
         condicionEjeFun.setLocalizedLabel(ENGLISH, "function execution condition");
         condicionEjeFun.setLocalizedLabel(SPANISH, "condición de ejecución de función");
         condicionEjeFun.setLocalizedShortLabel(ENGLISH, "condition");
@@ -318,6 +377,7 @@ public class RastroFuncion extends AbstractPersistentEntity {
         descripcionError.setLocalizedDescription(SPANISH, "texto que describe el resultado de la ejecución de la función");
         descripcionError.setLocalizedLabel(ENGLISH, "message");
         descripcionError.setLocalizedLabel(SPANISH, "mensaje");
+        /**/
         // </editor-fold>
     }
 
@@ -332,7 +392,36 @@ public class RastroFuncion extends AbstractPersistentEntity {
     }
 
     /**/
-    protected Segment dml, biz;
+    protected Tab tab110, tab120;
+
+    @Override
+    protected void settleTabs() {
+        super.settleTabs();
+        /**/
+        tab110.newTabField(id, rastroProceso, fechaHoraEjecucion,
+            usuario, funcion,
+            codigoClaseRecursoValor, nombreClaseRecursoValor,
+            codigoRecurso, nombreRecurso,
+            condicionEjeFun, descripcionError, direccionIp
+        );
+        /**/
+        tab120.newTabField(codigoUsuario, nombreUsuario, codigoFuncion, nombreFuncion, descripcionFuncion, paginaFuncion, tipoFuncion,
+            idClaseRecursoValor, codigoClaseRecursoValor, nombreClaseRecursoValor, // 3
+            recursoValor, idRecurso, versionRecurso, codigoRecurso, nombreRecurso, idPropietarioRecurso, idSegmentoRecurso, idSelectRecurso, paginaRecurso // 8
+        );
+        /**/
+        // <editor-fold defaultstate="collapsed" desc="localization of RastroFuncion's tabs">
+        /**/
+        tab110.setLocalizedLabel(ENGLISH, "general");
+        tab110.setLocalizedLabel(SPANISH, "general");
+        /**/
+        tab120.setLocalizedLabel(ENGLISH, "details");
+        tab120.setLocalizedLabel(SPANISH, "detalles");
+        /**/
+        // </editor-fold>
+    }
+
+    protected Segment biz, dml, mis, misbiz, misdml;
 
     @Override
     protected void settleExpressions() {
@@ -342,12 +431,15 @@ public class RastroFuncion extends AbstractPersistentEntity {
             tipoFuncion.PROCEDIMIENTO_PARAMETROS,
             tipoFuncion.PROCESO
         );
-        /**/
         dml = tipoFuncion.isIn(
             tipoFuncion.CREACION,
             tipoFuncion.MODIFICACION,
             tipoFuncion.ELIMINACION
         );
+        /**/
+        mis = codigoUsuario.isEqualTo(CURRENT_USER_CODE);
+        misbiz = mis.and(biz);
+        misdml = mis.and(dml);
         /**/
         // <editor-fold defaultstate="collapsed" desc="localization of RastroFuncion's expressions">
         /**/
@@ -356,10 +448,25 @@ public class RastroFuncion extends AbstractPersistentEntity {
         biz.setLocalizedCollectionShortLabel(ENGLISH, "Business Operations");
         biz.setLocalizedCollectionShortLabel(SPANISH, "Operaciones de Negocio");
         /**/
-        dml.setLocalizedCollectionLabel(ENGLISH, "Registration Operations (Insert, Update and Delete)");
-        dml.setLocalizedCollectionLabel(SPANISH, "Operaciones de Registro (Creación, Modificación y Eliminación)");
+        dml.setLocalizedCollectionLabel(ENGLISH, "Insert, Update and Delete Operations");
+        dml.setLocalizedCollectionLabel(SPANISH, "Operaciones de Creación, Modificación y Eliminación");
         dml.setLocalizedCollectionShortLabel(ENGLISH, "Registration Operations");
         dml.setLocalizedCollectionShortLabel(SPANISH, "Operaciones de Registro");
+        /**/
+        mis.setLocalizedCollectionLabel(ENGLISH, "Operations executed by the current user");
+        mis.setLocalizedCollectionLabel(SPANISH, "Operaciones ejecutadas por el usuario actual");
+        mis.setLocalizedCollectionShortLabel(ENGLISH, "My Operations");
+        mis.setLocalizedCollectionShortLabel(SPANISH, "Mis Operaciones");
+        /**/
+        misbiz.setLocalizedCollectionLabel(ENGLISH, "Business Procedures and Processes executed by the current user");
+        misbiz.setLocalizedCollectionLabel(SPANISH, "Procedimientos y Procesos de Negocio ejecutados por el usuario actual");
+        misbiz.setLocalizedCollectionShortLabel(ENGLISH, "My Business Operations");
+        misbiz.setLocalizedCollectionShortLabel(SPANISH, "Mis Operaciones de Negocio");
+        /**/
+        misdml.setLocalizedCollectionLabel(ENGLISH, "Insert, Update and Delete Operations executed by the current user");
+        misdml.setLocalizedCollectionLabel(SPANISH, "Operaciones de Creación, Modificación y Eliminación ejecutadas por el usuario actual");
+        misdml.setLocalizedCollectionShortLabel(ENGLISH, "My Registration Operations");
+        misdml.setLocalizedCollectionShortLabel(SPANISH, "Mis Operaciones de Registro");
         /**/
         // </editor-fold>
         /**/
@@ -370,6 +477,10 @@ public class RastroFuncion extends AbstractPersistentEntity {
         super.settleFilters();
         /**/
         addSelectSegment(biz, dml);
+        addSelectSegment(mis, true);
+        addSelectSegment(misbiz, misdml);
+        /**/
+        usuario.setRenderingFilter(usuario.id.isNotNull()); // mostrar si, y solo si, el usuario no ha sido eliminado
         /**/
     }
 

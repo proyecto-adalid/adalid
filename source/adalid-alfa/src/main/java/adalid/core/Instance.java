@@ -70,6 +70,10 @@ public class Instance extends AbstractArtifact {
 
     private final List<InstanceField> _instanceFieldsList = new ArrayList<>();
 
+    private void instanceFieldsList_add(InstanceField field) { // since 14/01/2025
+        appendField(_instanceFieldsList, field);
+    }
+
     // <editor-fold defaultstate="collapsed" desc="until 21/03/2021">
     /* commented on 21/03/2021
     private final Map<String, InstanceField> _instanceFields = new LinkedHashMap<>();
@@ -552,27 +556,27 @@ public class Instance extends AbstractArtifact {
                     if (Boolean.class.isAssignableFrom(dataType)) {
                         logico = dpv instanceof Boolean ? (Boolean) dpv : false;
                         InstanceField instanceField = new InstanceField(this, property, logico);
-                        _instanceFieldsList.add(instanceField);
+                        instanceFieldsList_add(instanceField);
                     } else if (Number.class.isAssignableFrom(dataType)) {
                         number = keyField ? _index : dpv instanceof Integer ? (Integer) dpv : 0;
                         InstanceField instanceField = new InstanceField(this, property, number);
-                        _instanceFieldsList.add(instanceField);
+                        instanceFieldsList_add(instanceField);
                     } else if (String.class.isAssignableFrom(dataType)) {
                         string = keyField ? code : dpv instanceof String ? (String) dpv : name;
                         InstanceField instanceField = new InstanceField(this, property, string);
-                        _instanceFieldsList.add(instanceField);
+                        instanceFieldsList_add(instanceField);
                     } else if (Date.class.isAssignableFrom(dataType)) {
                         date = keyField ? TimeUtils.currentDate() : dpv instanceof Date ? (Date) dpv : currentDate;
                         InstanceField instanceField = new InstanceField(this, property, date);
-                        _instanceFieldsList.add(instanceField);
+                        instanceFieldsList_add(instanceField);
                     } else if (Time.class.isAssignableFrom(dataType)) {
                         time = keyField ? TimeUtils.currentTime() : dpv instanceof Time ? (Time) dpv : currentTime;
                         InstanceField instanceField = new InstanceField(this, property, time);
-                        _instanceFieldsList.add(instanceField);
+                        instanceFieldsList_add(instanceField);
                     } else if (Timestamp.class.isAssignableFrom(dataType)) {
                         timestamp = keyField ? TimeUtils.currentTimestamp() : dpv instanceof Timestamp ? (Timestamp) dpv : currentTimestamp;
                         InstanceField instanceField = new InstanceField(this, property, timestamp);
-                        _instanceFieldsList.add(instanceField);
+                        instanceFieldsList_add(instanceField);
                     }
                 }
                 /**/
@@ -605,7 +609,7 @@ public class Instance extends AbstractArtifact {
      */
     public void newInstanceField(PersistentEntityReference property, Instance value) {
         InstanceField instanceField = new InstanceField(this, property, value);
-        _instanceFieldsList.add(instanceField);
+        instanceFieldsList_add(instanceField);
     }
 
     /**
@@ -616,7 +620,7 @@ public class Instance extends AbstractArtifact {
      */
     public void newInstanceField(BooleanProperty property, Boolean value) {
         InstanceField instanceField = new InstanceField(this, property, value);
-        _instanceFieldsList.add(instanceField);
+        instanceFieldsList_add(instanceField);
     }
 
     /**
@@ -627,7 +631,7 @@ public class Instance extends AbstractArtifact {
      */
     public void newInstanceField(CharacterProperty property, Character value) {
         InstanceField instanceField = new InstanceField(this, property, value);
-        _instanceFieldsList.add(instanceField);
+        instanceFieldsList_add(instanceField);
     }
 
     /**
@@ -639,7 +643,7 @@ public class Instance extends AbstractArtifact {
     public void newInstanceField(CharacterProperty property, String value) {
         if (value != null && value.length() == 1) {
             InstanceField instanceField = new InstanceField(this, property, value);
-            _instanceFieldsList.add(instanceField);
+            instanceFieldsList_add(instanceField);
         } else {
             logger.error("invalid char value for field " + getFullName() + "." + property.getName());
             Project.increaseParserErrorCount();
@@ -654,7 +658,7 @@ public class Instance extends AbstractArtifact {
      */
     public void newInstanceField(BigDecimalProperty property, BigDecimal value) {
         InstanceField instanceField = new InstanceField(this, property, value);
-        _instanceFieldsList.add(instanceField);
+        instanceFieldsList_add(instanceField);
     }
 
     /**
@@ -665,7 +669,7 @@ public class Instance extends AbstractArtifact {
      */
     public void newInstanceField(BigDecimalProperty property, BigInteger value) {
         InstanceField instanceField = new InstanceField(this, property, value);
-        _instanceFieldsList.add(instanceField);
+        instanceFieldsList_add(instanceField);
     }
 
     /**
@@ -676,7 +680,7 @@ public class Instance extends AbstractArtifact {
      */
     public void newInstanceField(BigDecimalProperty property, Long value) {
         InstanceField instanceField = new InstanceField(this, property, value);
-        _instanceFieldsList.add(instanceField);
+        instanceFieldsList_add(instanceField);
     }
 
     /**
@@ -687,7 +691,7 @@ public class Instance extends AbstractArtifact {
      */
     public void newInstanceField(BigDecimalProperty property, Integer value) {
         InstanceField instanceField = new InstanceField(this, property, value);
-        _instanceFieldsList.add(instanceField);
+        instanceFieldsList_add(instanceField);
     }
 
     /**
@@ -698,7 +702,7 @@ public class Instance extends AbstractArtifact {
      */
     public void newInstanceField(BigDecimalProperty property, Short value) {
         InstanceField instanceField = new InstanceField(this, property, value);
-        _instanceFieldsList.add(instanceField);
+        instanceFieldsList_add(instanceField);
     }
 
     /**
@@ -709,7 +713,7 @@ public class Instance extends AbstractArtifact {
      */
     public void newInstanceField(BigDecimalProperty property, Byte value) {
         InstanceField instanceField = new InstanceField(this, property, value);
-        _instanceFieldsList.add(instanceField);
+        instanceFieldsList_add(instanceField);
     }
 
     /**
@@ -720,7 +724,7 @@ public class Instance extends AbstractArtifact {
      */
     public void newInstanceField(BigIntegerProperty property, BigInteger value) {
         InstanceField instanceField = new InstanceField(this, property, value);
-        _instanceFieldsList.add(instanceField);
+        instanceFieldsList_add(instanceField);
     }
 
     /**
@@ -731,7 +735,7 @@ public class Instance extends AbstractArtifact {
      */
     public void newInstanceField(BigIntegerProperty property, Long value) {
         InstanceField instanceField = new InstanceField(this, property, value);
-        _instanceFieldsList.add(instanceField);
+        instanceFieldsList_add(instanceField);
     }
 
     /**
@@ -742,7 +746,7 @@ public class Instance extends AbstractArtifact {
      */
     public void newInstanceField(BigIntegerProperty property, Integer value) {
         InstanceField instanceField = new InstanceField(this, property, value);
-        _instanceFieldsList.add(instanceField);
+        instanceFieldsList_add(instanceField);
     }
 
     /**
@@ -753,7 +757,7 @@ public class Instance extends AbstractArtifact {
      */
     public void newInstanceField(BigIntegerProperty property, Short value) {
         InstanceField instanceField = new InstanceField(this, property, value);
-        _instanceFieldsList.add(instanceField);
+        instanceFieldsList_add(instanceField);
     }
 
     /**
@@ -764,7 +768,7 @@ public class Instance extends AbstractArtifact {
      */
     public void newInstanceField(BigIntegerProperty property, Byte value) {
         InstanceField instanceField = new InstanceField(this, property, value);
-        _instanceFieldsList.add(instanceField);
+        instanceFieldsList_add(instanceField);
     }
 
     /**
@@ -775,7 +779,7 @@ public class Instance extends AbstractArtifact {
      */
     public void newInstanceField(DoubleProperty property, Double value) {
         InstanceField instanceField = new InstanceField(this, property, value);
-        _instanceFieldsList.add(instanceField);
+        instanceFieldsList_add(instanceField);
     }
 
     /**
@@ -786,7 +790,7 @@ public class Instance extends AbstractArtifact {
      */
     public void newInstanceField(DoubleProperty property, Float value) {
         InstanceField instanceField = new InstanceField(this, property, value);
-        _instanceFieldsList.add(instanceField);
+        instanceFieldsList_add(instanceField);
     }
 
     /**
@@ -797,7 +801,7 @@ public class Instance extends AbstractArtifact {
      */
     public void newInstanceField(DoubleProperty property, Long value) {
         InstanceField instanceField = new InstanceField(this, property, value);
-        _instanceFieldsList.add(instanceField);
+        instanceFieldsList_add(instanceField);
     }
 
     /**
@@ -808,7 +812,7 @@ public class Instance extends AbstractArtifact {
      */
     public void newInstanceField(DoubleProperty property, Integer value) {
         InstanceField instanceField = new InstanceField(this, property, value);
-        _instanceFieldsList.add(instanceField);
+        instanceFieldsList_add(instanceField);
     }
 
     /**
@@ -819,7 +823,7 @@ public class Instance extends AbstractArtifact {
      */
     public void newInstanceField(DoubleProperty property, Short value) {
         InstanceField instanceField = new InstanceField(this, property, value);
-        _instanceFieldsList.add(instanceField);
+        instanceFieldsList_add(instanceField);
     }
 
     /**
@@ -830,7 +834,7 @@ public class Instance extends AbstractArtifact {
      */
     public void newInstanceField(DoubleProperty property, Byte value) {
         InstanceField instanceField = new InstanceField(this, property, value);
-        _instanceFieldsList.add(instanceField);
+        instanceFieldsList_add(instanceField);
     }
 
     /**
@@ -841,7 +845,7 @@ public class Instance extends AbstractArtifact {
      */
     public void newInstanceField(FloatProperty property, Float value) {
         InstanceField instanceField = new InstanceField(this, property, value);
-        _instanceFieldsList.add(instanceField);
+        instanceFieldsList_add(instanceField);
     }
 
     /**
@@ -852,7 +856,7 @@ public class Instance extends AbstractArtifact {
      */
     public void newInstanceField(FloatProperty property, Long value) {
         InstanceField instanceField = new InstanceField(this, property, value);
-        _instanceFieldsList.add(instanceField);
+        instanceFieldsList_add(instanceField);
     }
 
     /**
@@ -863,7 +867,7 @@ public class Instance extends AbstractArtifact {
      */
     public void newInstanceField(FloatProperty property, Integer value) {
         InstanceField instanceField = new InstanceField(this, property, value);
-        _instanceFieldsList.add(instanceField);
+        instanceFieldsList_add(instanceField);
     }
 
     /**
@@ -874,7 +878,7 @@ public class Instance extends AbstractArtifact {
      */
     public void newInstanceField(FloatProperty property, Short value) {
         InstanceField instanceField = new InstanceField(this, property, value);
-        _instanceFieldsList.add(instanceField);
+        instanceFieldsList_add(instanceField);
     }
 
     /**
@@ -885,7 +889,7 @@ public class Instance extends AbstractArtifact {
      */
     public void newInstanceField(FloatProperty property, Byte value) {
         InstanceField instanceField = new InstanceField(this, property, value);
-        _instanceFieldsList.add(instanceField);
+        instanceFieldsList_add(instanceField);
     }
 
     /**
@@ -896,7 +900,7 @@ public class Instance extends AbstractArtifact {
      */
     public void newInstanceField(LongProperty property, Long value) {
         InstanceField instanceField = new InstanceField(this, property, value);
-        _instanceFieldsList.add(instanceField);
+        instanceFieldsList_add(instanceField);
     }
 
     /**
@@ -907,7 +911,7 @@ public class Instance extends AbstractArtifact {
      */
     public void newInstanceField(LongProperty property, Integer value) {
         InstanceField instanceField = new InstanceField(this, property, value);
-        _instanceFieldsList.add(instanceField);
+        instanceFieldsList_add(instanceField);
     }
 
     /**
@@ -918,7 +922,7 @@ public class Instance extends AbstractArtifact {
      */
     public void newInstanceField(LongProperty property, Short value) {
         InstanceField instanceField = new InstanceField(this, property, value);
-        _instanceFieldsList.add(instanceField);
+        instanceFieldsList_add(instanceField);
     }
 
     /**
@@ -929,7 +933,7 @@ public class Instance extends AbstractArtifact {
      */
     public void newInstanceField(LongProperty property, Byte value) {
         InstanceField instanceField = new InstanceField(this, property, value);
-        _instanceFieldsList.add(instanceField);
+        instanceFieldsList_add(instanceField);
     }
 
     /**
@@ -940,7 +944,7 @@ public class Instance extends AbstractArtifact {
      */
     public void newInstanceField(IntegerProperty property, Integer value) {
         InstanceField instanceField = new InstanceField(this, property, value);
-        _instanceFieldsList.add(instanceField);
+        instanceFieldsList_add(instanceField);
     }
 
     /**
@@ -951,7 +955,7 @@ public class Instance extends AbstractArtifact {
      */
     public void newInstanceField(IntegerProperty property, Short value) {
         InstanceField instanceField = new InstanceField(this, property, value);
-        _instanceFieldsList.add(instanceField);
+        instanceFieldsList_add(instanceField);
     }
 
     /**
@@ -962,7 +966,7 @@ public class Instance extends AbstractArtifact {
      */
     public void newInstanceField(IntegerProperty property, Byte value) {
         InstanceField instanceField = new InstanceField(this, property, value);
-        _instanceFieldsList.add(instanceField);
+        instanceFieldsList_add(instanceField);
     }
 
     /**
@@ -973,7 +977,7 @@ public class Instance extends AbstractArtifact {
      */
     public void newInstanceField(ShortProperty property, Short value) {
         InstanceField instanceField = new InstanceField(this, property, value);
-        _instanceFieldsList.add(instanceField);
+        instanceFieldsList_add(instanceField);
     }
 
     /**
@@ -984,7 +988,7 @@ public class Instance extends AbstractArtifact {
      */
     public void newInstanceField(ShortProperty property, Byte value) {
         InstanceField instanceField = new InstanceField(this, property, value);
-        _instanceFieldsList.add(instanceField);
+        instanceFieldsList_add(instanceField);
     }
 
     /**
@@ -995,7 +999,7 @@ public class Instance extends AbstractArtifact {
      */
     public void newInstanceField(ByteProperty property, Byte value) {
         InstanceField instanceField = new InstanceField(this, property, value);
-        _instanceFieldsList.add(instanceField);
+        instanceFieldsList_add(instanceField);
     }
 
     /**
@@ -1023,7 +1027,7 @@ public class Instance extends AbstractArtifact {
             }
         }
         InstanceField instanceField = new InstanceField(this, property, value, locale);
-        _instanceFieldsList.add(instanceField);
+        instanceFieldsList_add(instanceField);
     }
 
     /**
@@ -1034,7 +1038,7 @@ public class Instance extends AbstractArtifact {
      */
     public void newInstanceField(DateProperty property, Date value) {
         InstanceField instanceField = new InstanceField(this, property, value);
-        _instanceFieldsList.add(instanceField);
+        instanceFieldsList_add(instanceField);
     }
 
     /**
@@ -1062,7 +1066,7 @@ public class Instance extends AbstractArtifact {
      */
     public void newInstanceField(TimeProperty property, Time value) {
         InstanceField instanceField = new InstanceField(this, property, value);
-        _instanceFieldsList.add(instanceField);
+        instanceFieldsList_add(instanceField);
     }
 
     /**
@@ -1090,7 +1094,7 @@ public class Instance extends AbstractArtifact {
      */
     public void newInstanceField(TimestampProperty property, Timestamp value) {
         InstanceField instanceField = new InstanceField(this, property, value);
-        _instanceFieldsList.add(instanceField);
+        instanceFieldsList_add(instanceField);
     }
 
     /**
@@ -1101,7 +1105,7 @@ public class Instance extends AbstractArtifact {
      */
     public void newInstanceField(TimestampProperty property, Time value) {
         InstanceField instanceField = new InstanceField(this, property, value);
-        _instanceFieldsList.add(instanceField);
+        instanceFieldsList_add(instanceField);
     }
 
     /**
@@ -1112,7 +1116,7 @@ public class Instance extends AbstractArtifact {
      */
     public void newInstanceField(TimestampProperty property, Date value) {
         InstanceField instanceField = new InstanceField(this, property, value);
-        _instanceFieldsList.add(instanceField);
+        instanceFieldsList_add(instanceField);
     }
 
     /**

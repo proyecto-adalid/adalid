@@ -23,7 +23,7 @@ import org.apache.commons.lang.StringUtils;
  */
 public class NamedValueCache implements NamedValue {
 
-    private static final Map<String, NamedValue> cache = Collections.synchronizedMap(new HashMap<String, NamedValue>());
+    private static final Map<String, NamedValue> cache = Collections.synchronizedMap(new HashMap<>());
 
     public static NamedValue getInstance(String name) {
         if (StringUtils.isBlank(name)) {

@@ -22,8 +22,7 @@ public class IsPersistentEntityWithDisplay implements Predicate {
 
     @Override
     public boolean evaluate(Object object) {
-        if (object instanceof PersistentEntity) {
-            Entity entity = (Entity) object;
+        if (object instanceof PersistentEntity entity) {
             return entity.isDisplayAvailable();
         }
         return false;

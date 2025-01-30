@@ -34,7 +34,7 @@ class FieldAllocationSettings {
 
     private String _remarks;
 
-    Set<String> getAllocationStrings() {
+    protected Set<String> getAllocationStrings() { // protected avoids method never unused warning
         return _allocationStrings;
     }
 
@@ -43,8 +43,7 @@ class FieldAllocationSettings {
     }
 
     private void setAllocationStrings(Object object) {
-        if (object instanceof EntityReferenceContainer) {
-            EntityReferenceContainer container = (EntityReferenceContainer) object;
+        if (object instanceof EntityReferenceContainer container) {
             _allocationStrings = container.getAllocationStrings();
             /*
             if (_allocationStrings != null && !_allocationStrings.isEmpty()) {
@@ -194,8 +193,7 @@ class FieldAllocationSettings {
             }
         }
         // get property allocation
-        if (object instanceof Entity) {
-            Entity entity = (Entity) object;
+        if (object instanceof Entity entity) {
             Map<String, AllocationOverride> map = entity.getAllocationOverridesMap();
             String key = field.getName();
             if (map.containsKey(key)) {
@@ -252,6 +250,7 @@ class FieldAllocationSettings {
     }
 
     private FieldAllocationSettings getParameterAllocation(Field field, Object object) {
+        assert true : "object=" + object; // this assert avoids unused parameter warning
         FieldAllocationSettings settings = new FieldAllocationSettings();
         Allocation parameterAllocation = getAllocationAnnotation(field);
         if (parameterAllocation == null) {

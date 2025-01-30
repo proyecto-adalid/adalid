@@ -15,7 +15,10 @@ package adalid.core;
 import adalid.commons.util.StrUtils;
 import adalid.core.enums.*;
 import adalid.core.interfaces.Entity;
+import adalid.core.interfaces.Parameter;
+import adalid.core.interfaces.Property;
 import adalid.core.jee.JavaWebProject;
+import adalid.core.properties.StringProperty;
 import java.util.List;
 import org.apache.commons.lang.StringUtils;
 
@@ -90,15 +93,12 @@ public class Page extends Display {
         if (mode != null) {
             String path = null;
             switch (mode) {
-                case READING:
+                case READING ->
                     path = entity.getApplicationReadingPath();
-                    break;
-                case WRITING:
+                case WRITING ->
                     path = entity.getApplicationWritingPath();
-                    break;
-                case PROCESSING:
+                case PROCESSING ->
                     path = entity.getApplicationConsolePath();
-                    break;
             }
             if (StringUtils.isNotBlank(path)) {
                 return path;
@@ -110,6 +110,43 @@ public class Page extends Display {
     private String pagePath(Project module) {
         String path = StrUtils.getLowerCaseIdentifier(StringUtils.defaultIfBlank(module.getAlias(), module.getName()), "/");
         return path;
+    }
+
+    public String getMainFormEncodingType() {
+        DisplayMode mode = getDisplayMode();
+        DisplayFormat format = getDisplayFormat();
+        if (DisplayMode.PROCESSING.equals(mode) && DisplayFormat.CONSOLE.equals(format)) {
+            Entity entity = getEntity();
+            if (entity != null) {
+                List<Operation> operations = entity.getBusinessOperationsList();
+                if (operations != null) {
+                    for (Operation operation : operations) {
+                        if (OperationType.PROCESS.equals(operation.getOperationType())) {
+                            OperationAccess access = operation.getOperationAccess();
+                            if (OperationAccess.PUBLIC.equals(access) || OperationAccess.PROTECTED.equals(access) || OperationAccess.RESTRICTED.equals(access)) {
+                                List<Parameter> parameters = operation.getParametersList();
+                                for (Parameter parameter : parameters) {
+                                    if (!parameter.isHiddenField() && parameter.isFileReferenceField()) {
+                                        return "multipart/form-data";
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        } else if (DisplayMode.WRITING.equals(mode) && DisplayFormat.DETAIL.equals(format)) {
+            Property property;
+            for (PageField field : getFields()) {
+                property = field.getProperty();
+                if (property instanceof StringProperty sp) {
+                    if (!sp.isHiddenField() && sp.isFileReferenceField() && (sp.isCreateField() || sp.isUpdateField())) {
+                        return "multipart/form-data";
+                    }
+                }
+            }
+        }
+        return null;
     }
 
     /**

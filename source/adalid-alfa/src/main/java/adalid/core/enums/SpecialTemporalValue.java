@@ -26,16 +26,16 @@ public enum SpecialTemporalValue implements SpecialValue {
 
     @Override
     public Class<?> getDataType() {
-        switch (this) {
-            case CURRENT_DATE:
-                return Date.class;
-            case CURRENT_TIME:
-                return Time.class;
-            case CURRENT_TIMESTAMP:
-                return Timestamp.class;
-            default:
-                return Object.class;
-        }
+        return switch (this) {
+            case CURRENT_DATE ->
+                Date.class;
+            case CURRENT_TIME ->
+                Time.class;
+            case CURRENT_TIMESTAMP ->
+                Timestamp.class;
+            default ->
+                Object.class;
+        };
     }
 
 }

@@ -12,7 +12,8 @@
  */
 package adalid.core.enums;
 
-import org.apache.commons.lang.StringUtils;
+import java.util.Arrays;
+import java.util.stream.Collectors;
 
 /**
  * @author Jorge Campins
@@ -27,14 +28,26 @@ public enum MimeType {
     private final static String REGEX_SUFFIX = ")$";
 
     public String getRegex() {
-        String join = StringUtils.join(getExtensions(), "|");
-        return REGEX_PREFIX + join + "|" + join.toUpperCase() + REGEX_SUFFIX;
+        return getRegex(false);
+    }
+
+    public String getRegex(boolean lowerAndUpperCase) {
+        String extensions = getRegexExtensions();
+        return REGEX_PREFIX + extensions + (lowerAndUpperCase ? "|" + extensions.toUpperCase() : "") + REGEX_SUFFIX;
+    }
+
+    public String getRegexExtensions() {
+        return Arrays.stream(getExtensions()).map(this::escape).collect(Collectors.joining("|")); // map(Pattern::quote) escape each extension
+    }
+
+    private String escape(String string) {
+        return string.replaceAll("([\\\\.^$|?*+()\\[\\]{}])", "\\\\$1"); // Escapes special characters for compatibility with JavaScript
     }
 
     public String[] getExtensions() {
-        switch (this) {
-            case APPLICATION:
-                return new String[]{"a", "aab", "aam", "aas", "ai", "aim", "ani", "aos", "aps", "arc", "arj", "asx", "avi", "bcpio", "bin", "boo",
+        return switch (this) {
+            case APPLICATION ->
+                new String[]{"a", "aab", "aam", "aas", "ai", "aim", "ani", "aos", "aps", "arc", "arj", "asx", "avi", "bcpio", "bin", "boo",
                     "book", "boz", "bsh", "bz", "bz2", "cat", "ccad", "cco", "cdf", "cer", "cha", "chat", "class", "com", "cpio", "cpt", "crl", "crt",
                     "csh", "css", "dcr", "deepv", "der", "dir", "doc", "docb", "docm", "docx", "dot", "dotm", "dotx", "dp", "drw", "dump", "dvi",
                     "dwg", "dxf", "dxr", "elc", "env", "eps", "es", "evy", "exe", "fdf", "fif", "frl", "gsp", "gss", "gtar", "gz", "gzip", "hdf",
@@ -49,56 +62,56 @@ public enum MimeType {
                     "uu", "vcd", "vda", "vew", "vmd", "vmf", "vrml", "vsd", "vst", "vsw", "w60", "w61", "w6w", "wb1", "wbk", "web", "wiz", "wk1",
                     "wmlc", "wmlsc", "word", "wp", "wp5", "wp6", "wpd", "wq1", "wri", "wrl", "wsrc", "wtk", "xl", "xla", "xlam", "xlb", "xlc", "xld",
                     "xlk", "xll", "xlm", "xls", "xlsb", "xlsm", "xlsx", "xlt", "xltm", "xltx", "xlv", "xlw", "xml", "xpix", "z", "zip", "zoo"};
-            case AUDIO:
-                return new String[]{"aif", "aifc", "aiff", "au", "funk", "gsd", "gsm", "it", "jam", "kar", "la", "lam", "lma", "m2a", "m3u", "mid",
+            case AUDIO ->
+                new String[]{"aif", "aifc", "aiff", "au", "funk", "gsd", "gsm", "it", "jam", "kar", "la", "lam", "lma", "m2a", "m3u", "mid",
                     "midi", "mjf", "mod", "mp2", "mp3", "mpa", "mpg", "mpga", "my", "pfunk", "qcp", "ra", "ram", "rm", "rmi", "rmm", "rmp", "rpm",
                     "s3m", "sid", "snd", "tsi", "tsp", "voc", "vox", "vqe", "vqf", "vql", "wav", "xm"};
-            case CHEMICAL:
-                return new String[]{"pdb", "xyz"};
-            case DRAWING:
-                return new String[]{"dwf"};
-            case I_WORLD:
-                return new String[]{"ivr"};
-            case IMAGE:
-                return new String[]{"art", "bm", "bmp", "dwg", "dxf", "fif", "flo", "fpx", "g3", "gif", "ico", "ief", "iefs", "jfif", "jfif-tbnl",
+            case CHEMICAL ->
+                new String[]{"pdb", "xyz"};
+            case DRAWING ->
+                new String[]{"dwf"};
+            case I_WORLD ->
+                new String[]{"ivr"};
+            case IMAGE ->
+                new String[]{"art", "bm", "bmp", "dwg", "dxf", "fif", "flo", "fpx", "g3", "gif", "ico", "ief", "iefs", "jfif", "jfif-tbnl",
                     "jpe", "jpeg", "jpg", "jps", "jut", "mcf", "nap", "naplps", "nif", "niff", "pbm", "pct", "pcx", "pgm", "pic", "pict", "pm", "png",
                     "pnm", "ppm", "qif", "qti", "qtif", "ras", "rast", "rf", "rgb", "rp", "svf", "tif", "tiff", "turbot", "wbmp", "x-png", "xbm",
                     "xif", "xpm", "xwd"};
-            case MESSAGE:
-                return new String[]{"mht", "mhtml", "mime"};
-            case MODEL:
-                return new String[]{"dwf", "iges", "igs", "pov", "vrml", "wrl", "wrz"};
-            case MULTIPART:
-                return new String[]{"gzip", "ustar", "zip"};
-            case MUSIC:
-                return new String[]{"kar", "mid", "midi"};
-            case PALEOVU:
-                return new String[]{"pvu"};
-            case TEXT:
-                return new String[]{"abc", "acgi", "aip", "asm", "asp", "c", "c++", "cc", "com", "conf", "cpp", "csh", "css", "cxx", "def", "el",
+            case MESSAGE ->
+                new String[]{"mht", "mhtml", "mime"};
+            case MODEL ->
+                new String[]{"dwf", "iges", "igs", "pov", "vrml", "wrl", "wrz"};
+            case MULTIPART ->
+                new String[]{"gzip", "ustar", "zip"};
+            case MUSIC ->
+                new String[]{"kar", "mid", "midi"};
+            case PALEOVU ->
+                new String[]{"pvu"};
+            case TEXT ->
+                new String[]{"abc", "acgi", "aip", "asm", "asp", "c", "c++", "cc", "com", "conf", "cpp", "csh", "css", "cxx", "def", "el",
                     "etx", "f", "f77", "f90", "flx", "for", "g", "h", "hh", "hlb", "htc", "htm", "html", "htmls", "htt", "htx", "idc", "jav", "java",
                     "js", "ksh", "list", "log", "lsp", "lst", "lsx", "m", "mar", "mcf", "p", "pas", "pl", "pm", "properties", "py", "rexx", "rt", "rtf", "rtx", "s",
                     "scm", "sdml", "sgm", "sgml", "sh", "shtml", "spc", "ssi", "talk", "tcl", "tcsh", "text", "tsv", "txt", "uil", "uni", "unis",
                     "uri", "uris", "uu", "uue", "vcs", "wml", "wmls", "wsc", "xml", "zsh"};
-            case VIDEO:
-                return new String[]{"afl", "asf", "asx", "avi", "avs", "dif", "dl", "dv", "fli", "fmf", "gl", "isu", "m1v", "m2v", "mjpg", "moov",
+            case VIDEO ->
+                new String[]{"afl", "asf", "asx", "avi", "avs", "dif", "dl", "dv", "fli", "fmf", "gl", "isu", "m1v", "m2v", "mjpg", "moov",
                     "mov", "movie", "mp2", "mp3", "mp4", "mpa", "mpe", "mpeg", "mpg", "mv", "qt", "qtc", "rv", "scm", "vdo", "viv", "vivo", "vos",
                     "xdr", "xsr"};
-            case WINDOWS:
-                return new String[]{"wmf"};
-            case WWW:
-                return new String[]{"mime"};
-            case X_CONFERENCE:
-                return new String[]{"ice"};
-            case X_MUSIC:
-                return new String[]{"mid", "midi"};
-            case X_WORLD:
-                return new String[]{"3dm", "3dmf", "qd3", "qd3d", "svr", "vrml", "vrt", "wrl", "wrz"};
-            case XGL:
-                return new String[]{"xgz", "xmz"};
-            default:
-                return null;
-        }
+            case WINDOWS ->
+                new String[]{"wmf"};
+            case WWW ->
+                new String[]{"mime"};
+            case X_CONFERENCE ->
+                new String[]{"ice"};
+            case X_MUSIC ->
+                new String[]{"mid", "midi"};
+            case X_WORLD ->
+                new String[]{"3dm", "3dmf", "qd3", "qd3d", "svr", "vrml", "vrt", "wrl", "wrz"};
+            case XGL ->
+                new String[]{"xgz", "xmz"};
+            default ->
+                null;
+        };
     }
 
 }

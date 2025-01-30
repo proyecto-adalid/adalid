@@ -31,6 +31,10 @@ public class Tab extends AbstractArtifact {
     /**/
     private final List<TabField> _tabFieldsList = new ArrayList<>();
 
+    private void tabFieldsList_add(TabField field) { // since 14/01/2025
+        appendField(_tabFieldsList, field);
+    }
+
     /* commented on 21/03/2021
     private final Map<String, TabField> _tabFields = new LinkedHashMap<>();
 
@@ -222,7 +226,7 @@ public class Tab extends AbstractArtifact {
         if (tab == null) {
             collection.setTab(this);
             TabField tabField = new TabField(this, collection);
-            _tabFieldsList.add(tabField);
+            tabFieldsList_add(tabField);
         } else {
             message += "; collection previously added to tab " + tab.getName();
             logger.error(message);
@@ -239,7 +243,7 @@ public class Tab extends AbstractArtifact {
      */
     public void newTabField(Property property) {
         TabField tabField = new TabField(this, property);
-        _tabFieldsList.add(tabField);
+        tabFieldsList_add(tabField);
     }
 
     /**
@@ -255,7 +259,7 @@ public class Tab extends AbstractArtifact {
         if (properties != null) {
             for (Property p : properties) {
                 tabField = new TabField(this, p);
-                _tabFieldsList.add(tabField);
+                tabFieldsList_add(tabField);
             }
         }
     }

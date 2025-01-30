@@ -76,6 +76,10 @@ public class ModuloAplicacion extends AbstractPersistentEntity {
     @PropertyField(update = Kleenean.FALSE)
     public BooleanProperty entidadesPrivadas;
 
+    @ColumnField(nullable = Kleenean.FALSE)
+    @PropertyField(update = Kleenean.FALSE)
+    public BooleanProperty inmutable;
+
     @ForeignKey(onDelete = OnDeleteAction.CASCADE, onUpdate = OnUpdateAction.CASCADE)
     @ManyToOne(navigability = Navigability.UNIDIRECTIONAL, view = MasterDetailView.NONE)
     @ColumnField(nullable = Kleenean.FALSE)
@@ -125,6 +129,9 @@ public class ModuloAplicacion extends AbstractPersistentEntity {
         /**/
         entidadesPrivadas.setInitialValue(false);
         entidadesPrivadas.setDefaultValue(false);
+        /**/
+        inmutable.setInitialValue(false);
+        inmutable.setDefaultValue(false);
         /**/
         // <editor-fold defaultstate="collapsed" desc="localization of ModuloAplicacion's properties">
         /**/
@@ -184,6 +191,9 @@ public class ModuloAplicacion extends AbstractPersistentEntity {
             + "entidades privadas indica si las entidades que integran el módulo pertenecen al conjunto de entidades privadas de la aplicación; "
             + "las entidades privadas son entidades que no tienen vistas (páginas) disponibles"
             + "");
+        /**/
+        inmutable.setLocalizedLabel(ENGLISH, "immutable");
+        inmutable.setLocalizedLabel(SPANISH, "inmutable");
         /**/
         aplicacion.setLocalizedLabel(ENGLISH, "application");
         aplicacion.setLocalizedLabel(SPANISH, "aplicación");

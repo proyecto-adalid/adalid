@@ -51,11 +51,11 @@ public class RastroInforme extends AbstractPersistentEntity {
     // </editor-fold>
 
     @PrimaryKey
-    @PropertyField(detail = Kleenean.TRUE, hidden = Kleenean.FALSE)
+    @PropertyField(hidden = Kleenean.FALSE, detail = Kleenean.TRUE, heading = Kleenean.TRUE)
     public LongProperty id;
 
     @ColumnField(nullable = Kleenean.FALSE, indexed = Kleenean.TRUE)
-    @PropertyField(responsivePriority = 6, sequence = 100, table = Kleenean.TRUE, report = Kleenean.TRUE, search = Kleenean.TRUE, overlay = Kleenean.TRUE)
+    @PropertyField(responsivePriority = 6, sequence = 100, table = Kleenean.TRUE, report = Kleenean.TRUE, search = Kleenean.TRUE, heading = Kleenean.FALSE, overlay = Kleenean.TRUE)
     public TimestampProperty fechaHoraInicioEjecucion;
 
     @PropertyField(sequence = 100)
@@ -80,7 +80,7 @@ public class RastroInforme extends AbstractPersistentEntity {
 //  20231209: remove foreign-key referring to Usuario because it might cause ARJUNA012117 and/or ARJUNA012121
 //  @ForeignKey(onDelete = OnDeleteAction.NONE, onUpdate = OnUpdateAction.NONE)
     @ManyToOne(navigability = Navigability.UNIDIRECTIONAL, view = MasterDetailView.NONE)
-    @PropertyField(hidden = Kleenean.TRUE)
+    @PropertyField(sequence = 250, table = Kleenean.FALSE, export = Kleenean.FALSE, report = Kleenean.FALSE, heading = Kleenean.FALSE, overlay = Kleenean.FALSE, search = Kleenean.FALSE, filter = Kleenean.FALSE, column = Kleenean.FALSE) // hidden until 02/11/2024
     @QueryMapping(mapKeyProperties = Kleenean.FALSE)
     public Usuario usuario;
 
@@ -90,15 +90,20 @@ public class RastroInforme extends AbstractPersistentEntity {
     public StringProperty codigoUsuario;
 
     @ColumnField(indexed = Kleenean.TRUE)
-    @PropertyField(sequence = 250, table = Kleenean.FALSE, search = Kleenean.TRUE, report = Kleenean.TRUE, overlay = Kleenean.TRUE)
+    @PropertyField(sequence = 250, table = Kleenean.FALSE, search = Kleenean.TRUE, report = Kleenean.TRUE, overlay = Kleenean.TRUE, anchor = "codigoUsuario", anchorType = AnchorType.INLINE)
     @StringField(maxLength = 100)
     public StringProperty nombreUsuario;
+
+    @ColumnField(nullable = Kleenean.TRUE)
+    @PropertyField(table = Kleenean.FALSE)
+    @StringField(maxLength = 40) // IPv4: Máximo de 15 caracteres (con puntos incluidos); IPv6: Máximo de 39 caracteres (con dos puntos incluidos)
+    public StringProperty direccionIp;
 
 //  20171213: remove foreign-key referring to Funcion
 //  @ForeignKey(onDelete = OnDeleteAction.NONE, onUpdate = OnUpdateAction.NONE)
     @ManyToOne(navigability = Navigability.UNIDIRECTIONAL, view = MasterDetailView.NONE)
     @ColumnField(nullable = Kleenean.TRUE)
-    @PropertyField(sequence = 300, hidden = Kleenean.TRUE)
+    @PropertyField(sequence = 300, table = Kleenean.FALSE, export = Kleenean.FALSE, report = Kleenean.FALSE, heading = Kleenean.FALSE, overlay = Kleenean.FALSE, search = Kleenean.FALSE, filter = Kleenean.FALSE, column = Kleenean.FALSE) // hidden until 11/01/2025
     @QueryMapping(mapKeyProperties = Kleenean.FALSE)
     public Funcion funcion;
 
@@ -108,7 +113,7 @@ public class RastroInforme extends AbstractPersistentEntity {
     public StringProperty codigoFuncion;
 
 //  @ColumnField(indexed = Kleenean.TRUE)
-    @PropertyField(sequence = 300)
+    @PropertyField(sequence = 300, table = Kleenean.FALSE, search = Kleenean.TRUE, report = Kleenean.TRUE, heading = Kleenean.FALSE, overlay = Kleenean.TRUE, anchor = "codigoFuncion", anchorType = AnchorType.INLINE)
     @StringField(maxLength = 200)
     public StringProperty nombreFuncion;
 
@@ -135,7 +140,7 @@ public class RastroInforme extends AbstractPersistentEntity {
     public StringProperty codigoClaseRecursoValor;
 
     @ColumnField(indexed = Kleenean.TRUE)
-    @PropertyField(sequence = 300, search = Kleenean.TRUE)
+    @PropertyField(sequence = 300, search = Kleenean.TRUE, overlay = Kleenean.TRUE, anchor = "codigoClaseRecursoValor", anchorType = AnchorType.INLINE)
     @StringField(maxLength = 100)
     public StringProperty nombreClaseRecursoValor;
 
@@ -151,11 +156,11 @@ public class RastroInforme extends AbstractPersistentEntity {
     public LongProperty versionRecurso;
 
     @ColumnField(indexed = Kleenean.FALSE)
-    @PropertyField(responsivePriority = 5, sequence = 300, table = Kleenean.TRUE, report = Kleenean.TRUE, search = Kleenean.TRUE)
+    @PropertyField(responsivePriority = 5, sequence = 300, table = Kleenean.TRUE, report = Kleenean.TRUE, search = Kleenean.TRUE, overlay = Kleenean.TRUE)
     public StringProperty codigoRecurso;
 
     @ColumnField(indexed = Kleenean.FALSE)
-    @PropertyField(sequence = 300, table = Kleenean.FALSE, report = Kleenean.TRUE, search = Kleenean.TRUE)
+    @PropertyField(sequence = 300, table = Kleenean.FALSE, report = Kleenean.TRUE, search = Kleenean.TRUE, overlay = Kleenean.TRUE, anchor = "codigoRecurso", anchorType = AnchorType.INLINE)
     public StringProperty nombreRecurso;
 
     @PropertyField(sequence = 300, hidden = Kleenean.TRUE)
@@ -189,7 +194,7 @@ public class RastroInforme extends AbstractPersistentEntity {
     @ColumnField(nullable = Kleenean.FALSE)
     @ForeignKey(onDelete = OnDeleteAction.NONE, onUpdate = OnUpdateAction.NONE)
     @ManyToOne(navigability = Navigability.UNIDIRECTIONAL, view = MasterDetailView.NONE)
-    @PropertyField(sequence = 500, table = Kleenean.TRUE, search = Kleenean.TRUE, report = Kleenean.TRUE)
+    @PropertyField(sequence = 500, table = Kleenean.TRUE, report = Kleenean.TRUE, heading = Kleenean.TRUE, overlay = Kleenean.TRUE)
     public CondicionEjeFun condicionEjeFun;
 
     @FileReference(loadField = "fechaHoraInicioEjecucion")
@@ -204,36 +209,36 @@ public class RastroInforme extends AbstractPersistentEntity {
     @ColumnField(nullable = Kleenean.TRUE)
     @ForeignKey(onDelete = OnDeleteAction.NONE, onUpdate = OnUpdateAction.NONE)
     @ManyToOne(navigability = Navigability.UNIDIRECTIONAL, view = MasterDetailView.NONE)
-    @PropertyField(responsivePriority = 6, sequence = 200, table = Kleenean.TRUE, search = Kleenean.TRUE, report = Kleenean.TRUE, overlay = Kleenean.TRUE)
+    @PropertyField(responsivePriority = 6, sequence = 200, table = Kleenean.TRUE, search = Kleenean.TRUE, report = Kleenean.TRUE, overlay = Kleenean.TRUE, anchor = "formatoInforme", anchorType = AnchorType.INLINE)
     public TipoInforme tipoInforme;
 
     @ColumnField(nullable = Kleenean.TRUE)
     @ForeignKey(onDelete = OnDeleteAction.NONE, onUpdate = OnUpdateAction.NONE)
     @ManyToOne(navigability = Navigability.UNIDIRECTIONAL, view = MasterDetailView.NONE)
-    @PropertyField(sequence = 200, table = Kleenean.FALSE, search = Kleenean.FALSE, report = Kleenean.FALSE, overlay = Kleenean.TRUE)
+    @PropertyField(sequence = 200, table = Kleenean.FALSE, search = Kleenean.FALSE, report = Kleenean.FALSE, overlay = Kleenean.TRUE, anchor = "formatoInforme", anchorType = AnchorType.INLINE)
     public TipoGrafico tipoGrafico;
 
     @ColumnField(nullable = Kleenean.TRUE)
     @ForeignKey(onDelete = OnDeleteAction.NONE, onUpdate = OnUpdateAction.NONE)
     @ManyToOne(navigability = Navigability.UNIDIRECTIONAL, view = MasterDetailView.NONE)
-    @PropertyField(sequence = 200, table = Kleenean.FALSE, search = Kleenean.FALSE, report = Kleenean.FALSE, overlay = Kleenean.TRUE)
+    @PropertyField(sequence = 200, table = Kleenean.FALSE, search = Kleenean.FALSE, report = Kleenean.FALSE, overlay = Kleenean.TRUE, anchor = "formatoInforme", anchorType = AnchorType.INLINE)
     public SubtipoGrafico subtipoGrafico;
 
     @ColumnField(nullable = Kleenean.TRUE)
 //  20231209: remove foreign-key referring to Usuario because it might cause ARJUNA012117 and/or ARJUNA012121
 //  @ForeignKey(onDelete = OnDeleteAction.NONE, onUpdate = OnUpdateAction.NONE)
     @ManyToOne(navigability = Navigability.UNIDIRECTIONAL, view = MasterDetailView.NONE)
-    @PropertyField(hidden = Kleenean.TRUE)
+    @PropertyField(sequence = 250, table = Kleenean.FALSE, export = Kleenean.FALSE, report = Kleenean.FALSE, heading = Kleenean.FALSE, overlay = Kleenean.FALSE, search = Kleenean.FALSE, filter = Kleenean.FALSE, column = Kleenean.FALSE) // hidden until 02/11/2024
     @QueryMapping(mapKeyProperties = Kleenean.FALSE)
     public Usuario remitente;
 
     @ColumnField(indexed = Kleenean.TRUE)
-    @PropertyField(responsivePriority = 6, sequence = 250, table = Kleenean.TRUE, search = Kleenean.TRUE, report = Kleenean.TRUE)
+    @PropertyField(responsivePriority = 6, sequence = 250, table = Kleenean.FALSE, search = Kleenean.FALSE, report = Kleenean.TRUE)
     @StringField(maxLength = MAX_EMAIL_ADDRESS_LENGTH, displayLength = 36) // maxLength = 36 until 01/12/2023
     public StringProperty codigoRemitente;
 
     @ColumnField(indexed = Kleenean.TRUE)
-    @PropertyField(sequence = 250, table = Kleenean.FALSE, search = Kleenean.TRUE, report = Kleenean.TRUE)
+    @PropertyField(sequence = 250, table = Kleenean.FALSE, search = Kleenean.FALSE, report = Kleenean.TRUE, overlay = Kleenean.TRUE, anchor = "codigoRemitente", anchorType = AnchorType.INLINE)
     @StringField(maxLength = 100)
     public StringProperty nombreRemitente;
 
@@ -306,6 +311,7 @@ public class RastroInforme extends AbstractPersistentEntity {
         RastroUtils.setGraphicImageExpressions(condicionEjeFun);
         /**/
         // <editor-fold defaultstate="collapsed" desc="localization of RastroInforme's properties">
+        /**/
         fechaHoraInicioEjecucion.setLocalizedLabel(ENGLISH, "start");
         fechaHoraInicioEjecucion.setLocalizedLabel(SPANISH, "inicio");
         /**/
@@ -317,6 +323,8 @@ public class RastroInforme extends AbstractPersistentEntity {
         /**/
         formatoInforme.setLocalizedLabel(ENGLISH, "format");
         formatoInforme.setLocalizedLabel(SPANISH, "formato");
+        formatoInforme.setLocalizedAnchorLabel(ENGLISH, "format, type...");
+        formatoInforme.setLocalizedAnchorLabel(SPANISH, "formato, tipo...");
         /**/
         tipoInforme.setLocalizedLabel(ENGLISH, "type");
         tipoInforme.setLocalizedLabel(SPANISH, "tipo");
@@ -339,23 +347,60 @@ public class RastroInforme extends AbstractPersistentEntity {
         limiteFilas.setLocalizedLabel(ENGLISH, "limit");
         limiteFilas.setLocalizedLabel(SPANISH, "límite");
         /**/
+        usuario.setLocalizedDescription(ENGLISH, "user who executed or received a copy of the report");
+        usuario.setLocalizedDescription(SPANISH, "usuario que ejecutó o recibió una copia del informe");
+        usuario.setLocalizedShortDescription(ENGLISH, "user who executed or received a copy of the report");
+        usuario.setLocalizedShortDescription(SPANISH, "usuario que ejecutó o recibió una copia del informe");
         usuario.setLocalizedLabel(ENGLISH, "user");
         usuario.setLocalizedLabel(SPANISH, "usuario");
         /**/
-        codigoUsuario.setLocalizedLabel(ENGLISH, "user");
-        codigoUsuario.setLocalizedLabel(SPANISH, "usuario");
+        codigoUsuario.setLocalizedDescription(ENGLISH, "code of the user who executed or received a copy of the report");
+        codigoUsuario.setLocalizedDescription(SPANISH, "código del usuario que ejecutó o recibió una copia del informe");
+        codigoUsuario.setLocalizedLabel(ENGLISH, "user code");
+        codigoUsuario.setLocalizedLabel(SPANISH, "código del usuario");
+        codigoUsuario.setLocalizedColumnHeader(ENGLISH, "user");
+        codigoUsuario.setLocalizedColumnHeader(SPANISH, "usuario");
+        codigoUsuario.setLocalizedAnchorLabel(ENGLISH, "user");
+        codigoUsuario.setLocalizedAnchorLabel(SPANISH, "usuario");
+        codigoUsuario.setLocalizedAnchoredLabel(ENGLISH, "code");
+        codigoUsuario.setLocalizedAnchoredLabel(SPANISH, "código");
         /**/
+        nombreUsuario.setLocalizedDescription(ENGLISH, "name of the user who executed or received a copy of the report");
+        nombreUsuario.setLocalizedDescription(SPANISH, "nombre del usuario que ejecutó o recibió una copia del informe");
         nombreUsuario.setLocalizedLabel(ENGLISH, "user name");
         nombreUsuario.setLocalizedLabel(SPANISH, "nombre del usuario");
+        nombreUsuario.setLocalizedAnchoredLabel(ENGLISH, "name");
+        nombreUsuario.setLocalizedAnchoredLabel(SPANISH, "nombre");
         /**/
+        direccionIp.setLocalizedDescription(ENGLISH, "IP address");
+        direccionIp.setLocalizedDescription(SPANISH, "dirección IP");
+        direccionIp.setLocalizedLabel(ENGLISH, "IP");
+        direccionIp.setLocalizedLabel(SPANISH, "IP");
+        /**/
+        remitente.setLocalizedDescription(ENGLISH, "user who sent the report");
+        remitente.setLocalizedDescription(SPANISH, "usuario que envió el informe");
+        remitente.setLocalizedShortDescription(ENGLISH, "user who sent the report");
+        remitente.setLocalizedShortDescription(SPANISH, "usuario que envió el informe");
         remitente.setLocalizedLabel(ENGLISH, "sender");
         remitente.setLocalizedLabel(SPANISH, "remitente");
         /**/
-        codigoRemitente.setLocalizedLabel(ENGLISH, "sender");
-        codigoRemitente.setLocalizedLabel(SPANISH, "remitente");
+        codigoRemitente.setLocalizedDescription(ENGLISH, "código del usuario of the user who sent the report");
+        codigoRemitente.setLocalizedDescription(SPANISH, "usuario que envió el informe");
+        codigoRemitente.setLocalizedLabel(ENGLISH, "sender code");
+        codigoRemitente.setLocalizedLabel(SPANISH, "código del remitente");
+        codigoRemitente.setLocalizedColumnHeader(ENGLISH, "sender");
+        codigoRemitente.setLocalizedColumnHeader(SPANISH, "remitente");
+        codigoRemitente.setLocalizedAnchorLabel(ENGLISH, "sender");
+        codigoRemitente.setLocalizedAnchorLabel(SPANISH, "remitente");
+        codigoRemitente.setLocalizedAnchoredLabel(ENGLISH, "code");
+        codigoRemitente.setLocalizedAnchoredLabel(SPANISH, "código");
         /**/
+        nombreRemitente.setLocalizedDescription(ENGLISH, "name of the user who sent the report");
+        nombreRemitente.setLocalizedDescription(SPANISH, "nombre del usuario que envió el informe");
         nombreRemitente.setLocalizedLabel(ENGLISH, "sender name");
         nombreRemitente.setLocalizedLabel(SPANISH, "nombre del remitente");
+        nombreRemitente.setLocalizedAnchoredLabel(ENGLISH, "name");
+        nombreRemitente.setLocalizedAnchoredLabel(SPANISH, "nombre");
         /**/
         funcion.setLocalizedLabel(ENGLISH, "function");
         funcion.setLocalizedLabel(SPANISH, "función");
@@ -363,11 +408,19 @@ public class RastroInforme extends AbstractPersistentEntity {
         tipoFuncion.setLocalizedLabel(ENGLISH, "function type");
         tipoFuncion.setLocalizedLabel(SPANISH, "tipo de función");
         /**/
-        codigoFuncion.setLocalizedLabel(ENGLISH, "function");
-        codigoFuncion.setLocalizedLabel(SPANISH, "función");
+        codigoFuncion.setLocalizedLabel(ENGLISH, "function code");
+        codigoFuncion.setLocalizedLabel(SPANISH, "código de la función");
+        codigoFuncion.setLocalizedColumnHeader(ENGLISH, "function");
+        codigoFuncion.setLocalizedColumnHeader(SPANISH, "función");
+        codigoFuncion.setLocalizedAnchorLabel(ENGLISH, "function");
+        codigoFuncion.setLocalizedAnchorLabel(SPANISH, "función");
+        codigoFuncion.setLocalizedAnchoredLabel(ENGLISH, "code");
+        codigoFuncion.setLocalizedAnchoredLabel(SPANISH, "código");
         /**/
         nombreFuncion.setLocalizedLabel(ENGLISH, "function name");
         nombreFuncion.setLocalizedLabel(SPANISH, "nombre de la función");
+        nombreFuncion.setLocalizedAnchoredLabel(ENGLISH, "name");
+        nombreFuncion.setLocalizedAnchoredLabel(SPANISH, "nombre");
         /**/
         descripcionFuncion.setLocalizedLabel(ENGLISH, "function description");
         descripcionFuncion.setLocalizedLabel(SPANISH, "descripción de la función");
@@ -377,14 +430,26 @@ public class RastroInforme extends AbstractPersistentEntity {
         paginaFuncion.setLocalizedTooltip(ENGLISH, "open the function's processing page");
         paginaFuncion.setLocalizedTooltip(SPANISH, "abrir la página de procesamiento de la función");
         /**/
+        idClaseRecursoValor.setLocalizedDescription(ENGLISH, "resource class of the report");
+        idClaseRecursoValor.setLocalizedDescription(SPANISH, "clase de recurso del informe");
         idClaseRecursoValor.setLocalizedLabel(ENGLISH, "resource class");
         idClaseRecursoValor.setLocalizedLabel(SPANISH, "clase de recurso");
         /**/
-        codigoClaseRecursoValor.setLocalizedLabel(ENGLISH, "resource class");
-        codigoClaseRecursoValor.setLocalizedLabel(SPANISH, "clase de recurso");
+        codigoClaseRecursoValor.setLocalizedDescription(ENGLISH, "code of the resource class of the function");
+        codigoClaseRecursoValor.setLocalizedDescription(SPANISH, "código de la clase de recurso de la función");
+        codigoClaseRecursoValor.setLocalizedLabel(ENGLISH, "resource class code");
+        codigoClaseRecursoValor.setLocalizedLabel(SPANISH, "código de la clase de recurso");
+        codigoClaseRecursoValor.setLocalizedColumnHeader(ENGLISH, "resource class");
+        codigoClaseRecursoValor.setLocalizedColumnHeader(SPANISH, "clase de recurso");
+        codigoClaseRecursoValor.setLocalizedAnchorLabel(ENGLISH, "resource class");
+        codigoClaseRecursoValor.setLocalizedAnchorLabel(SPANISH, "clase de recurso");
+        codigoClaseRecursoValor.setLocalizedAnchoredLabel(ENGLISH, "code");
+        codigoClaseRecursoValor.setLocalizedAnchoredLabel(SPANISH, "código");
         /**/
         nombreClaseRecursoValor.setLocalizedLabel(ENGLISH, "resource class name");
         nombreClaseRecursoValor.setLocalizedLabel(SPANISH, "nombre de la clase de recurso");
+        nombreClaseRecursoValor.setLocalizedAnchoredLabel(ENGLISH, "name");
+        nombreClaseRecursoValor.setLocalizedAnchoredLabel(SPANISH, "nombre");
         /**/
         recursoValor.setLocalizedLabel(ENGLISH, "resource");
         recursoValor.setLocalizedLabel(SPANISH, "recurso");
@@ -397,13 +462,21 @@ public class RastroInforme extends AbstractPersistentEntity {
         /**/
         codigoRecurso.setLocalizedDescription(ENGLISH, "code of the resource on which the report was executed");
         codigoRecurso.setLocalizedDescription(SPANISH, "código del recurso sobre el que se ejecutó el informe");
-        codigoRecurso.setLocalizedLabel(ENGLISH, "resource");
-        codigoRecurso.setLocalizedLabel(SPANISH, "recurso");
+        codigoRecurso.setLocalizedLabel(ENGLISH, "resource code");
+        codigoRecurso.setLocalizedLabel(SPANISH, "código del recurso");
+        codigoRecurso.setLocalizedColumnHeader(ENGLISH, "resource");
+        codigoRecurso.setLocalizedColumnHeader(SPANISH, "recurso");
+        codigoRecurso.setLocalizedAnchorLabel(ENGLISH, "resource");
+        codigoRecurso.setLocalizedAnchorLabel(SPANISH, "recurso");
+        codigoRecurso.setLocalizedAnchoredLabel(ENGLISH, "code");
+        codigoRecurso.setLocalizedAnchoredLabel(SPANISH, "código");
         /**/
         nombreRecurso.setLocalizedDescription(ENGLISH, "name of the resource on which the report was executed");
         nombreRecurso.setLocalizedDescription(SPANISH, "nombre del recurso sobre el que se ejecutó el informe");
         nombreRecurso.setLocalizedLabel(ENGLISH, "resource name");
         nombreRecurso.setLocalizedLabel(SPANISH, "nombre del recurso");
+        nombreRecurso.setLocalizedAnchoredLabel(ENGLISH, "name");
+        nombreRecurso.setLocalizedAnchoredLabel(SPANISH, "nombre");
         /**/
         idPropietarioRecurso.setLocalizedLabel(ENGLISH, "resource owner");
         idPropietarioRecurso.setLocalizedLabel(SPANISH, "propietario del recurso");
@@ -445,6 +518,7 @@ public class RastroInforme extends AbstractPersistentEntity {
         /**/
         descripcionError.setLocalizedLabel(ENGLISH, "message");
         descripcionError.setLocalizedLabel(SPANISH, "mensaje");
+        /**/
         // </editor-fold>
     }
 
@@ -459,31 +533,45 @@ public class RastroInforme extends AbstractPersistentEntity {
     }
 
     /**/
-    protected Tab tab1, tab2;
+    protected Tab tab1, tab2, tab3;
 
     @Override
     protected void settleTabs() {
         super.settleTabs();
-        tab1.newTabField(id, fechaHoraInicioEjecucion, fechaHoraFinEjecucion, nombreInforme, nombreArchivo, // 4
-            formatoInforme, tipoInforme, tipoGrafico, subtipoGrafico, personal, // 5
-            leido, descargado,
-            usuario, codigoUsuario, nombreUsuario, remitente, codigoRemitente, nombreRemitente, condicionEjeFun, descripcionError // 8
+        /**/
+        tab1.newTabField(id, fechaHoraInicioEjecucion, fechaHoraFinEjecucion, nombreInforme, nombreArchivo,
+            formatoInforme, tipoInforme, tipoGrafico, subtipoGrafico, personal,
+            usuario, remitente, funcion,
+            codigoClaseRecursoValor, nombreClaseRecursoValor,
+            codigoRecurso, nombreRecurso,
+            condicionEjeFun, descripcionError, direccionIp
         );
-        tab2.newTabField(funcion, codigoFuncion, nombreFuncion, descripcionFuncion, paginaFuncion, tipoFuncion, // 5
-            idClaseRecursoValor, codigoClaseRecursoValor, nombreClaseRecursoValor, recursoValor, // 4
-            idRecurso, versionRecurso, codigoRecurso, nombreRecurso, idPropietarioRecurso, idSegmentoRecurso, paginaRecurso, // 7
-            criteriosBusqueda, instruccionSelect, selectRestringido, filasSeleccionadas, limiteFilas, etiquetaLenguaje // 5
+        /**/
+        tab2.newTabField(codigoUsuario, nombreUsuario, codigoRemitente, nombreRemitente, codigoFuncion, nombreFuncion, descripcionFuncion, paginaFuncion, tipoFuncion, // 9
+            idClaseRecursoValor, codigoClaseRecursoValor, nombreClaseRecursoValor, // 3
+            recursoValor, idRecurso, versionRecurso, codigoRecurso, nombreRecurso, idPropietarioRecurso, idSegmentoRecurso, paginaRecurso, // 8
+            leido, descargado, etiquetaLenguaje // 3
         );
+        /**/
+        tab3.newTabField(
+            criteriosBusqueda, instruccionSelect, selectRestringido, filasSeleccionadas, limiteFilas // 5
+        );
+        /**/
         // <editor-fold defaultstate="collapsed" desc="localization of RastroInforme's tabs">
+        /**/
         tab1.setLocalizedLabel(ENGLISH, "general");
         tab1.setLocalizedLabel(SPANISH, "general");
         /**/
         tab2.setLocalizedLabel(ENGLISH, "details");
         tab2.setLocalizedLabel(SPANISH, "detalles");
+        /**/
+        tab3.setLocalizedLabel(ENGLISH, "query");
+        tab3.setLocalizedLabel(SPANISH, "consulta");
+        /**/
         // </editor-fold>
     }
 
-    protected Segment finalizado, pendiente, pendienteActual;
+    protected Segment finalizado, pendiente, mis, finalizadoActual, pendienteActual;
 
     @Override
     protected void settleExpressions() {
@@ -495,25 +583,51 @@ public class RastroInforme extends AbstractPersistentEntity {
             condicionEjeFun.EJECUCION_CANCELADA
         );
         pendiente = and(finalizado, not(leido), not(descargado));
-        pendienteActual = pendiente.and(codigoUsuario.isEqualTo(CURRENT_USER_CODE));
         /**/
-        pendiente.setLocalizedCollectionLabel(ENGLISH, "all reports not read or downloaded by their owner user");
-        pendiente.setLocalizedCollectionLabel(SPANISH, "todos los informes no leídos ni descargados por su usuario propietario");
-        pendiente.setLocalizedCollectionShortLabel(ENGLISH, "Reports not read nor downloaded");
+        mis = codigoUsuario.isEqualTo(CURRENT_USER_CODE);
+        finalizadoActual = mis.and(finalizado);
+        pendienteActual = mis.and(pendiente);
+        /**/
+        finalizado.setLocalizedCollectionLabel(ENGLISH, "reports that have already finished");
+        finalizado.setLocalizedCollectionLabel(SPANISH, "informes que ya han finalizado");
+        finalizado.setLocalizedCollectionShortLabel(ENGLISH, "Finished reports");
+        finalizado.setLocalizedCollectionShortLabel(SPANISH, "Informes finalizados");
+        finalizado.setLocalizedDescription(ENGLISH, "the report has already finished");
+        finalizado.setLocalizedDescription(SPANISH, "el informe ya ha finalizado");
+        finalizado.setLocalizedErrorMessage(ENGLISH, "the report has not finished");
+        finalizado.setLocalizedErrorMessage(SPANISH, "el informe no ha finalizado");
+        /**/
+        pendiente.setLocalizedCollectionLabel(ENGLISH, "finished reports not read nor downloaded");
+        pendiente.setLocalizedCollectionLabel(SPANISH, "informes finalizados no leídos ni descargados");
+        pendiente.setLocalizedCollectionShortLabel(ENGLISH, "Unread and undownloaded reports");
         pendiente.setLocalizedCollectionShortLabel(SPANISH, "Informes no leídos ni descargados");
-        pendiente.setLocalizedDescription(ENGLISH, "the report has not been read or downloaded by its owner user");
-        pendiente.setLocalizedDescription(SPANISH, "el informe no ha sido leído ni descargado por su usuario propietario");
-        pendiente.setLocalizedErrorMessage(ENGLISH, "the report has already been read or downloaded by its owner user");
-        pendiente.setLocalizedErrorMessage(SPANISH, "el informe ya fue leído o descargado por su usuario propietario");
+        pendiente.setLocalizedDescription(ENGLISH, "the report has not been read or downloaded");
+        pendiente.setLocalizedDescription(SPANISH, "el informe no ha sido leído o descargado");
+        pendiente.setLocalizedErrorMessage(ENGLISH, "the report has already been read or downloaded");
+        pendiente.setLocalizedErrorMessage(SPANISH, "el informe ya fue leído o descargado");
         /**/
-        pendienteActual.setLocalizedCollectionLabel(ENGLISH, "all your reports not read nor downloaded by you");
-        pendienteActual.setLocalizedCollectionLabel(SPANISH, "todos sus informes no leídos ni descargados por usted");
+        mis.setLocalizedCollectionLabel(ENGLISH, "reports executed by the current user");
+        mis.setLocalizedCollectionLabel(SPANISH, "informes ejecutados por el usuario actual");
+        mis.setLocalizedCollectionShortLabel(ENGLISH, "My reports");
+        mis.setLocalizedCollectionShortLabel(SPANISH, "Mis informes");
+        /**/
+        finalizadoActual.setLocalizedCollectionLabel(ENGLISH, "reports executed by the current user that have already finished");
+        finalizadoActual.setLocalizedCollectionLabel(SPANISH, "informes ejecutados por el usuario actual que ya han finalizado");
+        finalizadoActual.setLocalizedCollectionShortLabel(ENGLISH, "My finished reports");
+        finalizadoActual.setLocalizedCollectionShortLabel(SPANISH, "Mis informes finalizados");
+        finalizadoActual.setLocalizedDescription(ENGLISH, "the report has already finished");
+        finalizadoActual.setLocalizedDescription(SPANISH, "el informe ya ha finalizado");
+        finalizadoActual.setLocalizedErrorMessage(ENGLISH, "the report has not finished");
+        finalizadoActual.setLocalizedErrorMessage(SPANISH, "el informe no ha finalizado");
+        /**/
+        pendienteActual.setLocalizedCollectionLabel(ENGLISH, "finished reports executed by the current user not read nor downloaded");
+        pendienteActual.setLocalizedCollectionLabel(SPANISH, "informes finalizados ejecutados por el usuario actual no leídos ni descargados");
         pendienteActual.setLocalizedCollectionShortLabel(ENGLISH, "My unread and undownloaded reports");
         pendienteActual.setLocalizedCollectionShortLabel(SPANISH, "Mis informes no leídos ni descargados");
-        pendienteActual.setLocalizedDescription(ENGLISH, "the report has not been read or downloaded by the current user");
-        pendienteActual.setLocalizedDescription(SPANISH, "el informe no ha sido leído ni descargado por el usuario actual");
-        pendienteActual.setLocalizedErrorMessage(ENGLISH, "the report has already been read or downloaded by you");
-        pendienteActual.setLocalizedErrorMessage(SPANISH, "el informe ya fue leído o descargado por usted");
+        pendienteActual.setLocalizedDescription(ENGLISH, "the report has not been read or downloaded");
+        pendienteActual.setLocalizedDescription(SPANISH, "el informe no ha sido leído o descargado");
+        pendienteActual.setLocalizedErrorMessage(ENGLISH, "the report has already been read or downloaded");
+        pendienteActual.setLocalizedErrorMessage(SPANISH, "el informe ya fue leído o descargado");
         /**/
     }
 
@@ -521,8 +635,14 @@ public class RastroInforme extends AbstractPersistentEntity {
     protected void settleFilters() {
         super.settleFilters();
         /**/
-        addSelectSegment(pendienteActual, false);
-        addSelectSegment(pendiente, false);
+        addSelectSegment(finalizado, pendiente);
+        addSelectSegment(mis, true);
+        addSelectSegment(finalizadoActual, pendienteActual);
+        /**/
+        usuario.setRenderingFilter(usuario.id.isNotNull()); // mostrar si, y solo si, el usuario no ha sido eliminado
+        remitente.setRenderingFilter(remitente.id.isNotNull()); // mostrar si, y solo si, el remitente no ha sido eliminado
+        tipoGrafico.setRenderingFilter(tipoInforme.isEqualTo(tipoInforme.GRAFICO));
+        subtipoGrafico.setRenderingFilter(tipoInforme.isEqualTo(tipoInforme.GRAFICO).and(tipoGrafico.isNotEqualTo(tipoGrafico.TORTA)));
         /**/
     }
 

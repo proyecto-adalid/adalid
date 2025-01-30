@@ -39,7 +39,7 @@ public class ReportField extends AbstractArtifact implements Comparable<ReportFi
 
     private boolean _resizeable;
 
-    static ReportField addReportField(ReportGroup group, String name) {
+    protected static ReportField addReportField(ReportGroup group, String name) { // protected avoids method never unused warning
         return new ReportField(group, name);
     }
 
@@ -212,7 +212,7 @@ public class ReportField extends AbstractArtifact implements Comparable<ReportFi
     /**
      * @param resizeable the resizeable to set
      */
-    void setResizeable(boolean resizeable) {
+    protected void setResizeable(boolean resizeable) { // protected avoids method never unused warning
         _resizeable = resizeable;
     }
 
@@ -234,22 +234,22 @@ public class ReportField extends AbstractArtifact implements Comparable<ReportFi
         if (aggregation == null) {
             return false;
         }
-        switch (aggregation) {
-            case COUNT:
-                return isCountAtHand();
-            case MINIMUM:
-                return isMinAtHand();
-            case MAXIMUM:
-                return isMaxAtHand();
-            case SUM:
-                return isSumAtHand();
-            case AVERAGE:
-                return isAverageAtHand();
-            case DEVIATION:
-                return isDeviationAtHand();
-            default:
-                return false;
-        }
+        return switch (aggregation) {
+            case COUNT ->
+                isCountAtHand();
+            case MINIMUM ->
+                isMinAtHand();
+            case MAXIMUM ->
+                isMaxAtHand();
+            case SUM ->
+                isSumAtHand();
+            case AVERAGE ->
+                isAverageAtHand();
+            case DEVIATION ->
+                isDeviationAtHand();
+            default ->
+                false;
+        };
     }
 
     public boolean isCountAtHand() {
@@ -257,15 +257,12 @@ public class ReportField extends AbstractArtifact implements Comparable<ReportFi
         if (aggregation == null) {
             return false;
         }
-        switch (aggregation) {
-            case COUNT:
-            case COUNT_MINIMUM_MAXIMUM:
-            case SUM_COUNT_AVERAGE:
-            case SUM_COUNT_AVERAGE_DEVIATION_MINIMUM_MAXIMUM:
-                return true;
-            default:
-                return false;
-        }
+        return switch (aggregation) {
+            case COUNT, COUNT_MINIMUM_MAXIMUM, SUM_COUNT_AVERAGE, SUM_COUNT_AVERAGE_DEVIATION_MINIMUM_MAXIMUM ->
+                true;
+            default ->
+                false;
+        };
     }
 
     public boolean isMinAtHand() {
@@ -273,16 +270,12 @@ public class ReportField extends AbstractArtifact implements Comparable<ReportFi
         if (aggregation == null) {
             return false;
         }
-        switch (aggregation) {
-            case MINIMUM:
-            case COUNT_MINIMUM_MAXIMUM:
-            case MINIMUM_MAXIMUM:
-            case SUM_COUNT_AVERAGE_DEVIATION_MINIMUM_MAXIMUM:
-            case AVERAGE_DEVIATION_MINIMUM_MAXIMUM:
-                return true;
-            default:
-                return false;
-        }
+        return switch (aggregation) {
+            case MINIMUM, COUNT_MINIMUM_MAXIMUM, MINIMUM_MAXIMUM, SUM_COUNT_AVERAGE_DEVIATION_MINIMUM_MAXIMUM, AVERAGE_DEVIATION_MINIMUM_MAXIMUM ->
+                true;
+            default ->
+                false;
+        };
     }
 
     public boolean isMaxAtHand() {
@@ -290,16 +283,12 @@ public class ReportField extends AbstractArtifact implements Comparable<ReportFi
         if (aggregation == null) {
             return false;
         }
-        switch (aggregation) {
-            case MAXIMUM:
-            case COUNT_MINIMUM_MAXIMUM:
-            case MINIMUM_MAXIMUM:
-            case SUM_COUNT_AVERAGE_DEVIATION_MINIMUM_MAXIMUM:
-            case AVERAGE_DEVIATION_MINIMUM_MAXIMUM:
-                return true;
-            default:
-                return false;
-        }
+        return switch (aggregation) {
+            case MAXIMUM, COUNT_MINIMUM_MAXIMUM, MINIMUM_MAXIMUM, SUM_COUNT_AVERAGE_DEVIATION_MINIMUM_MAXIMUM, AVERAGE_DEVIATION_MINIMUM_MAXIMUM ->
+                true;
+            default ->
+                false;
+        };
     }
 
     public boolean isSumAtHand() {
@@ -307,14 +296,12 @@ public class ReportField extends AbstractArtifact implements Comparable<ReportFi
         if (aggregation == null) {
             return false;
         }
-        switch (aggregation) {
-            case SUM:
-            case SUM_COUNT_AVERAGE:
-            case SUM_COUNT_AVERAGE_DEVIATION_MINIMUM_MAXIMUM:
-                return true;
-            default:
-                return false;
-        }
+        return switch (aggregation) {
+            case SUM, SUM_COUNT_AVERAGE, SUM_COUNT_AVERAGE_DEVIATION_MINIMUM_MAXIMUM ->
+                true;
+            default ->
+                false;
+        };
     }
 
     public boolean isAverageAtHand() {
@@ -322,16 +309,12 @@ public class ReportField extends AbstractArtifact implements Comparable<ReportFi
         if (aggregation == null) {
             return false;
         }
-        switch (aggregation) {
-            case AVERAGE:
-            case SUM_COUNT_AVERAGE:
-            case SUM_COUNT_AVERAGE_DEVIATION_MINIMUM_MAXIMUM:
-            case AVERAGE_DEVIATION:
-            case AVERAGE_DEVIATION_MINIMUM_MAXIMUM:
-                return true;
-            default:
-                return false;
-        }
+        return switch (aggregation) {
+            case AVERAGE, SUM_COUNT_AVERAGE, SUM_COUNT_AVERAGE_DEVIATION_MINIMUM_MAXIMUM, AVERAGE_DEVIATION, AVERAGE_DEVIATION_MINIMUM_MAXIMUM ->
+                true;
+            default ->
+                false;
+        };
     }
 
     public boolean isDeviationAtHand() {
@@ -339,15 +322,12 @@ public class ReportField extends AbstractArtifact implements Comparable<ReportFi
         if (aggregation == null) {
             return false;
         }
-        switch (aggregation) {
-            case DEVIATION:
-            case SUM_COUNT_AVERAGE_DEVIATION_MINIMUM_MAXIMUM:
-            case AVERAGE_DEVIATION:
-            case AVERAGE_DEVIATION_MINIMUM_MAXIMUM:
-                return true;
-            default:
-                return false;
-        }
+        return switch (aggregation) {
+            case DEVIATION, SUM_COUNT_AVERAGE_DEVIATION_MINIMUM_MAXIMUM, AVERAGE_DEVIATION, AVERAGE_DEVIATION_MINIMUM_MAXIMUM ->
+                true;
+            default ->
+                false;
+        };
     }
 
     // <editor-fold defaultstate="collapsed" desc="Comparable">

@@ -44,7 +44,7 @@ import adalid.util.*;
  * <p>
  * ADVERTENCIA: SQLMerger2nd no procesa todas las tablas de la base de datos; excluye aquellas cuyo nombre comienza por ZYX_.
  *
- * @author ADALID meta-jee2-archetype
+ * @author ADALID meta-jee2-archetype, version 6.0.0
  */
 @RunnableClass
 public class SQLMerger2nd extends adalid.util.sql.jee2.SQLMerger2nd {

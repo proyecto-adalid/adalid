@@ -66,7 +66,7 @@ public class RastroProceso extends AbstractPersistentEntity {
     public LongProperty id;
 
     @ColumnField(nullable = Kleenean.FALSE, indexed = Kleenean.TRUE)
-    @PropertyField(responsivePriority = 6, table = Kleenean.TRUE, report = Kleenean.TRUE, search = Kleenean.TRUE, heading = Kleenean.TRUE, overlay = Kleenean.TRUE)
+    @PropertyField(responsivePriority = 6, table = Kleenean.TRUE, report = Kleenean.TRUE, search = Kleenean.TRUE, heading = Kleenean.FALSE, overlay = Kleenean.TRUE)
     public TimestampProperty fechaHoraInicioEjecucion;
 
     public TimestampProperty fechaHoraFinEjecucion;
@@ -77,7 +77,7 @@ public class RastroProceso extends AbstractPersistentEntity {
 //  20231209: remove foreign-key referring to Usuario because it might cause ARJUNA012117 and/or ARJUNA012121
 //  @ForeignKey(onDelete = OnDeleteAction.NONE, onUpdate = OnUpdateAction.NONE)
     @ManyToOne(navigability = Navigability.UNIDIRECTIONAL, view = MasterDetailView.NONE)
-    @PropertyField(hidden = Kleenean.TRUE)
+    @PropertyField(table = Kleenean.FALSE, export = Kleenean.FALSE, report = Kleenean.FALSE, heading = Kleenean.FALSE, overlay = Kleenean.FALSE, search = Kleenean.FALSE, filter = Kleenean.FALSE, column = Kleenean.FALSE) // hidden until 02/11/2024
     @QueryMapping(mapKeyProperties = Kleenean.FALSE)
     public Usuario usuario;
 
@@ -87,15 +87,20 @@ public class RastroProceso extends AbstractPersistentEntity {
     public StringProperty codigoUsuario;
 
     @ColumnField(indexed = Kleenean.TRUE)
-    @PropertyField(table = Kleenean.FALSE, search = Kleenean.TRUE, report = Kleenean.TRUE, heading = Kleenean.TRUE, overlay = Kleenean.TRUE)
+    @PropertyField(table = Kleenean.FALSE, search = Kleenean.TRUE, report = Kleenean.TRUE, heading = Kleenean.FALSE, overlay = Kleenean.TRUE, anchor = "codigoUsuario", anchorType = AnchorType.INLINE)
     @StringField(maxLength = 100)
     public StringProperty nombreUsuario;
+
+    @ColumnField(nullable = Kleenean.TRUE)
+    @PropertyField(table = Kleenean.FALSE)
+    @StringField(maxLength = 40) // IPv4: Máximo de 15 caracteres (con puntos incluidos); IPv6: Máximo de 39 caracteres (con dos puntos incluidos)
+    public StringProperty direccionIp;
 
 //  20171213: remove foreign-key referring to Funcion
 //  @ForeignKey(onDelete = OnDeleteAction.NONE, onUpdate = OnUpdateAction.NONE)
     @ManyToOne(navigability = Navigability.UNIDIRECTIONAL, view = MasterDetailView.NONE)
     @ColumnField(nullable = Kleenean.TRUE)
-    @PropertyField(hidden = Kleenean.TRUE)
+    @PropertyField(table = Kleenean.FALSE, export = Kleenean.FALSE, report = Kleenean.FALSE, heading = Kleenean.FALSE, overlay = Kleenean.FALSE, search = Kleenean.FALSE, filter = Kleenean.FALSE, column = Kleenean.FALSE) // hidden until 11/01/2025
     @QueryMapping(mapKeyProperties = Kleenean.FALSE)
     public Funcion funcion;
 
@@ -105,7 +110,7 @@ public class RastroProceso extends AbstractPersistentEntity {
     public StringProperty codigoFuncion;
 
     @ColumnField(indexed = Kleenean.TRUE)
-    @PropertyField(table = Kleenean.FALSE, search = Kleenean.TRUE, report = Kleenean.TRUE, heading = Kleenean.TRUE, overlay = Kleenean.TRUE)
+    @PropertyField(table = Kleenean.FALSE, search = Kleenean.TRUE, report = Kleenean.TRUE, heading = Kleenean.FALSE, overlay = Kleenean.TRUE, anchor = "codigoFuncion", anchorType = AnchorType.INLINE)
     @StringField(maxLength = 200)
     public StringProperty nombreFuncion;
 
@@ -135,7 +140,7 @@ public class RastroProceso extends AbstractPersistentEntity {
     public StringProperty codigoClaseRecursoValor;
 
     @ColumnField(indexed = Kleenean.TRUE)
-    @PropertyField(search = Kleenean.TRUE, heading = Kleenean.TRUE, overlay = Kleenean.TRUE)
+    @PropertyField(search = Kleenean.TRUE, heading = Kleenean.FALSE, overlay = Kleenean.TRUE, anchor = "codigoClaseRecursoValor", anchorType = AnchorType.INLINE)
     @StringField(maxLength = 100)
     public StringProperty nombreClaseRecursoValor;
 
@@ -151,11 +156,11 @@ public class RastroProceso extends AbstractPersistentEntity {
     public LongProperty versionRecurso;
 
     @ColumnField(indexed = Kleenean.FALSE)
-    @PropertyField(responsivePriority = 5, table = Kleenean.TRUE, report = Kleenean.TRUE, search = Kleenean.TRUE)
+    @PropertyField(responsivePriority = 5, table = Kleenean.TRUE, report = Kleenean.TRUE, search = Kleenean.TRUE, overlay = Kleenean.TRUE)
     public StringProperty codigoRecurso;
 
     @ColumnField(indexed = Kleenean.FALSE)
-    @PropertyField(table = Kleenean.FALSE, report = Kleenean.TRUE, search = Kleenean.TRUE)
+    @PropertyField(table = Kleenean.FALSE, report = Kleenean.TRUE, search = Kleenean.TRUE, overlay = Kleenean.TRUE, anchor = "codigoRecurso", anchorType = AnchorType.INLINE)
     public StringProperty nombreRecurso;
 
     @PropertyField(hidden = Kleenean.TRUE)
@@ -439,20 +444,42 @@ public class RastroProceso extends AbstractPersistentEntity {
         subprocesosCancelados.setDefaultValue(0);
         /**/
         // <editor-fold defaultstate="collapsed" desc="localization of RastroProceso's properties">
+        /**/
         fechaHoraInicioEjecucion.setLocalizedLabel(ENGLISH, "start");
         fechaHoraInicioEjecucion.setLocalizedLabel(SPANISH, "inicio");
         /**/
         fechaHoraFinEjecucion.setLocalizedLabel(ENGLISH, "end");
         fechaHoraFinEjecucion.setLocalizedLabel(SPANISH, "fin");
         /**/
+        usuario.setLocalizedDescription(ENGLISH, "user who executed the process");
+        usuario.setLocalizedDescription(SPANISH, "usuario que ejecutó el proceso");
+        usuario.setLocalizedShortDescription(ENGLISH, "user who executed the process");
+        usuario.setLocalizedShortDescription(SPANISH, "usuario que ejecutó el proceso");
         usuario.setLocalizedLabel(ENGLISH, "user");
         usuario.setLocalizedLabel(SPANISH, "usuario");
         /**/
-        codigoUsuario.setLocalizedLabel(ENGLISH, "user");
-        codigoUsuario.setLocalizedLabel(SPANISH, "usuario");
+        codigoUsuario.setLocalizedDescription(ENGLISH, "code of the user who executed the process");
+        codigoUsuario.setLocalizedDescription(SPANISH, "código del usuario que ejecutó el proceso");
+        codigoUsuario.setLocalizedLabel(ENGLISH, "user code");
+        codigoUsuario.setLocalizedLabel(SPANISH, "código del usuario");
+        codigoUsuario.setLocalizedColumnHeader(ENGLISH, "user");
+        codigoUsuario.setLocalizedColumnHeader(SPANISH, "usuario");
+        codigoUsuario.setLocalizedAnchorLabel(ENGLISH, "user");
+        codigoUsuario.setLocalizedAnchorLabel(SPANISH, "usuario");
+        codigoUsuario.setLocalizedAnchoredLabel(ENGLISH, "code");
+        codigoUsuario.setLocalizedAnchoredLabel(SPANISH, "código");
         /**/
+        nombreUsuario.setLocalizedDescription(ENGLISH, "name of the user who executed the process");
+        nombreUsuario.setLocalizedDescription(SPANISH, "nombre del usuario que ejecutó el proceso");
         nombreUsuario.setLocalizedLabel(ENGLISH, "user name");
         nombreUsuario.setLocalizedLabel(SPANISH, "nombre del usuario");
+        nombreUsuario.setLocalizedAnchoredLabel(ENGLISH, "name");
+        nombreUsuario.setLocalizedAnchoredLabel(SPANISH, "nombre");
+        /**/
+        direccionIp.setLocalizedDescription(ENGLISH, "IP address");
+        direccionIp.setLocalizedDescription(SPANISH, "dirección IP");
+        direccionIp.setLocalizedLabel(ENGLISH, "IP");
+        direccionIp.setLocalizedLabel(SPANISH, "IP");
         /**/
         funcion.setLocalizedLabel(ENGLISH, "function");
         funcion.setLocalizedLabel(SPANISH, "función");
@@ -463,11 +490,19 @@ public class RastroProceso extends AbstractPersistentEntity {
         tipoRastroFun.setLocalizedLabel(ENGLISH, "function trail type");
         tipoRastroFun.setLocalizedLabel(SPANISH, "tipo de rastro");
         /**/
-        codigoFuncion.setLocalizedLabel(ENGLISH, "function");
-        codigoFuncion.setLocalizedLabel(SPANISH, "función");
+        codigoFuncion.setLocalizedLabel(ENGLISH, "function code");
+        codigoFuncion.setLocalizedLabel(SPANISH, "código de la función");
+        codigoFuncion.setLocalizedColumnHeader(ENGLISH, "function");
+        codigoFuncion.setLocalizedColumnHeader(SPANISH, "función");
+        codigoFuncion.setLocalizedAnchorLabel(ENGLISH, "function");
+        codigoFuncion.setLocalizedAnchorLabel(SPANISH, "función");
+        codigoFuncion.setLocalizedAnchoredLabel(ENGLISH, "code");
+        codigoFuncion.setLocalizedAnchoredLabel(SPANISH, "código");
         /**/
         nombreFuncion.setLocalizedLabel(ENGLISH, "function name");
         nombreFuncion.setLocalizedLabel(SPANISH, "nombre de la función");
+        nombreFuncion.setLocalizedAnchoredLabel(ENGLISH, "name");
+        nombreFuncion.setLocalizedAnchoredLabel(SPANISH, "nombre");
         /**/
         descripcionFuncion.setLocalizedLabel(ENGLISH, "function description");
         descripcionFuncion.setLocalizedLabel(SPANISH, "descripción de la función");
@@ -480,11 +515,21 @@ public class RastroProceso extends AbstractPersistentEntity {
         idClaseRecursoValor.setLocalizedLabel(ENGLISH, "resource class");
         idClaseRecursoValor.setLocalizedLabel(SPANISH, "clase de recurso");
         /**/
-        codigoClaseRecursoValor.setLocalizedLabel(ENGLISH, "resource class");
-        codigoClaseRecursoValor.setLocalizedLabel(SPANISH, "clase de recurso");
+        codigoClaseRecursoValor.setLocalizedDescription(ENGLISH, "code of the resource class of the function");
+        codigoClaseRecursoValor.setLocalizedDescription(SPANISH, "código de la clase de recurso de la función");
+        codigoClaseRecursoValor.setLocalizedLabel(ENGLISH, "resource class code");
+        codigoClaseRecursoValor.setLocalizedLabel(SPANISH, "código de la clase de recurso");
+        codigoClaseRecursoValor.setLocalizedColumnHeader(ENGLISH, "resource class");
+        codigoClaseRecursoValor.setLocalizedColumnHeader(SPANISH, "clase de recurso");
+        codigoClaseRecursoValor.setLocalizedAnchorLabel(ENGLISH, "resource class");
+        codigoClaseRecursoValor.setLocalizedAnchorLabel(SPANISH, "clase de recurso");
+        codigoClaseRecursoValor.setLocalizedAnchoredLabel(ENGLISH, "code");
+        codigoClaseRecursoValor.setLocalizedAnchoredLabel(SPANISH, "código");
         /**/
         nombreClaseRecursoValor.setLocalizedLabel(ENGLISH, "resource class name");
         nombreClaseRecursoValor.setLocalizedLabel(SPANISH, "nombre de la clase de recurso");
+        nombreClaseRecursoValor.setLocalizedAnchoredLabel(ENGLISH, "name");
+        nombreClaseRecursoValor.setLocalizedAnchoredLabel(SPANISH, "nombre");
         /**/
         recursoValor.setLocalizedLabel(ENGLISH, "resource");
         recursoValor.setLocalizedLabel(SPANISH, "recurso");
@@ -497,13 +542,21 @@ public class RastroProceso extends AbstractPersistentEntity {
         /**/
         codigoRecurso.setLocalizedDescription(ENGLISH, "code of the resource on which the process was executed");
         codigoRecurso.setLocalizedDescription(SPANISH, "código del recurso sobre el que se ejecutó el proceso");
-        codigoRecurso.setLocalizedLabel(ENGLISH, "resource");
-        codigoRecurso.setLocalizedLabel(SPANISH, "recurso");
+        codigoRecurso.setLocalizedLabel(ENGLISH, "resource code");
+        codigoRecurso.setLocalizedLabel(SPANISH, "código del recurso");
+        codigoRecurso.setLocalizedColumnHeader(ENGLISH, "resource");
+        codigoRecurso.setLocalizedColumnHeader(SPANISH, "recurso");
+        codigoRecurso.setLocalizedAnchorLabel(ENGLISH, "resource");
+        codigoRecurso.setLocalizedAnchorLabel(SPANISH, "recurso");
+        codigoRecurso.setLocalizedAnchoredLabel(ENGLISH, "code");
+        codigoRecurso.setLocalizedAnchoredLabel(SPANISH, "código");
         /**/
         nombreRecurso.setLocalizedDescription(ENGLISH, "name of the resource on which the process was executed");
         nombreRecurso.setLocalizedDescription(SPANISH, "nombre del recurso sobre el que se ejecutó el proceso");
         nombreRecurso.setLocalizedLabel(ENGLISH, "resource name");
         nombreRecurso.setLocalizedLabel(SPANISH, "nombre del recurso");
+        nombreRecurso.setLocalizedAnchoredLabel(ENGLISH, "name");
+        nombreRecurso.setLocalizedAnchoredLabel(SPANISH, "nombre");
         /**/
         idPropietarioRecurso.setLocalizedLabel(ENGLISH, "resource owner");
         idPropietarioRecurso.setLocalizedLabel(SPANISH, "propietario del recurso");
@@ -657,6 +710,7 @@ public class RastroProceso extends AbstractPersistentEntity {
         /**/
         procedimientoAfterUpdate.setLocalizedLabel(ENGLISH, "final procedure");
         procedimientoAfterUpdate.setLocalizedLabel(SPANISH, "procedimiento final");
+        /**/
         // </editor-fold>
     }
 
@@ -677,35 +731,39 @@ public class RastroProceso extends AbstractPersistentEntity {
     protected void settleTabs() {
         super.settleTabs();
         /**/
-        tab110.newTabField(id, superior, fechaHoraInicioEjecucion, fechaHoraFinEjecucion,
-            leido, descargado,
-            usuario, codigoUsuario, nombreUsuario,
-            funcion, codigoFuncion, nombreFuncion, descripcionFuncion, paginaFuncion,
-            idClaseRecursoValor, codigoClaseRecursoValor, nombreClaseRecursoValor, recursoValor,
-            idRecurso, versionRecurso, codigoRecurso, nombreRecurso, idPropietarioRecurso, idSegmentoRecurso, paginaRecurso,
-            condicionEjeFun, codigoError, descripcionError, severidadMensaje, paginaRecursoObtenido, nombreArchivo, archivosCargados, etiquetaLenguaje); //, mensajeAplicacion);
+        tab110.newTabField(id, superior, fechaHoraInicioEjecucion, fechaHoraFinEjecucion, // 4
+            usuario, funcion, // 4
+            codigoClaseRecursoValor, nombreClaseRecursoValor, codigoRecurso, nombreRecurso, // 4
+            condicionEjeFun, codigoError, descripcionError, severidadMensaje, // 4
+            archivosCargados, nombreArchivo, direccionIp // 2
+        );
         /**/
-        tab120.newTabField(funcion, codigoFuncion, nombreFuncion, descripcionFuncion, paginaFuncion,
-            tipoFuncion, tipoRastroFun, grupo, procesoAsincrono, procesoCalendarizado, procesoNativo, procesoWeb, subprocesos);
+        tab120.newTabField(codigoUsuario, nombreUsuario, codigoFuncion, nombreFuncion, descripcionFuncion, paginaFuncion, tipoFuncion, tipoRastroFun, // 7
+            idClaseRecursoValor, codigoClaseRecursoValor, nombreClaseRecursoValor, // 3
+            recursoValor, idRecurso, versionRecurso, codigoRecurso, nombreRecurso, idPropietarioRecurso, idSegmentoRecurso, paginaRecurso, paginaRecursoObtenido, // 9
+            leido, descargado, etiquetaLenguaje // 3
+        );
         /**/
-        tab130.newTabField(subprocesos, subprocesosPendientes, subprocesosEnProgreso,
-            subprocesosSinErrores, subprocesosConErrores, subprocesosCancelados, procedimientoAfterUpdate);
+        tab130.newTabField(grupo, procesoAsincrono, procesoCalendarizado, procesoNativo, procesoWeb, // 5
+            subprocesos, subprocesosPendientes, subprocesosEnProgreso, // 3
+            subprocesosSinErrores, subprocesosConErrores, subprocesosCancelados, procedimientoAfterUpdate // 4
+        );
         /**/
         // <editor-fold defaultstate="collapsed" desc="localization of RastroProceso's tabs">
         /**/
         tab110.setLocalizedLabel(ENGLISH, "general");
         tab110.setLocalizedLabel(SPANISH, "general");
         /**/
-        tab120.setLocalizedLabel(ENGLISH, "process");
-        tab120.setLocalizedLabel(SPANISH, "proceso");
+        tab120.setLocalizedLabel(ENGLISH, "details");
+        tab120.setLocalizedLabel(SPANISH, "detalles");
         /**/
-        tab130.setLocalizedLabel(ENGLISH, "subprocesses");
-        tab130.setLocalizedLabel(SPANISH, "subprocesos");
+        tab130.setLocalizedLabel(ENGLISH, "process");
+        tab130.setLocalizedLabel(SPANISH, "proceso");
         /**/
         // </editor-fold>
     }
 
-    protected Segment finalizado, pendiente, pendienteActual;
+    protected Segment finalizado, pendiente, mis, finalizadoActual, pendienteActual;
 
     protected Segment conArchivosCargados, conSuperior, conSubprocesos;
 
@@ -721,7 +779,10 @@ public class RastroProceso extends AbstractPersistentEntity {
             condicionEjeFun.EJECUCION_CANCELADA
         );
         pendiente = and(procesoAsincrono, superior.isNull(), finalizado, not(leido), not(descargado));
-        pendienteActual = pendiente.and(codigoUsuario.isEqualTo(CURRENT_USER_CODE));
+        /**/
+        mis = codigoUsuario.isEqualTo(CURRENT_USER_CODE);
+        finalizadoActual = mis.and(finalizado);
+        pendienteActual = mis.and(pendiente);
         /**/
         sinArchivosCargados = archivosCargados.isEqualTo(0);
         conArchivosCargados = archivosCargados.isGreaterThan(0);
@@ -732,75 +793,96 @@ public class RastroProceso extends AbstractPersistentEntity {
         sinSubprocesos = subprocesos.isEqualTo(0);
         conSubprocesos = subprocesos.isGreaterThan(0);
         /**/
-        // <editor-fold defaultstate="collapsed" desc="localization of RastroProceso's expressions">
+        finalizado.setLocalizedCollectionLabel(ENGLISH, "processes that have already finished");
+        finalizado.setLocalizedCollectionLabel(SPANISH, "procesos que ya han finalizado");
+        finalizado.setLocalizedCollectionShortLabel(ENGLISH, "Finished processes");
+        finalizado.setLocalizedCollectionShortLabel(SPANISH, "Procesos finalizados");
+        finalizado.setLocalizedDescription(ENGLISH, "the process has already finished");
+        finalizado.setLocalizedDescription(SPANISH, "el proceso ya ha finalizado");
+        finalizado.setLocalizedErrorMessage(ENGLISH, "the process has not finished");
+        finalizado.setLocalizedErrorMessage(SPANISH, "el proceso no ha finalizado");
         /**/
-        pendiente.setLocalizedCollectionLabel(ENGLISH, "all processes not read or downloaded by their owner user");
-        pendiente.setLocalizedCollectionLabel(SPANISH, "todos los procesos no leídos ni descargados por su usuario propietario");
-        pendiente.setLocalizedCollectionShortLabel(ENGLISH, "Processes not read nor downloaded");
+        pendiente.setLocalizedCollectionLabel(ENGLISH, "finished processes not read nor downloaded");
+        pendiente.setLocalizedCollectionLabel(SPANISH, "procesos finalizados no leídos ni descargados");
+        pendiente.setLocalizedCollectionShortLabel(ENGLISH, "Unread and undownloaded processes");
         pendiente.setLocalizedCollectionShortLabel(SPANISH, "Procesos no leídos ni descargados");
-        pendiente.setLocalizedDescription(ENGLISH, "the process has not been read or downloaded by its owner user");
-        pendiente.setLocalizedDescription(SPANISH, "el proceso no ha sido leído ni descargado por su usuario propietario");
-        pendiente.setLocalizedErrorMessage(ENGLISH, "the process has already been read or downloaded by its owner user");
-        pendiente.setLocalizedErrorMessage(SPANISH, "el proceso ya fue leído o descargado por su usuario propietario");
+        pendiente.setLocalizedDescription(ENGLISH, "the process has not been read or downloaded");
+        pendiente.setLocalizedDescription(SPANISH, "el proceso no ha sido leído o descargado");
+        pendiente.setLocalizedErrorMessage(ENGLISH, "the process has already been read or downloaded");
+        pendiente.setLocalizedErrorMessage(SPANISH, "el proceso ya fue leído o descargado");
         /**/
-        pendienteActual.setLocalizedCollectionLabel(ENGLISH, "all your processes not read nor downloaded by you");
-        pendienteActual.setLocalizedCollectionLabel(SPANISH, "todos sus procesos no leídos ni descargados por usted");
+        mis.setLocalizedCollectionLabel(ENGLISH, "processes executed by the current user");
+        mis.setLocalizedCollectionLabel(SPANISH, "procesos ejecutados por el usuario actual");
+        mis.setLocalizedCollectionShortLabel(ENGLISH, "My processes");
+        mis.setLocalizedCollectionShortLabel(SPANISH, "Mis procesos");
+        /**/
+        finalizadoActual.setLocalizedCollectionLabel(ENGLISH, "processes executed by the current user that have already finished");
+        finalizadoActual.setLocalizedCollectionLabel(SPANISH, "procesos ejecutados por el usuario actual que ya han finalizado");
+        finalizadoActual.setLocalizedCollectionShortLabel(ENGLISH, "My finished processes");
+        finalizadoActual.setLocalizedCollectionShortLabel(SPANISH, "Mis procesos finalizados");
+        finalizadoActual.setLocalizedDescription(ENGLISH, "the process has already finished");
+        finalizadoActual.setLocalizedDescription(SPANISH, "el proceso ya ha finalizado");
+        finalizadoActual.setLocalizedErrorMessage(ENGLISH, "the process has not finished");
+        finalizadoActual.setLocalizedErrorMessage(SPANISH, "el proceso no ha finalizado");
+        /**/
+        pendienteActual.setLocalizedCollectionLabel(ENGLISH, "finished processes executed by the current user not read nor downloaded");
+        pendienteActual.setLocalizedCollectionLabel(SPANISH, "procesos finalizados ejecutados por el usuario actual no leídos ni descargados");
         pendienteActual.setLocalizedCollectionShortLabel(ENGLISH, "My unread and undownloaded processes");
         pendienteActual.setLocalizedCollectionShortLabel(SPANISH, "Mis procesos no leídos ni descargados");
-        pendienteActual.setLocalizedDescription(ENGLISH, "the process has not been read or downloaded by the current user");
-        pendienteActual.setLocalizedDescription(SPANISH, "el proceso no ha sido leído ni descargado por el usuario actual");
-        pendienteActual.setLocalizedErrorMessage(ENGLISH, "the process has already been read or downloaded by you");
-        pendienteActual.setLocalizedErrorMessage(SPANISH, "el proceso ya fue leído o descargado por usted");
+        pendienteActual.setLocalizedDescription(ENGLISH, "the process has not been read or downloaded");
+        pendienteActual.setLocalizedDescription(SPANISH, "el proceso no ha sido leído o descargado");
+        pendienteActual.setLocalizedErrorMessage(ENGLISH, "the process has already been read or downloaded");
+        pendienteActual.setLocalizedErrorMessage(SPANISH, "el proceso ya fue leído o descargado");
         /**/
-        sinArchivosCargados.setLocalizedCollectionLabel(ENGLISH, "audit trails of processes without uploaded files");
-        sinArchivosCargados.setLocalizedCollectionLabel(SPANISH, "rastros de auditoría de procesos sin archivos cargados");
-        sinArchivosCargados.setLocalizedCollectionShortLabel(ENGLISH, "trails of processes without uploaded files");
-        sinArchivosCargados.setLocalizedCollectionShortLabel(SPANISH, "rastros de procesos sin archivos cargados");
+        sinArchivosCargados.setLocalizedCollectionLabel(ENGLISH, "processes without any uploaded files");
+        sinArchivosCargados.setLocalizedCollectionLabel(SPANISH, "procesos sin ningún archivo cargado");
+        sinArchivosCargados.setLocalizedCollectionShortLabel(ENGLISH, "Processes without uploaded files");
+        sinArchivosCargados.setLocalizedCollectionShortLabel(SPANISH, "Procesos sin archivos cargados");
         sinArchivosCargados.setLocalizedDescription(ENGLISH, "the process has no uploaded files");
         sinArchivosCargados.setLocalizedDescription(SPANISH, "el proceso no tiene archivos cargados");
         sinArchivosCargados.setLocalizedErrorMessage(ENGLISH, "the process has uploaded files");
         sinArchivosCargados.setLocalizedErrorMessage(SPANISH, "el proceso tiene archivos cargados");
         /**/
-        conArchivosCargados.setLocalizedCollectionLabel(ENGLISH, "audit trails of processes with one or more uploaded files");
-        conArchivosCargados.setLocalizedCollectionLabel(SPANISH, "rastros de auditoría de procesos con uno o más archivos cargados");
-        conArchivosCargados.setLocalizedCollectionShortLabel(ENGLISH, "trails of processes with uploaded files");
-        conArchivosCargados.setLocalizedCollectionShortLabel(SPANISH, "rastros de procesos con archivos cargados");
+        conArchivosCargados.setLocalizedCollectionLabel(ENGLISH, "processes with one or more uploaded files");
+        conArchivosCargados.setLocalizedCollectionLabel(SPANISH, "procesos con uno o más archivos cargados");
+        conArchivosCargados.setLocalizedCollectionShortLabel(ENGLISH, "Processes with uploaded files");
+        conArchivosCargados.setLocalizedCollectionShortLabel(SPANISH, "Procesos con archivos cargados");
         conArchivosCargados.setLocalizedDescription(ENGLISH, "the process has uploaded files");
         conArchivosCargados.setLocalizedDescription(SPANISH, "el proceso tiene archivos cargados");
         conArchivosCargados.setLocalizedErrorMessage(ENGLISH, "the process has no uploaded files");
         conArchivosCargados.setLocalizedErrorMessage(SPANISH, "el proceso no tiene archivos cargados");
         /**/
-        sinSuperior.setLocalizedCollectionLabel(ENGLISH, "audit trails of main processes (processes without parent process)");
-        sinSuperior.setLocalizedCollectionLabel(SPANISH, "rastros de auditoría de procesos principales (procesos sin proceso superior)");
-        sinSuperior.setLocalizedCollectionShortLabel(ENGLISH, "trails of main processes");
-        sinSuperior.setLocalizedCollectionShortLabel(SPANISH, "rastros de procesos principales");
+        sinSuperior.setLocalizedCollectionLabel(ENGLISH, "processes without parent process");
+        sinSuperior.setLocalizedCollectionLabel(SPANISH, "procesos sin proceso superior");
+        sinSuperior.setLocalizedCollectionShortLabel(ENGLISH, "Main processes");
+        sinSuperior.setLocalizedCollectionShortLabel(SPANISH, "Procesos principales");
         sinSuperior.setLocalizedDescription(ENGLISH, "the process has no parent process");
         sinSuperior.setLocalizedDescription(SPANISH, "el proceso no tiene proceso superior");
         sinSuperior.setLocalizedErrorMessage(ENGLISH, "the process has parent process");
         sinSuperior.setLocalizedErrorMessage(SPANISH, "el proceso tiene proceso superior");
         /**/
-        conSuperior.setLocalizedCollectionLabel(ENGLISH, "audit trails of subprocesses (processes with parent process)");
-        conSuperior.setLocalizedCollectionLabel(SPANISH, "rastros de auditoría de subprocesos (procesos con proceso superior)");
-        conSuperior.setLocalizedCollectionShortLabel(ENGLISH, "trails of subprocesses");
-        conSuperior.setLocalizedCollectionShortLabel(SPANISH, "rastros de subprocesos");
+        conSuperior.setLocalizedCollectionLabel(ENGLISH, "processes with parent process");
+        conSuperior.setLocalizedCollectionLabel(SPANISH, "procesos con proceso superior");
+        conSuperior.setLocalizedCollectionShortLabel(ENGLISH, "Subprocesses");
+        conSuperior.setLocalizedCollectionShortLabel(SPANISH, "Subprocesos");
         conSuperior.setLocalizedDescription(ENGLISH, "the process has parent process");
         conSuperior.setLocalizedDescription(SPANISH, "el proceso tiene proceso superior");
         conSuperior.setLocalizedErrorMessage(ENGLISH, "the process has no parent process");
         conSuperior.setLocalizedErrorMessage(SPANISH, "el proceso no tiene proceso superior");
         /**/
-        sinSubprocesos.setLocalizedCollectionLabel(ENGLISH, "audit trails of processes without subprocesses");
-        sinSubprocesos.setLocalizedCollectionLabel(SPANISH, "rastros de auditoría de procesos sin subprocesos");
-        sinSubprocesos.setLocalizedCollectionShortLabel(ENGLISH, "trails of processes without subprocesses");
-        sinSubprocesos.setLocalizedCollectionShortLabel(SPANISH, "rastros de procesos sin subprocesos");
+        sinSubprocesos.setLocalizedCollectionLabel(ENGLISH, "processes without any subprocesses");
+        sinSubprocesos.setLocalizedCollectionLabel(SPANISH, "procesos sin ningún subproceso");
+        sinSubprocesos.setLocalizedCollectionShortLabel(ENGLISH, "Processes without subprocesses");
+        sinSubprocesos.setLocalizedCollectionShortLabel(SPANISH, "Procesos sin subprocesos");
         sinSubprocesos.setLocalizedDescription(ENGLISH, "the process has no subprocesses");
         sinSubprocesos.setLocalizedDescription(SPANISH, "el proceso no tiene subprocesos");
         sinSubprocesos.setLocalizedErrorMessage(ENGLISH, "the process has subprocesses");
         sinSubprocesos.setLocalizedErrorMessage(SPANISH, "el proceso tiene subprocesos");
         /**/
-        conSubprocesos.setLocalizedCollectionLabel(ENGLISH, "audit trails of processes with one or more subprocesses");
-        conSubprocesos.setLocalizedCollectionLabel(SPANISH, "rastros de auditoría de procesos con uno o más subprocesos");
-        conSubprocesos.setLocalizedCollectionShortLabel(ENGLISH, "trails of processes with subprocesses");
-        conSubprocesos.setLocalizedCollectionShortLabel(SPANISH, "rastros de procesos con subprocesos");
+        conSubprocesos.setLocalizedCollectionLabel(ENGLISH, "processes with one or more subprocesses");
+        conSubprocesos.setLocalizedCollectionLabel(SPANISH, "procesos con uno o más subprocesos");
+        conSubprocesos.setLocalizedCollectionShortLabel(ENGLISH, "Processes with subprocesses");
+        conSubprocesos.setLocalizedCollectionShortLabel(SPANISH, "Procesos con subprocesos");
         conSubprocesos.setLocalizedDescription(ENGLISH, "the process has subprocesses");
         conSubprocesos.setLocalizedDescription(SPANISH, "el proceso tiene subprocesos");
         conSubprocesos.setLocalizedErrorMessage(ENGLISH, "the process has no subprocesses");
@@ -815,13 +897,14 @@ public class RastroProceso extends AbstractPersistentEntity {
         /**/
         setMasterDetailFilter(superior.conSubprocesos);
         /**/
-        addSelectSegment(pendienteActual, false);
-        addSelectSegment(pendiente, false);
+        addSelectSegment(finalizado, pendiente);
+        addSelectSegment(mis, true);
+        addSelectSegment(finalizadoActual, pendienteActual);
+        addSelectSegment(sinArchivosCargados, conArchivosCargados);
+        addSelectSegment(sinSubprocesos, conSubprocesos);
+        addSelectSegment(sinSuperior, conSuperior);
         /**/
-//      addSelectSegment(sinSuperior, true); // no, porque hay páginas de rastros/superior
-        addSelectSegment(conArchivosCargados, conSuperior, conSubprocesos, sinArchivosCargados, sinSuperior, sinSubprocesos);
-        /**/
-        tab130.setRenderingFilter(conSubprocesos);
+        usuario.setRenderingFilter(usuario.id.isNotNull()); // mostrar si, y solo si, el usuario no ha sido eliminado
         /**/
     }
 

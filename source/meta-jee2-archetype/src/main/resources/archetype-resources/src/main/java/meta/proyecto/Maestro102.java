@@ -15,7 +15,7 @@ import adalid.jee2.constants.*;
 import meta.psm.ProjectAttributeKeys;
 
 /**
- * @author ADALID meta-jee2-archetype
+ * @author ADALID meta-jee2-archetype, version 6.0.0
  */
 @MasterProject(acronym = Maestro.ACRONYM, alias = Maestro102.ALIAS, helpFile = Maestro102.ALIAS)
 public class Maestro102 extends Maestro {
@@ -86,23 +86,8 @@ public class Maestro102 extends Maestro {
     public void configureGenerator() {
         super.configureGenerator();
         loadEnvironmentVariables(LoggingLevel.TRACE);
-//
 //      putEnvironmentVariable(CONTENT_ROOT_DIR_LINUX, "/opt/content-root");
 //      putEnvironmentVariable(CONTENT_ROOT_DIR_WINDOWS, "%SystemDrive%/content-root");
-//
-//      putEnvironmentVariable(POSTGRESQL_DRIVER_ID, "pgjdbc4");
-//      putEnvironmentVariable(POSTGRESQL_DRIVER_JAR, "postgresql-42.7.3.jar");
-//      putEnvironmentVariable(POSTGRESQL_DRIVER_VERSION, "42.7.3");
-//
-//      putEnvironmentVariable(PLATAFORMA_JAVA, "jakarta");
-//      putEnvironmentVariable(VERSION_ECLIPSELINK, "4.0.2");
-//      putEnvironmentVariable(VERSION_POSTGRESQL, "16");
-//      putEnvironmentVariable(VERSION_WILDFLY, "32.0.1.Final");
-//      putEnvironmentVariable(VERSION_JAVA, "17");
-//      putEnvironmentVariable(VERSION_PRIMEFACES, "13.0.10");
-//      putEnvironmentVariable(VERSION_GOOGLE_GSON, "2.10.1");
-//      putEnvironmentVariable(VERSION_THIRD_PARTY_DIR, "5.0");
-//
 //      loadPrivateProperties(LoggingLevel.INFO);
 //      setTheme(PrimeFacesThemes.SAGA);
 //      setThemeSwitchingEnabled(true);
@@ -139,7 +124,7 @@ public class Maestro102 extends Maestro {
     @Override
     public void addDirectives() {
         super.addDirectives();
-//      addFileExclusionPattern(expresión regular para evaluar el nombre de los archivos que se deben excluir);
+//      addFileExclusionPattern(expresión regular para evaluar el nombre de los archivos que se deben excluir y eliminar);
 //      por ejemplo: addFileExclusionPattern("^.*/data-migration/base/insert-select-past-data-[${backslash}${backslash}d]{8}-[${backslash}${backslash}d]{4}${backslash}${backslash}.sql${dollar}");
 //      por ejemplo: addFileExclusionPattern("^.*/webapp/resources/help/base/special-component/barraBotonesAccion1.xhtml${dollar}");
 //      addFilePreservationPattern(expresión regular para evaluar el nombre de los archivos que se deben preservar);

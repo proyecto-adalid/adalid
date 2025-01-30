@@ -18,7 +18,7 @@ import adalid.util.*;
  * utilizar otro emulador, cambiando el valor de la propiedad process.builder.start.command.for.linux del archivo bootstrapping.properties que se
  * encuentra en el subdirectorio src/main/resources.
  *
- * @author ADALID meta-jee2-archetype
+ * @author ADALID meta-jee2-archetype, version 6.0.0
  */
 @RunnableClass(false)
 public class RunZipRelease extends adalid.util.io.SysCmdRunner {

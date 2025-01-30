@@ -29,6 +29,7 @@ import adalid.core.sql.*;
 import adalid.jee2.ProjectObjectModel;
 import adalid.jee2.SpecialPage;
 import adalid.jee2.bundles.*;
+import adalid.jee2.constants.JEE2;
 import adalid.jee2.features.*;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -467,6 +468,12 @@ public abstract class ProyectoBase extends Project implements DatabaseProject, S
 
     public ProyectoBase() {
         super();
+    }
+
+    @Override
+    public void configureGenerator() {
+        super.configureGenerator();
+        putEnvironmentVariable(URL_ZIP_THIRD_PARTY_DIR, JEE2.THIRD_PARTY_DIR_ZIP);
     }
 
     @Override

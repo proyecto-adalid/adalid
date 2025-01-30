@@ -105,18 +105,15 @@ public class ViewField extends AbstractArtifact {
             _aggregation = aggregation;
         } else if (_column.isTemporalPrimitive()) {
             switch (aggregation) {
-                case MINIMUM:
-                case MAXIMUM:
-                case COUNT_MINIMUM_MAXIMUM:
-                case MINIMUM_MAXIMUM:
+                case MINIMUM, MAXIMUM, COUNT_MINIMUM_MAXIMUM, MINIMUM_MAXIMUM -> {
                     _chartable = false;
                     _aggregation = aggregation;
-                    break;
-                default:
+                }
+                default -> {
                     _chartable = true;
                     _aggregation = ViewFieldAggregation.COUNT;
                     logNotCountAggregation(aggregation);
-                    break;
+                }
             }
         } else {
             _chartable = false;

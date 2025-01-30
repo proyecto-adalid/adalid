@@ -14,13 +14,12 @@ package adalid.core.properties.ext;
 
 import adalid.core.constants.PhoneConstants;
 import adalid.core.enums.PhoneNumberFormat;
-import adalid.core.properties.StringProperty;
 import java.util.regex.Pattern;
 
 /**
  * @author Jorge Campins
  */
-public class LocalPhoneNumberProperty extends StringProperty {
+public class LocalPhoneNumberProperty extends AbstractPhoneNumberProperty {
 
     {
         /**/
@@ -35,11 +34,8 @@ public class LocalPhoneNumberProperty extends StringProperty {
         /**/
     }
 
-    public boolean isPhoneNumber() {
-        return true;
-    }
-
-    public PhoneNumberFormat getPhoneNumberFormat() {
+    @Override
+    public final PhoneNumberFormat getPhoneNumberFormat() {
         return PhoneNumberFormat.LOCAL;
     }
 

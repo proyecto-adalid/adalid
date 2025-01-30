@@ -42,6 +42,7 @@ public class BundleBase {
         load();
     }
 
+    @SuppressWarnings("deprecation")
     private static void load() {
         logger.trace(BASE_NAME);
         ResourceBundle bundle, bundlePlus;
@@ -50,7 +51,11 @@ public class BundleBase {
         for (Locale locale : supportedLocales) {
             bundle = putBundle(locale);
             if (bundle != null) {
+                /**/
                 localePlus = new Locale(locale.getLanguage(), locale.getCountry(), "PLUS");
+                /* new Locale is deprecated since JDK 19, but for Locale.Builder a valid variant must be a String of 5 to 8 alphanumerics
+                localePlus = new Locale.Builder().setLanguage(locale.getLanguage()).setRegion(locale.getCountry()).setVariant("PLUS").build();
+                /**/
                 bundlePlus = putBundle(localePlus);
                 if (bundlePlus != null) {
                     locales.put(locale, localePlus);

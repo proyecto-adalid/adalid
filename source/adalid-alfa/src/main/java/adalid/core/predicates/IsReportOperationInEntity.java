@@ -23,8 +23,7 @@ public class IsReportOperationInEntity implements Predicate {
 
     @Override
     public boolean evaluate(Object object) {
-        if (object instanceof Entity) {
-            Entity entity = (Entity) object;
+        if (object instanceof Entity entity) {
             IsReportOperation isReportOperation = new IsReportOperation();
             for (Operation operation : entity.getOperationsList()) {
                 if (isReportOperation.evaluate(operation)) {

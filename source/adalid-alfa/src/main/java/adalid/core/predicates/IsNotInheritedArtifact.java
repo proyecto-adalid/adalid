@@ -22,8 +22,7 @@ public class IsNotInheritedArtifact implements Predicate {
 
     @Override
     public boolean evaluate(Object object) {
-        if (object instanceof Artifact) {
-            Artifact artifact = (Artifact) object;
+        if (object instanceof Artifact artifact) {
             return artifact.isNotInherited();
         }
         return false;

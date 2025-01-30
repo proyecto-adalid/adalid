@@ -72,7 +72,7 @@ public class LineaPrueba extends PersistentEntityBase {
 
     @BusinessKey
     @StringField(maxLength = 70)
-    @PropertyField(create = Kleenean.FALSE, update = Kleenean.FALSE, table = Kleenean.FALSE, defaultCondition = DefaultCondition.UNCONDITIONALLY, defaultCheckpoint = Checkpoint.USER_INTERFACE)
+    @PropertyField(create = Kleenean.FALSE, update = Kleenean.FALSE, table = Kleenean.FALSE, defaultCondition = DefaultCondition.UNCONDITIONALLY) //, defaultCheckpoint = Checkpoint.USER_INTERFACE)
     public StringProperty codigo;
 
     @ColumnField(nullable = Kleenean.FALSE)
@@ -81,7 +81,7 @@ public class LineaPrueba extends PersistentEntityBase {
 
     @ColumnField(nullable = Kleenean.FALSE)
     @ForeignKey(onDelete = OnDeleteAction.NONE, onUpdate = OnUpdateAction.NONE)
-    @ManyToOne(navigability = Navigability.UNIDIRECTIONAL, view = MasterDetailView.TABLE_AND_DETAIL)
+    @ManyToOne(navigability = Navigability.UNIDIRECTIONAL, view = MasterDetailView.TABLE_AND_DETAIL, viewSequence = 10)
     @PropertyField(create = Kleenean.TRUE, update = Kleenean.FALSE, table = Kleenean.TRUE, report = Kleenean.TRUE)
     public ProgramaPrueba programa;
 

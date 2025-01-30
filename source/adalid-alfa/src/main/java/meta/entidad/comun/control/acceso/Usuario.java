@@ -51,7 +51,7 @@ public class Usuario extends AbstractPersistentEntity {
 
     @BusinessKey
     @PropertyField(update = Kleenean.FALSE, overlay = Kleenean.FALSE)
-    @StringField(maxLength = MAX_EMAIL_ADDRESS_LENGTH, displayLength = 36) // maxLength = 36 until 01/12/2023
+    @StringField(maxLength = MAX_EMAIL_ADDRESS_LENGTH, displayLength = 36, regex = WHITESPACELESS_REGEX) // maxLength = 36 until 01/12/2023
     public StringProperty codigoUsuario;
 
     @NameProperty
@@ -78,15 +78,14 @@ public class Usuario extends AbstractPersistentEntity {
     @PropertyField(create = Kleenean.TRUE, update = Kleenean.TRUE, table = Kleenean.FALSE, report = Kleenean.FALSE)
     public StringProperty archivo;
 
-    @PropertyField(create = Kleenean.TRUE, overlay = Kleenean.TRUE, table = Kleenean.FALSE, report = Kleenean.FALSE)
+    @PropertyField(create = Kleenean.TRUE, overlay = Kleenean.TRUE, table = Kleenean.FALSE, report = Kleenean.FALSE, search = Kleenean.TRUE)
     public EmailAddressProperty correoElectronico;
 
     @PropertyField(create = Kleenean.TRUE, table = Kleenean.FALSE, report = Kleenean.FALSE)
     public InternationalSmartphoneNumberProperty numeroTelefonoInteligente;
 
-    @StringField(maxLength = 20, regex = PHONE_REGEX, validator = PHONE_NUMBER_VALIDATOR)
     @PropertyField(create = Kleenean.TRUE, table = Kleenean.FALSE, report = Kleenean.FALSE)
-    public StringProperty numeroTelefonoMovil;
+    public InternationalPhoneNumberProperty numeroTelefonoMovil;
 
     @ColumnField(nullable = Kleenean.FALSE)
     @PropertyField(responsivePriority = 6, create = Kleenean.FALSE, update = Kleenean.FALSE, table = Kleenean.TRUE, report = Kleenean.TRUE)
@@ -120,6 +119,23 @@ public class Usuario extends AbstractPersistentEntity {
     @ColumnField(nullable = Kleenean.TRUE)
     @PropertyField(create = Kleenean.FALSE, update = Kleenean.FALSE)
     public TimestampProperty fechaHoraSincronizacion;
+
+    @ColumnField(nullable = Kleenean.FALSE)
+    @ForeignKey(onDelete = OnDeleteAction.NONE, onUpdate = OnUpdateAction.NONE)
+    @ManyToOne(view = MasterDetailView.NONE)
+    @PropertyField(create = Kleenean.FALSE, update = Kleenean.FALSE, search = Kleenean.TRUE)
+    public TipoUsuario tipoUsuario;
+
+    @ColumnField(nullable = Kleenean.FALSE)
+//  @PropertyField(create = Kleenean.FALSE, update = Kleenean.FALSE, anchor = "tipoUsuario", anchorType = AnchorType.INLINE)
+    @PropertyField(hidden = Kleenean.TRUE)
+    @StringField(maxLength = MAX_EMAIL_ADDRESS_LENGTH)
+    public StringProperty codigoExterno;
+
+    @ColumnField(nullable = Kleenean.FALSE)
+//  @PropertyField(create = Kleenean.FALSE, update = Kleenean.FALSE, anchor = "correoElectronico", anchorType = AnchorType.INLINE)
+    @PropertyField(hidden = Kleenean.TRUE)
+    public BooleanProperty correoElectronicoVerificado;
 
     @SegmentProperty
     @EntityReferenceSearch(searchType = SearchType.LIST, listStyle = ListStyle.CHARACTER_KEY_AND_NAME, displayMode = DisplayMode.WRITING)
@@ -172,6 +188,15 @@ public class Usuario extends AbstractPersistentEntity {
         esUsuarioAutomatico.setInitialValue(false);
         esUsuarioAutomatico.setDefaultValue(false);
         /**/
+        tipoUsuario.setInitialValue(tipoUsuario.Local);
+        tipoUsuario.setDefaultValue(tipoUsuario.Local);
+        /**/
+        codigoExterno.setDefaultValue(SpecialCharacterValue.RGUID);
+        codigoExterno.setInitialValue(SpecialCharacterValue.RGUID);
+        /**/
+        correoElectronicoVerificado.setInitialValue(false);
+        correoElectronicoVerificado.setDefaultValue(false);
+        /**/
 //      grupo.setInitialValue(esUsuarioEspecial.then(grupo.USUARIOS_ESPECIALES).otherwise(grupo.USUARIOS_ORDINARIOS));
 //      grupo.setDefaultValue(esUsuarioEspecial.then(grupo.USUARIOS_ESPECIALES).otherwise(grupo.USUARIOS_ORDINARIOS));
         /**/
@@ -181,6 +206,8 @@ public class Usuario extends AbstractPersistentEntity {
         codigoUsuario.setLocalizedLabel(SPANISH, "código del usuario");
         codigoUsuario.setLocalizedShortLabel(ENGLISH, "code");
         codigoUsuario.setLocalizedShortLabel(SPANISH, "código");
+        codigoUsuario.setLocalizedRegexErrorMessage(ENGLISH, "code contains spaces");
+        codigoUsuario.setLocalizedRegexErrorMessage(SPANISH, "código contiene espacios");
         /**/
         nombreUsuario.setLocalizedLabel(ENGLISH, "user name");
         nombreUsuario.setLocalizedLabel(SPANISH, "nombre del usuario");
@@ -205,14 +232,28 @@ public class Usuario extends AbstractPersistentEntity {
         archivo.setLocalizedTooltip(ENGLISH, "user portrait");
         archivo.setLocalizedTooltip(SPANISH, "retrato del usuario");
         /**/
-        correoElectronico.setLocalizedLabel(ENGLISH, "e-mail");
+        correoElectronico.setLocalizedLabel(ENGLISH, "email");
         correoElectronico.setLocalizedLabel(SPANISH, "correo electrónico");
+        correoElectronico.setLocalizedAnchorLabel(ENGLISH, "email");
+        correoElectronico.setLocalizedAnchorLabel(SPANISH, "correo electrónico");
+        correoElectronico.setLocalizedAnchoredLabel(ENGLISH, "address");
+        correoElectronico.setLocalizedAnchoredLabel(SPANISH, "dirección");
         /*
         correoElectronico.setLocalizedRegexErrorMessage(ENGLISH, "e-mail does not meet the required pattern");
         correoElectronico.setLocalizedRegexErrorMessage(SPANISH, "correo electrónico no cumple con el patrón requerido");
         /**/
+        correoElectronicoVerificado.setLocalizedLabel(ENGLISH, "verified address");
+        correoElectronicoVerificado.setLocalizedLabel(SPANISH, "dirección verificada");
+        correoElectronicoVerificado.setLocalizedAnchoredLabel(ENGLISH, "verified");
+        correoElectronicoVerificado.setLocalizedAnchoredLabel(SPANISH, "verificada");
+        /**/
+        numeroTelefonoInteligente.setMobileNumber(true);
+        numeroTelefonoInteligente.setSmsNumber(false);
+        /**/
         numeroTelefonoInteligente.setLocalizedLabel(ENGLISH, "WhatsApp phone number");
         numeroTelefonoInteligente.setLocalizedLabel(SPANISH, "número de teléfono WhatsApp");
+        numeroTelefonoInteligente.setLocalizedShortLabel(ENGLISH, "WhatsApp number");
+        numeroTelefonoInteligente.setLocalizedShortLabel(SPANISH, "número WhatsApp");
         numeroTelefonoInteligente.setLocalizedDescription(ENGLISH, "mobile phone number capable of running WhatsApp; " + PHONE_REGEX_ENGLISH_DESCRIPTION);
         numeroTelefonoInteligente.setLocalizedDescription(SPANISH, "número de teléfono móvil capaz de ejecutar WhatsApp; " + PHONE_REGEX_SPANISH_DESCRIPTION);
         numeroTelefonoInteligente.setLocalizedShortDescription(ENGLISH, "mobile phone number capable of running WhatsApp; " + PHONE_REGEX_ENGLISH_DESCRIPTION);
@@ -221,14 +262,17 @@ public class Usuario extends AbstractPersistentEntity {
         numeroTelefonoInteligente.setLocalizedRegexErrorMessage(ENGLISH, PHONE_REGEX_ENGLISH_ERROR_MESSAGE);
         numeroTelefonoInteligente.setLocalizedRegexErrorMessage(SPANISH, PHONE_REGEX_SPANISH_ERROR_MESSAGE);
         /**/
+        numeroTelefonoMovil.setMobileNumber(true);
         numeroTelefonoMovil.setDefaultValue(numeroTelefonoInteligente);
         /**/
         numeroTelefonoMovil.setLocalizedLabel(ENGLISH, "SMS phone number");
         numeroTelefonoMovil.setLocalizedLabel(SPANISH, "número de teléfono SMS");
-        numeroTelefonoMovil.setLocalizedDescription(ENGLISH, "mobile phone number capable of receiving SMS messages; "
-            + PHONE_REGEX_ENGLISH_DESCRIPTION);
-        numeroTelefonoMovil.setLocalizedDescription(SPANISH, "número de teléfono móvil capaz de recibir mensajes SMS; "
-            + PHONE_REGEX_SPANISH_DESCRIPTION);
+        numeroTelefonoMovil.setLocalizedShortLabel(ENGLISH, "SMS number");
+        numeroTelefonoMovil.setLocalizedShortLabel(SPANISH, "número SMS");
+        numeroTelefonoMovil.setLocalizedDescription(ENGLISH, "mobile phone number capable of receiving SMS messages; " + PHONE_REGEX_ENGLISH_DESCRIPTION);
+        numeroTelefonoMovil.setLocalizedDescription(SPANISH, "número de teléfono móvil capaz de recibir mensajes SMS; " + PHONE_REGEX_SPANISH_DESCRIPTION);
+        numeroTelefonoMovil.setLocalizedShortDescription(ENGLISH, "mobile phone number capable of receiving SMS messages; " + PHONE_REGEX_ENGLISH_DESCRIPTION);
+        numeroTelefonoMovil.setLocalizedShortDescription(SPANISH, "número de teléfono móvil capaz de recibir mensajes SMS; " + PHONE_REGEX_SPANISH_DESCRIPTION);
         /**/
         numeroTelefonoMovil.setLocalizedRegexErrorMessage(ENGLISH, PHONE_REGEX_ENGLISH_ERROR_MESSAGE);
         numeroTelefonoMovil.setLocalizedRegexErrorMessage(SPANISH, PHONE_REGEX_SPANISH_ERROR_MESSAGE);
@@ -289,6 +333,20 @@ public class Usuario extends AbstractPersistentEntity {
         fechaHoraSincronizacion.setLocalizedDescription(ENGLISH, "timestamp of last synchronization");
         fechaHoraSincronizacion.setLocalizedDescription(SPANISH, "fecha/hora de la última sincronización");
         /**/
+        tipoUsuario.setLocalizedLabel(ENGLISH, "user type");
+        tipoUsuario.setLocalizedLabel(SPANISH, "tipo de usuario");
+        tipoUsuario.setLocalizedAnchorLabel(ENGLISH, "user type");
+        tipoUsuario.setLocalizedAnchorLabel(SPANISH, "tipo de usuario");
+        tipoUsuario.setLocalizedAnchoredLabel(ENGLISH, "source");
+        tipoUsuario.setLocalizedAnchoredLabel(SPANISH, "origen");
+        tipoUsuario.setLocalizedDescription(ENGLISH, "Local, Google, Facebook, Twitter");
+        tipoUsuario.setLocalizedDescription(SPANISH, "Local, Google, Facebook, Twitter");
+        /**/
+        codigoExterno.setLocalizedLabel(ENGLISH, "external code");
+        codigoExterno.setLocalizedLabel(SPANISH, "código externo");
+        codigoExterno.setLocalizedAnchoredLabel(ENGLISH, "code");
+        codigoExterno.setLocalizedAnchoredLabel(SPANISH, "código");
+        /**/
         grupo.setLocalizedLabel(ENGLISH, "user group");
         grupo.setLocalizedLabel(SPANISH, "grupo de usuarios");
         grupo.setLocalizedShortLabel(ENGLISH, "group");
@@ -303,12 +361,17 @@ public class Usuario extends AbstractPersistentEntity {
 
     protected Key ix_usuario_0001;
 
+    protected Key ix_usuario_0002;
+
     @Override
     protected void settleKeys() {
         super.settleKeys();
         /**/
         ix_usuario_0001.setUnique(false);
         ix_usuario_0001.newKeyField(correoElectronico);
+        /**/
+        ix_usuario_0002.setUnique(true);
+        ix_usuario_0002.newKeyField(tipoUsuario, codigoExterno);
         /**/
     }
 
@@ -396,12 +459,16 @@ public class Usuario extends AbstractPersistentEntity {
 
     protected Segment usuariosEspeciales, usuariosOrdinarios;
 
+    protected Segment usuariosLocales, usuariosExternos;
+
     @Override
     protected void settleExpressions() {
         super.settleExpressions();
         /**/
         usuariosEspeciales = esUsuarioEspecial.isTrue();
         usuariosOrdinarios = esUsuarioEspecial.isFalse();
+        usuariosLocales = tipoUsuario.isEqualTo(tipoUsuario.Local);
+        usuariosExternos = tipoUsuario.isNotEqualTo(tipoUsuario.Local);
         /**/
         // <editor-fold defaultstate="collapsed" desc="localization of Usuario's expressions">
         /**/
@@ -415,13 +482,31 @@ public class Usuario extends AbstractPersistentEntity {
         usuariosOrdinarios.setLocalizedErrorMessage(ENGLISH, "the user is a special user");
         usuariosOrdinarios.setLocalizedErrorMessage(SPANISH, "el usuario es un usuario especial");
         /**/
+        usuariosLocales.setLocalizedDescription(ENGLISH, "the user is not a local user");
+        usuariosLocales.setLocalizedDescription(SPANISH, "el usuario no es un usuario local");
+        usuariosLocales.setLocalizedErrorMessage(ENGLISH, "the user is a local user");
+        usuariosLocales.setLocalizedErrorMessage(SPANISH, "el usuario es un usuario local");
+        /**/
+        usuariosExternos.setLocalizedDescription(ENGLISH, "the user is not a external user");
+        usuariosExternos.setLocalizedDescription(SPANISH, "el usuario no es un usuario externo");
+        usuariosExternos.setLocalizedErrorMessage(ENGLISH, "the user is a external user");
+        usuariosExternos.setLocalizedErrorMessage(SPANISH, "el usuario es un usuario externo");
+        /**/
         // </editor-fold>
     }
 
     @Override
     protected void settleFilters() {
         super.settleFilters();
+        /**/
+        nombreUsuario.setModifyingFilter(usuariosLocales);
+        archivo.setModifyingFilter(usuariosLocales);
+        correoElectronico.setModifyingFilter(usuariosLocales);
+        /**/
         archivo.setRenderingFilter(UNTRUTH, true);
+//      codigoExterno.setRenderingFilter(usuariosExternos, true);
+//      correoElectronicoVerificado.setRenderingFilter(usuariosExternos, true);
+        /**/
     }
 
 }

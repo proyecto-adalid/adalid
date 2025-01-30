@@ -74,7 +74,6 @@ public class ReportGroup extends AbstractArtifact implements Comparable<ReportGr
             if (entity != null) {
                 QueryTable queryTable = entity.getQueryTable();
                 if (queryTable != null) {
-                    Entity e;
                     Property p;
                     ReportField field;
                     List<Property> columns = entity.getDataProviderColumnsList();
@@ -85,8 +84,7 @@ public class ReportGroup extends AbstractArtifact implements Comparable<ReportGr
                                 if (column.isHiddenField() || !column.isReportField() || !qpm.containsKey(column.getPathString())) {
                                     continue;
                                 }
-                                if (column instanceof Entity) {
-                                    e = (Entity) column;
+                                if (column instanceof Entity e) {
                                     p = e.getBusinessKeyProperty();
                                     if (p != null && p.isReportField() && queryTable.contains(p) && qpm.containsKey(p.getPathString())) {
                                         field = ReportField.addReportField(group, p);
@@ -126,6 +124,7 @@ public class ReportGroup extends AbstractArtifact implements Comparable<ReportGr
 
     private ReportGroup(Report report, View view) {
         super();
+        assert true : "view=" + view; // this assert avoids unused parameter warning
         _report = report;
         _sequence = Integer.MAX_VALUE;
         _detail = true;
@@ -185,7 +184,7 @@ public class ReportGroup extends AbstractArtifact implements Comparable<ReportGr
     /**
      * @param field the view field to set
      */
-    void setViewField(ViewField field) {
+    protected void setViewField(ViewField field) { // protected avoids method never unused warning
         _viewField = field;
     }
 
@@ -220,7 +219,7 @@ public class ReportGroup extends AbstractArtifact implements Comparable<ReportGr
     /**
      * @param detail the detail to set
      */
-    void setDetail(boolean detail) {
+    protected void setDetail(boolean detail) { // protected avoids method never unused warning
         _detail = detail;
     }
 

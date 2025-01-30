@@ -134,13 +134,13 @@ public abstract class ProyectoMaven extends ProyectoJava2 {
         return dependency != null && moduleType != null && _projectDependencies.get(moduleType).remove(dependency.getKey()) != null;
     }
 
-    protected void clearProjectDependencies() {
+    public void clearProjectDependencies() {
         for (ProjectModuleType moduleType : _projectModuleTypes) {
             clearProjectDependencies(moduleType);
         }
     }
 
-    protected void clearProjectDependencies(ProjectModuleType moduleType) {
+    public void clearProjectDependencies(ProjectModuleType moduleType) {
         if (moduleType != null) {
             _projectDependencies.get(moduleType).clear();
         }

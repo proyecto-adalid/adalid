@@ -13,6 +13,7 @@
 package adalid.core.parameters.ext;
 
 import adalid.core.constants.EmailConstants;
+import adalid.core.enums.LetterCase;
 import adalid.core.parameters.StringParameter;
 import java.util.regex.Pattern;
 
@@ -23,6 +24,7 @@ public class EmailAddressParameter extends StringParameter {
 
     {
         /**/
+        setLetterCase(LetterCase.LOWER);
         setMaxLength(EmailConstants.MAX_EMAIL_ADDRESS_LENGTH);
         setPattern(Pattern.compile(EmailConstants.EMAIL_REGEX));
         /**/

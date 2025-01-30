@@ -17,18 +17,20 @@ package adalid.core.properties.ext;
  */
 public class InternationalSmartphoneNumberProperty extends InternationalPhoneNumberProperty {
 
-    public boolean isSmartphoneNumber() {
+    {
+        super.setSmartphoneNumber(true);
+    }
+
+    @Override
+    public final boolean isSmartphoneNumber() {
         return true;
     }
 
-    private boolean whatsAppNumber = true;
-
-    public boolean isWhatsAppNumber() {
-        return whatsAppNumber;
-    }
-
-    public void setWhatsAppNumber(boolean whatsAppNumber) {
-        this.whatsAppNumber = whatsAppNumber;
+    @Override
+    public final void setSmartphoneNumber(boolean b) {
+        if (!b) {
+            logger.warn("executing method setSmartphoneNumber of class InternationalSmartphoneNumberProperty is inconsequential");
+        }
     }
 
 }

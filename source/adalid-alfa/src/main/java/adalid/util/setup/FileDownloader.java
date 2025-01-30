@@ -17,6 +17,8 @@ import adalid.util.*;
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.text.MessageFormat;
 import org.apache.commons.io.FileUtils;
@@ -130,10 +132,10 @@ public class FileDownloader extends Utility {
     private static boolean downloadDropboxFile(String spec, String file) {
 //      info("downloading {0} to {1}", spec, file);
         try {
-            URL source = new URL(spec);
+            URL source = new URI(spec).toURL(); // new URL(spec); is deprecated since JDK 20
             File target = new File(WS, file);
             return downloadDropboxFile(source, target);
-        } catch (MalformedURLException ex) {
+        } catch (URISyntaxException | MalformedURLException ex) {
             logger.fatal(ThrowableUtils.getString(ex), ex);
         }
         return false;

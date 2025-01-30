@@ -81,10 +81,10 @@ public @interface EmbeddedDocument {
     int[] displayHeight() default {0, 0, 0};
 
     /**
-     * resizable indica si el ancho del documento se debe ajustar de manera dinámica y proporcional en función de las dimensiones reales del documento
-     * y de los valores especificados para los elementos displayWidth y displayHeight. Su valor es uno de los elementos de la enumeración Kleenean.
-     * Seleccione TRUE para ajustar el ancho; en caso contrario, seleccione FALSE. Alternativamente, omita el elemento o seleccione UNSPECIFIED para
-     * utilizar el valor predeterminado del atributo. El valor predeterminado del atributo es TRUE.
+     * resizable indica si el tamaño del documento se debe ajustar de manera dinámica y proporcional en función de las dimensiones reales del
+     * documento y de los valores especificados para los elementos displayWidth y displayHeight. Su valor es uno de los elementos de la enumeración
+     * Kleenean. Seleccione TRUE para ajustar el tamaño; en caso contrario, seleccione FALSE. Alternativamente, omita el elemento o seleccione
+     * UNSPECIFIED para utilizar el valor predeterminado del atributo. El valor predeterminado del atributo es TRUE.
      *
      * @return resizable
      */

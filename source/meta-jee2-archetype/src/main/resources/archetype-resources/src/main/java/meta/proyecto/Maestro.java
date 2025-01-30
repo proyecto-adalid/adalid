@@ -17,7 +17,7 @@ import ${package}.meta.modulo.*;
 import meta.proyecto.comun.*;
 
 /**
- * @author ADALID meta-jee2-archetype
+ * @author ADALID meta-jee2-archetype, version 6.0.0
  */
 public abstract class Maestro extends ProyectoPrime {
 
@@ -26,7 +26,7 @@ public abstract class Maestro extends ProyectoPrime {
     /**
      * Guía de Operación, Proyecto Adalid, Plataforma jee2
      */
-    public static final String HELP_DOCUMENT_URL = "https://drive.google.com/file/d/1WbT-VXWP-rOsqn7OZ9uXtq1oKHb40LnI/view?usp=sharing"; // 5.3
+    public static final String HELP_DOCUMENT_URL = adalid.jee2.constants.JEE2.OPERACION_PDF;
 
     @Override
     protected void setStaticAttributes() {

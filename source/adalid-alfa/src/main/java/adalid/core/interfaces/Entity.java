@@ -350,6 +350,11 @@ public interface Entity extends Comparable<Entity>, DataArtifact, EntityReferenc
     Map<String, Class<?>> getSubclassesMap();
 
     /**
+     * @return the direct known subentities map
+     */
+    Map<String, Entity> getSubentitiesMap();
+
+    /**
      * @return the allocation overrides list
      */
     List<AllocationOverride> getAllocationOverridesList();

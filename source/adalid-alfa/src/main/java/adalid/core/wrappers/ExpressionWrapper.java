@@ -123,8 +123,8 @@ public class ExpressionWrapper extends ArtifactWrapper {
         String defaultErrorMessage;
         List<Expression> expressions = getExpressionsList(booleanExpression);
         for (Expression expression : expressions) {
-            if (expression instanceof BooleanExpression) {
-                bex = (BooleanExpression) expression;
+            if (expression instanceof BooleanExpression booleanExpression1) {
+                bex = booleanExpression1;
                 defaultErrorMessage = bex.getDefaultErrorMessage();
                 if (defaultErrorMessage == null) {
                     defaultErrorMessagesList.addAll(getDefaultErrorMessagesList(bex));
@@ -213,8 +213,8 @@ public class ExpressionWrapper extends ArtifactWrapper {
         String defaultDescription;
         List<Expression> expressions = getExpressionsList(booleanExpression);
         for (Expression expression : expressions) {
-            if (expression instanceof BooleanExpression) {
-                bex = (BooleanExpression) expression;
+            if (expression instanceof BooleanExpression booleanExpression1) {
+                bex = booleanExpression1;
                 defaultDescription = bex.getDefaultDescription();
                 if (defaultDescription == null) {
                     defaultFilterDescriptionsList.addAll(getDefaultFilterDescriptionsList(bex));
@@ -239,8 +239,8 @@ public class ExpressionWrapper extends ArtifactWrapper {
                 if (operand instanceof Primitive) {
                     continue;
                 }
-                if (operand instanceof Expression) {
-                    ex = (Expression) operand;
+                if (operand instanceof Expression expression1) {
+                    ex = expression1;
                     expressionsList.add(ex);
                 }
             }

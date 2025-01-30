@@ -24,8 +24,8 @@ public class ChiefProgrammer extends AbstractProgrammer {
     public static BundleProgrammer getBundleProgrammer() {
         Class<? extends Programmer> clazz = BundleProgrammer.class;
         Programmer programmer = TLB.getProgrammer(clazz);
-        if (programmer instanceof BundleProgrammer) {
-            return (BundleProgrammer) programmer;
+        if (programmer instanceof BundleProgrammer bundleProgrammer) {
+            return bundleProgrammer;
         }
         throw new RuntimeException(message(clazz));
     }
@@ -33,8 +33,8 @@ public class ChiefProgrammer extends AbstractProgrammer {
     public static JavaProgrammer getJavaProgrammer() {
         Class<? extends Programmer> clazz = JavaProgrammer.class;
         Programmer programmer = TLB.getProgrammer(clazz);
-        if (programmer instanceof JavaProgrammer) {
-            return (JavaProgrammer) programmer;
+        if (programmer instanceof JavaProgrammer javaProgrammer) {
+            return javaProgrammer;
         }
         throw new RuntimeException(message(clazz));
     }
@@ -42,8 +42,8 @@ public class ChiefProgrammer extends AbstractProgrammer {
     public static SqlProgrammer getSqlProgrammer() {
         Class<? extends Programmer> clazz = SqlProgrammer.class;
         Programmer programmer = TLB.getProgrammer(clazz);
-        if (programmer instanceof SqlProgrammer) {
-            return (SqlProgrammer) programmer;
+        if (programmer instanceof SqlProgrammer sqlProgrammer) {
+            return sqlProgrammer;
         }
         throw new RuntimeException(message(clazz));
     }

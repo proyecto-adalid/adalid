@@ -22,8 +22,7 @@ public class IsEntityBwsCodeGenEnabled implements Predicate {
 
     @Override
     public boolean evaluate(Object object) {
-        if (object instanceof Entity) {
-            Entity entity = (Entity) object;
+        if (object instanceof Entity entity) {
             return entity.isBwsCodeGenEnabled();
         }
         return false;

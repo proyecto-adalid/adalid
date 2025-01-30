@@ -22,8 +22,7 @@ public class IsApplicationDefaultLocationDisplay implements Predicate {
 
     @Override
     public boolean evaluate(Object object) {
-        if (object instanceof Display) {
-            Display display = (Display) object;
+        if (object instanceof Display display) {
             return display.isApplicationDefaultLocation();
         }
         return false;

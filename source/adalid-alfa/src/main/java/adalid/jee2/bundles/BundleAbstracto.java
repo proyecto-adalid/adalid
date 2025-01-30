@@ -64,6 +64,7 @@ public abstract class BundleAbstracto {
         }
     }
 
+    @SuppressWarnings("deprecation")
     private void load() {
         logger.trace(baseName);
         ResourceBundle bundle, bundlePlus;
@@ -72,7 +73,11 @@ public abstract class BundleAbstracto {
         for (Locale locale : supportedLocales) {
             bundle = putBundle(locale);
             if (bundle != null) {
+                /**/
                 localePlus = new Locale(locale.getLanguage(), locale.getCountry(), "PLUS");
+                /* new Locale is deprecated since JDK 19, but for Locale.Builder a valid variant must be a String of 5 to 8 alphanumerics
+                localePlus = new Locale.Builder().setLanguage(locale.getLanguage()).setRegion(locale.getCountry()).setVariant("PLUS").build();
+                /**/
                 bundlePlus = putBundle(localePlus);
                 if (bundlePlus != null) {
                     locales().put(locale, localePlus);

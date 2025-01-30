@@ -22,8 +22,7 @@ public class IsPersistentEntityWithTable implements Predicate {
 
     @Override
     public boolean evaluate(Object object) {
-        if (object instanceof PersistentEntity) {
-            PersistentEntity entity = (PersistentEntity) object;
+        if (object instanceof PersistentEntity entity) {
             return entity.isTable() || entity.getBaseTableRoot() != null;
         }
         return false;

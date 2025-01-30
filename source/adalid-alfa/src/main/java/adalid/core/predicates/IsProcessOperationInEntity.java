@@ -23,8 +23,7 @@ public class IsProcessOperationInEntity implements Predicate {
 
     @Override
     public boolean evaluate(Object object) {
-        if (object instanceof Entity) {
-            Entity entity = (Entity) object;
+        if (object instanceof Entity entity) {
             for (Operation operation : entity.getOperationsList()) {
                 if (operation instanceof ProcessOperation) {
                     return true;

@@ -23,12 +23,12 @@ public enum SpecialEntityValue implements SpecialValue {
 
     @Override
     public Class<?> getDataType() {
-        switch (this) {
-            case CURRENT_USER:
-                return Entity.class;
-            default:
-                return Object.class;
-        }
+        return switch (this) {
+            case CURRENT_USER ->
+                Entity.class;
+            default ->
+                Object.class;
+        };
     }
 
 }

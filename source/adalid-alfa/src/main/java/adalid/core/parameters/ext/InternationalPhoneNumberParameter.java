@@ -14,13 +14,12 @@ package adalid.core.parameters.ext;
 
 import adalid.core.constants.PhoneConstants;
 import adalid.core.enums.PhoneNumberFormat;
-import adalid.core.parameters.StringParameter;
 import java.util.regex.Pattern;
 
 /**
  * @author Jorge Campins
  */
-public class InternationalPhoneNumberParameter extends StringParameter {
+public class InternationalPhoneNumberParameter extends AbstractPhoneNumberParameter {
 
     {
         /**/
@@ -35,11 +34,8 @@ public class InternationalPhoneNumberParameter extends StringParameter {
         /**/
     }
 
-    public boolean isPhoneNumber() {
-        return true;
-    }
-
-    public PhoneNumberFormat getPhoneNumberFormat() {
+    @Override
+    public final PhoneNumberFormat getPhoneNumberFormat() {
         return PhoneNumberFormat.INTERNATIONAL;
     }
 

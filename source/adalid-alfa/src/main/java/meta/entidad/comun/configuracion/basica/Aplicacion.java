@@ -16,6 +16,7 @@ import adalid.core.*;
 import adalid.core.annotations.*;
 import adalid.core.enums.*;
 import adalid.core.interfaces.*;
+import adalid.core.parameters.*;
 import adalid.core.properties.*;
 import java.lang.reflect.Field;
 
@@ -152,6 +153,47 @@ public class Aplicacion extends AbstractPersistentEntity {
         esEspecial.setLocalizedLabel(SPANISH, "especial");
         /**/
         // </editor-fold>
+    }
+
+    protected EnviarMensaje enviarMensaje;
+
+    @OperationClass(access = OperationAccess.PROTECTED, asynchronous = Kleenean.FALSE)
+    @ProcessOperationClass(builtIn = true)
+    public class EnviarMensaje extends ProcessOperation {
+
+        @Override
+        protected void settleAttributes() {
+            super.settleAttributes();
+            // <editor-fold defaultstate="collapsed" desc="localization of EnviarMensaje's attributes">
+            /**/
+            setLocalizedLabel(ENGLISH, "send message");
+            setLocalizedLabel(SPANISH, "enviar mensaje");
+            /**/
+            // </editor-fold>
+        }
+
+        @ParameterField(required = Kleenean.TRUE)
+        @StringField(maxLength = 160)
+        protected StringParameter mensaje;
+
+        @ParameterField(required = Kleenean.TRUE)
+        @StringField(maxLength = Constants.DEFAULT_STRING_FIELD_MAX_LENGTH)
+        protected StringParameter numeros;
+
+        @Override
+        protected void settleParameters() {
+            super.settleParameters();
+            // <editor-fold defaultstate="collapsed" desc="localization of EnviarMensaje's parameters">
+            /**/
+            mensaje.setLocalizedLabel(ENGLISH, "message");
+            mensaje.setLocalizedLabel(SPANISH, "mensaje");
+            /**/
+            numeros.setLocalizedLabel(ENGLISH, "numbers");
+            numeros.setLocalizedLabel(SPANISH, "números");
+            /**/
+            // </editor-fold>
+        }
+
     }
 
     protected ProcesoDiario diario;

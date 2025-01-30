@@ -7,7 +7,7 @@
  * Este programa se distribuye con la esperanza de que pueda ser util, pero SIN NINGUNA GARANTIA;
  * vea la licencia "GNU General Public License" para obtener mas informacion.
  */
-package ${package}.meta.util.beta;
+package ${package}.meta.util.extra;
 
 import adalid.util.*;
 
@@ -17,18 +17,8 @@ import adalid.util.*;
  * Para cada entidad del proyecto que tenga definida una máquina de estados se genera un archivo gráfico (.png) y uno de texto (.txt) que contiene las
  * instrucciones para la generación del diagrama utilizando PlantUML. Los archivos se almacenan en el subdirectorio
  * /source/development/resources/documents/uml/state del proyecto generado.
- * <p>
- * La plataforma meta-data-uml-state aún se encuentra en versión beta. Una beta representa la primera versión completa de un programa informático, que
- * es posible que sea inestable pero útil para que sea considerada como una versión preliminar. Esta etapa comienza cuando los desarrolladores
- * anuncian la congelación de las características del producto, indicando que no serán agregadas más características a esta versión y que solamente se
- * harán pequeñas ediciones y se corregirán errores. Las versiones beta están en un paso intermedio en el ciclo de desarrollo. Los desarrolladores las
- * entregan a un grupo de probadores de betas o al público en general, para una prueba de usuario. Los probadores informan cualquier error que
- * encuentran y características que quisieran ver en la versión final. Cuando una versión beta llega a estar disponible para el público en general, a
- * menudo es extensamente probada por personas tecnológicamente expertas y/o familiarizadas con versiones anteriores, como si el producto estuviera
- * acabado. Generalmente los desarrolladores de las versiones betas de software gratuito o de código abierto las entregan al público en general,
- * mientras que las versiones beta de software propietario van a un grupo relativamente pequeño de probadores.
  *
- * @author ADALID meta-jee2-archetype
+ * @author ADALID meta-jee2-archetype, version 6.0.0
  */
 @RunnableClass
 public class MetaDataUmlState extends adalid.util.Utility {

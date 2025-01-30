@@ -12,6 +12,7 @@
  */
 package adalid.core.annotations;
 
+import adalid.core.Constants;
 import adalid.core.enums.*;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -47,6 +48,23 @@ public @interface EntityTreeView {
      * @return menu
      */
     ViewMenuOption menu() default ViewMenuOption.NONE;
+
+    /**
+     * rootLimit específica el máximo número de nodos raíz (sin nodo superior) que muestra la vista. Este elemento es relevante solo si el valor
+     * especificado, o determinado, para el elemento enabled es TRUE. Su valor debe ser un número entero entre 5 y 1000. El valor predeterminado es
+     * 100.
+     *
+     * @return rootLimit
+     */
+    int rootLimit() default Constants.DEFAULT_ROWS_PER_PAGE_LIMIT;
+
+    /**
+     * branchLimit específica el máximo número de nodos por rama que muestra la vista. Este elemento es relevante solo si el valor especificado, o
+     * determinado, para el elemento enabled es TRUE. Su valor debe ser un número entero entre 5 y 1000. El valor predeterminado es 100.
+     *
+     * @return branchLimit
+     */
+    int branchLimit() default Constants.DEFAULT_ROWS_PER_PAGE_LIMIT;
 
     /**
      * helpDocument especifica el documento incrustado de ayuda de las vistas (páginas) de consulta y/o registro jerárquico de la entidad.

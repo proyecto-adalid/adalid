@@ -27,12 +27,12 @@ public enum ShortMessageServiceProvider {
     }
 
     public String getBeanName() {
-        switch (this) {
-            case UNSPECIFIED:
-                return null;
-            default:
-                return defaultBeanName();
-        }
+        return switch (this) {
+            case UNSPECIFIED ->
+                null;
+            default ->
+                defaultBeanName();
+        };
     }
 
     private static final String DEFAULT_SMS_BEAN_NAME_SUFFIX = "TexterBean";

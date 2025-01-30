@@ -22,8 +22,7 @@ public class IsReportOperationWithSelectableView implements Predicate {
 
     @Override
     public boolean evaluate(Object object) {
-        if (object instanceof ReportOperation) {
-            ReportOperation operation = (ReportOperation) object;
+        if (object instanceof ReportOperation operation) {
             View view = operation.getView();
             return view != null && view.isSelectable();
         }

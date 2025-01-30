@@ -21,7 +21,7 @@ import org.apache.commons.lang.StringUtils;
  */
 public enum ProjectDependencyScope {
 
-    COMPILE, PROVIDED, RUNTIME, TEST; // SYSTEM is deprecated
+    COMPILE, PROVIDED, RUNTIME, TEST, IMPORT; // SYSTEM is deprecated
 
     private static final List<String> names = new ArrayList<>();
 

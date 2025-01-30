@@ -24,16 +24,16 @@ public class ListOptionValueComparator implements Comparator<ListOption> {
         Long val1 = null;
         Long val2 = null;
 
-        if (opt1.getOptionValue() instanceof Integer) {
-            val1 = Long.valueOf((Integer) opt1.getOptionValue());
-        } else if (opt1.getOptionValue() instanceof Long) {
-            val1 = (Long) opt1.getOptionValue();
+        if (opt1.getOptionValue() instanceof Integer integer) {
+            val1 = Long.valueOf(integer);
+        } else if (opt1.getOptionValue() instanceof Long aLong) {
+            val1 = aLong;
         }
 
-        if (opt2.getOptionValue() instanceof Integer) {
-            val2 = Long.valueOf((Integer) opt2.getOptionValue());
-        } else if (opt2.getOptionValue() instanceof Long) {
-            val2 = (Long) opt2.getOptionValue();
+        if (opt2.getOptionValue() instanceof Integer integer) {
+            val2 = Long.valueOf(integer);
+        } else if (opt2.getOptionValue() instanceof Long aLong) {
+            val2 = aLong;
         }
 
         if (val1 == null && val2 == null) {

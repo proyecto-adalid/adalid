@@ -530,9 +530,9 @@ public class Usuario extends meta.entidad.comun.control.acceso.Usuario {
         super.settleTabs();
         /**/
         tab10.copy(step10, false); // false para una copia superficial, excluyendo los campos del paso.
-        tab10.newTabField(octetos, archivo, correoElectronico, numeroTelefonoInteligente, numeroTelefonoMovil);
+        tab10.newTabField(octetos, archivo, correoElectronico, correoElectronicoVerificado, numeroTelefonoInteligente, numeroTelefonoMovil);
         tab10.newTabField(esSuperUsuario, esSuperAuditor, esUsuarioEspecial, esUsuarioInactivo, esUsuarioAutomatico);
-        tab10.newTabField(grupo, usuarioSupervisor, fechaHoraRegistro, fechaHoraSincronizacion);
+        tab10.newTabField(tipoUsuario, codigoExterno, grupo, usuarioSupervisor, fechaHoraRegistro, fechaHoraSincronizacion);
         /**/
         tab20.copy(step20);
         /**/
@@ -562,7 +562,7 @@ public class Usuario extends meta.entidad.comun.control.acceso.Usuario {
     protected Check check100;
 
     /**/
-    protected Check check101, check102, check111, check112;
+    protected Check check101, check102, check111, check112, check121;
 
     protected State eliminable, modificable, desactivable, reactivable, supervisorAnulable, supervisorAsignable;
 
@@ -615,6 +615,8 @@ public class Usuario extends meta.entidad.comun.control.acceso.Usuario {
         check112 = conOtraPagina.and(otraPagina.isNotNull()).implies(filtroOtraPagina);
         check112.setCheckEvent(CheckEvent.UPDATE);
         check112.setCheckpoint(Checkpoint.USER_INTERFACE);
+        /**/
+        check121 = tipoUsuario.isEqualTo(tipoUsuario.Local).implies(codigoUsuario.notContains(SPACE));
         /**/
         eliminable = usuariosOrdinarios.and(demasUsuarios);
         modificable = usuariosOrdinarios.and(usuariosActivos);
@@ -723,6 +725,11 @@ public class Usuario extends meta.entidad.comun.control.acceso.Usuario {
         check112.setLocalizedDescription(SPANISH, "otra página debe estar activa");
         check112.setLocalizedErrorMessage(ENGLISH, "other page is inactive");
         check112.setLocalizedErrorMessage(SPANISH, "otra página se encuentra inactiva");
+        /**/
+        check121.setLocalizedDescription(ENGLISH, "local user code cannot contain spaces");
+        check121.setLocalizedDescription(SPANISH, "código de usuario local no puede tener espacios");
+        check121.setLocalizedErrorMessage(ENGLISH, "user code contains spaces");
+        check121.setLocalizedErrorMessage(SPANISH, "código de usuario contiene espacios");
         /**/
         eliminable.setLocalizedDescription(ENGLISH, "the user is not a special user and is not your own user");
         eliminable.setLocalizedDescription(SPANISH, "el usuario no es un usuario especial y no es su propio usuario");
@@ -833,6 +840,7 @@ public class Usuario extends meta.entidad.comun.control.acceso.Usuario {
 //      supervisorAsignable.setLocalizedErrorMessage(SPANISH, "no puede asignar un supervisor al usuario");
         /**/
         // </editor-fold>
+        /**/
     }
 
     private static final NativeQuery select_pagina_especial = NativeQuery.of("select 1 from pagina_especial");
@@ -846,7 +854,7 @@ public class Usuario extends meta.entidad.comun.control.acceso.Usuario {
         setUpdateFilter(modificable);
         setDeleteFilter(eliminable);
         /**/
-        addSelectSegment(misSupervisados);
+        addSelectSegment(misSupervisados, usuariosLocales, usuariosExternos);
         /*
         paginaInicio.setRemoveInstanceArray(paginaInicio.OTRA_PAGINA);
         /**/
@@ -1021,6 +1029,8 @@ public class Usuario extends meta.entidad.comun.control.acceso.Usuario {
 
     }
 
+    @ProcessOperationClass
+//  @OperationClass(dialogSize = 100)
     @ConstructionOperationClass(type = Usuario.class, onsuccess = OnConstructionOperationSuccess.DISPLAY_NEW_INSTANCE)
     public class Copiar extends ProcessOperation {
 
@@ -1047,7 +1057,7 @@ public class Usuario extends meta.entidad.comun.control.acceso.Usuario {
         protected meta.entidad.comun.control.acceso.Usuario usuario;
 
         @ParameterField(required = Kleenean.TRUE)
-        @StringField(maxLength = MAX_EMAIL_ADDRESS_LENGTH, displayLength = 36) // maxLength = 36 until 01/12/2023
+        @StringField(maxLength = MAX_EMAIL_ADDRESS_LENGTH, displayLength = 36, regex = WHITESPACELESS_REGEX) // maxLength = 36 until 01/12/2023
         protected StringParameter codigo;
 
         @ParameterField(required = Kleenean.FALSE)
@@ -1058,6 +1068,7 @@ public class Usuario extends meta.entidad.comun.control.acceso.Usuario {
         protected void settleParameters() {
             super.settleParameters();
             // <editor-fold defaultstate="collapsed" desc="localization of Copiar's parameters">
+            /**/
             usuario.setLocalizedLabel(ENGLISH, "user");
             usuario.setLocalizedLabel(SPANISH, "usuario");
             usuario.setLocalizedDescription(ENGLISH, "Code of the user you want to copy; "
@@ -1071,6 +1082,8 @@ public class Usuario extends meta.entidad.comun.control.acceso.Usuario {
                 + "it is a required field and has no default value");
             codigo.setLocalizedDescription(SPANISH, "Código del nuevo usuario que produce la copia; "
                 + "es un dato obligatorio y no tiene valor por omisión");
+            codigo.setLocalizedRegexErrorMessage(ENGLISH, "code contains spaces");
+            codigo.setLocalizedRegexErrorMessage(SPANISH, "código contiene espacios");
             /**/
             nombre.setLocalizedLabel(ENGLISH, "name");
             nombre.setLocalizedLabel(SPANISH, "nombre");
@@ -1080,6 +1093,18 @@ public class Usuario extends meta.entidad.comun.control.acceso.Usuario {
                 + "es un dato opcional; por omisión se utiliza el nombre del usuario original");
             /**/
             // </editor-fold>
+        }
+
+        Check check121;
+
+        @Override
+        protected void settleExpressions() {
+            super.settleExpressions();
+            check121 = codigo.notContains(SPACE);
+            check121.setLocalizedDescription(ENGLISH, "user code cannot contain spaces");
+            check121.setLocalizedDescription(SPANISH, "código de usuario no puede tener espacios");
+            check121.setLocalizedErrorMessage(ENGLISH, "user code contains spaces");
+            check121.setLocalizedErrorMessage(SPANISH, "código de usuario contiene espacios");
         }
 
     }
@@ -1397,9 +1422,21 @@ public class Usuario extends meta.entidad.comun.control.acceso.Usuario {
             // </editor-fold>
         }
 
+        Check check101;
+
+        @Override
+        protected void settleExpressions() {
+            super.settleExpressions();
+            check101 = usuario.tipoUsuario.isEqualTo(usuario.tipoUsuario.Local);
+            check101.setLocalizedDescription(ENGLISH, "the user is a local user");
+            check101.setLocalizedDescription(SPANISH, "el usuario es un usuario local");
+            check101.setLocalizedErrorMessage(ENGLISH, "the user is not a local user");
+            check101.setLocalizedErrorMessage(SPANISH, "el usuario no es un usuario local");
+        }
+
     }
 
-    @ProcessOperationClass(builtIn = true)
+    @ProcessOperationClass(builtIn = true, treeStructureModifier = true)
     public class AsignarSupervisor extends ProcessOperation {
 
         @Override
@@ -1805,6 +1842,18 @@ public class Usuario extends meta.entidad.comun.control.acceso.Usuario {
             // </editor-fold>
         }
 
+        Check check101;
+
+        @Override
+        protected void settleExpressions() {
+            super.settleExpressions();
+            check101 = usuario.tipoUsuario.isEqualTo(usuario.tipoUsuario.Local);
+            check101.setLocalizedDescription(ENGLISH, "the user is a local user");
+            check101.setLocalizedDescription(SPANISH, "el usuario es un usuario local");
+            check101.setLocalizedErrorMessage(ENGLISH, "the user is not a local user");
+            check101.setLocalizedErrorMessage(SPANISH, "el usuario no es un usuario local");
+        }
+
     }
 
     @OperationClass(access = OperationAccess.PRIVATE)
@@ -1885,6 +1934,18 @@ public class Usuario extends meta.entidad.comun.control.acceso.Usuario {
             confirmacionPassword.setLocalizedNullifyingFilterTag(SPANISH, "la nueva contraseña no tiene valor");
             /**/
             // </editor-fold>
+        }
+
+        Check check101;
+
+        @Override
+        protected void settleExpressions() {
+            super.settleExpressions();
+            check101 = usuario.tipoUsuario.isEqualTo(usuario.tipoUsuario.Local);
+            check101.setLocalizedDescription(ENGLISH, "the user is a local user");
+            check101.setLocalizedDescription(SPANISH, "el usuario es un usuario local");
+            check101.setLocalizedErrorMessage(ENGLISH, "the user is not a local user");
+            check101.setLocalizedErrorMessage(SPANISH, "el usuario no es un usuario local");
         }
 
     }
@@ -2006,6 +2067,18 @@ public class Usuario extends meta.entidad.comun.control.acceso.Usuario {
             // </editor-fold>
         }
 
+        Check check101;
+
+        @Override
+        protected void settleExpressions() {
+            super.settleExpressions();
+            check101 = usuario.tipoUsuario.isEqualTo(usuario.tipoUsuario.Local);
+            check101.setLocalizedDescription(ENGLISH, "the user is a local user");
+            check101.setLocalizedDescription(SPANISH, "el usuario es un usuario local");
+            check101.setLocalizedErrorMessage(ENGLISH, "the user is not a local user");
+            check101.setLocalizedErrorMessage(SPANISH, "el usuario no es un usuario local");
+        }
+
     }
 
     @OperationClass(access = OperationAccess.PRIVATE)
@@ -2088,6 +2161,18 @@ public class Usuario extends meta.entidad.comun.control.acceso.Usuario {
             // </editor-fold>
         }
 
+        Check check101;
+
+        @Override
+        protected void settleExpressions() {
+            super.settleExpressions();
+            check101 = usuario.tipoUsuario.isEqualTo(usuario.tipoUsuario.Local);
+            check101.setLocalizedDescription(ENGLISH, "the user is a local user");
+            check101.setLocalizedDescription(SPANISH, "el usuario es un usuario local");
+            check101.setLocalizedErrorMessage(ENGLISH, "the user is not a local user");
+            check101.setLocalizedErrorMessage(SPANISH, "el usuario no es un usuario local");
+        }
+
     }
 
     @OperationClass(access = OperationAccess.PRIVATE)
@@ -2121,6 +2206,18 @@ public class Usuario extends meta.entidad.comun.control.acceso.Usuario {
             // </editor-fold>
         }
 
+        Check check101;
+
+        @Override
+        protected void settleExpressions() {
+            super.settleExpressions();
+            check101 = usuario.tipoUsuario.isEqualTo(usuario.tipoUsuario.Local);
+            check101.setLocalizedDescription(ENGLISH, "the user is a local user");
+            check101.setLocalizedDescription(SPANISH, "el usuario es un usuario local");
+            check101.setLocalizedErrorMessage(ENGLISH, "the user is not a local user");
+            check101.setLocalizedErrorMessage(SPANISH, "el usuario no es un usuario local");
+        }
+
     }
 
     @OperationClass(access = OperationAccess.PRIVATE)
@@ -2152,6 +2249,18 @@ public class Usuario extends meta.entidad.comun.control.acceso.Usuario {
             usuario.setLocalizedDescription(SPANISH, "Código del usuario que desea retratar; "
                 + "es un dato obligatorio y no tiene valor por omisión");
             // </editor-fold>
+        }
+
+        Check check101;
+
+        @Override
+        protected void settleExpressions() {
+            super.settleExpressions();
+            check101 = usuario.tipoUsuario.isEqualTo(usuario.tipoUsuario.Local);
+            check101.setLocalizedDescription(ENGLISH, "the user is a local user");
+            check101.setLocalizedDescription(SPANISH, "el usuario es un usuario local");
+            check101.setLocalizedErrorMessage(ENGLISH, "the user is not a local user");
+            check101.setLocalizedErrorMessage(SPANISH, "el usuario no es un usuario local");
         }
 
     }

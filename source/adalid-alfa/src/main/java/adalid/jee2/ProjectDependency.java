@@ -57,7 +57,7 @@ public class ProjectDependency {
         _groupId = StringUtils.trimToNull(groupId);
         _artifactId = StringUtils.trimToNull(artifactId);
         _version = StringUtils.trimToNull(version);
-        _valid = _groupId != null && _artifactId != null && _version != null;
+        _valid = _groupId != null && _artifactId != null; // until 09/11/2024 && _version != null; // version might be set at dependencyManagement
     }
 
     /**

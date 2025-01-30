@@ -17,8 +17,20 @@ package adalid.core.parameters.ext;
  */
 public class LocalSmartphoneNumberParameter extends LocalPhoneNumberParameter {
 
-    public boolean isSmartphoneNumber() {
+    {
+        super.setSmartphoneNumber(true);
+    }
+
+    @Override
+    public final boolean isSmartphoneNumber() {
         return true;
+    }
+
+    @Override
+    public final void setSmartphoneNumber(boolean b) {
+        if (!b) {
+            logger.warn("executing method setSmartphoneNumber of class LocalSmartphoneNumberParameter is inconsequential");
+        }
     }
 
 }

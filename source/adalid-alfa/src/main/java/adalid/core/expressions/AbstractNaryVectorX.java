@@ -56,12 +56,10 @@ public abstract class AbstractNaryVectorX extends AbstractExpression implements 
             setDataType(Object.class);
         } else {
             switch (_operator) {
-                case SUBSTR:
+                case SUBSTR ->
                     setDataType(String.class);
-                    break;
-                default:
+                default ->
                     setDataType(Object.class);
-                    break;
             }
         }
     }

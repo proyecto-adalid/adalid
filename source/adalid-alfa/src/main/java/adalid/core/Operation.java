@@ -313,6 +313,8 @@ public abstract class Operation extends AbstractArtifact implements Comparable<O
 
     private boolean _complex;
 
+    int _dialogSize = -1; // menor que 0 equivale al valor predeterminado
+
     private OperationLogging _operationLogging = OperationLogging.UNSPECIFIED;
 
     private boolean _operationActivityDiagramGenEnabled = true;
@@ -714,6 +716,17 @@ public abstract class Operation extends AbstractArtifact implements Comparable<O
 
     public void setOperationLogging(OperationLogging operationLogging) {
         _operationLogging = operationLogging;
+    }
+
+    /**
+     * @return the operation dialog size
+     */
+    public int getDialogSize() {
+        return _dialogSize < 0 || _dialogSize > 100 ? 100 : _dialogSize;
+    }
+
+    public void setDialogSize(int percentage) {
+        _dialogSize = percentage; // Math.min(100, Math.max(0, percentage));
     }
 
     /**
@@ -1553,6 +1566,7 @@ public abstract class Operation extends AbstractArtifact implements Comparable<O
                 _shellEnabled = annotation.shell();
                 _confirmationRequired = annotation.confirmation().toBoolean(_confirmationRequired);
                 _complex = annotation.complex().toBoolean(_complex);
+                _dialogSize = annotation.dialogSize(); // Math.min(100, Math.max(0, annotation.dialogSize()));
                 _operationLogging = specified(annotation.logging(), _operationLogging);
                 _annotatedWithOperationClass = true;
             }
@@ -1590,6 +1604,8 @@ public abstract class Operation extends AbstractArtifact implements Comparable<O
 
     protected static final String URL_REGEX = Constants.URL_REGEX;
 
+    protected static final String WHITESPACELESS_REGEX = Constants.WHITESPACELESS_REGEX;
+
     protected static final SpecialCharacterValue NO_IMAGE = SpecialCharacterValue.NULL;
 
     protected static final SpecialEntityValue CURRENT_USER = SpecialEntityValue.CURRENT_USER;
@@ -1605,6 +1621,8 @@ public abstract class Operation extends AbstractArtifact implements Comparable<O
     protected static final CharacterScalarX EMPTY_STRING = XB.EMPTY_STRING;
 
     protected static final CharacterScalarX EMPTY = XB.EMPTY;
+
+    protected static final CharacterScalarX RGUID = XB.RGUID;
 
     protected static final CharacterScalarX SPACE = XB.SPACE;
 

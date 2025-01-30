@@ -17,8 +17,20 @@ package adalid.core.parameters.ext;
  */
 public class InternationalSmartphoneNumberParameter extends InternationalPhoneNumberParameter {
 
-    public boolean isSmartphoneNumber() {
+    {
+        super.setSmartphoneNumber(true);
+    }
+
+    @Override
+    public final boolean isSmartphoneNumber() {
         return true;
+    }
+
+    @Override
+    public final void setSmartphoneNumber(boolean b) {
+        if (!b) {
+            logger.warn("executing method setSmartphoneNumber of class InternationalSmartphoneNumberParameter is inconsequential");
+        }
     }
 
 }

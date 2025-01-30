@@ -29,6 +29,10 @@ public class Step extends AbstractArtifact {
     /**/
     private final List<StepField> _stepFieldsList = new ArrayList<>();
 
+    private void stepFieldsList_add(StepField field) { // since 14/01/2025
+        appendField(_stepFieldsList, field);
+    }
+
     /* commented on 21/03/2021
     private final Map<String, StepField> _stepFields = new LinkedHashMap<>();
 
@@ -228,7 +232,7 @@ public class Step extends AbstractArtifact {
     public void newStepField(EntityCollection collection) {
         collection.setStep(this);
         StepField stepField = new StepField(this, collection);
-        _stepFieldsList.add(stepField);
+        stepFieldsList_add(stepField);
     }
 
     /**
@@ -239,7 +243,7 @@ public class Step extends AbstractArtifact {
      */
     public void newStepField(Property property) {
         StepField stepField = new StepField(this, property);
-        _stepFieldsList.add(stepField);
+        stepFieldsList_add(stepField);
     }
 
     /**
@@ -254,7 +258,7 @@ public class Step extends AbstractArtifact {
         if (properties != null) {
             for (Property p : properties) {
                 stepField = new StepField(this, p);
-                _stepFieldsList.add(stepField);
+                stepFieldsList_add(stepField);
             }
         }
     }

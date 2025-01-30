@@ -23,13 +23,12 @@ public enum SpecialBooleanValue implements SpecialValue {
 
     @Override
     public Class<?> getDataType() {
-        switch (this) {
-            case TRUE:
-            case FALSE:
-                return Boolean.class;
-            default:
-                return Object.class;
-        }
+        return switch (this) {
+            case TRUE, FALSE ->
+                Boolean.class;
+            default ->
+                Object.class;
+        };
     }
 
 }

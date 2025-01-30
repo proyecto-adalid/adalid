@@ -14,7 +14,7 @@ import adalid.util.*;
 /**
  * RunSetupScript muestra el diálogo para buscar y seleccionar un script (archivo .bat) de instalación y ejecuta el script seleccionado.
  *
- * @author ADALID meta-jee2-archetype
+ * @author ADALID meta-jee2-archetype, version 6.0.0
  */
 @RunnableClass
 public class RunSetupScript extends adalid.util.io.SysCmdRunner {

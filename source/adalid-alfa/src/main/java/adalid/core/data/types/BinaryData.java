@@ -162,29 +162,29 @@ public class BinaryData extends BinaryPrimitive {
 
     @Override
     protected boolean isImplicitOverlayImageProperty() {
-        return super.isImplicitOverlayImageProperty() && AvatarShape.NONE.equals(_avatarShape);
+        return super.isImplicitOverlayImageProperty() && AvatarShape.NONE.equals(getAvatarShape());
     }
 
-    private AvatarShape _avatarShape = AvatarShape.NONE;
+    private AvatarShape _avatarShape = AvatarShape.UNSPECIFIED;
 
     public AvatarShape getAvatarShape() {
-        return _avatarShape;
+        return AvatarShape.UNSPECIFIED.equals(_avatarShape) ? AvatarShape.NONE : _avatarShape;
     }
 
     public void setAvatarShape(AvatarShape shape) {
         checkScope();
-        _avatarShape = shape == null ? AvatarShape.NONE : shape;
+        _avatarShape = shape == null ? AvatarShape.UNSPECIFIED : shape;
     }
 
-    private AvatarDefault _avatarDefault = AvatarDefault.NONE;
+    private AvatarDefault _avatarDefault = AvatarDefault.UNSPECIFIED;
 
     public AvatarDefault getAvatarDefault() {
-        return _avatarDefault;
+        return AvatarDefault.UNSPECIFIED.equals(_avatarDefault) ? AvatarDefault.NONE : _avatarDefault;
     }
 
     public void setAvatarDefault(AvatarDefault defaultAvatar) {
         checkScope();
-        _avatarDefault = defaultAvatar == null ? AvatarDefault.NONE : defaultAvatar;
+        _avatarDefault = defaultAvatar == null ? AvatarDefault.UNSPECIFIED : defaultAvatar;
     }
 
     private int _avatarWidth = 36;

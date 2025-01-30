@@ -38,31 +38,31 @@ public abstract class ProyectoMavenPrime extends ProyectoMaven {
 
     protected static final String PRIMEFACES_VERSION = "primefaces.version";
 
+    /* Since version 5.1, generated web page layouts no longer use Primefaces Extensions, so those dependencies are no longer added automatically
     protected static final String PRIMEFACES_EXTENSIONS_VERSION = "primefaces.extensions.version";
 
     protected static final String PRIMEFACES_EXTENSIONS_RESOURCES_CKEDITOR_VERSION = "primefaces.extensions.resources.ckeditor.version";
 
     protected static final String PRIMEFACES_EXTENSIONS_RESOURCES_MONACOEDITOR_VERSION = "primefaces.extensions.resources.monacoeditor.version";
 
+    /**/
     protected static final String GOOGLE_GSON_VERSION = "google.gson.version";
 
     protected static final String VERSION_PRIMEFACES = PRIMEFACES_VERSION;
 
+    /* Since version 5.1, generated web page layouts no longer use Primefaces Extensions, so those dependencies are no longer added automatically
     protected static final String VERSION_PRIMEFACES_EXTENSIONS = PRIMEFACES_EXTENSIONS_VERSION;
 
     protected static final String VERSION_PRIMEFACES_EXTENSIONS_RESOURCES_CKEDITOR = PRIMEFACES_EXTENSIONS_RESOURCES_CKEDITOR_VERSION;
 
     protected static final String VERSION_PRIMEFACES_EXTENSIONS_RESOURCES_MONACOEDITOR = PRIMEFACES_EXTENSIONS_RESOURCES_MONACOEDITOR_VERSION;
 
+    /**/
     protected static final String VERSION_GOOGLE_GSON = GOOGLE_GSON_VERSION;
 
     protected static final String DEFAULT_THEME = PrimeFacesThemes.SAGA;
 
     protected static final String DEFAULT_THEME_GROUP_ID = "org.primefaces.themes";
-//
-//  protected static final String DEFAULT_ALL_THEMES_ARTIFACT_ID = "all-themes";
-//
-//  protected static final String DEFAULT_ALL_THEMES_VERSION = "1.0.10";
 
     private String _theme;
 

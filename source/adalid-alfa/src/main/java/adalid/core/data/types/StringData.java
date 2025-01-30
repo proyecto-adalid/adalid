@@ -905,7 +905,7 @@ public class StringData extends CharacterPrimitive {
         }
         String[] strings = new String[validInputFileTypes.length];
         for (int i = 0; i < validInputFileTypes.length; i++) {
-            strings[i] = StringUtils.join(validInputFileTypes[i].getExtensions(), "|");
+            strings[i] = validInputFileTypes[i].getRegexExtensions();
         }
         String join = StringUtils.join(strings, "|");
         return MIME_TYPES_REGEX_PREFIX + "(" + join + ")" + MIME_TYPES_REGEX_SUFFIX;

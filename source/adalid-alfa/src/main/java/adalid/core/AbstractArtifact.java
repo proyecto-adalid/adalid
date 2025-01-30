@@ -2285,6 +2285,13 @@ public abstract class AbstractArtifact implements Artifact, Wrappable {
         }
     }
 
+    <T> void appendField(List<T> arrayList, T field) {
+        if (arrayList.contains(field)) { // Check if the element is already in the list
+            arrayList.remove(field); // Remove the existing element
+        }
+        arrayList.add(field); // Add the element to the end of the list
+    }
+
     // <editor-fold defaultstate="collapsed" desc="MarkupUtils">
     protected static final String BR = MarkupUtils.BR;
 
@@ -2506,13 +2513,47 @@ public abstract class AbstractArtifact implements Artifact, Wrappable {
     }
     // </editor-fold>
 
-    // <editor-fold defaultstate="collapsed" desc="big*">
+    // <editor-fold defaultstate="collapsed" desc="BigDecimal conversions">
     protected static BigDecimal bigDecimal(String value) {
         return new BigDecimal(value);
     }
 
+    protected static BigDecimal bigDecimal(int value) {
+        return bigDecimal((long) value);
+    }
+
+    protected static BigDecimal bigDecimal(long value) {
+        return BigDecimal.valueOf(value);
+    }
+
+    protected static BigDecimal bigDecimal(float value) {
+        return bigDecimal((double) value);
+    }
+
+    protected static BigDecimal bigDecimal(double value) {
+        return BigDecimal.valueOf(value);
+    }
+    // </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="BigInteger conversions">
     protected static BigInteger bigInteger(String value) {
         return new BigInteger(value);
+    }
+
+    protected static BigInteger bigInteger(int value) {
+        return bigInteger((long) value);
+    }
+
+    protected static BigInteger bigInteger(long value) {
+        return BigInteger.valueOf(value);
+    }
+
+    protected static BigInteger bigInteger(float value) {
+        return bigInteger((double) value);
+    }
+
+    protected static BigInteger bigInteger(double value) {
+        return BigDecimal.valueOf(value).toBigInteger();
     }
     // </editor-fold>
 

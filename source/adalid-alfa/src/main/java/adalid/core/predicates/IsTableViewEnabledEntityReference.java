@@ -23,8 +23,7 @@ public class IsTableViewEnabledEntityReference implements Predicate {
 
     @Override
     public boolean evaluate(Object object) {
-        if (object instanceof EntityReference) {
-            EntityReference reference = (EntityReference) object;
+        if (object instanceof EntityReference reference) {
             Entity declaringEntity = reference.getDeclaringEntity();
             if (declaringEntity != null) { // && declaringEntity.isSelectEnabled()
 //              Entity parentProperty = declaringEntity.getParentProperty();

@@ -82,6 +82,8 @@ public class Parametro extends AbstractPersistentEntity {
 
     public BooleanProperty formateado;
 
+    public IntegerProperty secuencia;
+
     public IntegerProperty longitud;
 
     public IntegerProperty precision;
@@ -160,6 +162,9 @@ public class Parametro extends AbstractPersistentEntity {
         /**/
         formateado.setLocalizedLabel(ENGLISH, "formatted");
         formateado.setLocalizedLabel(SPANISH, "formateado");
+        /**/
+        secuencia.setLocalizedLabel(ENGLISH, "sequence");
+        secuencia.setLocalizedLabel(SPANISH, "secuencia");
         /**/
         longitud.setLocalizedLabel(ENGLISH, "length");
         longitud.setLocalizedLabel(SPANISH, "longitud");

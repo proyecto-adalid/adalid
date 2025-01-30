@@ -21,7 +21,7 @@ import meta.entidad.comun.configuracion.basica.CondicionEjeFun;
  */
 public class RastroUtils {
 
-    static void setGraphicImageExpressions(CondicionEjeFun condicionEjeFun) {
+    protected static void setGraphicImageExpressions(CondicionEjeFun condicionEjeFun) { // protected avoids method never unused warning
         final String NULL = fa(FA.NULL_VALUE + FA.WITH_FIXED_WIDTH + CSS.STATUS_NULL_VALUE_IMAGE);
         final String fa11 = fa(W3.TEXT_INDIGO + FA.CHECK_CIRCLE + FA.WITH_SIZE_LG);
         final String fa12 = fa(W3.TEXT_BLUE + FA.CHECK_CIRCLE + FA.WITH_SIZE_LG);

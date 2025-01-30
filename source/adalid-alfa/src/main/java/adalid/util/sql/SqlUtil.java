@@ -137,8 +137,8 @@ public class SqlUtil {
             _programmer = bootstrapping.getString(_dbms + ".programmer");
             if (StringUtils.isNotBlank(_urlPattern) && StringUtils.isNotBlank(_driver) && StringUtils.isNotBlank(_programmer)) {
                 Object object = getNewInstanceForName(_programmer);
-                if (object instanceof Programmer) {
-                    TLB.setProgrammer(_dbms, (Programmer) object);
+                if (object instanceof Programmer programmer) {
+                    TLB.setProgrammer(_dbms, programmer);
                     logValidArgument("dbms", _dbms);
                     return true;
                 }

@@ -62,6 +62,7 @@ public class RastroFuncionPar extends AbstractPersistentEntity {
     }
 
     @PrimaryKey
+    @PropertyField(hidden = Kleenean.FALSE, detail = Kleenean.TRUE, heading = Kleenean.TRUE)
     public LongProperty id;
 
     @ForeignKey(onDelete = OnDeleteAction.CASCADE, onUpdate = OnUpdateAction.CASCADE)

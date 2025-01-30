@@ -184,42 +184,42 @@ public class PostgreSqlProgrammer extends AbstractSqlProgrammer {
         char sign = quantity < 0 ? '-' : '+';
         char unit = addend.getUnitCode();
         switch (unit) {
-            case 'A':
-            case 'Y':
+            case 'A', 'Y' -> {
                 base = "current_date";
                 word = "years";
-                break;
-            case 'M':
+            }
+            case 'M' -> {
                 base = "current_date";
                 word = "months";
-                break;
-            case 'D':
+            }
+            case 'D' -> {
                 base = "current_date";
                 word = "days";
-                break;
-            case 'h':
+            }
+            case 'h' -> {
 //              base = "current_time";
 //              base = "localtime";
 //              base = "current_timestamp";
                 base = "localtimestamp";
                 word = "hours";
-                break;
-            case 'm':
+            }
+            case 'm' -> {
 //              base = "current_time";
 //              base = "localtime";
 //              base = "current_timestamp";
                 base = "localtimestamp";
                 word = "minutes";
-                break;
-            case 's':
+            }
+            case 's' -> {
 //              base = "current_time";
 //              base = "localtime";
 //              base = "current_timestamp";
                 base = "localtimestamp";
                 word = "seconds";
-                break;
-            default:
+            }
+            default -> {
                 return null;
+            }
         }
         return quantity == 0 ? base : StrUtils.encloseSqlExpression(MessageFormat.format(TEMPORAL_ADDEND_PATTERN, base, sign, absolute + "", word));
     }
@@ -262,8 +262,8 @@ public class PostgreSqlProgrammer extends AbstractSqlProgrammer {
             return TIMEX;
         } else if (artifact instanceof TimestampData) {
             return TIMESTAMPX;
-        } else if (artifact instanceof Entity) {
-            return getEntityReferenceType((Entity) artifact);
+        } else if (artifact instanceof Entity entity) {
+            return getEntityReferenceType(entity);
         } else {
             return null;
         }
@@ -283,8 +283,7 @@ public class PostgreSqlProgrammer extends AbstractSqlProgrammer {
             return BOOLEAN;
         } else if (artifact instanceof CharacterData) {
             return CHAR;
-        } else if (artifact instanceof StringData) {
-            StringData data = (StringData) artifact;
+        } else if (artifact instanceof StringData data) {
             int l = (Integer) IntUtils.valueOf(data.getMaxLength());
             return l < 1 || l > MAX_VARCHAR_LENGTH ? TEXT : format(VARCHAR, l);
         } else if (artifact instanceof ByteData) {
@@ -299,29 +298,25 @@ public class PostgreSqlProgrammer extends AbstractSqlProgrammer {
             return FLOAT;
         } else if (artifact instanceof DoubleData) {
             return DOUBLE;
-        } else if (artifact instanceof BigIntegerData) {
-            BigIntegerData data = (BigIntegerData) artifact;
+        } else if (artifact instanceof BigIntegerData data) {
             int p = data.getPrecision();
             return format(BIGINT, p);
-        } else if (artifact instanceof BigDecimalData) {
-            BigDecimalData data = (BigDecimalData) artifact;
+        } else if (artifact instanceof BigDecimalData data) {
             int p = data.getPrecision();
             int s = data.getScale();
             return format(DECIMAL, p, s);
         } else if (artifact instanceof DateData) {
             return DATE;
-        } else if (artifact instanceof TimeData) {
-            TimeData data = (TimeData) artifact;
+        } else if (artifact instanceof TimeData data) {
             int p = IntUtils.valueOf(data.getPrecision(), Constants.DEFAULT_TIME_PRECISION);
             return format(TIME, p);
-        } else if (artifact instanceof TimestampData) {
-            TimestampData data = (TimestampData) artifact;
+        } else if (artifact instanceof TimestampData data) {
             int p = IntUtils.valueOf(data.getPrecision(), Constants.DEFAULT_TIME_PRECISION);
             return format(TIMESTAMP, p);
-        } else if (artifact instanceof Entity) {
-            return getEntityReferenceType((Entity) artifact);
-        } else if (artifact instanceof Expression) {
-            return getExpressionType((Expression) artifact);
+        } else if (artifact instanceof Entity entity) {
+            return getEntityReferenceType(entity);
+        } else if (artifact instanceof Expression expression) {
+            return getExpressionType(expression);
         } else {
             return null;
         }
@@ -393,12 +388,12 @@ public class PostgreSqlProgrammer extends AbstractSqlProgrammer {
         if (onDeleteAction == null) {
             return getNoAction();
         }
-        switch (onDeleteAction) {
-            case CASCADE:
-                return getCascade();
-            default:
-                return getNoAction();
-        }
+        return switch (onDeleteAction) {
+            case CASCADE ->
+                getCascade();
+            default ->
+                getNoAction();
+        };
     }
 
     /**
@@ -414,12 +409,12 @@ public class PostgreSqlProgrammer extends AbstractSqlProgrammer {
         if (onUpdateAction == null) {
             return getNoAction();
         }
-        switch (onUpdateAction) {
-            case CASCADE:
-                return getCascade();
-            default:
-                return getNoAction();
-        }
+        return switch (onUpdateAction) {
+            case CASCADE ->
+                getCascade();
+            default ->
+                getNoAction();
+        };
     }
 
     /**
@@ -437,20 +432,16 @@ public class PostgreSqlProgrammer extends AbstractSqlProgrammer {
             arguments[i] = getSqlExpression(operands[i], queryObject, qualifier, px, false);
         }
         String string;
-        switch (operator) {
-            case COALESCE:
-                string = call("coalesce", arguments);
-                break;
-            case MAXIMUM:
-                string = call("greatest", arguments);
-                break;
-            case MINIMUM:
-                string = call("least", arguments);
-                break;
-            default:
-                string = super.getSqlDataAggregateExpression(expression, queryObject, qualifier, px);
-                break;
-        }
+        string = switch (operator) {
+            case COALESCE ->
+                call("coalesce", arguments);
+            case MAXIMUM ->
+                call("greatest", arguments);
+            case MINIMUM ->
+                call("least", arguments);
+            default ->
+                super.getSqlDataAggregateExpression(expression, queryObject, qualifier, px);
+        };
         return string;
     }
 
@@ -474,14 +465,12 @@ public class PostgreSqlProgrammer extends AbstractSqlProgrammer {
             arguments[i] = StrUtils.discloseSqlExpression(strings[i]);
         }
         String pattern;
-        switch (operator) {
-            case SUBSTR:
-                pattern = length > 1 ? call(operator, length) : "null";
-                break;
-            default:
-                pattern = call(operator, length);
-                break;
-        }
+        pattern = switch (operator) {
+            case SUBSTR ->
+                length > 1 ? call(operator, length) : "null";
+            default ->
+                call(operator, length);
+        };
         return format(pattern, arguments);
     }
 
@@ -500,184 +489,171 @@ public class PostgreSqlProgrammer extends AbstractSqlProgrammer {
         String arg2 = getSqlExpression(y, queryObject, qualifier, px, true);
         String pattern;
         switch (operator) {
-            case COALESCE:
+            case COALESCE -> {
                 arg1 = StrUtils.discloseSqlExpression(arg1);
                 arg2 = StrUtils.discloseSqlExpression(arg2);
                 pattern = "coalesce({0}, {1})";
-                break;
-            case NULLIF:
+            }
+            case NULLIF -> {
                 arg1 = StrUtils.discloseSqlExpression(arg1);
                 arg2 = StrUtils.discloseSqlExpression(arg2);
                 pattern = "nullif({0}, {1})";
-                break;
-            case MAXIMUM:
+            }
+            case MAXIMUM -> {
                 arg1 = StrUtils.discloseSqlExpression(arg1);
                 arg2 = StrUtils.discloseSqlExpression(arg2);
                 pattern = "greatest({0}, {1})";
-                break;
-            case MINIMUM:
+            }
+            case MINIMUM -> {
                 arg1 = StrUtils.discloseSqlExpression(arg1);
                 arg2 = StrUtils.discloseSqlExpression(arg2);
                 pattern = "least({0}, {1})";
-                break;
-            case AND:
+            }
+            case AND ->
                 pattern = "{0} and {1}";
-                break;
-            case NAND:
+            case NAND ->
                 pattern = "not({0} and {1})";
-                break;
-            case OR:
+            case OR ->
                 pattern = "{0} or {1}";
-                break;
-            case NOR:
+            case NOR ->
                 pattern = "not({0} or {1})";
-                break;
-            case XOR:
+            case XOR ->
                 pattern = "not({0} and {1}) and ({0} or {1})";
-                break;
-            case XNOR:
+            case XNOR ->
                 pattern = "not({0} or {1}) or ({0} and {1})";
-                break;
-            case X_IMPLIES_Y:
+            case X_IMPLIES_Y -> {
                 arg1 = StrUtils.discloseSqlExpression(arg1);
                 pattern = "not({0}) or {1}";
-                break;
-            case ASCII:
+            }
+            case ASCII -> {
                 arg1 = StrUtils.discloseSqlExpression(arg1);
                 arg2 = StrUtils.discloseSqlExpression(arg2);
                 pattern = "ascii_string({0}, {1})";
-                break;
-            case DIACRITICLESS_ASCII:
+            }
+            case DIACRITICLESS_ASCII -> {
                 arg1 = StrUtils.discloseSqlExpression(arg1);
                 arg2 = StrUtils.discloseSqlExpression(arg2);
                 pattern = "diacriticless_ascii({0}, {1})";
-                break;
-            case CONCAT:
+            }
+            case CONCAT -> {
                 arg1 = StrUtils.discloseSqlExpression(arg1);
                 arg2 = StrUtils.discloseSqlExpression(arg2);
                 pattern = "concat({0}, {1})";
-                break;
-            case CONCATENATE:
+            }
+            case CONCATENATE ->
                 pattern = "{0} || {1}";
-                break;
-            case FORMAT:
+            case FORMAT -> {
                 arg1 = StrUtils.discloseSqlExpression(arg1);
                 arg2 = StrUtils.discloseSqlExpression(arg2);
                 pattern = "string_format({0}, {1})";
-                break;
-            case LEFT:
+            }
+            case LEFT -> {
                 arg1 = StrUtils.discloseSqlExpression(arg1);
                 arg2 = StrUtils.discloseSqlExpression(arg2);
                 pattern = "left({0}, {1})";
-                break;
-            case RIGHT:
+            }
+            case RIGHT -> {
                 arg1 = StrUtils.discloseSqlExpression(arg1);
                 arg2 = StrUtils.discloseSqlExpression(arg2);
                 pattern = "right({0}, {1})";
-                break;
-            case SUBSTR:
+            }
+            case SUBSTR -> {
                 arg1 = StrUtils.discloseSqlExpression(arg1);
                 arg2 = StrUtils.discloseSqlExpression(arg2);
                 pattern = "substr({0}, {1})";
-                break;
-            case TO_ZERO_PADDED_STRING:
+            }
+            case TO_ZERO_PADDED_STRING ->
                 pattern = toZeroPaddedStringPattern(x, y);
-                break;
-            case X_PLUS_Y:
+            case X_PLUS_Y ->
                 pattern = "{0} + {1}";
-                break;
-            case X_MINUS_Y:
+            case X_MINUS_Y ->
                 pattern = "{0} - {1}";
-                break;
-            case X_MULTIPLIED_BY_Y:
+            case X_MULTIPLIED_BY_Y ->
                 pattern = "{0} * {1}";
-                break;
-            case X_DIVIDED_INTO_Y:
+            case X_DIVIDED_INTO_Y ->
                 pattern = "{0} / {1}";
-                break;
-            case X_RAISED_TO_THE_Y:
+            case X_RAISED_TO_THE_Y ->
                 pattern = "{0} ^ {1}";
-                break;
-            case ADD_YEARS:
+            case ADD_YEARS -> {
                 arg1 = StrUtils.discloseSqlExpression(arg1);
                 arg2 = StrUtils.discloseSqlExpression(arg2);
                 pattern = "dateadd({0}, {1}, 'years')";
-                break;
-            case ADD_MONTHS:
+            }
+            case ADD_MONTHS -> {
                 arg1 = StrUtils.discloseSqlExpression(arg1);
                 arg2 = StrUtils.discloseSqlExpression(arg2);
                 pattern = "dateadd({0}, {1}, 'months')";
-                break;
-            case ADD_WEEKS:
+            }
+            case ADD_WEEKS -> {
                 arg1 = StrUtils.discloseSqlExpression(arg1);
                 arg2 = StrUtils.discloseSqlExpression(arg2);
                 pattern = "dateadd({0}, {1}, 'weeks')";
-                break;
-            case ADD_DAYS:
+            }
+            case ADD_DAYS -> {
                 arg1 = StrUtils.discloseSqlExpression(arg1);
                 arg2 = StrUtils.discloseSqlExpression(arg2);
                 pattern = "dateadd({0}, {1}, 'days')";
-                break;
-            case ADD_HOURS:
+            }
+            case ADD_HOURS -> {
                 arg1 = StrUtils.discloseSqlExpression(arg1);
                 arg2 = StrUtils.discloseSqlExpression(arg2);
                 pattern = "dateadd({0}, {1}, 'hours')";
-                break;
-            case ADD_MINUTES:
+            }
+            case ADD_MINUTES -> {
                 arg1 = StrUtils.discloseSqlExpression(arg1);
                 arg2 = StrUtils.discloseSqlExpression(arg2);
                 pattern = "dateadd({0}, {1}, 'minutes')";
-                break;
-            case ADD_SECONDS:
+            }
+            case ADD_SECONDS -> {
                 arg1 = StrUtils.discloseSqlExpression(arg1);
                 arg2 = StrUtils.discloseSqlExpression(arg2);
                 pattern = "dateadd({0}, {1}, 'seconds')";
-                break;
-            case DIFF_IN_YEARS:
+            }
+            case DIFF_IN_YEARS -> {
                 arg1 = StrUtils.discloseSqlExpression(arg1);
                 arg2 = StrUtils.discloseSqlExpression(arg2);
                 pattern = "datediff({0}, {1}, 'years')";
-                break;
-            case DIFF_IN_MONTHS:
+            }
+            case DIFF_IN_MONTHS -> {
                 arg1 = StrUtils.discloseSqlExpression(arg1);
                 arg2 = StrUtils.discloseSqlExpression(arg2);
                 pattern = "datediff({0}, {1}, 'months')";
-                break;
-            case DIFF_IN_WEEKS:
+            }
+            case DIFF_IN_WEEKS -> {
                 arg1 = StrUtils.discloseSqlExpression(arg1);
                 arg2 = StrUtils.discloseSqlExpression(arg2);
                 pattern = "datediff({0}, {1}, 'weeks')";
-                break;
-            case DIFF_IN_DAYS:
+            }
+            case DIFF_IN_DAYS -> {
                 arg1 = StrUtils.discloseSqlExpression(arg1);
                 arg2 = StrUtils.discloseSqlExpression(arg2);
                 pattern = "datediff({0}, {1}, 'days')";
-                break;
-            case DIFF_IN_HOURS:
+            }
+            case DIFF_IN_HOURS -> {
                 arg1 = StrUtils.discloseSqlExpression(arg1);
                 arg2 = StrUtils.discloseSqlExpression(arg2);
                 pattern = "datediff({0}, {1}, 'hours')";
-                break;
-            case DIFF_IN_MINUTES:
+            }
+            case DIFF_IN_MINUTES -> {
                 arg1 = StrUtils.discloseSqlExpression(arg1);
                 arg2 = StrUtils.discloseSqlExpression(arg2);
                 pattern = "datediff({0}, {1}, 'minutes')";
-                break;
-            case DIFF_IN_SECONDS:
+            }
+            case DIFF_IN_SECONDS -> {
                 arg1 = StrUtils.discloseSqlExpression(arg1);
                 arg2 = StrUtils.discloseSqlExpression(arg2);
                 pattern = "datediff({0}, {1}, 'seconds')";
-                break;
-            case TO_TIMESTAMP:
+            }
+            case TO_TIMESTAMP -> {
                 arg1 = StrUtils.discloseSqlExpression(arg1);
                 arg2 = StrUtils.discloseSqlExpression(arg2);
                 pattern = "({0}::date + {1}::time)";
-                break;
-            default:
+            }
+            default -> {
                 arg1 = StrUtils.discloseSqlExpression(arg1);
                 arg2 = StrUtils.discloseSqlExpression(arg2);
                 pattern = call(operator, 2);
-                break;
+            }
         }
         return format(pattern, arg1, arg2);
     }
@@ -700,171 +676,155 @@ public class PostgreSqlProgrammer extends AbstractSqlProgrammer {
         boolean varchar = operand instanceof String || operand instanceof CharacterExpression;
         String pattern;
         switch (operator) {
-            case DEFAULT_WHEN_NULL:
+            case DEFAULT_WHEN_NULL -> {
                 arg1 = StrUtils.discloseSqlExpression(arg1);
                 arg2 = StrUtils.discloseSqlExpression(arg2);
                 pattern = "coalesce({0}, {1})";
-                break;
-            case NULL_WHEN_DEFAULT:
+            }
+            case NULL_WHEN_DEFAULT -> {
                 arg1 = StrUtils.discloseSqlExpression(arg1);
                 arg2 = StrUtils.discloseSqlExpression(arg2);
                 pattern = "nullif({0}, {1})";
-                break;
-            case TO_BOOLEAN:
+            }
+            case TO_BOOLEAN ->
                 pattern = "cast({0} as boolean)";
-                break;
-            case TO_CHARACTER:
+            case TO_CHARACTER ->
                 pattern = "cast({0} as character(1))";
-                break;
-            case TO_STRING:
-            case TO_LOCALE_STRING:
+            case TO_STRING, TO_LOCALE_STRING -> {
                 arg1 = StrUtils.discloseSqlExpression(arg1);
                 pattern = toCharStringPattern(operand);
-                break;
-            case TO_BYTE:
+            }
+            case TO_BYTE ->
                 pattern = "cast({0} as smallint)";
-                break;
-            case TO_SHORT:
+            case TO_SHORT ->
                 pattern = "cast({0} as smallint)";
-                break;
-            case TO_INTEGER:
+            case TO_INTEGER ->
                 pattern = "cast({0} as int)";
-                break;
-            case TO_LONG:
+            case TO_LONG ->
                 pattern = "cast({0} as bigint)";
-                break;
-            case TO_FLOAT:
+            case TO_FLOAT ->
                 pattern = "cast({0} as real)";
-                break;
-            case TO_DOUBLE:
+            case TO_DOUBLE ->
                 pattern = "cast({0} as double precision)";
-                break;
-            case TO_BIG_INTEGER:
+            case TO_BIG_INTEGER ->
                 pattern = "cast({0} as numeric)";
-                break;
-            case TO_BIG_DECIMAL:
+            case TO_BIG_DECIMAL ->
                 pattern = "cast({0} as numeric)";
-                break;
-            case TO_DATE:
+            case TO_DATE -> {
                 if (varchar) {
                     arg1 = StrUtils.discloseSqlExpression(arg1);
                 }
                 pattern = getCurrentDate().equals(arg1) ? arg1 : varchar ? "cast_varchar_as_date({0})" : "cast({0} as date)";
-                break;
-            case TO_TIME:
+            }
+            case TO_TIME -> {
                 if (varchar) {
                     arg1 = StrUtils.discloseSqlExpression(arg1);
                 }
                 pattern = getCurrentTime().equals(arg1) ? arg1 : varchar ? "cast_varchar_as_time({0})" : "cast({0} as time without time zone)";
-                break;
-            case TO_TIMESTAMP:
+            }
+            case TO_TIMESTAMP -> {
                 if (varchar) {
                     arg1 = StrUtils.discloseSqlExpression(arg1);
                 }
                 pattern = getCurrentTimestamp().equals(arg1) ? arg1 : varchar ? "cast_varchar_as_timestamp({0})" : "cast({0} as timestamp without time zone)";
-                break;
-            case NOT:
+            }
+            case NOT -> {
                 arg1 = StrUtils.discloseSqlExpression(arg1);
                 pattern = "not({0})";
-                break;
-            case ASCII:
+            }
+            case ASCII -> {
                 arg1 = StrUtils.discloseSqlExpression(arg1);
                 pattern = "ascii_string({0})";
-                break;
-            case DIACRITICLESS:
+            }
+            case DIACRITICLESS -> {
                 arg1 = StrUtils.discloseSqlExpression(arg1);
                 pattern = "diacriticless({0})";
-                break;
-            case DIACRITICLESS_ASCII:
+            }
+            case DIACRITICLESS_ASCII -> {
                 arg1 = StrUtils.discloseSqlExpression(arg1);
                 pattern = "diacriticless_ascii({0})";
-                break;
-            case LOWER:
+            }
+            case LOWER -> {
                 arg1 = StrUtils.discloseSqlExpression(arg1);
                 pattern = "lower({0})";
-                break;
-            case UPPER:
+            }
+            case UPPER -> {
                 arg1 = StrUtils.discloseSqlExpression(arg1);
                 pattern = "upper({0})";
-                break;
-            case CAPITALIZE:
+            }
+            case CAPITALIZE -> {
                 arg1 = StrUtils.discloseSqlExpression(arg1);
                 pattern = "initcap({0})";
-                break;
-            case UNCAPITALIZE:
+            }
+            case UNCAPITALIZE -> {
                 arg1 = StrUtils.discloseSqlExpression(arg1);
                 pattern = "uncap({0})";
-                break;
-            case TRIM:
+            }
+            case TRIM -> {
                 arg1 = StrUtils.discloseSqlExpression(arg1);
                 pattern = "trim({0})";
-                break;
-            case LTRIM:
+            }
+            case LTRIM -> {
                 arg1 = StrUtils.discloseSqlExpression(arg1);
                 pattern = "ltrim({0})";
-                break;
-            case RTRIM:
+            }
+            case RTRIM -> {
                 arg1 = StrUtils.discloseSqlExpression(arg1);
                 pattern = "rtrim({0})";
-                break;
-            case MODULUS:
+            }
+            case MODULUS -> {
                 arg1 = StrUtils.discloseSqlExpression(arg1);
                 pattern = "abs({0})";
-                break;
-            case OPPOSITE:
+            }
+            case OPPOSITE -> {
                 arg1 = StrUtils.discloseSqlExpression(arg1);
                 pattern = "-({0})";
-                break;
-            case RECIPROCAL:
+            }
+            case RECIPROCAL -> {
                 arg1 = StrUtils.discloseSqlExpression(arg1);
                 pattern = "1/({0})";
-                break;
-            case YEAR:
-            case MONTH:
-            case DAY:
-            case HOUR:
-            case MINUTE:
-            case SECOND:
+            }
+            case YEAR, MONTH, DAY, HOUR, MINUTE, SECOND -> {
                 arg1 = StrUtils.discloseSqlExpression(arg1);
 //              pattern = "cast(date_part('" + operator.name().toLowerCase() + "', {0}) as integer)";
                 pattern = "date_part('" + operator.name().toLowerCase() + "', {0})";
-                break;
-            case FIRST_DATE_OF_MONTH:
+            }
+            case FIRST_DATE_OF_MONTH -> {
                 arg1 = StrUtils.discloseSqlExpression(arg1);
                 pattern = "first_date_of_month({0})";
-                break;
-            case FIRST_DATE_OF_QUARTER:
+            }
+            case FIRST_DATE_OF_QUARTER -> {
                 arg1 = StrUtils.discloseSqlExpression(arg1);
                 pattern = "first_date_of_quarter({0})";
-                break;
-            case FIRST_DATE_OF_SEMESTER:
+            }
+            case FIRST_DATE_OF_SEMESTER -> {
                 arg1 = StrUtils.discloseSqlExpression(arg1);
                 pattern = "first_date_of_semester({0})";
-                break;
-            case FIRST_DATE_OF_YEAR:
+            }
+            case FIRST_DATE_OF_YEAR -> {
                 arg1 = StrUtils.discloseSqlExpression(arg1);
                 pattern = "first_date_of_year({0})";
-                break;
-            case LAST_DATE_OF_MONTH:
+            }
+            case LAST_DATE_OF_MONTH -> {
                 arg1 = StrUtils.discloseSqlExpression(arg1);
                 pattern = "last_date_of_month({0})";
-                break;
-            case LAST_DATE_OF_QUARTER:
+            }
+            case LAST_DATE_OF_QUARTER -> {
                 arg1 = StrUtils.discloseSqlExpression(arg1);
                 pattern = "last_date_of_quarter({0})";
-                break;
-            case LAST_DATE_OF_SEMESTER:
+            }
+            case LAST_DATE_OF_SEMESTER -> {
                 arg1 = StrUtils.discloseSqlExpression(arg1);
                 pattern = "last_date_of_semester({0})";
-                break;
-            case LAST_DATE_OF_YEAR:
+            }
+            case LAST_DATE_OF_YEAR -> {
                 arg1 = StrUtils.discloseSqlExpression(arg1);
                 pattern = "last_date_of_year({0})";
-                break;
-            default:
+            }
+            default -> {
                 arg1 = StrUtils.discloseSqlExpression(arg1);
                 pattern = call(operator, 1);
-                break;
+            }
         }
         return format(pattern, arg1, arg2);
     }
@@ -905,6 +865,11 @@ public class PostgreSqlProgrammer extends AbstractSqlProgrammer {
     @Override
     protected String defaultZeroPaddedStringPattern(int width) {
         return "lpad({0}::text, " + width + ", '0')";
+    }
+
+    @Override
+    protected String randomlyGeneratedUniqueIdentifier() {
+        return "gen_random_uuid()::text"; // 36 characters
     }
 
     @Override

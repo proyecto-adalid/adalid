@@ -387,6 +387,7 @@ public class Rol extends AbstractPersistentEntity {
 
     // <editor-fold defaultstate="collapsed" desc="Operations">
     @ProcessOperationClass
+//  @OperationClass(dialogSize = 100)
     @ConstructionOperationClass(type = Rol.class, onsuccess = OnConstructionOperationSuccess.DISPLAY_NEW_INSTANCE)
     public class Copiar extends ProcessOperation {
 

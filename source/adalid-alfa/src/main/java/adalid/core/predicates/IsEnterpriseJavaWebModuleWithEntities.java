@@ -24,8 +24,7 @@ public class IsEnterpriseJavaWebModuleWithEntities implements Predicate {
 
     @Override
     public boolean evaluate(Object object) {
-        if (object instanceof JavaWebModule) {
-            JavaWebModule module = (JavaWebModule) object;
+        if (object instanceof JavaWebModule module) {
             List<Entity> entities = module.getDisplayableEntitiesList();
             return entities != null && !entities.isEmpty();
         }

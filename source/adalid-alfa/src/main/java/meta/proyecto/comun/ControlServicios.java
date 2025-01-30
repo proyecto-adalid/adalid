@@ -13,6 +13,7 @@
 package meta.proyecto.comun;
 
 import adalid.core.*;
+import meta.entidad.comun.configuracion.basica.Aplicacion;
 import meta.entidad.comun.operacion.basica.FiltroFuncion;
 import meta.entidad.comun.operacion.basica.FiltroFuncionPar;
 import meta.entidad.comun.operacion.basica.VistaFuncion;
@@ -36,6 +37,8 @@ public class ControlServicios extends Project {
         setLocalizedDescription(SPANISH, "Módulo de Control de Servicios Complementarios");
         // </editor-fold>
     }
+
+    protected Aplicacion Aplicacion;
 
     protected FiltroFuncion FiltroFuncion;
 

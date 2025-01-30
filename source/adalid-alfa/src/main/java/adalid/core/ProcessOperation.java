@@ -499,6 +499,17 @@ public abstract class ProcessOperation extends Operation {
         return _constructionType != null ? _onConstructionSuccess : OnConstructionOperationSuccess.UNSPECIFIED;
     }
 
+    @Override
+    public int getDialogSize() {
+        /*
+        return _dialogSize < 0 // menor que 0 equivale al valor predeterminado
+            && _constructionType != null
+            && _onConstructionSuccess != null
+            && _onConstructionSuccess.equals(OnConstructionOperationSuccess.DISPLAY_NEW_INSTANCE) ? 0 : super.getDialogSize();
+        /**/
+        return _dialogSize < 0 && _constructionType != null ? 0 : super.getDialogSize();
+    }
+
     /**
      * El método addTransition se utiliza para agregar una transición a la lista de transiciones que lleva a cabo la operación.
      *

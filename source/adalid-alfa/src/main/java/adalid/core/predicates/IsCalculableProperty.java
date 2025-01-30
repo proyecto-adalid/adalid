@@ -22,8 +22,7 @@ public class IsCalculableProperty implements Predicate {
 
     @Override
     public boolean evaluate(Object object) {
-        if (object instanceof Property) {
-            Property property = (Property) object;
+        if (object instanceof Property property) {
             return property.isCalculable();
         }
         return false;

@@ -3520,6 +3520,24 @@ public abstract class AbstractDataArtifact extends AbstractArtifact implements A
         return field.isAnnotationPresent(CastingField.class);
     }
 
+    private boolean casting(Field field, Field previous) {
+        /**/
+        // <editor-fold defaultstate="collapsed">
+        /*
+        CastingField annotation = field.getAnnotation(CastingField.class);
+        if (annotation != null) {
+            String annotationValue = annotation.value();
+            String artifactName = getName();
+            String previousFieldName = previous.getName();
+            logger.trace("@CastingField(" + annotationValue + ") -> " + artifactName + "\nF=" + field + "\nP=" + previous + "\nD=" + getDeclaringField());
+            return annotationValue.equals(artifactName) && annotationValue.equals(previousFieldName);
+        }
+        /**/
+        // </editor-fold>
+        /**/
+        return casting(field) && previous == getDeclaringField();
+    }
+
     private void annotatePrimaryKey(Field field) {
         PrimaryKey annotation = field.getAnnotation(PrimaryKey.class);
         if (annotation != null && annotation.value()) {
@@ -3528,7 +3546,7 @@ public abstract class AbstractDataArtifact extends AbstractArtifact implements A
             boolean aye = XS1.checkKeyPropertyFieldAnnotation(log, field, KeyProperty.PRIMARY_KEY);
             if (aye) {
                 Field previous = getDeclaringArtifact().put(annotationClass, field);
-                if (previous == null) {
+                if (previous == null || casting(field, previous)) {
                     _annotatedWithPrimaryKey = true;
                 } else if (log) {
                     XS1.logDuplicateAnnotation(field, annotationClass, previous);
@@ -3545,7 +3563,7 @@ public abstract class AbstractDataArtifact extends AbstractArtifact implements A
             boolean aye = XS1.checkKeyPropertyFieldAnnotation(log, field, KeyProperty.SEQUENCE);
             if (aye) {
                 Field previous = getDeclaringArtifact().put(annotationClass, field);
-                if (previous == null) {
+                if (previous == null || casting(field, previous)) {
                     _annotatedWithSequenceProperty = true;
                     _sequencePropertyStart = Math.min(Long.MAX_VALUE, Math.max(1, annotation.start()));
                     _sequencePropertyStop = Math.min(Long.MAX_VALUE, Math.max(1, annotation.stop()));
@@ -3571,7 +3589,7 @@ public abstract class AbstractDataArtifact extends AbstractArtifact implements A
             boolean aye = XS1.checkKeyPropertyFieldAnnotation(log, field, KeyProperty.VERSION);
             if (aye) {
                 Field previous = getDeclaringArtifact().put(annotationClass, field);
-                if (previous == null) {
+                if (previous == null || casting(field, previous)) {
                     _annotatedWithVersionProperty = true;
                 } else if (log) {
                     XS1.logDuplicateAnnotation(field, annotationClass, previous);
@@ -3588,7 +3606,7 @@ public abstract class AbstractDataArtifact extends AbstractArtifact implements A
             boolean aye = XS1.checkKeyPropertyFieldAnnotation(log, field, KeyProperty.NAME);
             if (aye) {
                 Field previous = getDeclaringArtifact().put(annotationClass, field);
-                if (previous == null) {
+                if (previous == null || casting(field, previous)) {
                     _annotatedWithNameProperty = true;
                 } else if (log) {
                     XS1.logDuplicateAnnotation(field, annotationClass, previous);
@@ -3605,7 +3623,7 @@ public abstract class AbstractDataArtifact extends AbstractArtifact implements A
             boolean aye = XS1.checkKeyPropertyFieldAnnotation(log, field, KeyProperty.DESCRIPTION);
             if (aye) {
                 Field previous = getDeclaringArtifact().put(annotationClass, field);
-                if (previous == null) {
+                if (previous == null || casting(field, previous)) {
                     _annotatedWithDescriptionProperty = true;
                 } else if (log) {
                     XS1.logDuplicateAnnotation(field, annotationClass, previous);
@@ -3623,7 +3641,7 @@ public abstract class AbstractDataArtifact extends AbstractArtifact implements A
         /**/
         if (aye) {
             Field previous = getDeclaringArtifact().put(annotationClass, field);
-            if (previous == null) {
+            if (previous == null || casting(field, previous)) {
                 _annotatedWithImageProperty = true;
                 BinaryData data = (BinaryData) this;
                 ImageProperty annotation = field.getAnnotation(ImageProperty.class);
@@ -3668,8 +3686,8 @@ public abstract class AbstractDataArtifact extends AbstractArtifact implements A
                 /**/
                 // </editor-fold>
                 /**/
-                AvatarShape avatarShape = specified(AvatarShape.NONE.name(), annotation.avatarShape(), data.getAvatarShape());
-                AvatarDefault avatarDefault = specified(AvatarDefault.NONE.name(), annotation.avatarDefault(), data.getAvatarDefault());
+                AvatarShape avatarShape = specified(AvatarShape.UNSPECIFIED.name(), annotation.avatarShape(), data.getAvatarShape());
+                AvatarDefault avatarDefault = specified(AvatarDefault.UNSPECIFIED.name(), annotation.avatarDefault(), data.getAvatarDefault());
                 int avatarWidth = greaterThanZero(annotation.avatarWidth(), data.getAvatarWidth());
                 int avatarHeight = greaterThanZero(annotation.avatarHeight(), data.getAvatarHeight());
                 /**/
@@ -3714,7 +3732,7 @@ public abstract class AbstractDataArtifact extends AbstractArtifact implements A
             boolean aye = XS1.checkKeyPropertyFieldAnnotation(log, field, KeyProperty.INACTIVE_INDICATOR);
             if (aye) {
                 Field previous = getDeclaringArtifact().put(annotationClass, field);
-                if (previous == null) {
+                if (previous == null || casting(field, previous)) {
                     _annotatedWithInactiveIndicator = true;
                 } else if (log) {
                     XS1.logDuplicateAnnotation(field, annotationClass, previous);
@@ -3731,7 +3749,7 @@ public abstract class AbstractDataArtifact extends AbstractArtifact implements A
         /**/
         if (aye) {
             Field previous = getDeclaringArtifact().put(annotationClass, field);
-            if (previous == null) {
+            if (previous == null || casting(field, previous)) {
                 _annotatedWithUrlProperty = true;
                 StringData data = (StringData) this;
                 UrlProperty annotation = field.getAnnotation(UrlProperty.class);
@@ -3772,7 +3790,7 @@ public abstract class AbstractDataArtifact extends AbstractArtifact implements A
             boolean aye = XS1.checkKeyPropertyFieldAnnotation(log, field, KeyProperty.PARENT, validTypes);
             if (aye) {
                 Field previous = getDeclaringArtifact().put(annotationClass, field);
-                if (previous == null) {
+                if (previous == null || casting(field, previous)) {
                     _annotatedWithParentProperty = true;
                 } else if (log) {
                     XS1.logDuplicateAnnotation(field, annotationClass, previous);
@@ -3792,7 +3810,7 @@ public abstract class AbstractDataArtifact extends AbstractArtifact implements A
                 Class<? extends Entity> userEntityClass = TLC.getProject().getUserEntityClass();
                 if (userEntityClass != null && userEntityClass.isAssignableFrom(fieldType)) {
                     Field previous = getDeclaringArtifact().put(annotationClass, field);
-                    if (previous == null) {
+                    if (previous == null || casting(field, previous)) {
                         _annotatedWithOwnerProperty = true;
                     } else if (log) {
                         XS1.logDuplicateAnnotation(field, annotationClass, previous);
@@ -3816,7 +3834,7 @@ public abstract class AbstractDataArtifact extends AbstractArtifact implements A
                 Class<? extends Entity> userEntityClass = TLC.getProject().getUserEntityClass();
                 if (userEntityClass != null && userEntityClass.isAssignableFrom(fieldType)) {
                     Field previous = getDeclaringArtifact().put(annotationClass, field);
-                    if (previous == null) {
+                    if (previous == null || casting(field, previous)) {
                         _annotatedWithUserProperty = true;
                     } else if (log) {
                         XS1.logDuplicateAnnotation(field, annotationClass, previous);
@@ -3837,7 +3855,7 @@ public abstract class AbstractDataArtifact extends AbstractArtifact implements A
             boolean aye = XS1.checkKeyPropertyFieldAnnotation(log, field, KeyProperty.SEGMENT);
             if (aye) {
                 Field previous = getDeclaringArtifact().put(annotationClass, field);
-                if (previous == null) {
+                if (previous == null || casting(field, previous)) {
                     _annotatedWithSegmentProperty = true;
                     _segmentEntityClass = annotation.entityClass(); // since 20210218
                     if (field.isAnnotationPresent(PrimaryKey.class)) { // since 20220715
@@ -3882,7 +3900,7 @@ public abstract class AbstractDataArtifact extends AbstractArtifact implements A
             boolean aye = XS1.checkKeyPropertyFieldAnnotation(log, field, KeyProperty.BUSINESS_KEY);
             if (aye) {
                 Field previous = getDeclaringArtifact().put(annotationClass, field);
-                if (previous == null) {
+                if (previous == null || casting(field, previous)) {
                     _annotatedWithBusinessKey = true;
                 } else if (log) {
                     XS1.logDuplicateAnnotation(field, annotationClass, previous);
@@ -3899,7 +3917,7 @@ public abstract class AbstractDataArtifact extends AbstractArtifact implements A
             boolean aye = XS1.checkKeyPropertyFieldAnnotation(log, field, KeyProperty.DISCRIMINATOR);
             if (aye) {
                 Field previous = getDeclaringArtifact().put(annotationClass, field);
-                if (previous == null) {
+                if (previous == null || casting(field, previous)) {
                     _annotatedWithDiscriminatorColumn = true;
                 } else if (log) {
                     XS1.logDuplicateAnnotation(field, annotationClass, previous);
@@ -3916,7 +3934,7 @@ public abstract class AbstractDataArtifact extends AbstractArtifact implements A
             boolean aye = XS1.checkKeyPropertyFieldAnnotation(log, field, KeyProperty.STATE);
             if (aye) {
                 Field previous = getDeclaringArtifact().put(annotationClass, field);
-                if (previous == null) {
+                if (previous == null || casting(field, previous)) {
                     _annotatedWithStateProperty = true;
                     setTransitionUserEntity(annotation);
                     setTransitionDateTimeProperty(annotation);
@@ -5665,7 +5683,7 @@ public abstract class AbstractDataArtifact extends AbstractArtifact implements A
             boolean aye = XS1.checkFieldAnnotation(log, field, annotationClass, validTypes);
             if (aye) {
                 Field previous = getDeclaringArtifact().put(annotationClass, field);
-                if (previous == null) {
+                if (previous == null || casting(field, previous)) {
                     _annotatedWithInstanceReference = true;
                     declaringOperation.setOperationKind(OperationKind.INSTANCE);
                 } else if (log) {
@@ -8541,18 +8559,29 @@ public abstract class AbstractDataArtifact extends AbstractArtifact implements A
                     if (property instanceof NumericPrimitive && property.isProperty() && !isCalculable(property.getDeclaringField())) {
                         Entity thatDeclaringEntity = property.getDeclaringEntity();
                         Entity thenDeclaringEntity = thatDeclaringEntity.getDeclaringEntity();
-//                  String thatTableColumnEntityName = property.getTableColumnEntityName();
                         String thatDeclaringEntityTableColumnEntityName = ((Property) thatDeclaringEntity).getTableColumnEntityName();
-                        boolean ok = !isCalculable(thatDeclaringEntity.getDeclaringField());
-                        if (ok && thisDeclaringEntity == thenDeclaringEntity && thisTableColumnEntityName.equals(thatDeclaringEntityTableColumnEntityName)) {
+                        Field thatDeclaringEntityDeclaringField = thatDeclaringEntity.getDeclaringField();
+                        if (isCalculable(thatDeclaringEntityDeclaringField)) {
+                            if (log) {
+                                String hint = "; " + thatDeclaringEntityDeclaringField + " is calculable ";
+                                logger.error(message + hint);
+                                Project.increaseParserErrorCount();
+                            }
+                        } else if (thisDeclaringEntity != thenDeclaringEntity) {
+                            if (log) {
+                                String hint = "; " + thisDeclaringEntity + " is not equal to " + thenDeclaringEntity;
+                                logger.error(message + hint);
+                                Project.increaseParserErrorCount();
+                            }
+                        } else if (thisTableColumnEntityName.equals(thatDeclaringEntityTableColumnEntityName)) {
                             _aggregates.add(new NumericAggregate(operator, property));
                         } else if (log) {
-                            String hint = "; " + property.getFullName() + xIsNotY + thisDeclaringEntity.getFullName();
+                            String hint = "; " + property.getName() + " is stored in the table of " + thisTableColumnEntityName + ", not in the table of " + thatDeclaringEntityTableColumnEntityName;
                             logger.error(message + hint);
                             Project.increaseParserErrorCount();
                         }
                     } else if (log) {
-                        String name = property == null ? "null property argument" : property.getFullName();
+                        String name = property == null ? "null property argument" : property.getName();
                         String hint = "; " + name + xIsNotY + thisDeclaringEntity.getFullName();
                         logger.error(message + hint);
                         Project.increaseParserErrorCount();

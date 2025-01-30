@@ -328,8 +328,8 @@ public class TareaUsuarioCorreo extends AbstractPersistentEntity {
         super.settleAttributes();
 //      setSchema(ProyectoBase.getEsquemaEntidadesComunes());
         // <editor-fold defaultstate="collapsed" desc="localization of TareaUsuarioCorreo's attributes">
-        setLocalizedLabel(ENGLISH, "task mail");
-        setLocalizedLabel(SPANISH, "correo de tarea");
+        setLocalizedLabel(ENGLISH, "task mails");
+        setLocalizedLabel(SPANISH, "correos de tarea");
         setLocalizedCollectionLabel(ENGLISH, "Task Mails");
         setLocalizedCollectionLabel(SPANISH, "Correos de Tareas");
         /**/

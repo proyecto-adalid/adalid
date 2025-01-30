@@ -128,7 +128,7 @@ public class RolAplicacion extends AbstractPersistentEntity {
             + "una disociación múltiple (no simple) elimina las asociaciones entre el rol y todas las aplicaciones "
             + "que no tengan una disociación múltiple (no simple) con el rol. "
             + "");
-        /**/
+        /*
         setLocalizedShortDescription(ENGLISH, "application associated with a role");
         setLocalizedShortDescription(SPANISH, "aplicación asociada con un rol");
         /**/

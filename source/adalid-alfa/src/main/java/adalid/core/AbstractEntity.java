@@ -387,6 +387,11 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
     private final Map<String, Class<?>> _subclasses = new LinkedHashMap<>();
 
     /**
+     * subentities: known extensions
+     */
+    private final Map<String, Entity> _subentities = new LinkedHashMap<>();
+
+    /**
      *
      */
     private final Map<String, AllocationOverride> _allocationOverrides = new LinkedHashMap<>();
@@ -1129,6 +1134,16 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
     /**
      *
      */
+    private int _treeViewRootLimit = Constants.DEFAULT_ROWS_PER_PAGE_LIMIT;
+
+    /**
+     *
+     */
+    private int _treeViewBranchLimit = Constants.DEFAULT_ROWS_PER_PAGE_LIMIT;
+
+    /**
+     *
+     */
     private String _treeViewHelpDocument = "";
 
     /**
@@ -1285,6 +1300,16 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
      *
      */
     private boolean _visibleFieldsWarningsEnabled = true;
+
+    /**
+     *
+     */
+    private boolean _stepCreatableFieldsWarningsEnabled = true;
+
+    /**
+     *
+     */
+    private boolean _stepUpdatableFieldsWarningsEnabled = true;
 
     /**
      *
@@ -2513,6 +2538,14 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
     @Override
     public Map<String, Class<?>> getSubclassesMap() {
         return _subclasses;
+    }
+
+    /**
+     * @return the direct known subentities map
+     */
+    @Override
+    public Map<String, Entity> getSubentitiesMap() {
+        return _subentities;
     }
 
     /**
@@ -4421,7 +4454,7 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
         /* until 13/07/2022
         return _treeViewEnabled && _parentProperty != null && _ownerProperty == null && _segmentProperty == null && isGuiCodeGenEnabled();
         /**/
-        return _treeViewEnabled && _parentProperty != null && isGuiCodeGenEnabled();
+        return _treeViewEnabled && _parentProperty != null && _baseClass == null && isGuiCodeGenEnabled(); // 16/01/2025 add && _baseClass == null
     }
 
     /**
@@ -4439,6 +4472,22 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
 //  @Override
     public ViewMenuOption getTreeViewMenuOption() {
         return _treeViewMenuOption;
+    }
+
+    /**
+     * @return the tree view root limit
+     */
+//  @Override
+    public int getTreeViewRootLimit() {
+        return _treeViewRootLimit;
+    }
+
+    /**
+     * @return the tree view branch limit
+     */
+//  @Override
+    public int getTreeViewBranchLimit() {
+        return _treeViewBranchLimit;
     }
 
     /**
@@ -8725,9 +8774,10 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
         String shortName = StrUtils.removeWords(fieldName, EntityReference.class, "_");
         boolean preserve = className.equals(shortName) || (_reuseWhenContains && className.contains(shortName));
         if (!preserve) {
+            // erase labels set by settleAttributes
             for (Locale locale : Bundle.getSupportedLocales()) {
                 setLocalizedLabel(locale, null);
-                setLocalizedShortLabel(locale, (String) null);
+//              setLocalizedShortLabel(locale, (String) null); setLocalizedLabel also sets the short label
             }
         }
     }
@@ -8738,18 +8788,39 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
         String shortName = StrUtils.removeWords(fieldName, EntityReference.class, "_");
         boolean preserve = className.equals(shortName);
         if (!preserve) {
+            // erase descriptions set by settleAttributes
             for (Locale locale : Bundle.getSupportedLocales()) {
                 setLocalizedDescription(locale, null);
-                setLocalizedShortDescription(locale, null);
+                setLocalizedShortDescription(locale, null); // setLocalizedDescription does not set short description to prevent excessive inline help
             }
         } else { // since 16/03/2023
+            boolean linkedParameter = isLinkedParameter();
             for (Locale locale : Bundle.getSupportedLocales()) {
+                // erase linked parameter descriptions set by settleAttributes
+                if (linkedParameter) { // since 03/11/2024
+                    setLocalizedDescription(locale, null);
+                    setLocalizedShortDescription(locale, null);
+                    continue;
+                }
+                // replace descriptions set by settleAttributes
                 String lsd = getLocalizedShortDescription(locale);
                 if (lsd != null) {
                     setLocalizedDescription(locale, lsd);
+                    setLocalizedShortDescription(locale, null); // since 03/11/2024
                 }
             }
         }
+    }
+
+    private boolean isLinkedParameter() {
+        Field field = getDeclaringField();
+        if (field != null) {
+            ParameterField annotation = field.getAnnotation(ParameterField.class);
+            if (annotation != null) {
+                return StringUtils.isNotBlank(annotation.linkedField());
+            }
+        }
+        return false;
     }
 
     // <editor-fold defaultstate="collapsed" desc="settle">
@@ -9112,8 +9183,11 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
         boolean ok = super.finalise();
         if (ok) {
             _atlas.finalise();
-            finaliseProperties();
-            finaliseCollections();
+            Artifact declaringArtifact = getDeclaringArtifact();
+            if (declaringArtifact == null) {
+                finaliseProperties();
+                finaliseCollections();
+            }
             setKeyFields();
             setBusinessKey();
             setKeyProperties();
@@ -10487,11 +10561,11 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
                     }
                 }
                 if (!ec) {
-                    if (!cf) {
+                    if (!cf && _stepCreatableFieldsWarningsEnabled) {
                         logger.warn("step " + step.getFullName() + " has no creatable fields");
                         Project.increaseParserWarningCount();
                     }
-                    if (!uf) {
+                    if (!uf && _stepCreatableFieldsWarningsEnabled) {
                         logger.warn("step " + step.getFullName() + " has no updatable fields");
                         Project.increaseParserWarningCount();
                     }
@@ -10689,6 +10763,9 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
                 if (reference.isHiddenField() || reference.isInherited()) {
                     continue;
                 }
+                if (!(reference.isCreateField() || reference.isUpdateField())) {
+                    continue; // since 22/01/2025
+                }
                 entityReference = (EntityReference) reference;
                 EntityReferenceStyle referenceStyle = entityReference.getReferenceStyle();
                 SearchType searchType = entityReference.getSearchType();
@@ -10727,7 +10804,7 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
                 }
             }
             if (size > 0) {
-                String by = size == 1 ? "property " + referenceFullName : size + " non-exclusively-existentially-dependent properties";
+                String by = size == 1 ? "property " + referenceFullName : size + " non-exclusively-existentially-dependent creatable-and/or-updatable properties";
                 logger.warn(warn + by);
                 Project.increaseParserWarningCount();
             }
@@ -11333,12 +11410,16 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
     }
 
     private void annotateEntityTreeView(Class<?> type) {
+        final int MAX = Constants.MAXIMUM_ROWS_PER_PAGE_LIMIT;
+        final int MIN = Constants.MINIMUM_ROWS_PER_PAGE_LIMIT;
         Class<?> annotatedClass = XS1.getAnnotatedClass(type, EntityTreeView.class);
         if (annotatedClass != null) {
             EntityTreeView annotation = annotatedClass.getAnnotation(EntityTreeView.class);
             if (annotation != null) {
                 _treeViewEnabled = annotation.enabled().toBoolean(_treeViewEnabled);
                 _treeViewMenuOption = annotation.menu();
+                _treeViewRootLimit = Math.min(MAX, Math.max(MIN, annotation.rootLimit()));
+                _treeViewBranchLimit = Math.min(MAX, Math.max(MIN, annotation.branchLimit()));
                 _annotatedWithEntityTreeView = true;
                 /**/
                 String document = annotation.helpDocument();
@@ -11501,6 +11582,8 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
                         _triggersWarningsEnabled = annotation.aboutTriggers().toBoolean(_triggersWarningsEnabled);
                         _versionPropertyWarningsEnabled = annotation.aboutVersionProperty().toBoolean(_versionPropertyWarningsEnabled);
                         _visibleFieldsWarningsEnabled = annotation.aboutVisibleFields().toBoolean(_visibleFieldsWarningsEnabled);
+                        _stepCreatableFieldsWarningsEnabled = annotation.aboutStepCreatableFields().toBoolean(_stepCreatableFieldsWarningsEnabled);
+                        _stepUpdatableFieldsWarningsEnabled = annotation.aboutStepUpdatableFields().toBoolean(_stepUpdatableFieldsWarningsEnabled);
                         _specialExpressionsWarningsEnabled = annotation.aboutSpecialExpressions().toBoolean(_specialExpressionsWarningsEnabled);
                         _unusualExpressionsWarningsEnabled = annotation.aboutUnusualExpressions().toBoolean(_unusualExpressionsWarningsEnabled);
                     } else {
@@ -11511,6 +11594,8 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
                         _triggersWarningsEnabled = false;
                         _versionPropertyWarningsEnabled = false;
                         _visibleFieldsWarningsEnabled = false;
+                        _stepCreatableFieldsWarningsEnabled = false;
+                        _stepUpdatableFieldsWarningsEnabled = false;
                         _specialExpressionsWarningsEnabled = false;
                         _unusualExpressionsWarningsEnabled = false;
                     }
@@ -12663,6 +12748,8 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
 
     protected static final String URL_REGEX = Constants.URL_REGEX;
 
+    protected static final String WHITESPACELESS_REGEX = Constants.WHITESPACELESS_REGEX;
+
     protected static final SpecialCharacterValue NO_IMAGE = SpecialCharacterValue.NULL;
 
     protected static final SpecialEntityValue CURRENT_USER = SpecialEntityValue.CURRENT_USER;
@@ -12678,6 +12765,8 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
     protected static final CharacterScalarX EMPTY_STRING = XB.EMPTY_STRING;
 
     protected static final CharacterScalarX EMPTY = XB.EMPTY;
+
+    protected static final CharacterScalarX RGUID = XB.RGUID;
 
     protected static final CharacterScalarX SPACE = XB.SPACE;
 

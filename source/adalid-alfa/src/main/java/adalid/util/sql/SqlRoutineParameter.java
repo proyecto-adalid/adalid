@@ -237,34 +237,34 @@ public class SqlRoutineParameter extends SqlArtifact {
     }
 
     public String getMetajavaType() {
-        switch (_type) {
-            case "boolean":
-                return "BooleanParameter";
-            case "char":
-                return "CharacterParameter";
-            case "string":
-                return "StringParameter";
-            case "short":
-                return "ShortParameter";
-            case "integer":
-                return "IntegerParameter";
-            case "long":
-                return "LongParameter";
-            case "decimal":
-                return "BigDecimalParameter";
-            case "float":
-                return "FloatParameter";
-            case "double":
-                return "DoubleParameter";
-            case "date":
-                return "DateParameter";
-            case "time":
-                return "TimeParameter";
-            case "timestamp":
-                return "TimestampParameter";
-            default:
-                return "Parameter";
-        }
+        return switch (_type) {
+            case "boolean" ->
+                "BooleanParameter";
+            case "char" ->
+                "CharacterParameter";
+            case "string" ->
+                "StringParameter";
+            case "short" ->
+                "ShortParameter";
+            case "integer" ->
+                "IntegerParameter";
+            case "long" ->
+                "LongParameter";
+            case "decimal" ->
+                "BigDecimalParameter";
+            case "float" ->
+                "FloatParameter";
+            case "double" ->
+                "DoubleParameter";
+            case "date" ->
+                "DateParameter";
+            case "time" ->
+                "TimeParameter";
+            case "timestamp" ->
+                "TimestampParameter";
+            default ->
+                "Parameter";
+        };
     }
 
     public String getQualifiedName() {

@@ -61,7 +61,7 @@ public class IntUtils {
         if (++version == 100000) {
             version = 0;
         }
-        long thread = Thread.currentThread().getId();
+        long thread = Thread.currentThread().threadId(); // getId(); is deprecated since JDK 19
         return version + 100000 * (int) (thread % 10000L); // 9 digitos: 4t + 5v
     }
 

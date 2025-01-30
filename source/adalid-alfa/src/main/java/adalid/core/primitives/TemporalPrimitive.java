@@ -622,8 +622,7 @@ public abstract class TemporalPrimitive extends Primitive implements Intervalize
     }
 
     private Object toDataType(Object value) {
-        if (value instanceof TemporalExpression) {
-            TemporalExpression tx = (TemporalExpression) value;
+        if (value instanceof TemporalExpression tx) {
             Operator txop = tx.getOperator();
             Class<?> txdt = tx instanceof TemporalPrimitive ? tx.getDataType() : null;
             Class<?> mydt = getDataType();

@@ -89,7 +89,7 @@ public class ControlPruebas extends Project {
 
     protected ParteAmbientePrueba x01020;
 
-    protected PiezaAmbientePrueba x01010;
+    protected PiezaAmbientePrueba x005;
 
     protected ProgramaPrueba x040;
 

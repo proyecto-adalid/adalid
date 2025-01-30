@@ -31,6 +31,10 @@ public class Key extends AbstractArtifact {
     /**/
     private final List<KeyField> _keyFieldsList = new ArrayList<>();
 
+    private void keyFieldsList_add(KeyField field) { // since 14/01/2025
+        appendField(_keyFieldsList, field);
+    }
+
     /* commented on 21/03/2021
     private final Map<String, KeyField> _keyFields = new LinkedHashMap<>();
 
@@ -253,7 +257,7 @@ public class Key extends AbstractArtifact {
      */
     public void newKeyField(Property property) {
         KeyField keyField = new KeyField(this, property);
-        _keyFieldsList.add(keyField);
+        keyFieldsList_add(keyField);
     }
 
     /**
@@ -267,7 +271,7 @@ public class Key extends AbstractArtifact {
      */
     public void newKeyField(Property property, SortOption sortOption) {
         KeyField keyField = new KeyField(this, property, sortOption);
-        _keyFieldsList.add(keyField);
+        keyFieldsList_add(keyField);
     }
 
     /**
@@ -283,7 +287,7 @@ public class Key extends AbstractArtifact {
         if (properties != null) {
             for (Property p : properties) {
                 keyField = new KeyField(this, p);
-                _keyFieldsList.add(keyField);
+                keyFieldsList_add(keyField);
             }
         }
     }

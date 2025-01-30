@@ -252,6 +252,11 @@ public class Constants {
     public static final String SNIPPET_FILE_NAME_REGEX = "^/?([\\w-]+/)*[\\w-]+(\\.[a-zA-Z]+)?$";
 
     /**
+     * non-whitespace-only regex
+     */
+    public static final String WHITESPACELESS_REGEX = "^[\\S]+$";
+
+    /**
      * DEFAULT_ROWS_PER_PAGE getter (for velocity templates)
      *
      * @return DEFAULT_ROWS_PER_PAGE

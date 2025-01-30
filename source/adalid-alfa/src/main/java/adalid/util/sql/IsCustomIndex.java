@@ -21,8 +21,7 @@ public class IsCustomIndex implements Predicate {
 
     @Override
     public boolean evaluate(Object object) {
-        if (object instanceof SqlIndex) {
-            SqlIndex index = (SqlIndex) object;
+        if (object instanceof SqlIndex index) {
             SqlColumn column = index.getSingleColumn();
             if (column == null) {
                 return true;  // multi-column index

@@ -66,7 +66,7 @@ public class LongUtils {
 
     public static long getNewId() {
         long millis = TimeUtils.currentTimeMillis();
-        long thread = Thread.currentThread().getId();
+        long thread = Thread.currentThread().threadId(); // getId(); is deprecated since JDK 19
         return 100000L * millis + 10L * (thread % 10000L); // 18 digitos: 13m + 5t
     }
 

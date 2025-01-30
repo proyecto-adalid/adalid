@@ -1218,6 +1218,8 @@ public abstract class AbstractSqlProgrammer extends AbstractProgrammer implement
                 getNull();
             case EMPTY ->
                 getZeroString();
+            case RGUID ->
+                randomlyGeneratedUniqueIdentifier();
             case CONTENT_ROOT_DIR ->
                 "content_root_dir()";
             case CURRENT_USER_CODE ->
@@ -1226,6 +1228,8 @@ public abstract class AbstractSqlProgrammer extends AbstractProgrammer implement
                 null;
         };
     }
+
+    protected abstract String randomlyGeneratedUniqueIdentifier();
 
     @Override
     public String getSpecialEntityValue(SpecialEntityValue value) {

@@ -35,6 +35,7 @@ import java.util.ResourceBundle;
 import java.util.Set;
 import java.util.UUID;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 import org.apache.commons.collections.ExtendedProperties;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringEscapeUtils;
@@ -139,6 +140,13 @@ public class StrUtils {
         }
     }
 
+    public static String uniteWords(String string1, String string2) {
+        Set<String> words = new LinkedHashSet<>(); // Create a set to store unique words from both strings preserving the order of words
+        words.addAll(Arrays.asList(string1.split("\\s+"))); // Add words from string1 to the set
+        words.addAll(Arrays.asList(string2.split("\\s+"))); // Add words from string2 to the set
+        return words.stream().collect(Collectors.joining(" ")); // Join the words from the set back into a single string
+    }
+
     public static String separateLines(String string, int maxLineLength) {
         return separateLines(string, maxLineLength, "\n");
     }
@@ -148,7 +156,7 @@ public class StrUtils {
     }
 
     public static String separateLines(String string, int maxLineLength, String separator, boolean separatorLine) {
-        List<String> list = StrUtils.split(string, maxLineLength, separator, separatorLine);
+        List<String> list = split(string, maxLineLength, separator, separatorLine);
         String sep = splitSeparator(separator);
         String str = StringUtils.join(list, sep);
         boolean ls = linesSeparator(separator, separatorLine);
@@ -259,6 +267,86 @@ public class StrUtils {
     public static String rtrimToNull(String s) {
         String t = rtrim(s);
         return t == null || t.isEmpty() ? null : t;
+    }
+
+    private final static String LTR_FLAG = "(LTR)";
+
+    private final static String RTL_FLAG = "(RTL)";
+
+    public static String format(String string, String template) {
+        if (string == null || template == null) {
+            return string;
+        }
+        int m = string.length();
+        int n = template.length();
+        if (m < 1 || n < 1) {
+            return string;
+        }
+        String t2uc = template.toUpperCase();
+        boolean ltr = t2uc.startsWith(LTR_FLAG); // left-to-right
+        boolean rtl = t2uc.startsWith(RTL_FLAG); // right-to-left
+        String twof = ltr ? StringUtils.removeStartIgnoreCase(template, LTR_FLAG)
+            : rtl ? StringUtils.removeStartIgnoreCase(template, RTL_FLAG) : template;
+        /**/
+        return twof.isEmpty() ? string : ltr || (!rtl && !StringUtils.isNumeric(string)) ? ltr(string, twof) : rtl(string, twof);
+    }
+
+    private static String ltr(String string, String template) {
+        StringBuilder sb = new StringBuilder();
+        int m = string.length();
+        int n = template.length();
+        boolean b = false;
+        for (int i = 0, j = 0; i < m && j < n; j++) {
+            char c = template.charAt(j);
+            if (b) {
+                b = false;
+                sb.append(c);
+            } else {
+                switch (c) {
+                    case '\\' ->
+                        b = true;
+                    case 'X' -> {
+                        sb.append(string.charAt(i));
+                        i++;
+                    }
+                    default ->
+                        sb.append(c);
+                }
+            }
+        }
+        return sb.toString();
+    }
+
+    private static String rtl(String string, String template) {
+        StringBuilder sb = new StringBuilder();
+        int m = string.length();
+        int n = template.length();
+        boolean b = false;
+        for (int i = m - 1, j = n - 1; i >= 0 && j >= 0; j--) {
+            char c = template.charAt(j);
+            if (b) {
+                b = false;
+                sb.append(c);
+            } else {
+                switch (c) {
+                    case '\\' ->
+                        b = true;
+                    case 'X' -> {
+                        sb.insert(0, string.charAt(i));
+                        i--;
+                    }
+                    default ->
+                        sb.insert(0, c);
+                }
+            }
+        }
+        return sb.toString();
+    }
+
+    private static final String key_value_pair_json_pattern = "'{'\"{0}\": \"{1}\"'}'";
+
+    public static String getStringJson(String key, Object value) {
+        return key == null || value == null ? null : MessageFormat.format(key_value_pair_json_pattern, key, ObjUtils.toString(value));
     }
 
     public static String toString(Object obj) {

@@ -107,6 +107,8 @@ public class RolUsuario extends AbstractPersistentEntity {
         super.settleProperties();
         /**/
         nombre.setCalculableValueExpression(concatenate(usuario.codigoUsuario, SLASH, rol.codigoRol));
+        /*
+        usuario.setRestrictedAccessEntityReference(false); // para que los autorizados al grupo del rol puedan asignar el rol a cualquier usuario
         /**/
         // <editor-fold defaultstate="collapsed" desc="localization of RolUsuario's properties">
         rol.setLocalizedLabel(ENGLISH, "role");

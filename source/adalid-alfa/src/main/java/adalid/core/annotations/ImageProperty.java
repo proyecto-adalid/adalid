@@ -35,7 +35,7 @@ public @interface ImageProperty {
      *
      * @return avatarShape
      */
-    AvatarShape avatarShape() default AvatarShape.NONE;
+    AvatarShape avatarShape() default AvatarShape.UNSPECIFIED;
 
     /**
      * avatarDefault especifica el avatar de las instancias que no tienen imagen. Este elemento es relevante solo si el valor especificado, o
@@ -46,7 +46,7 @@ public @interface ImageProperty {
      *
      * @return avatarShape
      */
-    AvatarDefault avatarDefault() default AvatarDefault.NONE;
+    AvatarDefault avatarDefault() default AvatarDefault.UNSPECIFIED;
 
     /**
      * avatarWidth específica el número de pixeles de ancho de la imagen en la vista, cuando se utiliza como avatar. Este elemento es relevante solo
@@ -89,9 +89,9 @@ public @interface ImageProperty {
     int[] displayHeight() default {0, 0, 0};
 
     /**
-     * resizable indica si el ancho de la imagen se debe ajustar de manera dinámica y proporcional en función de las dimensiones reales de la imagen y
-     * de los valores especificados para los elementos displayWidth y displayHeight. Su valor es uno de los elementos de la enumeración Kleenean.
-     * Seleccione TRUE para ajustar el ancho; en caso contrario, seleccione FALSE. Alternativamente, omita el elemento o seleccione UNSPECIFIED para
+     * resizable indica si el tamaño de la imagen se debe ajustar de manera dinámica y proporcional en función de las dimensiones reales de la imagen
+     * y de los valores especificados para los elementos displayWidth y displayHeight. Su valor es uno de los elementos de la enumeración Kleenean.
+     * Seleccione TRUE para ajustar el tamaño; en caso contrario, seleccione FALSE. Alternativamente, omita el elemento o seleccione UNSPECIFIED para
      * utilizar el valor predeterminado del atributo. El valor predeterminado del atributo es TRUE.
      *
      * @return resizable

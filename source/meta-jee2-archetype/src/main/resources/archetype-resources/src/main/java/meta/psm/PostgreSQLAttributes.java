@@ -20,7 +20,7 @@ import static meta.psm.PostgreSQLAttributeKeys.TABLESPACE;
 import static meta.psm.PostgreSQLAttributeKeys.WITH;
 
 /**
- * @author ADALID meta-jee2-archetype
+ * @author ADALID meta-jee2-archetype, version 6.0.0
  */
 public class PostgreSQLAttributes {
 

@@ -15,7 +15,7 @@ import adalid.jee2.constants.*;
 import meta.psm.ProjectAttributeKeys;
 
 /**
- * @author ADALID meta-jee2-archetype
+ * @author ADALID meta-jee2-archetype, version 6.0.0
  */
 @MasterProject(acronym = Maestro.ACRONYM, alias = Maestro112.ALIAS, helpFile = Maestro112.ALIAS)
 public class Maestro112 extends Maestro {
@@ -86,23 +86,8 @@ public class Maestro112 extends Maestro {
     public void configureGenerator() {
         super.configureGenerator();
         loadEnvironmentVariables(LoggingLevel.TRACE);
-//
 //      putEnvironmentVariable(CONTENT_ROOT_DIR_LINUX, "/opt/content-root");
 //      putEnvironmentVariable(CONTENT_ROOT_DIR_WINDOWS, "%SystemDrive%/content-root");
-//
-//      putEnvironmentVariable(ORACLE_DRIVER_ID, "ojdbc11");
-//      putEnvironmentVariable(ORACLE_DRIVER_JAR, "ojdbc11.jar");
-//      putEnvironmentVariable(ORACLE_DRIVER_VERSION, "23.4.0.24.05");
-//      putEnvironmentVariable(ORACLE_SERVICE, "XEPDB1");
-//      putEnvironmentVariable(PLATAFORMA_JAVA, "jakarta");
-//      putEnvironmentVariable(VERSION_ECLIPSELINK, "4.0.2");
-//      putEnvironmentVariable(VERSION_ORACLE, "21c");
-//      putEnvironmentVariable(VERSION_WILDFLY, "32.0.1.Final");
-//      putEnvironmentVariable(VERSION_JAVA, "17");
-//      putEnvironmentVariable(VERSION_PRIMEFACES, "13.0.10");
-//      putEnvironmentVariable(VERSION_GOOGLE_GSON, "2.10.1");
-//      putEnvironmentVariable(VERSION_THIRD_PARTY_DIR, "5.0");
-//
 //      loadPrivateProperties(LoggingLevel.INFO);
 //      setTheme(PrimeFacesThemes.SAGA);
 //      setThemeSwitchingEnabled(true);
@@ -139,7 +124,7 @@ public class Maestro112 extends Maestro {
     @Override
     public void addDirectives() {
         super.addDirectives();
-//      addFileExclusionPattern(expresión regular para evaluar el nombre de los archivos que se deben excluir);
+//      addFileExclusionPattern(expresión regular para evaluar el nombre de los archivos que se deben excluir y eliminar);
 //      por ejemplo: addFileExclusionPattern("^.*/data-migration/base/insert-select-past-data-[${backslash}${backslash}d]{8}-[${backslash}${backslash}d]{4}${backslash}${backslash}.sql${dollar}");
 //      por ejemplo: addFileExclusionPattern("^.*/webapp/resources/help/base/special-component/barraBotonesAccion1.xhtml${dollar}");
 //      addFilePreservationPattern(expresión regular para evaluar el nombre de los archivos que se deben preservar);

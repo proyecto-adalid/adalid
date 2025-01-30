@@ -22,8 +22,7 @@ public class IsInstanceOperation implements Predicate {
 
     @Override
     public boolean evaluate(Object object) {
-        if (object instanceof Operation) {
-            Operation operation = (Operation) object;
+        if (object instanceof Operation operation) {
             return operation.isInstanceOperation(); // OperationKind.INSTANCE.equals(operation.getOperationKind()) until 26/07/2023
         }
         return false;

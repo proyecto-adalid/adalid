@@ -92,7 +92,7 @@ public class ArchivoAdjunto extends AbstractPersistentEntity {
 //  20231209: remove foreign-key referring to Usuario because it might cause ARJUNA012117 and/or ARJUNA012121
 //  @ForeignKey(onDelete = OnDeleteAction.NONE, onUpdate = OnUpdateAction.NONE)
     @ManyToOne(navigability = Navigability.UNIDIRECTIONAL, view = MasterDetailView.NONE)
-    @PropertyField(hidden = Kleenean.TRUE)
+    @PropertyField(table = Kleenean.FALSE, export = Kleenean.FALSE, report = Kleenean.FALSE, heading = Kleenean.FALSE, overlay = Kleenean.TRUE, search = Kleenean.FALSE, filter = Kleenean.FALSE, column = Kleenean.FALSE) // hidden until 02/11/2024
     @QueryMapping(mapKeyProperties = Kleenean.FALSE)
     public Usuario propietario;
 
@@ -182,18 +182,11 @@ public class ArchivoAdjunto extends AbstractPersistentEntity {
         referencias.setInitialValue(0);
         referencias.setDefaultValue(0);
         /**/
-//      eliminable=not(tipo_carga is null or tipo_carga = 'FILA');
         eliminable.setInitialValue(false);
-        eliminable.setDefaultValue(not(tipoCarga.isNullOrEqualTo("FILA")));
-        eliminable.setPrimalDefaultValue(true);
+        eliminable.setDefaultValue(false);
         /**/
-//      restaurable=not(octetos is null or archivo_servidor like '/%/media/%-%-%-%-%/table-row-column/%.%');
-//      archivo_servidor: /${ALIAS}-content-base/media/${UUID}/table-row-column/${NAME}.${TYPE} (FILA => table-row-column)
-//      e.g. /jee2ap101-content-base/media/97dc9878-1927-4287-b02e-c5835fb8aa01/table-row-column/164843751567204330.jpg
-        BooleanExpression likish = and(archivoServidor.contains("/media/"), archivoServidor.contains("/table-row-column/"));
         restaurable.setInitialValue(false);
-        restaurable.setDefaultValue(not(octetos.isNull().or(likish))); // formerly just restaurable.setDefaultValue(octetos.isNotNull());
-        restaurable.setPrimalDefaultValue(true);
+        restaurable.setDefaultValue(false);
         /**/
         // <editor-fold defaultstate="collapsed" desc="localization of ArchivoAdjunto's properties">
         /**/
@@ -208,38 +201,40 @@ public class ArchivoAdjunto extends AbstractPersistentEntity {
         archivoServidor.setLocalizedTooltip(ENGLISH, "open the attached file");
         archivoServidor.setLocalizedTooltip(SPANISH, "abrir el archivo adjunto");
         /**/
-        archivoCliente.setLocalizedDescription(ENGLISH, "name of the original file (file on the computer of the user who made the upload)");
+        archivoCliente.setLocalizedDescription(ENGLISH, "name of the original file (file on the computer of the user who performed the upload)");
         archivoCliente.setLocalizedDescription(SPANISH, "nombre del archivo original (archivo en el computador del usuario que realizó la carga)");
         archivoCliente.setLocalizedLabel(ENGLISH, "attached file's client file name");
         archivoCliente.setLocalizedLabel(SPANISH, "archivo cliente del archivo adjunto");
         archivoCliente.setLocalizedShortLabel(ENGLISH, "client file");
         archivoCliente.setLocalizedShortLabel(SPANISH, "archivo cliente");
         /**/
-        propietario.setLocalizedDescription(ENGLISH, "user who made the upload");
+        propietario.setLocalizedDescription(ENGLISH, "user who performed the upload");
         propietario.setLocalizedDescription(SPANISH, "usuario que realizó la carga");
-        propietario.setLocalizedLabel(ENGLISH, "attached file's owner");
-        propietario.setLocalizedLabel(SPANISH, "propietario del archivo adjunto");
-        propietario.setLocalizedShortLabel(ENGLISH, "owner");
-        propietario.setLocalizedShortLabel(SPANISH, "propietario");
+        propietario.setLocalizedShortDescription(ENGLISH, "user who performed the upload");
+        propietario.setLocalizedShortDescription(SPANISH, "usuario que realizó la carga");
+        propietario.setLocalizedLabel(ENGLISH, "owner");
+        propietario.setLocalizedLabel(SPANISH, "propietario");
         /**/
-        codigoUsuarioPropietario.setLocalizedDescription(ENGLISH, "code of the user who made the upload");
+        codigoUsuarioPropietario.setLocalizedDescription(ENGLISH, "code of the user who performed the upload");
         codigoUsuarioPropietario.setLocalizedDescription(SPANISH, "código del usuario que realizó la carga");
-        codigoUsuarioPropietario.setLocalizedLabel(ENGLISH, "owner");
-        codigoUsuarioPropietario.setLocalizedLabel(SPANISH, "propietario");
+        codigoUsuarioPropietario.setLocalizedLabel(ENGLISH, "owner code");
+        codigoUsuarioPropietario.setLocalizedLabel(SPANISH, "código del propietario");
         /**/
-        nombreUsuarioPropietario.setLocalizedDescription(ENGLISH, "name of the user who made the upload");
+        nombreUsuarioPropietario.setLocalizedDescription(ENGLISH, "name of the user who performed the upload");
         nombreUsuarioPropietario.setLocalizedDescription(SPANISH, "nombre del usuario que realizó la carga");
         nombreUsuarioPropietario.setLocalizedLabel(ENGLISH, "owner name");
         nombreUsuarioPropietario.setLocalizedLabel(SPANISH, "nombre del propietario");
         /**/
         rastroProcesoCarga.setLocalizedDescription(ENGLISH, "audit trail of the execution of the business process that performed the file upload");
         rastroProcesoCarga.setLocalizedDescription(SPANISH, "rastro de auditoría de la ejecución del proceso de negocio que realizó la carga del archivo");
+        rastroProcesoCarga.setLocalizedShortDescription(ENGLISH, "audit trail of the execution of the business process that performed the file upload");
+        rastroProcesoCarga.setLocalizedShortDescription(SPANISH, "rastro de auditoría de la ejecución del proceso de negocio que realizó la carga del archivo");
         rastroProcesoCarga.setLocalizedLabel(ENGLISH, "process execution audit trail");
         rastroProcesoCarga.setLocalizedLabel(SPANISH, "rastro de ejecución del proceso");
         rastroProcesoCarga.setLocalizedShortLabel(ENGLISH, "process audit trail");
         rastroProcesoCarga.setLocalizedShortLabel(SPANISH, "rastro del proceso");
         /**/
-        fechaHoraCarga.setLocalizedDescription(ENGLISH, "date and time the upload was made");
+        fechaHoraCarga.setLocalizedDescription(ENGLISH, "date and time the upload was performed");
         fechaHoraCarga.setLocalizedDescription(SPANISH, "fecha y hora en la que se realizó la carga");
         fechaHoraCarga.setLocalizedLabel(ENGLISH, "upload timestamp");
         fechaHoraCarga.setLocalizedLabel(SPANISH, "fecha hora carga");
@@ -292,11 +287,30 @@ public class ArchivoAdjunto extends AbstractPersistentEntity {
         // </editor-fold>
     }
 
+    protected Segment mis;
+
+    @Override
+    protected void settleExpressions() {
+        super.settleExpressions();
+        /**/
+        mis = codigoUsuarioPropietario.isEqualTo(CURRENT_USER_CODE);
+        /**/
+        mis.setLocalizedCollectionLabel(ENGLISH, "files uploaded by the current user");
+        mis.setLocalizedCollectionLabel(SPANISH, "archivos cargados por el usuario actual");
+        mis.setLocalizedCollectionShortLabel(ENGLISH, "My files");
+        mis.setLocalizedCollectionShortLabel(SPANISH, "Mis archivos");
+        /**/
+    }
+
     @Override
     protected void settleFilters() {
         super.settleFilters();
         /**/
         setMasterDetailFilter(rastroProcesoCarga.conArchivosCargados);
+        /**/
+        addSelectSegment(mis, true);
+        /**/
+        propietario.setRenderingFilter(propietario.id.isNotNull()); // mostrar si, y solo si, el propietario no ha sido eliminado
         /**/
     }
 

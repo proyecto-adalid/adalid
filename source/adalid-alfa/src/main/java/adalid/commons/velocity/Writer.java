@@ -710,6 +710,7 @@ public class Writer {
                         message = MessageFormat.format(pattern, tpfnwox, TP_DISABLED, templatePropertiesFile);
                         log(_disabledLevel, message);
                         alerts++;
+                        excludeFile(platformWriterContext, templatePropertiesFile);
                     } else if (missing(disabledMissing)) {
                         processedTemplatePropertiesFileMap.put(template, currPath);
                         disabledTemplates++;
@@ -718,6 +719,7 @@ public class Writer {
                         message = MessageFormat.format(pattern, tpfnwox, TP_DISABLED_MISSING, templatePropertiesFile, disabledMissing);
                         log(_disabledLevel, message);
                         alerts++;
+                        excludeFile(platformWriterContext, templatePropertiesFile);
                     } else if (foreign(disabledForeign)) {
                         processedTemplatePropertiesFileMap.put(template, currPath);
                         disabledTemplates++;
@@ -726,6 +728,7 @@ public class Writer {
                         message = MessageFormat.format(pattern, tpfnwox, TP_DISABLED_FOREIGN, templatePropertiesFile, disabledForeign);
                         log(_disabledLevel, message);
                         alerts++;
+                        excludeFile(platformWriterContext, templatePropertiesFile);
                     } else if (privado(disabledPrivate)) {
                         processedTemplatePropertiesFileMap.put(template, currPath);
                         disabledTemplates++;
@@ -734,6 +737,7 @@ public class Writer {
                         message = MessageFormat.format(pattern, tpfnwox, TP_DISABLED_PRIVATE, templatePropertiesFile, disabledPrivate);
                         log(_disabledLevel, message);
                         alerts++;
+                        excludeFile(platformWriterContext, templatePropertiesFile);
                     } else {
                         processedTemplatePropertiesFileMap.put(template, currPath);
                         writeTemplate(platformWriterContext, templatePropertiesFile);
@@ -805,6 +809,67 @@ public class Writer {
 
     private boolean privado(String resourceName) {
         return StringUtils.isNotBlank(resourceName) && privateResourceNames != null && privateResourceNames.contains(resourceName);
+    }
+
+    private void excludeFile(WriterContext templateWriterContext, File templatePropertiesFile) {
+        if (fileExclusionPatterns == null) {
+            return;
+        }
+        VelocityContext fileContext = templateWriterContext.getVelocityContextClone();
+        TLB.setProgrammers(templateWriterContext.programmers);
+        TLB.setWrapperClasses(templateWriterContext.wrapperClasses);
+        Properties properties = mergeProperties(fileContext, templatePropertiesFile);
+        String userPath = pathString(USER_DIR);
+        String filePath = StringUtils.trimToNull(properties.getProperty(TP_PATH));
+        String filePack = StringUtils.trimToNull(properties.getProperty(TP_PACKAGE));
+        String fileName = StringUtils.trimToNull(properties.getProperty(TP_FILE));
+        String root = bootstrappingRootFolder.getPath();
+        String raiz = root.replace(FILE_SEPARATOR, SLASH);
+        String hint = "; check property \"{0}\" at file \"{1}\"";
+        if (fileName == null) {
+            String pattern = "failed to obtain a valid file name" + hint;
+            String message = MessageFormat.format(pattern, TP_FILE, templatePropertiesFile);
+            logger.error(message);
+            errors++;
+            return;
+        }
+        if (filePath == null) {
+            filePath = userPath;
+        } else {
+            filePath = pathString(filePath);
+            if (isRelativePath(filePath)) {
+                if (filePath.startsWith(FILE_SEPARATOR)) {
+                    filePath = userPath + filePath;
+                } else {
+                    filePath = userPath + FILE_SEPARATOR + filePath;
+                }
+            }
+        }
+        if (filePack != null) {
+            filePath += FILE_SEPARATOR + pathString(StringUtils.replace(filePack, DOT, SLASH));
+        }
+        File path = new File(filePath);
+        if (path.exists()) {
+            if (path.isDirectory()) {
+                String fullname = path.getPath() + FILE_SEPARATOR + fileName;
+                String slashedPath = fullname.replace(FILE_SEPARATOR, SLASH);
+                File file = new File(fullname);
+                if (file.exists()) {
+                    String regex, pattern, message;
+                    for (Pattern fxp : fileExclusionPatterns) {
+                        regex = fxp.pattern();
+                        if (slashedPath.matches(regex)) {
+                            excludedFiles++;
+                            pattern = "file {0} will be deleted; it matches exclusion expression \"{1}\"";
+                            message = MessageFormat.format(pattern, StringUtils.removeStartIgnoreCase(slashedPath, raiz), regex);
+                            log(Level.INFO, message);
+                            alerts++;
+                            FileUtils.deleteQuietly(file);
+                        }
+                    }
+                }
+            }
+        }
     }
 
     private void writeTemplate(WriterContext platformWriterContext, File templatePropertiesFile) {
@@ -969,7 +1034,7 @@ public class Writer {
                         excludedFiles++;
                         pattern = "file {0} will be deleted; it matches exclusion expression \"{1}\"";
                         message = MessageFormat.format(pattern, StringUtils.removeStartIgnoreCase(slashedPath, raiz), regex);
-                        log(_excludedLevel, message);
+                        log(Level.INFO, message);
                         alerts++;
                         FileUtils.deleteQuietly(file);
                         return;
@@ -1600,7 +1665,8 @@ public class Writer {
                 continue;
             }
             log(_detailLevel, "deleting files " + wildcard + " from " + StringUtils.removeStartIgnoreCase(pathname, raiz) + " " + recursively);
-            fileFilter = new WildcardFileFilter(wildcard);
+//          fileFilter = new WildcardFileFilter(wildcard);
+            fileFilter = WildcardFileFilter.builder().setWildcards(wildcard).get();
             matchingFiles = FileUtils.listFiles(directory, fileFilter, dirFilter);
             for (File file : matchingFiles) {
                 path = file.getPath();

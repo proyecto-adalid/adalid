@@ -23,8 +23,7 @@ public class IsUnidirectionalEntityReference implements Predicate {
 
     @Override
     public boolean evaluate(Object object) {
-        if (object instanceof EntityReference) {
-            EntityReference reference = (EntityReference) object;
+        if (object instanceof EntityReference reference) {
             return Navigability.UNIDIRECTIONAL.equals(reference.getNavigability());
         }
         return false;

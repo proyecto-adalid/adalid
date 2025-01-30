@@ -116,6 +116,12 @@ public class ProjectAttributeKeys {
     public static final String ALWAYS_OPEN_CONTENT_VIEWER_AS_DIALOG = "always_open_content_viewer_as_dialog";
 
     /**
+     * true si la interfaz gráfica de la aplicación generada debe abrir las consolas de procesamiento como un diálogo cuando sea oportuno; de lo
+     * contrario especifique false. El valor predeterminado es true.
+     */
+    public static final String ALLOW_OPEN_PROCESSING_CONSOLE_AS_DIALOG = "allow_open_processing_console_as_dialog";
+
+    /**
      * true si la interfaz gráfica de la aplicación generada debe utilizar el método básico de autenticación de HTTP; de lo contrario false. El valor
      * por omisión es false.
      */

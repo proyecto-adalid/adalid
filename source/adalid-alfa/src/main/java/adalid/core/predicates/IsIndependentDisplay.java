@@ -22,8 +22,7 @@ public class IsIndependentDisplay implements Predicate {
 
     @Override
     public boolean evaluate(Object object) {
-        if (object instanceof Display) {
-            Display display = (Display) object;
+        if (object instanceof Display display) {
             return display.getEntity() != null && display.getReference() == null && display.getMaster() == null;
         }
         return false;

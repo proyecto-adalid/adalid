@@ -482,33 +482,32 @@ public class View extends AbstractArtifact {
             addGrafico(grafico, alias, field, group, true, option);
             addGroupBy(groupBy, alias, field, group);
             switch (option) {
-                case DETAIL:
+                case DETAIL ->
                     addOrderBy(orderBy, alias, order);
-                    break;
-                case SUMMARY:
+                case SUMMARY -> {
                     if (field.isControlField()) {
                         addOrderBy(orderBy, alias, order);
                     }
-                    break;
-                case CHART:
-                case CHART_BY_GROUP:
+                }
+                case CHART, CHART_BY_GROUP -> {
                     if (field.isControlField()) {
                         filters.add(alias + " IS NOT NULL");
                         if (grupoGrafico(group, option)) {
                             addOrderBy(orderBy, alias, order);
                         }
                     }
-                    break;
+                }
             }
         }
         boolean distinct = false;
         switch (option) {
-            case DETAIL:
+            case DETAIL -> {
                 return select(distinct, detalle, from, null, null, orderBy);
-            case SUMMARY:
+            }
+            case SUMMARY -> {
                 return select(distinct, resumen, from, null, groupBy, orderBy);
-            case CHART:
-            case CHART_BY_GROUP:
+            }
+            case CHART, CHART_BY_GROUP -> {
                 distinct = true;
                 if (grafico.isEmpty()) {
                     grafico.add("1");
@@ -516,8 +515,10 @@ public class View extends AbstractArtifact {
                 } else {
                     return select(distinct, grafico, from, filters, null, orderBy);
                 }
-            default:
+            }
+            default -> {
                 return null;
+            }
         }
     }
 
@@ -525,17 +526,16 @@ public class View extends AbstractArtifact {
         if (option == null) {
             return false;
         }
-        switch (option) {
-            case DETAIL:
-                return _selectable;
-            case SUMMARY:
-                return _summarizable;
-            case CHART:
-            case CHART_BY_GROUP:
-                return _chartable;
-            default:
-                return false;
-        }
+        return switch (option) {
+            case DETAIL ->
+                _selectable;
+            case SUMMARY ->
+                _summarizable;
+            case CHART, CHART_BY_GROUP ->
+                _chartable;
+            default ->
+                false;
+        };
     }
 
     private void addDetalle(List<String> detalle, String alias, boolean visible) {
@@ -550,59 +550,52 @@ public class View extends AbstractArtifact {
             }
         } else {
             switch (tipo) {
-                case COUNT:
+                case COUNT ->
                     resumen.add(cnt(alias, visible));
-                    break;
-                case MINIMUM:
+                case MINIMUM ->
                     resumen.add(min(alias, visible));
-                    break;
-                case MAXIMUM:
+                case MAXIMUM ->
                     resumen.add(max(alias, visible));
-                    break;
-                case SUM:
+                case SUM ->
                     resumen.add(sum(alias, visible));
-                    break;
-                case AVERAGE:
+                case AVERAGE ->
                     resumen.add(avg(alias, visible));
-                    break;
-                case DEVIATION:
+                case DEVIATION ->
                     resumen.add(dev(alias, visible));
-                    break;
-                case COUNT_MINIMUM_MAXIMUM:
+                case COUNT_MINIMUM_MAXIMUM -> {
                     resumen.add(cnt(alias, visible));
                     resumen.add(min(alias, visible));
                     resumen.add(max(alias, visible));
-                    break;
-                case MINIMUM_MAXIMUM:
+                }
+                case MINIMUM_MAXIMUM -> {
                     resumen.add(min(alias, visible));
                     resumen.add(max(alias, visible));
-                    break;
-                case SUM_COUNT_AVERAGE:
+                }
+                case SUM_COUNT_AVERAGE -> {
                     resumen.add(sum(alias, visible));
                     resumen.add(cnt(alias, visible));
                     resumen.add(avg(alias, visible));
-                    break;
-                case SUM_COUNT_AVERAGE_DEVIATION_MINIMUM_MAXIMUM:
+                }
+                case SUM_COUNT_AVERAGE_DEVIATION_MINIMUM_MAXIMUM -> {
                     resumen.add(sum(alias, visible));
                     resumen.add(cnt(alias, visible));
                     resumen.add(avg(alias, visible));
                     resumen.add(dev(alias, visible));
                     resumen.add(min(alias, visible));
                     resumen.add(max(alias, visible));
-                    break;
-                case AVERAGE_DEVIATION:
+                }
+                case AVERAGE_DEVIATION -> {
                     resumen.add(avg(alias, visible));
                     resumen.add(dev(alias, visible));
-                    break;
-                case AVERAGE_DEVIATION_MINIMUM_MAXIMUM:
+                }
+                case AVERAGE_DEVIATION_MINIMUM_MAXIMUM -> {
                     resumen.add(avg(alias, visible));
                     resumen.add(dev(alias, visible));
                     resumen.add(min(alias, visible));
                     resumen.add(max(alias, visible));
-                    break;
-                default:
+                }
+                default ->
                     resumen.add(cnt(alias, visible));
-                    break;
             }
         }
     }

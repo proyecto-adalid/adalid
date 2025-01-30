@@ -150,8 +150,7 @@ public abstract class Primitive extends AbstractDataArtifact implements Expressi
     @Override
     public Map<String, QueryJoin> getReferencedJoinsMap() {
         Entity declaringEntity = getDeclaringEntity();
-        if (declaringEntity instanceof PersistentEntity) {
-            PersistentEntity pent = (PersistentEntity) declaringEntity;
+        if (declaringEntity instanceof PersistentEntity pent) {
             QueryTable queryTable = pent.getQueryTable();
             return queryTable.getReferencedJoinsMap(this);
         }

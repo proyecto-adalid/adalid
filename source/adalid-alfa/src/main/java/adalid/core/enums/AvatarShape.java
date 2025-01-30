@@ -17,6 +17,6 @@ package adalid.core.enums;
  */
 public enum AvatarShape {
 
-    NONE, CIRCLE, RECTANGLE
+    UNSPECIFIED, NONE, CIRCLE, RECTANGLE
 
 }

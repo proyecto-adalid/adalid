@@ -96,6 +96,16 @@ public @interface OperationClass {
     Kleenean complex() default Kleenean.UNSPECIFIED; // FALSE
 
     /**
+     * dialogSize especifica el porcentaje del espacio disponible en la ventana actual que ocupa la ventana emergente para ejecutar la operación,
+     * cuando se abre la consola de procesamiento como un diálogo. Por lo general, cuando el porcentaje es menor que 50, la ventana emergente será del
+     * tamaño mínimo requerido, el cual es 640 x 480 pixeles. Especifique 0 para no abrir la consola de procesamiento como un diálogo. El valor
+     * predeterminado es 0 si la operación es un constructor; de lo contrario, 100.
+     *
+     * @return dialogSize
+     */
+    int dialogSize() default -1; // menor que 0 equivale al valor predeterminado
+
+    /**
      * logging especifica cuando se deben registrar pistas de auditoría de la ejecución de la operación. Su valor es uno de los elementos de la
      * enumeración OperationLogging. Seleccione SUCCESS, FAILURE o BOTH si las pistas se deben registrar cuando la operación se ejecute exitosamente,
      * cuando se produzca un error al ejecutar la operación, o en ambos casos, respectivamente. Alternativamente, omita el elemento o seleccione

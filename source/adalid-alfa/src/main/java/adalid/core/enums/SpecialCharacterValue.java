@@ -19,12 +19,12 @@ import adalid.core.interfaces.*;
  */
 public enum SpecialCharacterValue implements SpecialValue {
 
-    NULL, EMPTY, CONTENT_ROOT_DIR, CURRENT_USER_CODE;
+    NULL, EMPTY, RGUID, CONTENT_ROOT_DIR, CURRENT_USER_CODE;
 
     @Override
     public Class<?> getDataType() {
         return switch (this) {
-            case EMPTY, CONTENT_ROOT_DIR, CURRENT_USER_CODE ->
+            case EMPTY, RGUID, CONTENT_ROOT_DIR, CURRENT_USER_CODE ->
                 String.class;
             default ->
                 Object.class;

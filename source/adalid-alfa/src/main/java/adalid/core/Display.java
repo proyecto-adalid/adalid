@@ -116,18 +116,14 @@ public abstract class Display extends AbstractArtifact implements Comparable<Dis
         if (_entity != null) {
             String helpDocument = _entity.getHelpDocument();
             switch (_displayFormat) {
-                case TABLE:
+                case TABLE ->
                     helpDocument = StringUtils.defaultIfBlank(_entity.getTableViewHelpDocument(), helpDocument);
-                    break;
-                case DETAIL:
+                case DETAIL ->
                     helpDocument = StringUtils.defaultIfBlank(_entity.getDetailViewHelpDocument(), helpDocument);
-                    break;
-                case TREE:
+                case TREE ->
                     helpDocument = StringUtils.defaultIfBlank(_entity.getTreeViewHelpDocument(), helpDocument);
-                    break;
-                case CONSOLE:
+                case CONSOLE ->
                     helpDocument = StringUtils.defaultIfBlank(_entity.getConsoleViewHelpDocument(), helpDocument);
-                    break;
             }
             if (StringUtils.isNotBlank(helpDocument)) {
                 return helpDocument;
@@ -169,18 +165,14 @@ public abstract class Display extends AbstractArtifact implements Comparable<Dis
         if (_entity != null) {
             String helpFileName = _entity.getHelpFileName();
             switch (_displayFormat) {
-                case TABLE:
+                case TABLE ->
                     helpFileName = StringUtils.defaultIfBlank(_entity.getTableViewHelpFileName(), helpFileName);
-                    break;
-                case DETAIL:
+                case DETAIL ->
                     helpFileName = StringUtils.defaultIfBlank(_entity.getDetailViewHelpFileName(), helpFileName);
-                    break;
-                case TREE:
+                case TREE ->
                     helpFileName = StringUtils.defaultIfBlank(_entity.getTreeViewHelpFileName(), helpFileName);
-                    break;
-                case CONSOLE:
+                case CONSOLE ->
                     helpFileName = StringUtils.defaultIfBlank(_entity.getConsoleViewHelpFileName(), helpFileName);
-                    break;
             }
             if (StringUtils.isNotBlank(helpFileName)) {
                 return helpFileName;

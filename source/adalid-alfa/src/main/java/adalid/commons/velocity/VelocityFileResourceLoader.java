@@ -21,7 +21,6 @@ import java.io.InputStream;
  */
 public class VelocityFileResourceLoader extends org.apache.velocity.runtime.resource.loader.FileResourceLoader {
 
-    /**/
     @Override
     public synchronized InputStream getResourceStream(String name) {
         return new IndentationFilterInputStream(super.getResourceStream(name));
@@ -103,15 +102,16 @@ public class VelocityFileResourceLoader extends org.apache.velocity.runtime.reso
                 while (true) {
                     ch = in.read();
                     switch (ch) {
-                        case -1:
+                        case -1 -> {
                             eof = true;
                             break search;
-                        case '\n':
+                        }
+                        case '\n' -> {
                             line += '\n';
                             break search;
-                        default:
+                        }
+                        default ->
                             line += (char) ch;
-                            break;
                     }
                 }
             boolean startsWithDots = false;

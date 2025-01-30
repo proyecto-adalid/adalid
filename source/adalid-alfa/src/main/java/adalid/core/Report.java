@@ -98,7 +98,7 @@ public class Report extends AbstractArtifact implements Comparable<Report> {
         _entity = entity;
         _detailGroup = ReportGroup.addReportGroup(this);
         List<ReportField> fields = _detailGroup.getFields();
-        if (fields != null && fields.size() > 0) {
+        if (fields != null && !fields.isEmpty()) {
             resize(_detailGroup);
         }
         Collections.sort(_groups);
@@ -227,7 +227,7 @@ public class Report extends AbstractArtifact implements Comparable<Report> {
     /**
      * @param interFieldGapWidth the inter field gap width to set
      */
-    void setInterFieldGapWidth(int interFieldGapWidth) {
+    protected void setInterFieldGapWidth(int interFieldGapWidth) { // protected avoids method never unused warning
         _interFieldGapWidth = interFieldGapWidth;
     }
 
@@ -379,7 +379,7 @@ public class Report extends AbstractArtifact implements Comparable<Report> {
         int columnWidth = getColumnWidth();
         String viewName = _entity.getName() + "." + _view.getName();
         List<ReportField> fields = _detailGroup.getFields();
-        if (fields != null && fields.size() > 0) {
+        if (fields != null && !fields.isEmpty()) {
             for (ReportField field : fields) {
                 w = field.getPixels();
                 if (w > 0) {

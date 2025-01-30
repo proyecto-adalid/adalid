@@ -23,8 +23,7 @@ public class IsBidirectionalEntityReference implements Predicate {
 
     @Override
     public boolean evaluate(Object object) {
-        if (object instanceof EntityReference) {
-            EntityReference reference = (EntityReference) object;
+        if (object instanceof EntityReference reference) {
             return Navigability.BIDIRECTIONAL.equals(reference.getNavigability());
         }
         return false;

@@ -116,36 +116,33 @@ public class SortedProperties extends Properties {
                 continue;
             }
             switch (aChar) {
-                case ' ':
+                case ' ' -> {
                     if (x == 0 || escapeSpace) {
                         outBuffer.append('\\');
                     }
                     outBuffer.append(' ');
-                    break;
-                case '\t':
+                }
+                case '\t' -> {
                     outBuffer.append('\\');
                     outBuffer.append('t');
-                    break;
-                case '\n':
+                }
+                case '\n' -> {
                     outBuffer.append('\\');
                     outBuffer.append('n');
-                    break;
-                case '\r':
+                }
+                case '\r' -> {
                     outBuffer.append('\\');
                     outBuffer.append('r');
-                    break;
-                case '\f':
+                }
+                case '\f' -> {
                     outBuffer.append('\\');
                     outBuffer.append('f');
-                    break;
-                case '=': // Fall through
-                case ':': // Fall through
-                case '#': // Fall through
-                case '!':
+                }
+                case '=', ':', '#', '!' -> {
                     outBuffer.append('\\');
                     outBuffer.append(aChar);
-                    break;
-                default:
+                }
+                default -> {
                     if (((aChar < 0x0020) || (aChar > 0x007e)) & escapeUnicode) {
                         outBuffer.append('\\');
                         outBuffer.append('u');
@@ -156,7 +153,7 @@ public class SortedProperties extends Properties {
                     } else {
                         outBuffer.append(aChar);
                     }
-                    break;
+                }
             }
         }
         return outBuffer.toString();

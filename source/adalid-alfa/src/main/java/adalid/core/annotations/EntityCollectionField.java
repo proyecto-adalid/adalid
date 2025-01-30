@@ -93,6 +93,58 @@ public @interface EntityCollectionField {
     InlineHelpType inlineHelp() default InlineHelpType.UNSPECIFIED;
 
     /**
+     * afterReadingSnippet especifica la ruta y el nombre del snippet que se encuentra después de la colección de lectura en vistas (páginas) de
+     * consulta y registro.
+     *
+     * Si utiliza la plataforma jee2, los snippets se deben agregar en el subdirectorio resources/snippets/custom-made del directorio src/main/webapp
+     * del módulo Web, o en algún subdirectorio de resources/snippets/custom-made; si el valor de snippet no comienza por
+     * <b>/resources/snippets/custom-made/</b>, ese prefijo se le agrega automáticamente. Además, los snippets deben ser archivos xhtml; si el valor
+     * de snippet no termina con <b>.xhtml</b>, ese sufijo se le agrega automáticamente.
+     *
+     * @return afterReadingSnippet
+     */
+    String afterReadingSnippet() default "";
+
+    /**
+     * afterWritingSnippet especifica la ruta y el nombre del snippet que se encuentra después de la colección de escritura en vistas (páginas) de
+     * registro.
+     *
+     * Si utiliza la plataforma jee2, los snippets se deben agregar en el subdirectorio resources/snippets/custom-made del directorio src/main/webapp
+     * del módulo Web, o en algún subdirectorio de resources/snippets/custom-made; si el valor de snippet no comienza por
+     * <b>/resources/snippets/custom-made/</b>, ese prefijo se le agrega automáticamente. Además, los snippets deben ser archivos xhtml; si el valor
+     * de snippet no termina con <b>.xhtml</b>, ese sufijo se le agrega automáticamente.
+     *
+     * @return afterWritingSnippet
+     */
+    String afterWritingSnippet() default "";
+
+    /**
+     * beforeReadingSnippet especifica la ruta y el nombre del snippet que se encuentra antes de la colección de lectura en vistas (páginas) de
+     * consulta y registro.
+     *
+     * Si utiliza la plataforma jee2, los snippets se deben agregar en el subdirectorio resources/snippets/custom-made del directorio src/main/webapp
+     * del módulo Web, o en algún subdirectorio de resources/snippets/custom-made; si el valor de snippet no comienza por
+     * <b>/resources/snippets/custom-made/</b>, ese prefijo se le agrega automáticamente. Además, los snippets deben ser archivos xhtml; si el valor
+     * de snippet no termina con <b>.xhtml</b>, ese sufijo se le agrega automáticamente.
+     *
+     * @return beforeReadingSnippet
+     */
+    String beforeReadingSnippet() default "";
+
+    /**
+     * beforeWritingSnippet especifica la ruta y el nombre del snippet que se encuentra antes de la colección de escritura en vistas (páginas) de
+     * registro.
+     *
+     * Si utiliza la plataforma jee2, los snippets se deben agregar en el subdirectorio resources/snippets/custom-made del directorio src/main/webapp
+     * del módulo Web, o en algún subdirectorio de resources/snippets/custom-made; si el valor de snippet no comienza por
+     * <b>/resources/snippets/custom-made/</b>, ese prefijo se le agrega automáticamente. Además, los snippets deben ser archivos xhtml; si el valor
+     * de snippet no termina con <b>.xhtml</b>, ese sufijo se le agrega automáticamente.
+     *
+     * @return beforeWritingSnippet
+     */
+    String beforeWritingSnippet() default "";
+
+    /**
      * readingViewRowActionSnippet especifica la ruta y el nombre del snippet de la columna de botones de acción de las filas de la colección en
      * vistas (páginas) de consulta.
      *

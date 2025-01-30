@@ -335,6 +335,7 @@ public class ConjuntoSegmento extends AbstractPersistentEntity {
     protected Copiar copiar;
 
     @ProcessOperationClass
+//  @OperationClass(dialogSize = 100)
     @ConstructionOperationClass(type = ConjuntoSegmento.class, onsuccess = OnConstructionOperationSuccess.DISPLAY_NEW_INSTANCE)
     public class Copiar extends ProcessOperation {
 

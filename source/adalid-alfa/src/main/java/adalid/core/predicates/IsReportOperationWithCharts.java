@@ -23,8 +23,7 @@ public class IsReportOperationWithCharts implements Predicate {
 
     @Override
     public boolean evaluate(Object object) {
-        if (object instanceof ReportOperation) {
-            ReportOperation operation = (ReportOperation) object;
+        if (object instanceof ReportOperation operation) {
             ReportChartType[] chartTypes = operation.getChartTypes();
             View view = operation.getView();
             return chartTypes != null & chartTypes.length > 0 && view != null && view.isChartable();

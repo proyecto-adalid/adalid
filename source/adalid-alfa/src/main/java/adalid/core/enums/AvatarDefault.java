@@ -17,6 +17,6 @@ package adalid.core.enums;
  */
 public enum AvatarDefault {
 
-    NONE, COMPANY, PERSON, USER, UNKNOWN, UNSEEN
+    UNSPECIFIED, NONE, COMPANY, PERSON, USER, UNKNOWN, UNSEEN
 
 }

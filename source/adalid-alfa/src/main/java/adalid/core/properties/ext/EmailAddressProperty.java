@@ -13,6 +13,7 @@
 package adalid.core.properties.ext;
 
 import adalid.core.constants.EmailConstants;
+import adalid.core.enums.LetterCase;
 import adalid.core.properties.StringProperty;
 import java.util.regex.Pattern;
 
@@ -23,6 +24,7 @@ public class EmailAddressProperty extends StringProperty {
 
     {
         /**/
+        setLetterCase(LetterCase.LOWER);
         setMaxLength(EmailConstants.MAX_EMAIL_ADDRESS_LENGTH);
         setPattern(Pattern.compile(EmailConstants.EMAIL_REGEX));
         /**/

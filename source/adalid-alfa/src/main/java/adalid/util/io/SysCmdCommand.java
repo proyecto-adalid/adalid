@@ -111,15 +111,12 @@ class SysCmdCommand {
 
     private void addCommands(SysCmd os, String pdqName, String dirPath, String comando) {
         switch (os) {
-            case Linux:
+            case Linux ->
                 addCommandsForLinux(pdqName, dirPath, comando);
-                break;
-            case Windows:
+            case Windows ->
                 addCommandsForWindows(pdqName, dirPath, comando);
-                break;
-            case WSL:
+            case WSL ->
                 addCommandsForLinux(pdqName, wslPath(dirPath), wslPath(comando));
-                break;
         }
     }
 

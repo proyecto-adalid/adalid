@@ -12,10 +12,27 @@
  */
 package adalid.commons.i18n;
 
+import java.util.Set;
+
 /**
  * @author Jorge Campins
  */
 public class SpanishLinguist implements Linguist {
+
+    @Override
+    public Set<String> getArticles() {
+        return SpanishNoun.getArticles();
+    }
+
+    @Override
+    public Set<String> getConjunctions() {
+        return SpanishNoun.getConjunctions();
+    }
+
+    @Override
+    public Set<String> getPrepositions() {
+        return SpanishNoun.getPrepositions();
+    }
 
     @Override
     public String capitalize(String noun) {

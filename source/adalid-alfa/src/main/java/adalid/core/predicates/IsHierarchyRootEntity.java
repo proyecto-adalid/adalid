@@ -23,8 +23,7 @@ public class IsHierarchyRootEntity implements Predicate {
 
     @Override
     public boolean evaluate(Object object) {
-        if (object instanceof Entity) {
-            Entity entity = (Entity) object;
+        if (object instanceof Entity entity) {
             return HierarchyNodeType.ROOT.equals(entity.getHierarchyNodeType());
         }
         return false;

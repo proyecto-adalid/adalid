@@ -222,11 +222,9 @@ public abstract class ModuloBase extends AbstractJavaWebModule {
         if (project == null) {
             return siblings;
         }
-        ModuloBase modulo;
         List<Project> modules = project.getModulesList();
         for (Project module : modules) {
-            if (module instanceof ModuloBase) {
-                modulo = (ModuloBase) module;
+            if (module instanceof ModuloBase modulo) {
                 if (module == this) {
                     continue;
                 }

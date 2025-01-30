@@ -21,8 +21,7 @@ public class IsRootTable implements Predicate {
 
     @Override
     public boolean evaluate(Object object) {
-        if (object instanceof SqlTable) {
-            SqlTable table = (SqlTable) object;
+        if (object instanceof SqlTable table) {
             return table.isRoot();
         }
         return false;

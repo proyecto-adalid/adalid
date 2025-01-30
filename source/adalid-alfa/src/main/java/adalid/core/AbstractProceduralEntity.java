@@ -38,7 +38,7 @@ public abstract class AbstractProceduralEntity extends AbstractDatabaseEntity im
     /**
      * @param proceduralEntityType the procedural entity type to set
      */
-    void setProceduralEntityType(ProceduralEntityType proceduralEntityType) {
+    protected void setProceduralEntityType(ProceduralEntityType proceduralEntityType) { // protected avoids method never unused warning
         _proceduralEntityType = proceduralEntityType;
     }
 

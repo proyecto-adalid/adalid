@@ -27,7 +27,7 @@ public class SpanishNoun {
     static final String[] conjunctions = {"aunque", "como", "conque", "cuando", "donde", "e", "empero", "entonces", "ergo", "incluso",
         "luego", "mas", "mientras", "ni", "o", "ora", "pero", "porque", "pues", "que", "sea", "si", "sino", "siquiera", "u", "y", "ya"};
 
-    static final String[] prepositions = {"a", "ante", "bajo", "con", "contra", "de", "desde", "durante", "en", "entre", "excepto",
+    static final String[] prepositions = {"a", "ante", "bajo", "con", "contra", "de", "del", "desde", "durante", "en", "entre", "excepto",
         "hacia", "hasta", "mediante", "para", "por", "salvo", "según", "sin", "so", "sobre", "tras", "versus", "via"};
 
     private static final List<String> lowerCaseWords = new ArrayList<>();
@@ -54,6 +54,18 @@ public class SpanishNoun {
         }
     }
 
+    public static Set<String> getArticles() {
+        return Set.of(articles);
+    }
+
+    public static Set<String> getConjunctions() {
+        return Set.of(conjunctions);
+    }
+
+    public static Set<String> getPrepositions() {
+        return Set.of(prepositions);
+    }
+
     /**
      * Returns the nicely capitalized form of a noun.
      *
@@ -69,9 +81,21 @@ public class SpanishNoun {
         String[] split = StringUtils.split(noun);
         for (int i = 0; i < split.length; i++) {
             word = split[i].toLowerCase();
-            split[i] = lowerCaseWords.contains(word) ? word : WordUtils.capitalize(word, separators);
+            split[i] = lowerCaseWords_contains(word) ? word : WordUtils.capitalize(word, separators);
         }
         return StringUtils.join(split, ' ');
+    }
+
+    private static boolean lowerCaseWords_contains(String word) {
+        if (!lowerCaseWords.contains(word)) {
+            String[] split = StringUtils.split(word, '/');
+            for (String term : split) {
+                if (!lowerCaseWords.contains(term)) {
+                    return false;
+                }
+            }
+        }
+        return true;
     }
 
     /**
@@ -144,8 +168,8 @@ public class SpanishNoun {
         }
         Object singularLookup = irregularSingulars.get(word);
         if (singularLookup != null) {
-            if (singularLookup instanceof ArrayList) {
-                return (String) (((ArrayList) singularLookup).get(0));
+            if (singularLookup instanceof ArrayList arrayList) {
+                return (String) (arrayList.get(0));
             } else {
                 return (String) singularLookup;
             }
@@ -180,8 +204,8 @@ public class SpanishNoun {
         }
         Object pluralLookup = irregularPlurals.get(word);
         if (pluralLookup != null) {
-            if (pluralLookup instanceof ArrayList) {
-                return (String) (((ArrayList) pluralLookup).get(0));
+            if (pluralLookup instanceof ArrayList arrayList) {
+                return (String) (arrayList.get(0));
             } else {
                 return (String) pluralLookup;
             }

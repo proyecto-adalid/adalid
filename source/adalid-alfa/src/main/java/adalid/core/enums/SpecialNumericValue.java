@@ -23,12 +23,12 @@ public enum SpecialNumericValue implements SpecialValue {
 
     @Override
     public Class<?> getDataType() {
-        switch (this) {
-            case CURRENT_USER_ID:
-                return Long.class;
-            default:
-                return Object.class;
-        }
+        return switch (this) {
+            case CURRENT_USER_ID ->
+                Long.class;
+            default ->
+                Object.class;
+        };
     }
 
 }

@@ -122,6 +122,21 @@ public abstract class ProyectoJava1 extends ProyectoBase implements JavaWebProje
     protected static final String VERSION_JAVA = JAVA_VERSION;
 
     /**
+     * Versión de JasperReports
+     */
+    protected static final String JASPERREPORTS_VERSION = "jasperreports.version";
+
+    /**
+     * Versión de JasperReports
+     */
+    protected static final String VERSION_JASPERREPORTS = JASPERREPORTS_VERSION;
+
+    /**
+     * Adaptador de Datos predeterminado en Jaspersoft Studio
+     */
+    protected static final String JASPERREPORTS_DATA_ADAPTER = "jasperreports.data.adapter";
+
+    /**
      * quick filter snippet path
      */
     protected static final String QUICK_FILTER_SNIPPET = Constants.QUICK_FILTER_SNIPPET;
@@ -458,6 +473,8 @@ public abstract class ProyectoJava1 extends ProyectoBase implements JavaWebProje
 
     private String _persistenceRootPackageName;
 
+    private String _googleCloudStorageBucket;
+
     private String _googleRecaptchaSiteKey;
 
     private String _googleRecaptchaSecretKey;
@@ -477,6 +494,12 @@ public abstract class ProyectoJava1 extends ProyectoBase implements JavaWebProje
     private boolean _internetAccessAllowed;
 
     private boolean _roleWebAppDissociationAllowed;
+
+    private boolean _googleFirebaseEnabled;
+
+    private boolean _googleSignInEnabled;
+
+    private boolean _googleCloudStorageEnabled;
 
     private boolean _webServicesEnabled;
 
@@ -776,6 +799,26 @@ public abstract class ProyectoJava1 extends ProyectoBase implements JavaWebProje
     }
 
     /**
+     * @return the Google Cloud Storage bucket name
+     */
+    public String getGoogleCloudStorageBucket() {
+        return StringUtils.defaultIfBlank(_googleCloudStorageBucket, getDefaultGoogleCloudStorageBucket());
+    }
+
+    /**
+     * El método setGoogleCloudStorageBucket se utiliza para especificar el nombre del bucket de Google Cloud Storage de su proyecto. Si no se
+     * especifica, el nombre del bucket será generado, dando formato de UUID al hash MD5 del alias del proyecto. Si no existe el bucket con el nombre
+     * especificado o generado, la aplicación lo creará cuando sea necesario. Sin embargo, para mayor control sobre su configuración, se recomienda
+     * crear el bucket utilizando la consola de Google Cloud y especificar su nombre para generar la aplicación.
+     *
+     * @param bucketName nombre del bucket; debe cumplir los requisitos establecidos en la documentación de Google Cloud Storage.
+     * @see <a href="https://cloud.google.com/storage/docs/buckets?hl=es-419">Acerca de los buckets de Cloud Storage</a>
+     */
+    public void setGoogleCloudStorageBucket(String bucketName) {
+        _googleCloudStorageBucket = bucketName;
+    }
+
+    /**
      * @return the Google reCAPTCHA site key
      */
     public String getGoogleRecaptchaSiteKey() {
@@ -937,6 +980,83 @@ public abstract class ProyectoJava1 extends ProyectoBase implements JavaWebProje
      */
     public void setRoleWebAppDissociationAllowed(boolean allowed) {
         _roleWebAppDissociationAllowed = allowed;
+    }
+
+    /**
+     * @return true if Google Firebase should be enabled; false otherwise
+     */
+    public boolean isGoogleFirebaseEnabled() {
+        return _internetAccessAllowed && _googleFirebaseEnabled;
+    }
+
+    /**
+     * @return true if Google Firebase should be disabled; false otherwise
+     */
+    public boolean isGoogleFirebaseDisabled() {
+        return !isGoogleFirebaseEnabled();
+    }
+
+    /**
+     * El método setGoogleFirebaseEnabled se utiliza para especificar si el proyecto generado utiliza, o no, Google Firebase. El valor predeterminado
+     * de esta propiedad es false (no se utiliza Google Firebase).
+     *
+     * @param enabled true, si el proyecto generado utiliza Google Firebase; de lo contrario false.
+     */
+    public void setGoogleFirebaseEnabled(boolean enabled) {
+        _googleFirebaseEnabled = enabled;
+    }
+
+    /**
+     * @return true if Google Sign-In should be enabled; false otherwise
+     */
+    public boolean isGoogleSignInEnabled() {
+        return _internetAccessAllowed && _googleSignInEnabled && SecurityRealmType.JDBC.equals(getSecurityRealmType());
+    }
+
+    /**
+     * @return true if Google Sign-In should be disabled; false otherwise
+     */
+    public boolean isGoogleSignInDisabled() {
+        return !isGoogleSignInEnabled();
+    }
+
+    /**
+     * El método setGoogleSignInEnabled se utiliza para especificar si el proyecto generado permite, o no, el acceso con Google. El valor
+     * predeterminado de esta propiedad es false (no se permite el acceso con Google). Este atributo solo se utiliza si el tipo de dominio de
+     * seguridad del proyecto es JDBC.
+     *
+     * @param enabled true, si el proyecto generado permite el acceso con Google; de lo contrario false.
+     */
+    public void setGoogleSignInEnabled(boolean enabled) {
+        _googleSignInEnabled = enabled;
+    }
+
+    /**
+     * @return true if Google Cloud Storage should be enabled; false otherwise
+     */
+    public boolean isGoogleCloudStorageEnabled() {
+        return _internetAccessAllowed && _googleCloudStorageEnabled;
+    }
+
+    /**
+     * @return true if Google Cloud Storage should be disabled; false otherwise
+     */
+    public boolean isGoogleCloudStorageDisabled() {
+        return !isGoogleCloudStorageEnabled();
+    }
+
+    /**
+     * El método setGoogleCloudStorageEnabled se utiliza para especificar si el proyecto generado permite, o no, almacenar archivos en Google Cloud
+     * Storage. El valor predeterminado de esta propiedad es false (no se permite almacenar archivos en Google Cloud Storage). Para utilizar Google
+     * Cloud Storage en una aplicación generada con la plataforma jee2 de Adalid, es necesario obtener el archivo JSON de la clave de cuenta de
+     * servicio para su proyecto y configurar el servidor de aplicaciones en el que se ejecuta la aplicación, como se explica en el capítulo <b>Uso de
+     * Google Cloud Storage</b> del documento <b>Uso de Servicios en la Nube</b>.
+     *
+     * @param enabled true, si el proyecto generado permite almacenar archivos en Google Cloud Storage; de lo contrario false.
+     * @see <a href="https://drive.google.com/file/d/1rGOWCcqm0smrwsJtErWovdqS_foZhoiv/view?usp=sharing">Uso de Servicios en la Nube</a>
+     */
+    public void setGoogleCloudStorageEnabled(boolean enabled) {
+        _googleCloudStorageEnabled = enabled;
     }
 
     /**
@@ -1294,6 +1414,14 @@ public abstract class ProyectoJava1 extends ProyectoBase implements JavaWebProje
         return !defaultSMSProviderIs(name);
     }
 
+    public boolean defaultSMSProviderIsIn(String... names) {
+        return names != null && ArrayUtils.contains(names, getDefaultSMSProvider().name());
+    }
+
+    public boolean defaultSMSProviderIsNotIn(String... names) {
+        return !defaultSMSProviderIsIn(names);
+    }
+
     /**
      * El método setDefaultSMSProvider se utiliza para especificar el proveedor de mensajería de texto predeterminado. El valor puede ser cualquiera
      * de los elementos de la enumeración ShortMessageServiceProvider, es decir: UNSPECIFIED, TELEMO_GROUP o TWILIO. El valor predeterminado de esta
@@ -1545,6 +1673,10 @@ public abstract class ProyectoJava1 extends ProyectoBase implements JavaWebProje
 
     protected String getDefaultPersistenceRootPackageName() {
         return getRootPackageName();
+    }
+
+    protected String getDefaultGoogleCloudStorageBucket() {
+        return StrUtils.format(StrUtils.digest(getAlias()), "XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX");
     }
 
     protected String getDefaultGoogleRecaptchaSiteKey() {

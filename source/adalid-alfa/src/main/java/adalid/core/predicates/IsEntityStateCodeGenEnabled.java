@@ -22,8 +22,7 @@ public class IsEntityStateCodeGenEnabled implements Predicate {
 
     @Override
     public boolean evaluate(Object object) {
-        if (object instanceof Entity) {
-            Entity entity = (Entity) object;
+        if (object instanceof Entity entity) {
             return entity.isEntityStateCodeGenEnabled();
         }
         return false;

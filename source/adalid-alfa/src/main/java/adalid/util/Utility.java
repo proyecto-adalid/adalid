@@ -152,9 +152,34 @@ public class Utility {
     }
 
     public static String chooseFile(String path, boolean acceptAllFileFilterUsed, FileFilter... filters) {
+        return choose(path, JFileChooser.FILES_ONLY, acceptAllFileFilterUsed, filters);
+    }
+
+    public static String chooseFileOrDirectory(String path) {
+        return chooseFileOrDirectory(path, (FileFilter[]) null);
+    }
+
+    public static String chooseFileOrDirectory(String path, List<? extends FileFilter> list) {
+        if (list == null) {
+            return chooseFileOrDirectory(path, (FileFilter[]) null);
+        }
+        FileFilter[] array1 = new FileFilter[list.size()];
+        FileFilter[] array2 = list.toArray(array1);
+        return chooseFileOrDirectory(path, true, array2);
+    }
+
+    public static String chooseFileOrDirectory(String path, FileFilter... filters) {
+        return chooseFileOrDirectory(path, true, filters);
+    }
+
+    public static String chooseFileOrDirectory(String path, boolean acceptAllFileFilterUsed, FileFilter... filters) {
+        return choose(path, JFileChooser.FILES_AND_DIRECTORIES, acceptAllFileFilterUsed, filters);
+    }
+
+    private static String choose(String path, int mode, boolean acceptAllFileFilterUsed, FileFilter... filters) {
         String currentDirectoryPath = FilUtils.isDirectory(path) ? path : USER_DIR;
         JFileChooser chooser = new JFileChooser(currentDirectoryPath);
-        chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+        chooser.setFileSelectionMode(mode);
         if (filters != null && filters.length > 0) {
             for (FileFilter filter : filters) {
                 chooser.addChoosableFileFilter(filter);

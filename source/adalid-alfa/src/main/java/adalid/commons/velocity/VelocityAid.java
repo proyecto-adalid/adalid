@@ -364,8 +364,7 @@ public class VelocityAid {
             return null;
         }
         Object object = values(clazz);
-        if (object instanceof Enum[]) {
-            Enum[] values = (Enum[]) object;
+        if (object instanceof Enum[] values) {
             for (Enum e : values) {
                 if (name.equals(e.name())) {
                     return e;
@@ -468,8 +467,8 @@ public class VelocityAid {
     public static Object nvl(Object... objects) {
         if (objects != null && objects.length > 0) {
             for (Object object : objects) {
-                if (object instanceof String) {
-                    if (StringUtils.isNotBlank((String) object)) {
+                if (object instanceof String string) {
+                    if (StringUtils.isNotBlank(string)) {
                         return object;
                     }
                 } else if (object != null) {

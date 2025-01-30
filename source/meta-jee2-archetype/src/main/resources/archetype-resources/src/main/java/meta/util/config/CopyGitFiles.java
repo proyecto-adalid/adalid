@@ -17,7 +17,7 @@ import adalid.util.*;
  * Los archivos del directorio src/main/resources/configuration/Git son ejemplos de archivos de configuración de Git. Puede copiarlos al directorio
  * raíz del proyecto y modificar las copias si fuese necesario.
  *
- * @author ADALID meta-jee2-archetype
+ * @author ADALID meta-jee2-archetype, version 6.0.0
  */
 @RunnableClass(false)
 public class CopyGitFiles extends adalid.util.meta.config.CopyGitFiles {

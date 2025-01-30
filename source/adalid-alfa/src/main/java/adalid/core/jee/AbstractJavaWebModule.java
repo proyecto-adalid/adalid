@@ -258,11 +258,26 @@ public abstract class AbstractJavaWebModule extends AbstractJavaModule implement
     }
 
     private boolean putConsolePages(Entity entity) {
-        boolean put = false;
-        if (entity.isConsoleViewEnabled() && !entity.getBusinessOperationsList().isEmpty()) {
-            put |= putPage(entity, DisplayMode.PROCESSING, DisplayFormat.CONSOLE);
+        if (entity.isConsoleViewEnabled()) {
+            List<Operation> businessOperationsList = entity.getBusinessOperationsList();
+            if (businessOperationsList.isEmpty()) {
+                return false;
+            }
+            for (Operation operation : businessOperationsList) {
+                switch (operation.getOperationAccess()) {
+                    case null -> {
+                        continue;
+                    }
+                    case UNSPECIFIED, PRIVATE -> {
+                        continue;
+                    }
+                    default -> {
+                        return putPage(entity, DisplayMode.PROCESSING, DisplayFormat.CONSOLE);
+                    }
+                }
+            }
         }
-        return put;
+        return false;
     }
 
     private boolean putMasterDetailPages(Entity detail, EntityReference reference, Entity master) {

@@ -22,8 +22,7 @@ public class IsPersistentEntityWithDisplayInApplicationDefaultLocation implement
 
     @Override
     public boolean evaluate(Object object) {
-        if (object instanceof PersistentEntity) {
-            Entity entity = (Entity) object;
+        if (object instanceof PersistentEntity entity) {
             return entity.isApplicationDefaultLocation() && entity.isDisplayAvailable();
         }
         return false;

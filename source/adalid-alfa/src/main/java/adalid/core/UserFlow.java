@@ -13,16 +13,11 @@
 package adalid.core;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
 
 /**
  * @author Jorge Campins
  */
 public class UserFlow extends AbstractArtifact implements Comparable<UserFlow> {
-
-    private static final Logger logger = Logger.getLogger(UserFlow.class);
-
-    private static final String EOL = "\n";
 
     public UserFlow(String name) {
         super();
@@ -50,10 +45,6 @@ public class UserFlow extends AbstractArtifact implements Comparable<UserFlow> {
     // <editor-fold defaultstate="collapsed" desc="toString">
     @Override
     protected String fieldsToString(int n, String key, boolean verbose, boolean fields, boolean maps) {
-        String tab = verbose ? StringUtils.repeat(" ", 4) : "";
-        String fee = verbose ? StringUtils.repeat(tab, n) : "";
-        String faa = " = ";
-        String foo = verbose ? EOL : ", ";
         String string = super.fieldsToString(n, key, verbose, fields, maps);
         return string;
     }

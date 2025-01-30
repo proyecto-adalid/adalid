@@ -41,8 +41,7 @@ public class RoadMapper extends Utility {
         List<Project> masters = new ArrayList<>();
         for (Class<?> masterClass : masterClasses) {
             Object instance = masterClass.getDeclaredConstructor().newInstance();
-            if (instance instanceof Project) {
-                Project project = (Project) instance;
+            if (instance instanceof Project project) {
                 if (project.getMaster() == null) {
                     JavaWebProject jwp = jwp(project);
                     if (jwp == null) {
@@ -97,7 +96,7 @@ public class RoadMapper extends Utility {
         // </editor-fold>
         /**/
         Set<String> sources, targets;
-        Set<String> crossing = new TreeSet<String>();
+        Set<String> crossing = new TreeSet<>();
         for (String application : applications) {
             sources = appSources.get(application);
             targets = appTargets.get(application);

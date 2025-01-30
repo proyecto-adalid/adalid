@@ -3048,6 +3048,8 @@ public class XB {
 
     public static final CharacterScalarX EMPTY = new CharacterScalarX(null, SpecialCharacterValue.EMPTY);
 
+    public static final CharacterScalarX RGUID = new CharacterScalarX(null, SpecialCharacterValue.RGUID);
+
     public static final CharacterScalarX SPACE = new CharacterScalarX(null, " ");
 
     public static final CharacterScalarX COMMA = new CharacterScalarX(null, ",");

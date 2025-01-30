@@ -14,17 +14,22 @@ package adalid.commons.util;
 
 import java.io.File;
 import java.io.FileFilter;
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Scanner;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
 
 /**
  * @author Jorge Campins
  */
 public class FilUtils {
+
+    private static final Logger logger = Logger.getLogger(FilUtils.class);
 
     private static final String OS_NAME = System.getProperty("os.name");
 
@@ -49,6 +54,8 @@ public class FilUtils {
     private static final String DOT = ".";
 
     private static final String SLASH = "/";
+
+    private static final String BACKSLASH = "\\";
 
     private static final String WORKSPACE_FOLDER_NAME = "workspace";
 
@@ -147,13 +154,6 @@ public class FilUtils {
         if (StringUtils.isBlank(path)) {
             return null;
         }
-        /*
-        String string = StringUtils.replace(path.trim(), SLASH, FILE_SEP);
-        String replacement = workspace_folder_path.replace("\\", "\\\\");
-        for (String workspace_folder_key : workspace_folder_keys) {
-            string = string.replaceAll(workspace_folder_key, replacement);
-        }
-        **/
         String string = path.trim();
         string = string.replace(FILE_SEP, SLASH);
         string = replaceAll(string, user_dir_folder_keys, USER_DIR);
@@ -172,6 +172,10 @@ public class FilUtils {
             string = string.replaceAll(regex, replacement);
         }
         return string;
+    }
+
+    public static String replaceSlashes(String path) {
+        return StringUtils.isBlank(path) ? null : StringUtils.replaceChars(path.trim(), SLASH + BACKSLASH, FILE_SEP + FILE_SEP);
     }
 
     public static String slashedPath(String path) {
@@ -230,6 +234,23 @@ public class FilUtils {
         String[] split = StringUtils.split(substringAfter, File.separator);
         String[] array = (String[]) ArrayUtils.subarray(split, parts > 0 ? split.length - parts : 0, split.length);
         return StringUtils.join(array, StringUtils.defaultIfBlank(separator, File.separator));
+    }
+
+    public static String scanTextFile(String path) {
+        if (path == null || path.isBlank()) {
+            return null;
+        }
+        File file = new File(path);
+        if (file.isFile()) {
+            try (Scanner scanner = new Scanner(file).useDelimiter("\\Z")) {
+                return StringUtils.trimToNull(scanner.next()); // Read the entire content as a single token
+            } catch (FileNotFoundException ex) {
+                logger.warn(path + " is missing");
+            }
+        } else {
+            logger.warn(path + " is missing or invalid");
+        }
+        return null;
     }
 
     public static File getDirectory(String pathname) {
@@ -293,6 +314,19 @@ public class FilUtils {
             }
         }
         return b;
+    }
+
+    public static boolean isAbsolutePath(String pathname) {
+        boolean b = StringUtils.isNotBlank(pathname);
+        if (b) {
+            File file = new File(pathname);
+            b = file.isAbsolute();
+        }
+        return b;
+    }
+
+    public static boolean isAbsolutePath(File file) {
+        return file != null && file.isAbsolute();
     }
 
     public static boolean isVisibleDirectory(File file) {

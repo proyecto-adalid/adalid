@@ -76,6 +76,7 @@ import meta.entidad.comun.control.acceso.RolVistaFuncion;
 import meta.entidad.comun.control.acceso.Segmento;
 import meta.entidad.comun.control.acceso.TipoRestriccionFormatos;
 import meta.entidad.comun.control.acceso.TipoRol;
+import meta.entidad.comun.control.acceso.TipoUsuario;
 import meta.entidad.comun.control.acceso.Usuario;
 import meta.entidad.comun.control.acceso.UsuarioFuncion;
 import meta.entidad.comun.control.acceso.UsuarioFuncionPar;
@@ -392,6 +393,8 @@ public class EntidadesComunes extends Project implements SpecialEntityPack {
     protected TipoResultadoPrueba TipoResultadoPrueba;
 
     protected TipoRol TipoRol;
+
+    protected TipoUsuario TipoUsuario;
 
     protected TipoValor TipoValor;
 

@@ -22,26 +22,26 @@ public enum LoggingLevel {
     OFF, TRACE, DEBUG, INFO, WARN, ERROR, FATAL, ALL;
 
     public Level getLevel() {
-        switch (this) {
-            case OFF:
-                return Level.OFF;
-            case TRACE:
-                return Level.TRACE;
-            case DEBUG:
-                return Level.DEBUG;
-            case INFO:
-                return Level.INFO;
-            case WARN:
-                return Level.WARN;
-            case ERROR:
-                return Level.ERROR;
-            case FATAL:
-                return Level.FATAL;
-            case ALL:
-                return Level.ALL;
-            default:
-                return Level.OFF;
-        }
+        return switch (this) {
+            case OFF ->
+                Level.OFF;
+            case TRACE ->
+                Level.TRACE;
+            case DEBUG ->
+                Level.DEBUG;
+            case INFO ->
+                Level.INFO;
+            case WARN ->
+                Level.WARN;
+            case ERROR ->
+                Level.ERROR;
+            case FATAL ->
+                Level.FATAL;
+            case ALL ->
+                Level.ALL;
+            default ->
+                Level.OFF;
+        };
     }
 
     public static LoggingLevel getLoggingLevel(Level level) {

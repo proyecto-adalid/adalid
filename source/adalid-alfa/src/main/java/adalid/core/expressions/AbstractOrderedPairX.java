@@ -79,63 +79,22 @@ public abstract class AbstractOrderedPairX extends AbstractExpression implements
             copyDataType(operand);
         } else {
             switch (_operator) {
-                case COALESCE:
-                case NULLIF:
-                case MAXIMUM:
-                case MINIMUM:
+                case COALESCE, NULLIF, MAXIMUM, MINIMUM ->
                     copyDataType(operand);
-                    break;
-                case AND:
-                case NAND:
-                case OR:
-                case NOR:
-                case XOR:
-                case XNOR:
-                case X_IMPLIES_Y:
+                case AND, NAND, OR, NOR, XOR, XNOR, X_IMPLIES_Y ->
                     setDataType(Boolean.class);
-                    break;
-                case ASCII:
-                case DIACRITICLESS_ASCII:
-                case CONCAT, CONCATENATE:
-                case FORMAT:
-                case LEFT:
-                case RIGHT:
-                case SUBSTR:
-                case TO_ZERO_PADDED_STRING:
+                case ASCII, DIACRITICLESS_ASCII, CONCAT, CONCATENATE, FORMAT, LEFT, RIGHT, SUBSTR, TO_ZERO_PADDED_STRING ->
                     setDataType(String.class);
-                    break;
-                case X_PLUS_Y:
-                case X_MINUS_Y:
-                case X_MULTIPLIED_BY_Y:
-                case X_DIVIDED_INTO_Y:
-                case X_RAISED_TO_THE_Y:
+                case X_PLUS_Y, X_MINUS_Y, X_MULTIPLIED_BY_Y, X_DIVIDED_INTO_Y, X_RAISED_TO_THE_Y ->
                     setDataType(BigDecimal.class);
-                    break;
-                case ADD_YEARS:
-                case ADD_MONTHS:
-                case ADD_WEEKS:
-                case ADD_DAYS:
-                case ADD_HOURS:
-                case ADD_MINUTES:
-                case ADD_SECONDS:
-//                  setDataType(java.util.Date.class); // returning operand's data type until java.util.Date.class is fully tested
+                case ADD_YEARS, ADD_MONTHS, ADD_WEEKS, ADD_DAYS, ADD_HOURS, ADD_MINUTES, ADD_SECONDS -> //                  setDataType(java.util.Date.class); // returning operand's data type until java.util.Date.class is fully tested
                     copyDataType(operand);
-                    break;
-                case DIFF_IN_YEARS:
-                case DIFF_IN_MONTHS:
-                case DIFF_IN_WEEKS:
-                case DIFF_IN_DAYS:
-                case DIFF_IN_HOURS:
-                case DIFF_IN_MINUTES:
-                case DIFF_IN_SECONDS:
+                case DIFF_IN_YEARS, DIFF_IN_MONTHS, DIFF_IN_WEEKS, DIFF_IN_DAYS, DIFF_IN_HOURS, DIFF_IN_MINUTES, DIFF_IN_SECONDS ->
                     setDataType(Long.class);
-                    break;
-                case TO_TIMESTAMP:
+                case TO_TIMESTAMP ->
                     setDataType(java.sql.Timestamp.class);
-                    break;
-                default:
+                default ->
                     copyDataType(operand);
-                    break;
             }
         }
     }
