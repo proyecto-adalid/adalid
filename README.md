@@ -8,3 +8,5 @@ Adalid es una adaptación libre y simplificada de la arquitectura dirigida por m
 Adalid utiliza Apache Velocity Engine como motor de plantillas, de manera que las plantillas pueden ser elaboradas utilizando el poderoso lenguaje de plantillas de Velocity. La facilidad de extender el modelo de datos y de añadir nuevas plantillas permite virtualmente la generación de cualquier clase de documentos.
 
 La extensibilidad y la reusabilidad son principios fundamentales en Adalid. Como cualquier otra aplicación Java open-source, agregar nuevas funciones y modificar las existentes se puede lograr simplemente extendiendo los artefactos de Adalid. Y, como se mencionó antes, los modelos de datos son definidos y almacenados como librerías de clases Java, de manera que también son fácilmente reutilizados, extendidos, controlados (con cualquier sistema de control de versiones) e incluso organizados en una jerarquía de modelos.
+
+[Haga click aquí para ver las páginas Wiki](../../wiki)
