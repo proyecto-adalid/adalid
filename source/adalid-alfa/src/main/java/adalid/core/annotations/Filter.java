@@ -19,14 +19,19 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * La anotación Filter se utiliza para especificar los filtros automáticos que las vistas (páginas) implementan en la búsqueda del valor de la
- * referencia (propiedad o parámetro que hace referencia a otra entidad).
+ * La anotación Filter ya no tiene efecto en la generación de código y será eliminada en una próxima versión. Esta anotación se utilizaba para
+ * especificar los filtros automáticos que las vistas (páginas) implementan en la búsqueda del valor de la referencia (propiedad o parámetro que hace
+ * referencia a otra entidad).
+ *
+ * En lugar de esta anotación, para filtrar las instancias de la entidad referenciada que se encuentran inactivas, utilice el método
+ * setSearchQueryFilter para definir el filtro de búsqueda equivalente. Para filtrar con o sin acceso restringido por las reglas de control de acceso,
+ * utilice el elemento restrictedAccess de la anotación EntityReferenceConversionValidation.
  *
  * @author Jorge Campins
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)
-@Deprecated
+@Deprecated(forRemoval = true)
 public @interface Filter {
 
     /**

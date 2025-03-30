@@ -6,7 +6,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.proyecto-adalid</groupId>
     <artifactId>adalid-alfa</artifactId>
-    <version>6.0.0</version><!--adalid-->
+    <version>6.1.0</version><!--adalid-->
     <packaging>jar</packaging>
     <name>adalid-alfa</name>
     <description>Adalid Alfa Library</description>
@@ -57,7 +57,7 @@
             <dependency>
                 <groupId>com.google.cloud</groupId>
                 <artifactId>libraries-bom</artifactId>
-                <version>26.50.0</version><!--com.google.cloud:libraries-bom-->
+                <version>26.56.0</version><!--com.google.cloud:libraries-bom-->
                 <scope>import</scope>
                 <type>pom</type>
             </dependency>
@@ -77,7 +77,7 @@
         <dependency>
             <groupId>commons-io</groupId>
             <artifactId>commons-io</artifactId>
-            <version>2.17.0</version><!--commons-io-->
+            <version>2.18.0</version><!--commons-io-->
         </dependency>
         <dependency>
             <groupId>commons-lang</groupId>
@@ -87,12 +87,12 @@
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
-            <version>2.0.16</version><!--slf4j-api-->
+            <version>2.0.17</version><!--slf4j-api-->
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-reload4j</artifactId>
-            <version>2.0.16</version><!--slf4j-reload4j-->
+            <version>2.0.17</version><!--slf4j-reload4j-->
         </dependency>
         <dependency>
             <groupId>log4j</groupId>
@@ -136,7 +136,7 @@
         <dependency>
             <groupId>net.sourceforge.plantuml</groupId>
             <artifactId>plantuml</artifactId>
-            <version>1.2025.0</version><!--plantuml-->
+            <version>1.2025.2</version><!--plantuml-->
         </dependency>
         <!--
         <dependency>
@@ -170,7 +170,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.13.0</version><!--maven-compiler-plugin-->
+                <version>3.14.0</version><!--maven-compiler-plugin-->
                 <configuration>
                     <release>${maven.compiler.release}</release>
                     <showDeprecation>true</showDeprecation>
@@ -245,7 +245,7 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-javadoc-plugin</artifactId>
-                        <version>3.10.1</version><!--maven-javadoc-plugin-->
+                        <version>3.11.2</version><!--maven-javadoc-plugin-->
                         <configuration>
                             <source>${maven.compiler.release}</source>
                             <detectJavaApiLink>false</detectJavaApiLink>

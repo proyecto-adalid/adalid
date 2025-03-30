@@ -154,6 +154,16 @@ public @interface PropertyField {
     Kleenean filter() default Kleenean.UNSPECIFIED; // TRUE
 
     /**
+     * columnFilter indica si la propiedad debe tener, o no, el componente para filtrar en la barra de títulos de la tabla en las vistas (páginas) de
+     * consulta y/o registro. Este elemento solo se utiliza si el valor especificado, o determinado, para el elemento filter es TRUE. Seleccione TRUE
+     * si la propiedad debe tener el componente de filtro; en caso contrario, seleccione FALSE. Alternativamente, omita el elemento o seleccione
+     * UNSPECIFIED para utilizar el valor predeterminado del atributo. El valor predeterminado del atributo es el valor del elemento filter.
+     *
+     * @return filter
+     */
+    Kleenean columnFilter() default Kleenean.UNSPECIFIED; // TRUE
+
+    /**
      * sort indica si la propiedad es, o no, un criterio de ordenamiento en las vistas (páginas) de consulta y registro. Su valor es uno de los
      * elementos de la enumeración Kleenean. Seleccione TRUE si la propiedad es un criterio de ordenamiento; en caso contrario, seleccione FALSE.
      * Alternativamente, omita el elemento o seleccione UNSPECIFIED para utilizar el valor predeterminado del atributo. El valor predeterminado del

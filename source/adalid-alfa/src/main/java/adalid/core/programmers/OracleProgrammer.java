@@ -169,7 +169,7 @@ public class OracleProgrammer extends AbstractSqlProgrammer {
                         }
                     }
                 }
-                return 30;
+                return 128; // 30 until 12/03/2025
             }
         }
         return maxIdentifierLength;

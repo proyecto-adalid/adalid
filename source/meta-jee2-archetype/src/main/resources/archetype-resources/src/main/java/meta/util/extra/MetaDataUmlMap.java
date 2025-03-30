@@ -18,7 +18,7 @@ import adalid.util.*;
  * generación del mapa utilizando PlantUML. Los archivos se almacenan en el subdirectorio /source/development/resources/documents/uml/map del proyecto
  * generado.
  *
- * @author ADALID meta-jee2-archetype, version 6.0.0
+ * @author ADALID meta-jee2-archetype, version 6.1.0
  */
 @RunnableClass
 public class MetaDataUmlMap extends adalid.util.Utility {

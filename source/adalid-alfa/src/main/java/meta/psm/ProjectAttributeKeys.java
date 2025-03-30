@@ -18,6 +18,31 @@ package meta.psm;
 public class ProjectAttributeKeys {
 
     /**
+     * Nivel de zoom predeterminado de las páginas de la aplicación en dispositivos fijos y portátiles con pantalla grande (desktops, laptops, etc.).
+     * <p>
+     * El valor de BIG_SCREEN_DEVICE_ZOOM debe ser un número entre 0.5 y 2.0, y funciona de la siguiente manera:</p>
+     * <ul>
+     * <li><b>1.0</b>: El contenido se muestra en su tamaño original.</li>
+     * <li><b>Menor que 1.0 (ej. 0.8)</b>: Reduce el tamaño del contenido, haciéndolo más pequeño (ej. 80% del tamaño original).</li>
+     * <li><b>Mayor que 1.0 (ej. 1.5)</b>: Aumenta el tamaño del contenido, haciéndolo más grande (ej. 150% del tamaño original).</li>
+     * </ul>
+     * El valor predeterminado de BIG_SCREEN_DEVICE_ZOOM es 1.0
+     */
+    public static final String BIG_SCREEN_DEVICE_ZOOM = "big_screen_device_zoom";
+
+    /**
+     * Nivel de zoom predeterminado de las páginas de la aplicación en dispositivos móviles con pantalla pequeña (tablets, smartphones, etc.).
+     * <p>
+     * El valor de SMALL_SCREEN_DEVICE_ZOOM debe ser un número entre 0.5 y 1.0, y funciona de la siguiente manera:</p>
+     * <ul>
+     * <li><b>1.0</b>: El contenido se muestra en su tamaño original.</li>
+     * <li><b>Menor que 1.0 (ej. 0.8)</b>: Reduce el tamaño del contenido, haciéndolo más pequeño (ej. 80% del tamaño original).</li>
+     * </ul>
+     * El valor predeterminado de SMALL_SCREEN_DEVICE_ZOOM es 0.75
+     */
+    public static final String SMALL_SCREEN_DEVICE_ZOOM = "small_screen_device_zoom";
+
+    /**
      * true si la interfaz gráfica de la aplicación generada tiene un layout personalizado que se debe utilizar en lugar del layout generado; de lo
      * contrario false. El valor predeterminado es false. El nombre del archivo de layout generado es fullPageLayout.xhtml y se almacena en el
      * subdirectorio templates/base del directorio src/main/webapp del módulo alias-web de la aplicación, donde alias es el alias del proyecto

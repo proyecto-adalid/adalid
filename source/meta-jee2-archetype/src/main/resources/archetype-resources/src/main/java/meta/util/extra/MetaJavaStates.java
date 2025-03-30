@@ -20,7 +20,7 @@ import adalid.util.*;
  * propiedad metajava.path del archivo bootstrapping.properties, y cuyo valor predeterminado es src/test/java. Para obtener más información respecto
  * al archivo bootstrapping.properties, consulte el Manual de Referencia.
  *
- * @author ADALID meta-jee2-archetype, version 6.0.0
+ * @author ADALID meta-jee2-archetype, version 6.1.0
  */
 @RunnableClass
 public class MetaJavaStates extends adalid.util.Utility {

@@ -18,7 +18,7 @@ import adalid.util.*;
  * generación del diagrama utilizando PlantUML. Los archivos se almacenan en el subdirectorio /source/development/resources/documents/uml/clazz del
  * proyecto generado.
  *
- * @author ADALID meta-jee2-archetype, version 6.0.0
+ * @author ADALID meta-jee2-archetype, version 6.1.0
  */
 @RunnableClass
 public class MetaDataUmlClass extends adalid.util.Utility {

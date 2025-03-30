@@ -11,5 +11,13 @@
         <fileSet filtered="true" packaged="false">
             <directory>src/main/resources</directory>
         </fileSet>
+        <fileSet filtered="true" packaged="false">
+            <directory/>
+            <includes>
+                <include>.gitignore</include>
+                <include>nbactions.xml</include>
+                <include>nb-configuration.xml</include>
+            </includes>
+        </fileSet>
     </fileSets>
 </archetype-descriptor>

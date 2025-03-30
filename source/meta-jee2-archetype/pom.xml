@@ -6,7 +6,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.proyecto-adalid.meta</groupId>
     <artifactId>meta-jee2-archetype</artifactId>
-    <version>6.0.0</version><!--adalid-->
+    <version>6.1.0</version><!--adalid-->
     <packaging>maven-archetype</packaging>
     <name>meta-jee2-archetype</name>
     <description>Adalid platform JEE2 meta-project archetype</description>
@@ -68,19 +68,31 @@
                 </plugin>
                 <plugin>
                     <artifactId>maven-archetype-plugin</artifactId>
-                    <version>3.2.1</version><!--maven-archetype-plugin-->
+                    <version>3.3.1</version><!--maven-archetype-plugin-->
+                    <configuration>
+                        <!-- needed to include .gitignore -->
+                        <useDefaultExcludes>false</useDefaultExcludes>
+                    </configuration>
                 </plugin>
                 <plugin>
                     <artifactId>maven-resources-plugin</artifactId>
                     <version>3.3.1</version><!--maven-resources-plugin-->
+                    <configuration>
+                        <!-- needed to include .gitignore -->
+                        <addDefaultExcludes>false</addDefaultExcludes>
+                    </configuration>
                 </plugin>
                 <plugin>
                     <artifactId>maven-install-plugin</artifactId>
-                    <version>3.1.2</version><!--maven-install-plugin-->
+                    <version>3.1.3</version><!--maven-install-plugin-->
                 </plugin>
                 <plugin>
                     <artifactId>maven-deploy-plugin</artifactId>
-                    <version>3.1.2</version><!--maven-deploy-plugin-->
+                    <version>3.1.3</version><!--maven-deploy-plugin-->
+                </plugin>
+                <plugin>
+                    <artifactId>maven-jar-plugin</artifactId>
+                    <version>3.4.2</version><!--maven-jar-plugin-->
                 </plugin>
             </plugins>
         </pluginManagement>
@@ -94,7 +106,7 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-gpg-plugin</artifactId>
-                        <version>3.2.4</version><!--maven-gpg-plugin-->
+                        <version>3.2.7</version><!--maven-gpg-plugin-->
                         <executions>
                             <execution>
                                 <id>sign-artifacts</id>
@@ -115,7 +127,7 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-javadoc-plugin</artifactId>
-                        <version>3.7.0</version><!--maven-javadoc-plugin-->
+                        <version>3.11.2</version><!--maven-javadoc-plugin-->
                         <configuration>
                             <source>${maven.compiler.source}</source>
                             <detectJavaApiLink>false</detectJavaApiLink>

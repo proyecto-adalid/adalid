@@ -33,6 +33,7 @@ import org.apache.log4j.Logger;
 public class Utility {
 
     static {
+//      SysUtils.setOut();
         adalid.commons.MainClass.init();
     }
 

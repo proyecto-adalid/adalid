@@ -24,86 +24,7 @@ import java.util.TreeSet;
  */
 public class PrimeFacesThemes {
 
-    // <editor-fold defaultstate="collapsed" desc="AllThemes/all-themes-1.0.10.jar">
-//
-//  public static final String AFTERDARK = "afterdark";
-//
-//  public static final String AFTERNOON = "afternoon";
-//
-//  public static final String AFTERWORK = "afterwork";
-//
-//  public static final String ARISTO = "aristo"; // Aristo misbehaves!
-//
-//  public static final String BLACK_TIE = "black-tie";
-//
-//  public static final String BLITZER = "blitzer";
-//
-//  public static final String BLUESKY = "bluesky";
-//
-//  public static final String BOOTSTRAP = "bootstrap";
-//
-//  public static final String CASABLANCA = "casablanca";
-//
-//  public static final String CRUZE = "cruze";
-//
-//  public static final String CUPERTINO = "cupertino";
-//
-//  public static final String DARK_HIVE = "dark-hive";
-//
-//  public static final String DELTA = "delta";
-//
-//  public static final String DOT_LUV = "dot-luv";
-//
-//  public static final String EGGPLANT = "eggplant";
-//
-//  public static final String EXCITE_BIKE = "excite-bike";
-//
-//  public static final String FLICK = "flick";
-//
-//  public static final String GLASS_X = "glass-x";
-//
-//  public static final String HOME = "home";
-//
-//  public static final String HOT_SNEAKS = "hot-sneaks";
-//
-//  public static final String HUMANITY = "humanity";
-//
-//  public static final String LE_FROG = "le-frog";
-//
-//  public static final String MIDNIGHT = "midnight";
-//
-//  public static final String MINT_CHOC = "mint-choc";
-//
-//  public static final String OVERCAST = "overcast";
-//
-//  public static final String PEPPER_GRINDER = "pepper-grinder";
-//
-//  public static final String REDMOND = "redmond";
-//
-//  public static final String ROCKET = "rocket";
-//
-//  public static final String SAM = "sam";
-//
-//  public static final String SMOOTHNESS = "smoothness";
-//
-//  public static final String SOUTH_STREET = "south-street";
-//
-//  public static final String START = "start";
-//
-//  public static final String SUNNY = "sunny";
-//
-//  public static final String SWANKY_PURSE = "swanky-purse";
-//
-//  public static final String TRONTASTIC = "trontastic";
-//
-//  public static final String UI_DARKNESS = "ui-darkness";
-//
-//  public static final String UI_LIGHTNESS = "ui-lightness";
-//
-//  public static final String VADER = "vader";
-    // </editor-fold>
-/**/
-    // <editor-fold defaultstate="collapsed" desc="Luna/primefaces-11.0.0.jar">
+    // <editor-fold defaultstate="collapsed" desc="Luna/primefaces-11">
     public static final String LUNA_AMBER = "luna-amber";
 
     public static final String LUNA_BLUE = "luna-blue";
@@ -113,7 +34,7 @@ public class PrimeFacesThemes {
     public static final String LUNA_PINK = "luna-pink";
     // </editor-fold>
 
-    // <editor-fold defaultstate="collapsed" desc="Nova/primefaces-11.0.0.jar">
+    // <editor-fold defaultstate="collapsed" desc="Nova/primefaces-11">
     public static final String NOVA_COLORED = "nova-colored";
 
     public static final String NOVA_DARK = "nova-dark";
@@ -121,7 +42,7 @@ public class PrimeFacesThemes {
     public static final String NOVA_LIGHT = "nova-light";
     // </editor-fold>
 
-    // <editor-fold defaultstate="collapsed" desc="PrimeOne/primefaces-11.0.0.jar">
+    // <editor-fold defaultstate="collapsed" desc="PrimeOne/primefaces-11">
     public static final String ARYA = "arya";
 
     public static final String SAGA = "saga";
@@ -129,59 +50,42 @@ public class PrimeFacesThemes {
     public static final String VELA = "vela";
     // </editor-fold>
 
-    // <editor-fold defaultstate="collapsed" desc="allThemesContains">
-    static final Set<String> allThemes = new TreeSet<>();
+    // <editor-fold defaultstate="collapsed" desc="PrimeOne/primefaces-15">
+    public static final String ARYA_BLUE = "arya-blue";
 
-    static {
-        /*
-//      allThemes.add(AFTERDARK);
-//      allThemes.add(AFTERNOON);
-//      allThemes.add(AFTERWORK);
-//      allThemes.add(ARISTO);
-//      allThemes.add(BLACK_TIE);
-        allThemes.add(BLITZER);
-//      allThemes.add(BLUESKY);
-        allThemes.add(BOOTSTRAP);
-        allThemes.add(CASABLANCA);
-//      allThemes.add(CRUZE);
-//      allThemes.add(CUPERTINO);
-        allThemes.add(DARK_HIVE);
-        allThemes.add(DELTA);
-//      allThemes.add(DOT_LUV);
-//      allThemes.add(EGGPLANT);
-//      allThemes.add(EXCITE_BIKE);
-        allThemes.add(FLICK);
-        allThemes.add(GLASS_X);
-        allThemes.add(HOME);
-        allThemes.add(HOT_SNEAKS);
-//      allThemes.add(HUMANITY);
-//      allThemes.add(LE_FROG);
-//      allThemes.add(MIDNIGHT);
-//      allThemes.add(MINT_CHOC);
-//      allThemes.add(OVERCAST);
-        allThemes.add(PEPPER_GRINDER);
-        allThemes.add(REDMOND);
-//      allThemes.add(ROCKET);
-        allThemes.add(SAM);
-        allThemes.add(SMOOTHNESS);
-//      allThemes.add(SOUTH_STREET);
-        allThemes.add(START);
-//      allThemes.add(SUNNY);
-//      allThemes.add(SWANKY_PURSE);
-//      allThemes.add(TRONTASTIC);
-//      allThemes.add(UI_DARKNESS);
-//      allThemes.add(UI_LIGHTNESS);
-//      allThemes.add(VADER);
-        /**/
-    }
+    public static final String SAGA_BLUE = "saga-blue";
 
-    public static boolean allThemesContains(String theme) {
-        return allThemes.contains(theme);
-    }
+    public static final String VELA_BLUE = "vela-blue";
+
+    public static final String BOOTSTRAP_BLUE_DARK = "bootstrap4-blue-dark";
+
+    public static final String BOOTSTRAP_BLUE_LIGHT = "bootstrap4-blue-light";
+
+    public static final String BOOTSTRAP_PURPLE_DARK = "bootstrap4-purple-dark";
+
+    public static final String BOOTSTRAP_PURPLE_LIGHT = "bootstrap4-purple-light";
+
+    public static final String MATERIAL_COMPACT_DEEP_PURPLE_DARK = "material-compact-deeppurple-dark";
+
+    public static final String MATERIAL_COMPACT_DEEP_PURPLE_LIGHT = "material-compact-deeppurple-light";
+
+    public static final String MATERIAL_COMPACT_INDIGO_DARK = "material-compact-indigo-dark";
+
+    public static final String MATERIAL_COMPACT_INDIGO_LIGHT = "material-compact-indigo-light";
+
+    public static final String MATERIAL_DEEP_PURPLE_DARK = "material-deeppurple-dark";
+
+    public static final String MATERIAL_DEEP_PURPLE_LIGHT = "material-deeppurple-light";
+
+    public static final String MATERIAL_INDIGO_DARK = "material-indigo-dark";
+
+    public static final String MATERIAL_INDIGO_LIGHT = "material-indigo-light";
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="primefacesJarContains">
     static final Set<String> version11Themes = new TreeSet<>();
+
+    static final Set<String> version15Themes = new TreeSet<>();
 
     static final Map<String, Set<String>> primefacesJarThemes = new TreeMap<>();
 
@@ -194,11 +98,35 @@ public class PrimeFacesThemes {
         version11Themes.add(NOVA_COLORED);
         version11Themes.add(NOVA_DARK);
         version11Themes.add(NOVA_LIGHT);
+        /**/
+        version15Themes.addAll(version11Themes);
+        /**/
         version11Themes.add(ARYA);
         version11Themes.add(SAGA);
         version11Themes.add(VELA);
         /**/
+        version15Themes.add(ARYA_BLUE);
+        version15Themes.add(SAGA_BLUE);
+        version15Themes.add(VELA_BLUE);
+        /**/
+        version15Themes.add(BOOTSTRAP_BLUE_DARK);
+        version15Themes.add(BOOTSTRAP_BLUE_LIGHT);
+        version15Themes.add(BOOTSTRAP_PURPLE_DARK);
+        version15Themes.add(BOOTSTRAP_PURPLE_LIGHT);
+        version15Themes.add(MATERIAL_COMPACT_DEEP_PURPLE_DARK);
+        version15Themes.add(MATERIAL_COMPACT_DEEP_PURPLE_LIGHT);
+        version15Themes.add(MATERIAL_COMPACT_INDIGO_DARK);
+        version15Themes.add(MATERIAL_COMPACT_INDIGO_LIGHT);
+        version15Themes.add(MATERIAL_DEEP_PURPLE_DARK);
+        version15Themes.add(MATERIAL_DEEP_PURPLE_LIGHT);
+        version15Themes.add(MATERIAL_INDIGO_DARK);
+        version15Themes.add(MATERIAL_INDIGO_LIGHT);
+        /**/
         primefacesJarThemes.put("11", version11Themes);
+        primefacesJarThemes.put("12", version11Themes);
+        primefacesJarThemes.put("13", version11Themes);
+        primefacesJarThemes.put("14", version11Themes);
+        primefacesJarThemes.put("15", version15Themes);
     }
 
     public static boolean primefacesJarContains(String version, String theme) {

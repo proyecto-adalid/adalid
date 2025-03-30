@@ -53,6 +53,8 @@ public class FA {
 
     public static final String GEARS = " fa fa-gears ";
 
+    public static final String BAN = " fa fa-ban ";
+
     public static final String CHECK = " fa fa-check ";
 
     public static final String CHECK_CIRCLE = " fa fa-check-circle ";

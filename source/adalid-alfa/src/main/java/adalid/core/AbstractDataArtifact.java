@@ -171,6 +171,11 @@ public abstract class AbstractDataArtifact extends AbstractArtifact implements A
     /**
      *
      */
+    private Boolean _columnFilterField;
+
+    /**
+     *
+     */
     private Boolean _sortField;
 
     /**
@@ -1262,6 +1267,14 @@ public abstract class AbstractDataArtifact extends AbstractArtifact implements A
 
     protected void setFilterField(Boolean filterField) {
         _filterField = filterField;
+    }
+
+    public boolean isColumnFilterField() {
+        return isFilterField() && BitUtils.valueOf(_columnFilterField, true);
+    }
+
+    public void setColumnFilterField(Boolean filterField) {
+        _columnFilterField = filterField;
     }
 
     /**
@@ -2389,6 +2402,7 @@ public abstract class AbstractDataArtifact extends AbstractArtifact implements A
     public void setNullValueGraphicImageName(String name) {
         checkScope();
         _nullValueGraphicImageName = fairGraphicImageName(name);
+        setNullValueGraphicImageExpression();
     }
 
     public boolean isNullValueGraphicImageNameFontAwesomeClass() {
@@ -2406,12 +2420,12 @@ public abstract class AbstractDataArtifact extends AbstractArtifact implements A
         String name = getNullValueGraphicImageName();
         if (name != null && _graphicImageNameExpression == null) {
             CharacterExpression expression = isNull().then(name);
-            _nullValueGraphicImageNameExpression = true;
             if (isFontAwesomeClass(name)) {
                 setGraphicImageFontAwesomeClassNameExpression(expression);
             } else {
                 setGraphicImageNameExpression(expression);
             }
+            _nullValueGraphicImageNameExpression = true; // must be set after the expression
             setNullValueGraphicImageTooltip(name, ENGLISH);
             setNullValueGraphicImageTooltip(name, SPANISH);
         }
@@ -2511,6 +2525,7 @@ public abstract class AbstractDataArtifact extends AbstractArtifact implements A
             }
         } else {
             _graphicImageNameExpression = expression;
+            _nullValueGraphicImageNameExpression = false;
         }
     }
 
@@ -5818,6 +5833,7 @@ public abstract class AbstractDataArtifact extends AbstractArtifact implements A
             _updateFieldViaAPI = annotation.update().toBoolean(_updateFieldViaAPI);
             _searchField = annotation.search().toBoolean(_searchField);
             _filterField = annotation.filter().toBoolean(_filterField);
+            _columnFilterField = annotation.columnFilter().toBoolean(_columnFilterField);
             _sortField = annotation.sort().toBoolean(_sortField);
             _tableField = annotation.table().toBoolean(_tableField);
             _detailField = annotation.detail().toBoolean(_detailField);

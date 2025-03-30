@@ -16,7 +16,7 @@ import adalid.core.interfaces.*;
 import org.apache.commons.lang.StringUtils;
 
 /**
- * @author ADALID meta-jee2-archetype, version 6.0.0
+ * @author ADALID meta-jee2-archetype, version 6.1.0
  */
 public class DescriptiveAttributes {
 

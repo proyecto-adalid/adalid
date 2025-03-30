@@ -19,7 +19,7 @@ import adalid.util.*;
  * cada módulo. Para cada diagrama se genera un archivo gráfico (.png) y uno de texto (.txt) que contiene las instrucciones para la generación del
  * diagrama utilizando PlantUML. Los archivos se almacenan en el subdirectorio /source/development/resources/documents/uml del proyecto generado.
  *
- * @author ADALID meta-jee2-archetype, version 6.0.0
+ * @author ADALID meta-jee2-archetype, version 6.1.0
  */
 @RunnableClass
 public class MetaDataUml extends adalid.util.Utility {

@@ -65,7 +65,7 @@ public class Runner extends Utility {
         Set<Class<?>> utilities = JavaUtils.getSubTypes(prefix, Utility.class);
         set.addAll(JavaUtils.getCanonicalNames(ColUtils.filter(utilities, (Object o) -> runnableUtility(o))));
         /**/
-        Collection<String> names = set.isEmpty() ? null : ColUtils.filter(set, (Object o) -> fairName(o, prefix, exclude, runner));
+        Collection<String> names = set.isEmpty() ? null : ColUtils.filter(set, (Object o) -> fairName(o, null, exclude, runner));
         if (names != null && !names.isEmpty()) {
             execute(showInputDialog(names));
         }
@@ -84,9 +84,9 @@ public class Runner extends Utility {
         return a != null && a.value();
     }
 
-    private boolean fairName(Object o, String prefix, String infix, String runner) {
+    private boolean fairName(Object o, String prefix, String exclude, String runner) {
         String name = o == null ? null : o.toString();
-        return name != null && name.startsWith(prefix) && !name.contains(infix) && !name.equals(runner);
+        return name != null && (prefix == null || name.startsWith(prefix)) && (exclude == null || !name.contains(exclude)) && !name.equals(runner);
     }
 
     private String showInputDialog(Collection<String> names) {
@@ -137,6 +137,15 @@ public class Runner extends Utility {
     }
 
     private String getString(String key) {
+        String string = fetchString(key);
+        if (string == null && key.contains(".")) {
+            String simple = key.substring(key.lastIndexOf('.') + 1);
+            string = fetchString(simple);
+        }
+        return string;
+    }
+
+    private String fetchString(String key) {
         try {
             String string = RB.getString(key);
             return StringUtils.trimToNull(string);

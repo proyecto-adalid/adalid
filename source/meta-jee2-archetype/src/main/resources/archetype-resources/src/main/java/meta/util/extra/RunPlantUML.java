@@ -15,7 +15,7 @@ import adalid.util.Utility;
 /**
  * RunPlantUML genera archivos de imagen a partir de archivos de texto utilizando PlantUML.
  *
- * @author ADALID meta-jee2-archetype, version 6.0.0
+ * @author ADALID meta-jee2-archetype, version 6.1.0
  */
 @RunnableClass
 public class RunPlantUML extends Utility {

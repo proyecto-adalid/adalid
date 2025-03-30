@@ -53,7 +53,7 @@ import adalid.util.*;
  * <p>
  * ADVERTENCIA: SQLWriter no procesa todas las tablas de la base de datos; excluye aquellas cuyo nombre comienza por ZYX_.
  *
- * @author ADALID meta-jee2-archetype, version 6.0.0
+ * @author ADALID meta-jee2-archetype, version 6.1.0
  */
 @RunnableClass
 public class SQLWriter extends adalid.util.sql.jee2.SQLWriter {

@@ -10966,7 +10966,7 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
             valid.add(EntityReferenceConversionValidation.class);
             valid.add(EntityReferenceDisplay.class);
             valid.add(EntityReferenceSearch.class);
-            valid.add(Filter.class);
+//          valid.add(Filter.class);
             valid.add(InstanceReference.class);
             valid.add(ParameterField.class);
         }
@@ -10978,7 +10978,7 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
             valid.add(EntityReferenceDataGen.class);
             valid.add(EntityReferenceDisplay.class);
             valid.add(EntityReferenceSearch.class);
-            valid.add(Filter.class);
+//          valid.add(Filter.class);
             valid.add(ManyToOne.class);
             valid.add(OneToOne.class);
             valid.add(OwnerProperty.class);
@@ -11752,6 +11752,7 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
 
     @SuppressWarnings("deprecation")
     private void annotateFilter(Field field) {
+        /*
         _annotatedWithFilter = field.isAnnotationPresent(Filter.class);
         if (_annotatedWithFilter) {
             Filter annotation = field.getAnnotation(Filter.class);
@@ -11759,6 +11760,7 @@ public abstract class AbstractEntity extends AbstractDataArtifact implements Ent
             _filterOwnerProperty = annotation.owner().toBoolean(_filterOwnerProperty);
             _filterSegmentProperty = annotation.segment().toBoolean(_filterSegmentProperty);
         }
+        /**/
     }
 
     private void annotateOneToOne(Field field) {

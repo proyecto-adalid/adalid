@@ -3703,17 +3703,18 @@ public abstract class Project extends AbstractArtifact implements ProjectBuilder
         long millis1 = System.currentTimeMillis();
         logger.warn(RunUtils.starting("building and generation of project " + clase + " with " + plataformas));
         boolean built = build();
-        logger.warn(RunUtils.finished("building project " + clase, millis1));
+        String proyecto = clase + " (" + getAlias() + ")";
+        logger.warn(RunUtils.finished("building project " + proyecto, millis1));
         boolean generated = false;
         if (built) {
             for (String platform : platforms) {
                 long millis2 = System.currentTimeMillis();
                 generated = generate(platform);
-                logger.warn(RunUtils.finished("generation of project " + clase + " with " + platform, millis2));
+                logger.warn(RunUtils.finished("generation of project " + proyecto + " with platform [" + platform + "]", millis2));
             }
         }
         storeKeyFeatures();
-        logger.warn(RunUtils.finished("building and generation of project " + clase + " with " + plataformas, millis1));
+        logger.warn(RunUtils.finished("building and generation of project " + proyecto + " with " + plataformas, millis1));
         return built && generated;
     }
 

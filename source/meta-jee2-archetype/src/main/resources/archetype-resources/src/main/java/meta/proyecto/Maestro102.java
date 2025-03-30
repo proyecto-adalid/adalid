@@ -15,7 +15,7 @@ import adalid.jee2.constants.*;
 import meta.psm.ProjectAttributeKeys;
 
 /**
- * @author ADALID meta-jee2-archetype, version 6.0.0
+ * @author ADALID meta-jee2-archetype, version 6.1.0
  */
 @MasterProject(acronym = Maestro.ACRONYM, alias = Maestro102.ALIAS, helpFile = Maestro102.ALIAS)
 public class Maestro102 extends Maestro {
@@ -89,7 +89,7 @@ public class Maestro102 extends Maestro {
 //      putEnvironmentVariable(CONTENT_ROOT_DIR_LINUX, "/opt/content-root");
 //      putEnvironmentVariable(CONTENT_ROOT_DIR_WINDOWS, "%SystemDrive%/content-root");
 //      loadPrivateProperties(LoggingLevel.INFO);
-//      setTheme(PrimeFacesThemes.SAGA);
+//      setTheme(PrimeFacesThemes.SAGA_BLUE); // SAGA until PrimeFaces 14
 //      setThemeSwitchingEnabled(true);
 //      setInternetAccessAllowed(true);
 //      setWebServicesEnabled(true);
@@ -118,7 +118,7 @@ public class Maestro102 extends Maestro {
 //      setVersion("1.0.0");
 //      taskNotifierSchedule.minute = "*/15";
 //      addProjectDependency(dependencia adicional, tipo del módulo al que se debe agregar la dependencia adicional);
-//      por ejemplo: addProjectDependency(MavenDependencies.PrimeFaces.omega(), ProjectModuleType.WEB);
+//      por ejemplo: addProjectDependency(MavenDependencies.PrimeFaces.freya(), ProjectModuleType.WEB);
     }
 
     @Override

@@ -17,7 +17,7 @@ import ${package}.meta.modulo.*;
 import meta.proyecto.comun.*;
 
 /**
- * @author ADALID meta-jee2-archetype, version 6.0.0
+ * @author ADALID meta-jee2-archetype, version 6.1.0
  */
 public abstract class Maestro extends ProyectoPrime {
 

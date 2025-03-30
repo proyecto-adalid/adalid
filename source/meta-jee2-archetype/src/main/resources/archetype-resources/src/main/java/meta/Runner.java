@@ -16,7 +16,7 @@ package ${package}.meta;
  * dispone de xterm, y no desea instalarlo, puede utilizar otro emulador, cambiando el valor de la propiedad process.builder.start.command.for.linux
  * del archivo bootstrapping.properties que se encuentra en el subdirectorio src/main/resources.
  *
- * @author ADALID meta-jee2-archetype, version 6.0.0
+ * @author ADALID meta-jee2-archetype, version 6.1.0
  */
 @adalid.util.RunnableClass(false)
 class Runner extends adalid.util.Runner {

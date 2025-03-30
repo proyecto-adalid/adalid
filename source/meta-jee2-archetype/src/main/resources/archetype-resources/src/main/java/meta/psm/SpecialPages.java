@@ -13,7 +13,7 @@ import adalid.commons.bundles.Bundle;
 import adalid.jee2.SpecialPage;
 
 /**
- * @author ADALID meta-jee2-archetype, version 6.0.0
+ * @author ADALID meta-jee2-archetype, version 6.1.0
  */
 public class SpecialPages {
 
@@ -35,36 +35,6 @@ public class SpecialPages {
         return dashboard;
     }
 
-    public static SpecialPage dashboardMirage() {
-        SpecialPage dashboard = SpecialPage.of("DashboardMirage", SpecialPage.view("dashboards/DashboardMirage"));
-        dashboard.setIconClass("fa fa-dashboard");
-        dashboard.setLocalizedLabel(Bundle.ENGLISH, "Mirage Dashboard");
-        dashboard.setLocalizedLabel(Bundle.SPANISH, "Tablero «Mirage»");
-        dashboard.setLocalizedShortDescription(Bundle.ENGLISH, "Mirage Dashboard of the company key performance indicators (KPIs)");
-        dashboard.setLocalizedShortDescription(Bundle.SPANISH, "Tablero «Mirage» de indicadores clave de rendimiento (KPIs) de la empresa");
-        return dashboard;
-    }
-
-    public static SpecialPage dashboardOmega() {
-        SpecialPage dashboard = SpecialPage.of("DashboardOmega", SpecialPage.view("dashboards/DashboardOmega"));
-        dashboard.setIconClass("fa fa-dashboard");
-        dashboard.setLocalizedLabel(Bundle.ENGLISH, "Omega Dashboard");
-        dashboard.setLocalizedLabel(Bundle.SPANISH, "Tablero «Omega»");
-        dashboard.setLocalizedShortDescription(Bundle.ENGLISH, "Omega Dashboard of the company key performance indicators (KPIs)");
-        dashboard.setLocalizedShortDescription(Bundle.SPANISH, "Tablero «Omega» de indicadores clave de rendimiento (KPIs) de la empresa");
-        return dashboard;
-    }
-
-    public static SpecialPage dashboardPrestige() {
-        SpecialPage dashboard = SpecialPage.of("DashboardPrestige", SpecialPage.view("dashboards/DashboardPrestige"));
-        dashboard.setIconClass("fa fa-dashboard");
-        dashboard.setLocalizedLabel(Bundle.ENGLISH, "Prestige Dashboard");
-        dashboard.setLocalizedLabel(Bundle.SPANISH, "Tablero «Prestige»");
-        dashboard.setLocalizedShortDescription(Bundle.ENGLISH, "Prestige Dashboard of the company key performance indicators (KPIs)");
-        dashboard.setLocalizedShortDescription(Bundle.SPANISH, "Tablero «Prestige» de indicadores clave de rendimiento (KPIs) de la empresa");
-        return dashboard;
-    }
-
     public static SpecialPage dashboardSerenity() {
         SpecialPage dashboard = SpecialPage.of("DashboardSerenity", SpecialPage.view("dashboards/DashboardSerenity"));
         dashboard.setIconClass("fa fa-dashboard");
@@ -72,16 +42,6 @@ public class SpecialPages {
         dashboard.setLocalizedLabel(Bundle.SPANISH, "Tablero «Serenity»");
         dashboard.setLocalizedShortDescription(Bundle.ENGLISH, "Serenity Dashboard of the company key performance indicators (KPIs)");
         dashboard.setLocalizedShortDescription(Bundle.SPANISH, "Tablero «Serenity» de indicadores clave de rendimiento (KPIs) de la empresa");
-        return dashboard;
-    }
-
-    public static SpecialPage dashboardUltima() {
-        SpecialPage dashboard = SpecialPage.of("DashboardUltima", SpecialPage.view("dashboards/DashboardUltima"));
-        dashboard.setIconClass("fa fa-dashboard");
-        dashboard.setLocalizedLabel(Bundle.ENGLISH, "Ultima Dashboard");
-        dashboard.setLocalizedLabel(Bundle.SPANISH, "Tablero «Ultima»");
-        dashboard.setLocalizedShortDescription(Bundle.ENGLISH, "Ultima Dashboard of the company key performance indicators (KPIs)");
-        dashboard.setLocalizedShortDescription(Bundle.SPANISH, "Tablero «Ultima» de indicadores clave de rendimiento (KPIs) de la empresa");
         return dashboard;
     }
 

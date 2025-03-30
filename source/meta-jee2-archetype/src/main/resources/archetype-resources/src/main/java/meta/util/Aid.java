@@ -12,7 +12,7 @@ package ${package}.meta.util;
 /**
  * Aid contiene campos utilizables por las demás clases utilitarias.
  *
- * @author ADALID meta-jee2-archetype, version 6.0.0
+ * @author ADALID meta-jee2-archetype, version 6.1.0
  */
 public class Aid {
 

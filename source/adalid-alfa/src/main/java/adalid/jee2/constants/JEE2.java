@@ -13,24 +13,26 @@
 package adalid.jee2.constants;
 
 /**
+ * Hipervínculos a documentos de ADALID/JEE2 6.1.0 en Google Drive
+ *
  * @author Jorge Campins
  */
 public class JEE2 {
 
     public static final String BLOG = "https://proyecto-adalid.blogspot.com/";
 
-    public static final String INSTALACION_LINUX_PDF = "https://drive.google.com/file/d/17OA2XQHRtylT9BXY0hIThAKBQT6YeDsc/view?usp=sharing";
+    public static final String INSTALACION_LINUX_PDF = "https://drive.google.com/file/d/1KqiveD-i8N4XbmeMqaAln5d9o79pMTek/view?usp=sharing";
 
-    public static final String INSTALACION_WINDOWS_PDF = "https://drive.google.com/file/d/1-bFBnlx9dzZWk2ZMwRzTBEFbLv5YElP9/view?usp=sharing";
+    public static final String INSTALACION_WINDOWS_PDF = "https://drive.google.com/file/d/1JPc3u25N0LzVMpdNBAEbEHDdm7erZKEC/view?usp=sharing";
 
-    public static final String META_PROGRAMACION_PDF = "https://drive.google.com/file/d/19wqUTso57ftK04DNdglmLIe2f1jEl7lS/view?usp=sharing";
+    public static final String META_PROGRAMACION_PDF = "https://drive.google.com/file/d/1wfU1f1X3cvrZop4DvueTSIaHLoXzq2mm/view?usp=sharing";
 
-    public static final String OPERACION_PDF = "https://drive.google.com/file/d/12eVLisCouPEo1OxqZa9QmtF8fCP1tBR7/view?usp=sharing";
+    public static final String OPERACION_PDF = "https://drive.google.com/file/d/1UEyPgaCLNaVLr_f258Pc9-tF_WDhZwK6/view?usp=sharing";
 
-    public static final String REFERENCIA_PDF = "https://drive.google.com/file/d/1hZ6JowU75ujoUw5EETHSXVshBLJ077ZT/view?usp=sharing";
+    public static final String REFERENCIA_PDF = "https://drive.google.com/file/d/1nldO7m0QxbpAqterUAkjaJDaxee44R11/view?usp=sharing";
 
-    public static final String SERVICIOS_PDF = "https://drive.google.com/file/d/1rGOWCcqm0smrwsJtErWovdqS_foZhoiv/view?usp=sharing";
+    public static final String SERVICIOS_PDF = "https://drive.google.com/file/d/1w2_EqJ7xXspT_QbshbXDhm8ZgjvGOD8B/view?usp=sharing";
 
-    public static final String THIRD_PARTY_DIR_ZIP = "https://drive.google.com/file/d/1eLb0Xm0z4vM-6_yzesGToSBq_j5LA_5i/view?usp=sharing";
+    public static final String THIRD_PARTY_DIR_ZIP = "https://drive.google.com/file/d/1Ht195TPfz8okpI9nvxAQ8R3ztCA63JCg/view?usp=sharing";
 
 }

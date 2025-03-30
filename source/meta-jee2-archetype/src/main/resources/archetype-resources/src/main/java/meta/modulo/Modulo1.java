@@ -10,7 +10,7 @@
 package ${package}.meta.modulo;
 
 /**
- * @author ADALID meta-jee2-archetype, version 6.0.0
+ * @author ADALID meta-jee2-archetype, version 6.1.0
  */
 public class Modulo1 extends adalid.core.Project {
 

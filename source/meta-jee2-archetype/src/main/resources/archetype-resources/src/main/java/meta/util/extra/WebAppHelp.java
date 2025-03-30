@@ -26,7 +26,7 @@ import adalid.util.*;
  * <p>
  * {@code @MasterProject(alias = "${artifactId.toLowerCase().replaceAll('^\Qmeta\E[\_\-\.]+', '').replaceAll('[\_\-\.]+\Qmeta\E$', '').replaceAll('[^a-z0-9]', '')}ap101", helpFile = "${artifactId.toLowerCase().replaceAll('^\Qmeta\E[\_\-\.]+', '').replaceAll('[\_\-\.]+\Qmeta\E$', '').replaceAll('[^a-z0-9]', '')}ap101.xhtml", helpFileAutoName = HelpFileAutoName.ENTITY, helpFileAutoType = "xhtml")}
  *
- * @author ADALID meta-jee2-archetype, version 6.0.0
+ * @author ADALID meta-jee2-archetype, version 6.1.0
  */
 @RunnableClass
 public class WebAppHelp extends adalid.util.Utility {

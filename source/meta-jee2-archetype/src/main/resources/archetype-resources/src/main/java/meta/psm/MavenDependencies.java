@@ -12,12 +12,14 @@ package ${package}.meta.psm;
 import adalid.jee2.*;
 
 /**
- * @author ADALID meta-jee2-archetype, version 6.0.0
+ * @author ADALID meta-jee2-archetype, version 6.1.0
  */
 public class MavenDependencies {
 
+    /*
     public static Apache Apache;
 
+    /**/
     public static PrimeFaces PrimeFaces;
 
     static {
@@ -25,10 +27,13 @@ public class MavenDependencies {
     }
 
     private MavenDependencies() {
+        /*
         Apache = new Apache();
+        /**/
         PrimeFaces = new PrimeFaces();
     }
 
+    /* Apache HttpClient fue reemplazado por el HttpClient integrado de Java en la versión 6.1 de Adalid/JEE2
     public class Apache {
 
         public ProjectDependency httpclient() {
@@ -38,19 +43,28 @@ public class MavenDependencies {
 
     }
 
+    /**/
     public class PrimeFaces {
 
         private static final String groupId = "org.primefaces.themes";
 
         public ProjectDependency freya() {
-            return ProjectDependency.of(groupId, "freya", "5.0.0").
-                setClassifier("jakarta").
+            return freya("7.0.0", "jakarta");
+        }
+
+        public ProjectDependency freya(String version, String classifier) {
+            return ProjectDependency.of(groupId, "freya", version).
+                setClassifier(classifier).
                 setScope(ProjectDependencyScope.RUNTIME);
         }
 
         public ProjectDependency serenity() {
-            return ProjectDependency.of(groupId, "serenity", "6.0.0").
-                setClassifier("jakarta").
+            return serenity("8.0.0", "jakarta");
+        }
+
+        public ProjectDependency serenity(String version, String classifier) {
+            return ProjectDependency.of(groupId, "serenity", version).
+                setClassifier(classifier).
                 setScope(ProjectDependencyScope.RUNTIME);
         }
 

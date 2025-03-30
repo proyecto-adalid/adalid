@@ -1539,6 +1539,25 @@ public abstract class AbstractArtifact implements Artifact, Wrappable {
         return ObjUtils.toBoolean(attribute);
     }
 
+    public Double getDoubleAttribute(Class<?> clazz, String name) {
+        return getDoubleAttribute(attributeName(clazz, name));
+    }
+
+    public Double getDoubleAttribute(String name) {
+        Object attribute = _attributes.get(name);
+        return ObjUtils.toDouble(attribute);
+    }
+
+    public Double getDoubleAttribute(Class<?> clazz, String name, Double min, Double max) {
+        return getDoubleAttribute(attributeName(clazz, name), min, max);
+    }
+
+    public Double getDoubleAttribute(String name, Double min, Double max) {
+        Object attribute = _attributes.get(name);
+        Double d = ObjUtils.toDouble(attribute);
+        return ObjUtils.between(d, min, max) ? d : null;
+    }
+
     public Integer getIntegerAttribute(Class<?> clazz, String name) {
         return getIntegerAttribute(attributeName(clazz, name));
     }

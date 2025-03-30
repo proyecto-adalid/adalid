@@ -18,6 +18,8 @@ import org.apache.commons.collections.ExtendedProperties;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
+import org.apache.maven.artifact.versioning.ArtifactVersion;
+import org.apache.maven.artifact.versioning.DefaultArtifactVersion;
 
 /**
  * @author Jorge Campins
@@ -46,6 +48,8 @@ public abstract class ProyectoMavenPrime extends ProyectoMaven {
     protected static final String PRIMEFACES_EXTENSIONS_RESOURCES_MONACOEDITOR_VERSION = "primefaces.extensions.resources.monacoeditor.version";
 
     /**/
+    protected static final String GOOGLE_CLOUD_VERSION = "google.cloud.version";
+
     protected static final String GOOGLE_GSON_VERSION = "google.gson.version";
 
     protected static final String VERSION_PRIMEFACES = PRIMEFACES_VERSION;
@@ -58,6 +62,8 @@ public abstract class ProyectoMavenPrime extends ProyectoMaven {
     protected static final String VERSION_PRIMEFACES_EXTENSIONS_RESOURCES_MONACOEDITOR = PRIMEFACES_EXTENSIONS_RESOURCES_MONACOEDITOR_VERSION;
 
     /**/
+    protected static final String VERSION_GOOGLE_CLOUD = GOOGLE_CLOUD_VERSION;
+
     protected static final String VERSION_GOOGLE_GSON = GOOGLE_GSON_VERSION;
 
     protected static final String DEFAULT_THEME = PrimeFacesThemes.SAGA;
@@ -127,16 +133,6 @@ public abstract class ProyectoMavenPrime extends ProyectoMaven {
     }
 
     /**
-     * Returns {@code true} if PrimeFaces all-themes jar contains the specified theme.
-     *
-     * @param theme theme whose presence is to be tested
-     * @return {@code true} if PrimeFaces all-themes jar contains the specified theme
-     */
-    public boolean allThemesContains(String theme) {
-        return PrimeFacesThemes.allThemesContains(theme);
-    }
-
-    /**
      * Returns {@code true} if PrimeFaces jar of the specified major version (from 11 onwards) contains the specified theme.
      *
      * @param version PrimeFaces major version, from 11 onwards
@@ -166,6 +162,13 @@ public abstract class ProyectoMavenPrime extends ProyectoMaven {
     }
 
     protected String getDefaultTheme() {
+        String version = getEnvironmentVariable(PRIMEFACES_VERSION);
+        if (version != null && version.matches("^\\d+(\\.\\d+)+")) {
+            ArtifactVersion artifactVersion = new DefaultArtifactVersion(version);
+            if (artifactVersion.getMajorVersion() > 14) {
+                return PrimeFacesThemes.SAGA_BLUE;
+            }
+        }
         return DEFAULT_THEME;
     }
 

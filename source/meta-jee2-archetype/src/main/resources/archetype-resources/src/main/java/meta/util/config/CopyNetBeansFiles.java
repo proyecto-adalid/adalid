@@ -29,7 +29,7 @@ import adalid.util.*;
  * run, run.single.main, debug y debug.single.main. Revise y modifique el valor de los parámetros si fuese necesario; en particular, revise los
  * valores de -Xms y -Xmx en las propiedades exec.args; éstos se deben ajustar según la disponibilidad de memoria de su computador.
  *
- * @author ADALID meta-jee2-archetype, version 6.0.0
+ * @author ADALID meta-jee2-archetype, version 6.1.0
  */
 @RunnableClass(false)
 public class CopyNetBeansFiles extends adalid.util.meta.config.CopyNetBeansFiles {
